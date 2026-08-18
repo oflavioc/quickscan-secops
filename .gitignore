@@ -1,0 +1,5 @@
+node_modules/
+test-results/
+visual_evidence/
+print_evidence/
+*.log

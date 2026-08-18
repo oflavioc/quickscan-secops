@@ -1,0 +1,230 @@
+{
+  "format": "quickscan-secops-session",
+  "schemaVersion": 1,
+  "toolVersion": "3.4.0-dev.4.8.0.7",
+  "engineSha256": "9a4a2e674389a115a56c0bce9785ad0f90651546e31d264a947998e2bb5d247a",
+  "createdAt": "2026-08-17T12:00:00.000Z",
+  "label": "exemplo-completo",
+  "inputs": {
+    "assessment": {
+      "archetype": 0,
+      "answers": {
+        "mandate": 1,
+        "governance": 1,
+        "policies": 1,
+        "team-capacity": 1,
+        "training": 1,
+        "knowledge": 1,
+        "incident-response": 1,
+        "detection-lifecycle": 1,
+        "automation": 1,
+        "logs": 0,
+        "endpoint": 1,
+        "network-visibility": "NA",
+        "monitoring-coverage": 1,
+        "external-surface": 1,
+        "vulnerability-management": 1
+      },
+      "notes": {
+        "logs": "Contexto sintético — nenhum dado real de cliente."
+      }
+    },
+    "priorities": [
+      "logs",
+      "endpoint"
+    ],
+    "technologyLandscape": {
+      "capabilities": {
+        "knowledge-management": {
+          "presence": "UNSET",
+          "solutions": [],
+          "declaredDriver": null
+        },
+        "incident-management": {
+          "presence": "UNSET",
+          "solutions": [],
+          "declaredDriver": null
+        },
+        "detection-engineering": {
+          "presence": "UNSET",
+          "solutions": [],
+          "declaredDriver": null
+        },
+        "security-analytics": {
+          "presence": "NONE",
+          "solutions": [],
+          "declaredDriver": null
+        },
+        "security-automation": {
+          "presence": "UNSET",
+          "solutions": [],
+          "declaredDriver": null
+        },
+        "continuous-monitoring": {
+          "presence": "UNSET",
+          "solutions": [],
+          "declaredDriver": null
+        },
+        "soc-platform": {
+          "presence": "UNSET",
+          "solutions": [],
+          "declaredDriver": null
+        },
+        "threat-intelligence": {
+          "presence": "UNSET",
+          "solutions": [],
+          "declaredDriver": null
+        },
+        "soc-ai-assistance": {
+          "presence": "UNSET",
+          "solutions": [],
+          "declaredDriver": null
+        },
+        "endpoint-detection": {
+          "presence": "PARTIAL",
+          "solutions": [
+            {
+              "vendor": "OutroFabricante",
+              "product": "EDR X",
+              "status": "production"
+            },
+            {
+              "vendor": "Fortinet",
+              "product": "FortiEDR",
+              "status": "partial-production",
+              "deployment": "saas",
+              "coverage": "1.200 endpoints"
+            },
+            {
+              "vendor": "TerceiroFabricante",
+              "product": "Agente Y"
+            }
+          ],
+          "declaredDriver": {
+            "note": "Renovação em 2027"
+          }
+        },
+        "network-detection": {
+          "presence": "UNSET",
+          "solutions": [],
+          "declaredDriver": null
+        },
+        "external-exposure": {
+          "presence": "UNSET",
+          "solutions": [],
+          "declaredDriver": null
+        },
+        "vulnerability-management": {
+          "presence": "UNSET",
+          "solutions": [],
+          "declaredDriver": null
+        },
+        "deception": {
+          "presence": "UNSET",
+          "solutions": [],
+          "declaredDriver": null
+        },
+        "malware-analysis": {
+          "presence": "UNSET",
+          "solutions": [],
+          "declaredDriver": null
+        },
+        "email-threat-protection": {
+          "presence": "UNSET",
+          "solutions": [],
+          "declaredDriver": null
+        },
+        "insider-risk": {
+          "presence": "UNSET",
+          "solutions": [],
+          "declaredDriver": null
+        },
+        "data-loss-prevention": {
+          "presence": "UNSET",
+          "solutions": [],
+          "declaredDriver": null
+        },
+        "identity-access": {
+          "presence": "UNSET",
+          "solutions": [],
+          "declaredDriver": null
+        },
+        "privileged-access": {
+          "presence": "UNSET",
+          "solutions": [],
+          "declaredDriver": null
+        },
+        "human-risk": {
+          "presence": "UNSET",
+          "solutions": [],
+          "declaredDriver": null
+        },
+        "ai-runtime-security": {
+          "presence": "UNSET",
+          "solutions": [],
+          "declaredDriver": null
+        }
+      },
+      "architectureContext": {
+        "saasAllowed": "yes",
+        "localProcessingRequired": "no",
+        "otIsolated": "unknown",
+        "unifiedPlatformPreference": "unified",
+        "environmentProfile": "hybrid",
+        "dataResidency": "no-constraint"
+      },
+      "declaredPlatforms": [
+        {
+          "platform": "fortisoc",
+          "bundle": null,
+          "subscriptions": [],
+          "notes": "piloto"
+        },
+        {
+          "platform": "fortigate",
+          "bundle": "utp",
+          "subscriptions": [
+            "fg-ips",
+            "fg-antivirus"
+          ]
+        }
+      ],
+      "signals": {
+        "activeIncident": true,
+        "suspectedCompromise": "unset",
+        "ransomwareConcern": "unset",
+        "wantsIRReadiness": "unset",
+        "wantsSOCAssessment": "unset",
+        "wantsSOCDevelopment": "unset",
+        "becConcern": "unset",
+        "emailSecurityConcern": "unset",
+        "dataLeakageConcern": "unset",
+        "insiderRiskConcern": "unset",
+        "complianceDataProtection": "unset",
+        "shadowAIConcern": "unset",
+        "aiUsageRisk": "unset",
+        "organizationBuildsAIApps": "unset",
+        "usesPrivateLLMs": "unset",
+        "usesAgenticAI": "unset",
+        "aiRuntimeSecurityConcern": "unset",
+        "promptInjectionConcern": "unset",
+        "llmDataLeakageConcern": "unset",
+        "identityRiskConcern": "unset",
+        "pamRequirement": "unset",
+        "edrSpecificNeed": "unset"
+      }
+    },
+    "targetProfile": {
+      "overrides": {
+        "logs": 3
+      }
+    },
+    "operationalRefinement": {
+      "answers": {
+        "ref-metrics": 1,
+        "ref-lessons": null,
+        "ref-hunting": null
+      }
+    }
+  }
+}

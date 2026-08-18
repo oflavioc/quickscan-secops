@@ -1,0 +1,2018 @@
+{
+ "meta": {
+  "baseline": "quickscan_secops_soccmm_v3_1_3.html",
+  "generatedAt": "2026-08-16T15:37:54.028Z",
+  "legacyModeSource": "baseline-v3.1.3",
+  "purpose": "M41/E11 — payload funcional da V3.1.3; V3.2 em rota legacy deve reproduzi-lo integralmente",
+  "legacyModeCondition": "TECH_LANDSCAPE UNSET + ARCHITECTURE_CONTEXT default + SESSION_SIGNALS vazio + PLATFORM_CONTEXT vazio"
+ },
+ "configErrors": [],
+ "candidatesMatrix": {
+  "mandate": [
+   "FortiGuard-Service-Bundle"
+  ],
+  "governance": [
+   "FortiGuard-Service-Bundle"
+  ],
+  "policies": [
+   "FortiGuard-Service-Bundle"
+  ],
+  "team-capacity": [
+   "SOCaaS",
+   "FortiGuard-MDR-Service",
+   "FortiAI-Assist"
+  ],
+  "training": [
+   "FortiGuard-Service-Bundle"
+  ],
+  "knowledge": [
+   "FortiSOAR"
+  ],
+  "incident-response": [
+   "FortiSOAR",
+   "FortiGuard-Service-Bundle"
+  ],
+  "detection-lifecycle": [
+   "FortiSIEM",
+   "FortiAI-Assist"
+  ],
+  "automation": [
+   "FortiSOAR",
+   "FortiXDR"
+  ],
+  "logs": [
+   "FortiAnalyzer",
+   "FortiSIEM"
+  ],
+  "endpoint": [
+   "FortiEndpoint"
+  ],
+  "network-visibility": [
+   "FortiNDR"
+  ],
+  "monitoring-coverage": [
+   "SOCaaS",
+   "FortiGuard-MDR-Service"
+  ],
+  "external-surface": [
+   "FortiRecon"
+  ],
+  "vulnerability-management": [
+   "FortiRecon",
+   "FortiEndpoint"
+  ]
+ },
+ "scenarios": [
+  {
+   "scenario": "S1_maduro_total",
+   "legacyMode": true,
+   "answers": [
+    {
+     "id": "mandate",
+     "a": 2
+    },
+    {
+     "id": "governance",
+     "a": 2
+    },
+    {
+     "id": "policies",
+     "a": 2
+    },
+    {
+     "id": "team-capacity",
+     "a": 2
+    },
+    {
+     "id": "training",
+     "a": 2
+    },
+    {
+     "id": "knowledge",
+     "a": 2
+    },
+    {
+     "id": "incident-response",
+     "a": 2
+    },
+    {
+     "id": "detection-lifecycle",
+     "a": 2
+    },
+    {
+     "id": "automation",
+     "a": 2
+    },
+    {
+     "id": "logs",
+     "a": 2
+    },
+    {
+     "id": "endpoint",
+     "a": 2
+    },
+    {
+     "id": "network-visibility",
+     "a": 2
+    },
+    {
+     "id": "monitoring-coverage",
+     "a": 2
+    },
+    {
+     "id": "external-surface",
+     "a": 2
+    },
+    {
+     "id": "vulnerability-management",
+     "a": 2
+    }
+   ],
+   "priorities": [],
+   "confirmed": 15,
+   "toValidate": 0,
+   "domains": [
+    {
+     "dom": "Business",
+     "score": 3.3,
+     "conf": "alta",
+     "basis": "3 de 3 respostas confirmadas · leitura consistente",
+     "n": 3,
+     "nNA": 0
+    },
+    {
+     "dom": "People",
+     "score": 3.3,
+     "conf": "alta",
+     "basis": "3 de 3 respostas confirmadas · leitura consistente",
+     "n": 3,
+     "nNA": 0
+    },
+    {
+     "dom": "Process",
+     "score": 3.3,
+     "conf": "alta",
+     "basis": "3 de 3 respostas confirmadas · leitura consistente",
+     "n": 3,
+     "nNA": 0
+    },
+    {
+     "dom": "Technology",
+     "score": 3.3,
+     "conf": "alta",
+     "basis": "3 de 3 respostas confirmadas · leitura consistente",
+     "n": 3,
+     "nNA": 0
+    },
+    {
+     "dom": "Services",
+     "score": 3.3,
+     "conf": "alta",
+     "basis": "3 de 3 respostas confirmadas · leitura consistente",
+     "n": 3,
+     "nNA": 0
+    }
+   ],
+   "sufficiency": true,
+   "overall": 3.3,
+   "stage": {
+    "en": "Defined",
+    "pt": "Definido"
+   },
+   "findings": [],
+   "validate": [],
+   "tiers": {
+    "t1": [],
+    "t2": [],
+    "t3": [
+     {
+      "p": "FortiGuard-Service-Bundle",
+      "reason": "prática “Mandato e objetivos” declarada como “Mandato e objetivos formalizados”"
+     },
+     {
+      "p": "SOCaaS",
+      "reason": "prática “Capacidade do time” declarada como “Capacidade definida”"
+     },
+     {
+      "p": "FortiGuard-MDR-Service",
+      "reason": "prática “Capacidade do time” declarada como “Capacidade definida”"
+     },
+     {
+      "p": "FortiAI-Assist",
+      "reason": "prática “Capacidade do time” declarada como “Capacidade definida”"
+     },
+     {
+      "p": "FortiSOAR",
+      "reason": "prática “Conhecimento operacional” declarada como “Procedimentos documentados”"
+     },
+     {
+      "p": "FortiSIEM",
+      "reason": "prática “Casos de uso de detecção” declarada como “Casos de uso gerenciados”"
+     },
+     {
+      "p": "FortiXDR",
+      "reason": "prática “Automação” declarada como “Playbooks definidos”"
+     },
+     {
+      "p": "FortiAnalyzer",
+      "reason": "prática “Centralização de logs” declarada como “Principais fontes centralizadas”"
+     },
+     {
+      "p": "FortiEndpoint",
+      "reason": "prática “Proteção de endpoint” declarada como “EDR nas cargas críticas”"
+     },
+     {
+      "p": "FortiNDR",
+      "reason": "prática “Visibilidade de rede” declarada como “Detecção de rede implementada”"
+     },
+     {
+      "p": "FortiRecon",
+      "reason": "prática “Superfície externa” declarada como “Monitoramento recorrente”"
+     }
+    ]
+   }
+  },
+  {
+   "scenario": "S2_critico_total",
+   "legacyMode": true,
+   "answers": [
+    {
+     "id": "mandate",
+     "a": 0
+    },
+    {
+     "id": "governance",
+     "a": 0
+    },
+    {
+     "id": "policies",
+     "a": 0
+    },
+    {
+     "id": "team-capacity",
+     "a": 0
+    },
+    {
+     "id": "training",
+     "a": 0
+    },
+    {
+     "id": "knowledge",
+     "a": 0
+    },
+    {
+     "id": "incident-response",
+     "a": 0
+    },
+    {
+     "id": "detection-lifecycle",
+     "a": 0
+    },
+    {
+     "id": "automation",
+     "a": 0
+    },
+    {
+     "id": "logs",
+     "a": 0
+    },
+    {
+     "id": "endpoint",
+     "a": 0
+    },
+    {
+     "id": "network-visibility",
+     "a": 0
+    },
+    {
+     "id": "monitoring-coverage",
+     "a": 0
+    },
+    {
+     "id": "external-surface",
+     "a": 0
+    },
+    {
+     "id": "vulnerability-management",
+     "a": 0
+    }
+   ],
+   "priorities": [],
+   "confirmed": 15,
+   "toValidate": 0,
+   "domains": [
+    {
+     "dom": "Business",
+     "score": 0,
+     "conf": "alta",
+     "basis": "3 de 3 respostas confirmadas · leitura consistente",
+     "n": 3,
+     "nNA": 0
+    },
+    {
+     "dom": "People",
+     "score": 0,
+     "conf": "alta",
+     "basis": "3 de 3 respostas confirmadas · leitura consistente",
+     "n": 3,
+     "nNA": 0
+    },
+    {
+     "dom": "Process",
+     "score": 0,
+     "conf": "alta",
+     "basis": "3 de 3 respostas confirmadas · leitura consistente",
+     "n": 3,
+     "nNA": 0
+    },
+    {
+     "dom": "Technology",
+     "score": 0,
+     "conf": "alta",
+     "basis": "3 de 3 respostas confirmadas · leitura consistente",
+     "n": 3,
+     "nNA": 0
+    },
+    {
+     "dom": "Services",
+     "score": 0,
+     "conf": "alta",
+     "basis": "3 de 3 respostas confirmadas · leitura consistente",
+     "n": 3,
+     "nNA": 0
+    }
+   ],
+   "sufficiency": true,
+   "overall": 0,
+   "stage": {
+    "en": "Non-existent",
+    "pt": "Inexistente"
+   },
+   "findings": [
+    {
+     "id": "mandate",
+     "sev": 2,
+     "lvl": 0
+    },
+    {
+     "id": "governance",
+     "sev": 2,
+     "lvl": 0
+    },
+    {
+     "id": "policies",
+     "sev": 2,
+     "lvl": 0
+    },
+    {
+     "id": "team-capacity",
+     "sev": 2,
+     "lvl": 0
+    },
+    {
+     "id": "training",
+     "sev": 2,
+     "lvl": 0
+    },
+    {
+     "id": "knowledge",
+     "sev": 2,
+     "lvl": 0
+    },
+    {
+     "id": "incident-response",
+     "sev": 2,
+     "lvl": 0
+    },
+    {
+     "id": "detection-lifecycle",
+     "sev": 2,
+     "lvl": 0
+    },
+    {
+     "id": "automation",
+     "sev": 2,
+     "lvl": 0
+    },
+    {
+     "id": "logs",
+     "sev": 2,
+     "lvl": 0
+    },
+    {
+     "id": "endpoint",
+     "sev": 2,
+     "lvl": 0
+    },
+    {
+     "id": "network-visibility",
+     "sev": 2,
+     "lvl": 0
+    },
+    {
+     "id": "monitoring-coverage",
+     "sev": 2,
+     "lvl": 0
+    },
+    {
+     "id": "external-surface",
+     "sev": 2,
+     "lvl": 0
+    },
+    {
+     "id": "vulnerability-management",
+     "sev": 2,
+     "lvl": 0
+    }
+   ],
+   "validate": [],
+   "tiers": {
+    "t1": [
+     {
+      "p": "FortiGuard-Service-Bundle",
+      "reasons": [
+       "Direcionamento e mandato de segurança",
+       "Governança e reporte de risco",
+       "Políticas de segurança e privacidade (LGPD)",
+       "Desenvolvimento de competências do time",
+       "Gestão e execução de resposta a incidentes"
+      ],
+      "whys": [
+       "assessment de postura e formalização de charter",
+       "estruturação de governança e prontidão de resposta",
+       "apoio à formalização de políticas",
+       "treinamento e certificação (Cybersecurity Professional Education)",
+       "IR readiness e exercícios TTX"
+      ]
+     },
+     {
+      "p": "SOCaaS",
+      "reasons": [
+       "Capacidade e resiliência do time",
+       "Cobertura de monitoramento alinhada ao risco"
+      ],
+      "whys": [
+       "amplia capacidade sem contratar um turno inteiro",
+       "monitoramento e triagem na janela exigida pelo negócio, como serviço"
+      ]
+     },
+     {
+      "p": "FortiGuard-MDR-Service",
+      "reasons": [
+       "Capacidade e resiliência do time",
+       "Cobertura de monitoramento alinhada ao risco"
+      ],
+      "whys": [
+       "especialistas estendem o time interno",
+       "detecção e resposta gerenciadas"
+      ]
+     },
+     {
+      "p": "FortiSOAR",
+      "reasons": [
+       "Gestão de conhecimento operacional",
+       "Gestão e execução de resposta a incidentes",
+       "Orquestração e automação de resposta"
+      ],
+      "whys": [
+       "playbooks como documentação executável",
+       "processo como playbook auditável",
+       "playbooks de triagem e resposta"
+      ]
+     },
+     {
+      "p": "FortiSIEM",
+      "reasons": [
+       "Ciclo de vida de detecção (detection engineering)",
+       "Análise centralizada, correlação e retenção de eventos"
+      ],
+      "whys": [
+       "regras e conteúdo curado, mapeado a MITRE ATT&CK",
+       "quando há necessidade de coleta e correlação multifabricante"
+      ]
+     },
+     {
+      "p": "FortiAnalyzer",
+      "reasons": [
+       "Análise centralizada, correlação e retenção de eventos"
+      ],
+      "whys": [
+       "quando a operação é predominantemente Fortinet / Security Fabric"
+      ]
+     },
+     {
+      "p": "FortiEndpoint",
+      "reasons": [
+       "Detecção e resposta em endpoint (EDR)",
+       "Gestão contínua de vulnerabilidades"
+      ],
+      "whys": [
+       "EPP + EDR em agente unificado",
+       "visibilidade de vulnerabilidades no endpoint via agente"
+      ]
+     },
+     {
+      "p": "FortiNDR",
+      "reasons": [
+       "Network Detection & Response"
+      ],
+      "whys": [
+       "visibilidade comportamental e detecção de ameaças no tráfego, inclusive onde agentes não chegam"
+      ]
+     },
+     {
+      "p": "FortiRecon",
+      "reasons": [
+       "Gestão de exposição externa (EASM/DRPS)",
+       "Gestão contínua de vulnerabilidades"
+      ],
+      "whys": [
+       "superfície externa, credenciais vazadas e marca",
+       "descoberta e priorização de exposição externa"
+      ]
+     }
+    ],
+    "t2": [],
+    "t3": []
+   }
+  },
+  {
+   "scenario": "S3_misto_com_prioridades",
+   "legacyMode": true,
+   "answers": [
+    {
+     "id": "mandate",
+     "a": 0
+    },
+    {
+     "id": "governance",
+     "a": 1
+    },
+    {
+     "id": "policies",
+     "a": 0
+    },
+    {
+     "id": "team-capacity",
+     "a": 1
+    },
+    {
+     "id": "training",
+     "a": 2
+    },
+    {
+     "id": "knowledge",
+     "a": 1
+    },
+    {
+     "id": "incident-response",
+     "a": 1
+    },
+    {
+     "id": "detection-lifecycle",
+     "a": 1
+    },
+    {
+     "id": "automation",
+     "a": 1
+    },
+    {
+     "id": "logs",
+     "a": 2
+    },
+    {
+     "id": "endpoint",
+     "a": 3
+    },
+    {
+     "id": "network-visibility",
+     "a": 1
+    },
+    {
+     "id": "monitoring-coverage",
+     "a": 1
+    },
+    {
+     "id": "external-surface",
+     "a": 1
+    },
+    {
+     "id": "vulnerability-management",
+     "a": 1
+    }
+   ],
+   "priorities": [
+    "mandate",
+    "policies",
+    "monitoring-coverage"
+   ],
+   "confirmed": 15,
+   "toValidate": 0,
+   "domains": [
+    {
+     "dom": "Business",
+     "score": 0.6,
+     "conf": "alta",
+     "basis": "3 de 3 respostas confirmadas · leitura consistente",
+     "n": 3,
+     "nNA": 0
+    },
+    {
+     "dom": "People",
+     "score": 2.2,
+     "conf": "alta",
+     "basis": "3 de 3 respostas confirmadas · leitura consistente",
+     "n": 3,
+     "nNA": 0
+    },
+    {
+     "dom": "Process",
+     "score": 1.7,
+     "conf": "alta",
+     "basis": "3 de 3 respostas confirmadas · leitura consistente",
+     "n": 3,
+     "nNA": 0
+    },
+    {
+     "dom": "Technology",
+     "score": 3.3,
+     "conf": "média",
+     "basis": "3 de 3 respostas confirmadas · respostas divergentes entre si",
+     "n": 3,
+     "nNA": 0
+    },
+    {
+     "dom": "Services",
+     "score": 1.7,
+     "conf": "alta",
+     "basis": "3 de 3 respostas confirmadas · leitura consistente",
+     "n": 3,
+     "nNA": 0
+    }
+   ],
+   "sufficiency": true,
+   "overall": 1.9,
+   "stage": {
+    "en": "Managed",
+    "pt": "Gerenciado"
+   },
+   "findings": [
+    {
+     "id": "mandate",
+     "sev": 2,
+     "lvl": 0
+    },
+    {
+     "id": "policies",
+     "sev": 2,
+     "lvl": 0
+    },
+    {
+     "id": "governance",
+     "sev": 1,
+     "lvl": 1
+    },
+    {
+     "id": "team-capacity",
+     "sev": 1,
+     "lvl": 1
+    },
+    {
+     "id": "knowledge",
+     "sev": 1,
+     "lvl": 1
+    },
+    {
+     "id": "incident-response",
+     "sev": 1,
+     "lvl": 1
+    },
+    {
+     "id": "detection-lifecycle",
+     "sev": 1,
+     "lvl": 1
+    },
+    {
+     "id": "automation",
+     "sev": 1,
+     "lvl": 1
+    },
+    {
+     "id": "network-visibility",
+     "sev": 1,
+     "lvl": 1
+    },
+    {
+     "id": "monitoring-coverage",
+     "sev": 1,
+     "lvl": 1
+    },
+    {
+     "id": "external-surface",
+     "sev": 1,
+     "lvl": 1
+    },
+    {
+     "id": "vulnerability-management",
+     "sev": 1,
+     "lvl": 1
+    }
+   ],
+   "validate": [],
+   "tiers": {
+    "t1": [
+     {
+      "p": "FortiGuard-Service-Bundle",
+      "reasons": [
+       "Direcionamento e mandato de segurança",
+       "Políticas de segurança e privacidade (LGPD)",
+       "Governança e reporte de risco"
+      ],
+      "whys": [
+       "assessment de postura e formalização de charter",
+       "apoio à formalização de políticas",
+       "estruturação de governança e prontidão de resposta"
+      ]
+     }
+    ],
+    "t2": [
+     {
+      "p": "SOCaaS",
+      "reasons": [
+       "Capacidade e resiliência do time",
+       "Cobertura de monitoramento alinhada ao risco (prioridade declarada pelo negócio)"
+      ],
+      "whys": [
+       "cobre lacunas de escala enquanto o time amadurece",
+       "formaliza cobertura e SLA fora do horário"
+      ]
+     },
+     {
+      "p": "FortiGuard-MDR-Service",
+      "reasons": [
+       "Cobertura de monitoramento alinhada ao risco (prioridade declarada pelo negócio)"
+      ],
+      "whys": [
+       "resposta gerenciada nas janelas críticas"
+      ]
+     },
+     {
+      "p": "FortiAI-Assist",
+      "reasons": [
+       "Capacidade e resiliência do time",
+       "Ciclo de vida de detecção (detection engineering)"
+      ],
+      "whys": [
+       "multiplica a produtividade do analista existente",
+       "apoio de IA à criação e revisão de detecções"
+      ]
+     },
+     {
+      "p": "FortiSOAR",
+      "reasons": [
+       "Gestão de conhecimento operacional",
+       "Gestão e execução de resposta a incidentes",
+       "Orquestração e automação de resposta"
+      ],
+      "whys": [
+       "playbooks como documentação executável",
+       "padroniza e mede o processo existente",
+       "orquestração ampla entre as ferramentas"
+      ]
+     },
+     {
+      "p": "FortiSIEM",
+      "reasons": [
+       "Ciclo de vida de detecção (detection engineering)"
+      ],
+      "whys": [
+       "conteúdo curado e cobertura mapeada"
+      ]
+     },
+     {
+      "p": "FortiXDR",
+      "reasons": [
+       "Orquestração e automação de resposta"
+      ],
+      "whys": [
+       "detecção e resposta correlacionadas para times enxutos"
+      ]
+     },
+     {
+      "p": "FortiNDR",
+      "reasons": [
+       "Network Detection & Response"
+      ],
+      "whys": [
+       "ampliar cobertura e consistência da detecção de rede"
+      ]
+     },
+     {
+      "p": "FortiRecon",
+      "reasons": [
+       "Gestão de exposição externa (EASM/DRPS)",
+       "Gestão contínua de vulnerabilidades"
+      ],
+      "whys": [
+       "transformar consultas pontuais em monitoramento recorrente",
+       "priorização por risco e contexto de ameaça externa"
+      ]
+     }
+    ],
+    "t3": [
+     {
+      "p": "FortiAnalyzer",
+      "reason": "prática “Centralização de logs” declarada como “Principais fontes centralizadas”"
+     },
+     {
+      "p": "FortiEndpoint",
+      "reason": "prática “Proteção de endpoint” declarada como “Cobertura e eficácia gerenciadas”"
+     }
+    ]
+   }
+  },
+  {
+   "scenario": "S4_insuficiente",
+   "legacyMode": true,
+   "answers": [
+    {
+     "id": "mandate",
+     "a": 1
+    },
+    {
+     "id": "governance",
+     "a": 1
+    },
+    {
+     "id": "policies",
+     "a": "NA"
+    },
+    {
+     "id": "team-capacity",
+     "a": 0
+    },
+    {
+     "id": "training",
+     "a": null
+    },
+    {
+     "id": "knowledge",
+     "a": "NA"
+    },
+    {
+     "id": "incident-response",
+     "a": null
+    },
+    {
+     "id": "detection-lifecycle",
+     "a": null
+    },
+    {
+     "id": "automation",
+     "a": null
+    },
+    {
+     "id": "logs",
+     "a": null
+    },
+    {
+     "id": "endpoint",
+     "a": null
+    },
+    {
+     "id": "network-visibility",
+     "a": null
+    },
+    {
+     "id": "monitoring-coverage",
+     "a": null
+    },
+    {
+     "id": "external-surface",
+     "a": null
+    },
+    {
+     "id": "vulnerability-management",
+     "a": null
+    }
+   ],
+   "priorities": [],
+   "confirmed": 3,
+   "toValidate": 2,
+   "domains": [
+    {
+     "dom": "Business",
+     "score": 1.7,
+     "conf": "média",
+     "basis": "2 de 3 respostas confirmadas · 1 requer validação",
+     "n": 2,
+     "nNA": 1
+    },
+    {
+     "dom": "People",
+     "score": 0,
+     "conf": "baixa",
+     "basis": "1 de 3 respostas confirmada · leitura parcial",
+     "n": 1,
+     "nNA": 1
+    },
+    {
+     "dom": "Process",
+     "score": null,
+     "conf": null,
+     "basis": "sem respostas registradas",
+     "n": 0,
+     "nNA": 0
+    },
+    {
+     "dom": "Technology",
+     "score": null,
+     "conf": null,
+     "basis": "sem respostas registradas",
+     "n": 0,
+     "nNA": 0
+    },
+    {
+     "dom": "Services",
+     "score": null,
+     "conf": null,
+     "basis": "sem respostas registradas",
+     "n": 0,
+     "nNA": 0
+    }
+   ],
+   "sufficiency": false,
+   "overall": null,
+   "stage": null,
+   "findings": [
+    {
+     "id": "team-capacity",
+     "sev": 2,
+     "lvl": 0
+    },
+    {
+     "id": "mandate",
+     "sev": 1,
+     "lvl": 1
+    },
+    {
+     "id": "governance",
+     "sev": 1,
+     "lvl": 1
+    }
+   ],
+   "validate": [
+    "policies",
+    "knowledge"
+   ],
+   "tiers": {
+    "t1": [
+     {
+      "p": "SOCaaS",
+      "reasons": [
+       "Capacidade e resiliência do time"
+      ],
+      "whys": [
+       "amplia capacidade sem contratar um turno inteiro"
+      ]
+     },
+     {
+      "p": "FortiGuard-MDR-Service",
+      "reasons": [
+       "Capacidade e resiliência do time"
+      ],
+      "whys": [
+       "especialistas estendem o time interno"
+      ]
+     }
+    ],
+    "t2": [
+     {
+      "p": "FortiGuard-Service-Bundle",
+      "reasons": [
+       "Direcionamento e mandato de segurança",
+       "Governança e reporte de risco"
+      ],
+      "whys": [
+       "assessment de postura e formalização de charter",
+       "estruturação de governança e prontidão de resposta"
+      ]
+     }
+    ],
+    "t3": []
+   }
+  },
+  {
+   "scenario": "S5_na_pesado",
+   "legacyMode": true,
+   "answers": [
+    {
+     "id": "mandate",
+     "a": 2
+    },
+    {
+     "id": "governance",
+     "a": 2
+    },
+    {
+     "id": "policies",
+     "a": 2
+    },
+    {
+     "id": "team-capacity",
+     "a": 2
+    },
+    {
+     "id": "training",
+     "a": 2
+    },
+    {
+     "id": "knowledge",
+     "a": 2
+    },
+    {
+     "id": "incident-response",
+     "a": 2
+    },
+    {
+     "id": "detection-lifecycle",
+     "a": 2
+    },
+    {
+     "id": "automation",
+     "a": "NA"
+    },
+    {
+     "id": "logs",
+     "a": 1
+    },
+    {
+     "id": "endpoint",
+     "a": "NA"
+    },
+    {
+     "id": "network-visibility",
+     "a": "NA"
+    },
+    {
+     "id": "monitoring-coverage",
+     "a": 2
+    },
+    {
+     "id": "external-surface",
+     "a": 2
+    },
+    {
+     "id": "vulnerability-management",
+     "a": 2
+    }
+   ],
+   "priorities": [],
+   "confirmed": 12,
+   "toValidate": 3,
+   "domains": [
+    {
+     "dom": "Business",
+     "score": 3.3,
+     "conf": "alta",
+     "basis": "3 de 3 respostas confirmadas · leitura consistente",
+     "n": 3,
+     "nNA": 0
+    },
+    {
+     "dom": "People",
+     "score": 3.3,
+     "conf": "alta",
+     "basis": "3 de 3 respostas confirmadas · leitura consistente",
+     "n": 3,
+     "nNA": 0
+    },
+    {
+     "dom": "Process",
+     "score": 3.3,
+     "conf": "média",
+     "basis": "2 de 3 respostas confirmadas · 1 requer validação",
+     "n": 2,
+     "nNA": 1
+    },
+    {
+     "dom": "Technology",
+     "score": 1.7,
+     "conf": "baixa",
+     "basis": "1 de 3 respostas confirmada · leitura parcial",
+     "n": 1,
+     "nNA": 2
+    },
+    {
+     "dom": "Services",
+     "score": 3.3,
+     "conf": "alta",
+     "basis": "3 de 3 respostas confirmadas · leitura consistente",
+     "n": 3,
+     "nNA": 0
+    }
+   ],
+   "sufficiency": false,
+   "overall": null,
+   "stage": null,
+   "findings": [
+    {
+     "id": "logs",
+     "sev": 1,
+     "lvl": 1
+    }
+   ],
+   "validate": [
+    "automation",
+    "endpoint",
+    "network-visibility"
+   ],
+   "tiers": {
+    "t1": [],
+    "t2": [
+     {
+      "p": "FortiSIEM",
+      "reasons": [
+       "Análise centralizada, correlação e retenção de eventos"
+      ],
+      "whys": [
+       "ampliação de cobertura e correlação multifabricante"
+      ]
+     },
+     {
+      "p": "FortiAnalyzer",
+      "reasons": [
+       "Análise centralizada, correlação e retenção de eventos"
+      ],
+      "whys": [
+       "ampliação de cobertura no Security Fabric"
+      ]
+     }
+    ],
+    "t3": [
+     {
+      "p": "FortiGuard-Service-Bundle",
+      "reason": "prática “Mandato e objetivos” declarada como “Mandato e objetivos formalizados”"
+     },
+     {
+      "p": "SOCaaS",
+      "reason": "prática “Capacidade do time” declarada como “Capacidade definida”"
+     },
+     {
+      "p": "FortiGuard-MDR-Service",
+      "reason": "prática “Capacidade do time” declarada como “Capacidade definida”"
+     },
+     {
+      "p": "FortiAI-Assist",
+      "reason": "prática “Capacidade do time” declarada como “Capacidade definida”"
+     },
+     {
+      "p": "FortiRecon",
+      "reason": "prática “Superfície externa” declarada como “Monitoramento recorrente”"
+     }
+    ]
+   }
+  },
+  {
+   "scenario": "S6_moderado_total",
+   "legacyMode": true,
+   "answers": [
+    {
+     "id": "mandate",
+     "a": 1
+    },
+    {
+     "id": "governance",
+     "a": 1
+    },
+    {
+     "id": "policies",
+     "a": 1
+    },
+    {
+     "id": "team-capacity",
+     "a": 1
+    },
+    {
+     "id": "training",
+     "a": 1
+    },
+    {
+     "id": "knowledge",
+     "a": 1
+    },
+    {
+     "id": "incident-response",
+     "a": 1
+    },
+    {
+     "id": "detection-lifecycle",
+     "a": 1
+    },
+    {
+     "id": "automation",
+     "a": 1
+    },
+    {
+     "id": "logs",
+     "a": 1
+    },
+    {
+     "id": "endpoint",
+     "a": 1
+    },
+    {
+     "id": "network-visibility",
+     "a": 1
+    },
+    {
+     "id": "monitoring-coverage",
+     "a": 1
+    },
+    {
+     "id": "external-surface",
+     "a": 1
+    },
+    {
+     "id": "vulnerability-management",
+     "a": 1
+    }
+   ],
+   "priorities": [],
+   "confirmed": 15,
+   "toValidate": 0,
+   "domains": [
+    {
+     "dom": "Business",
+     "score": 1.7,
+     "conf": "alta",
+     "basis": "3 de 3 respostas confirmadas · leitura consistente",
+     "n": 3,
+     "nNA": 0
+    },
+    {
+     "dom": "People",
+     "score": 1.7,
+     "conf": "alta",
+     "basis": "3 de 3 respostas confirmadas · leitura consistente",
+     "n": 3,
+     "nNA": 0
+    },
+    {
+     "dom": "Process",
+     "score": 1.7,
+     "conf": "alta",
+     "basis": "3 de 3 respostas confirmadas · leitura consistente",
+     "n": 3,
+     "nNA": 0
+    },
+    {
+     "dom": "Technology",
+     "score": 1.7,
+     "conf": "alta",
+     "basis": "3 de 3 respostas confirmadas · leitura consistente",
+     "n": 3,
+     "nNA": 0
+    },
+    {
+     "dom": "Services",
+     "score": 1.7,
+     "conf": "alta",
+     "basis": "3 de 3 respostas confirmadas · leitura consistente",
+     "n": 3,
+     "nNA": 0
+    }
+   ],
+   "sufficiency": true,
+   "overall": 1.7,
+   "stage": {
+    "en": "Managed",
+    "pt": "Gerenciado"
+   },
+   "findings": [
+    {
+     "id": "mandate",
+     "sev": 1,
+     "lvl": 1
+    },
+    {
+     "id": "governance",
+     "sev": 1,
+     "lvl": 1
+    },
+    {
+     "id": "policies",
+     "sev": 1,
+     "lvl": 1
+    },
+    {
+     "id": "team-capacity",
+     "sev": 1,
+     "lvl": 1
+    },
+    {
+     "id": "training",
+     "sev": 1,
+     "lvl": 1
+    },
+    {
+     "id": "knowledge",
+     "sev": 1,
+     "lvl": 1
+    },
+    {
+     "id": "incident-response",
+     "sev": 1,
+     "lvl": 1
+    },
+    {
+     "id": "detection-lifecycle",
+     "sev": 1,
+     "lvl": 1
+    },
+    {
+     "id": "automation",
+     "sev": 1,
+     "lvl": 1
+    },
+    {
+     "id": "logs",
+     "sev": 1,
+     "lvl": 1
+    },
+    {
+     "id": "endpoint",
+     "sev": 1,
+     "lvl": 1
+    },
+    {
+     "id": "network-visibility",
+     "sev": 1,
+     "lvl": 1
+    },
+    {
+     "id": "monitoring-coverage",
+     "sev": 1,
+     "lvl": 1
+    },
+    {
+     "id": "external-surface",
+     "sev": 1,
+     "lvl": 1
+    },
+    {
+     "id": "vulnerability-management",
+     "sev": 1,
+     "lvl": 1
+    }
+   ],
+   "validate": [],
+   "tiers": {
+    "t1": [],
+    "t2": [
+     {
+      "p": "FortiGuard-Service-Bundle",
+      "reasons": [
+       "Direcionamento e mandato de segurança",
+       "Governança e reporte de risco",
+       "Políticas de segurança e privacidade (LGPD)",
+       "Desenvolvimento de competências do time"
+      ],
+      "whys": [
+       "assessment de postura e formalização de charter",
+       "estruturação de governança e prontidão de resposta",
+       "apoio à formalização e revisão de políticas",
+       "trilha recorrente de capacitação"
+      ]
+     },
+     {
+      "p": "SOCaaS",
+      "reasons": [
+       "Capacidade e resiliência do time",
+       "Cobertura de monitoramento alinhada ao risco"
+      ],
+      "whys": [
+       "cobre lacunas de escala enquanto o time amadurece",
+       "formaliza cobertura e SLA fora do horário"
+      ]
+     },
+     {
+      "p": "FortiGuard-MDR-Service",
+      "reasons": [
+       "Cobertura de monitoramento alinhada ao risco"
+      ],
+      "whys": [
+       "resposta gerenciada nas janelas críticas"
+      ]
+     },
+     {
+      "p": "FortiAI-Assist",
+      "reasons": [
+       "Capacidade e resiliência do time",
+       "Ciclo de vida de detecção (detection engineering)"
+      ],
+      "whys": [
+       "multiplica a produtividade do analista existente",
+       "apoio de IA à criação e revisão de detecções"
+      ]
+     },
+     {
+      "p": "FortiSOAR",
+      "reasons": [
+       "Gestão de conhecimento operacional",
+       "Gestão e execução de resposta a incidentes",
+       "Orquestração e automação de resposta"
+      ],
+      "whys": [
+       "playbooks como documentação executável",
+       "padroniza e mede o processo existente",
+       "orquestração ampla entre as ferramentas"
+      ]
+     },
+     {
+      "p": "FortiSIEM",
+      "reasons": [
+       "Ciclo de vida de detecção (detection engineering)",
+       "Análise centralizada, correlação e retenção de eventos"
+      ],
+      "whys": [
+       "conteúdo curado e cobertura mapeada",
+       "ampliação de cobertura e correlação multifabricante"
+      ]
+     },
+     {
+      "p": "FortiXDR",
+      "reasons": [
+       "Orquestração e automação de resposta"
+      ],
+      "whys": [
+       "detecção e resposta correlacionadas para times enxutos"
+      ]
+     },
+     {
+      "p": "FortiAnalyzer",
+      "reasons": [
+       "Análise centralizada, correlação e retenção de eventos"
+      ],
+      "whys": [
+       "ampliação de cobertura no Security Fabric"
+      ]
+     },
+     {
+      "p": "FortiEndpoint",
+      "reasons": [
+       "Detecção e resposta em endpoint (EDR)"
+      ],
+      "whys": [
+       "expansão da cobertura do parque"
+      ]
+     },
+     {
+      "p": "FortiNDR",
+      "reasons": [
+       "Network Detection & Response"
+      ],
+      "whys": [
+       "ampliar cobertura e consistência da detecção de rede"
+      ]
+     },
+     {
+      "p": "FortiRecon",
+      "reasons": [
+       "Gestão de exposição externa (EASM/DRPS)",
+       "Gestão contínua de vulnerabilidades"
+      ],
+      "whys": [
+       "transformar consultas pontuais em monitoramento recorrente",
+       "priorização por risco e contexto de ameaça externa"
+      ]
+     }
+    ],
+    "t3": []
+   }
+  },
+  {
+   "scenario": "S7_otimizado_total",
+   "legacyMode": true,
+   "answers": [
+    {
+     "id": "mandate",
+     "a": 3
+    },
+    {
+     "id": "governance",
+     "a": 3
+    },
+    {
+     "id": "policies",
+     "a": 3
+    },
+    {
+     "id": "team-capacity",
+     "a": 3
+    },
+    {
+     "id": "training",
+     "a": 3
+    },
+    {
+     "id": "knowledge",
+     "a": 3
+    },
+    {
+     "id": "incident-response",
+     "a": 3
+    },
+    {
+     "id": "detection-lifecycle",
+     "a": 3
+    },
+    {
+     "id": "automation",
+     "a": 3
+    },
+    {
+     "id": "logs",
+     "a": 3
+    },
+    {
+     "id": "endpoint",
+     "a": 3
+    },
+    {
+     "id": "network-visibility",
+     "a": 3
+    },
+    {
+     "id": "monitoring-coverage",
+     "a": 3
+    },
+    {
+     "id": "external-surface",
+     "a": 3
+    },
+    {
+     "id": "vulnerability-management",
+     "a": 3
+    }
+   ],
+   "priorities": [],
+   "confirmed": 15,
+   "toValidate": 0,
+   "domains": [
+    {
+     "dom": "Business",
+     "score": 5,
+     "conf": "alta",
+     "basis": "3 de 3 respostas confirmadas · leitura consistente",
+     "n": 3,
+     "nNA": 0
+    },
+    {
+     "dom": "People",
+     "score": 5,
+     "conf": "alta",
+     "basis": "3 de 3 respostas confirmadas · leitura consistente",
+     "n": 3,
+     "nNA": 0
+    },
+    {
+     "dom": "Process",
+     "score": 5,
+     "conf": "alta",
+     "basis": "3 de 3 respostas confirmadas · leitura consistente",
+     "n": 3,
+     "nNA": 0
+    },
+    {
+     "dom": "Technology",
+     "score": 5,
+     "conf": "alta",
+     "basis": "3 de 3 respostas confirmadas · leitura consistente",
+     "n": 3,
+     "nNA": 0
+    },
+    {
+     "dom": "Services",
+     "score": 5,
+     "conf": "alta",
+     "basis": "3 de 3 respostas confirmadas · leitura consistente",
+     "n": 3,
+     "nNA": 0
+    }
+   ],
+   "sufficiency": true,
+   "overall": 5,
+   "stage": {
+    "en": "Optimizing",
+    "pt": "Em otimização"
+   },
+   "findings": [],
+   "validate": [],
+   "tiers": {
+    "t1": [],
+    "t2": [],
+    "t3": [
+     {
+      "p": "FortiGuard-Service-Bundle",
+      "reason": "prática “Mandato e objetivos” declarada como “Objetivos medidos e revisados”"
+     },
+     {
+      "p": "SOCaaS",
+      "reason": "prática “Capacidade do time” declarada como “Capacidade planejada e resiliente”"
+     },
+     {
+      "p": "FortiGuard-MDR-Service",
+      "reason": "prática “Capacidade do time” declarada como “Capacidade planejada e resiliente”"
+     },
+     {
+      "p": "FortiAI-Assist",
+      "reason": "prática “Capacidade do time” declarada como “Capacidade planejada e resiliente”"
+     },
+     {
+      "p": "FortiSOAR",
+      "reason": "prática “Conhecimento operacional” declarada como “Conhecimento mantido e validado”"
+     },
+     {
+      "p": "FortiSIEM",
+      "reason": "prática “Casos de uso de detecção” declarada como “Lifecycle orientado por risco”"
+     },
+     {
+      "p": "FortiXDR",
+      "reason": "prática “Automação” declarada como “Automação orquestrada e medida”"
+     },
+     {
+      "p": "FortiAnalyzer",
+      "reason": "prática “Centralização de logs” declarada como “Cobertura gerenciada e otimizada”"
+     },
+     {
+      "p": "FortiEndpoint",
+      "reason": "prática “Proteção de endpoint” declarada como “Cobertura e eficácia gerenciadas”"
+     },
+     {
+      "p": "FortiNDR",
+      "reason": "prática “Visibilidade de rede” declarada como “Cobertura gerenciada e integrada”"
+     },
+     {
+      "p": "FortiRecon",
+      "reason": "prática “Superfície externa” declarada como “Inteligência operacionalizada”"
+     }
+    ]
+   }
+  },
+  {
+   "scenario": "S8_limite_suficiencia",
+   "legacyMode": true,
+   "answers": [
+    {
+     "id": "mandate",
+     "a": 2
+    },
+    {
+     "id": "governance",
+     "a": 1
+    },
+    {
+     "id": "policies",
+     "a": "NA"
+    },
+    {
+     "id": "team-capacity",
+     "a": 2
+    },
+    {
+     "id": "training",
+     "a": 1
+    },
+    {
+     "id": "knowledge",
+     "a": "NA"
+    },
+    {
+     "id": "incident-response",
+     "a": 2
+    },
+    {
+     "id": "detection-lifecycle",
+     "a": 1
+    },
+    {
+     "id": "automation",
+     "a": "NA"
+    },
+    {
+     "id": "logs",
+     "a": 2
+    },
+    {
+     "id": "endpoint",
+     "a": 1
+    },
+    {
+     "id": "network-visibility",
+     "a": "NA"
+    },
+    {
+     "id": "monitoring-coverage",
+     "a": 2
+    },
+    {
+     "id": "external-surface",
+     "a": 1
+    },
+    {
+     "id": "vulnerability-management",
+     "a": "NA"
+    }
+   ],
+   "priorities": [],
+   "confirmed": 10,
+   "toValidate": 5,
+   "domains": [
+    {
+     "dom": "Business",
+     "score": 2.5,
+     "conf": "média",
+     "basis": "2 de 3 respostas confirmadas · 1 requer validação",
+     "n": 2,
+     "nNA": 1
+    },
+    {
+     "dom": "People",
+     "score": 2.5,
+     "conf": "média",
+     "basis": "2 de 3 respostas confirmadas · 1 requer validação",
+     "n": 2,
+     "nNA": 1
+    },
+    {
+     "dom": "Process",
+     "score": 2.5,
+     "conf": "média",
+     "basis": "2 de 3 respostas confirmadas · 1 requer validação",
+     "n": 2,
+     "nNA": 1
+    },
+    {
+     "dom": "Technology",
+     "score": 2.5,
+     "conf": "média",
+     "basis": "2 de 3 respostas confirmadas · 1 requer validação",
+     "n": 2,
+     "nNA": 1
+    },
+    {
+     "dom": "Services",
+     "score": 2.5,
+     "conf": "média",
+     "basis": "2 de 3 respostas confirmadas · 1 requer validação",
+     "n": 2,
+     "nNA": 1
+    }
+   ],
+   "sufficiency": true,
+   "overall": 2.5,
+   "stage": {
+    "en": "Defined",
+    "pt": "Definido"
+   },
+   "findings": [
+    {
+     "id": "governance",
+     "sev": 1,
+     "lvl": 1
+    },
+    {
+     "id": "training",
+     "sev": 1,
+     "lvl": 1
+    },
+    {
+     "id": "detection-lifecycle",
+     "sev": 1,
+     "lvl": 1
+    },
+    {
+     "id": "endpoint",
+     "sev": 1,
+     "lvl": 1
+    },
+    {
+     "id": "external-surface",
+     "sev": 1,
+     "lvl": 1
+    }
+   ],
+   "validate": [
+    "policies",
+    "knowledge",
+    "automation",
+    "network-visibility",
+    "vulnerability-management"
+   ],
+   "tiers": {
+    "t1": [],
+    "t2": [
+     {
+      "p": "FortiGuard-Service-Bundle",
+      "reasons": [
+       "Governança e reporte de risco",
+       "Desenvolvimento de competências do time"
+      ],
+      "whys": [
+       "estruturação de governança e prontidão de resposta",
+       "trilha recorrente de capacitação"
+      ]
+     },
+     {
+      "p": "FortiAI-Assist",
+      "reasons": [
+       "Ciclo de vida de detecção (detection engineering)"
+      ],
+      "whys": [
+       "apoio de IA à criação e revisão de detecções"
+      ]
+     },
+     {
+      "p": "FortiSIEM",
+      "reasons": [
+       "Ciclo de vida de detecção (detection engineering)"
+      ],
+      "whys": [
+       "conteúdo curado e cobertura mapeada"
+      ]
+     },
+     {
+      "p": "FortiEndpoint",
+      "reasons": [
+       "Detecção e resposta em endpoint (EDR)"
+      ],
+      "whys": [
+       "expansão da cobertura do parque"
+      ]
+     },
+     {
+      "p": "FortiRecon",
+      "reasons": [
+       "Gestão de exposição externa (EASM/DRPS)"
+      ],
+      "whys": [
+       "transformar consultas pontuais em monitoramento recorrente"
+      ]
+     }
+    ],
+    "t3": [
+     {
+      "p": "SOCaaS",
+      "reason": "prática “Capacidade do time” declarada como “Capacidade definida”"
+     },
+     {
+      "p": "FortiGuard-MDR-Service",
+      "reason": "prática “Capacidade do time” declarada como “Capacidade definida”"
+     },
+     {
+      "p": "FortiAnalyzer",
+      "reason": "prática “Centralização de logs” declarada como “Principais fontes centralizadas”"
+     }
+    ]
+   }
+  },
+  {
+   "scenario": "S9_all_na",
+   "legacyMode": true,
+   "answers": [
+    {
+     "id": "mandate",
+     "a": "NA"
+    },
+    {
+     "id": "governance",
+     "a": "NA"
+    },
+    {
+     "id": "policies",
+     "a": "NA"
+    },
+    {
+     "id": "team-capacity",
+     "a": "NA"
+    },
+    {
+     "id": "training",
+     "a": "NA"
+    },
+    {
+     "id": "knowledge",
+     "a": "NA"
+    },
+    {
+     "id": "incident-response",
+     "a": "NA"
+    },
+    {
+     "id": "detection-lifecycle",
+     "a": "NA"
+    },
+    {
+     "id": "automation",
+     "a": "NA"
+    },
+    {
+     "id": "logs",
+     "a": "NA"
+    },
+    {
+     "id": "endpoint",
+     "a": "NA"
+    },
+    {
+     "id": "network-visibility",
+     "a": "NA"
+    },
+    {
+     "id": "monitoring-coverage",
+     "a": "NA"
+    },
+    {
+     "id": "external-surface",
+     "a": "NA"
+    },
+    {
+     "id": "vulnerability-management",
+     "a": "NA"
+    }
+   ],
+   "priorities": [],
+   "confirmed": 0,
+   "toValidate": 15,
+   "domains": [
+    {
+     "dom": "Business",
+     "score": null,
+     "conf": null,
+     "basis": "3 de 3 itens requerem validação",
+     "n": 0,
+     "nNA": 3
+    },
+    {
+     "dom": "People",
+     "score": null,
+     "conf": null,
+     "basis": "3 de 3 itens requerem validação",
+     "n": 0,
+     "nNA": 3
+    },
+    {
+     "dom": "Process",
+     "score": null,
+     "conf": null,
+     "basis": "3 de 3 itens requerem validação",
+     "n": 0,
+     "nNA": 3
+    },
+    {
+     "dom": "Technology",
+     "score": null,
+     "conf": null,
+     "basis": "3 de 3 itens requerem validação",
+     "n": 0,
+     "nNA": 3
+    },
+    {
+     "dom": "Services",
+     "score": null,
+     "conf": null,
+     "basis": "3 de 3 itens requerem validação",
+     "n": 0,
+     "nNA": 3
+    }
+   ],
+   "sufficiency": false,
+   "overall": null,
+   "stage": null,
+   "findings": [],
+   "validate": [
+    "mandate",
+    "governance",
+    "policies",
+    "team-capacity",
+    "training",
+    "knowledge",
+    "incident-response",
+    "detection-lifecycle",
+    "automation",
+    "logs",
+    "endpoint",
+    "network-visibility",
+    "monitoring-coverage",
+    "external-surface",
+    "vulnerability-management"
+   ],
+   "tiers": {
+    "t1": [],
+    "t2": [],
+    "t3": []
+   }
+  }
+ ]
+}

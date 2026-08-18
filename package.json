@@ -1,0 +1,35 @@
+{
+  "name": "quickscan-secops-v32-dev",
+  "version": "3.4.0-dev.4.8.0.7",
+  "private": true,
+  "description": "Quickscan SecOps SOC-CMM V3.2 — Phase 4.8.0.7 Self-Import Closure, Unicode Scalar Limits & Release Evidence Consistency. Export preflight validates and size-checks the exact emitted bytes; the 10,000 limit counts Unicode scalar values; published examples and version metadata are coherent with the build.",
+  "scripts": {
+    "build": "python3 build_v32_html.py",
+    "test:engine": "node tests_m42_m86.js",
+    "test:ui": "npm run test:ui31 && npm run test:ui32 && npm run test:ui33 && npm run test:ui332 && npm run test:ui333 && npm run test:ux41 && npm run test:target && npm run test:ref && npm run test:journey && npm run test:icons46 && npm run test:session",
+    "test:m41": "node harness_m41_v313.js quickscan_secops_soccmm_v3_2_dev.html --compare v3_1_3_functional_snapshot.json --out /dev/null",
+    "test:all": "npm run build && npm run test:engine && npm run test:ui && npm run test:m41",
+    "test:ui31": "node tests_ui_m31.js",
+    "test:ui32": "node tests_ui_m32.js",
+    "test:ui33": "node tests_ui_m33.js",
+    "test:ui332": "node tests_ui_m332.js",
+    "test:ui333": "node tests_ui_m333.js",
+    "test:ux41": "node tests_ux_m41.js",
+    "test:target": "node tests_target_m431.js",
+    "test:ref": "node tests_ref_m44.js",
+    "test:journey": "node tests_journey_m45.js",
+    "test:icons46": "node tests_icons_m46.js",
+    "test:visual": "playwright test",
+    "test:full": "npm run test:all && npm run test:visual",
+    "test:session": "node --max-old-space-size=3072 tests_session_m48.js"
+  },
+  "dependencies": {
+    "jsdom": "30.0.1"
+  },
+  "engines": {
+    "node": "^22.22.2 || ^24.15.0 || >=26.0.0"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.62.1"
+  }
+}

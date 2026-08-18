@@ -1,0 +1,29 @@
+{
+ "baseline": "3.4.0-dev.4.5.0.2",
+ "sourceCount": 23,
+ "files": {
+  "FortiAI-Assist.svg": "b7c4a7efe5c7a76eaf60c5d50c1f0006b4435d37bf40e381fe7e3fbe99cabb6a",
+  "FortiAIGate.svg": "e29d33eae9df396bca15a1bd78b19c45a709f920757655eb5078eebcc21d8cb7",
+  "FortiAnalyzer.svg": "87e2894b7280e70318cb6d9e94f96225e1664a5f243433baadc90d19bfcd95b7",
+  "FortiAuthenticator.svg": "31aa525ae6c954fa5935aa7a1fe72892cf0cf334274c2c1c31f3fc987c7be2f8",
+  "FortiDLP.svg": "5a09b4f9046710541822de21919f83e6bf46eb3f945ed7e3f2d3056cdf1b7929",
+  "FortiDeceptor.svg": "889ba3abd249fa2171780266c1393c6792571bd6c9247ec3e7af14cc83a9c9e3",
+  "FortiEDR.svg": "ac4fa7ffdef2eaed818460e8e337e74419004feff78d84d1f963ee5085e5b739",
+  "FortiEndpoint.svg": "4447f8657897746c0fc5ecbb339513a123934ebb9252af787fc82f71518b2459",
+  "FortiGuard-IR-Service.svg": "a8180dfa7d118628d4d368919e45af38e62799c226d3fd0a655bbabbea27bf3f",
+  "FortiGuard-Labs.svg": "39d6663d522d6a253f29892277376f7913287988a711c21341954d95d585fcef",
+  "FortiGuard-MDR-Service.svg": "c1999211d8a26c5ca45a83d98ed83bfb0e1e36f647d0a0248e5d1f1962ab7301",
+  "FortiMail-Cloud-SaaS.svg": "1016b224183e9c9aba46d77b42d7370be86a95ecfb18aa742ed4fef654b92980",
+  "FortiMail.svg": "b88332426416ba01f7b748e912bb637ddf08fd49a9811d29dedd01094a131539",
+  "FortiNDR-Cloud.svg": "fb1edfc5596714afdb4712f2747c53402fa3cfcef8600de498bde394131ee59d",
+  "FortiNDR.svg": "a382c05e2440a9467a010f95a2bd6bffa1a916761f4c269ac481b8ff36f1f9a8",
+  "FortiPAM.svg": "787a3643ab20c57e7766f2f665be6d94f7114c8dc42e559f1286f99ba423b292",
+  "FortiRecon.svg": "eef327f9762449e99bd296281fc6e6c555a6be94f02d82f01d7afe984383ae73",
+  "FortiSIEM-Cloud.svg": "9fba338d7a5840dc1cf7e3c6821b3997e66cfb45dbfe74f488774d26b7c33ce5",
+  "FortiSIEM.svg": "2d7e9211fecfcde51bf1007e9d9893a86eb2f40768354c799a513cec7264bc2d",
+  "FortiSOAR.svg": "8c1ede690086e9b6c9e7bc2be7879d531ba603bcb297bfbe47413e0f948f453e",
+  "FortiSOC.svg": "c395bf65ba4106ab17423a4afc7d71bd944fc4f4a2daa4e9e4d8f461cb7c20a2",
+  "FortiSandbox.svg": "2a81a947724ca6310eee5e1e7b824856915f766482ce81a80322c4f2c6ea2b0f",
+  "FortiXDR.svg": "224439945c540376e47f7bcb712a71ab5ce50d77241c8e9d3e851d68814edf39"
+ }
+}

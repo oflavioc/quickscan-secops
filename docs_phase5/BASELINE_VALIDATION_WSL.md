@@ -55,7 +55,7 @@ Pós-correções (observado):
   SESSION 4.8:   97 PASS · 0 FAIL de 97
 ```
 
-## Execução consolidada final (preencher com os valores observados)
+## Execução consolidada final — registro do proprietário
 
 Comandos:
 
@@ -71,17 +71,57 @@ Refinement 28 · Journey 31 · Icons 12 · Session 97/97 · M41 PASS (payload 97
 HTML `8d0932e145d8a8f8d203095f509137aacba43b3242a3b53822ff76001fd85ddb` ·
 visual 67 passed / 0 failed / 37 skipped.
 
-Observado em ____-__-__:
+**Proveniência:** execução consolidada conduzida pelo proprietário (Flávio Costa) no host descrito
+em "Ambiente observado", após as correções #1–#3. Registro completo, incluindo a suíte visual.
+
+Observado em 2026-08-18:
 
 ```text
-MATRIZ:    ___/105
-UI/UX/…:   ____________________
-Session:   ___/97
-M41:       ______
-HTML:      ________________________________
-visual:    __ passed · __ failed · __ skipped
+MATRIZ:    105/105
+UI/UX/…:   UI 19+25+11+23+26 · UX 56 · Target 30 · Ref 28 · Journey 31 · Icons 12
+Session:   97/97
+M41:       PASS · payload 9794b267e4225d8fa14f0f0d84aed0e2979658bfa2565b459788ef3b3ed4365b
+HTML:      8d0932e145d8a8f8d203095f509137aacba43b3242a3b53822ff76001fd85ddb
+visual:    67 passed · 0 failed · 37 skipped   (Chromium Playwright-managed)
 ```
 
-**Veredito do baseline:** VALIDADO quando todos os campos acima coincidirem com o esperado.
-Qualquer desvio: parar, registrar e investigar como condição de ambiente antes de suspeitar do
-produto (precedentes #1–#3 e o episódio do unzip na auditoria final).
+**Veredito do baseline:** VALIDADO — todos os campos coincidem com o esperado.
+
+---
+
+## Revalidação na sessão de auditoria REV A
+
+**Proveniência:** medição independente realizada durante a auditoria da PHASE 5.0 Candidate Spec
+REV A (relatório em `docs_phase5/AUDITORIA_REV_A.md`), na mesma máquina, sob modo de trabalho
+read-only. **Registro separado e não substitutivo** do anterior: existe para atestar que o baseline
+continuava íntegro no momento da auditoria, não para reescrever a execução consolidada.
+
+Observado em 2026-08-18:
+
+```text
+MANIFEST:  74/74 OK · 0 FAIL
+engine:    9a4a2e674389a115a56c0bce9785ad0f90651546e31d264a947998e2bb5d247a
+HTML dev:  8d0932e145d8a8f8d203095f509137aacba43b3242a3b53822ff76001fd85ddb · 578152 bytes
+HTML base: 3e24ff9dc18ec3c8005a75820e2828f801a8013a0e3945396c215b26c36f87bb
+MATRIZ:    105/105
+UI/UX/…:   UI 19+25+11+23+26 · UX 56 · Target 30 · Ref 28 · Journey 31
+Session:   97/97
+M41:       COMPARAÇÃO PASS · payload 9794b267e4225d8fa14f0f0d84aed0e2979658bfa2565b459788ef3b3ed4365b
+spec REV A: 22e729174c6a3c5dd620da5330b03eb96d9eb6fc6e64eba097c2bde55eb0a510
+```
+
+**Não executado nesta sessão** (declarado, não omitido):
+
+```text
+npm run test:visual      NÃO EXECUTADO — Playwright/Chromium; escreve visual_evidence/ e print_evidence/
+node tests_icons_m46.js  NÃO EXECUTADO — a suíte escreve arquivos (writeFileSync)
+python3 build_v32_html.py / npm run build
+                         NÃO EXECUTADO — reescreveria o HTML construído; identidade já conferida por hash
+```
+
+Consequência: as contagens Icons 12 e visual 67/0/37 desta revalidação **não** foram remedidas —
+valem exclusivamente pelo registro do proprietário acima.
+
+**Veredito da revalidação:** baseline ÍNTEGRO no momento da auditoria, nas suítes executadas.
+Qualquer desvio futuro: parar, registrar e investigar como condição de ambiente antes de suspeitar
+do produto (precedentes #1–#3 e o episódio do unzip na auditoria final).

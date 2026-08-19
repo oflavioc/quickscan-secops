@@ -2,7 +2,7 @@
 
 **Arquivo:** `docs_phase5/REVB_BACKLOG.md`
 **Propósito:** registro versionado dos itens decididos ou propostos em sessões de apoio que DEVEM ser considerados na montagem do mandato da REV B. Este arquivo não é a spec: é insumo. A REV B permanece sendo autorada pelo proprietário, com numeração final sua.
-**Status:** aguardando conclusão da micro-fase UNSET antes da abertura do mandato da REV B.
+**Status:** micro-fase UNSET concluída e aprovada (parecer de par fechado em 2026-08-18, com UG13 incluído); baseline da phase5 adotado. Pronto para montagem do mandato da REV B a partir das fontes da seção 1.
 **Proveniência:** decisões registradas em sessão de apoio de 2026-08-18, sobre o baseline congelado `runtimeCore 3.4.0-dev.4.8.0.7` (engine `9a4a2e67…`, HTML `8d0932e1…`). Afirmações sobre o source citadas abaixo foram verificadas contra o core extraído (arquivo:linha indicados); o restante é registro de decisão.
 
 ---
@@ -14,7 +14,7 @@ O mandato da REV B, quando aberto, deve ser montado a partir de — e somente de
 1. **Seção 8 do `docs_phase5/AUDITORIA_REV_A.md`** — lista fechada de 11 itens de remediação (blockers B-1..B-6 e achados aceitos);
 2. **Achados A/M/L aceitos** da mesma auditoria;
 3. **Decision log** (seção 2 deste arquivo);
-4. **Resultado da micro-fase UNSET** (`docs_phase5/MICROFASE_UNSET_REPORT.md`, quando entregue) — o desfecho da micro-fase altera o texto do item B-3 na REV B (resolvido → cláusula de preservação; não resolvido → custo declarado e decisão);
+4. **Resultado da micro-fase UNSET** — `docs_phase5/MICROFASE_UNSET_REPORT.md`, ENTREGUE E APROVADO (UG1–UG13, mutation-tested; engine e payload M41 byte-idênticos; baseline phase5 = HTML `787cd3ab…`). Efeito na REV B: B-3 está RESOLVIDO na implementação → a REV B escreve cláusula de **preservação** (UNSET nunca renderiza como zero geométrico; rótulo `n/d` canônico até decisão do A-8) asserida pelos gates UG, em vez de cláusula de correção. O desvio autorizado a posteriori (package.json, §8.1 do relatório) e a dívida B-2 (`ui_target_v32.js:32`) permanecem registrados lá;
 5. **Este backlog** (seções 3 e 4) — cláusulas novas candidatas.
 
 Nada além dessas fontes entra no mandato sem decisão explícita do proprietário.
@@ -26,7 +26,7 @@ Nada além dessas fontes entra no mandato sem decisão explícita do proprietár
 | # | Decisão | Efeito na REV B |
 |---|---|---|
 | DL-1 | **B-1/D2 → opção 1a**: derivação de razões/déficit de suficiência FORA da Camada 1. `dataSufficiency()` intocado; acessores canônicos derivam razões; gate de equivalência ∀estado (`derivado.sufficient === dataSufficiency()`); SUF0 passa a ser prospectivo; espelho `ui_target_v32.js:32` registrado como dívida conhecida. | Reescrever SUF0/SUF3/UI-012 sobre a camada derivada, nunca sobre a Camada 1. |
-| DL-2 | **B-3/D3 → micro-fase UNSET dedicada ANTES da REV B.** Estratégia: mudar só a geometria (radar tela, régua, radar PDF `ui_v32.js:652`, overlay/radar target `ui_target_v32.js:120/:179`), preservando o rótulo "n/d" byte-idêntico. | O texto do anti-pattern UNSET na REV B depende do desfecho da micro-fase (ver seção 1, item 4). |
+| DL-2 | **B-3/D3 → micro-fase UNSET dedicada ANTES da REV B.** Estratégia: mudar só a geometria (radar tela, régua, radar PDF `ui_v32.js:652`, overlay/radar target `ui_target_v32.js:120/:179`), preservando o rótulo "n/d" byte-idêntico. | EXECUTADA E APROVADA — ver seção 1, item 4. O texto do anti-pattern UNSET na REV B vira cláusula de preservação. |
 | DL-3 | **D1 → interação de perguntas 5.0 como superfície NOVA da Camada 5.** Mesmos setters do runtime congelado; tela congelada intacta. | Cláusulas de interação da REV B são escritas para superfície nova; proibido modificar a tela congelada. |
 | DL-4 | **D5 → paleta congelada é o branding oficial.** `PR_DOM_HEX`, custom properties `--ftnt-*`, `#DA291C` como acento. BRANDING-01 encerrado. D4 (NIST) ratificado fora do escopo 5.0. | Remover BRANDING-01 como pendência; incorporar cláusula de tokens (seção 3). |
 
@@ -40,7 +40,7 @@ Nada além dessas fontes entra no mandato sem decisão explícita do proprietár
 
 **COR-01.2 — Papel do acento de marca.** `#DA291C` é acento de marca, não cor de dado: progresso global, seleção ativa, marcações de cabeçalho/print. Réguas, radar, heat map e qualquer visualização em que o domínio é a dimensão usam a cor do próprio domínio.
 
-**COR-01.3 — UNSET esmaecido na cor do domínio.** A representação visual de UNSET pós-micro-fase (tracejado/lacuna) usa a cor do próprio domínio esmaecida — nunca cinza genérico, nunca o acento de marca.
+**COR-01.3 — UNSET esmaecido na cor do domínio.** A representação visual de UNSET em superfícies novas (tracejado/lacuna) usa a cor do próprio domínio esmaecida — nunca cinza genérico, nunca o acento de marca. Nota: nas superfícies congeladas corrigidas pela micro-fase, o encoding adotado foi pontilhado neutro (`--faint`/`#999`), restrito pelo runtime congelado (tracejado+`#3CB17E` é encoding exclusivo do cenário-alvo, T14/V9); essa diferença entre superfícies congeladas e novas é deliberada e deve ser declarada na REV B.
 
 **COR-01.4 — Gates.** Lint das superfícies novas: zero hex literal dos valores de domínio fora da declaração congelada; gates V4+V5 permanecem a autoridade e ficam intactos.
 
@@ -68,7 +68,7 @@ Nada além dessas fontes entra no mandato sem decisão explícita do proprietár
 
 **N-1 · Custo verificado no source.** `iconFor` **já está exposto** em `window.__V32UI` (`ui_v32.js:827`, verificado no core extraído). Diferente do caso `ARCH_FIELDS` na 4.8.0.2, **nenhuma linha aditiva no core é necessária** — a cláusula consome ponte existente. Isso mantém a classificação de custo em baixo risco.
 
-**N-2 · Namespace de gates.** Os IDs `IC5-n` e `COR-01.x` são provisórios. Colisão de namespace foi o blocker **B-4** da auditoria da REV A (UX1–UX9 × frozen UX1–UX56; F1–F11 × fixtures F1–F9); a REV B deve conferir todos os IDs novos contra as suítes congeladas antes de fixá-los.
+**N-2 · Namespace de gates.** Os IDs `IC5-n` e `COR-01.x` são provisórios. Colisão de namespace foi o blocker **B-4** da auditoria da REV A (UX1–UX9 × frozen UX1–UX56; F1–F11 × fixtures F1–F9); a REV B deve conferir todos os IDs novos contra as suítes congeladas antes de fixá-los — incluindo agora o namespace **UG1–UG13**, ocupado pela micro-fase UNSET.
 
 **N-3 · Estado atual dos ícones (para evitar reabertura indevida).** Os ícones **já renderizam** hoje nas listas de candidatos (`.v32-cand`) e serviços (`.v32-svc`) do Recommendation Context via `iconFor()` (`ui_v32.js:482–511`): 26 SVGs oficiais em `icons_v32_source/`, ~40 itemIds em `ICON_MAP_V32`, serviços IR/Labs compartilhando `FortiGuard-IR-Service`/`FortiGuard-Labs`. A percepção de "falta de ícone" em itens específicos decorre, em parte, de decisões congeladas corretas (famílias/abstrações e `fortisat` usam fallback by design). ICON-01 trata de **consumo em superfícies novas**, não de correção do estado atual.
 
@@ -83,4 +83,4 @@ Nada além dessas fontes entra no mandato sem decisão explícita do proprietár
 
 ---
 
-*Fim do backlog. Próxima ação prevista: concluir micro-fase UNSET → leitura de par do MICROFASE_UNSET_REPORT.md → montagem do mandato da REV B a partir das fontes da seção 1.*
+*Fim do backlog. Próxima ação prevista: montagem do mandato da REV B a partir das fontes da seção 1 (micro-fase UNSET já entregue e aprovada — item 4).*

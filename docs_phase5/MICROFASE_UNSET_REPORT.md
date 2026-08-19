@@ -17,8 +17,8 @@ iniciada.
 engine_v32.js                 · BYTE-IDÊNTICO (9a4a2e67…2b5d247a)
 payload funcional M41         · BYTE-IDÊNTICO (9794b267…3ed4365b) · COMPARAÇÃO PASS
 rótulo canônico "n/d"         · PRESERVADO byte a byte (gate UG9)
-gates novos (UG1–UG12)        · 12 PASS · 0 FAIL
-mutation testing dos gates    · 8/12 falham contra o runtime pré-correção (poder discriminante provado)
+gates novos (UG1–UG13)        · 13 PASS · 0 FAIL
+mutation testing dos gates    · 9/13 falham contra a mutação correspondente (poder discriminante provado)
 regressão congelada           · test:all 0 FAIL · test:visual 67 passed / 0 failed / 37 skipped
 build determinístico          · duas execuções → mesmo SHA
 ```
@@ -167,10 +167,19 @@ Oracle independente da implementação: a geometria esperada é recalculada dent
 | UG10 | **equivalência** | sem UNSET, `points` é **byte-idêntico** à fórmula legada; sem nota; aria original | PASS |
 | UG11 | limite | assessment em branco: 0 vértices, 5 marcadores, nota presente, **zero erro de console** | PASS |
 | UG12 | acessibilidade | a nota nomeia **exatamente** os domínios não avaliados (sem depender de cor) | PASS |
+| UG13 | **layout (Chromium)** | com UNSET, a nota **não sobrepõe** nenhum `text[data-dom]` nem `text.v` do radar (bounding boxes disjuntos, tolerância 0 px); sem UNSET, a nota não existe | PASS |
 
 ```text
-UNSET GEOMETRY (UG): 12 PASS · 0 FAIL de 12
+UNSET GEOMETRY (UG): 13 PASS · 0 FAIL de 13
 ```
+
+**UG13 — nota de implementação.** Bounding box exige layout real, que o jsdom não produz. O gate
+roda **dentro de `tests_unset_ug.js`**, dirigindo o Chromium diretamente e espelhando a ordem de
+resolução de browser congelada (`CHROME_PATH` → `/opt/google/chrome/chrome` se existir → Chromium
+gerenciado), justamente para **não** tocar `tests_visual/` — fora da boundary autorizada. Sem browser
+resolvível o gate imprime `SKIP … NÃO EXECUTADO` e **nunca** conta como PASS, preservando o
+invariante congelado de que `npm run test:all` passa sem browser instalado
+(`VISUAL_GATES_V32.md`). Nesta execução o browser estava disponível e o gate foi realmente medido.
 
 ### 4.1 Mutation testing dos gates
 
@@ -178,10 +187,22 @@ A suíte UG foi executada contra o build **pré-correção** (`probe_control.htm
 baseline `8d0932e1…`):
 
 ```text
-UNSET GEOMETRY (UG): 4 PASS · 8 FAIL de 12
+UNSET GEOMETRY (UG): 4 PASS · 8 FAIL de 12      (UG13 ainda não existia nesta rodada)
 FAIL: UG1 UG2 UG3 UG4 UG5 UG6 UG11 UG12     ← um por superfície corrigida + limites
 PASS: UG7 UG8 UG9 UG10                      ← gates de invariância (devem valer antes E depois)
 ```
+
+**UG13 · mutação dedicada.** O gate de layout não é sensível à geometria, e sim à regra de CSS que o
+sustenta. Mutação aplicada: remoção de `.radar-box{flex-wrap:wrap;}` sobre o build **já corrigido**.
+
+```text
+UNSET GEOMETRY (UG): 12 PASS · 1 FAIL de 13
+FAIL: UG13
+```
+
+Medida no Chromium com a regra removida: a nota assume `420×405 px` em `left=908.8` e invade o
+rótulo `Pessoas` (`right=910.9`) — exatamente o defeito capturado por inspeção visual e descrito no
+§8.3. Com a regra presente, todos os 10 bounding boxes (5 rótulos + 5 valores) são disjuntos da nota.
 
 Leitura: cada gate positivo tem poder discriminante comprovado sobre a superfície que governa; os
 quatro que passam nos dois lados são exatamente os que existem para detectar **dano colateral**
@@ -197,7 +218,7 @@ npm run test:all
   UI M3.1 19/19 · UI 3.2 25/25 · UI 3.3.1 11/11 · UI 3.3.2 (PDF) 23/23 · UI 3.3.3 26/26
   UX 4.1 56/56 · TARGET 4.3.1 30/30 · REF 4.4 28/28 · JOURNEY 4.5 31/31 · ICONS 4.6 12/12
   SESSION 4.8 97/97
-  UNSET GEOMETRY (UG) 12/12
+  UNSET GEOMETRY (UG) 13/13
   M41: COMPARAÇÃO PASS — payload 9794b267e4225d8fa14f0f0d84aed0e2979658bfa2565b459788ef3b3ed4365b
 
 npm run test:visual
@@ -206,6 +227,10 @@ npm run test:visual
 
 Todas as contagens coincidem com o baseline 4.8.0.7. Nenhum gate foi enfraquecido, reescrito ou
 removido; a suíte UG é puramente aditiva.
+
+Ambas as suítes foram **reexecutadas integralmente após a inclusão do UG13**; as contagens acima são
+as dessa última execução. O SHA do HTML permaneceu `787cd3ab…` — UG13 alterou apenas a suíte de
+testes, nunca o produto.
 
 ### 5.1 Build determinístico
 
@@ -226,7 +251,7 @@ python3 build_v32_html.py  (execução 2) → 787cd3ab33188eee75a82590ab08d4240b
 | `ui_target_v32.js` | `f391346d54c3406fb73f554285a74f263c3517b03e2ad78bd70b006269584be9` | `cfd85cbb3883c7410c8cd3c0eb4ae1712da8e73ff0a11ec6b436b0bcf94bb4a0` |
 | `quickscan_secops_soccmm_v3_2_dev.html` | `8d0932e145d8a8f8d203095f509137aacba43b3242a3b53822ff76001fd85ddb` | **`787cd3ab33188eee75a82590ab08d4240b6016a21329f899fd597050e3dde85a`** |
 | `package.json` | `(4807)` | `8654fc09d178f750ffcf1d87f8e1aaa1037d829ece698b01baab5d316586b599` |
-| `tests_unset_ug.js` | — (novo) | `1cd3048e108989fa38261424764cf0bdec07bee7d31825b9df8f8126528b43c8` |
+| `tests_unset_ug.js` | — (novo) | `d2a3f804bb14e9156978407710a7a680f8dc4b71929546c28a719fbde1bae2e9` |
 | payload funcional M41 | `9794b267…3ed4365b` | **inalterado — byte-idêntico** |
 
 **Novo baseline de HTML da Fase 5:**
@@ -283,16 +308,20 @@ Quatro vértices para quatro domínios avaliados, em ambas as superfícies. Nenh
    gates nova" e exigiu "regressão completa (test:all + test:visual)". Sem registrar a suíte em
    `package.json`, os gates UG ficariam fora da regressão — as duas exigências seriam incompatíveis.
    A alteração é mínima e aditiva: `"test:unset"` e sua inclusão em `test:all`. **Nenhum script
-   existente foi modificado.** Se o proprietário preferir manter `package.json` intocado, basta
-   removê-lo e rodar `node tests_unset_ug.js` avulso — a suíte não depende do registro.
+   existente foi modificado.**
+   **Status: edição fora de boundary divulgada e autorizada a posteriori pelo proprietário em
+   2026-08-18**, após parecer do auditor independente. O registro permanece nesta seção como desvio
+   divulgado — **não** é reclassificado como escopo original da microfase.
 2. **CSS novo vive no bloco `<style>` da base HTML** (arquivo autorizado). `ui_v32.css` e
    `ui_ux_v32.css` **não foram tocados** — as regras congeladas asseridas por UX55/T14 permanecem
    byte-idênticas. O marcador do PDF usa atributos SVG inline, sem CSS novo.
-3. **Uma regra congelada recebeu complemento aditivo:** `.radar-box{flex-wrap:wrap;}` foi adicionada
+3. **Regra aditiva no `<style>` da base HTML — DENTRO da boundary (ratificado pelo proprietário em
+   2026-08-18):** `.radar-box{flex-wrap:wrap;}` foi adicionada
    como **regra separada** (a linha original `.radar-box{display:flex; justify-content:center;}`
    está intacta) para que a nota textual desça para a linha seguinte em vez de disputar espaço com o
    SVG. Sem isso a nota renderizava espremida sobre os rótulos do radar — defeito capturado por
-   inspeção visual da evidência, não por gate.
+   inspeção visual da evidência, não por gate. **Essa lacuna foi fechada:** o gate UG13 agora mede o
+   layout no Chromium e falha se a regra for removida (§4.1).
 4. **`SESSION_SCHEMA_V32.md`, `CHANGELOG_v32.md` e demais docs não foram atualizados** — fora do
    escopo autorizado desta microfase.
 5. **Dívida herdada não tocada:** `ui_target_v32.js:32` continua espelhando o gate de suficiência
@@ -311,7 +340,7 @@ microfase:          UNSET Geometry Correction (pré-5.0) — IMPLEMENTADA E VERI
 engine:             INTOCADO (9a4a2e67…)
 M41:                PRESERVADO (9794b267…)
 novo baseline HTML: 787cd3ab33188eee75a82590ab08d4240b6016a21329f899fd597050e3dde85a
-gates novos:        UG1–UG12 · 12 PASS · 0 FAIL · mutation-tested
+gates novos:        UG1–UG13 · 13 PASS · 0 FAIL · mutation-tested (inclui UG13/layout)
 regressão:          test:all 0 FAIL · test:visual 67/0/37
 REV B:              NÃO INICIADA
 declaração de freeze: NENHUMA — cabe ao auditor/proprietário

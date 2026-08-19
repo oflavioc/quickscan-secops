@@ -214,6 +214,64 @@ T("UG12","nota textual nomeia exatamente os domínios não avaliados (sem depend
     note.includes("n/d") && aria.includes("Processos, Serviços");
 });
 
-const fail=results.filter(r=>!r.ok).length;
-console.log(`\nUNSET GEOMETRY (UG): ${results.length-fail} PASS · ${fail} FAIL de ${results.length}`);
-process.exit(fail?1:0);
+/* ===================== LAYOUT — medido no Chromium (UG13) =====================
+   jsdom não faz layout: bounding box exige browser real. O gate roda DENTRO desta suíte para não
+   tocar tests_visual/ (fora da boundary autorizada). Sem browser resolvível o gate é declarado
+   NÃO EXECUTADO — nunca PASS silencioso —, preservando o invariante congelado de que `test:all`
+   passa sem browser instalado (VISUAL_GATES_V32.md). */
+function resolveBrowser(){                                   /* mesma ordem de playwright.config.js */
+  const explicit=process.env.CHROME_PATH;
+  const local="/opt/google/chrome/chrome";
+  return explicit || (fs.existsSync(local) ? local : null);
+}
+async function ug13(){
+  let chromium;
+  try{ ({chromium}=require("@playwright/test")); }
+  catch(e){ console.log("SKIP  UG13 — layout da nota no Chromium — NÃO EXECUTADO (@playwright/test ausente)");
+    return {skipped:true}; }
+  const exe=resolveBrowser();
+  const opts={args:["--no-sandbox","--disable-dev-shm-usage"]};
+  if(exe) opts.executablePath=exe;
+  let b;
+  try{ b=await chromium.launch(opts); }
+  catch(e){ console.log("SKIP  UG13 — layout da nota no Chromium — NÃO EXECUTADO (browser indisponível: "+e.message.split("\n")[0]+")");
+    return {skipped:true}; }
+  try{
+    const p=await b.newPage({viewport:{width:1440,height:900}});
+    const url="file://"+path.join(__dirname,"quickscan_secops_soccmm_v3_2_dev.html");
+    /* (a) com UNSET: a nota existe e NÃO sobrepõe nenhum rótulo do radar */
+    await p.goto(url);
+    await p.evaluate(IDS=>{ IDS.forEach((id,k)=>window.__DEV.setAnswerById(id, k>=12?null:1));
+      window.__DEV.setArq(0); window.__DEV.showResults(); }, IDS);
+    const m=await p.evaluate(()=>{
+      const note=document.querySelector(".radar-unset-note");
+      if(!note) return {note:null};
+      const r=e=>{const b=e.getBoundingClientRect();return {l:b.left,t:b.top,r:b.right,b:b.bottom,w:b.width,h:b.height};};
+      const labels=Array.from(document.querySelectorAll("svg.radar text[data-dom]")).map(r);
+      const values=Array.from(document.querySelectorAll("svg.radar text.v")).map(r);
+      return {note:r(note), labels, values};
+    });
+    const disjoint=(a,z)=>a.r<=z.l||z.r<=a.l||a.b<=z.t||z.b<=a.t;   /* 0 px de tolerância */
+    const okA = !!m.note && m.note.h>0 && m.labels.length===5 &&
+      m.labels.every(x=>disjoint(m.note,x)) && m.values.every(x=>disjoint(m.note,x));
+    /* (b) sem UNSET: a nota não existe */
+    await p.goto(url);
+    await p.evaluate(IDS=>{ IDS.forEach(id=>window.__DEV.setAnswerById(id,1));
+      window.__DEV.setArq(0); window.__DEV.showResults(); }, IDS);
+    const noNote=await p.evaluate(()=>!document.querySelector(".radar-unset-note"));
+    const ok=okA&&noNote;
+    results.push({id:"UG13",ok});
+    console.log((ok?"PASS":"FAIL")+"  UG13 — layout: nota de UNSET não sobrepõe rótulos do radar (bbox disjuntos, Chromium); sem UNSET, nota ausente"+
+      (ok?"":` [note=${JSON.stringify(m.note)} labels=${JSON.stringify(m.labels)} noNote=${noNote}]`));
+    return {skipped:false};
+  } finally { await b.close(); }
+}
+
+(async()=>{
+  const r13=await ug13();
+  const fail=results.filter(x=>!x.ok).length;
+  const skipped=r13.skipped?1:0;
+  console.log(`\nUNSET GEOMETRY (UG): ${results.length-fail} PASS · ${fail} FAIL de ${results.length}` +
+    (skipped?` · ${skipped} NÃO EXECUTADO (UG13 requer Chromium)`:""));
+  process.exit(fail?1:0);
+})();

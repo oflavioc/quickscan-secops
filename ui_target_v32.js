@@ -114,11 +114,14 @@ function tgtRadarOverlay(app){                                  /* [I] geometria
   if(!tgtHasOverrides()){ svg.setAttribute("aria-label","Radar de maturidade — perfil atual"); return; }
   const axes=Array.from(svg.querySelectorAll("line.axis")); if(axes.length!==5) return;
   const tgt=computeTargetProfile(tgtEffectiveVector());
+  /* [UNSET-GEOM] eixo sem alvo efetivo (current UNSET e sem override) não vira vértice zero:
+     o ponto é OMITIDO do polígono do cenário-alvo, como no perfil atual. */
   const pts=axes.map((ax,i)=>{
+    if(tgt.stats[i].score===null) return null;
     const cx=+ax.getAttribute("x1"), cy=+ax.getAttribute("y1");
     const x2=+ax.getAttribute("x2"), y2=+ax.getAttribute("y2");
-    const s=tgt.stats[i].score===null?0:tgt.stats[i].score/5;
-    return `${(cx+(x2-cx)*s).toFixed(2)},${(cy+(y2-cy)*s).toFixed(2)}`;}).join(" ");
+    const s=tgt.stats[i].score/5;
+    return `${(cx+(x2-cx)*s).toFixed(2)},${(cy+(y2-cy)*s).toFixed(2)}`;}).filter(p=>p!==null).join(" ");
   const p=document.createElementNS("http://www.w3.org/2000/svg","polygon");
   p.setAttribute("class","ux-target-shape"); p.setAttribute("points",pts);
   p.setAttribute("fill","rgba(60,177,126,.10)"); p.setAttribute("stroke","#3CB17E");
@@ -176,7 +179,11 @@ window.__uxTargetPrintHTML = function(){
   const fmt=v=>v===null?"n/d":v.toFixed(1);
   const cxp=135, cyp=110, Rp=80, ang=i=>-Math.PI/2+i*2*Math.PI/5;
   const P=(i,r)=>`${(cxp+r*Math.cos(ang(i))).toFixed(1)},${(cyp+r*Math.sin(ang(i))).toFixed(1)}`;
-  const poly=st=>st.map((s,i)=>P(i,Rp*((s.score===null?0:s.score)/5))).join(" ");
+  /* [UNSET-GEOM] mesma regra no PDF, para os DOIS polígonos (atual e alvo): domínio sem score
+     não recebe vértice. O tracejado verde continua sendo encoding exclusivo do cenário-alvo. */
+  const poly=st=>st.map((s,i)=>s.score===null?null:P(i,Rp*(s.score/5))).filter(p=>p!==null).join(" ");
+  const ndT=DOMS.map((dm,i)=>(cur.stats[i].score===null||tgt.stats[i].score===null)?dm.pt:null).filter(Boolean);
+  const ndNote=ndT.length?`<div class="pr-mut pr-radar-nd">Sem ponto no radar por ausência de avaliação (n/d): ${esc32(ndT.join(" · "))}</div>`:"";
   const grid=[1,2,3,4,5].map(k=>`<polygon points="${DOMS.map((_,i)=>P(i,Rp*k/5)).join(" ")}" fill="none" stroke="#ccc" stroke-width="0.6"/>`).join("");
   const labels=DOMS.map((dm,i)=>{const [x,y]=P(i,Rp+12).split(",");
     return `<text x="${x}" y="${y}" font-size="8" text-anchor="middle" fill="#444">${esc32(dm.pt)}</text>`;}).join("");
@@ -193,6 +200,7 @@ window.__uxTargetPrintHTML = function(){
       <polygon points="${poly(cur.stats)}" fill="rgba(48,127,226,.14)" stroke="#307FE2" stroke-width="1.6"/>
       <polygon points="${poly(tgt.stats)}" fill="none" stroke="#3CB17E" stroke-width="1.6" stroke-dasharray="5 4"/>${labels}</svg>
     <div class="pr-mut" style="text-align:center">— Perfil atual (azul) · - - Cenário-alvo (verde)</div>
+    ${ndNote}
     <table class="pr-doms"><tbody>${rows}</tbody></table>${ovs}
     <div class="pr-card"><i>${esc32(TGT_DISCLAIMER)}</i></div></div>`;
 };

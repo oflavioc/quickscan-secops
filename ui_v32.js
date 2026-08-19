@@ -648,15 +648,27 @@ function prRadarSVG(stats){
   const ang = i => -Math.PI/2 + i*2*Math.PI/N;
   const P = (i,r)=>`${(cx+r*Math.cos(ang(i))).toFixed(1)},${(cy+r*Math.sin(ang(i))).toFixed(1)}`;
   const grid = [1,2,3,4,5].map(k=>`<polygon points="${stats.map((_,i)=>P(i,R*k/5)).join(" ")}" fill="none" stroke="#ccc" stroke-width="0.6"/>`).join("");
-  const axes = stats.map((_,i)=>`<line x1="${cx}" y1="${cy}" x2="${P(i,R).split(",")[0]}" y2="${P(i,R).split(",")[1]}" stroke="#ddd" stroke-width="0.6"/>`).join("");
-  const poly = stats.map((s,i)=>P(i, R*((s.score===null?0:s.score)/5))).join(" ");
+  /* [UNSET-GEOM] paridade com a tela: domínio sem score tem eixo pontilhado, marcador vazado no
+     centro e vértice OMITIDO do polígono — nunca desenhado como zero. Nenhum <text> é adicionado
+     (P22 (C) exige exatamente 5 textos neste SVG). */
+  const axes = stats.map((s,i)=>`<line x1="${cx}" y1="${cy}" x2="${P(i,R).split(",")[0]}" y2="${P(i,R).split(",")[1]}" stroke="#ddd" stroke-width="0.6"${s.score===null?' stroke-dasharray="3 3"':''}/>`).join("");
+  const marks = stats.map((s,i)=>s.score===null
+    ? `<circle cx="${cx}" cy="${cy}" r="3" fill="none" stroke="#999" stroke-width="1.1"/>` : "").join("");
+  const poly = stats.map((s,i)=>s.score===null ? null : P(i, R*(s.score/5)))
+                    .filter(p=>p!==null).join(" ");
   const labels = stats.map((s,i)=>{const [x,y]=P(i,R+11).split(",");
     const c = Math.cos(ang(i));
     const anchor = c > 0.25 ? "start" : (c < -0.25 ? "end" : "middle");     /* [3.3.2.2-C] anchors por lado */
     const dy = Math.sin(ang(i)) > 0.6 ? 8 : (Math.sin(ang(i)) < -0.6 ? -2 : 3);
     return `<circle cx="${x}" cy="${(parseFloat(y)+dy-2.6).toFixed(1)}" r="2.2" fill="${PR_DOM_HEX[i]}" opacity="0"></circle><text x="${x}" y="${(parseFloat(y)+dy).toFixed(1)}" font-size="8.5" text-anchor="${anchor}" fill="#444">${esc32(DOMS[i].pt)} ${s.score===null?"n/d":s.score.toFixed(1)}</text>`;}).join("");
-  return `<svg viewBox="0 0 300 244" class="pr-radar" role="img" aria-label="Radar de maturidade por domínio">
-    ${grid}${axes}<polygon points="${poly}" fill="rgba(218,41,28,.15)" stroke="#DA291C" stroke-width="1.6"/>${labels}</svg>`;
+  const ndDoms = stats.map((s,i)=>s.score===null?DOMS[i].pt:null).filter(Boolean);
+  const aria = "Radar de maturidade por domínio" + (ndDoms.length
+    ? `. Sem avaliação, portanto fora do polígono: ${ndDoms.join(", ")}.` : "");
+  const note = ndDoms.length
+    ? `<div class="pr-mut pr-radar-nd">${ndDoms.length===1?"Domínio não avaliado":"Domínios não avaliados"} (n/d, sem ponto no radar): ${esc32(ndDoms.join(" · "))}</div>`
+    : "";
+  return `<svg viewBox="0 0 300 244" class="pr-radar" role="img" aria-label="${esc32(aria)}">
+    ${grid}${axes}<polygon points="${poly}" fill="rgba(218,41,28,.15)" stroke="#DA291C" stroke-width="1.6"/>${marks}${labels}</svg>${note}`;
 }
 function prWhy(id, c){
   const inner = whyHTMLOf(id, c).replace(/<\/?details[^>]*>/g,"").replace(/<summary>[\s\S]*?<\/summary>/,"");

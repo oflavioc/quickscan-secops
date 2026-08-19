@@ -124,6 +124,17 @@ svg.radar{max-width:340px; width:100%;}
 .radar .grid{fill:none; stroke:var(--line); stroke-width:1;}
 .radar .axis{stroke:var(--line); stroke-width:1;}
 .radar .shape{fill:rgba(218,41,28,.22); stroke:var(--red); stroke-width:2;}
+/* [UNSET-GEOM] domínio não avaliado: eixo neutro pontilhado + marcador vazado no centro.
+   Nunca tracejado verde (encoding reservado do cenário-alvo) e nunca vértice em zero. */
+.radar .axis.unset{stroke-dasharray:3 3; stroke:var(--faint);}
+.radar .unset-mark{fill:none; stroke:var(--faint); stroke-width:1.4;}
+.radar-box{flex-wrap:wrap;}                       /* [UNSET-GEOM] aditivo: a nota desce para a linha seguinte */
+.radar-unset-note{flex:0 0 100%; margin-top:2px; color:var(--faint); font-size:11px; line-height:1.5;
+  text-align:center; max-width:100%;}
+.ruler.unset{background:transparent; border:1px dashed var(--faint);}
+.ruler.unset .ticks i{border-right-color:transparent;}
+.ruler .ruler-na{position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+  color:var(--muted); font-size:11px; font-weight:700; line-height:1; letter-spacing:.08em;}
 .radar text{fill:var(--muted); font-size:11px;}
 .radar text.v{fill:var(--text); font-weight:700; font-size:11.5px;}
 
@@ -747,19 +758,35 @@ function radarSVG(stats){
     const pts = Array.from({length:N},(_,i)=>pt(i, R*lv/5).join(",")).join(" ");
     rings += `<polygon class="grid" points="${pts}"/>`;
   }
-  let axes = "", labels = "";
+  let axes = "", labels = "", marks = "";
   DOMS.forEach((d,i)=>{
     const [x,y] = pt(i,R);
-    axes += `<line class="axis" x1="${cx}" y1="${cy}" x2="${x}" y2="${y}"/>`;
+    /* [UNSET-GEOM] domínio sem score não é ponto zero: o eixo vira pontilhado e recebe marcador
+       vazado no centro; o vértice é OMITIDO do polígono. O rótulo "n/d" permanece inalterado. */
+    const unset = stats[i].score===null;
+    axes += `<line class="axis${unset?" unset":""}" x1="${cx}" y1="${cy}" x2="${x}" y2="${y}"/>`;
+    if(unset) marks += `<circle class="unset-mark" cx="${cx}" cy="${cy}" r="4" data-unsetdom="${i}"/>`;
     const [lx,ly] = pt(i, R+26);
     const anchor = Math.abs(lx-cx)<10 ? "middle" : (lx>cx ? "start" : "end");
     const v = stats[i].score===null ? "n/d" : stats[i].score.toFixed(1);
     labels += `<text x="${lx}" y="${ly}" text-anchor="${anchor}">${d.pt}</text>
                <text class="v" x="${lx}" y="${ly+14}" text-anchor="${anchor}">${v}</text>`;
   });
-  const shape = stats.map((s,i)=>pt(i, R*Math.max(s.score??0,0.15)/5).join(",")).join(" ");
-  return `<svg class="radar" viewBox="0 0 340 330" role="img" aria-label="Radar indicativo de maturidade por domínio">
-    ${rings}${axes}<polygon class="shape" points="${shape}"/>${labels}</svg>`;
+  const shape = stats.map((s,i)=>s.score===null ? null : pt(i, R*Math.max(s.score,0.15)/5).join(","))
+                     .filter(p=>p!==null).join(" ");
+  const unsetDoms = DOMS.filter((d,i)=>stats[i].score===null).map(d=>d.pt);
+  const aria = "Radar indicativo de maturidade por domínio" + (unsetDoms.length
+    ? `. Sem avaliação, portanto fora do polígono: ${unsetDoms.join(", ")}.` : "");
+  return `<svg class="radar" viewBox="0 0 340 330" role="img" aria-label="${aria}">
+    ${rings}${axes}<polygon class="shape" points="${shape}"/>${marks}${labels}</svg>`;
+}
+/* [UNSET-GEOM] nota textual do radar — fora do SVG (não interfere na contagem de <text>) e
+   independente de cor: nomeia os domínios não avaliados em vez de deixá-los implícitos. */
+function radarUnsetNote(stats){
+  const nd = DOMS.filter((d,i)=>stats[i].score===null).map(d=>d.pt);
+  if(!nd.length) return "";
+  return `<div class="radar-unset-note">${nd.length===1?"Domínio não avaliado":"Domínios não avaliados"}
+    (n/d, sem ponto no radar): ${esc(nd.join(" · "))}</div>`;
 }
 
 /* ---------------- anexo de evidências ---------------- */
@@ -925,7 +952,7 @@ function renderResults(app){
         <div class="arq-tag">Ponto de partida declarado: <b>${a.id} — ${esc(a.t)}</b><br>
         ${confirmed} de ${QS.length} respostas confirmadas na sessão${toValidate?` · ${toValidate} marcada${toValidate>1?"s":""} para validação`:""}.</div>
       </div>
-      <div class="radar-box">${radarSVG(stats)}</div>
+      <div class="radar-box">${radarSVG(stats)}${radarUnsetNote(stats)}</div>
     </div>
 
     <div class="grid2">
@@ -936,7 +963,9 @@ function renderResults(app){
           const val = s.score===null ? "n/d" : s.score.toFixed(1)+" — "+stageOf(s.score).en;
           return `<div class="dom">
             <div class="lbl"><b>${d.pt} <span style="color:var(--faint);font-weight:400">· ${d.en}</span></b><span>${val}</span></div>
-            <div class="ruler"><div class="fill" style="width:${(s.score??0)/5*100}%"></div>
+            <div class="ruler${s.score===null?" unset":""}">${s.score===null
+              ? `<span class="ruler-na" role="img" aria-label="não avaliado">—</span>`
+              : `<div class="fill" style="width:${s.score/5*100}%"></div>`}
               <div class="ticks"><i></i><i></i><i></i><i></i><i></i></div></div>
             <div class="conf">${s.conf?`Confiança ${s.conf} — ${s.basis}`:esc(s.basis)}</div>
           </div>`;}).join("")}

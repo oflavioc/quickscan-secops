@@ -50,8 +50,15 @@ wrapper 4.9 ou control.4.
   · SHA-256 `dfa8001844085ad1da09db1c858581e7b1bcb3283ed0c5dbf4155b1188c237c6`.
   Conteúdo auditado (identidade histórica da candidata): SHA-256
   `0f31900e8ad608c8a5825d9d5fa9e2d7a4fd3d68f8efbf23c7fc937a16950925`.
-  **A promoção normativa NÃO abre a fase: Phase 5.0 NÃO ABERTA · implementação NÃO AUTORIZADA ·
-  Wave 1A NÃO INICIADA.** A abertura formal é ato exclusivo do proprietário (§1 da spec).
+  **Phase 5.0 ABERTA em 2026-08-19** por ato do proprietário — registro
+  `docs_phase5/REV_B_PHASE_OPENING_RECORD.md`. Implementação **AUTORIZADA**, restrita à change
+  boundary da §29 e ao protocolo de microfases §5/§33. **Wave 1A NÃO INICIADA.**
+  Módulos novos permitidos (§29.2, lista fechada): `ui_p50_shell_v32.js` · `ui_p50_suff_v32.js` ·
+  `ui_p50_results_v32.js` · `ui_p50_v32.css` · `tests_p50_core.js` · `tests_p50_chromium.js` ·
+  `fixtures_p50.js`. Edição limitada e nominal (§29.3): `build_v32_html.py` (só injeção),
+  `package.json`/`package-lock.json` (só scripts P50 + `@axe-core/playwright` 4.13.0 exata).
+  Todo o resto permanece protegido (§29.4); print/PDF fora de escopo (§29.6).
+  Freeze continua vedado até auditoria independente explícita (§32).
   A `specs/PHASE_5_0_REV_A.md` permanece no repositório apenas como histórico (REPROVADA em
   auditoria independente, 2026-08-18); não é fonte normativa.
 - Precedência: spec corrente → HANDOFF/START mais recente → source do baseline → testes/invariantes

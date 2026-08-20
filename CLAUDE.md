@@ -42,8 +42,18 @@ wrapper 4.9 ou control.4.
 
 ## Governança de fase — obrigatória
 
-- Especificação normativa: `specs/PHASE_5_0_REV_A.md`. **A REV A aguarda auditoria independente;
-  nenhuma implementação da Fase 5.0 antes da aprovação do auditor.**
+- Especificação normativa: `specs/PHASE_5_0_REV_B.md`
+  · SHA-256 `4f1583c733df62a9452aa7b218d962e40d781bb8d30dfc3179ad6e1ef004619b`
+  · promovida em 2026-08-19 · registro `docs_phase5/REV_B_PROMOTION_RECORD.md`.
+  Auditoria independente da REV B: **PASS**, zero blockers (2026-08-19, Codex/OpenAI) —
+  `docs_phase5/AUDITORIA_INDEPENDENTE_PHASE_5_0_REV_B.md`
+  · SHA-256 `dfa8001844085ad1da09db1c858581e7b1bcb3283ed0c5dbf4155b1188c237c6`.
+  Conteúdo auditado (identidade histórica da candidata): SHA-256
+  `0f31900e8ad608c8a5825d9d5fa9e2d7a4fd3d68f8efbf23c7fc937a16950925`.
+  **A promoção normativa NÃO abre a fase: Phase 5.0 NÃO ABERTA · implementação NÃO AUTORIZADA ·
+  Wave 1A NÃO INICIADA.** A abertura formal é ato exclusivo do proprietário (§1 da spec).
+  A `specs/PHASE_5_0_REV_A.md` permanece no repositório apenas como histórico (REPROVADA em
+  auditoria independente, 2026-08-18); não é fonte normativa.
 - Precedência: spec corrente → HANDOFF/START mais recente → source do baseline → testes/invariantes
   congelados → docs → estas instruções. Nunca combinar requisitos de versões diferentes.
 - Ler a spec integralmente antes de editar; validar baseline; respeitar a change boundary; se uma

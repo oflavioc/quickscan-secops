@@ -1,11 +1,11 @@
 {
   "baseline": {
-    "shell": "f3580683d55d73837116060d7be099b47d63c491bb3a0633496fe6df35a7d3c4",
-    "css": "8a274b4e04167d33289b41958c7d8c363467e6c12bb2a5c83f6dcf4c3c925cd8",
-    "html": "61e8877ee1f798b3a42c2c7232657e065cf7955750e365820e9128a67506c69d"
+    "shell": "1f9c7a5a8ad10b724f9caab86eead66eeb5ad6df1f397c4b41b0b75380577b09",
+    "css": "e873d90d22f0460592003c27d08e38ff26eafbf44c9b3d9f0ea661e05bef35fb",
+    "html": "5d1a301e472dd1453f4056c6919ea818e6fd7768d67158321deaae9ad0c926cd"
   },
-  "detected": 11,
-  "total": 11,
+  "detected": 24,
+  "total": 24,
   "mutants": [
     {
       "id": "M1",
@@ -86,6 +86,110 @@
       "detected": true,
       "note": "",
       "line": "FAIL  P50-UX13 — composição de __uxDecor e do wrapper de render: captura única, predecessor preservado, ordem, idempotência, reentrância, isolamento [lista de decoradores P50 reexecutada por reentrânc"
+    },
+    {
+      "id": "M12",
+      "desc": "cue exibir a descrição de outra opção (dessincronizada da seleção)",
+      "gate": "P50-UX3",
+      "detected": true,
+      "note": "",
+      "line": "FAIL  P50-UX3 — cue corresponde à descrição canônica da opção selecionada; sem cue stale nem cue sem resposta [cue != opts[0].d em k=0: \"Metas com indicadores, ajustadas conforme risco e estratégia.\"]"
+    },
+    {
+      "id": "M13",
+      "desc": "escrever a evidência direto em notes[k] em vez do setter congelado",
+      "gate": "P50-UX4",
+      "detected": true,
+      "note": "",
+      "line": "FAIL  P50-UX4 — evidência binda somente ao owner canônico notes[k] e sobrevive ao roundtrip [campo canônico de nota não foi aberto pelo atalho]"
+    },
+    {
+      "id": "M14",
+      "desc": "fabricar um chip sem provenance no runtime (weight class)",
+      "gate": "P50-UX5",
+      "detected": true,
+      "note": "",
+      "line": "FAIL  P50-UX5 — todo chip tem provenance no runtime; nenhum chip fabricado [esperados 3 chips, obtidos 4]"
+    },
+    {
+      "id": "M15",
+      "desc": "renderizar a evidência como marcação em vez de texto inerte",
+      "gate": "P50-UX12",
+      "detected": true,
+      "note": "",
+      "line": "FAIL  P50-UX12 — renderização inerte de texto livre adversarial na superfície nova [nó executável criado na superfície nova]"
+    },
+    {
+      "id": "M16",
+      "desc": "manter o wording de export mesmo com modificações posteriores",
+      "gate": "P50-SESUX2",
+      "detected": true,
+      "note": "",
+      "line": "FAIL  P50-SESUX2 — wording de export aparece somente após export bem-sucedido [wording de export persistiu apesar de modificação posterior]"
+    },
+    {
+      "id": "M17",
+      "desc": "serializar o estado efêmero de sessão dentro dos inputs canônicos",
+      "gate": "P50-SESUX5",
+      "detected": true,
+      "note": "",
+      "line": "FAIL  P50-SESUX5 — estado efêmero de UX nunca entra no documento exportado e é recusado no import [estado efêmero serializado em doc.inputs.operationalRefinement.answers.p50SessionState]"
+    },
+    {
+      "id": "M18",
+      "desc": "remover a reconciliação no evento REAL de evidência (B-502-1)",
+      "gate": "P50-SESUX2",
+      "detected": true,
+      "note": "",
+      "line": "FAIL  P50-SESUX2 — wording de export aparece somente após export bem-sucedido [status stale após digitar evidência: exported]"
+    },
+    {
+      "id": "M19",
+      "desc": "manter o estado `imported` após edição da evidência",
+      "gate": "P50-SESUX3",
+      "detected": true,
+      "note": "",
+      "line": "FAIL  P50-SESUX3 — wording de import não implica persistência automática [estado imported persistiu após edição: imported]"
+    },
+    {
+      "id": "M20",
+      "desc": "omitir dirty e falha do texto acessível (aria-label sobrescrevendo a live region)",
+      "gate": "P50-SESUX1B",
+      "detected": true,
+      "note": "",
+      "line": "FAIL  P50-SESUX1B — status de sessão renderizado corresponde ao estado real (matriz normativa completa + pós-export) [fresh: aria-label sobrescreve o conteúdo da live region · modified-not-exported: a"
+    },
+    {
+      "id": "M21",
+      "desc": "remover o wrapper de export (downloadSession não observado)",
+      "gate": "P50-SESUX4",
+      "detected": true,
+      "note": "",
+      "line": "FAIL  P50-SESUX4 — session roundtrip permanece canônico com a superfície nova ativa [predecessor invocado 0 vez(es), esperado 1]"
+    },
+    {
+      "id": "M22",
+      "desc": "remover o wrapper de import (importSessionDocument não observado)",
+      "gate": "P50-SESUX4",
+      "detected": true,
+      "note": "",
+      "line": "FAIL  P50-SESUX4 — session roundtrip permanece canônico com a superfície nova ativa [import ok=true não marcou imported]"
+    },
+    {
+      "id": "M23",
+      "desc": "inverter a leitura de r.ok no observador de export",
+      "gate": "P50-SESUX4",
+      "detected": true,
+      "note": "",
+      "line": "FAIL  P50-SESUX4 — session roundtrip permanece canônico com a superfície nova ativa [ok=true não marcou exported]"
+    },
+    {
+      "id": "M24",
+      "desc": "duplicar a invocação do predecessor de sessão",
+      "gate": "P50-SESUX4",
+      "detected": true,
+      "note": "",
+      "line": "FAIL  P50-SESUX4 — session roundtrip permanece canônico com a superfície nova ativa [predecessor invocado 2 vez(es), esperado 1]"
     },
     {
       "id": "M10",

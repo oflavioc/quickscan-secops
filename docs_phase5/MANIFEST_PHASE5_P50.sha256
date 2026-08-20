@@ -1,24 +1,32 @@
-# MANIFEST_PHASE5_P50.sha256 — delta da Phase 5.0 (microfase 5.0.1 · Assessment Shell & Answer Semantics)
-# precedente: MANIFEST_PHASE5_UNSET.sha256 · estendido a cada entrega da fase
-# gerado POR ULTIMO, apos a importacao do parecer independente; exclui apenas a si proprio
-# baseline de ENTRADA da 5.0.1 (HTML): 787cd3ab33188eee75a82590ab08d4240b6016a21329f899fd597050e3dde85a
-# baseline de SAIDA   da 5.0.1 (HTML): 61e8877ee1f798b3a42c2c7232657e065cf7955750e365820e9128a67506c69d
-f3580683d55d73837116060d7be099b47d63c491bb3a0633496fe6df35a7d3c4  ui_p50_shell_v32.js
-8a274b4e04167d33289b41958c7d8c363467e6c12bb2a5c83f6dcf4c3c925cd8  ui_p50_v32.css
-fde1e9868e1dddc294c4f66464dd031b65a5bcd0fea15ca850e3651696d48eac  fixtures_p50.js
-f495c5081cf62c9ede2352a8d7edf42785505fd065e78c43a49f93375fbeb5b6  tests_p50_core.js
-465ff2686bc36ad47fcf20a436509a01ec0ab4673b89d9914f14c6dc950e5396  tests_p50_chromium.js
-009a879f30ae31355f0c86511e432497fac0b7a85118b73442e1078d43b51bf5  tests_p50_mutants.js
+# MANIFEST_PHASE5_P50.sha256 — delta da Phase 5.0
+# 5.0.1 Assessment Shell & Answer Semantics  (integrada em main · 70154a1b…)
+# 5.0.2 Evidence Capture & Progress UX       (reauditada · PASS WITH NON-BLOCKING CAVEATS)
+# gerado POR ULTIMO; exclui apenas a si proprio
+# baseline de ENTRADA da 5.0.2 (HTML): 61e8877ee1f798b3a42c2c7232657e065cf7955750e365820e9128a67506c69d
+# baseline de SAIDA   da 5.0.2 (HTML): 5d1a301e472dd1453f4056c6919ea818e6fd7768d67158321deaae9ad0c926cd
+1f9c7a5a8ad10b724f9caab86eead66eeb5ad6df1f397c4b41b0b75380577b09  ui_p50_shell_v32.js
+e873d90d22f0460592003c27d08e38ff26eafbf44c9b3d9f0ea661e05bef35fb  ui_p50_v32.css
+b7f5b31039f6da4864510b458da5e899bca29dc482cc8abe0d2ff5d25caa82d7  fixtures_p50.js
+9817c46e09fe39cf9a874821772ce1e00a15283eee4c21305a5b5e358aa65242  tests_p50_core.js
+2c99e932dc4ac167714916c4ca2ae480c6a2e51afae93d01ea895a4ac9c6efdd  tests_p50_chromium.js
+774f9325ad3cc58a7247c58fe5c92231fc2ec3a422f923d31bdb3c4c979326fc  tests_p50_mutants.js
 f2295a421e59e77825530d77069a6d0350e9a01af8fdf506a6d1482416456a9e  build_v32_html.py
 fc0bf13b5c32832c04121245f3512dcc0e66744d2d1164da598bab1ec924746f  package.json
-61e8877ee1f798b3a42c2c7232657e065cf7955750e365820e9128a67506c69d  quickscan_secops_soccmm_v3_2_dev.html
+5d1a301e472dd1453f4056c6919ea818e6fd7768d67158321deaae9ad0c926cd  quickscan_secops_soccmm_v3_2_dev.html
 4518700b78c00331025680c3d381d025343baf949fcef7628a851b3a937dd3ca  docs_phase5/MICROFASE_5_0_1_REPORT.md
+1b02bd914dd10dc2dcba8e402d058d4c9f9576000d8e1e3ff63611b3cf27e540  docs_phase5/MICROFASE_5_0_2_REPORT.md
 ad7cc22aff7e8552117940e03ca0b748b0aab988bf72d5804cdd9fb07bf214cf  docs_phase5/BACKLOG_PRODUCTION_HARDENING_VAULT.md
 46386669d81a3cd1de247986b61d1f97973873c6f8d9cb65bd0e812a42c966a3  docs_phase5/AUDITORIA_INDEPENDENTE_MICROFASE_5_0_1.md
-59bbb13565351b75314c886c9e9001ed0040de24ff13cd6840a4c7bea66943af  docs_phase5/evidence_p50/P50-ACC6-selection-1440.json
-f749d27365d1168df57b15419ab891c87fd794ef1ec7b60c42255aeb2f362963  docs_phase5/evidence_p50/P50-mutation-5.0.1.json
-81fdbac91593a0e61931cc24afd8f4ea778fe336715b6d4fc35fc4b433f21748  docs_phase5/evidence_p50/P50-ACC6-P50-F2-1440.png
-c989ee1fd12be7a0652f6fccd0d8d236f1dbddcf9dab893009e48c896188b1fb  docs_phase5/evidence_p50/P50-ACC6-P50-F6-1440.png
-c989ee1fd12be7a0652f6fccd0d8d236f1dbddcf9dab893009e48c896188b1fb  docs_phase5/evidence_p50/P50-5.0.1-default-collapsed-1440.png
-799dbd5656a9280e3838373381a253f0747949ed1b8acc03161030913d57f88a  docs_phase5/evidence_p50/P50-5.0.1-default-collapsed-390.png
-4da8299c171bb445820635116ddb3b7c1454a4fdcadc1f79b2f67b3a3a63edb0  docs_phase5/evidence_p50/P50-5.0.1-map-expanded-1440.png
+b8296a110b78fd66b8605f38c5885a73d9f5a0298471085692eefc5849671800  docs_phase5/AUDITORIA_INDEPENDENTE_MICROFASE_5_0_2.md
+71d5902b55138e100143f38697f9f2f503465a87b905092b329d1d4408dc339d  docs_phase5/REAUDITORIA_INDEPENDENTE_MICROFASE_5_0_2.md
+8d096d97ac9ca0e5c85daedf64d98367ac6f897cabd97440851ed1130d922fce  docs_phase5/evidence_p50/P50-ACC6-selection-1440.json
+fe3f0531ff78c90bbd9fb7ae95e28b0a0109b4d7320250fa5ea4c89a099e33ff  docs_phase5/evidence_p50/P50-mutation-5.0.1.json
+c08793d750d61d614c49974ca9612abeda33e6dcc5c4fcc40b545e0291fd9887  docs_phase5/evidence_p50/P50-ACC6-P50-F2-1440.png
+fac2885a4312f7cd48b735e465210c19f05b0ae8ce24372df9f8dfc088cd0ec8  docs_phase5/evidence_p50/P50-ACC6-P50-F6-1440.png
+fac2885a4312f7cd48b735e465210c19f05b0ae8ce24372df9f8dfc088cd0ec8  docs_phase5/evidence_p50/P50-5.0.1-default-collapsed-1440.png
+8da3e409ec3c400f31e748d5bfe0d24c0b3a3458d0a0f8f2860a122f4589bec4  docs_phase5/evidence_p50/P50-5.0.1-default-collapsed-390.png
+f7eb8a2af3c3e81b32e99b3179cb192f7616f4af67d6ab730ed79523860e337a  docs_phase5/evidence_p50/P50-5.0.1-map-expanded-1440.png
+2b8a1b3dd599217978ea1793d30a60a84d279fb57e0d33d2a8d7070b587462be  docs_phase5/evidence_p50/P50-5.0.2-evidence-P50-F8-1440.png
+cb50248d1be726cac2be8a12a545d898fc5f76790b6ed2efca98a0750d22c4e5  docs_phase5/evidence_p50/P50-5.0.2-evidence-P50-F10-1440.png
+98a44e86d39d0f5b6b3eb410803b3a48653f625460cfce9aef9e3c691d434bea  docs_phase5/evidence_p50/P50-5.0.2-session-exported-1440.png
+0d21b10a3a25b0eae69378ee990db388dc894c1daf738985225aced1c596a700  docs_phase5/evidence_p50/P50-5.0.2-session-dirty-after-edit-1440.png

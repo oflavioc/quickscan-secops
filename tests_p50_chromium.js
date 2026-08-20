@@ -35,6 +35,27 @@ function resolveBrowser() {                       /* mesma ordem de playwright.c
 /* A Camada 1 aplica `.screen{animation:fade .35s ease}` (congelado). Capturar
    antes do fim da animação produz PNG não determinístico. Aguardar o repouso
    torna a evidência reproduzível entre execuções. */
+/* Captura só o viewport. Necessária quando o estado sob teste contém texto
+   sem pontos de quebra (a fixture de falha de export usa 1 MiB de "x"), que
+   alarga a página congelada e inviabiliza um fullPage. */
+/* Screenshot do próprio elemento: garante que o componente esteja
+   materialmente visível na imagem (M-502-3). */
+async function shotElement(page, selector, name) {
+  fs.mkdirSync(EVIDENCE, { recursive: true });
+  const loc = page.locator(selector).first();
+  await loc.scrollIntoViewIfNeeded();
+  await page.waitForTimeout(300);
+  await loc.screenshot({ path: path.join(EVIDENCE, name), animations: "disabled" });
+  shots.push(name);
+}
+
+async function shotViewport(page, name) {
+  fs.mkdirSync(EVIDENCE, { recursive: true });
+  await page.waitForTimeout(400);
+  await page.screenshot({ path: path.join(EVIDENCE, name), fullPage: false, animations: "disabled" });
+  shots.push(name);
+}
+
 async function shot(page, name) {
   fs.mkdirSync(EVIDENCE, { recursive: true });
   await page.waitForTimeout(600);
@@ -46,7 +67,7 @@ async function shot(page, name) {
    vetor da fixture. Espelha fixtures_p50.js::p50GotoQuestion dentro da página. */
 async function applyFixture(page, fx) {
   await page.goto(HTML_URL);
-  await page.evaluate(([qids, vec, k]) => {
+  await page.evaluate(([qids, vec, k, notes]) => {
     const step = () => {
       const box = document.getElementById("progbox");
       if (!box || box.classList.contains("hidden")) return -1;
@@ -60,10 +81,11 @@ async function applyFixture(page, fx) {
     key("Enter");
     for (let s = 1; s < k + 2; s++) { key("1"); key("Enter"); }
     qids.forEach((id, i) => window.__DEV.setAnswerById(id, vec[i]));
+    if (notes) Object.keys(notes).forEach(i => window.__DEV.setNote(Number(i), notes[i]));
     let guard = 0;
     while (step() > k + 1 && guard++ < 40) key("ArrowLeft");
     if (step() !== k + 1) throw new Error("navegação: step " + step() + " != " + (k + 1));
-  }, [FX.P50_QIDS, fx.vec, fx.focusQuestion]);
+  }, [FX.P50_QIDS, fx.vec, fx.focusQuestion, fx.notes || null]);
 }
 
 async function acc6(page) {
@@ -126,6 +148,172 @@ async function acc6(page) {
     (ok ? "" : " [" + detail.join(" · ") + "]"));
 }
 
+/* ============================================================================
+   P50-SESUX1B · Rendered persistence claim (Chromium)
+   Texto VISÍVEL e texto acessível/computado do componente de status de sessão
+   devem corresponder ao estado real, nas seis fixtures obrigatórias da §25.5.
+   Inclui texto composto por nós DOM separados (l1 + l2 + notas).
+   ========================================================================== */
+const SESUX_BANNED = [
+  "saved", "auto-saved", "autosave", "salvo automaticamente", "salvamento autom",
+  "pode fechar a aba", "feche a aba com seguran", "retome automaticamente",
+  "retomada autom", "persistência autom", "persistencia autom"
+];
+const SESUX_CANON = {
+  "default":  ["Sessão não salva automaticamente.", "Exporte o arquivo da sessão para continuar depois."],
+  "exported": ["Sessão exportada.", "Guarde o arquivo JSON para retomar posteriormente."],
+  "imported": ["Sessão carregada do arquivo.", "Novas alterações não são salvas automaticamente."]
+};
+
+async function sesux1b(page) {
+  const detail = [];
+  const observed = [];
+
+  const readStatus = () => page.evaluate(() => {
+    const box = document.getElementById("p50-session-status");
+    if (!box) return null;
+    const g = sel => { const e = box.querySelector(sel); return e ? (e.textContent || "").trim() : null; };
+    return {
+      state: box.getAttribute("data-p50-ses-state"),
+      dirty: box.getAttribute("data-p50-ses-dirty"),
+      role: box.getAttribute("role"),
+      l1: g("[data-p50=\"ses-line1\"]"),
+      l2: g("[data-p50=\"ses-line2\"]"),
+      failure: g("[data-p50=\"ses-failure\"]"),
+      dirtyNote: g("[data-p50=\"ses-dirty\"]"),
+      ariaLabel: box.getAttribute("aria-label"),
+      visibleText: (box.innerText || box.textContent || "").replace(/\s+/g, " ").trim(),
+      /* Numa live region role=status o texto ANUNCIADO é o conteúdo. Um
+         aria-label aqui suprimiria dirty/falha (B-502-2), logo exigimos a
+         ausência da sobrescrita e usamos o conteúdo como texto acessível. */
+      accessibleText: (box.textContent || "").replace(/\s+/g, " ").trim()
+    };
+  });
+
+  const check = (name, st, expectState, expectDirty) => {
+    if (!st) { detail.push(name + ": componente de status ausente"); return; }
+    observed.push({ fixture: name, state: st.state, dirty: st.dirty,
+      visibleText: st.visibleText, accessibleText: st.accessibleText });
+    if (st.state !== expectState) detail.push(name + ": estado=" + st.state + " (esperado " + expectState + ")");
+    if (expectDirty !== null && st.dirty !== expectDirty)
+      detail.push(name + ": dirty=" + st.dirty + " (esperado " + expectDirty + ")");
+    if (st.role !== "status") detail.push(name + ": role=" + st.role);
+    const canon = SESUX_CANON[st.state === "export-failed" ? "default" : st.state];
+    if (!canon) { detail.push(name + ": estado desconhecido"); return; }
+    if (st.l1 !== canon[0] || st.l2 !== canon[1])
+      detail.push(name + ": par de mensagens fora do contrato: " + JSON.stringify([st.l1, st.l2]));
+    /* texto visível E acessível: nenhum claim proibido, inclusive composto */
+    const hay = (st.visibleText + " " + st.accessibleText).toLowerCase();
+    SESUX_BANNED.forEach(b => { if (hay.includes(b)) detail.push(name + ": claim proibido \"" + b + "\""); });
+    if (st.ariaLabel !== null)
+      detail.push(name + ": aria-label sobrescreve o conteúdo da live region");
+    if (!st.accessibleText.includes(canon[0]) || !st.accessibleText.includes(canon[1]))
+      detail.push(name + ": texto acessível não corresponde ao visível");
+    /* B-502-2: dirty e falha são estados MATERIAIS e devem constar do texto
+       visível E do texto acessível quando exibidos. */
+    const DIRTY_TXT = "Há alterações ainda não exportadas.";
+    const FAIL_TXT = "A última exportação não foi concluída";
+    if (st.dirty === "true") {
+      if (!st.visibleText.includes(DIRTY_TXT)) detail.push(name + ": dirty ausente do texto visível");
+      if (!st.accessibleText.includes(DIRTY_TXT)) detail.push(name + ": dirty ausente do texto acessível");
+    } else if (st.visibleText.includes(DIRTY_TXT)) {
+      detail.push(name + ": mensagem stale de alterações pendentes");
+    }
+    if (st.state === "export-failed") {
+      if (!st.visibleText.includes(FAIL_TXT)) detail.push(name + ": falha ausente do texto visível");
+      if (!st.accessibleText.includes(FAIL_TXT)) detail.push(name + ": falha ausente do texto acessível");
+    } else if (st.visibleText.includes(FAIL_TXT)) {
+      detail.push(name + ": mensagem stale de falha de exportação");
+    }
+    /* nenhuma mensagem stale de outro estado */
+    Object.keys(SESUX_CANON).forEach(kk => {
+      if (kk === (st.state === "export-failed" ? "default" : st.state)) return;
+      if (st.visibleText.includes(SESUX_CANON[kk][0]) && SESUX_CANON[kk][0] !== canon[0])
+        detail.push(name + ": wording stale de \"" + kk + "\"");
+    });
+  };
+
+  /* Volta à pergunta pelo controle congelado e digita evidência pelo evento real. */
+  const realNoteEdit = text => page.evaluate(t => {
+    document.getElementById("review").click();
+    document.querySelector("#app [data-p50=\"evidence-open\"]").click();
+    const ta = document.getElementById("notetxt");
+    ta.value = t;
+    ta.dispatchEvent(new Event("input", { bubbles: true }));
+  }, text);
+
+  /* 1 · fresh assessment — estado de carga, antes de qualquer interação */
+  await page.goto(HTML_URL);
+  check("fresh", await readStatus(), "default", "false");
+
+  /* 2 · modified but not exported */
+  await applyFixture(page, FX.P50_F2);
+  await page.evaluate(id => { window.__DEV.setAnswerById(id, 3); window.__P50.decorate(); }, FX.P50_QIDS[5]);
+  check("modified-not-exported", await readStatus(), "default", "true");
+
+  /* 3 · export success (caminho real: botão congelado -> modal -> confirmar) */
+  await page.evaluate(() => {
+    if (typeof URL.createObjectURL !== "function") { URL.createObjectURL = () => "blob:p50"; URL.revokeObjectURL = () => {}; }
+    window.__DEV.showResults();
+    document.getElementById("ses-export").click();
+    document.getElementById("ux-modal-ok").click();
+  });
+  check("export-success", await readStatus(), "exported", "false");
+  /* M-502-3: o componente precisa aparecer MATERIALMENTE na imagem —
+     screenshot do próprio elemento, não do topo da página. */
+  await shotElement(page, "#p50-session-status", "P50-5.0.2-session-exported-1440.png");
+
+  /* 4 · post-export modification -> volta ao padrão, honestamente */
+  await page.evaluate(id => { window.__DEV.setAnswerById(id, 1); window.__uxDecor(document.getElementById("app")); },
+    FX.P50_QIDS[7]);
+  check("post-export-modification", await readStatus(), "default", "true");
+
+  /* 5 · import success */
+  await page.evaluate(() => {
+    const doc = window.__DEV.buildSessionDocument("sesux1b");
+    const compat = window.__DEV.sessionCompatibility(doc);
+    window.__DEV.showImportPreview(doc, compat, null);
+    document.getElementById("ux-modal-ok").click();
+  });
+  check("import-success", await readStatus(), "imported", "false");
+
+  /* 5b · POST-IMPORT MODIFICATION — fixture normativa da §25.5.
+     Usa o evento REAL do campo de evidência, não alteração por API. */
+  await realNoteEdit("evidência digitada após o import");
+  const pim = await readStatus();
+  check("post-import-modification", pim, "default", "true");
+  /* evidência do estado pós-edição: default + dirty=true + alterações pendentes */
+  await shotElement(page, "#p50-session-status", "P50-5.0.2-session-dirty-after-edit-1440.png");
+  if (pim && pim.visibleText.includes(SESUX_CANON["imported"][0]))
+    detail.push("post-import-modification: wording de import permaneceu");
+  /* o componente não muta estado canônico: a nota veio do handler congelado */
+  const ownerOk = await page.evaluate(() =>
+    Object.values(window.__DEV.captureCanonicalInputs().assessment.notes)
+      .some(v => String(v).includes("evidência digitada após o import")));
+  if (!ownerOk) detail.push("post-import-modification: nota não chegou ao owner canônico");
+
+  /* 6 · export failure (documento acima do limite -> nenhum arquivo gerado) */
+  await applyFixture(page, FX.P50_F2);
+  await page.evaluate(() => {
+    if (typeof URL.createObjectURL !== "function") { URL.createObjectURL = () => "blob:p50"; URL.revokeObjectURL = () => {}; }
+    window.__DEV.setNote(0, "x".repeat(1024 * 1024 + 64));      /* estoura o limite de 1 MiB */
+    window.__DEV.showResults();
+    document.getElementById("ses-export").click();
+    document.getElementById("ux-modal-ok").click();
+  });
+  const failSt = await readStatus();
+  check("export-failure", failSt, "export-failed", null);
+  if (failSt && !failSt.failure) detail.push("export-failure: nota de falha ausente");
+  if (failSt && failSt.l1 !== SESUX_CANON["default"][0])
+    detail.push("export-failure: exibiu wording de export bem-sucedido");
+
+  const ok = detail.length === 0;
+  results.push({ id: "P50-SESUX1B", ok });
+  console.log((ok ? "PASS" : "FAIL") + "  P50-SESUX1B — status de sessão renderizado corresponde ao estado real (matriz normativa completa + pós-export)" +
+    (ok ? "" : " [" + detail.join(" · ") + "]"));
+  return observed;
+}
+
 (async () => {
   let chromium;
   try { ({ chromium } = require("@playwright/test")); }
@@ -149,6 +337,12 @@ async function acc6(page) {
     const pageErrors = [];
     page.on("pageerror", e => pageErrors.push(String(e.message)));
     await acc6(page);
+    /* superfície de evidência da 5.0.2: chips + cue + preview inerte */
+    await applyFixture(page, FX.P50_F8);
+    await shot(page, "P50-5.0.2-evidence-P50-F8-1440.png");
+    await applyFixture(page, FX.P50_F10);
+    await shot(page, "P50-5.0.2-evidence-P50-F10-1440.png");
+    const sesuxObserved = await sesux1b(page);
     if (pageErrors.length) {
       console.log("FAIL  P50-ACC6 — erros de página: " + pageErrors.join(" | "));
       results.push({ id: "P50-ACC6-pageerrors", ok: false });
@@ -263,6 +457,7 @@ async function acc6(page) {
         pageErrors,
         screenshots: shots.slice(),
         smokeNonNormative: smoke,
+        sesux1b: sesuxObserved,
         note: "Screenshots são evidência visual mínima da 5.0.1. NÃO encerram P50-VIS1..P50-VIS10.",
         verdict: results.every(r => r.ok) ? "PASS" : "FAIL"
       }, null, 2) + "\n", "utf8");
@@ -273,7 +468,7 @@ async function acc6(page) {
 function finish() {
   const fail = results.filter(r => !r.ok).length;
   const pass = results.length - fail;
-  console.log("\nP50 CHROMIUM (microfase 5.0.1): " + pass + " PASS · " + fail + " FAIL de " + results.length +
+  console.log("\nP50 CHROMIUM (microfases 5.0.1+5.0.2): " + pass + " PASS · " + fail + " FAIL de " + results.length +
     (skipped ? " · " + skipped + " NÃO EXECUTADO (requer Chromium real)" : ""));
   process.exit(fail ? 1 : 0);
 }

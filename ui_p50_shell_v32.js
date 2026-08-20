@@ -1,5 +1,7 @@
 /* ============================================================================
-   PHASE 5.0 · microfase 5.0.1 — ASSESSMENT SHELL & ANSWER SEMANTICS
+   PHASE 5.0 · microfases 5.0.1 + 5.0.2
+   5.0.1 — ASSESSMENT SHELL & ANSWER SEMANTICS
+   5.0.2 — EVIDENCE CAPTURE & PROGRESS UX
    Camada 5 (superfície nova). Engine, Camada 1 e todos os módulos 4.x
    permanecem byte-idênticos: este módulo APENAS decora pós-render e aciona
    os handlers/setters congelados.
@@ -15,13 +17,22 @@
      §12.2(d) superfície nova NÃO geométrica: n/d + "Não avaliado" + acessível
      COR-01   cor exclusivamente por token congelado (var(--dom-accent))
 
-   Fora do escopo desta microfase (microfases 5.0.2-5.0.5): evidência/notas,
-   chips de metadata, componente de status de sessão, dirty flag, camada
-   derivada de suficiência, results, heat map, target, assurance visual.
+   Acrescentado pela 5.0.2:
+     UI-005   cue de interpretação pelo Caminho A (descrição canônica da opção)
+     UI-006   evidência inline ligada EXCLUSIVAMENTE ao owner canônico notes[k],
+              gravada apenas pelo setter congelado (nunca por escrita direta)
+     UI-007   indicador de presença de nota (nunca confirma resposta)
+     UI-008   chips com provenance: Question ID, Domain ID, presença de nota
+     UI-010A  estado efêmero de sessão (dirty flag e resultado da última operação)
+     UI-011   mensagens honestas de portabilidade de sessão
+     UI-049   renderização inerte de texto livre (sem innerHTML em lugar algum)
 
-   Disciplina de implementação (errata 5.0.1 §3.4): este módulo NÃO usa
-   innerHTML. Todo texto entra por textContent e todo atributo por
-   setAttribute. Nenhum conteúdo de texto livre novo é renderizado aqui.
+   Fora do escopo (microfases 5.0.3-5.0.5): camada derivada de suficiência,
+   UI-009A, UI-012/012A/012B, results, heat map, target, assurance visual completa.
+
+   Disciplina de implementação: este módulo NÃO usa innerHTML. Todo texto entra
+   por textContent e todo atributo por setAttribute — inclusive o texto livre de
+   evidência, que é conteúdo do cliente.
    ========================================================================== */
 (function () {
   "use strict";
@@ -41,6 +52,71 @@
   var p50PrevInvocations = 0;
   var p50Observer = null;
   var p50Decorators = [];
+
+  /* ============================================================
+     5.0.2 · estado efêmero de sessão (UI-010A)
+     Vive SOMENTE aqui, na Camada 5. Nunca entra no documento de sessão,
+     nunca entra em `inputs`, nunca vira derivado exportado, nunca altera o
+     schema nem o comportamento canônico de import/export. Não grava nada por
+     conta própria e não cria persistência local ou remota.
+     ============================================================ */
+  var p50SesState = "default";       /* default | exported | imported | export-failed */
+  var p50CleanSnapshot = null;       /* serialização canônica no último ponto "limpo" */
+
+  function p50Canon() {
+    try { return JSON.stringify(captureCanonicalInputs()); }
+    catch (e) { return null; }
+  }
+  function p50MarkClean() { p50CleanSnapshot = p50Canon(); }
+  function p50IsDirty() {
+    var now = p50Canon();
+    if (now === null || p50CleanSnapshot === null) return false;
+    return now !== p50CleanSnapshot;
+  }
+
+  /* Observadores de export/import — mesmo padrão aprovado em AMB-1:
+     captura única, predecessor SEMPRE invocado e inalterado, retorno repassado
+     intacto, falha isolada. Nao duplicam nem substituem a logica de Session
+     Portability: apenas leem o resultado ja produzido por ela. */
+  var p50SesWrapCount = 0;
+  var p50SesSub = { download: null, "import": null };     /* substituto SOMENTE de teste */
+  var p50SesCalls = { download: 0, "import": 0 };
+  var p50SesPredCalls = { download: 0, "import": 0 };
+  /* Chama o predecessor EXATAMENTE uma vez, preservando `this`, argumentos,
+     retorno e exceções. O substituto existe apenas para que os gates possam
+     provar o contrato; em produção nunca é instalado. */
+  function p50SesInvoke(kind, fallback, ctx, args) {
+    p50SesCalls[kind]++;
+    var pred = p50SesSub[kind] || fallback;
+    p50SesPredCalls[kind]++;
+    return pred.apply(ctx, args);
+  }
+
+  var p50PrevDownloadSession = (typeof downloadSession === "function") ? downloadSession : null;
+  if (p50PrevDownloadSession) {
+    downloadSession = function () {
+      var r = p50SesInvoke("download", p50PrevDownloadSession, this, arguments);
+      try {
+        if (r && r.ok) { p50SesState = "exported"; p50MarkClean(); }
+        else { p50SesState = "export-failed"; }
+        p50UpdateSessionStatus();
+      } catch (e) { console.error("P50 session status:", e.message); }
+      return r;
+    };
+    p50SesWrapCount++;
+  }
+  var p50PrevImportSessionDocument = (typeof importSessionDocument === "function") ? importSessionDocument : null;
+  if (p50PrevImportSessionDocument) {
+    importSessionDocument = function () {
+      var r = p50SesInvoke("import", p50PrevImportSessionDocument, this, arguments);
+      try {
+        if (r && r.ok) { p50SesState = "imported"; p50MarkClean(); }
+        p50UpdateSessionStatus();
+      } catch (e) { console.error("P50 session status:", e.message); }
+      return r;
+    };
+    p50SesWrapCount++;
+  }
 
   /* ============================================================
      UI-004A · owner ÚNICO de composição de window.__uxDecor
@@ -97,8 +173,14 @@
     p50Depth++;
     if (p50Depth > p50MaxDepth) p50MaxDepth = p50Depth;
     try {
+      /* Ponto limpo inicial: o primeiro render ocorre na home, com o assessment
+         vazio. Sem esta âncora, "modificado desde o último export" nunca seria
+         verdadeiro antes da primeira exportação. */
+      if (p50CleanSnapshot === null) p50MarkClean();
       p50BuildShell();
       p50DecorateAnswers();
+      p50QuestionExtras();
+      p50HomeSessionStatus();
       if (p50ProbeReentry) { p50ProbeReentry = false; render(); }
     } catch (e) {
       p50ShellErrors++;
@@ -205,6 +287,7 @@
     });
     nav.appendChild(bPrev); nav.appendChild(bNext); nav.appendChild(bTgl);
     orient.appendChild(nav);
+    orient.appendChild(p50BuildSessionStatus());      /* UI-011 · status honesto */
     shell.appendChild(orient);
 
     /* ---- sidebar: 5 domínios -> 3 perguntas, com os três estados ---- */
@@ -253,6 +336,195 @@
     }
     shell.appendChild(side);
     wrap.insertBefore(shell, app);
+  }
+
+  /* ============================================================
+     5.0.2 · UI-011 / UI-010A — componente de status de sessão
+     Mensagens honestas, sem qualquer afirmação de gravação, persistência ou
+     retomada que o runtime não sustente. Enquanto houver alteração desde o último ponto
+     limpo, o estado exibido volta ao padrão: dizer "Sessão exportada" com
+     modificações pendentes seria desonesto (P50-SESUX2).
+     ============================================================ */
+  var P50_SES_MSG = {
+    "default":       ["Sessão não salva automaticamente.",
+                      "Exporte o arquivo da sessão para continuar depois."],
+    "exported":      ["Sessão exportada.",
+                      "Guarde o arquivo JSON para retomar posteriormente."],
+    "imported":      ["Sessão carregada do arquivo.",
+                      "Novas alterações não são salvas automaticamente."],
+    "export-failed": ["Sessão não salva automaticamente.",
+                      "Exporte o arquivo da sessão para continuar depois."]
+  };
+
+  function p50EffectiveSesState() {
+    if (p50SesState === "export-failed") return "export-failed";
+    if (p50IsDirty()) return "default";          /* honestidade tem precedência */
+    return p50SesState;
+  }
+
+  function p50BuildSessionStatus() {
+    var st = p50EffectiveSesState();
+    var dirty = p50IsDirty();
+    var msg = P50_SES_MSG[st] || P50_SES_MSG["default"];
+    var box = el("div", {
+      id: "p50-session-status", "class": "p50-ses", "data-p50": "session-status",
+      "data-p50-ses-state": st, "data-p50-ses-dirty": dirty ? "true" : "false",
+      role: "status", "aria-live": "polite"
+      /* Sem aria-label: numa live region o texto ANUNCIADO é o conteúdo. Um
+         aria-label aqui suprimiria justamente as linhas de dirty e de falha
+         (B-502-2). O nome/descrição acessível passa a ser o conteúdo completo. */
+    });
+    box.appendChild(el("p", { "class": "p50-ses-l1", "data-p50": "ses-line1" }, msg[0]));
+    box.appendChild(el("p", { "class": "p50-ses-l2", "data-p50": "ses-line2" }, msg[1]));
+    if (st === "export-failed") {
+      box.appendChild(el("p", { "class": "p50-ses-note", "data-p50": "ses-failure" },
+        "A última exportação não foi concluída — nenhum arquivo foi gerado."));
+    }
+    if (dirty) {
+      box.appendChild(el("p", { "class": "p50-ses-note", "data-p50": "ses-dirty" },
+        "Há alterações ainda não exportadas."));
+    }
+    return box;
+  }
+
+  /* Atualiza em todos os hosts onde o componente já exista, sem render(). */
+  function p50UpdateSessionStatus() {
+    var nodes = document.querySelectorAll("#p50-session-status");
+    for (var i = 0; i < nodes.length; i++) {
+      var fresh = p50BuildSessionStatus();
+      nodes[i].parentNode.replaceChild(fresh, nodes[i]);
+    }
+  }
+  function p50MountSessionStatus(host, where) {
+    if (!host) return;
+    var old = document.getElementById("p50-session-status");
+    if (old) old.remove();
+    var node = p50BuildSessionStatus();
+    if (where === "prepend" && host.firstChild) host.insertBefore(node, host.firstChild);
+    else host.appendChild(node);
+  }
+
+  /* ============================================================
+     B-502-1 · reconciliação no evento REAL de evidência
+     O handler congelado de #notetxt atualiza notes[k] SEM chamar render(),
+     de modo que o status ficava materialmente stale ("Sessão exportada" com o
+     owner já sujo). A observação é ADITIVA: addEventListener não substitui o
+     handler congelado (t.oninput), que continua sendo o único escritor de
+     notes[k]. Como é registrada DEPOIS dele, executa DEPOIS dele — o owner já
+     está atualizado quando reconciliamos. Não chama render().
+     ============================================================ */
+  function p50OnNoteInput() {
+    try {
+      p50UpdateEvidenceIndicators();
+      p50UpdateSessionStatus();
+    } catch (e) {
+      p50ShellErrors++;
+      console.error("P50 note observer:", e.message);      /* falha isolada */
+    }
+  }
+  function p50BindNoteObserver() {
+    var ta = document.getElementById("notetxt");
+    if (!ta) return;
+    if (ta.dataset.p50NoteBound === "1") return;            /* idempotente */
+    ta.dataset.p50NoteBound = "1";
+    ta.addEventListener("input", p50OnNoteInput);
+    ta.addEventListener("change", p50OnNoteInput);
+  }
+  /* Indicador de presença de nota (UI-007) reconciliado sem re-render. */
+  function p50UpdateEvidenceIndicators() {
+    if (!isQuestionScreen()) return;
+    var k = step - 1;
+    var has = String(notes[k] || "").trim().length > 0;
+    var chip = document.querySelector("#app [data-p50-chip=\"evidence\"]");
+    if (!chip) return;
+    chip.setAttribute("data-p50-evidence", has ? "present" : "none");
+    chip.setAttribute("aria-label", has ? "Evidência registrada para esta pergunta"
+                                        : "Sem evidência registrada para esta pergunta");
+    chip.textContent = has ? "Evidência registrada" : "Sem evidência";
+  }
+
+  /* ============================================================
+     5.0.2 · UI-005 (cue) · UI-007 (indicador) · UI-008 (chips)
+     Toda informação exibida tem provenance observável no runtime.
+     Nenhuma taxonomia nova, nenhum weight/importance, nenhum framework.
+     ============================================================ */
+  function p50QuestionExtras() {
+    var scr = document.querySelector("#app section.screen");
+    if (!scr) return;
+    var stale = scr.querySelector("#p50-q"); if (stale) stale.remove();
+    var staleCue = scr.querySelector("#p50-cue"); if (staleCue) staleCue.remove();
+    if (!isQuestionScreen()) return;               /* extras só na tela de pergunta */
+    var k = step - 1;
+    var qq = QS[k];
+    if (!qq) return;
+    var hasNote = String(notes[k] || "").trim().length > 0;
+
+    /* --- chips (UI-008): apenas Question ID, Domain ID e presença de nota --- */
+    var chips = el("div", { id: "p50-q", "class": "p50-chips", "data-p50": "chips", role: "list" });
+    chips.appendChild(el("span", {
+      "class": "p50-chip", "data-p50": "chip", "data-p50-chip": "qid", role: "listitem",
+      "aria-label": "Identificador da pergunta: " + qq.id
+    }, "ID · " + qq.id));
+    chips.appendChild(el("span", {
+      "class": "p50-chip", "data-p50": "chip", "data-p50-chip": "dom", role: "listitem",
+      "data-dom": qq.dom,
+      "aria-label": "Domínio: " + DOMS[qq.dom].pt + " · " + DOMS[qq.dom].en
+    }, DOMS[qq.dom].pt + " · " + DOMS[qq.dom].en));
+    chips.appendChild(el("span", {
+      "class": "p50-chip p50-chip-ev", "data-p50": "chip", "data-p50-chip": "evidence",
+      "data-p50-evidence": hasNote ? "present" : "none", role: "listitem",
+      "aria-label": hasNote ? "Evidência registrada para esta pergunta"
+                            : "Sem evidência registrada para esta pergunta"
+    }, hasNote ? "Evidência registrada" : "Sem evidência"));
+    var hint = scr.querySelector("p.hint");
+    if (hint) hint.insertAdjacentElement("afterend", chips); else scr.appendChild(chips);
+
+    /* --- cue (UI-005, Caminho A) + evidência (UI-006/UI-007) --- */
+    var block = el("div", { id: "p50-cue", "class": "p50-cueblock" });
+    var v = ans[k];
+    if (v !== null && v !== undefined) {
+      /* A cue é a descrição canônica da opção SELECIONADA, lida do próprio
+         runtime. Para 0..3 equivale a QS[k].opts[v].d; para "NA" é o descritor
+         canônico já renderizado pela Camada 1. Nenhum texto é inventado. */
+      var sel = document.querySelector("#app .opts .opt[data-p50-selected=\"true\"]");
+      var dEl = sel ? sel.querySelector(".d") : null;
+      var cueText = dEl ? (dEl.textContent || "").trim() : "";
+      if (cueText) {
+        block.appendChild(el("p", {
+          "class": "p50-cue", "data-p50": "cue",
+          "data-p50-cue-for": (v === "NA" ? "NA" : String(v)),
+          "aria-label": "Interpretação da resposta selecionada: " + cueText
+        }, cueText));
+      }
+    }
+
+    /* Preview inerte da evidência registrada. O conteúdo é texto livre do
+       cliente: entra EXCLUSIVAMENTE por textContent (UI-049). */
+    if (hasNote) {
+      var raw = String(notes[k]);
+      var flat = raw.replace(/\s+/g, " ").trim();
+      var preview = flat.length > 160 ? flat.slice(0, 160) + "…" : flat;
+      var ev = el("div", { "class": "p50-ev", "data-p50": "evidence", "data-p50-evidence": "present" });
+      ev.appendChild(el("span", { "class": "p50-ev-lab", "data-p50": "evidence-label" }, "Evidência registrada"));
+      ev.appendChild(el("p", { "class": "p50-ev-txt", "data-p50": "evidence-preview" }, preview));
+      block.appendChild(ev);
+    }
+
+    /* Atalho para o campo canônico congelado. NÃO escreve em notes[k]:
+       delega ao controle congelado, que é o único setter da nota. */
+    var tglBtn = el("button", {
+      type: "button", "class": "p50-btn p50-btn-ghost", "data-p50": "evidence-open"
+    }, hasNote ? "Editar evidência ou observação" : "Registrar evidência ou observação");
+    tglBtn.addEventListener("click", function () {
+      var t = document.getElementById("notetgl");        /* setter congelado */
+      if (t) t.click();
+    });
+    block.appendChild(tglBtn);
+
+    var opts = scr.querySelector(".opts");
+    if (opts) opts.insertAdjacentElement("afterend", block); else scr.appendChild(block);
+
+    p50BindNoteObserver();
   }
 
   /* ============================================================
@@ -322,6 +594,30 @@
   /* ============================================================
      API do módulo: consumo pelas microfases seguintes + diagnóstico
      ============================================================ */
+  /* Status de sessão na home, onde vive o controle congelado #ses-import-home.
+     Cobre o estado "fresh assessment" antes de qualquer interação. */
+  function p50HomeSessionStatus() {
+    if (step !== -1) return;
+    var host = document.getElementById("ux-home") ||
+               document.querySelector("#app section.screen");
+    p50MountSessionStatus(host, "append");
+  }
+
+  /* Status de sessão também na tela de resultados, onde vivem os controles
+     congelados #ses-export / #ses-import. Consome o agregador da 5.0.1 via
+     registerDecor — NÃO reatribui window.__uxDecor. */
+  function p50ResultsSessionDecor(app) {
+    var host = document.getElementById("ses-actions");
+    if (host && host.parentNode) {
+      var old = document.getElementById("p50-session-status");
+      if (old) old.remove();
+      host.insertAdjacentElement("afterend", p50BuildSessionStatus());
+      return;
+    }
+    p50MountSessionStatus(app || document.getElementById("app"), "append");
+  }
+  p50Decorators.push(p50ResultsSessionDecor);
+
   window.__P50 = {
     __installed: true,
     registerDecor: function (fn) { if (typeof fn === "function") p50Decorators.push(fn); },
@@ -337,11 +633,22 @@
         decorReentriesBlocked: p50DecorReentriesBlocked,
         shellDepth: p50Depth,
         shellMaxDepth: p50MaxDepth,
-        shellErrors: p50ShellErrors
+        shellErrors: p50ShellErrors,
+        sessionWrapCount: p50SesWrapCount,
+        sessionCalls: { download: p50SesCalls.download, "import": p50SesCalls["import"] },
+        sessionPredCalls: { download: p50SesPredCalls.download, "import": p50SesPredCalls["import"] },
+        sessionState: p50SesState,
+        sessionEffectiveState: p50EffectiveSesState(),
+        sessionDirty: p50IsDirty()
       };
     },
     __spyPredecessor: function (fn) { p50Observer = fn; },
     __forceShellFailure: function (on) { p50ForceFailure = !!on; },
+    __substituteSessionPredecessor: function (kind, fn) { p50SesSub[kind] = fn || null; },
+    __resetSessionCounters: function () {
+      p50SesCalls.download = 0; p50SesCalls["import"] = 0;
+      p50SesPredCalls.download = 0; p50SesPredCalls["import"] = 0;
+    },
     __probeReentrancy: function () { p50MaxDepth = 0; p50ProbeReentry = true; render(); return p50MaxDepth; }
   };
 })();

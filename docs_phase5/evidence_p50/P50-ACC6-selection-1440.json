@@ -1,0 +1,77 @@
+{
+  "gate": "P50-ACC6",
+  "microfase": "5.0.1",
+  "browser": {
+    "name": "chromium",
+    "version": "151.0.7922.34",
+    "executablePath": "/home/oflavioc/.cache/ms-playwright/chromium-1234/chrome-linux64/chrome",
+    "resolutionOrigin": "Chromium gerenciado pelo Playwright",
+    "specNominalVersion": "141.0.7390.37",
+    "nominalDeviationAccepted": true
+  },
+  "playwright": "1.62.1",
+  "viewport": "1440x900",
+  "fixtures": [
+    "P50-F2",
+    "P50-F6"
+  ],
+  "pageErrors": [],
+  "screenshots": [
+    "P50-ACC6-P50-F2-1440.png",
+    "P50-ACC6-P50-F6-1440.png",
+    "P50-5.0.1-default-collapsed-1440.png",
+    "P50-5.0.1-map-expanded-1440.png",
+    "P50-5.0.1-default-collapsed-390.png"
+  ],
+  "smokeNonNormative": {
+    "viewports": [
+      {
+        "viewport": {
+          "w": 1440,
+          "h": 900
+        },
+        "shellPresent": true,
+        "shellHeight": 193,
+        "collapsed": "true",
+        "sidebarVisible": false,
+        "toggleVisible": true,
+        "toggleLabel": "Mostrar mapa do assessment",
+        "questionTop": 364,
+        "firstCardTop": 517,
+        "documentScrollWidth": 1440,
+        "horizontalOverflow": false,
+        "stickyOverlapsFirstCard": false,
+        "clippedLabels": 0
+      },
+      {
+        "viewport": {
+          "w": 390,
+          "h": 844
+        },
+        "shellPresent": true,
+        "shellHeight": 245,
+        "collapsed": "true",
+        "sidebarVisible": false,
+        "toggleVisible": true,
+        "toggleLabel": "Mostrar mapa do assessment",
+        "questionTop": 440,
+        "firstCardTop": 618,
+        "documentScrollWidth": 390,
+        "horizontalOverflow": false,
+        "stickyOverlapsFirstCard": false,
+        "clippedLabels": 0
+      }
+    ],
+    "expanded": {
+      "collapsed": "false",
+      "sidebarVisible": true,
+      "domains": 5,
+      "questions": 15,
+      "unset": 13,
+      "na": 1,
+      "confirmed": 1
+    }
+  },
+  "note": "Screenshots são evidência visual mínima da 5.0.1. NÃO encerram P50-VIS1..P50-VIS10.",
+  "verdict": "PASS"
+}

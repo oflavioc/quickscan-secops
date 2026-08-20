@@ -1,0 +1,99 @@
+{
+  "baseline": {
+    "shell": "f3580683d55d73837116060d7be099b47d63c491bb3a0633496fe6df35a7d3c4",
+    "css": "8a274b4e04167d33289b41958c7d8c363467e6c12bb2a5c83f6dcf4c3c925cd8",
+    "html": "61e8877ee1f798b3a42c2c7232657e065cf7955750e365820e9128a67506c69d"
+  },
+  "detected": 11,
+  "total": 11,
+  "mutants": [
+    {
+      "id": "M1",
+      "desc": "remover a chamada do predecessor em window.__uxDecor",
+      "gate": "P50-UX13",
+      "detected": true,
+      "note": "",
+      "line": "FAIL  P50-UX13 — composição de __uxDecor e do wrapper de render: captura única, predecessor preservado, ordem, idempotência, reentrância, isolamento [predecessor não foi invocado: decoração congelada "
+    },
+    {
+      "id": "M2",
+      "desc": "remover a chamada do predecessor no wrapper de render",
+      "gate": "UX 4.1",
+      "detected": true,
+      "note": "",
+      "line": "FAIL  UX1 — home sem contexto: fluxo antigo em um clique; CTA secundário + microcopy presentes [Cannot read properties of null (reading 'click')]"
+    },
+    {
+      "id": "M3",
+      "desc": "trocar o mapeamento de dois answer cards",
+      "gate": "P50-UX1",
+      "detected": true,
+      "note": "",
+      "line": "FAIL  P50-UX1 — cards mapeiam 1:1 os valores canônicos; nada criado, removido ou reordenado [ordem/valores [\"0\",\"2\",\"1\",\"3\",\"NA\"] em k=0]"
+    },
+    {
+      "id": "M4",
+      "desc": "trocar o acionamento do handler congelado por escrita direta em ans[k]",
+      "gate": "P50-UX2",
+      "detected": true,
+      "note": "",
+      "line": "FAIL  P50-UX2 — seleção por teclado na superfície nova = mesmo estado canônico do clique, pelo setter congelado [caminho congelado invocado 0 vez(es), esperado 1]"
+    },
+    {
+      "id": "M5",
+      "desc": "dessincronizar a descrição canônica d de uma opção",
+      "gate": "P50-UX1",
+      "detected": true,
+      "note": "",
+      "line": "FAIL  P50-UX1 — cards mapeiam 1:1 os valores canônicos; nada criado, removido ou reordenado [descrição canônica dessincronizada k=0 i=0]"
+    },
+    {
+      "id": "M6",
+      "desc": "renderizar 0.0 para domínio sem resposta confirmada",
+      "gate": "P50-SUF2",
+      "detected": true,
+      "note": "",
+      "line": "FAIL  P50-SUF2 — domínio sem resposta confirmada exibe n/d + 'Não avaliado', nunca 0.0 [P50-F1 dom 0: visível '0.0']"
+    },
+    {
+      "id": "M7",
+      "desc": "introduzir derivação local de suficiência no renderer novo",
+      "gate": "P50-SUF0",
+      "detected": true,
+      "note": "",
+      "line": "FAIL  P50-SUF0 — o renderer novo não é dono de lógica de suficiência (lint prospectivo) [ui_p50_shell_v32.js compara confirmedCount() diretamente]"
+    },
+    {
+      "id": "M8",
+      "desc": "introduzir hexadecimal de cor de domínio na camada nova",
+      "gate": "P50-COR1",
+      "detected": true,
+      "note": "",
+      "line": "FAIL  P50-COR1 — lint de fonte única: zero hex de cor de domínio nos módulos novos [ui_p50_v32.css declara hex de domínio #307FE2]"
+    },
+    {
+      "id": "M9",
+      "desc": "remover a proteção de idempotência do shell",
+      "gate": "P50-UX13",
+      "detected": true,
+      "note": "",
+      "line": "FAIL  P50-UX13 — composição de __uxDecor e do wrapper de render: captura única, predecessor preservado, ordem, idempotência, reentrância, isolamento [shell duplicado: 6 -> 8]"
+    },
+    {
+      "id": "M11",
+      "desc": "neutralizar o guard de reentrância da composição de __uxDecor",
+      "gate": "P50-UX13",
+      "detected": true,
+      "note": "",
+      "line": "FAIL  P50-UX13 — composição de __uxDecor e do wrapper de render: captura única, predecessor preservado, ordem, idempotência, reentrância, isolamento [lista de decoradores P50 reexecutada por reentrânc"
+    },
+    {
+      "id": "M10",
+      "desc": "dessincronizar o estado acessível do card do estado canônico",
+      "gate": "P50-ACC6",
+      "detected": true,
+      "note": "",
+      "line": "FAIL  P50-ACC6 — estado programático da seleção coerente com o estado canônico [P50-F2: data-p50-selected=false em value=2 · P50-F6: data-p50-selected=false em value=0]"
+    }
+  ]
+}

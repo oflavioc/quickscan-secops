@@ -1,0 +1,24 @@
+# MANIFEST_PHASE5_P50.sha256 — delta da Phase 5.0 (microfase 5.0.1 · Assessment Shell & Answer Semantics)
+# precedente: MANIFEST_PHASE5_UNSET.sha256 · estendido a cada entrega da fase
+# gerado POR ULTIMO, apos a importacao do parecer independente; exclui apenas a si proprio
+# baseline de ENTRADA da 5.0.1 (HTML): 787cd3ab33188eee75a82590ab08d4240b6016a21329f899fd597050e3dde85a
+# baseline de SAIDA   da 5.0.1 (HTML): 61e8877ee1f798b3a42c2c7232657e065cf7955750e365820e9128a67506c69d
+f3580683d55d73837116060d7be099b47d63c491bb3a0633496fe6df35a7d3c4  ui_p50_shell_v32.js
+8a274b4e04167d33289b41958c7d8c363467e6c12bb2a5c83f6dcf4c3c925cd8  ui_p50_v32.css
+fde1e9868e1dddc294c4f66464dd031b65a5bcd0fea15ca850e3651696d48eac  fixtures_p50.js
+f495c5081cf62c9ede2352a8d7edf42785505fd065e78c43a49f93375fbeb5b6  tests_p50_core.js
+465ff2686bc36ad47fcf20a436509a01ec0ab4673b89d9914f14c6dc950e5396  tests_p50_chromium.js
+009a879f30ae31355f0c86511e432497fac0b7a85118b73442e1078d43b51bf5  tests_p50_mutants.js
+f2295a421e59e77825530d77069a6d0350e9a01af8fdf506a6d1482416456a9e  build_v32_html.py
+fc0bf13b5c32832c04121245f3512dcc0e66744d2d1164da598bab1ec924746f  package.json
+61e8877ee1f798b3a42c2c7232657e065cf7955750e365820e9128a67506c69d  quickscan_secops_soccmm_v3_2_dev.html
+4518700b78c00331025680c3d381d025343baf949fcef7628a851b3a937dd3ca  docs_phase5/MICROFASE_5_0_1_REPORT.md
+ad7cc22aff7e8552117940e03ca0b748b0aab988bf72d5804cdd9fb07bf214cf  docs_phase5/BACKLOG_PRODUCTION_HARDENING_VAULT.md
+46386669d81a3cd1de247986b61d1f97973873c6f8d9cb65bd0e812a42c966a3  docs_phase5/AUDITORIA_INDEPENDENTE_MICROFASE_5_0_1.md
+59bbb13565351b75314c886c9e9001ed0040de24ff13cd6840a4c7bea66943af  docs_phase5/evidence_p50/P50-ACC6-selection-1440.json
+f749d27365d1168df57b15419ab891c87fd794ef1ec7b60c42255aeb2f362963  docs_phase5/evidence_p50/P50-mutation-5.0.1.json
+81fdbac91593a0e61931cc24afd8f4ea778fe336715b6d4fc35fc4b433f21748  docs_phase5/evidence_p50/P50-ACC6-P50-F2-1440.png
+c989ee1fd12be7a0652f6fccd0d8d236f1dbddcf9dab893009e48c896188b1fb  docs_phase5/evidence_p50/P50-ACC6-P50-F6-1440.png
+c989ee1fd12be7a0652f6fccd0d8d236f1dbddcf9dab893009e48c896188b1fb  docs_phase5/evidence_p50/P50-5.0.1-default-collapsed-1440.png
+799dbd5656a9280e3838373381a253f0747949ed1b8acc03161030913d57f88a  docs_phase5/evidence_p50/P50-5.0.1-default-collapsed-390.png
+4da8299c171bb445820635116ddb3b7c1454a4fdcadc1f79b2f67b3a3a63edb0  docs_phase5/evidence_p50/P50-5.0.1-map-expanded-1440.png

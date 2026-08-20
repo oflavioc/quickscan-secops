@@ -140,6 +140,141 @@ const MUTANTS = [
     reason: /reexecutada por reentrância|reentrância|recurs/i
   },
   {
+    id: "M12",
+    desc: "cue exibir a descrição de outra opção (dessincronizada da seleção)",
+    file: SHELL,
+    find: `      var dEl = sel ? sel.querySelector(".d") : null;`,
+    repl: `      var dEl = document.querySelector("#app .opts .opt[data-p50-value='3'] .d");`,
+    gate: "P50-UX3", cmd: "node tests_p50_core.js",
+    reason: /cue != opts|cue stale/
+  },
+  {
+    id: "M13",
+    desc: "escrever a evidência direto em notes[k] em vez do setter congelado",
+    file: SHELL,
+    find: `      var t = document.getElementById("notetgl");        /* setter congelado */
+      if (t) t.click();`,
+    repl: `      notes[step - 1] = String(notes[step - 1] || "");
+      render();`,
+    gate: "P50-UX4", cmd: "node tests_p50_core.js",
+    reason: /campo canônico de nota não foi aberto|escreve diretamente em notes/
+  },
+  {
+    id: "M14",
+    desc: "fabricar um chip sem provenance no runtime (weight class)",
+    file: SHELL,
+    find: `    var hint = scr.querySelector("p.hint");`,
+    repl: `    chips.appendChild(el("span", { "class": "p50-chip", "data-p50": "chip",
+      "data-p50-chip": "weight", role: "listitem", "aria-label": "Peso" }, "Importance: alta"));
+    var hint = scr.querySelector("p.hint");`,
+    gate: "P50-UX5", cmd: "node tests_p50_core.js",
+    reason: /conjunto de chips|chip fabricado|esperados 3 chips/
+  },
+  {
+    id: "M15",
+    desc: "renderizar a evidência como marcação em vez de texto inerte",
+    file: SHELL,
+    find: `      ev.appendChild(el("p", { "class": "p50-ev-txt", "data-p50": "evidence-preview" }, preview));`,
+    repl: `      var pnode = el("p", { "class": "p50-ev-txt", "data-p50": "evidence-preview" });
+      pnode.innerHTML = preview;
+      ev.appendChild(pnode);`,
+    gate: "P50-UX12", cmd: "node tests_p50_core.js",
+    reason: /gerou .* elemento|gerou marcação|executou|escape de contexto|nó executável/
+  },
+  {
+    id: "M16",
+    desc: "manter o wording de export mesmo com modificações posteriores",
+    file: SHELL,
+    find: `    if (p50IsDirty()) return "default";          /* honestidade tem precedência */`,
+    repl: `    /* MUTANTE: honestidade removida */`,
+    gate: "P50-SESUX2", cmd: "node tests_p50_core.js",
+    reason: /wording de export persistiu|modificação pós-export/
+  },
+  {
+    id: "M17",
+    desc: "serializar o estado efêmero de sessão dentro dos inputs canônicos",
+    file: SHELL,
+    find: `  function p50MarkClean() { p50CleanSnapshot = p50Canon(); }`,
+    repl: `  function p50MarkClean() {
+    p50CleanSnapshot = p50Canon();
+    try { OPERATIONAL_REFINEMENT.answers.p50SessionState = p50SesState; } catch (e) {}
+  }`,
+    gate: "P50-SESUX5", cmd: "node tests_p50_core.js",
+    reason: /estado efêmero serializado|bloco inputs alterado|roundtrip|inválido/
+  },
+  {
+    id: "M18",
+    desc: "remover a reconciliação no evento REAL de evidência (B-502-1)",
+    file: SHELL,
+    find: `    ta.addEventListener("input", p50OnNoteInput);`,
+    repl: `    void p50OnNoteInput;   /* MUTANTE: reconciliação removida */`,
+    gate: "P50-SESUX2", cmd: "node tests_p50_core.js",
+    reason: /status stale após digitar evidência|dirty não reconciliado|wording de export permaneceu/
+  },
+  {
+    id: "M19",
+    desc: "manter o estado `imported` após edição da evidência",
+    file: SHELL,
+    find: `    if (p50IsDirty()) return "default";          /* honestidade tem precedência */`,
+    repl: `    if (p50IsDirty() && p50SesState !== "imported") return "default";`,
+    gate: "P50-SESUX3", cmd: "node tests_p50_core.js",
+    reason: /estado imported persistiu|wording de import permaneceu|dirty não reconciliado/
+  },
+  {
+    id: "M20",
+    desc: "omitir dirty e falha do texto acessível (aria-label sobrescrevendo a live region)",
+    file: SHELL,
+    find: `      role: "status", "aria-live": "polite"`,
+    repl: `      role: "status", "aria-live": "polite",
+      "aria-label": "Estado da sessão: " + msg[0] + " " + msg[1]`,
+    gate: "P50-SESUX1B", cmd: "node tests_p50_chromium.js",
+    reason: /aria-label sobrescreve|texto acessível/
+  },
+  {
+    id: "M21",
+    desc: "remover o wrapper de export (downloadSession não observado)",
+    file: SHELL,
+    find: `      var r = p50SesInvoke("download", p50PrevDownloadSession, this, arguments);`,
+    repl: `      var r = p50PrevDownloadSession.apply(this, arguments);`,
+    gate: "P50-SESUX4", cmd: "node tests_p50_core.js",
+    reason: /predecessor invocado 0|contadores|identidade do objeto retornado|`this` do predecessor/
+  },
+  {
+    id: "M22",
+    desc: "remover o wrapper de import (importSessionDocument não observado)",
+    file: SHELL,
+    find: `      var r = p50SesInvoke("import", p50PrevImportSessionDocument, this, arguments);`,
+    repl: `      var r = p50PrevImportSessionDocument.apply(this, arguments);`,
+    gate: "P50-SESUX4", cmd: "node tests_p50_core.js",
+    reason: /import ok=true não marcou imported|import ok=false marcou imported|retorno de falha de import/
+  },
+  {
+    id: "M23",
+    desc: "inverter a leitura de r.ok no observador de export",
+    file: SHELL,
+    find: `        if (r && r.ok) { p50SesState = "exported"; p50MarkClean(); }
+        else { p50SesState = "export-failed"; }`,
+    repl: `        if (r && !r.ok) { p50SesState = "exported"; p50MarkClean(); }
+        else { p50SesState = "export-failed"; }`,
+    gate: "P50-SESUX4", cmd: "node tests_p50_core.js",
+    reason: /ok=true não marcou exported|ok=false marcou exported|ok=true não marcou clean/
+  },
+  {
+    id: "M24",
+    desc: "duplicar a invocação do predecessor de sessão",
+    file: SHELL,
+    find: `    var pred = p50SesSub[kind] || fallback;
+    p50SesPredCalls[kind]++;
+    return pred.apply(ctx, args);`,
+    repl: `    var pred = p50SesSub[kind] || fallback;
+    p50SesPredCalls[kind]++;
+    pred.apply(ctx, args);
+    p50SesPredCalls[kind]++;
+    return pred.apply(ctx, args);`,
+    gate: "P50-SESUX4", cmd: "node tests_p50_core.js",
+    reason: /predecessor invocado 2|contadores/
+  },
+  {
     id: "M10",
     desc: "dessincronizar o estado acessível do card do estado canônico",
     file: SHELL,
@@ -197,7 +332,7 @@ const MUTANTS = [
   console.log("restauração: shell " + (sha(SHELL) === BASE_SHA.shell ? "OK" : "DIVERGENTE") +
     " · css " + (sha(CSS) === BASE_SHA.css ? "OK" : "DIVERGENTE") +
     " · html " + (htmlBack === BASE_HTML_SHA ? "OK" : "DIVERGENTE (" + htmlBack + ")"));
-  console.log("\nMUTATION TESTING (5.0.1): " + ok + "/" + MUTANTS.length + " mutantes detectados pelo gate e motivo esperados");
+  console.log("\nMUTATION TESTING (5.0.1+5.0.2): " + ok + "/" + MUTANTS.length + " mutantes detectados pelo gate e motivo esperados");
   fs.mkdirSync(path.join(HERE, "docs_phase5", "evidence_p50"), { recursive: true });
   fs.writeFileSync(path.join(HERE, "docs_phase5", "evidence_p50", "P50-mutation-5.0.1.json"),
     JSON.stringify({ baseline: { shell: BASE_SHA.shell, css: BASE_SHA.css, html: BASE_HTML_SHA },

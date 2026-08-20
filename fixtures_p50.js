@@ -71,7 +71,54 @@ const P50_F6 = (() => {
   return { id: "P50-F6", name: "Três estados de resposta", vec: v, landscape: "UNSET", focusQuestion: 2 };
 })();
 
-const P50_FIXTURES = { "P50-F1": P50_F1, "P50-F2": P50_F2, "P50-F6": P50_F6 };
+/* ---------------------------------------------------------------------------
+   P50-F8 · Rich notes  (microfase 5.0.2)
+   Texto longo, Unicode fora do BMP, marcas combinantes, pontuação extensa,
+   quebras de linha. Exercita UI-006/UI-007 e a renderização inerte (UI-049).
+--------------------------------------------------------------------------- */
+const P50_F8 = (() => {
+  const v = nulls();
+  v[0] = 2; v[1] = 1; v[3] = 3;
+  const notes = {};
+  notes[0] = "MSSP cobre 8×5; plantão interno fora do horário — SLA P1 = 30 min.\n" +
+             "Contatos: NOC (ramal 4021) & SOC (ramal 4022).\n" +
+             "Observação: “governança” revisada em 12/03; pendências: 3 (três).";
+  notes[1] = "Unicode: 😀🇧🇷 àéîõü ﬁ ligature · combinantes: a\u0301e\u0300 · " +
+             "matemático: 𝕏 𝔸 · RTL: \u200Fשלום\u200E · zero-width:\u200B fim.";
+  notes[3] = ("Parágrafo longo. ").repeat(60) + "FIM-DO-TEXTO-LONGO";
+  return { id: "P50-F8", name: "Rich notes", vec: v, notes, landscape: "UNSET", focusQuestion: 0 };
+})();
+
+/* ---------------------------------------------------------------------------
+   P50-F10 · Adversarial content  (microfase 5.0.2)
+   Payloads da UI-049. NENHUM deve produzir nó executável, atributo de evento
+   ou escape de contexto na superfície nova.
+--------------------------------------------------------------------------- */
+const P50_ADVERSARIAL = [
+  "<script>window.__p50_pwned=1;<\/script>",
+  "<img src=x onerror=\"window.__p50_pwned=1\">",
+  "<svg/onload=window.__p50_pwned=1>",
+  "\" onmouseover=\"window.__p50_pwned=1\" x=\"",
+  "' onfocus='window.__p50_pwned=1' y='",
+  "</textarea><script>window.__p50_pwned=1;<\/script>",
+  "<iframe src=javascript:window.__p50_pwned=1></iframe>",
+  "a < b && c > d — ampersand &amp; &lt; &gt; &#39; &quot;",
+  "javascript:window.__p50_pwned=1",
+  "\u2028\u2029 separadores de linha Unicode",
+  "</div></section><h1>injetado</h1>",
+  "&#60;script&#62;window.__p50_pwned=1&#60;/script&#62;"
+];
+const P50_F10 = (() => {
+  const v = nulls();
+  v[0] = 0; v[1] = "NA"; v[2] = 3;
+  const notes = {};
+  P50_ADVERSARIAL.forEach((payload, i) => { notes[i % N] = payload; });
+  notes[0] = P50_ADVERSARIAL.join(" \n ");        /* pergunta em foco: todos juntos */
+  return { id: "P50-F10", name: "Adversarial content", vec: v, notes, landscape: "UNSET", focusQuestion: 0 };
+})();
+
+const P50_FIXTURES = { "P50-F1": P50_F1, "P50-F2": P50_F2, "P50-F6": P50_F6,
+                       "P50-F8": P50_F8, "P50-F10": P50_F10 };
 
 /* ===================== aplicação sobre o runtime real ===================== */
 
@@ -94,29 +141,30 @@ function p50Key(w, d, key, target) {
 
 /* Aplica o vetor pelos owners canônicos do runtime (API DEV congelada).
    NÃO renderiza — a renderização é provocada por navegação real. */
-function p50ApplyVec(w, vec) {
+function p50ApplyVec(w, vec, notes) {
   P50_QIDS.forEach((id, k) => w.__DEV.setAnswerById(id, vec[k]));
+  if (notes) Object.keys(notes).forEach(k => w.__DEV.setNote(Number(k), notes[k]));
 }
 
 /* Navega até a pergunta de índice k (0..13) deixando o vetor da fixture no ar.
    Estratégia (somente controles congelados): avança até k+2 respondendo
    temporariamente, aplica o vetor real e volta com ArrowLeft — cada volta
    dispara render(), portanto o render final reflete o vetor da fixture. */
-function p50GotoQuestion(w, d, vec, k) {
+function p50GotoQuestion(w, d, vec, k, notes) {
   if (k < 0 || k > 13) throw new Error("p50GotoQuestion: k fora de 0..13 (limite do caminho congelado)");
   w.__DEV.setArq(0);
   d.querySelector("#start").click();          /* step 0 · ponto de partida */
   p50Key(w, d, "Enter");                      /* step 1 · pergunta 1       */
   const forward = k + 2;
   for (let s = 1; s < forward; s++) { p50Key(w, d, "1"); p50Key(w, d, "Enter"); }
-  p50ApplyVec(w, vec);
+  p50ApplyVec(w, vec, notes);
   let guard = 0;
   while (p50Step(d) > k + 1 && guard++ < 40) p50Key(w, d, "ArrowLeft");
   if (p50Step(d) !== k + 1) throw new Error("p50GotoQuestion: step " + p50Step(d) + " != " + (k + 1));
 }
 
 function p50ApplyFixture(w, d, fx) {
-  p50GotoQuestion(w, d, fx.vec, fx.focusQuestion);
+  p50GotoQuestion(w, d, fx.vec, fx.focusQuestion, fx.notes);
   return fx;
 }
 
@@ -132,7 +180,7 @@ function p50ConfirmedTotal(vec) {
 
 module.exports = {
   P50_QIDS, P50_DOM_OF, P50_DOM_PT, P50_DOM_EN, P50_SCORES,
-  P50_F1, P50_F2, P50_F6, P50_FIXTURES,
+  P50_F1, P50_F2, P50_F6, P50_F8, P50_F10, P50_FIXTURES, P50_ADVERSARIAL,
   p50Step, p50Key, p50ApplyVec, p50GotoQuestion, p50ApplyFixture,
   p50ConfirmedByDomain, p50ConfirmedTotal
 };

@@ -684,21 +684,33 @@ async function sesux1b(page) {
    quanto ao VEREDITO: indisponível é declarado; divergente é FAIL. (B) é
    sempre exigido, de modo que nenhum caminho leva a PASS vacuoso.
    ========================================================================== */
+/* A baseline de ENTRADA é identificada por DUAS constantes imutáveis: o commit
+   de entrada da 5.0.3 e o SHA-256 funcional do HTML daquele commit. Resolver por
+   `HEAD:` era correto ENQUANTO o trabalho vivia na branch da microfase, mas
+   passou a apontar para o próprio candidato assim que a 5.0.3 foi integrada em
+   `main` — o guard, corretamente, recusou comparar o candidato consigo mesmo e
+   FALHOU. A referência é agora ancorada no commit, independente de branch, de
+   `HEAD`, de pai corrente e de merge-base. */
+const PR1_BASELINE_COMMIT = "fe4a536a508ed592bf62d1545a90e399036bb43d";
 const PR1_BASELINE_SHA = "5d1a301e472dd1453f4056c6919ea818e6fd7768d67158321deaae9ad0c926cd";
 
 function pr1Baseline() {
   try {
     const { execFileSync } = require("child_process");
     const crypto = require("crypto"), os = require("os");
-    const buf = execFileSync("git", ["show", "HEAD:quickscan_secops_soccmm_v3_2_dev.html"],
-      { cwd: __dirname, maxBuffer: 1 << 28 });
+    const ref = PR1_BASELINE_COMMIT + ":quickscan_secops_soccmm_v3_2_dev.html";
+    const buf = execFileSync("git", ["show", ref], { cwd: __dirname, maxBuffer: 1 << 28 });
     const got = crypto.createHash("sha256").update(buf).digest("hex");
     if (got !== PR1_BASELINE_SHA)
-      return { ok: false, why: "baseline de entrada com SHA " + got.slice(0, 16) + " != " + PR1_BASELINE_SHA.slice(0, 16) };
+      return { ok: false, why: "baseline de entrada do commit " + PR1_BASELINE_COMMIT.slice(0, 16) +
+        " com SHA " + got.slice(0, 16) + " != " + PR1_BASELINE_SHA.slice(0, 16) + " (esperado)" };
     const f = path.join(os.tmpdir(), "p50-pr1-baseline-" + PR1_BASELINE_SHA.slice(0, 12) + ".html");
     fs.writeFileSync(f, buf);
     return { ok: true, file: f };
-  } catch (e) { return { ok: false, why: String(e.message).split("\n")[0] }; }
+  } catch (e) {
+    return { ok: false, why: "baseline de entrada indisponível no commit " +
+      PR1_BASELINE_COMMIT.slice(0, 16) + ": " + String(e.message).split("\n")[0] };
+  }
 }
 
 /* Mede a superfície legada com visibilidade REAL (computed style + caixa),

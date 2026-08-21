@@ -24,18 +24,59 @@
 # apontava para o proprio candidato). Somente tests_p50_chromium.js mudou;
 # zero byte de runtime, evidencia ou documento selado. Cardinalidade 51 -> 52
 # pelo relatorio POST_MERGE_FIX_P50_PR1_BASELINE.md.
-# Regenerado POR ULTIMO, depois da assurance direcionada desta correcao.
+# 5.0.4 Target & Heat Map Visualizations     (CANDIDATA NAO COMITADA · aguarda AUDITORIA
+#        INDEPENDENTE. Novos na 5.0.4: relatorio + 7 evidencias P50-5.0.4-*.)
+#
+# ================= REGISTRO HISTORICO PRE-ERRATA — SUPERADO PELA ERRATA =================
+# ============== AUTORIZADA UG8. As QUATRO linhas abaixo descrevem a ENTREGA ==============
+# ============== INICIAL da 5.0.4 e NAO o estado corrente; ver logo adiante. ==============
+# [HISTORICO] na entrega inicial a candidata estava BLOQUEADA por B-504-UNSET-LABEL:
+# [HISTORICO] UI-016a exige "n/d" no eixo por PERGUNTA e a suite congelada UG8 proibia
+# [HISTORICO] a string "n/d" em #app numa sessao suficiente; nao contornado, aguardava
+# [HISTORICO] decisao do proprietario, com UG em 12/13 e tests_unset_ug.js byte-identico.
+# ======================== FIM DO REGISTRO HISTORICO PRE-ERRATA ==========================
+#
+# ESTADO CORRENTE (governa tudo o que estiver acima):
+# ERRATA AUTORIZADA UG8 (5.0.4): por ato explicito do proprietario (Opcao 1),
+# corrigido o ESCOPO do oraculo de UG8 em tests_unset_ug.js — excecao de boundary
+# TEST-ONLY, nominal e nao extensivel. B-504-UNSET-LABEL FECHADO; UG voltou a 13/13.
+# Nenhum requisito, byte de runtime ou rotulo P50 alterado; HTML inalterado (d7c53209...).
+# P50-GOV1 continua fixando tests_unset_ug.js BYTE A BYTE, no valor autorizado.
+# CARDINALIDADE 60 -> 61 (enumeracao REAL, nao presuncao): a errata previa 60 supondo
+# que tests_unset_ug.js ja fosse caminho coberto. Ele NAO era: sempre foi suite
+# CONGELADA e protegida, fora do delta da Phase 5.0 e, portanto, fora deste manifesto.
+# Ao entrar no delta pela excecao nominal autorizada, passou a exigir cobertura — sem
+# ela o manifesto deixaria de ser completo sobre `git status --porcelain`.
+# RESUMO DO ESTADO CORRENTE: Opcao 1 aplicada · B-504-UNSET-LABEL FECHADO · UG 13/13 ·
+# excecao TEST-ONLY somente no bloco UG8 de tests_unset_ug.js · P50-GOV1 reancorado ao
+# hash autorizado af129900... · manifesto com 61 entradas · HTML e runtime INALTERADOS
+# (d7c53209...) · demais protegidos byte-identicos · candidata aguarda auditoria independente.
+# AJUSTE DOCUMENTAL PRE-AUDITORIA: rodada exclusivamente documental; alterados apenas
+# MICROFASE_5_0_4_REPORT.md (§19 reconciliada) e este manifesto. Nenhum executavel,
+# teste, evidencia, HTML ou build tocado ou reexecutado.
+# Regenerado POR ULTIMO, depois da reconciliacao documental.
+# SELAGEM 5.0.4: auditoria independente orientada a risco concluida com veredito
+# PASS COM RESSALVAS NAO BLOQUEANTES. Importado byte a byte o parecer
+# AUDITORIA_INDEPENDENTE_MICROFASE_5_0_4.md (8aaa7513...5a34107 · 25.553 bytes · 445 linhas)
+# e criado o registro MICROFASE_5_0_4_ACCEPTANCE.md. As sete ressalvas R1-R7 foram
+# aceitas pelo proprietario como backlog nao bloqueante, e a RQ-AUD504-ID (identidade
+# preliminar na §12 do parecer versus identidade externa final verificada) foi aceita
+# como ressalva documental: a identidade CANONICA e 8aaa7513...5a34107. O parecer NAO
+# foi editado. Nenhum byte executavel alterado; HTML, engine, M41, relatorio, testes e
+# as 7 evidencias 5.0.4 preservados. Cardinalidade 61 -> 63 por estes dois documentos.
+# Regenerado POR ULTIMO, depois da selagem documental da 5.0.4.
 1f9c7a5a8ad10b724f9caab86eead66eeb5ad6df1f397c4b41b0b75380577b09  ui_p50_shell_v32.js
 cdb4a6edcc8eee64c33d7410301ddcf059e725ffa588ca009b16fc7afd6e5a32  ui_p50_suff_v32.js
-9694ef05c518e2ad11100f2ce0b3c15a7e9be2587c5a2a59de51d6768d30e670  ui_p50_results_v32.js
-57a6fa7204a5de3bce6527785f1c318ce47ecf2c0acfe5c04cabe488d77d7620  ui_p50_v32.css
-90b2a7d2a3044094a3bafb48b6954a28d171e307733f451e4495b445023bc9b5  fixtures_p50.js
-ff6e26469c7ee41109e33068477d991c983d4d495969b5625ecadeb4a88927bc  tests_p50_core.js
-52c5e1357dbb53b19bcff483e9521356b0b48063bdb6610df90114fc3bdf8847  tests_p50_chromium.js
+b52f5c3b3ef2975ac9906f31f8001c21a3311cbfc156f2aeed8780eaa567eb5d  ui_p50_results_v32.js
+81b32002a8fe4d891d4d7ce3704ee98c6c43ddefba9d8bd5f966cfdb6f2d9a30  ui_p50_v32.css
+08610c8f92238eefb82a07ec57cb1ab9cdbb626cad1c9483d278e26ed572443f  fixtures_p50.js
+4a6b526d873e485249eaf02a25b06029c4d289ce55a12afc8e05fa763426b324  tests_p50_core.js
+c0ead18e2be76fb7ef8c219b1f30ac876c2ae543d04007a415c687968fdf0d0e  tests_p50_chromium.js
 28f2e876d4f614baf83b02d0c23bbbf19a983d4b0a943e1b42d1f8c8c067ddf5  tests_p50_mutants.js
+af129900d1c5e2b8f02a9582f4fc8ab26fecc617cc595c9f2a7508000cabcb91  tests_unset_ug.js
 bce37fef5e4722e6e6215186f33c9f0af030bb03e706504a30ca80fededc07bc  build_v32_html.py
 fc0bf13b5c32832c04121245f3512dcc0e66744d2d1164da598bab1ec924746f  package.json
-04f9d7ba9c5534aff69fec5193ab7fd8548dae304eddf29fad1378c5de5639ab  quickscan_secops_soccmm_v3_2_dev.html
+d7c532097ac00548212085579c434e4dab69d14b7ed51ad86ab68377fd6cdb8c  quickscan_secops_soccmm_v3_2_dev.html
 4518700b78c00331025680c3d381d025343baf949fcef7628a851b3a937dd3ca  docs_phase5/MICROFASE_5_0_1_REPORT.md
 1b02bd914dd10dc2dcba8e402d058d4c9f9576000d8e1e3ff63611b3cf27e540  docs_phase5/MICROFASE_5_0_2_REPORT.md
 ea313469ea84df6dd6c1ed9b80b24220bd94c09469e5836e66efd56edb375ff5  docs_phase5/MICROFASE_5_0_3_REPORT.md
@@ -48,6 +89,16 @@ f0e207554cc0ed5d63354212baf52df88d841209f5dc48494aa334f971af7cb5  docs_phase5/AU
 ebdf69e6992725b5e71edd86047773f8cc224a48582828431a0cb679f87c752d  docs_phase5/AUDITORIA_INDEPENDENTE_REAUDITORIA_FINAL_MICROFASE_5_0_3.md
 74ba2e69090f81015fdfbabceccdd8f35b5dccbb1c3fff820e5b0ad081652db1  docs_phase5/MICROFASE_5_0_3_ACCEPTANCE.md
 b1474bf1b5a9e1caa3310dd0dad0bc08e0237d838611ff6dd1926179014bcb43  docs_phase5/POST_MERGE_FIX_P50_PR1_BASELINE.md
+8bc9db6dcf9d026e081d24cc6a89ec7bdc9e7fcaaa8147e9efa97cae933e3e37  docs_phase5/MICROFASE_5_0_4_REPORT.md
+8aaa751334b5ee8e34e390d9ed5049bad670ec46666aafba47f6bbf9a5e34107  docs_phase5/AUDITORIA_INDEPENDENTE_MICROFASE_5_0_4.md
+8e7d72fb9275a7eec25b5ae87e900a8910e4a7b49d7a139784a51a345012c6da  docs_phase5/MICROFASE_5_0_4_ACCEPTANCE.md
+db99288d81043c99a50db542c9c9aa7b1c676af7c25c04475ab34ed8e8bdfe19  docs_phase5/evidence_p50/P50-5.0.4-heatmap-F6-1440.png
+24c44a211a6b43ad0b2e7e9207844fb1649bbe8edfc25d5e46ba43ce4983547a  docs_phase5/evidence_p50/P50-5.0.4-heatmap-F6-390.png
+a1b8f039620510cb419c9634dcbe588f310099d03b9b090154245694ef994815  docs_phase5/evidence_p50/P50-5.0.4-presence-F7-1440.png
+648e78574fe5a3f456747b6e3fd28d736a09c9f2fd1661b129cac999e3601623  docs_phase5/evidence_p50/P50-5.0.4-current-target-F9-1440.png
+b5176b252711573acf7b964e37548fbbea77398ac4c98da583543175e11572ed  docs_phase5/evidence_p50/P50-5.0.4-current-target-F9-390.png
+df5ed81e9b9c9c6f691f721cb914cbb64dee1833815f669e719fbe54f9cd2fc1  docs_phase5/evidence_p50/P50-5.0.4-domain-drilldown-1440.png
+7337718adc0326cbdb669d7a43ee8acb4b15464e3118afc1cc2e6267bd027b85  docs_phase5/evidence_p50/P50-5.0.4-visual-surface.json
 59bbb13565351b75314c886c9e9001ed0040de24ff13cd6840a4c7bea66943af  docs_phase5/evidence_p50/P50-ACC6-selection-1440.json
 f749d27365d1168df57b15419ab891c87fd794ef1ec7b60c42255aeb2f362963  docs_phase5/evidence_p50/P50-mutation-5.0.1.json
 81fdbac91593a0e61931cc24afd8f4ea778fe336715b6d4fc35fc4b433f21748  docs_phase5/evidence_p50/P50-ACC6-P50-F2-1440.png

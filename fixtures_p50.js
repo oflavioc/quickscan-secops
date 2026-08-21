@@ -4,7 +4,9 @@
      5.0.1  P50-F1 · P50-F2 · P50-F6
      5.0.2  P50-F8 · P50-F10
      5.0.3  P50-F3 · P50-F4 · P50-F5
-   P50-F7 e P50-F9 NÃO são criadas — nem como placeholder (§17.3 da diretriz).
+     5.0.4  P50-F7 · P50-F9
+   Nenhuma outra fixture é criada — nem como placeholder. Não existe fixture de
+   framework mapping nem de print (§15/§33 da REV B).
 
    Nenhuma fixture inventa estado canônico: um vetor de 15 posições
    (null | 0..3 | "NA") é aplicado pelos owners reais do runtime congelado.
@@ -166,8 +168,47 @@ const P50_F5 = (() => {
            screen: "results", focusQuestion: 0 };
 })();
 
+/* ---------------------------------------------------------------------------
+   P50-F7 · UNSET vs NONE no eixo de PRESENCE  (microfase 5.0.4)
+   Duas capabilities canônicas em estados materialmente distintos:
+     knowledge-management = "UNSET"  → não informado (nunca zero, nunca ausência)
+     security-analytics   = "NONE"   → ausência CONFIRMADA (estado declarado)
+   As duas possuem `questionIds` canônicos e, portanto, domínio derivável:
+   knowledge → Pessoas (1) · logs → Tecnologia (3). O vetor de respostas é
+   independente do eixo de presence: existe apenas para dar contexto de tela.
+   Uso: P50-UX11, P50-VIS8, P50-COR3.
+--------------------------------------------------------------------------- */
+const P50_F7 = (() => {
+  const v = nulls();
+  v[0] = 2; v[1] = 1;                /* Negócio    · 2 confirmadas */
+  v[3] = 1; v[4] = 2;                /* Pessoas    · 2 confirmadas */
+  v[6] = 2; v[7] = 1;                /* Processos  · 2 confirmadas */
+  v[9] = 2; v[10] = 3;               /* Tecnologia · 2 confirmadas */
+  v[12] = 1; v[13] = 2;              /* Serviços   · 2 confirmadas */
+  return { id: "P50-F7", name: "UNSET vs NONE (presence)", vec: v,
+           landscape: "MIXED",
+           presence: { "knowledge-management": "UNSET", "security-analytics": "NONE" },
+           screen: "results", focusQuestion: 0 };
+})();
+
+/* ---------------------------------------------------------------------------
+   P50-F9 · Target profile  (microfase 5.0.4)
+   Current confirmado e suficiente ([3,3,3,3,3] · 15) com overrides LEGÍTIMOS,
+   todos estritamente superiores ao atual — o setter canônico `setTarget()`
+   recusa qualquer valor inferior, de modo que a fixture não pode fabricar alvo.
+   Overrides cobrem Negócio, Pessoas e Tecnologia; Processos e Serviços ficam
+   deliberadamente SEM alvo, para provar que target só aparece onde há override.
+   Uso: P50-VIS9, P50-VIS7.
+--------------------------------------------------------------------------- */
+const P50_F9 = (() => {
+  const v = new Array(N).fill(1);    /* todas confirmadas no nível 1 (score 1.7) */
+  return { id: "P50-F9", name: "Target profile", vec: v, landscape: "UNSET",
+           targets: { "mandate": 3, "governance": 2, "team-capacity": 2, "logs": 3 },
+           screen: "results", focusQuestion: 0 };
+})();
+
 const P50_FIXTURES = { "P50-F1": P50_F1, "P50-F2": P50_F2, "P50-F3": P50_F3,
-                       "P50-F4": P50_F4, "P50-F5": P50_F5, "P50-F6": P50_F6,
+                       "P50-F4": P50_F4, "P50-F5": P50_F5, "P50-F6": P50_F6, "P50-F7": P50_F7, "P50-F9": P50_F9,
                        "P50-F8": P50_F8, "P50-F10": P50_F10 };
 
 /* ===================== aplicação sobre o runtime real ===================== */
@@ -224,8 +265,35 @@ function p50ApplyFixture(w, d, fx) {
 function p50ApplyResults(w, d, fx) {
   w.__DEV.setArq(0);
   p50ApplyVec(w, fx.vec, fx.notes);
+  p50ApplyPresence(w, fx.presence);
+  p50ApplyTargets(w, fx.targets);
   w.__DEV.showResults();
   return fx;
+}
+
+/* Aplica o eixo de PRESENCE da fixture pelo owner canônico do runtime
+   (`V32.TECH_LANDSCAPE`). Não cria capability nova e não inventa presence:
+   apenas declara, nas capabilities que já existem, o estado que a fixture
+   descreve. UNSET nunca recebe driver órfão (invariante congelada C11). */
+function p50ApplyPresence(w, presence) {
+  if (!presence) return;
+  const L = w.__DEV.V32.TECH_LANDSCAPE;
+  Object.keys(presence).forEach(id => {
+    if (!L[id]) throw new Error("p50ApplyPresence: capability inexistente no runtime: " + id);
+    L[id].presence = presence[id];
+    if (presence[id] === "UNSET") L[id].declaredDriver = null;
+  });
+}
+
+/* Aplica o eixo de TARGET pelo setter canônico `setTarget()`. O setter recusa
+   alvo inferior ao atual confirmado e recusa "NA": se a fixture declarar um
+   alvo ilegítimo, o erro aparece AQUI e não silenciosamente dentro de um gate. */
+function p50ApplyTargets(w, targets) {
+  if (!targets) return;
+  Object.keys(targets).forEach(qid => {
+    if (w.__DEV.setTarget(qid, targets[qid]) !== true)
+      throw new Error("p50ApplyTargets: setter canônico recusou " + qid + "=" + targets[qid]);
+  });
 }
 
 /* Validação ESTRUTURAL das contagens declaradas de cada fixture: se o vetor
@@ -237,7 +305,9 @@ const P50_FIXTURE_COUNTS = {
   "P50-F3": [1, 3, 2, 2, 2],
   "P50-F4": [2, 2, 2, 2, 2],
   "P50-F5": [3, 3, 3, 3, 3],
-  "P50-F6": [1, 0, 0, 0, 0]
+  "P50-F6": [1, 0, 0, 0, 0],
+  "P50-F7": [2, 2, 2, 2, 2],
+  "P50-F9": [3, 3, 3, 3, 3]
 };
 function p50AssertFixtureCounts() {
   Object.keys(P50_FIXTURE_COUNTS).forEach(id => {
@@ -261,8 +331,9 @@ function p50ConfirmedTotal(vec) {
 
 module.exports = {
   P50_QIDS, P50_DOM_OF, P50_DOM_PT, P50_DOM_EN, P50_SCORES,
-  P50_F1, P50_F2, P50_F3, P50_F4, P50_F5, P50_F6, P50_F8, P50_F10,
+  P50_F1, P50_F2, P50_F3, P50_F4, P50_F5, P50_F6, P50_F7, P50_F8, P50_F9, P50_F10,
   P50_FIXTURES, P50_ADVERSARIAL, P50_FIXTURE_COUNTS,
   p50Step, p50Key, p50ApplyVec, p50GotoQuestion, p50ApplyFixture, p50ApplyResults,
+  p50ApplyPresence, p50ApplyTargets,
   p50ConfirmedByDomain, p50ConfirmedTotal, p50AssertFixtureCounts
 };

@@ -40,7 +40,7 @@ if (NO_EVIDENCE) console.log("EVIDÊNCIA SUPRIMIDA (execução sob mutação): n
    NUNCA regravado. Sem esta regra, uma execução posterior (ou uma execução sob
    mutação) reescreve o acervo auditado de 5.0.1/5.0.2 sem que nenhuma decisão
    de projeto o tenha tocado. */
-const EVIDENCE_PREFIX = "P50-5.0.3-";
+const EVIDENCE_PREFIX = "P50-5.0.4-";   /* microfase CORRENTE; 5.0.1/5.0.2/5.0.3 são históricas */
 function evidenceWritable(name) {
   if (NO_EVIDENCE) return false;
   return name.indexOf(EVIDENCE_PREFIX) === 0;
@@ -1093,6 +1093,493 @@ async function pr1(browser, pageErrors) {
   return { ok, detail, observed };
 }
 
+/* ============================================================================
+   MICROFASE 5.0.4 · TARGET & HEAT MAP VISUALIZATIONS
+   Gates normativos P50-VIS7 · P50-VIS8 · P50-VIS9 · P50-ACC5.
+   Todos medem a SUPERFÍCIE NOVA (#p50-results) em Chromium real; nenhum deles
+   encerra P50-VIS10 nem redefine a autoridade congelada V9/T14 sobre
+   `#ux-target`, que permanece intacta.
+   ========================================================================== */
+
+/* Aplica a fixture pelos OWNERS CANÔNICOS e alcança a tela de resultados.
+   Presence via V32.TECH_LANDSCAPE; target via o setter canônico setTarget(),
+   que recusa alvo inferior ao atual — a fixture não pode fabricar alvo. */
+async function applyResults(page, fx) {
+  await page.goto(HTML_URL);
+  await page.evaluate(([qids, vec, notes, presence, targets]) => {
+    window.__DEV.setArq(0);
+    qids.forEach((id, i) => window.__DEV.setAnswerById(id, vec[i]));
+    if (notes) Object.keys(notes).forEach(i => window.__DEV.setNote(Number(i), notes[i]));
+    if (presence) Object.keys(presence).forEach(id => {
+      const L = window.__DEV.V32.TECH_LANDSCAPE[id];
+      if (!L) throw new Error("capability inexistente: " + id);
+      L.presence = presence[id];
+      if (presence[id] === "UNSET") L.declaredDriver = null;
+    });
+    if (targets) Object.keys(targets).forEach(qid => {
+      if (window.__DEV.setTarget(qid, targets[qid]) !== true)
+        throw new Error("setter canônico recusou alvo " + qid + "=" + targets[qid]);
+    });
+    window.__DEV.showResults();
+  }, [FX.P50_QIDS, fx.vec, fx.notes || null, fx.presence || null, fx.targets || null]);
+  await pr1Settle(page);
+}
+
+async function selectTab(page, id) {
+  await page.evaluate(t => {
+    const b = document.querySelector('#p50-results [data-p50="tab"][data-p50-tab="' + t + '"]');
+    if (!b) throw new Error("tab ausente: " + t);
+    b.click();
+  }, id);
+  await page.waitForTimeout(60);
+}
+
+/* Geometria dos labels — mesmo método do UG13: bounding boxes reais, com
+   tolerância ZERO de sobreposição e de transbordo do container. */
+function measureLabels(page, sel, containerSel) {
+  return page.evaluate(([sel, containerSel]) => {
+    const box = e => { const b = e.getBoundingClientRect();
+      return { l: +b.left.toFixed(2), t: +b.top.toFixed(2), r: +b.right.toFixed(2), b: +b.bottom.toFixed(2),
+               w: +b.width.toFixed(2), h: +b.height.toFixed(2) }; };
+    const nodes = Array.from(document.querySelectorAll(sel))
+      .filter(e => e.getClientRects().length && (e.textContent || "").trim());
+    const container = document.querySelector(containerSel);
+    const cbox = container ? box(container) : null;
+    const items = nodes.map(e => ({
+      text: (e.textContent || "").replace(/\s+/g, " ").trim().slice(0, 40),
+      key: e.getAttribute("data-qid") || e.getAttribute("data-dom") || e.getAttribute("data-cap") || "",
+      box: box(e),
+      clipped: e.scrollWidth > e.clientWidth + 1 || e.scrollHeight > e.clientHeight + 1
+    }));
+    const se = document.scrollingElement;
+    return { items, container: cbox, documentScrollWidth: se.scrollWidth, innerWidth: window.innerWidth };
+  }, [sel, containerSel]);
+}
+
+function overlaps(a, b) { return !(a.r <= b.l || b.r <= a.l || a.b <= b.t || b.b <= a.t); }
+
+/* P50-VIS7 — labels dos charts novos: disjuntos, contidos e não clipados. */
+async function vis7(browser, pageErrors) {
+  const detail = [], observed = { viewports: [] };
+  const CASES = [
+    { fx: FX.P50_F9, id: "P50-F9", vp: { width: 1440, height: 900 } },
+    { fx: FX.P50_F9, id: "P50-F9", vp: { width: 390, height: 844 } },
+    { fx: FX.P50_F5, id: "P50-F5", vp: { width: 1440, height: 900 } },
+    { fx: FX.P50_F5, id: "P50-F5", vp: { width: 390, height: 844 } }
+  ];
+  const TARGETS = [
+    { tab: "heatmap", sel: '#p50-results [data-p50="hm-cell"] [data-p50="hm-q"]', box: '#p50-results [data-p50="heatmap"]' },
+    { tab: "analise", sel: '#p50-results [data-p50="ct-row"] [data-p50="ct-name"]', box: '#p50-results [data-p50="current-target"]' }
+  ];
+  for (const c of CASES) {
+    const pg = await browser.newPage({ viewport: c.vp });
+    pg.on("pageerror", e => pageErrors.push("VIS7/" + c.id + "/" + c.vp.width + ": " + String(e.message)));
+    try {
+      await applyResults(pg, c.fx);
+      for (const t of TARGETS) {
+        await selectTab(pg, t.tab);
+        const m = await measureLabels(pg, t.sel, t.box);
+        const tag = c.id + "@" + c.vp.width + "/" + t.tab;
+        observed.viewports.push({ case: tag, labels: m.items.length, container: m.container,
+          documentScrollWidth: m.documentScrollWidth, innerWidth: m.innerWidth });
+        if (!m.items.length) { detail.push(tag + ": nenhum label medido"); continue; }
+        if (!m.container) { detail.push(tag + ": container ausente"); continue; }
+        for (let i = 0; i < m.items.length; i++) {
+          const A = m.items[i];
+          if (A.clipped) detail.push(tag + ": label clipado por overflow — \"" + A.text + "\"");
+          const cb = m.container;
+          if (A.box.l < cb.l - 0.5 || A.box.r > cb.r + 0.5 || A.box.t < cb.t - 0.5 || A.box.b > cb.b + 0.5)
+            detail.push(tag + ": label fora do container — \"" + A.text + "\" " + JSON.stringify(A.box) +
+              " vs " + JSON.stringify(cb));
+          for (let j = i + 1; j < m.items.length; j++) {
+            if (overlaps(A.box, m.items[j].box))
+              detail.push(tag + ": labels sobrepostos — \"" + A.text + "\" × \"" + m.items[j].text + "\"");
+          }
+        }
+        if (m.documentScrollWidth > m.innerWidth)
+          detail.push(tag + ": overflow horizontal do documento (" + m.documentScrollWidth + " > " + m.innerWidth + ")");
+      }
+    } catch (e) {
+      detail.push(c.id + "@" + c.vp.width + ": " + String(e.message).split("\n")[0]);
+    } finally { await pg.close(); }
+  }
+  const ok = detail.length === 0;
+  results.push({ id: "P50-VIS7", ok });
+  console.log((ok ? "PASS" : "FAIL") + "  P50-VIS7 — labels dos charts novos disjuntos, contidos e não clipados" +
+    (ok ? "" : " [" + detail.slice(0, 6).join(" · ") + "]"));
+  return { ok, detail, observed };
+}
+
+/* P50-VIS8 — encoding de UNSET/estados nas superfícies novas (§12.2 c/d). */
+async function vis8(browser, pageErrors) {
+  const detail = [], observed = {};
+  const GREEN = "rgb(60, 177, 126)";                 /* --ftnt-green: encoding EXCLUSIVO do alvo */
+  const pg = await browser.newPage({ viewport: { width: 1440, height: 900 } });
+  pg.on("pageerror", e => pageErrors.push("VIS8: " + String(e.message)));
+  try {
+    /* (1) P50-F1 — assessment em branco: 15 células UNSET, zero preenchimento */
+    await applyResults(pg, FX.P50_F1);
+    await selectTab(pg, "heatmap");
+    const blank = await pg.evaluate(() => {
+      const cells = Array.from(document.querySelectorAll('#p50-results [data-p50="hm-cell"]'));
+      return {
+        total: cells.length,
+        unset: cells.filter(c => c.getAttribute("data-p50-ans") === "unset").length,
+        filled: cells.filter(c => c.getAttribute("data-p50-fill") !== "none").length,
+        levels: cells.filter(c => c.hasAttribute("data-p50-level")).length,
+        texts: Array.from(new Set(cells.map(c => (c.querySelector('[data-p50="hm-state"]') || {}).textContent)))
+      };
+    });
+    observed.blank = blank;
+    if (blank.total !== 15) detail.push("P50-F1: " + blank.total + " células (esperadas 15)");
+    if (blank.unset !== 15) detail.push("P50-F1: " + blank.unset + "/15 células UNSET");
+    if (blank.filled !== 0) detail.push("P50-F1: " + blank.filled + " célula(s) com preenchimento fabricado");
+    if (blank.levels !== 0) detail.push("P50-F1: " + blank.levels + " célula(s) UNSET com nível");
+    if (JSON.stringify(blank.texts) !== JSON.stringify(["n/d"]))
+      detail.push("P50-F1: rótulos de UNSET " + JSON.stringify(blank.texts));
+
+    /* (2) P50-F6 — encoding computado do UNSET: cor do PRÓPRIO domínio, esmaecida */
+    await applyResults(pg, FX.P50_F6);
+    await selectTab(pg, "heatmap");
+    const enc = await pg.evaluate(() => {
+      const cell = document.querySelector('#p50-results [data-p50="hm-cell"][data-qid="mandate"]');
+      const row = document.querySelector('#p50-results [data-p50="hm-row"][data-dom="0"]');
+      const cs = getComputedStyle(cell), tint = getComputedStyle(cell).getPropertyValue("--dom-accent").trim();
+      const before = getComputedStyle(cell, "::before");
+      return {
+        ans: cell.getAttribute("data-p50-ans"),
+        cue: cell.getAttribute("data-p50-cue"),
+        fill: cell.getAttribute("data-p50-fill"),
+        domAccentToken: tint,
+        rowAccent: getComputedStyle(row).getPropertyValue("--dom-accent").trim(),
+        borderStyle: cs.borderTopStyle,
+        borderColor: cs.borderTopColor,
+        beforeOpacity: before.opacity,
+        beforeBackground: before.backgroundImage + " | " + before.backgroundColor,
+        text: (cell.querySelector('[data-p50="hm-state"]') || {}).textContent,
+        confirmedCell: (() => {
+          const z = document.querySelector('#p50-results [data-p50="hm-cell"][data-qid="policies"]');
+          const zb = getComputedStyle(z, "::before");
+          return { ans: z.getAttribute("data-p50-ans"), fill: z.getAttribute("data-p50-fill"),
+                   level: z.getAttribute("data-p50-level"), opacity: zb.opacity,
+                   text: (z.querySelector('[data-p50="hm-state"]') || {}).textContent };
+        })()
+      };
+    });
+    observed.unsetEncoding = enc;
+    if (enc.ans !== "unset") detail.push("P50-F6: célula mandate não é unset");
+    if (!enc.cue) detail.push("P50-F6: UNSET sem pista não cromática");
+    if (enc.fill !== "none") detail.push("P50-F6: UNSET com preenchimento");
+    if (enc.borderStyle !== "dashed") detail.push("P50-F6: UNSET sem tracejado (border-style=" + enc.borderStyle + ")");
+    if (enc.borderColor === GREEN) detail.push("P50-F6: UNSET usa o encoding exclusivo do alvo");
+    if (!/^rgb/.test(enc.borderColor)) detail.push("P50-F6: borda de UNSET sem cor computada");
+    if (Number(enc.beforeOpacity) >= 1 || Number(enc.beforeOpacity) <= 0)
+      detail.push("P50-F6: UNSET não está esmaecido (opacity=" + enc.beforeOpacity + ")");
+    if (enc.text !== "n/d") detail.push("P50-F6: UNSET sem rótulo n/d");
+    if (enc.confirmedCell.fill !== "level") detail.push("P50-F6: nível 0 confirmado não foi plotado");
+    if (enc.confirmedCell.level !== "0") detail.push("P50-F6: nível 0 perdeu o atributo de nível");
+
+    /* (3) P50-F7 — UNSET × NONE no eixo de presence, visualmente distintos */
+    await applyResults(pg, FX.P50_F7);
+    await selectTab(pg, "heatmap");
+    const pres = await pg.evaluate(() => {
+      const g = id => {
+        const c = document.querySelector('#p50-results [data-p50="presence-chip"][data-cap="' + id + '"]');
+        if (!c) return null;
+        const cs = getComputedStyle(c);
+        return { presence: c.getAttribute("data-p50-presence"), cue: c.getAttribute("data-p50-cue"),
+                 confirmed: c.getAttribute("data-p50-confirmed"),
+                 borderStyle: cs.borderTopStyle, borderColor: cs.borderTopColor,
+                 label: (c.querySelector('[data-p50="presence-state"]') || {}).textContent,
+                 acc: c.getAttribute("aria-label") };
+      };
+      return { unset: g("knowledge-management"), none: g("security-analytics") };
+    });
+    observed.presence = pres;
+    if (!pres.unset || !pres.none) detail.push("P50-F7: chips de presence ausentes");
+    else {
+      if (pres.unset.presence === pres.none.presence) detail.push("P50-F7: DOM de presence idêntico");
+      if (pres.unset.label === pres.none.label) detail.push("P50-F7: rótulo visível idêntico");
+      if (pres.unset.acc === pres.none.acc) detail.push("P50-F7: nome acessível idêntico");
+      if (pres.unset.cue === pres.none.cue) detail.push("P50-F7: pista não cromática idêntica");
+      if (pres.unset.borderStyle !== "dashed") detail.push("P50-F7: UNSET sem tracejado");
+      if (pres.none.borderStyle === "dashed") detail.push("P50-F7: NONE tracejado como UNSET");
+      if (pres.none.confirmed !== "true") detail.push("P50-F7: NONE não é ausência confirmada");
+    }
+    await shotViewport(pg, "P50-5.0.4-presence-F7-1440.png");
+  } catch (e) { detail.push("exceção: " + String(e.message).split("\n")[0]); } finally { await pg.close(); }
+  const ok = detail.length === 0;
+  results.push({ id: "P50-VIS8", ok });
+  console.log((ok ? "PASS" : "FAIL") + "  P50-VIS8 — encoding de UNSET e dos três estados nas superfícies novas" +
+    (ok ? "" : " [" + detail.slice(0, 6).join(" · ") + "]"));
+  return { ok, detail, observed };
+}
+
+/* P50-VIS9 — Current × Target: alvo só com override canônico; encoding
+   tracejado + --ftnt-green exclusivo do alvo; current inalterado. */
+async function vis9(browser, pageErrors) {
+  const detail = [], observed = {};
+  const GREEN = "rgb(60, 177, 126)";
+  const pg = await browser.newPage({ viewport: { width: 1440, height: 900 } });
+  pg.on("pageerror", e => pageErrors.push("VIS9: " + String(e.message)));
+  try {
+    /* (1) SEM override: nenhum alvo fabricado, nenhum delta contra nada */
+    await applyResults(pg, FX.P50_F5);
+    await selectTab(pg, "analise");
+    const noOv = await pg.evaluate(() => {
+      const rows = Array.from(document.querySelectorAll('#p50-results [data-p50="ct-row"]'));
+      return {
+        overrides: Object.keys(window.__DEV.TARGET.overrides).length,
+        rows: rows.length,
+        withTarget: rows.filter(r => r.getAttribute("data-p50-has-target") === "true").length,
+        targetNodes: document.querySelectorAll('#p50-results [data-p50="ct-target"]').length,
+        gapNodes: document.querySelectorAll('#p50-results [data-p50="ct-gap"]').length,
+        empty: !!document.querySelector('#p50-results [data-p50="ct-empty"]'),
+        bodyText: (document.querySelector('#p50-results [data-p50="current-target"]') || {}).textContent || ""
+      };
+    });
+    observed.withoutOverrides = noOv;
+    if (noOv.overrides !== 0) detail.push("pré-condição: P50-F5 não deveria ter override");
+    if (noOv.rows !== 5) detail.push("sem override: " + noOv.rows + " linhas (esperadas 5)");
+    if (noOv.withTarget !== 0) detail.push("sem override: " + noOv.withTarget + " linha(s) com alvo fabricado");
+    if (noOv.targetNodes !== 0) detail.push("sem override: " + noOv.targetNodes + " marcador(es) de alvo fabricado(s)");
+    if (noOv.gapNodes !== 0) detail.push("sem override: " + noOv.gapNodes + " gap fabricado(s)");
+    if (!noOv.empty) detail.push("sem override: ausência de alvo não é declarada ao usuário");
+    if (/\b3[.,]0\b/.test(noOv.bodyText)) detail.push("sem override: alvo fixo 3.0 presente na superfície");
+
+    /* (2) COM override canônico (P50-F9): alvo só onde há override */
+    await applyResults(pg, FX.P50_F9);
+    await selectTab(pg, "analise");
+    const withOv = await pg.evaluate(() => {
+      const rows = Array.from(document.querySelectorAll('#p50-results [data-p50="ct-row"]'));
+      const cur = window.__DEV.tgtCurrentProfile();
+      const tgt = window.__DEV.computeTargetProfile(window.__DEV.tgtEffectiveVector());
+      return {
+        overrides: JSON.parse(JSON.stringify(window.__DEV.TARGET.overrides)),
+        canonicalCurrent: cur.stats.map(x => x.score),
+        canonicalTarget: tgt.stats.map(x => x.score),
+        rows: rows.map(r => {
+          const t = r.querySelector('[data-p50="ct-target"]');
+          const cs = t ? getComputedStyle(t) : null;
+          return {
+            dom: r.getAttribute("data-dom"),
+            hasTarget: r.getAttribute("data-p50-has-target"),
+            current: r.getAttribute("data-p50-current"),
+            target: r.getAttribute("data-p50-target"),
+            gap: r.getAttribute("data-p50-gap"),
+            currentText: (r.querySelector('[data-p50="ct-current-value"]') || {}).textContent,
+            targetText: t ? t.textContent : null,
+            /* o marcador de alvo é uma RÉGUA VERTICAL: mede-se o lado que ele
+               efetivamente usa, não um lado presumido. Exige-se que exista ao
+               menos um lado tracejado e que a cor desse lado seja a canônica. */
+            targetDashedSides: cs ? ["Top", "Right", "Bottom", "Left"]
+              .filter(k => cs["border" + k + "Style"] === "dashed") : null,
+            targetDashedColors: cs ? ["Top", "Right", "Bottom", "Left"]
+              .filter(k => cs["border" + k + "Style"] === "dashed")
+              .map(k => cs["border" + k + "Color"]) : null,
+            /* §12.2(b)/T14: o encoding EXCLUSIVO do alvo é a COMBINAÇÃO
+               tracejado + --ftnt-green. O verde isolado NÃO é exclusivo: a
+               paleta congelada atribui --ftnt-green ao domínio Pessoas, e
+               COR-01.2 exige que a barra de current use a cor do próprio
+               domínio. O que se proíbe é o current adotar a combinação. */
+            currentBarColor: (() => {
+              const bar = r.querySelector('[data-p50="ct-current"]');
+              return bar ? getComputedStyle(bar).backgroundColor : null;
+            })(),
+            currentDashedSides: (() => {
+              const bar = r.querySelector('[data-p50="ct-current"]');
+              if (!bar) return null;
+              const bs = getComputedStyle(bar);
+              return ["Top", "Right", "Bottom", "Left"].filter(k => bs["border" + k + "Style"] === "dashed");
+            })()
+          };
+        })
+      };
+    });
+    observed.withOverrides = withOv;
+    const OV_DOMS = { 0: true, 1: true, 3: true };            /* mandate/governance · team-capacity · logs */
+    withOv.rows.forEach(r => {
+      const i = Number(r.dom);
+      const shouldHave = !!OV_DOMS[i];
+      if ((r.hasTarget === "true") !== shouldHave)
+        detail.push("domínio " + i + ": alvo " + (shouldHave ? "ausente" : "fabricado") + " (has-target=" + r.hasTarget + ")");
+      if (Number(r.current) !== withOv.canonicalCurrent[i])
+        detail.push("domínio " + i + ": current " + r.current + " != canônico " + withOv.canonicalCurrent[i]);
+      if (shouldHave) {
+        if (Number(r.target) !== withOv.canonicalTarget[i])
+          detail.push("domínio " + i + ": target " + r.target + " != canônico " + withOv.canonicalTarget[i]);
+        const g = +(withOv.canonicalTarget[i] - withOv.canonicalCurrent[i]).toFixed(1);
+        if (Number(r.gap) !== g) detail.push("domínio " + i + ": gap " + r.gap + " != " + g);
+        if (!r.targetDashedSides || !r.targetDashedSides.length)
+          detail.push("domínio " + i + ": alvo sem tracejado em nenhum lado");
+        else if (r.targetDashedColors.indexOf(GREEN) < 0)
+          detail.push("domínio " + i + ": alvo fora do encoding canônico (" +
+            JSON.stringify(r.targetDashedColors) + " sem " + GREEN + ")");
+      } else {
+        if (r.target !== null) detail.push("domínio " + i + ": atributo de alvo presente sem override");
+        if (r.gap !== null) detail.push("domínio " + i + ": gap presente sem override");
+      }
+      if (r.currentDashedSides && r.currentDashedSides.length && r.currentBarColor === GREEN)
+        detail.push("domínio " + i + ": current adotou a COMBINAÇÃO exclusiva do alvo (tracejado + verde)");
+    });
+
+    /* (3) UI-018 — exibir/alternar o alvo não altera current nem canônico */
+    const inv = await pg.evaluate(async () => {
+      const snap = () => JSON.stringify(window.__DEV.captureCanonicalInputs());
+      const cur = () => JSON.stringify(window.__DEV.tgtCurrentProfile());
+      const before = { canon: snap(), cur: cur(),
+        ov: JSON.stringify(window.__DEV.TARGET.overrides),
+        suff: String(window.__P50SUFF.contract().sufficient) };
+      ["resumo", "heatmap", "dominios", "analise"].forEach(t => {
+        const b = document.querySelector('#p50-results [data-p50="tab"][data-p50-tab="' + t + '"]');
+        if (b) b.click();
+      });
+      const after = { canon: snap(), cur: cur(),
+        ov: JSON.stringify(window.__DEV.TARGET.overrides),
+        suff: String(window.__P50SUFF.contract().sufficient) };
+      return { before, after };
+    });
+    observed.invariants = inv;
+    ["canon", "cur", "ov", "suff"].forEach(k => {
+      if (inv.before[k] !== inv.after[k]) detail.push("UI-018: " + k + " alterado pela visualização de alvo");
+    });
+
+    /* (4) UI-019 — current insuficiente: nenhum zero, nenhum delta contra nada */
+    await applyResults(pg, FX.P50_F6);
+    await selectTab(pg, "analise");
+    const insuf = await pg.evaluate(() => {
+      const rows = Array.from(document.querySelectorAll('#p50-results [data-p50="ct-row"]'));
+      return {
+        sufficient: window.__P50SUFF.contract().sufficient,
+        canonical: window.__DEV.tgtCurrentProfile().stats.map(x => x.score),
+        currents: rows.map(r => r.getAttribute("data-p50-current")),
+        texts: rows.map(r => (r.querySelector('[data-p50="ct-current-value"]') || {}).textContent),
+        gaps: rows.map(r => r.getAttribute("data-p50-gap")),
+        plotted: rows.map(r => {
+          const bar = r.querySelector('[data-p50="ct-current"]');
+          return bar ? bar.getAttribute("data-p50-plotted") : null;
+        })
+      };
+    });
+    observed.insufficient = insuf;
+    if (insuf.sufficient !== false) detail.push("pré-condição: P50-F6 deveria ser insuficiente");
+    /* UG7: um 0.0 CONFIRMADO é legítimo e deve aparecer. O que é proibido é
+       desenhar como zero um domínio cujo current canônico é null. */
+    insuf.canonical.forEach((canon, i) => {
+      const shown = insuf.currents[i];
+      if (canon === null) {
+        if (shown !== null)
+          detail.push("domínio " + i + ": current ausente renderizado como " + shown);
+        if (!/n\/d/.test(String(insuf.texts[i])))
+          detail.push("domínio " + i + ": current ausente sem rótulo n/d");
+        if (insuf.plotted[i] === "true")
+          detail.push("domínio " + i + ": barra plotada sem current canônico");
+        if (insuf.gaps[i] !== null)
+          detail.push("domínio " + i + ": delta numérico contra current inexistente");
+      } else if (Number(shown) !== canon) {
+        detail.push("domínio " + i + ": current " + shown + " != canônico " + canon);
+      }
+    });
+  } catch (e) { detail.push("exceção: " + String(e.message).split("\n")[0]); } finally { await pg.close(); }
+  const ok = detail.length === 0;
+  results.push({ id: "P50-VIS9", ok });
+  console.log((ok ? "PASS" : "FAIL") + "  P50-VIS9 — Current × Target somente pelo alvo canônico; current inalterado" +
+    (ok ? "" : " [" + detail.slice(0, 6).join(" · ") + "]"));
+  return { ok, detail, observed };
+}
+
+/* P50-ACC5 — alternativa acessível com os MESMOS dados do gráfico. */
+async function acc5(browser, pageErrors) {
+  const detail = [], observed = {};
+  const pg = await browser.newPage({ viewport: { width: 1440, height: 900 } });
+  pg.on("pageerror", e => pageErrors.push("ACC5: " + String(e.message)));
+  try {
+    await applyResults(pg, FX.P50_F9);
+    await selectTab(pg, "heatmap");
+    const cmp = await pg.evaluate(() => {
+      const cells = Array.from(document.querySelectorAll('#p50-results [data-p50="hm-cell"]'));
+      const rows = Array.from(document.querySelectorAll('#p50-results [data-p50="alt-row"]'));
+      const cellData = cells.map(c => ({
+        dom: c.getAttribute("data-dom"), qid: c.getAttribute("data-qid"),
+        state: c.getAttribute("data-p50-ans"),
+        current: c.getAttribute("data-p50-score"),
+        target: c.getAttribute("data-p50-target"),
+        gap: c.getAttribute("data-p50-gap"),
+        sufficient: c.getAttribute("data-p50-domain-sufficient")
+      }));
+      const rowData = rows.map(r => ({
+        dom: r.getAttribute("data-dom"), qid: r.getAttribute("data-qid"),
+        state: r.getAttribute("data-p50-ans"),
+        current: r.getAttribute("data-p50-score"),
+        target: r.getAttribute("data-p50-target"),
+        gap: r.getAttribute("data-p50-gap"),
+        sufficient: r.getAttribute("data-p50-domain-sufficient")
+      }));
+      const table = document.querySelector('#p50-results [data-p50="alt-table"]');
+      const heads = Array.from(document.querySelectorAll('#p50-results [data-p50="alt-table"] thead th'))
+        .map(h => (h.textContent || "").trim());
+      const rowHeaderScopes = Array.from(document.querySelectorAll('#p50-results [data-p50="alt-table"] tbody th'))
+        .map(h => h.getAttribute("scope"));
+      return { cellData, rowData, isTable: !!table && table.tagName.toLowerCase() === "table",
+               caption: table ? (table.querySelector("caption") || {}).textContent : null,
+               heads, rowHeaderScopes,
+               altTexts: rows.map(r => (r.textContent || "").replace(/\s+/g, " ").trim()) };
+    });
+    observed.acc5 = { cells: cmp.cellData.length, rows: cmp.rowData.length, heads: cmp.heads,
+                      isTable: cmp.isTable, caption: cmp.caption };
+    if (!cmp.isTable) detail.push("alternativa acessível não é uma tabela real");
+    if (!cmp.caption) detail.push("tabela alternativa sem caption");
+    const WANT_HEADS = ["Domínio", "Pergunta", "Estado", "Atual", "Alvo", "Gap", "Suficiência"];
+    if (JSON.stringify(cmp.heads) !== JSON.stringify(WANT_HEADS))
+      detail.push("cabeçalhos da alternativa: " + JSON.stringify(cmp.heads));
+    if (cmp.rowData.length !== cmp.cellData.length)
+      detail.push("alternativa com " + cmp.rowData.length + " linhas para " + cmp.cellData.length + " células");
+    else {
+      for (let i = 0; i < cmp.cellData.length; i++) {
+        const a = cmp.cellData[i], b = cmp.rowData[i];
+        Object.keys(a).forEach(k => {
+          if (a[k] !== b[k])
+            detail.push("divergência campo a campo em " + a.qid + "." + k + ": chart=" +
+              JSON.stringify(a[k]) + " alternativa=" + JSON.stringify(b[k]));
+        });
+      }
+    }
+    if (cmp.altTexts.some(t => !t)) detail.push("linha da alternativa sem conteúdo textual");
+    if (cmp.rowHeaderScopes.length !== cmp.rowData.length)
+      detail.push("linhas da alternativa sem cabeçalho de linha");
+    if (cmp.rowHeaderScopes.some(x => x !== "row"))
+      detail.push("cabeçalho de linha sem scope=\"row\": " + JSON.stringify(cmp.rowHeaderScopes.slice(0, 4)));
+  } catch (e) { detail.push("exceção: " + String(e.message).split("\n")[0]); } finally { await pg.close(); }
+  const ok = detail.length === 0;
+  results.push({ id: "P50-ACC5", ok });
+  console.log((ok ? "PASS" : "FAIL") + "  P50-ACC5 — alternativa acessível com os mesmos dados do heat map" +
+    (ok ? "" : " [" + detail.slice(0, 6).join(" · ") + "]"));
+  return { ok, detail, observed };
+}
+
+/* Evidência visual mínima da 5.0.4 (prefixo exclusivo P50-5.0.4-).
+   Capturas do ELEMENTO quando o componente vive no rodapé de página alta —
+   mesma correção adotada em 5.0.2 (M-502-3) e 5.0.3. */
+async function shot504(browser, pageErrors) {
+  const CASES = [
+    { fx: FX.P50_F6, tab: "heatmap",  vp: { width: 1440, height: 900 }, sel: '#p50-results [data-p50="heatmap"]',        name: "P50-5.0.4-heatmap-F6-1440.png" },
+    { fx: FX.P50_F6, tab: "heatmap",  vp: { width: 390,  height: 844 }, sel: '#p50-results [data-p50="heatmap"]',        name: "P50-5.0.4-heatmap-F6-390.png" },
+    { fx: FX.P50_F9, tab: "analise",  vp: { width: 1440, height: 900 }, sel: '#p50-results [data-p50="current-target"]', name: "P50-5.0.4-current-target-F9-1440.png" },
+    { fx: FX.P50_F9, tab: "analise",  vp: { width: 390,  height: 844 }, sel: '#p50-results [data-p50="current-target"]', name: "P50-5.0.4-current-target-F9-390.png" },
+    { fx: FX.P50_F9, tab: "dominios", vp: { width: 1440, height: 900 }, sel: '#p50-results [data-p50="drilldown"]',      name: "P50-5.0.4-domain-drilldown-1440.png" }
+  ];
+  for (const c of CASES) {
+    const pg = await browser.newPage({ viewport: c.vp });
+    pg.on("pageerror", e => pageErrors.push("shot504/" + c.name + ": " + String(e.message)));
+    try {
+      await applyResults(pg, c.fx);
+      await selectTab(pg, c.tab);
+      await shotElement(pg, c.sel, c.name);
+    } catch (e) { pageErrors.push("shot504/" + c.name + ": " + String(e.message).split("\n")[0]); }
+    finally { await pg.close(); }
+  }
+}
+
 (async () => {
   let chromium;
   try { ({ chromium } = require("@playwright/test")); }
@@ -1225,6 +1712,13 @@ async function pr1(browser, pageErrors) {
     const aceite = await aceite503(b, pageErrors);
     /* ---- B-AUD-503-2 · guard estreito da superfície de print legado ---- */
     const prn1 = await pr1(b, pageErrors);
+
+    /* ---- microfase 5.0.4 · gates normativos novos ---- */
+    const g7 = await vis7(b, pageErrors);
+    const g8 = await vis8(b, pageErrors);
+    const g9 = await vis9(b, pageErrors);
+    const g5 = await acc5(b, pageErrors);
+    await shot504(b, pageErrors);
     writeEvidence("P50-5.0.3-sufficiency-surface.json",
       JSON.stringify({
         check: "ACEITE-UX-5.0.3",
@@ -1271,6 +1765,33 @@ async function pr1(browser, pageErrors) {
         pageErrors,
         verdict: (aceite.detail.length || !prn1.ok) ? "FAIL" : "PASS"
       }, null, 2) + "\n");
+    writeEvidence("P50-5.0.4-visual-surface.json",
+      JSON.stringify({
+        microfase: "5.0.4 · Target & Heat Map Visualizations",
+        note: "Gates normativos da 5.0.4 em Chromium real. NÃO encerram P50-VIS10 nem redefinem a autoridade congelada V9/T14 sobre #ux-target.",
+        browser: { name: "chromium", version: b.version(), executablePath: chromium.executablePath(),
+          resolutionOrigin: resolved.origin, specNominalVersion: "141.0.7390.37",
+          nominalDeviationAccepted: b.version() !== "141.0.7390.37" },
+        playwright: require("@playwright/test/package.json").version,
+        fixtures: ["P50-F1", "P50-F5", "P50-F6", "P50-F7", "P50-F9"],
+        tabs: ["resumo", "dominios", "heatmap", "analise"],
+        frameworkMappingTab: false,
+        gates: {
+          "P50-VIS7": { ok: g7.ok, failures: g7.detail, observed: g7.observed },
+          "P50-VIS8": { ok: g8.ok, failures: g8.detail, observed: g8.observed },
+          "P50-VIS9": { ok: g9.ok, failures: g9.detail, observed: g9.observed },
+          "P50-ACC5": { ok: g5.ok, failures: g5.detail, observed: g5.observed }
+        },
+        canonicalOwners: {
+          target: "TARGET_PROFILE.overrides via setTarget() — nenhum alvo fixo, nenhum fallback",
+          presence: "V32.TECH_LANDSCAPE[cap].presence",
+          sufficiency: "window.__P50SUFF.contract() (UI-012A)",
+          score: "domStat(i).score / tgtCurrentProfile()"
+        },
+        screenshots: shots.filter(n => n.indexOf("P50-5.0.4-") === 0),
+        pageErrors,
+        verdict: (g7.ok && g8.ok && g9.ok && g5.ok) ? "PASS" : "FAIL"
+      }, null, 2) + "\n");
     writeEvidence("P50-5.0.3-acc6-selection-1440.json",
       JSON.stringify({
         gate: "P50-ACC6",
@@ -1299,7 +1820,7 @@ async function pr1(browser, pageErrors) {
 function finish() {
   const fail = results.filter(r => !r.ok).length;
   const pass = results.length - fail;
-  console.log("\nP50 CHROMIUM (microfases 5.0.1+5.0.2+5.0.3): " + pass + " PASS · " + fail + " FAIL de " + results.length +
+  console.log("\nP50 CHROMIUM (microfases 5.0.1+5.0.2+5.0.3+5.0.4): " + pass + " PASS · " + fail + " FAIL de " + results.length +
     (skipped ? " · " + skipped + " NÃO EXECUTADO (requer Chromium real)" : ""));
   process.exit(fail ? 1 : 0);
 }

@@ -1,32 +1,73 @@
 # MANIFEST_PHASE5_P50.sha256 — delta da Phase 5.0
 # 5.0.1 Assessment Shell & Answer Semantics  (integrada em main · 70154a1b…)
-# 5.0.2 Evidence Capture & Progress UX       (reauditada · PASS WITH NON-BLOCKING CAVEATS)
+# 5.0.2 Evidence Capture & Progress UX       (integrada em main · e520c05d…)
+# 5.0.3 Sufficiency-Aware Results            (candidata SELADA · PASS COM RESSALVAS NAO BLOQUEANTES · aguarda revisao de PR)
 # gerado POR ULTIMO; exclui apenas a si proprio
-# baseline de ENTRADA da 5.0.2 (HTML): 61e8877ee1f798b3a42c2c7232657e065cf7955750e365820e9128a67506c69d
-# baseline de SAIDA   da 5.0.2 (HTML): 5d1a301e472dd1453f4056c6919ea818e6fd7768d67158321deaae9ad0c926cd
+# Completude conferida por ORACULO INDEPENDENTE do manifesto: o delta reportado
+# por `git status --porcelain` — zero duplicatas, zero auto-referencia, zero ausentes.
+# Os 7 artefatos historicos da 5.0.1 constam com os hashes ORIGINAIS do commit
+# auditado 70154a1b (errata estreita, B-503-EVIDENCE), nao com os bytes da 5.0.2.
+# As 4 evidencias da 5.0.2 permanecem identicas ao commit auditado e520c05d.
+# As evidencias 5.0.3 foram regeradas de EXECUCAO LIMPA, depois da campanha de
+# mutacao e com escrita de evidencia suprimida durante toda ela (B-AUD-503-1).
+# baseline de ENTRADA da 5.0.3 (HTML): 5d1a301e472dd1453f4056c6919ea818e6fd7768d67158321deaae9ad0c926cd
+# baseline de SAIDA   da 5.0.3 (HTML): 04f9d7ba9c5534aff69fec5193ab7fd8548dae304eddf29fad1378c5de5639ab
+# ERRATA FINAL B-AUD-FIN-503-1: neutralizacao (opacity/position) confinada a @media screen;
+# P50-PR1 ganhou oracle de apresentacao continua; campanha de mutacao passou a 53/53.
+# SELAGEM 5.0.3: importados byte a byte os tres pareceres independentes
+# (FAIL f0e20755, FAIL 8d9ed98c, PASS-com-ressalvas ebdf69e6) e criado o
+# registro de aceitacao MICROFASE_5_0_3_ACCEPTANCE.md; RQ-REAUD-FIN-1 aceita
+# pelo proprietario. Nenhum byte executavel alterado; o relatorio auditado
+# permanece em ea313469. Cardinalidade 47 -> 51 por estes quatro documentos.
+# Regenerado POR ULTIMO, depois da selagem documental.
 1f9c7a5a8ad10b724f9caab86eead66eeb5ad6df1f397c4b41b0b75380577b09  ui_p50_shell_v32.js
-e873d90d22f0460592003c27d08e38ff26eafbf44c9b3d9f0ea661e05bef35fb  ui_p50_v32.css
-b7f5b31039f6da4864510b458da5e899bca29dc482cc8abe0d2ff5d25caa82d7  fixtures_p50.js
-9817c46e09fe39cf9a874821772ce1e00a15283eee4c21305a5b5e358aa65242  tests_p50_core.js
-2c99e932dc4ac167714916c4ca2ae480c6a2e51afae93d01ea895a4ac9c6efdd  tests_p50_chromium.js
-774f9325ad3cc58a7247c58fe5c92231fc2ec3a422f923d31bdb3c4c979326fc  tests_p50_mutants.js
-f2295a421e59e77825530d77069a6d0350e9a01af8fdf506a6d1482416456a9e  build_v32_html.py
+cdb4a6edcc8eee64c33d7410301ddcf059e725ffa588ca009b16fc7afd6e5a32  ui_p50_suff_v32.js
+9694ef05c518e2ad11100f2ce0b3c15a7e9be2587c5a2a59de51d6768d30e670  ui_p50_results_v32.js
+57a6fa7204a5de3bce6527785f1c318ce47ecf2c0acfe5c04cabe488d77d7620  ui_p50_v32.css
+90b2a7d2a3044094a3bafb48b6954a28d171e307733f451e4495b445023bc9b5  fixtures_p50.js
+ff6e26469c7ee41109e33068477d991c983d4d495969b5625ecadeb4a88927bc  tests_p50_core.js
+3295c91f2d12d932699a87bba85657c62127175f39cf028001580c324371052e  tests_p50_chromium.js
+28f2e876d4f614baf83b02d0c23bbbf19a983d4b0a943e1b42d1f8c8c067ddf5  tests_p50_mutants.js
+bce37fef5e4722e6e6215186f33c9f0af030bb03e706504a30ca80fededc07bc  build_v32_html.py
 fc0bf13b5c32832c04121245f3512dcc0e66744d2d1164da598bab1ec924746f  package.json
-5d1a301e472dd1453f4056c6919ea818e6fd7768d67158321deaae9ad0c926cd  quickscan_secops_soccmm_v3_2_dev.html
+04f9d7ba9c5534aff69fec5193ab7fd8548dae304eddf29fad1378c5de5639ab  quickscan_secops_soccmm_v3_2_dev.html
 4518700b78c00331025680c3d381d025343baf949fcef7628a851b3a937dd3ca  docs_phase5/MICROFASE_5_0_1_REPORT.md
 1b02bd914dd10dc2dcba8e402d058d4c9f9576000d8e1e3ff63611b3cf27e540  docs_phase5/MICROFASE_5_0_2_REPORT.md
+ea313469ea84df6dd6c1ed9b80b24220bd94c09469e5836e66efd56edb375ff5  docs_phase5/MICROFASE_5_0_3_REPORT.md
 ad7cc22aff7e8552117940e03ca0b748b0aab988bf72d5804cdd9fb07bf214cf  docs_phase5/BACKLOG_PRODUCTION_HARDENING_VAULT.md
 46386669d81a3cd1de247986b61d1f97973873c6f8d9cb65bd0e812a42c966a3  docs_phase5/AUDITORIA_INDEPENDENTE_MICROFASE_5_0_1.md
 b8296a110b78fd66b8605f38c5885a73d9f5a0298471085692eefc5849671800  docs_phase5/AUDITORIA_INDEPENDENTE_MICROFASE_5_0_2.md
 71d5902b55138e100143f38697f9f2f503465a87b905092b329d1d4408dc339d  docs_phase5/REAUDITORIA_INDEPENDENTE_MICROFASE_5_0_2.md
-8d096d97ac9ca0e5c85daedf64d98367ac6f897cabd97440851ed1130d922fce  docs_phase5/evidence_p50/P50-ACC6-selection-1440.json
-fe3f0531ff78c90bbd9fb7ae95e28b0a0109b4d7320250fa5ea4c89a099e33ff  docs_phase5/evidence_p50/P50-mutation-5.0.1.json
-c08793d750d61d614c49974ca9612abeda33e6dcc5c4fcc40b545e0291fd9887  docs_phase5/evidence_p50/P50-ACC6-P50-F2-1440.png
-fac2885a4312f7cd48b735e465210c19f05b0ae8ce24372df9f8dfc088cd0ec8  docs_phase5/evidence_p50/P50-ACC6-P50-F6-1440.png
-fac2885a4312f7cd48b735e465210c19f05b0ae8ce24372df9f8dfc088cd0ec8  docs_phase5/evidence_p50/P50-5.0.1-default-collapsed-1440.png
-8da3e409ec3c400f31e748d5bfe0d24c0b3a3458d0a0f8f2860a122f4589bec4  docs_phase5/evidence_p50/P50-5.0.1-default-collapsed-390.png
-f7eb8a2af3c3e81b32e99b3179cb192f7616f4af67d6ab730ed79523860e337a  docs_phase5/evidence_p50/P50-5.0.1-map-expanded-1440.png
+f0e207554cc0ed5d63354212baf52df88d841209f5dc48494aa334f971af7cb5  docs_phase5/AUDITORIA_INDEPENDENTE_MICROFASE_5_0_3.md
+8d9ed98c2ec9107097a613da9c4d1cb849115ad0e77d1ac8d2ddaed50584bbea  docs_phase5/AUDITORIA_INDEPENDENTE_FINAL_MICROFASE_5_0_3.md
+ebdf69e6992725b5e71edd86047773f8cc224a48582828431a0cb679f87c752d  docs_phase5/AUDITORIA_INDEPENDENTE_REAUDITORIA_FINAL_MICROFASE_5_0_3.md
+74ba2e69090f81015fdfbabceccdd8f35b5dccbb1c3fff820e5b0ad081652db1  docs_phase5/MICROFASE_5_0_3_ACCEPTANCE.md
+59bbb13565351b75314c886c9e9001ed0040de24ff13cd6840a4c7bea66943af  docs_phase5/evidence_p50/P50-ACC6-selection-1440.json
+f749d27365d1168df57b15419ab891c87fd794ef1ec7b60c42255aeb2f362963  docs_phase5/evidence_p50/P50-mutation-5.0.1.json
+81fdbac91593a0e61931cc24afd8f4ea778fe336715b6d4fc35fc4b433f21748  docs_phase5/evidence_p50/P50-ACC6-P50-F2-1440.png
+c989ee1fd12be7a0652f6fccd0d8d236f1dbddcf9dab893009e48c896188b1fb  docs_phase5/evidence_p50/P50-ACC6-P50-F6-1440.png
+c989ee1fd12be7a0652f6fccd0d8d236f1dbddcf9dab893009e48c896188b1fb  docs_phase5/evidence_p50/P50-5.0.1-default-collapsed-1440.png
+799dbd5656a9280e3838373381a253f0747949ed1b8acc03161030913d57f88a  docs_phase5/evidence_p50/P50-5.0.1-default-collapsed-390.png
+4da8299c171bb445820635116ddb3b7c1454a4fdcadc1f79b2f67b3a3a63edb0  docs_phase5/evidence_p50/P50-5.0.1-map-expanded-1440.png
 2b8a1b3dd599217978ea1793d30a60a84d279fb57e0d33d2a8d7070b587462be  docs_phase5/evidence_p50/P50-5.0.2-evidence-P50-F8-1440.png
 cb50248d1be726cac2be8a12a545d898fc5f76790b6ed2efca98a0750d22c4e5  docs_phase5/evidence_p50/P50-5.0.2-evidence-P50-F10-1440.png
 98a44e86d39d0f5b6b3eb410803b3a48653f625460cfce9aef9e3c691d434bea  docs_phase5/evidence_p50/P50-5.0.2-session-exported-1440.png
 0d21b10a3a25b0eae69378ee990db388dc894c1daf738985225aced1c596a700  docs_phase5/evidence_p50/P50-5.0.2-session-dirty-after-edit-1440.png
+6cd79e682cace4dcaf22f22e8598a1120cdc20a159cd95ebcd0f6a05c3183da7  docs_phase5/evidence_p50/P50-5.0.3-mutation.json
+908df6d862ac73dbcd7c3ed231a64a334bc798261eadcce71fb9e120974a918c  docs_phase5/evidence_p50/P50-5.0.3-sufficiency-surface.json
+9bc333122fa89e147f7a868bbd36268bda0e80d92e61e2f6966d1db179347bbd  docs_phase5/evidence_p50/P50-5.0.3-partial-insufficient-1440.png
+5887dc0c2eacbf6c51dfc1ae3ecb1ad01a1d03f79f15be6c877145cb6cde7562  docs_phase5/evidence_p50/P50-5.0.3-near-threshold-1440.png
+c247d4c7387146280043eb8463a1335a9a8f29a62b63c59554503fc9074940b9  docs_phase5/evidence_p50/P50-5.0.3-exactly-sufficient-1440.png
+73fd57f1943f7b65092abc960fb4d2fb6e13c142948822f4ac9c424daa4cc0c6  docs_phase5/evidence_p50/P50-5.0.3-fully-sufficient-1440.png
+62df42f877a493fd70e671330bcc08f852a34299dfcaa4fe4ddd868847424464  docs_phase5/evidence_p50/P50-5.0.3-relocked-1440.png
+6ed40002534361c63993849575eadfe4b52d890ec2c59bd58b963ae6fb175f79  docs_phase5/evidence_p50/P50-5.0.3-insufficient-390.png
+791068c68afc5435ba3313fd95cefbf2b740195275515ff168c85ea33f30ae61  docs_phase5/evidence_p50/P50-5.0.3-sufficient-390.png
+a011b4c631e341a7b730bdf7948d238679fad25ad44e49d877e5b4ebc91a2f6f  docs_phase5/evidence_p50/P50-5.0.3-panel-blocked-1440.png
+f9becb3f5a9bdfa5ae1f290364df47da229d2a1290d1a9729582f15ea00ace3c  docs_phase5/evidence_p50/P50-5.0.3-gate-blocked-1440.png
+f65ddcf597b702461527e990dd0903406f55b99714a8e121e43051badf1ac432  docs_phase5/evidence_p50/P50-5.0.3-panel-released-1440.png
+dc6afea886684b9d712db2b492510496fe0d5a670f275f819302a6881a755ac2  docs_phase5/evidence_p50/P50-5.0.3-gate-released-1440.png
+23e0855ef4f2b6114c89491c4625cdd01ad3b51e7aeac44077eb938c3dea7c33  docs_phase5/evidence_p50/P50-5.0.3-acc6-selection-1440.json
+f8374f0ec3d09f7e40de2b52330108a5e4278e613256170182efb5d198d53314  docs_phase5/evidence_p50/P50-5.0.3-legacy-head-blocked-1440.png
+6825adb12e2fcb1bfb927dc47c61e05a5c68f245df8d375d0ebf951bd2783b8d  docs_phase5/evidence_p50/P50-5.0.3-legacy-head-released-1440.png
+6f22cdc0e21bec8ac6acc666b4dd6e3152fd05535a9c7b3c4cb003ebad46e937  docs_phase5/evidence_p50/P50-5.0.3-legacy-domains-blocked-1440.png
+f441b97d317684819bf0de07aa9b02790308adbeb1d6d7617ceff890f8eb4c79  docs_phase5/evidence_p50/P50-5.0.3-legacy-domains-released-1440.png

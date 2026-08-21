@@ -1,0 +1,3620 @@
+{
+  "check": "ACEITE-UX-5.0.3",
+  "microfase": "5.0.3",
+  "note": "Verificação de aceite em Chromium real. NÃO é gate do namespace P50-VIS/P50-ACC e não encerra P50-VIS1..P50-VIS10.",
+  "browser": {
+    "name": "chromium",
+    "version": "151.0.7922.34",
+    "executablePath": "/home/oflavioc/.cache/ms-playwright/chromium-1234/chrome-linux64/chrome",
+    "resolutionOrigin": "Chromium gerenciado pelo Playwright",
+    "specNominalVersion": "141.0.7390.37",
+    "nominalDeviationAccepted": true
+  },
+  "playwright": "1.62.1",
+  "viewports": [
+    "1440x900",
+    "390x844"
+  ],
+  "fixtures": [
+    "P50-F2",
+    "P50-F3",
+    "P50-F4",
+    "P50-F5",
+    "relock(P50-F4 -> NA)"
+  ],
+  "selectors": {
+    "suffPanel": "#p50-suff",
+    "gate": "#p50-results[data-p50-gate]",
+    "globalLine": "[data-p50=\"suff-global\"]",
+    "deficit": "[data-p50=\"suff-deficit\"]",
+    "axis": "[data-p50=\"suff-domain\"]",
+    "guidance": "[data-p50=\"suff-guidance\"]",
+    "domainRow": "[data-p50=\"results-domain\"]",
+    "execCards": "[data-p50=\"exec-cards\"]"
+  },
+  "screenshots": [
+    "P50-5.0.3-partial-insufficient-1440.png",
+    "P50-5.0.3-near-threshold-1440.png",
+    "P50-5.0.3-panel-blocked-1440.png",
+    "P50-5.0.3-gate-blocked-1440.png",
+    "P50-5.0.3-legacy-head-blocked-1440.png",
+    "P50-5.0.3-legacy-domains-blocked-1440.png",
+    "P50-5.0.3-exactly-sufficient-1440.png",
+    "P50-5.0.3-panel-released-1440.png",
+    "P50-5.0.3-gate-released-1440.png",
+    "P50-5.0.3-legacy-head-released-1440.png",
+    "P50-5.0.3-legacy-domains-released-1440.png",
+    "P50-5.0.3-fully-sufficient-1440.png",
+    "P50-5.0.3-relocked-1440.png",
+    "P50-5.0.3-insufficient-390.png",
+    "P50-5.0.3-sufficient-390.png"
+  ],
+  "observed": [
+    {
+      "fixture": "P50-F2@1440",
+      "gate": "blocked",
+      "sufficientAttr": "false",
+      "suffVisible": true,
+      "resVisible": true,
+      "globalLine": {
+        "text": "Faltam 6 respostas confirmadas no total (4 de 10).",
+        "confirmed": "4",
+        "required": "10",
+        "missing": "6"
+      },
+      "deficits": [
+        {
+          "dom": 1,
+          "missing": 1,
+          "text": "Pessoas: +1 resposta confirmada necessária (1 de 2).",
+          "accessible": "Pessoas: +1 resposta confirmada necessária (1 de 2).",
+          "visible": true
+        },
+        {
+          "dom": 2,
+          "missing": 2,
+          "text": "Processos: +2 respostas confirmadas necessárias (0 de 2).",
+          "accessible": "Processos: +2 respostas confirmadas necessárias (0 de 2).",
+          "visible": true
+        },
+        {
+          "dom": 3,
+          "missing": 1,
+          "text": "Tecnologia: +1 resposta confirmada necessária (1 de 2).",
+          "accessible": "Tecnologia: +1 resposta confirmada necessária (1 de 2).",
+          "visible": true
+        },
+        {
+          "dom": 4,
+          "missing": 2,
+          "text": "Serviços: +2 respostas confirmadas necessárias (0 de 2).",
+          "accessible": "Serviços: +2 respostas confirmadas necessárias (0 de 2).",
+          "visible": true
+        }
+      ],
+      "axis": [
+        {
+          "dom": 0,
+          "confirmed": 2,
+          "toValidate": 0,
+          "unanswered": 1,
+          "text": "Negócio · 2 confirmadas · 0 a validar · 1 não respondida",
+          "accessible": "Negócio · 2 confirmadas · 0 a validar · 1 não respondida"
+        },
+        {
+          "dom": 1,
+          "confirmed": 1,
+          "toValidate": 0,
+          "unanswered": 2,
+          "text": "Pessoas · 1 confirmada · 0 a validar · 2 não respondidas",
+          "accessible": "Pessoas · 1 confirmada · 0 a validar · 2 não respondidas"
+        },
+        {
+          "dom": 2,
+          "confirmed": 0,
+          "toValidate": 1,
+          "unanswered": 2,
+          "text": "Processos · 0 confirmadas · 1 a validar · 2 não respondidas",
+          "accessible": "Processos · 0 confirmadas · 1 a validar · 2 não respondidas"
+        },
+        {
+          "dom": 3,
+          "confirmed": 1,
+          "toValidate": 0,
+          "unanswered": 2,
+          "text": "Tecnologia · 1 confirmada · 0 a validar · 2 não respondidas",
+          "accessible": "Tecnologia · 1 confirmada · 0 a validar · 2 não respondidas"
+        },
+        {
+          "dom": 4,
+          "confirmed": 0,
+          "toValidate": 0,
+          "unanswered": 3,
+          "text": "Serviços · 0 confirmadas · 0 a validar · 3 não respondidas",
+          "accessible": "Serviços · 0 confirmadas · 0 a validar · 3 não respondidas"
+        }
+      ],
+      "guidance": "Continue o assessment para atingir evidência suficiente.",
+      "verdict": "Resultado executivo: BLOQUEADO.",
+      "domains": [
+        {
+          "dom": 0,
+          "state": "unavailable",
+          "value": "n/d",
+          "label": "Não avaliado · evidência insuficiente",
+          "accessible": "Negócion/dNão avaliado · evidência insuficiente",
+          "visible": true
+        },
+        {
+          "dom": 1,
+          "state": "unavailable",
+          "value": "n/d",
+          "label": "Não avaliado · evidência insuficiente",
+          "accessible": "Pessoasn/dNão avaliado · evidência insuficiente",
+          "visible": true
+        },
+        {
+          "dom": 2,
+          "state": "unavailable",
+          "value": "n/d",
+          "label": "Não avaliado · evidência insuficiente",
+          "accessible": "Processosn/dNão avaliado · evidência insuficiente",
+          "visible": true
+        },
+        {
+          "dom": 3,
+          "state": "unavailable",
+          "value": "n/d",
+          "label": "Não avaliado · evidência insuficiente",
+          "accessible": "Tecnologian/dNão avaliado · evidência insuficiente",
+          "visible": true
+        },
+        {
+          "dom": 4,
+          "state": "unavailable",
+          "value": "n/d",
+          "label": "Não avaliado · evidência insuficiente",
+          "accessible": "Serviçosn/dNão avaliado · evidência insuficiente",
+          "visible": true
+        }
+      ],
+      "execCards": [],
+      "execCardsBox": false,
+      "overallEl": false,
+      "stageEl": false,
+      "layout": {
+        "docScrollWidth": 1440,
+        "viewportW": 1440,
+        "viewportH": 900,
+        "clippedNodes": 0,
+        "suffBottom": 4098,
+        "resTop": 4114,
+        "overlap": false,
+        "suffRight": 1130,
+        "resRight": 1130
+      },
+      "resText": "Resultado executivoResultado executivo: BLOQUEADO.Resultado ainda indisponível — as condições pendentes estão listadas no painel de suficiência acima.Negócion/dNão avaliado · evidência insuficientePessoasn/dNão avaliado · evidência insuficienteProcessosn/dNão avaliado · evidência insuficienteTecnologian/dNão avaliado · evidência insuficienteServiçosn/dNão avaliado · evidência insuficiente",
+      "legacy": {
+        "rows": 5,
+        "frozenValues": [
+          "2.5 — Defined",
+          "0.0 — Non-existent",
+          "n/d",
+          "5.0 — Optimizing",
+          "n/d"
+        ],
+        "frozenValuesVisible": [
+          false,
+          false,
+          false,
+          false,
+          false
+        ],
+        "frozenConfVisible": [
+          false,
+          false,
+          false,
+          false,
+          false
+        ],
+        "p50Values": [
+          "n/d",
+          "n/d",
+          "n/d",
+          "n/d",
+          "n/d"
+        ],
+        "p50ValuesVisible": [
+          true,
+          true,
+          true,
+          true,
+          true
+        ],
+        "marks": [
+          "neutralized",
+          "neutralized",
+          "neutralized",
+          "neutralized",
+          "neutralized"
+        ],
+        "stateNotes": [
+          "Não avaliado · evidência insuficiente",
+          "Não avaliado · evidência insuficiente",
+          "Não avaliado · evidência insuficiente",
+          "Não avaliado · evidência insuficiente",
+          "Não avaliado · evidência insuficiente"
+        ],
+        "fillsPresent": 3,
+        "rulersScored": 3,
+        "fillsVisible": 0,
+        "radarVisible": false,
+        "radarNoteVisible": true,
+        "legendVisible": false,
+        "bannerVisible": true,
+        "accText": "Resultado indicativo n/d / 5.0 Cobertura insuficiente Ponto de partida declarado: A — Sem operação formal 4 de 15 respostas confirmadas na sessão · 1 marcada para validação. Perfil de maturidade por domínio indisponível — evidência insuficiente. Maturidade indicativa por domínio Negócio · Business n/d 2 de 3 respostas confirmadas · diagnóstico parcial, não é veredito de maturidade Não avaliado · evidência insuficiente Pessoas · People n/d 1 de 3 respostas confirmadas · diagnóstico parcial, não é veredito de maturidade Não avaliado · evidência insuficiente Processos · Process n/d não avaliado 0 de 3 respostas confirmadas · diagnóstico parcial, não é veredito de maturidade Não avaliado · evidência insuficiente Tecnologia · Technology n/d 1 de 3 respostas confirmadas · diagnóstico parcial, não é veredito de maturidade Não avaliado · evidência insuficiente Serviços · Services n/d não avaliado 0 de 3 respostas confirmadas · diagnóstico parcial, não é veredito de maturidade Não avaliado · evidência insuficiente Evidência insuficiente: nenhum score de maturidade por domínio é apresentado até o gate canônico abrir. Síntese do resultado Dados insuficientes para uma leitura consolidada. Os achados abaixo refletem somente as respostas confirmadas — itens pendentes precisam ser validados antes de uma conclusão sobre a maturidade geral. Os gaps derivam das respostas individuais , não da média do domínio — itens “não sei” entram como validação, nunca como gap. A régua não é a ambição: a ambição e o risco do negócio definem o nível necessário . Jornada de maturidade Posicionamento atual: n/d Não há evidência suficiente neste Quickscan para posicionar a operação com segurança em um estágio de maturidade. Jornada de maturidade: estágios do modelo com perfil atual. Para avançar Dimensionar e sustentar a capacidade do time. Formalizar mandato, responsabilidades e critérios de decisão. O próximo estágio representa a próxima faixa do modelo de maturidade. A transição depende da evolução consistente das práticas e das evidências correspondentes. Leitura executiva As respostas disponíveis ainda não são suficientes para posicionar a operação em um estágio de maturidade com segurança. Ainda assim, o Quickscan identifica sinais relevantes nos gaps já confirmados durante a sessão. Nenhuma prioridade específica foi declarada nesta sessão; foram observados 1 gap alto e 1 moderado, que concentram os principais pontos de evolução identificados nesta sessão. O próximo passo mais consistente é completar e validar as evidências pendentes, em vez de perseguir um estágio artificial. Em paralelo, os sinais já confirmados apontam para: dimensionar e sustentar a capacidade do time; formalizar mandato, responsabilidades e critérios de decisão. O contexto tecnológico não foi informado nesta sessão; por isso, a leitura evita inferir presença ou ausência de ferramentas. O que mais importa · prioridades declaradas pelo negócio Nenhuma prioridade foi selecionada nesta sessão — o negócio pode declará-las em uma próxima conversa. Aprofundamento operacional Refinamento qualitativo opcional — não altera sua pontuação de maturidade. Refinar diagnóstico · 3 perguntas Gaps observados na sessão Gap alto de maturidade Capacidade do time Pessoas Evidência declarada: Capacidade insuficiente — A demanda excede a equipe; atividades relevantes ficam sem dono. Capability a desenvolver: Capacidade e resiliência do time Gap moderado de maturidade Mandato e objetivos Negócio Evidência declarada: Direcionamento informal — Prioridades existem, mas dependem da liderança e de pessoas. Capability a desenvolver: Direcionamento e mandato de segurança Como a Fortinet pode apoiar agora Capacidade e resiliência do time Por que apareceu: “Capacidade do time” respondida como “Capacidade insuficiente”. FortiGuard SOCaaS Monitoramento e triagem contínuos entregues como serviço pelos especialistas FortiGuard. Neste contexto: amplia capacidade sem contratar um turno inteiro. Página oficial ↗ FortiGuard MDR Detecção e resposta gerenciadas, estendendo o time interno com especialistas FortiGuard. Neste contexto: especialistas estendem o time interno. Página oficial ↗ Pode fazer sentido — após validação Serviços FortiGuard — sinal identificado em: Direcionamento e mandato de segurança. O screening não tem profundidade para priorizá-lo; validar no aprofundamento. Capabilities a validar Gestão e execução de resposta a incidentes — pergunta “Resposta a incidentes” · informação não confirmada. Não priorizados neste screening · 1 solução FortiAnalyzer — sem evidência de gap correspondente nesta sessão (prática “Centralização de logs” declarada como “Cobertura gerenciada e otimizada”). Trilha de Validação · Próximo passo sugerido Completar evidências pendentes Antes de priorizar uma trilha de evolução, valide os itens sem informação suficiente e complete as evidências mínimas da sessão. Após a validação, o ponto de partida define a trilha de Fundação ou de Otimização. Adicionar contexto tecnológico Opcional · refine a interpretação dos gaps informando tecnologias e serviços já existentes. Imprimir / salvar em PDF Editar prioridades ← Revisar respostas Reiniciar avaliação Nova sessão O PDF inclui, ao final, o anexo “Evidências e observações da sessão”. Exportar sessão Importar sessão Sessão não salva automaticamente. Exporte o arquivo da sessão para continuar depois. Há alterações ainda não exportadas. Cenário-alvo de maturidade Nenhum cenário-alvo foi definido. Defina níveis de prática desejados para visualizar uma trajetória indicativa de evolução. Definir cenário-alvo Suficiência de evidência Faltam 6 respostas confirmadas no total (4 de 10). Pessoas: +1 resposta confirmada necessária (1 de 2). Processos: +2 respostas confirmadas necessárias (0 de 2). Tecnologia: +1 resposta confirmada necessária (1 de 2). Serviços: +2 respostas confirmadas necessárias (0 de 2). Negócio · 2 confirmadas · 0 a validar · 1 não respondida Pessoas · 1 confirmada · 0 a validar · 2 não respondidas Processos · 0 confirmadas · 1 a validar · 2 não respondidas Tecnologia · 1 confirmada · 0 a validar · 2 não respondidas Serviços · 0 confirmadas · 0 a validar · 3 não respondidas Continue o assessment para atingir evidência suficiente. Resultado executivo Resultado executivo: BLOQUEADO. Resultado ainda indisponível — as condições pendentes estão listadas no painel de suficiência acima. Negócio n/d Não avaliado · evidência insuficiente Pessoas n/d Não avaliado · evidência insuficiente Processos n/d Não avaliado · evidência insuficiente Tecnologia n/d Não avaliado · evidência insuficiente Serviços n/d Não avaliado · evidência insuficiente"
+      }
+    },
+    {
+      "fixture": "P50-F3@1440",
+      "gate": "blocked",
+      "sufficientAttr": "false",
+      "suffVisible": true,
+      "resVisible": true,
+      "globalLine": {
+        "text": "10 de 10 respostas confirmadas no total.",
+        "confirmed": "10",
+        "required": "10",
+        "missing": "0"
+      },
+      "deficits": [
+        {
+          "dom": 0,
+          "missing": 1,
+          "text": "Negócio: +1 resposta confirmada necessária (1 de 2).",
+          "accessible": "Negócio: +1 resposta confirmada necessária (1 de 2).",
+          "visible": true
+        }
+      ],
+      "axis": [
+        {
+          "dom": 0,
+          "confirmed": 1,
+          "toValidate": 0,
+          "unanswered": 2,
+          "text": "Negócio · 1 confirmada · 0 a validar · 2 não respondidas",
+          "accessible": "Negócio · 1 confirmada · 0 a validar · 2 não respondidas"
+        },
+        {
+          "dom": 1,
+          "confirmed": 3,
+          "toValidate": 0,
+          "unanswered": 0,
+          "text": "Pessoas · 3 confirmadas · 0 a validar · 0 não respondidas",
+          "accessible": "Pessoas · 3 confirmadas · 0 a validar · 0 não respondidas"
+        },
+        {
+          "dom": 2,
+          "confirmed": 2,
+          "toValidate": 0,
+          "unanswered": 1,
+          "text": "Processos · 2 confirmadas · 0 a validar · 1 não respondida",
+          "accessible": "Processos · 2 confirmadas · 0 a validar · 1 não respondida"
+        },
+        {
+          "dom": 3,
+          "confirmed": 2,
+          "toValidate": 0,
+          "unanswered": 1,
+          "text": "Tecnologia · 2 confirmadas · 0 a validar · 1 não respondida",
+          "accessible": "Tecnologia · 2 confirmadas · 0 a validar · 1 não respondida"
+        },
+        {
+          "dom": 4,
+          "confirmed": 2,
+          "toValidate": 0,
+          "unanswered": 1,
+          "text": "Serviços · 2 confirmadas · 0 a validar · 1 não respondida",
+          "accessible": "Serviços · 2 confirmadas · 0 a validar · 1 não respondida"
+        }
+      ],
+      "guidance": "Continue o assessment para atingir evidência suficiente.",
+      "verdict": "Resultado executivo: BLOQUEADO.",
+      "domains": [
+        {
+          "dom": 0,
+          "state": "unavailable",
+          "value": "n/d",
+          "label": "Não avaliado · evidência insuficiente",
+          "accessible": "Negócion/dNão avaliado · evidência insuficiente",
+          "visible": true
+        },
+        {
+          "dom": 1,
+          "state": "unavailable",
+          "value": "n/d",
+          "label": "Não avaliado · evidência insuficiente",
+          "accessible": "Pessoasn/dNão avaliado · evidência insuficiente",
+          "visible": true
+        },
+        {
+          "dom": 2,
+          "state": "unavailable",
+          "value": "n/d",
+          "label": "Não avaliado · evidência insuficiente",
+          "accessible": "Processosn/dNão avaliado · evidência insuficiente",
+          "visible": true
+        },
+        {
+          "dom": 3,
+          "state": "unavailable",
+          "value": "n/d",
+          "label": "Não avaliado · evidência insuficiente",
+          "accessible": "Tecnologian/dNão avaliado · evidência insuficiente",
+          "visible": true
+        },
+        {
+          "dom": 4,
+          "state": "unavailable",
+          "value": "n/d",
+          "label": "Não avaliado · evidência insuficiente",
+          "accessible": "Serviçosn/dNão avaliado · evidência insuficiente",
+          "visible": true
+        }
+      ],
+      "execCards": [],
+      "execCardsBox": false,
+      "overallEl": false,
+      "stageEl": false,
+      "layout": {
+        "docScrollWidth": 1440,
+        "viewportW": 1440,
+        "viewportH": 900,
+        "clippedNodes": 0,
+        "suffBottom": 3982,
+        "resTop": 3998,
+        "overlap": false,
+        "suffRight": 1130,
+        "resRight": 1130
+      },
+      "resText": "Resultado executivoResultado executivo: BLOQUEADO.Resultado ainda indisponível — as condições pendentes estão listadas no painel de suficiência acima.Negócion/dNão avaliado · evidência insuficientePessoasn/dNão avaliado · evidência insuficienteProcessosn/dNão avaliado · evidência insuficienteTecnologian/dNão avaliado · evidência insuficienteServiçosn/dNão avaliado · evidência insuficiente",
+      "legacy": {
+        "rows": 5,
+        "frozenValues": [
+          "3.3 — Defined",
+          "3.3 — Defined",
+          "2.5 — Defined",
+          "2.5 — Defined",
+          "4.2 — Quantitatively Managed"
+        ],
+        "frozenValuesVisible": [
+          false,
+          false,
+          false,
+          false,
+          false
+        ],
+        "frozenConfVisible": [
+          false,
+          false,
+          false,
+          false,
+          false
+        ],
+        "p50Values": [
+          "n/d",
+          "n/d",
+          "n/d",
+          "n/d",
+          "n/d"
+        ],
+        "p50ValuesVisible": [
+          true,
+          true,
+          true,
+          true,
+          true
+        ],
+        "marks": [
+          "neutralized",
+          "neutralized",
+          "neutralized",
+          "neutralized",
+          "neutralized"
+        ],
+        "stateNotes": [
+          "Não avaliado · evidência insuficiente",
+          "Não avaliado · evidência insuficiente",
+          "Não avaliado · evidência insuficiente",
+          "Não avaliado · evidência insuficiente",
+          "Não avaliado · evidência insuficiente"
+        ],
+        "fillsPresent": 5,
+        "rulersScored": 5,
+        "fillsVisible": 0,
+        "radarVisible": false,
+        "radarNoteVisible": true,
+        "legendVisible": false,
+        "bannerVisible": true,
+        "accText": "Resultado indicativo n/d / 5.0 Cobertura insuficiente Ponto de partida declarado: A — Sem operação formal 10 de 15 respostas confirmadas na sessão. Perfil de maturidade por domínio indisponível — evidência insuficiente. Maturidade indicativa por domínio Negócio · Business n/d 1 de 3 respostas confirmadas · diagnóstico parcial, não é veredito de maturidade Não avaliado · evidência insuficiente Pessoas · People n/d 3 de 3 respostas confirmadas · diagnóstico parcial, não é veredito de maturidade Não avaliado · evidência insuficiente Processos · Process n/d 2 de 3 respostas confirmadas · diagnóstico parcial, não é veredito de maturidade Não avaliado · evidência insuficiente Tecnologia · Technology n/d 2 de 3 respostas confirmadas · diagnóstico parcial, não é veredito de maturidade Não avaliado · evidência insuficiente Serviços · Services n/d 2 de 3 respostas confirmadas · diagnóstico parcial, não é veredito de maturidade Não avaliado · evidência insuficiente Evidência insuficiente: nenhum score de maturidade por domínio é apresentado até o gate canônico abrir. Síntese do resultado Dados insuficientes para uma leitura consolidada. Os achados abaixo refletem somente as respostas confirmadas — itens pendentes precisam ser validados antes de uma conclusão sobre a maturidade geral. Os gaps derivam das respostas individuais , não da média do domínio — itens “não sei” entram como validação, nunca como gap. A régua não é a ambição: a ambição e o risco do negócio definem o nível necessário . Jornada de maturidade Posicionamento atual: n/d Não há evidência suficiente neste Quickscan para posicionar a operação com segurança em um estágio de maturidade. Jornada de maturidade: estágios do modelo com perfil atual. Para avançar Dimensionar e sustentar a capacidade do time. Ampliar consistência dos processos de detecção e resposta. Ampliar cobertura e gestão da proteção de endpoint. O próximo estágio representa a próxima faixa do modelo de maturidade. A transição depende da evolução consistente das práticas e das evidências correspondentes. Leitura executiva As respostas disponíveis ainda não são suficientes para posicionar a operação em um estágio de maturidade com segurança. Ainda assim, o Quickscan identifica sinais relevantes nos gaps já confirmados durante a sessão. Nenhuma prioridade específica foi declarada nesta sessão; foram observados 0 gaps altos e 3 moderados, que concentram os principais pontos de evolução identificados nesta sessão. O próximo passo mais consistente é completar e validar as evidências pendentes, em vez de perseguir um estágio artificial. Em paralelo, os sinais já confirmados apontam para: dimensionar e sustentar a capacidade do time; ampliar consistência dos processos de detecção e resposta; ampliar cobertura e gestão da proteção de endpoint. O contexto tecnológico não foi informado nesta sessão; por isso, a leitura evita inferir presença ou ausência de ferramentas. O que mais importa · prioridades declaradas pelo negócio Nenhuma prioridade foi selecionada nesta sessão — o negócio pode declará-las em uma próxima conversa. Aprofundamento operacional Refinamento qualitativo opcional — não altera sua pontuação de maturidade. Refinar diagnóstico · 3 perguntas Gaps observados na sessão Gap moderado de maturidade Capacidade do time Pessoas Evidência declarada: Dependência de poucas pessoas — A operação funciona, mas depende de indivíduos específicos, sem redundância. Capability a desenvolver: Capacidade e resiliência do time Gap moderado de maturidade Resposta a incidentes Processos Evidência declarada: Processo informal — Há uma forma habitual de atuar, mas varia por equipe e caso. Capability a desenvolver: Gestão e execução de resposta a incidentes Gap moderado de maturidade Proteção de endpoint Tecnologia Evidência declarada: EDR parcial — Somente parte do parque, ou com funções limitadas. Capability a desenvolver: Detecção e resposta em endpoint (EDR) Como a Fortinet pode apoiar agora Sem indicação tecnológica — as evidências desta sessão são insuficientes. Pode fazer sentido — após validação FortiGuard SOCaaS — sinal identificado em: Capacidade e resiliência do time. O screening não tem profundidade para priorizá-lo; validar no aprofundamento. FortiAI-Assist — sinal identificado em: Capacidade e resiliência do time. O screening não tem profundidade para priorizá-lo; validar no aprofundamento. FortiSOAR — sinal identificado em: Gestão e execução de resposta a incidentes. O screening não tem profundidade para priorizá-lo; validar no aprofundamento. FortiEndpoint — sinal identificado em: Detecção e resposta em endpoint (EDR). O screening não tem profundidade para priorizá-lo; validar no aprofundamento. Não priorizados neste screening · 3 soluções FortiGuard MDR — sem evidência de gap correspondente nesta sessão (prática “Cobertura de monitoramento” declarada como “Cobertura medida e resiliente”). FortiSIEM — sem evidência de gap correspondente nesta sessão (prática “Casos de uso de detecção” declarada como “Casos de uso gerenciados”). FortiAnalyzer — sem evidência de gap correspondente nesta sessão (prática “Centralização de logs” declarada como “Principais fontes centralizadas”). Trilha de Validação · Próximo passo sugerido Completar evidências pendentes Antes de priorizar uma trilha de evolução, valide os itens sem informação suficiente e complete as evidências mínimas da sessão. Após a validação, o ponto de partida define a trilha de Fundação ou de Otimização. Adicionar contexto tecnológico Opcional · refine a interpretação dos gaps informando tecnologias e serviços já existentes. Imprimir / salvar em PDF Editar prioridades ← Revisar respostas Reiniciar avaliação Nova sessão O PDF inclui, ao final, o anexo “Evidências e observações da sessão”. Exportar sessão Importar sessão Sessão não salva automaticamente. Exporte o arquivo da sessão para continuar depois. Há alterações ainda não exportadas. Cenário-alvo de maturidade Nenhum cenário-alvo foi definido. Defina níveis de prática desejados para visualizar uma trajetória indicativa de evolução. Definir cenário-alvo Suficiência de evidência 10 de 10 respostas confirmadas no total. Negócio: +1 resposta confirmada necessária (1 de 2). Negócio · 1 confirmada · 0 a validar · 2 não respondidas Pessoas · 3 confirmadas · 0 a validar · 0 não respondidas Processos · 2 confirmadas · 0 a validar · 1 não respondida Tecnologia · 2 confirmadas · 0 a validar · 1 não respondida Serviços · 2 confirmadas · 0 a validar · 1 não respondida Continue o assessment para atingir evidência suficiente. Resultado executivo Resultado executivo: BLOQUEADO. Resultado ainda indisponível — as condições pendentes estão listadas no painel de suficiência acima. Negócio n/d Não avaliado · evidência insuficiente Pessoas n/d Não avaliado · evidência insuficiente Processos n/d Não avaliado · evidência insuficiente Tecnologia n/d Não avaliado · evidência insuficiente Serviços n/d Não avaliado · evidência insuficiente"
+      }
+    },
+    {
+      "fixture": "P50-F4@1440",
+      "gate": "released",
+      "sufficientAttr": "true",
+      "suffVisible": true,
+      "resVisible": true,
+      "globalLine": {
+        "text": "10 de 10 respostas confirmadas no total.",
+        "confirmed": "10",
+        "required": "10",
+        "missing": "0"
+      },
+      "deficits": [],
+      "axis": [
+        {
+          "dom": 0,
+          "confirmed": 2,
+          "toValidate": 0,
+          "unanswered": 1,
+          "text": "Negócio · 2 confirmadas · 0 a validar · 1 não respondida",
+          "accessible": "Negócio · 2 confirmadas · 0 a validar · 1 não respondida"
+        },
+        {
+          "dom": 1,
+          "confirmed": 2,
+          "toValidate": 0,
+          "unanswered": 1,
+          "text": "Pessoas · 2 confirmadas · 0 a validar · 1 não respondida",
+          "accessible": "Pessoas · 2 confirmadas · 0 a validar · 1 não respondida"
+        },
+        {
+          "dom": 2,
+          "confirmed": 2,
+          "toValidate": 0,
+          "unanswered": 1,
+          "text": "Processos · 2 confirmadas · 0 a validar · 1 não respondida",
+          "accessible": "Processos · 2 confirmadas · 0 a validar · 1 não respondida"
+        },
+        {
+          "dom": 3,
+          "confirmed": 2,
+          "toValidate": 0,
+          "unanswered": 1,
+          "text": "Tecnologia · 2 confirmadas · 0 a validar · 1 não respondida",
+          "accessible": "Tecnologia · 2 confirmadas · 0 a validar · 1 não respondida"
+        },
+        {
+          "dom": 4,
+          "confirmed": 2,
+          "toValidate": 0,
+          "unanswered": 1,
+          "text": "Serviços · 2 confirmadas · 0 a validar · 1 não respondida",
+          "accessible": "Serviços · 2 confirmadas · 0 a validar · 1 não respondida"
+        }
+      ],
+      "guidance": null,
+      "verdict": "Resultado executivo: liberado pelo veredito canônico.",
+      "domains": [
+        {
+          "dom": 0,
+          "state": "scored",
+          "value": "2.5",
+          "label": "maturidade indicativa do domínio",
+          "accessible": "Negócio2.5maturidade indicativa do domínio",
+          "visible": true
+        },
+        {
+          "dom": 1,
+          "state": "scored",
+          "value": "2.5",
+          "label": "maturidade indicativa do domínio",
+          "accessible": "Pessoas2.5maturidade indicativa do domínio",
+          "visible": true
+        },
+        {
+          "dom": 2,
+          "state": "scored",
+          "value": "2.5",
+          "label": "maturidade indicativa do domínio",
+          "accessible": "Processos2.5maturidade indicativa do domínio",
+          "visible": true
+        },
+        {
+          "dom": 3,
+          "state": "scored",
+          "value": "4.2",
+          "label": "maturidade indicativa do domínio",
+          "accessible": "Tecnologia4.2maturidade indicativa do domínio",
+          "visible": true
+        },
+        {
+          "dom": 4,
+          "state": "scored",
+          "value": "2.5",
+          "label": "maturidade indicativa do domínio",
+          "accessible": "Serviços2.5maturidade indicativa do domínio",
+          "visible": true
+        }
+      ],
+      "execCards": [
+        "strengths",
+        "priorities"
+      ],
+      "execCardsBox": true,
+      "overallEl": false,
+      "stageEl": false,
+      "layout": {
+        "docScrollWidth": 1440,
+        "viewportW": 1440,
+        "viewportH": 900,
+        "clippedNodes": 0,
+        "suffBottom": 3917,
+        "resTop": 3933,
+        "overlap": false,
+        "suffRight": 1130,
+        "resRight": 1130
+      },
+      "resText": "Resultado executivoResultado executivo: liberado pelo veredito canônico.A evidência registrada atende ao requisito canônico; os itens abaixo refletem somente as respostas confirmadas.Negócio2.5maturidade indicativa do domínioPessoas2.5maturidade indicativa do domínioProcessos2.5maturidade indicativa do domínioTecnologia4.2maturidade indicativa do domínioServiços2.5maturidade indicativa do domínioPontos fortes observadosDirecionamento e mandato de segurançaMandato e objetivosDesenvolvimento de competências do timeCapacitaçãoGestão e execução de resposta a incidentesResposta a incidentesAnálise centralizada, correlação e retenção de eventosCentralização de logsDetecção e resposta em endpoint (EDR)Proteção de endpointGestão de exposição externa (EASM/DRPS)Superfície externaPrioridades de evoluçãoNenhum gap alto foi identificado entre as respostas confirmadas desta sessão.",
+      "legacy": {
+        "rows": 5,
+        "frozenValues": [
+          "2.5 — Defined",
+          "2.5 — Defined",
+          "2.5 — Defined",
+          "4.2 — Quantitatively Managed",
+          "2.5 — Defined"
+        ],
+        "frozenValuesVisible": [
+          true,
+          true,
+          true,
+          true,
+          true
+        ],
+        "frozenConfVisible": [
+          true,
+          true,
+          true,
+          true,
+          true
+        ],
+        "p50Values": [
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        "p50ValuesVisible": [
+          false,
+          false,
+          false,
+          false,
+          false
+        ],
+        "marks": [
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        "stateNotes": [
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        "fillsPresent": 5,
+        "rulersScored": 5,
+        "fillsVisible": 5,
+        "radarVisible": true,
+        "radarNoteVisible": false,
+        "legendVisible": true,
+        "bannerVisible": false,
+        "accText": "Resultado indicativo 2.8 / 5.0 Defined · Definido Ponto de partida declarado: A — Sem operação formal 10 de 15 respostas confirmadas na sessão. Radar indicativo de maturidade por domínio Maturidade indicativa por domínio Negócio · Business 2.5 — Defined Confiança média — 2 de 3 respostas confirmadas · 1 requer validação Pessoas · People 2.5 — Defined Confiança média — 2 de 3 respostas confirmadas · 1 requer validação Processos · Process 2.5 — Defined Confiança média — 2 de 3 respostas confirmadas · 1 requer validação Tecnologia · Technology 4.2 — Quantitatively Managed Confiança média — 2 de 3 respostas confirmadas · 1 requer validação Serviços · Services 2.5 — Defined Confiança média — 2 de 3 respostas confirmadas · 1 requer validação 0 Non-existent 1 Initial 2 Managed 3 Defined 4 Quant. 5 Optimizing Síntese do resultado O consolidado 2.8/5.0 posiciona a operação, de forma indicativa, no estágio Defined . Existe uma base operacional estabelecida, mas a consistência entre práticas ainda varia. O ganho tende a vir da padronização, mensuração e integração dos processos. Os gaps derivam das respostas individuais , não da média do domínio — itens “não sei” entram como validação, nunca como gap. A régua não é a ambição: a ambição e o risco do negócio definem o nível necessário . Jornada de maturidade Jornada de maturidade: estágios do modelo com perfil atual e próximo estágio. Para avançar Estruturar governança e acompanhamento executivo da operação. Dimensionar e sustentar a capacidade do time. Gerenciar o ciclo de vida das detecções como casos de uso. O próximo estágio representa a próxima faixa do modelo de maturidade. A transição depende da evolução consistente das práticas e das evidências correspondentes. Leitura executiva O Quickscan posiciona a operação em Definido (2.8/5), com maior consistência relativa em Tecnologia e oportunidades mais relevantes de evolução em Negócio, Pessoas, Processos e Serviços. A distribuição mostra que a evolução não é uniforme entre os domínios avaliados. Nenhuma prioridade específica foi declarada nesta sessão; foram observados 0 gaps altos e 4 moderados, que concentram os principais pontos de evolução identificados nesta sessão. Os próximos passos mais consistentes envolvem: estruturar governança e acompanhamento executivo da operação; dimensionar e sustentar a capacidade do time; gerenciar o ciclo de vida das detecções como casos de uso. O contexto tecnológico não foi informado nesta sessão; por isso, a leitura evita inferir presença ou ausência de ferramentas. O que mais importa · prioridades declaradas pelo negócio Nenhuma prioridade foi selecionada nesta sessão — o negócio pode declará-las em uma próxima conversa. Aprofundamento operacional Refinamento qualitativo opcional — não altera sua pontuação de maturidade. Refinar diagnóstico · 3 perguntas Gaps observados na sessão Gap moderado de maturidade Governança Negócio Evidência declarada: Papéis informais — Sabe-se quem faz o quê, mas sem estrutura consistente. Capability a desenvolver: Governança e reporte de risco Gap moderado de maturidade Capacidade do time Pessoas Evidência declarada: Dependência de poucas pessoas — A operação funciona, mas depende de indivíduos específicos, sem redundância. Capability a desenvolver: Capacidade e resiliência do time Gap moderado de maturidade Casos de uso de detecção Processos Evidência declarada: Gestão reativa — Regras ajustadas após falsos positivos, incidentes ou problemas. Capability a desenvolver: Ciclo de vida de detecção (detection engineering) Gap moderado de maturidade Cobertura de monitoramento Serviços Evidência declarada: Cobertura parcial ou informal — Existe plantão, contato ou serviço fora do horário, mas com lacunas de escala, SLA ou formalização. Capability a desenvolver: Cobertura de monitoramento alinhada ao risco Como a Fortinet pode apoiar agora Sem indicação tecnológica prioritária a partir das evidências desta sessão. Pode fazer sentido — após validação Serviços FortiGuard — sinal identificado em: Governança e reporte de risco. O screening não tem profundidade para priorizá-lo; validar no aprofundamento. FortiGuard SOCaaS — sinal identificado em: Capacidade e resiliência do time; Cobertura de monitoramento alinhada ao risco. O screening não tem profundidade para priorizá-lo; validar no aprofundamento. FortiGuard MDR — sinal identificado em: Cobertura de monitoramento alinhada ao risco. O screening não tem profundidade para priorizá-lo; validar no aprofundamento. FortiAI-Assist — sinal identificado em: Capacidade e resiliência do time; Ciclo de vida de detecção (detection engineering). O screening não tem profundidade para priorizá-lo; validar no aprofundamento. FortiSIEM — sinal identificado em: Ciclo de vida de detecção (detection engineering). O screening não tem profundidade para priorizá-lo; validar no aprofundamento. Não priorizados neste screening · 1 solução FortiAnalyzer — sem evidência de gap correspondente nesta sessão (prática “Centralização de logs” declarada como “Principais fontes centralizadas”). Trilha Fundação · Próximo passo sugerido Assessment de Maturidade NIST CSF 2.0 Raio-X completo da postura de segurança da organização: workshop conduzido ao vivo (sem questionário prévio), relatório executivo com score por função e roadmap priorizado de 24 meses. É o diagnóstico que ordena os investimentos — antes de qualquer compra. Adicionar contexto tecnológico Opcional · refine a interpretação dos gaps informando tecnologias e serviços já existentes. Imprimir / salvar em PDF Editar prioridades ← Revisar respostas Reiniciar avaliação Nova sessão O PDF inclui, ao final, o anexo “Evidências e observações da sessão”. Exportar sessão Importar sessão Sessão não salva automaticamente. Exporte o arquivo da sessão para continuar depois. Há alterações ainda não exportadas. Cenário-alvo de maturidade Nenhum cenário-alvo foi definido. Defina níveis de prática desejados para visualizar uma trajetória indicativa de evolução. Definir cenário-alvo Suficiência de evidência 10 de 10 respostas confirmadas no total. Negócio · 2 confirmadas · 0 a validar · 1 não respondida Pessoas · 2 confirmadas · 0 a validar · 1 não respondida Processos · 2 confirmadas · 0 a validar · 1 não respondida Tecnologia · 2 confirmadas · 0 a validar · 1 não respondida Serviços · 2 confirmadas · 0 a validar · 1 não respondida Resultado executivo Resultado executivo: liberado pelo veredito canônico. A evidência registrada atende ao requisito canônico; os itens abaixo refletem somente as respostas confirmadas. Negócio 2.5 maturidade indicativa do domínio Pessoas 2.5 maturidade indicativa do domínio Processos 2.5 maturidade indicativa do domínio Tecnologia 4.2 maturidade indicativa do domínio Serviços 2.5 maturidade indicativa do domínio Pontos fortes observados Direcionamento e mandato de segurança Mandato e objetivos Desenvolvimento de competências do time Capacitação Gestão e execução de resposta a incidentes Resposta a incidentes Análise centralizada, correlação e retenção de eventos Centralização de logs Detecção e resposta em endpoint (EDR) Proteção de endpoint Gestão de exposição externa (EASM/DRPS) Superfície externa Prioridades de evolução Nenhum gap alto foi identificado entre as respostas confirmadas desta sessão."
+      }
+    },
+    {
+      "fixture": "P50-F5@1440",
+      "gate": "released",
+      "sufficientAttr": "true",
+      "suffVisible": true,
+      "resVisible": true,
+      "globalLine": {
+        "text": "15 de 10 respostas confirmadas no total.",
+        "confirmed": "15",
+        "required": "10",
+        "missing": "0"
+      },
+      "deficits": [],
+      "axis": [
+        {
+          "dom": 0,
+          "confirmed": 3,
+          "toValidate": 0,
+          "unanswered": 0,
+          "text": "Negócio · 3 confirmadas · 0 a validar · 0 não respondidas",
+          "accessible": "Negócio · 3 confirmadas · 0 a validar · 0 não respondidas"
+        },
+        {
+          "dom": 1,
+          "confirmed": 3,
+          "toValidate": 0,
+          "unanswered": 0,
+          "text": "Pessoas · 3 confirmadas · 0 a validar · 0 não respondidas",
+          "accessible": "Pessoas · 3 confirmadas · 0 a validar · 0 não respondidas"
+        },
+        {
+          "dom": 2,
+          "confirmed": 3,
+          "toValidate": 0,
+          "unanswered": 0,
+          "text": "Processos · 3 confirmadas · 0 a validar · 0 não respondidas",
+          "accessible": "Processos · 3 confirmadas · 0 a validar · 0 não respondidas"
+        },
+        {
+          "dom": 3,
+          "confirmed": 3,
+          "toValidate": 0,
+          "unanswered": 0,
+          "text": "Tecnologia · 3 confirmadas · 0 a validar · 0 não respondidas",
+          "accessible": "Tecnologia · 3 confirmadas · 0 a validar · 0 não respondidas"
+        },
+        {
+          "dom": 4,
+          "confirmed": 3,
+          "toValidate": 0,
+          "unanswered": 0,
+          "text": "Serviços · 3 confirmadas · 0 a validar · 0 não respondidas",
+          "accessible": "Serviços · 3 confirmadas · 0 a validar · 0 não respondidas"
+        }
+      ],
+      "guidance": null,
+      "verdict": "Resultado executivo: liberado pelo veredito canônico.",
+      "domains": [
+        {
+          "dom": 0,
+          "state": "scored",
+          "value": "3.3",
+          "label": "maturidade indicativa do domínio",
+          "accessible": "Negócio3.3maturidade indicativa do domínio",
+          "visible": true
+        },
+        {
+          "dom": 1,
+          "state": "scored",
+          "value": "3.3",
+          "label": "maturidade indicativa do domínio",
+          "accessible": "Pessoas3.3maturidade indicativa do domínio",
+          "visible": true
+        },
+        {
+          "dom": 2,
+          "state": "scored",
+          "value": "3.3",
+          "label": "maturidade indicativa do domínio",
+          "accessible": "Processos3.3maturidade indicativa do domínio",
+          "visible": true
+        },
+        {
+          "dom": 3,
+          "state": "scored",
+          "value": "3.3",
+          "label": "maturidade indicativa do domínio",
+          "accessible": "Tecnologia3.3maturidade indicativa do domínio",
+          "visible": true
+        },
+        {
+          "dom": 4,
+          "state": "scored",
+          "value": "3.3",
+          "label": "maturidade indicativa do domínio",
+          "accessible": "Serviços3.3maturidade indicativa do domínio",
+          "visible": true
+        }
+      ],
+      "execCards": [
+        "strengths",
+        "priorities"
+      ],
+      "execCardsBox": true,
+      "overallEl": false,
+      "stageEl": false,
+      "layout": {
+        "docScrollWidth": 1440,
+        "viewportW": 1440,
+        "viewportH": 900,
+        "clippedNodes": 0,
+        "suffBottom": 4094,
+        "resTop": 4110,
+        "overlap": false,
+        "suffRight": 1130,
+        "resRight": 1130
+      },
+      "resText": "Resultado executivoResultado executivo: liberado pelo veredito canônico.A evidência registrada atende ao requisito canônico; os itens abaixo refletem somente as respostas confirmadas.Negócio3.3maturidade indicativa do domínioPessoas3.3maturidade indicativa do domínioProcessos3.3maturidade indicativa do domínioTecnologia3.3maturidade indicativa do domínioServiços3.3maturidade indicativa do domínioPontos fortes observadosDirecionamento e mandato de segurançaMandato e objetivosPolíticas de segurança e privacidade (LGPD)Políticas e privacidadeDesenvolvimento de competências do timeCapacitaçãoGestão de conhecimento operacionalConhecimento operacionalGestão e execução de resposta a incidentesResposta a incidentesCiclo de vida de detecção (detection engineering)Casos de uso de detecçãoAnálise centralizada, correlação e retenção de eventosCentralização de logsDetecção e resposta em endpoint (EDR)Proteção de endpointCobertura de monitoramento alinhada ao riscoCobertura de monitoramentoGestão contínua de vulnerabilidadesGestão de vulnerabilidadesPrioridades de evoluçãoNenhum gap alto foi identificado entre as respostas confirmadas desta sessão.",
+      "legacy": {
+        "rows": 5,
+        "frozenValues": [
+          "3.3 — Defined",
+          "3.3 — Defined",
+          "3.3 — Defined",
+          "3.3 — Defined",
+          "3.3 — Defined"
+        ],
+        "frozenValuesVisible": [
+          true,
+          true,
+          true,
+          true,
+          true
+        ],
+        "frozenConfVisible": [
+          true,
+          true,
+          true,
+          true,
+          true
+        ],
+        "p50Values": [
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        "p50ValuesVisible": [
+          false,
+          false,
+          false,
+          false,
+          false
+        ],
+        "marks": [
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        "stateNotes": [
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        "fillsPresent": 5,
+        "rulersScored": 5,
+        "fillsVisible": 5,
+        "radarVisible": true,
+        "radarNoteVisible": false,
+        "legendVisible": true,
+        "bannerVisible": false,
+        "accText": "Resultado indicativo 3.3 / 5.0 Defined · Definido Ponto de partida declarado: A — Sem operação formal 15 de 15 respostas confirmadas na sessão. Radar indicativo de maturidade por domínio Maturidade indicativa por domínio Negócio · Business 3.3 — Defined Confiança média — 3 de 3 respostas confirmadas · respostas divergentes entre si Pessoas · People 3.3 — Defined Confiança média — 3 de 3 respostas confirmadas · respostas divergentes entre si Processos · Process 3.3 — Defined Confiança média — 3 de 3 respostas confirmadas · respostas divergentes entre si Tecnologia · Technology 3.3 — Defined Confiança média — 3 de 3 respostas confirmadas · respostas divergentes entre si Serviços · Services 3.3 — Defined Confiança média — 3 de 3 respostas confirmadas · respostas divergentes entre si 0 Non-existent 1 Initial 2 Managed 3 Defined 4 Quant. 5 Optimizing Síntese do resultado O consolidado 3.3/5.0 posiciona a operação, de forma indicativa, no estágio Defined . Existe uma base operacional estabelecida, mas a consistência entre práticas ainda varia. O ganho tende a vir da padronização, mensuração e integração dos processos. Os gaps derivam das respostas individuais , não da média do domínio — itens “não sei” entram como validação, nunca como gap. A régua não é a ambição: a ambição e o risco do negócio definem o nível necessário . Jornada de maturidade Jornada de maturidade: estágios do modelo com perfil atual e próximo estágio. Para avançar Estruturar governança e acompanhamento executivo da operação. Dimensionar e sustentar a capacidade do time. Evoluir automação e orquestração das rotinas operacionais. O próximo estágio representa a próxima faixa do modelo de maturidade. A transição depende da evolução consistente das práticas e das evidências correspondentes. Leitura executiva O Quickscan posiciona a operação em Definido (3.3/5). Os domínios apresentam resultados próximos entre si, indicando um perfil relativamente equilibrado dentro do estágio atual. Nenhuma prioridade específica foi declarada nesta sessão; foram observados 0 gaps altos e 5 moderados, que concentram os principais pontos de evolução identificados nesta sessão. Os próximos passos mais consistentes envolvem: estruturar governança e acompanhamento executivo da operação; dimensionar e sustentar a capacidade do time; evoluir automação e orquestração das rotinas operacionais. O contexto tecnológico não foi informado nesta sessão; por isso, a leitura evita inferir presença ou ausência de ferramentas. O que mais importa · prioridades declaradas pelo negócio Nenhuma prioridade foi selecionada nesta sessão — o negócio pode declará-las em uma próxima conversa. Aprofundamento operacional Refinamento qualitativo opcional — não altera sua pontuação de maturidade. Refinar diagnóstico · 3 perguntas Gaps observados na sessão Gap moderado de maturidade Governança Negócio Evidência declarada: Papéis informais — Sabe-se quem faz o quê, mas sem estrutura consistente. Capability a desenvolver: Governança e reporte de risco Gap moderado de maturidade Capacidade do time Pessoas Evidência declarada: Dependência de poucas pessoas — A operação funciona, mas depende de indivíduos específicos, sem redundância. Capability a desenvolver: Capacidade e resiliência do time Gap moderado de maturidade Automação Processos Evidência declarada: Automações pontuais — Scripts ou integrações isoladas. Capability a desenvolver: Orquestração e automação de resposta Gap moderado de maturidade Visibilidade de rede Tecnologia Evidência declarada: Visibilidade parcial — Alguns segmentos ou ferramentas fornecem visibilidade, mas existem lacunas relevantes de cobertura ou análise. Capability a desenvolver: Network Detection & Response Gap moderado de maturidade Superfície externa Serviços Evidência declarada: Consultas pontuais — Após incidentes ou por demanda. Capability a desenvolver: Gestão de exposição externa (EASM/DRPS) Como a Fortinet pode apoiar agora Sem indicação tecnológica prioritária a partir das evidências desta sessão. Pode fazer sentido — após validação Serviços FortiGuard — sinal identificado em: Governança e reporte de risco. O screening não tem profundidade para priorizá-lo; validar no aprofundamento. FortiGuard SOCaaS — sinal identificado em: Capacidade e resiliência do time. O screening não tem profundidade para priorizá-lo; validar no aprofundamento. FortiAI-Assist — sinal identificado em: Capacidade e resiliência do time. O screening não tem profundidade para priorizá-lo; validar no aprofundamento. FortiSOAR — sinal identificado em: Orquestração e automação de resposta. O screening não tem profundidade para priorizá-lo; validar no aprofundamento. FortiXDR — sinal identificado em: Orquestração e automação de resposta. O screening não tem profundidade para priorizá-lo; validar no aprofundamento. FortiNDR — sinal identificado em: Network Detection & Response. O screening não tem profundidade para priorizá-lo; validar no aprofundamento. FortiRecon — sinal identificado em: Gestão de exposição externa (EASM/DRPS). O screening não tem profundidade para priorizá-lo; validar no aprofundamento. Não priorizados neste screening · 4 soluções FortiGuard MDR — sem evidência de gap correspondente nesta sessão (prática “Cobertura de monitoramento” declarada como “Cobertura compatível com a necessidade”). FortiSIEM — sem evidência de gap correspondente nesta sessão (prática “Casos de uso de detecção” declarada como “Lifecycle orientado por risco”). FortiAnalyzer — sem evidência de gap correspondente nesta sessão (prática “Centralização de logs” declarada como “Cobertura gerenciada e otimizada”). FortiEndpoint — sem evidência de gap correspondente nesta sessão (prática “Proteção de endpoint” declarada como “EDR nas cargas críticas”). Trilha Fundação · Próximo passo sugerido Assessment de Maturidade NIST CSF 2.0 Raio-X completo da postura de segurança da organização: workshop conduzido ao vivo (sem questionário prévio), relatório executivo com score por função e roadmap priorizado de 24 meses. É o diagnóstico que ordena os investimentos — antes de qualquer compra. Adicionar contexto tecnológico Opcional · refine a interpretação dos gaps informando tecnologias e serviços já existentes. Imprimir / salvar em PDF Editar prioridades ← Revisar respostas Reiniciar avaliação Nova sessão O PDF inclui, ao final, o anexo “Evidências e observações da sessão”. Exportar sessão Importar sessão Sessão não salva automaticamente. Exporte o arquivo da sessão para continuar depois. Há alterações ainda não exportadas. Cenário-alvo de maturidade Nenhum cenário-alvo foi definido. Defina níveis de prática desejados para visualizar uma trajetória indicativa de evolução. Definir cenário-alvo Suficiência de evidência 15 de 10 respostas confirmadas no total. Negócio · 3 confirmadas · 0 a validar · 0 não respondidas Pessoas · 3 confirmadas · 0 a validar · 0 não respondidas Processos · 3 confirmadas · 0 a validar · 0 não respondidas Tecnologia · 3 confirmadas · 0 a validar · 0 não respondidas Serviços · 3 confirmadas · 0 a validar · 0 não respondidas Resultado executivo Resultado executivo: liberado pelo veredito canônico. A evidência registrada atende ao requisito canônico; os itens abaixo refletem somente as respostas confirmadas. Negócio 3.3 maturidade indicativa do domínio Pessoas 3.3 maturidade indicativa do domínio Processos 3.3 maturidade indicativa do domínio Tecnologia 3.3 maturidade indicativa do domínio Serviços 3.3 maturidade indicativa do domínio Pontos fortes observados Direcionamento e mandato de segurança Mandato e objetivos Políticas de segurança e privacidade (LGPD) Políticas e privacidade Desenvolvimento de competências do time Capacitação Gestão de conhecimento operacional Conhecimento operacional Gestão e execução de resposta a incidentes Resposta a incidentes Ciclo de vida de detecção (detection engineering) Casos de uso de detecção Análise centralizada, correlação e retenção de eventos Centralização de logs Detecção e resposta em endpoint (EDR) Proteção de endpoint Cobertura de monitoramento alinhada ao risco Cobertura de monitoramento Gestão contínua de vulnerabilidades Gestão de vulnerabilidades Prioridades de evolução Nenhum gap alto foi identificado entre as respostas confirmadas desta sessão."
+      }
+    },
+    {
+      "fixture": "relock@1440",
+      "gate": "blocked",
+      "sufficientAttr": "false",
+      "suffVisible": true,
+      "resVisible": true,
+      "globalLine": {
+        "text": "Falta 1 resposta confirmada no total (9 de 10).",
+        "confirmed": "9",
+        "required": "10",
+        "missing": "1"
+      },
+      "deficits": [
+        {
+          "dom": 0,
+          "missing": 1,
+          "text": "Negócio: +1 resposta confirmada necessária (1 de 2).",
+          "accessible": "Negócio: +1 resposta confirmada necessária (1 de 2).",
+          "visible": true
+        }
+      ],
+      "axis": [
+        {
+          "dom": 0,
+          "confirmed": 1,
+          "toValidate": 1,
+          "unanswered": 1,
+          "text": "Negócio · 1 confirmada · 1 a validar · 1 não respondida",
+          "accessible": "Negócio · 1 confirmada · 1 a validar · 1 não respondida"
+        },
+        {
+          "dom": 1,
+          "confirmed": 2,
+          "toValidate": 0,
+          "unanswered": 1,
+          "text": "Pessoas · 2 confirmadas · 0 a validar · 1 não respondida",
+          "accessible": "Pessoas · 2 confirmadas · 0 a validar · 1 não respondida"
+        },
+        {
+          "dom": 2,
+          "confirmed": 2,
+          "toValidate": 0,
+          "unanswered": 1,
+          "text": "Processos · 2 confirmadas · 0 a validar · 1 não respondida",
+          "accessible": "Processos · 2 confirmadas · 0 a validar · 1 não respondida"
+        },
+        {
+          "dom": 3,
+          "confirmed": 2,
+          "toValidate": 0,
+          "unanswered": 1,
+          "text": "Tecnologia · 2 confirmadas · 0 a validar · 1 não respondida",
+          "accessible": "Tecnologia · 2 confirmadas · 0 a validar · 1 não respondida"
+        },
+        {
+          "dom": 4,
+          "confirmed": 2,
+          "toValidate": 0,
+          "unanswered": 1,
+          "text": "Serviços · 2 confirmadas · 0 a validar · 1 não respondida",
+          "accessible": "Serviços · 2 confirmadas · 0 a validar · 1 não respondida"
+        }
+      ],
+      "guidance": "Continue o assessment para atingir evidência suficiente.",
+      "verdict": "Resultado executivo: BLOQUEADO.",
+      "domains": [
+        {
+          "dom": 0,
+          "state": "unavailable",
+          "value": "n/d",
+          "label": "Não avaliado · evidência insuficiente",
+          "accessible": "Negócion/dNão avaliado · evidência insuficiente",
+          "visible": true
+        },
+        {
+          "dom": 1,
+          "state": "unavailable",
+          "value": "n/d",
+          "label": "Não avaliado · evidência insuficiente",
+          "accessible": "Pessoasn/dNão avaliado · evidência insuficiente",
+          "visible": true
+        },
+        {
+          "dom": 2,
+          "state": "unavailable",
+          "value": "n/d",
+          "label": "Não avaliado · evidência insuficiente",
+          "accessible": "Processosn/dNão avaliado · evidência insuficiente",
+          "visible": true
+        },
+        {
+          "dom": 3,
+          "state": "unavailable",
+          "value": "n/d",
+          "label": "Não avaliado · evidência insuficiente",
+          "accessible": "Tecnologian/dNão avaliado · evidência insuficiente",
+          "visible": true
+        },
+        {
+          "dom": 4,
+          "state": "unavailable",
+          "value": "n/d",
+          "label": "Não avaliado · evidência insuficiente",
+          "accessible": "Serviçosn/dNão avaliado · evidência insuficiente",
+          "visible": true
+        }
+      ],
+      "execCards": [],
+      "execCardsBox": false,
+      "overallEl": false,
+      "stageEl": false,
+      "layout": {
+        "docScrollWidth": 1440,
+        "viewportW": 1440,
+        "viewportH": 900,
+        "clippedNodes": 0,
+        "suffBottom": 4353,
+        "resTop": 4369,
+        "overlap": false,
+        "suffRight": 1130,
+        "resRight": 1130
+      },
+      "resText": "Resultado executivoResultado executivo: BLOQUEADO.Resultado ainda indisponível — as condições pendentes estão listadas no painel de suficiência acima.Negócion/dNão avaliado · evidência insuficientePessoasn/dNão avaliado · evidência insuficienteProcessosn/dNão avaliado · evidência insuficienteTecnologian/dNão avaliado · evidência insuficienteServiçosn/dNão avaliado · evidência insuficiente",
+      "legacy": {
+        "rows": 5,
+        "frozenValues": [
+          "1.7 — Managed",
+          "2.5 — Defined",
+          "2.5 — Defined",
+          "4.2 — Quantitatively Managed",
+          "2.5 — Defined"
+        ],
+        "frozenValuesVisible": [
+          false,
+          false,
+          false,
+          false,
+          false
+        ],
+        "frozenConfVisible": [
+          false,
+          false,
+          false,
+          false,
+          false
+        ],
+        "p50Values": [
+          "n/d",
+          "n/d",
+          "n/d",
+          "n/d",
+          "n/d"
+        ],
+        "p50ValuesVisible": [
+          true,
+          true,
+          true,
+          true,
+          true
+        ],
+        "marks": [
+          "neutralized",
+          "neutralized",
+          "neutralized",
+          "neutralized",
+          "neutralized"
+        ],
+        "stateNotes": [
+          "Não avaliado · evidência insuficiente",
+          "Não avaliado · evidência insuficiente",
+          "Não avaliado · evidência insuficiente",
+          "Não avaliado · evidência insuficiente",
+          "Não avaliado · evidência insuficiente"
+        ],
+        "fillsPresent": 5,
+        "rulersScored": 5,
+        "fillsVisible": 0,
+        "radarVisible": false,
+        "radarNoteVisible": true,
+        "legendVisible": false,
+        "bannerVisible": true,
+        "accText": "Resultado indicativo n/d / 5.0 Cobertura insuficiente Ponto de partida declarado: A — Sem operação formal 9 de 15 respostas confirmadas na sessão · 1 marcada para validação. Perfil de maturidade por domínio indisponível — evidência insuficiente. Maturidade indicativa por domínio Negócio · Business n/d 1 de 3 respostas confirmadas · diagnóstico parcial, não é veredito de maturidade Não avaliado · evidência insuficiente Pessoas · People n/d 2 de 3 respostas confirmadas · diagnóstico parcial, não é veredito de maturidade Não avaliado · evidência insuficiente Processos · Process n/d 2 de 3 respostas confirmadas · diagnóstico parcial, não é veredito de maturidade Não avaliado · evidência insuficiente Tecnologia · Technology n/d 2 de 3 respostas confirmadas · diagnóstico parcial, não é veredito de maturidade Não avaliado · evidência insuficiente Serviços · Services n/d 2 de 3 respostas confirmadas · diagnóstico parcial, não é veredito de maturidade Não avaliado · evidência insuficiente Evidência insuficiente: nenhum score de maturidade por domínio é apresentado até o gate canônico abrir. Síntese do resultado Dados insuficientes para uma leitura consolidada. Os achados abaixo refletem somente as respostas confirmadas — itens pendentes precisam ser validados antes de uma conclusão sobre a maturidade geral. Os gaps derivam das respostas individuais , não da média do domínio — itens “não sei” entram como validação, nunca como gap. A régua não é a ambição: a ambição e o risco do negócio definem o nível necessário . Jornada de maturidade Posicionamento atual: n/d Não há evidência suficiente neste Quickscan para posicionar a operação com segurança em um estágio de maturidade. Jornada de maturidade: estágios do modelo com perfil atual. Para avançar Estruturar governança e acompanhamento executivo da operação. Dimensionar e sustentar a capacidade do time. Gerenciar o ciclo de vida das detecções como casos de uso. O próximo estágio representa a próxima faixa do modelo de maturidade. A transição depende da evolução consistente das práticas e das evidências correspondentes. Leitura executiva As respostas disponíveis ainda não são suficientes para posicionar a operação em um estágio de maturidade com segurança. Ainda assim, o Quickscan identifica sinais relevantes nos gaps já confirmados durante a sessão. Nenhuma prioridade específica foi declarada nesta sessão; foram observados 0 gaps altos e 4 moderados, que concentram os principais pontos de evolução identificados nesta sessão. O próximo passo mais consistente é completar e validar as evidências pendentes, em vez de perseguir um estágio artificial. Em paralelo, os sinais já confirmados apontam para: estruturar governança e acompanhamento executivo da operação; dimensionar e sustentar a capacidade do time; gerenciar o ciclo de vida das detecções como casos de uso. O contexto tecnológico não foi informado nesta sessão; por isso, a leitura evita inferir presença ou ausência de ferramentas. O que mais importa · prioridades declaradas pelo negócio Nenhuma prioridade foi selecionada nesta sessão — o negócio pode declará-las em uma próxima conversa. Aprofundamento operacional Refinamento qualitativo opcional — não altera sua pontuação de maturidade. Refinar diagnóstico · 3 perguntas Gaps observados na sessão Gap moderado de maturidade Governança Negócio Evidência declarada: Papéis informais — Sabe-se quem faz o quê, mas sem estrutura consistente. Capability a desenvolver: Governança e reporte de risco Gap moderado de maturidade Capacidade do time Pessoas Evidência declarada: Dependência de poucas pessoas — A operação funciona, mas depende de indivíduos específicos, sem redundância. Capability a desenvolver: Capacidade e resiliência do time Gap moderado de maturidade Casos de uso de detecção Processos Evidência declarada: Gestão reativa — Regras ajustadas após falsos positivos, incidentes ou problemas. Capability a desenvolver: Ciclo de vida de detecção (detection engineering) Gap moderado de maturidade Cobertura de monitoramento Serviços Evidência declarada: Cobertura parcial ou informal — Existe plantão, contato ou serviço fora do horário, mas com lacunas de escala, SLA ou formalização. Capability a desenvolver: Cobertura de monitoramento alinhada ao risco Como a Fortinet pode apoiar agora Sem indicação tecnológica — as evidências desta sessão são insuficientes. Pode fazer sentido — após validação Serviços FortiGuard — sinal identificado em: Governança e reporte de risco. O screening não tem profundidade para priorizá-lo; validar no aprofundamento. FortiGuard SOCaaS — sinal identificado em: Capacidade e resiliência do time; Cobertura de monitoramento alinhada ao risco. O screening não tem profundidade para priorizá-lo; validar no aprofundamento. FortiGuard MDR — sinal identificado em: Cobertura de monitoramento alinhada ao risco. O screening não tem profundidade para priorizá-lo; validar no aprofundamento. FortiAI-Assist — sinal identificado em: Capacidade e resiliência do time; Ciclo de vida de detecção (detection engineering). O screening não tem profundidade para priorizá-lo; validar no aprofundamento. FortiSIEM — sinal identificado em: Ciclo de vida de detecção (detection engineering). O screening não tem profundidade para priorizá-lo; validar no aprofundamento. Capabilities a validar Direcionamento e mandato de segurança — pergunta “Mandato e objetivos” · informação não confirmada. Não priorizados neste screening · 1 solução FortiAnalyzer — sem evidência de gap correspondente nesta sessão (prática “Centralização de logs” declarada como “Principais fontes centralizadas”). Trilha de Validação · Próximo passo sugerido Completar evidências pendentes Antes de priorizar uma trilha de evolução, valide os itens sem informação suficiente e complete as evidências mínimas da sessão. Após a validação, o ponto de partida define a trilha de Fundação ou de Otimização. Adicionar contexto tecnológico Opcional · refine a interpretação dos gaps informando tecnologias e serviços já existentes. Imprimir / salvar em PDF Editar prioridades ← Revisar respostas Reiniciar avaliação Nova sessão O PDF inclui, ao final, o anexo “Evidências e observações da sessão”. Exportar sessão Importar sessão Sessão não salva automaticamente. Exporte o arquivo da sessão para continuar depois. Há alterações ainda não exportadas. Cenário-alvo de maturidade Nenhum cenário-alvo foi definido. Defina níveis de prática desejados para visualizar uma trajetória indicativa de evolução. Definir cenário-alvo Suficiência de evidência Falta 1 resposta confirmada no total (9 de 10). Negócio: +1 resposta confirmada necessária (1 de 2). Negócio · 1 confirmada · 1 a validar · 1 não respondida Pessoas · 2 confirmadas · 0 a validar · 1 não respondida Processos · 2 confirmadas · 0 a validar · 1 não respondida Tecnologia · 2 confirmadas · 0 a validar · 1 não respondida Serviços · 2 confirmadas · 0 a validar · 1 não respondida Continue o assessment para atingir evidência suficiente. Resultado executivo Resultado executivo: BLOQUEADO. Resultado ainda indisponível — as condições pendentes estão listadas no painel de suficiência acima. Negócio n/d Não avaliado · evidência insuficiente Pessoas n/d Não avaliado · evidência insuficiente Processos n/d Não avaliado · evidência insuficiente Tecnologia n/d Não avaliado · evidência insuficiente Serviços n/d Não avaliado · evidência insuficiente"
+      }
+    },
+    {
+      "fixture": "P50-F3@390",
+      "gate": "blocked",
+      "sufficientAttr": "false",
+      "suffVisible": true,
+      "resVisible": true,
+      "globalLine": {
+        "text": "10 de 10 respostas confirmadas no total.",
+        "confirmed": "10",
+        "required": "10",
+        "missing": "0"
+      },
+      "deficits": [
+        {
+          "dom": 0,
+          "missing": 1,
+          "text": "Negócio: +1 resposta confirmada necessária (1 de 2).",
+          "accessible": "Negócio: +1 resposta confirmada necessária (1 de 2).",
+          "visible": true
+        }
+      ],
+      "axis": [
+        {
+          "dom": 0,
+          "confirmed": 1,
+          "toValidate": 0,
+          "unanswered": 2,
+          "text": "Negócio · 1 confirmada · 0 a validar · 2 não respondidas",
+          "accessible": "Negócio · 1 confirmada · 0 a validar · 2 não respondidas"
+        },
+        {
+          "dom": 1,
+          "confirmed": 3,
+          "toValidate": 0,
+          "unanswered": 0,
+          "text": "Pessoas · 3 confirmadas · 0 a validar · 0 não respondidas",
+          "accessible": "Pessoas · 3 confirmadas · 0 a validar · 0 não respondidas"
+        },
+        {
+          "dom": 2,
+          "confirmed": 2,
+          "toValidate": 0,
+          "unanswered": 1,
+          "text": "Processos · 2 confirmadas · 0 a validar · 1 não respondida",
+          "accessible": "Processos · 2 confirmadas · 0 a validar · 1 não respondida"
+        },
+        {
+          "dom": 3,
+          "confirmed": 2,
+          "toValidate": 0,
+          "unanswered": 1,
+          "text": "Tecnologia · 2 confirmadas · 0 a validar · 1 não respondida",
+          "accessible": "Tecnologia · 2 confirmadas · 0 a validar · 1 não respondida"
+        },
+        {
+          "dom": 4,
+          "confirmed": 2,
+          "toValidate": 0,
+          "unanswered": 1,
+          "text": "Serviços · 2 confirmadas · 0 a validar · 1 não respondida",
+          "accessible": "Serviços · 2 confirmadas · 0 a validar · 1 não respondida"
+        }
+      ],
+      "guidance": "Continue o assessment para atingir evidência suficiente.",
+      "verdict": "Resultado executivo: BLOQUEADO.",
+      "domains": [
+        {
+          "dom": 0,
+          "state": "unavailable",
+          "value": "n/d",
+          "label": "Não avaliado · evidência insuficiente",
+          "accessible": "Negócion/dNão avaliado · evidência insuficiente",
+          "visible": true
+        },
+        {
+          "dom": 1,
+          "state": "unavailable",
+          "value": "n/d",
+          "label": "Não avaliado · evidência insuficiente",
+          "accessible": "Pessoasn/dNão avaliado · evidência insuficiente",
+          "visible": true
+        },
+        {
+          "dom": 2,
+          "state": "unavailable",
+          "value": "n/d",
+          "label": "Não avaliado · evidência insuficiente",
+          "accessible": "Processosn/dNão avaliado · evidência insuficiente",
+          "visible": true
+        },
+        {
+          "dom": 3,
+          "state": "unavailable",
+          "value": "n/d",
+          "label": "Não avaliado · evidência insuficiente",
+          "accessible": "Tecnologian/dNão avaliado · evidência insuficiente",
+          "visible": true
+        },
+        {
+          "dom": 4,
+          "state": "unavailable",
+          "value": "n/d",
+          "label": "Não avaliado · evidência insuficiente",
+          "accessible": "Serviçosn/dNão avaliado · evidência insuficiente",
+          "visible": true
+        }
+      ],
+      "execCards": [],
+      "execCardsBox": false,
+      "overallEl": false,
+      "stageEl": false,
+      "layout": {
+        "docScrollWidth": 390,
+        "viewportW": 390,
+        "viewportH": 844,
+        "clippedNodes": 0,
+        "suffBottom": 6078,
+        "resTop": 6094,
+        "overlap": false,
+        "suffRight": 372,
+        "resRight": 372
+      },
+      "resText": "Resultado executivoResultado executivo: BLOQUEADO.Resultado ainda indisponível — as condições pendentes estão listadas no painel de suficiência acima.Negócion/dNão avaliado · evidência insuficientePessoasn/dNão avaliado · evidência insuficienteProcessosn/dNão avaliado · evidência insuficienteTecnologian/dNão avaliado · evidência insuficienteServiçosn/dNão avaliado · evidência insuficiente",
+      "legacy": {
+        "rows": 5,
+        "frozenValues": [
+          "3.3 — Defined",
+          "3.3 — Defined",
+          "2.5 — Defined",
+          "2.5 — Defined",
+          "4.2 — Quantitatively Managed"
+        ],
+        "frozenValuesVisible": [
+          false,
+          false,
+          false,
+          false,
+          false
+        ],
+        "frozenConfVisible": [
+          false,
+          false,
+          false,
+          false,
+          false
+        ],
+        "p50Values": [
+          "n/d",
+          "n/d",
+          "n/d",
+          "n/d",
+          "n/d"
+        ],
+        "p50ValuesVisible": [
+          true,
+          true,
+          true,
+          true,
+          true
+        ],
+        "marks": [
+          "neutralized",
+          "neutralized",
+          "neutralized",
+          "neutralized",
+          "neutralized"
+        ],
+        "stateNotes": [
+          "Não avaliado · evidência insuficiente",
+          "Não avaliado · evidência insuficiente",
+          "Não avaliado · evidência insuficiente",
+          "Não avaliado · evidência insuficiente",
+          "Não avaliado · evidência insuficiente"
+        ],
+        "fillsPresent": 5,
+        "rulersScored": 5,
+        "fillsVisible": 0,
+        "radarVisible": false,
+        "radarNoteVisible": true,
+        "legendVisible": false,
+        "bannerVisible": true,
+        "accText": "Resultado indicativo n/d / 5.0 Cobertura insuficiente Ponto de partida declarado: A — Sem operação formal 10 de 15 respostas confirmadas na sessão. Perfil de maturidade por domínio indisponível — evidência insuficiente. Maturidade indicativa por domínio Negócio · Business n/d 1 de 3 respostas confirmadas · diagnóstico parcial, não é veredito de maturidade Não avaliado · evidência insuficiente Pessoas · People n/d 3 de 3 respostas confirmadas · diagnóstico parcial, não é veredito de maturidade Não avaliado · evidência insuficiente Processos · Process n/d 2 de 3 respostas confirmadas · diagnóstico parcial, não é veredito de maturidade Não avaliado · evidência insuficiente Tecnologia · Technology n/d 2 de 3 respostas confirmadas · diagnóstico parcial, não é veredito de maturidade Não avaliado · evidência insuficiente Serviços · Services n/d 2 de 3 respostas confirmadas · diagnóstico parcial, não é veredito de maturidade Não avaliado · evidência insuficiente Evidência insuficiente: nenhum score de maturidade por domínio é apresentado até o gate canônico abrir. Síntese do resultado Dados insuficientes para uma leitura consolidada. Os achados abaixo refletem somente as respostas confirmadas — itens pendentes precisam ser validados antes de uma conclusão sobre a maturidade geral. Os gaps derivam das respostas individuais , não da média do domínio — itens “não sei” entram como validação, nunca como gap. A régua não é a ambição: a ambição e o risco do negócio definem o nível necessário . Jornada de maturidade Posicionamento atual: n/d Não há evidência suficiente neste Quickscan para posicionar a operação com segurança em um estágio de maturidade. Jornada de maturidade: estágios do modelo com perfil atual. Para avançar Dimensionar e sustentar a capacidade do time. Ampliar consistência dos processos de detecção e resposta. Ampliar cobertura e gestão da proteção de endpoint. O próximo estágio representa a próxima faixa do modelo de maturidade. A transição depende da evolução consistente das práticas e das evidências correspondentes. Leitura executiva As respostas disponíveis ainda não são suficientes para posicionar a operação em um estágio de maturidade com segurança. Ainda assim, o Quickscan identifica sinais relevantes nos gaps já confirmados durante a sessão. Nenhuma prioridade específica foi declarada nesta sessão; foram observados 0 gaps altos e 3 moderados, que concentram os principais pontos de evolução identificados nesta sessão. O próximo passo mais consistente é completar e validar as evidências pendentes, em vez de perseguir um estágio artificial. Em paralelo, os sinais já confirmados apontam para: dimensionar e sustentar a capacidade do time; ampliar consistência dos processos de detecção e resposta; ampliar cobertura e gestão da proteção de endpoint. O contexto tecnológico não foi informado nesta sessão; por isso, a leitura evita inferir presença ou ausência de ferramentas. O que mais importa · prioridades declaradas pelo negócio Nenhuma prioridade foi selecionada nesta sessão — o negócio pode declará-las em uma próxima conversa. Aprofundamento operacional Refinamento qualitativo opcional — não altera sua pontuação de maturidade. Refinar diagnóstico · 3 perguntas Gaps observados na sessão Gap moderado de maturidade Capacidade do time Pessoas Evidência declarada: Dependência de poucas pessoas — A operação funciona, mas depende de indivíduos específicos, sem redundância. Capability a desenvolver: Capacidade e resiliência do time Gap moderado de maturidade Resposta a incidentes Processos Evidência declarada: Processo informal — Há uma forma habitual de atuar, mas varia por equipe e caso. Capability a desenvolver: Gestão e execução de resposta a incidentes Gap moderado de maturidade Proteção de endpoint Tecnologia Evidência declarada: EDR parcial — Somente parte do parque, ou com funções limitadas. Capability a desenvolver: Detecção e resposta em endpoint (EDR) Como a Fortinet pode apoiar agora Sem indicação tecnológica — as evidências desta sessão são insuficientes. Pode fazer sentido — após validação FortiGuard SOCaaS — sinal identificado em: Capacidade e resiliência do time. O screening não tem profundidade para priorizá-lo; validar no aprofundamento. FortiAI-Assist — sinal identificado em: Capacidade e resiliência do time. O screening não tem profundidade para priorizá-lo; validar no aprofundamento. FortiSOAR — sinal identificado em: Gestão e execução de resposta a incidentes. O screening não tem profundidade para priorizá-lo; validar no aprofundamento. FortiEndpoint — sinal identificado em: Detecção e resposta em endpoint (EDR). O screening não tem profundidade para priorizá-lo; validar no aprofundamento. Não priorizados neste screening · 3 soluções FortiGuard MDR — sem evidência de gap correspondente nesta sessão (prática “Cobertura de monitoramento” declarada como “Cobertura medida e resiliente”). FortiSIEM — sem evidência de gap correspondente nesta sessão (prática “Casos de uso de detecção” declarada como “Casos de uso gerenciados”). FortiAnalyzer — sem evidência de gap correspondente nesta sessão (prática “Centralização de logs” declarada como “Principais fontes centralizadas”). Trilha de Validação · Próximo passo sugerido Completar evidências pendentes Antes de priorizar uma trilha de evolução, valide os itens sem informação suficiente e complete as evidências mínimas da sessão. Após a validação, o ponto de partida define a trilha de Fundação ou de Otimização. Adicionar contexto tecnológico Opcional · refine a interpretação dos gaps informando tecnologias e serviços já existentes. Imprimir / salvar em PDF Editar prioridades ← Revisar respostas Reiniciar avaliação Nova sessão O PDF inclui, ao final, o anexo “Evidências e observações da sessão”. Exportar sessão Importar sessão Sessão não salva automaticamente. Exporte o arquivo da sessão para continuar depois. Há alterações ainda não exportadas. Cenário-alvo de maturidade Nenhum cenário-alvo foi definido. Defina níveis de prática desejados para visualizar uma trajetória indicativa de evolução. Definir cenário-alvo Suficiência de evidência 10 de 10 respostas confirmadas no total. Negócio: +1 resposta confirmada necessária (1 de 2). Negócio · 1 confirmada · 0 a validar · 2 não respondidas Pessoas · 3 confirmadas · 0 a validar · 0 não respondidas Processos · 2 confirmadas · 0 a validar · 1 não respondida Tecnologia · 2 confirmadas · 0 a validar · 1 não respondida Serviços · 2 confirmadas · 0 a validar · 1 não respondida Continue o assessment para atingir evidência suficiente. Resultado executivo Resultado executivo: BLOQUEADO. Resultado ainda indisponível — as condições pendentes estão listadas no painel de suficiência acima. Negócio n/d Não avaliado · evidência insuficiente Pessoas n/d Não avaliado · evidência insuficiente Processos n/d Não avaliado · evidência insuficiente Tecnologia n/d Não avaliado · evidência insuficiente Serviços n/d Não avaliado · evidência insuficiente"
+      }
+    },
+    {
+      "fixture": "P50-F4@390",
+      "gate": "released",
+      "sufficientAttr": "true",
+      "suffVisible": true,
+      "resVisible": true,
+      "globalLine": {
+        "text": "10 de 10 respostas confirmadas no total.",
+        "confirmed": "10",
+        "required": "10",
+        "missing": "0"
+      },
+      "deficits": [],
+      "axis": [
+        {
+          "dom": 0,
+          "confirmed": 2,
+          "toValidate": 0,
+          "unanswered": 1,
+          "text": "Negócio · 2 confirmadas · 0 a validar · 1 não respondida",
+          "accessible": "Negócio · 2 confirmadas · 0 a validar · 1 não respondida"
+        },
+        {
+          "dom": 1,
+          "confirmed": 2,
+          "toValidate": 0,
+          "unanswered": 1,
+          "text": "Pessoas · 2 confirmadas · 0 a validar · 1 não respondida",
+          "accessible": "Pessoas · 2 confirmadas · 0 a validar · 1 não respondida"
+        },
+        {
+          "dom": 2,
+          "confirmed": 2,
+          "toValidate": 0,
+          "unanswered": 1,
+          "text": "Processos · 2 confirmadas · 0 a validar · 1 não respondida",
+          "accessible": "Processos · 2 confirmadas · 0 a validar · 1 não respondida"
+        },
+        {
+          "dom": 3,
+          "confirmed": 2,
+          "toValidate": 0,
+          "unanswered": 1,
+          "text": "Tecnologia · 2 confirmadas · 0 a validar · 1 não respondida",
+          "accessible": "Tecnologia · 2 confirmadas · 0 a validar · 1 não respondida"
+        },
+        {
+          "dom": 4,
+          "confirmed": 2,
+          "toValidate": 0,
+          "unanswered": 1,
+          "text": "Serviços · 2 confirmadas · 0 a validar · 1 não respondida",
+          "accessible": "Serviços · 2 confirmadas · 0 a validar · 1 não respondida"
+        }
+      ],
+      "guidance": null,
+      "verdict": "Resultado executivo: liberado pelo veredito canônico.",
+      "domains": [
+        {
+          "dom": 0,
+          "state": "scored",
+          "value": "2.5",
+          "label": "maturidade indicativa do domínio",
+          "accessible": "Negócio2.5maturidade indicativa do domínio",
+          "visible": true
+        },
+        {
+          "dom": 1,
+          "state": "scored",
+          "value": "2.5",
+          "label": "maturidade indicativa do domínio",
+          "accessible": "Pessoas2.5maturidade indicativa do domínio",
+          "visible": true
+        },
+        {
+          "dom": 2,
+          "state": "scored",
+          "value": "2.5",
+          "label": "maturidade indicativa do domínio",
+          "accessible": "Processos2.5maturidade indicativa do domínio",
+          "visible": true
+        },
+        {
+          "dom": 3,
+          "state": "scored",
+          "value": "4.2",
+          "label": "maturidade indicativa do domínio",
+          "accessible": "Tecnologia4.2maturidade indicativa do domínio",
+          "visible": true
+        },
+        {
+          "dom": 4,
+          "state": "scored",
+          "value": "2.5",
+          "label": "maturidade indicativa do domínio",
+          "accessible": "Serviços2.5maturidade indicativa do domínio",
+          "visible": true
+        }
+      ],
+      "execCards": [
+        "strengths",
+        "priorities"
+      ],
+      "execCardsBox": true,
+      "overallEl": false,
+      "stageEl": false,
+      "layout": {
+        "docScrollWidth": 390,
+        "viewportW": 390,
+        "viewportH": 844,
+        "clippedNodes": 0,
+        "suffBottom": 6237,
+        "resTop": 6253,
+        "overlap": false,
+        "suffRight": 372,
+        "resRight": 372
+      },
+      "resText": "Resultado executivoResultado executivo: liberado pelo veredito canônico.A evidência registrada atende ao requisito canônico; os itens abaixo refletem somente as respostas confirmadas.Negócio2.5maturidade indicativa do domínioPessoas2.5maturidade indicativa do domínioProcessos2.5maturidade indicativa do domínioTecnologia4.2maturidade indicativa do domínioServiços2.5maturidade indicativa do domínioPontos fortes observadosDirecionamento e mandato de segurançaMandato e objetivosDesenvolvimento de competências do timeCapacitaçãoGestão e execução de resposta a incidentesResposta a incidentesAnálise centralizada, correlação e retenção de eventosCentralização de logsDetecção e resposta em endpoint (EDR)Proteção de endpointGestão de exposição externa (EASM/DRPS)Superfície externaPrioridades de evoluçãoNenhum gap alto foi identificado entre as respostas confirmadas desta sessão.",
+      "legacy": {
+        "rows": 5,
+        "frozenValues": [
+          "2.5 — Defined",
+          "2.5 — Defined",
+          "2.5 — Defined",
+          "4.2 — Quantitatively Managed",
+          "2.5 — Defined"
+        ],
+        "frozenValuesVisible": [
+          true,
+          true,
+          true,
+          true,
+          true
+        ],
+        "frozenConfVisible": [
+          true,
+          true,
+          true,
+          true,
+          true
+        ],
+        "p50Values": [
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        "p50ValuesVisible": [
+          false,
+          false,
+          false,
+          false,
+          false
+        ],
+        "marks": [
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        "stateNotes": [
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        "fillsPresent": 5,
+        "rulersScored": 5,
+        "fillsVisible": 5,
+        "radarVisible": true,
+        "radarNoteVisible": false,
+        "legendVisible": true,
+        "bannerVisible": false,
+        "accText": "Resultado indicativo 2.8 / 5.0 Defined · Definido Ponto de partida declarado: A — Sem operação formal 10 de 15 respostas confirmadas na sessão. Radar indicativo de maturidade por domínio Maturidade indicativa por domínio Negócio · Business 2.5 — Defined Confiança média — 2 de 3 respostas confirmadas · 1 requer validação Pessoas · People 2.5 — Defined Confiança média — 2 de 3 respostas confirmadas · 1 requer validação Processos · Process 2.5 — Defined Confiança média — 2 de 3 respostas confirmadas · 1 requer validação Tecnologia · Technology 4.2 — Quantitatively Managed Confiança média — 2 de 3 respostas confirmadas · 1 requer validação Serviços · Services 2.5 — Defined Confiança média — 2 de 3 respostas confirmadas · 1 requer validação 0 Non-existent 1 Initial 2 Managed 3 Defined 4 Quant. 5 Optimizing Síntese do resultado O consolidado 2.8/5.0 posiciona a operação, de forma indicativa, no estágio Defined . Existe uma base operacional estabelecida, mas a consistência entre práticas ainda varia. O ganho tende a vir da padronização, mensuração e integração dos processos. Os gaps derivam das respostas individuais , não da média do domínio — itens “não sei” entram como validação, nunca como gap. A régua não é a ambição: a ambição e o risco do negócio definem o nível necessário . Jornada de maturidade Jornada de maturidade: estágios do modelo com perfil atual e próximo estágio. Para avançar Estruturar governança e acompanhamento executivo da operação. Dimensionar e sustentar a capacidade do time. Gerenciar o ciclo de vida das detecções como casos de uso. O próximo estágio representa a próxima faixa do modelo de maturidade. A transição depende da evolução consistente das práticas e das evidências correspondentes. Leitura executiva O Quickscan posiciona a operação em Definido (2.8/5), com maior consistência relativa em Tecnologia e oportunidades mais relevantes de evolução em Negócio, Pessoas, Processos e Serviços. A distribuição mostra que a evolução não é uniforme entre os domínios avaliados. Nenhuma prioridade específica foi declarada nesta sessão; foram observados 0 gaps altos e 4 moderados, que concentram os principais pontos de evolução identificados nesta sessão. Os próximos passos mais consistentes envolvem: estruturar governança e acompanhamento executivo da operação; dimensionar e sustentar a capacidade do time; gerenciar o ciclo de vida das detecções como casos de uso. O contexto tecnológico não foi informado nesta sessão; por isso, a leitura evita inferir presença ou ausência de ferramentas. O que mais importa · prioridades declaradas pelo negócio Nenhuma prioridade foi selecionada nesta sessão — o negócio pode declará-las em uma próxima conversa. Aprofundamento operacional Refinamento qualitativo opcional — não altera sua pontuação de maturidade. Refinar diagnóstico · 3 perguntas Gaps observados na sessão Gap moderado de maturidade Governança Negócio Evidência declarada: Papéis informais — Sabe-se quem faz o quê, mas sem estrutura consistente. Capability a desenvolver: Governança e reporte de risco Gap moderado de maturidade Capacidade do time Pessoas Evidência declarada: Dependência de poucas pessoas — A operação funciona, mas depende de indivíduos específicos, sem redundância. Capability a desenvolver: Capacidade e resiliência do time Gap moderado de maturidade Casos de uso de detecção Processos Evidência declarada: Gestão reativa — Regras ajustadas após falsos positivos, incidentes ou problemas. Capability a desenvolver: Ciclo de vida de detecção (detection engineering) Gap moderado de maturidade Cobertura de monitoramento Serviços Evidência declarada: Cobertura parcial ou informal — Existe plantão, contato ou serviço fora do horário, mas com lacunas de escala, SLA ou formalização. Capability a desenvolver: Cobertura de monitoramento alinhada ao risco Como a Fortinet pode apoiar agora Sem indicação tecnológica prioritária a partir das evidências desta sessão. Pode fazer sentido — após validação Serviços FortiGuard — sinal identificado em: Governança e reporte de risco. O screening não tem profundidade para priorizá-lo; validar no aprofundamento. FortiGuard SOCaaS — sinal identificado em: Capacidade e resiliência do time; Cobertura de monitoramento alinhada ao risco. O screening não tem profundidade para priorizá-lo; validar no aprofundamento. FortiGuard MDR — sinal identificado em: Cobertura de monitoramento alinhada ao risco. O screening não tem profundidade para priorizá-lo; validar no aprofundamento. FortiAI-Assist — sinal identificado em: Capacidade e resiliência do time; Ciclo de vida de detecção (detection engineering). O screening não tem profundidade para priorizá-lo; validar no aprofundamento. FortiSIEM — sinal identificado em: Ciclo de vida de detecção (detection engineering). O screening não tem profundidade para priorizá-lo; validar no aprofundamento. Não priorizados neste screening · 1 solução FortiAnalyzer — sem evidência de gap correspondente nesta sessão (prática “Centralização de logs” declarada como “Principais fontes centralizadas”). Trilha Fundação · Próximo passo sugerido Assessment de Maturidade NIST CSF 2.0 Raio-X completo da postura de segurança da organização: workshop conduzido ao vivo (sem questionário prévio), relatório executivo com score por função e roadmap priorizado de 24 meses. É o diagnóstico que ordena os investimentos — antes de qualquer compra. Adicionar contexto tecnológico Opcional · refine a interpretação dos gaps informando tecnologias e serviços já existentes. Imprimir / salvar em PDF Editar prioridades ← Revisar respostas Reiniciar avaliação Nova sessão O PDF inclui, ao final, o anexo “Evidências e observações da sessão”. Exportar sessão Importar sessão Sessão não salva automaticamente. Exporte o arquivo da sessão para continuar depois. Há alterações ainda não exportadas. Cenário-alvo de maturidade Nenhum cenário-alvo foi definido. Defina níveis de prática desejados para visualizar uma trajetória indicativa de evolução. Definir cenário-alvo Suficiência de evidência 10 de 10 respostas confirmadas no total. Negócio · 2 confirmadas · 0 a validar · 1 não respondida Pessoas · 2 confirmadas · 0 a validar · 1 não respondida Processos · 2 confirmadas · 0 a validar · 1 não respondida Tecnologia · 2 confirmadas · 0 a validar · 1 não respondida Serviços · 2 confirmadas · 0 a validar · 1 não respondida Resultado executivo Resultado executivo: liberado pelo veredito canônico. A evidência registrada atende ao requisito canônico; os itens abaixo refletem somente as respostas confirmadas. Negócio 2.5 maturidade indicativa do domínio Pessoas 2.5 maturidade indicativa do domínio Processos 2.5 maturidade indicativa do domínio Tecnologia 4.2 maturidade indicativa do domínio Serviços 2.5 maturidade indicativa do domínio Pontos fortes observados Direcionamento e mandato de segurança Mandato e objetivos Desenvolvimento de competências do time Capacitação Gestão e execução de resposta a incidentes Resposta a incidentes Análise centralizada, correlação e retenção de eventos Centralização de logs Detecção e resposta em endpoint (EDR) Proteção de endpoint Gestão de exposição externa (EASM/DRPS) Superfície externa Prioridades de evolução Nenhum gap alto foi identificado entre as respostas confirmadas desta sessão."
+      }
+    }
+  ],
+  "failures": [],
+  "legacyPrintGuard": {
+    "gate": "P50-PR1",
+    "note": "Guard ADICIONAL e estreito. NÃO encerra nem redefine P50-VIS10.",
+    "vis10Closed": false,
+    "vis10Statement": "P50-VIS10 permanece ABERTO e integral; P50-PR1 não o encerra, não o redefine e não o substitui.",
+    "fixture": "P50-F3",
+    "baselineSha": "5d1a301e472dd1453f4056c6919ea818e6fd7768d67158321deaae9ad0c926cd",
+    "continuousPresentationContract": {
+      "version": "P50-PR1/continuous-presentation-v1",
+      "comparedAgainstBaseline": "5d1a301e472dd1453f4056c6919ea818e6fd7768d67158321deaae9ad0c926cd",
+      "comparedAgainstBaselineLabel": "baseline de ENTRADA da 5.0.3 (5d1a301e…), mesma fixture, mídia print",
+      "properties": [
+        "display",
+        "visibility",
+        "opacity",
+        "position",
+        "filter",
+        "transform",
+        "color",
+        "backgroundColor"
+      ],
+      "selectors": [
+        {
+          "key": ".ruler",
+          "selector": "#app .grid2 .panel .dom .ruler",
+          "expect": 5
+        },
+        {
+          "key": ".fill",
+          "selector": "#app .grid2 .panel .dom .ruler .fill",
+          "expect": 5
+        },
+        {
+          "key": ".conf",
+          "selector": "#app .grid2 .panel .dom .conf",
+          "expect": 5
+        },
+        {
+          "key": ".lbl > span",
+          "selector": "#app .grid2 .panel .dom .lbl > span",
+          "expect": 5
+        },
+        {
+          "key": ".radar-box",
+          "selector": "#app .radar-box",
+          "expect": 1
+        },
+        {
+          "key": ".scale-legend",
+          "selector": "#app .scale-legend",
+          "expect": 1
+        }
+      ],
+      "states": [
+        "gate-bloqueado (P50-F3)",
+        "gate-liberado (P50-F5)"
+      ],
+      "opacityIsBinary": false,
+      "divergences": [
+        {
+          "state": "gate-bloqueado",
+          "fixture": "P50-F3",
+          "gate": "blocked",
+          "divergences": []
+        },
+        {
+          "state": "gate-liberado",
+          "fixture": "P50-F5",
+          "gate": "released",
+          "divergences": []
+        }
+      ]
+    },
+    "ok": true,
+    "failures": [],
+    "observed": {
+      "precondition": {
+        "legacy": true,
+        "gate": "blocked",
+        "canonicalSuff": false
+      },
+      "canonicalDomains": [
+        {
+          "score": 3.3,
+          "conf": "baixa",
+          "n": 1,
+          "nNA": 0
+        },
+        {
+          "score": 3.3,
+          "conf": "média",
+          "n": 3,
+          "nNA": 0
+        },
+        {
+          "score": 2.5,
+          "conf": "média",
+          "n": 2,
+          "nNA": 0
+        },
+        {
+          "score": 2.5,
+          "conf": "média",
+          "n": 2,
+          "nNA": 0
+        },
+        {
+          "score": 4.2,
+          "conf": "média",
+          "n": 2,
+          "nNA": 0
+        }
+      ],
+      "screen": {
+        "wrapPresent": true,
+        "wrapVisible": true,
+        "appPresent": true,
+        "appVisible": true,
+        "printReportEmpty": true,
+        "printModeClass": false,
+        "printBlockedClass": false,
+        "rows": 5,
+        "values": [
+          "3.3 — Defined",
+          "3.3 — Defined",
+          "2.5 — Defined",
+          "2.5 — Defined",
+          "4.2 — Quantitatively Managed"
+        ],
+        "valuesVisible": [
+          false,
+          false,
+          false,
+          false,
+          false
+        ],
+        "confs": [
+          "Confiança baixa — 1 de 3 respostas confirmada · leitura parcial",
+          "Confiança média — 3 de 3 respostas confirmadas · respostas divergentes entre si",
+          "Confiança média — 2 de 3 respostas confirmadas · 1 requer validação",
+          "Confiança média — 2 de 3 respostas confirmadas · 1 requer validação",
+          "Confiança média — 2 de 3 respostas confirmadas · 1 requer validação"
+        ],
+        "confsVisible": [
+          false,
+          false,
+          false,
+          false,
+          false
+        ],
+        "fills": 5,
+        "fillsVisible": 0,
+        "radarPresent": true,
+        "radarVisible": false,
+        "legendPresent": true,
+        "legendVisible": false,
+        "substitutes": 17,
+        "substitutesVisible": 17,
+        "p50ShellVisible": false,
+        "p50SuffVisible": true,
+        "p50ResultsVisible": true,
+        "diag": [
+          {
+            "selector": ".wrap",
+            "present": true,
+            "display": "block",
+            "visibility": "visible",
+            "opacity": "1",
+            "w": 1320,
+            "h": 4651
+          },
+          {
+            "selector": "#app",
+            "present": true,
+            "display": "block",
+            "visibility": "visible",
+            "opacity": "1",
+            "w": 1240,
+            "h": 4321
+          },
+          {
+            "selector": "#app .radar-box svg",
+            "present": true,
+            "display": "block",
+            "visibility": "hidden",
+            "opacity": "1",
+            "w": 420,
+            "h": 408
+          },
+          {
+            "selector": "#app .scale-legend",
+            "present": true,
+            "display": "none",
+            "visibility": "visible",
+            "opacity": "1",
+            "w": 0,
+            "h": 0
+          },
+          {
+            "selector": ".dom[0] .lbl > span",
+            "present": true,
+            "display": "none",
+            "visibility": "visible",
+            "opacity": "1",
+            "w": 0,
+            "h": 0
+          },
+          {
+            "selector": ".dom[1] .lbl > span",
+            "present": true,
+            "display": "none",
+            "visibility": "visible",
+            "opacity": "1",
+            "w": 0,
+            "h": 0
+          },
+          {
+            "selector": ".dom[2] .lbl > span",
+            "present": true,
+            "display": "none",
+            "visibility": "visible",
+            "opacity": "1",
+            "w": 0,
+            "h": 0
+          },
+          {
+            "selector": ".dom[3] .lbl > span",
+            "present": true,
+            "display": "none",
+            "visibility": "visible",
+            "opacity": "1",
+            "w": 0,
+            "h": 0
+          },
+          {
+            "selector": ".dom[4] .lbl > span",
+            "present": true,
+            "display": "none",
+            "visibility": "visible",
+            "opacity": "1",
+            "w": 0,
+            "h": 0
+          },
+          {
+            "selector": ".dom[0] .conf",
+            "present": true,
+            "display": "none",
+            "visibility": "visible",
+            "opacity": "1",
+            "w": 0,
+            "h": 0
+          },
+          {
+            "selector": ".dom[1] .conf",
+            "present": true,
+            "display": "none",
+            "visibility": "visible",
+            "opacity": "1",
+            "w": 0,
+            "h": 0
+          },
+          {
+            "selector": ".dom[2] .conf",
+            "present": true,
+            "display": "none",
+            "visibility": "visible",
+            "opacity": "1",
+            "w": 0,
+            "h": 0
+          },
+          {
+            "selector": ".dom[3] .conf",
+            "present": true,
+            "display": "none",
+            "visibility": "visible",
+            "opacity": "1",
+            "w": 0,
+            "h": 0
+          },
+          {
+            "selector": ".dom[4] .conf",
+            "present": true,
+            "display": "none",
+            "visibility": "visible",
+            "opacity": "1",
+            "w": 0,
+            "h": 0
+          },
+          {
+            "selector": ".ruler .fill[0]",
+            "present": true,
+            "display": "none",
+            "visibility": "visible",
+            "opacity": "1",
+            "w": 0,
+            "h": 0
+          },
+          {
+            "selector": ".ruler .fill[1]",
+            "present": true,
+            "display": "none",
+            "visibility": "visible",
+            "opacity": "1",
+            "w": 0,
+            "h": 0
+          },
+          {
+            "selector": ".ruler .fill[2]",
+            "present": true,
+            "display": "none",
+            "visibility": "visible",
+            "opacity": "1",
+            "w": 0,
+            "h": 0
+          },
+          {
+            "selector": ".ruler .fill[3]",
+            "present": true,
+            "display": "none",
+            "visibility": "visible",
+            "opacity": "1",
+            "w": 0,
+            "h": 0
+          },
+          {
+            "selector": ".ruler .fill[4]",
+            "present": true,
+            "display": "none",
+            "visibility": "visible",
+            "opacity": "1",
+            "w": 0,
+            "h": 0
+          }
+        ]
+      },
+      "print": {
+        "wrapPresent": true,
+        "wrapVisible": true,
+        "appPresent": true,
+        "appVisible": true,
+        "printReportEmpty": true,
+        "printModeClass": false,
+        "printBlockedClass": false,
+        "rows": 5,
+        "values": [
+          "3.3 — Defined",
+          "3.3 — Defined",
+          "2.5 — Defined",
+          "2.5 — Defined",
+          "4.2 — Quantitatively Managed"
+        ],
+        "valuesVisible": [
+          true,
+          true,
+          true,
+          true,
+          true
+        ],
+        "confs": [
+          "Confiança baixa — 1 de 3 respostas confirmada · leitura parcial",
+          "Confiança média — 3 de 3 respostas confirmadas · respostas divergentes entre si",
+          "Confiança média — 2 de 3 respostas confirmadas · 1 requer validação",
+          "Confiança média — 2 de 3 respostas confirmadas · 1 requer validação",
+          "Confiança média — 2 de 3 respostas confirmadas · 1 requer validação"
+        ],
+        "confsVisible": [
+          true,
+          true,
+          true,
+          true,
+          true
+        ],
+        "fills": 5,
+        "fillsVisible": 5,
+        "radarPresent": true,
+        "radarVisible": true,
+        "legendPresent": true,
+        "legendVisible": true,
+        "substitutes": 17,
+        "substitutesVisible": 0,
+        "p50ShellVisible": false,
+        "p50SuffVisible": false,
+        "p50ResultsVisible": false,
+        "diag": [
+          {
+            "selector": ".wrap",
+            "present": true,
+            "display": "block",
+            "visibility": "visible",
+            "opacity": "1",
+            "w": 1320,
+            "h": 4178
+          },
+          {
+            "selector": "#app",
+            "present": true,
+            "display": "block",
+            "visibility": "visible",
+            "opacity": "1",
+            "w": 1240,
+            "h": 3253
+          },
+          {
+            "selector": "#app .radar-box svg",
+            "present": true,
+            "display": "block",
+            "visibility": "visible",
+            "opacity": "1",
+            "w": 420,
+            "h": 408
+          },
+          {
+            "selector": "#app .scale-legend",
+            "present": true,
+            "display": "flex",
+            "visibility": "visible",
+            "opacity": "1",
+            "w": 500,
+            "h": 12
+          },
+          {
+            "selector": ".dom[0] .lbl > span",
+            "present": true,
+            "display": "block",
+            "visibility": "visible",
+            "opacity": "1",
+            "w": 90,
+            "h": 16
+          },
+          {
+            "selector": ".dom[1] .lbl > span",
+            "present": true,
+            "display": "block",
+            "visibility": "visible",
+            "opacity": "1",
+            "w": 90,
+            "h": 16
+          },
+          {
+            "selector": ".dom[2] .lbl > span",
+            "present": true,
+            "display": "block",
+            "visibility": "visible",
+            "opacity": "1",
+            "w": 90,
+            "h": 16
+          },
+          {
+            "selector": ".dom[3] .lbl > span",
+            "present": true,
+            "display": "block",
+            "visibility": "visible",
+            "opacity": "1",
+            "w": 90,
+            "h": 16
+          },
+          {
+            "selector": ".dom[4] .lbl > span",
+            "present": true,
+            "display": "block",
+            "visibility": "visible",
+            "opacity": "1",
+            "w": 188,
+            "h": 16
+          },
+          {
+            "selector": ".dom[0] .conf",
+            "present": true,
+            "display": "block",
+            "visibility": "visible",
+            "opacity": "1",
+            "w": 500,
+            "h": 14
+          },
+          {
+            "selector": ".dom[1] .conf",
+            "present": true,
+            "display": "block",
+            "visibility": "visible",
+            "opacity": "1",
+            "w": 500,
+            "h": 14
+          },
+          {
+            "selector": ".dom[2] .conf",
+            "present": true,
+            "display": "block",
+            "visibility": "visible",
+            "opacity": "1",
+            "w": 500,
+            "h": 14
+          },
+          {
+            "selector": ".dom[3] .conf",
+            "present": true,
+            "display": "block",
+            "visibility": "visible",
+            "opacity": "1",
+            "w": 500,
+            "h": 14
+          },
+          {
+            "selector": ".dom[4] .conf",
+            "present": true,
+            "display": "block",
+            "visibility": "visible",
+            "opacity": "1",
+            "w": 500,
+            "h": 14
+          },
+          {
+            "selector": ".ruler .fill[0]",
+            "present": true,
+            "display": "block",
+            "visibility": "visible",
+            "opacity": "1",
+            "w": 330,
+            "h": 8
+          },
+          {
+            "selector": ".ruler .fill[1]",
+            "present": true,
+            "display": "block",
+            "visibility": "visible",
+            "opacity": "1",
+            "w": 330,
+            "h": 8
+          },
+          {
+            "selector": ".ruler .fill[2]",
+            "present": true,
+            "display": "block",
+            "visibility": "visible",
+            "opacity": "1",
+            "w": 250,
+            "h": 8
+          },
+          {
+            "selector": ".ruler .fill[3]",
+            "present": true,
+            "display": "block",
+            "visibility": "visible",
+            "opacity": "1",
+            "w": 250,
+            "h": 8
+          },
+          {
+            "selector": ".ruler .fill[4]",
+            "present": true,
+            "display": "block",
+            "visibility": "visible",
+            "opacity": "1",
+            "w": 420,
+            "h": 8
+          }
+        ]
+      },
+      "baseline": {
+        "compared": true,
+        "sha": "5d1a301e472dd1453f4056c6919ea818e6fd7768d67158321deaae9ad0c926cd",
+        "print": {
+          "wrapPresent": true,
+          "wrapVisible": true,
+          "appPresent": true,
+          "appVisible": true,
+          "printReportEmpty": true,
+          "printModeClass": false,
+          "printBlockedClass": false,
+          "rows": 5,
+          "values": [
+            "3.3 — Defined",
+            "3.3 — Defined",
+            "2.5 — Defined",
+            "2.5 — Defined",
+            "4.2 — Quantitatively Managed"
+          ],
+          "valuesVisible": [
+            true,
+            true,
+            true,
+            true,
+            true
+          ],
+          "confs": [
+            "Confiança baixa — 1 de 3 respostas confirmada · leitura parcial",
+            "Confiança média — 3 de 3 respostas confirmadas · respostas divergentes entre si",
+            "Confiança média — 2 de 3 respostas confirmadas · 1 requer validação",
+            "Confiança média — 2 de 3 respostas confirmadas · 1 requer validação",
+            "Confiança média — 2 de 3 respostas confirmadas · 1 requer validação"
+          ],
+          "confsVisible": [
+            true,
+            true,
+            true,
+            true,
+            true
+          ],
+          "fills": 5,
+          "fillsVisible": 5,
+          "radarPresent": true,
+          "radarVisible": true,
+          "legendPresent": true,
+          "legendVisible": true,
+          "substitutes": 0,
+          "substitutesVisible": 0,
+          "p50ShellVisible": false,
+          "p50SuffVisible": false,
+          "p50ResultsVisible": false,
+          "diag": [
+            {
+              "selector": ".wrap",
+              "present": true,
+              "display": "block",
+              "visibility": "visible",
+              "opacity": "1",
+              "w": 1320,
+              "h": 4178
+            },
+            {
+              "selector": "#app",
+              "present": true,
+              "display": "block",
+              "visibility": "visible",
+              "opacity": "1",
+              "w": 1240,
+              "h": 3253
+            },
+            {
+              "selector": "#app .radar-box svg",
+              "present": true,
+              "display": "block",
+              "visibility": "visible",
+              "opacity": "1",
+              "w": 420,
+              "h": 408
+            },
+            {
+              "selector": "#app .scale-legend",
+              "present": true,
+              "display": "flex",
+              "visibility": "visible",
+              "opacity": "1",
+              "w": 500,
+              "h": 12
+            },
+            {
+              "selector": ".dom[0] .lbl > span",
+              "present": true,
+              "display": "block",
+              "visibility": "visible",
+              "opacity": "1",
+              "w": 90,
+              "h": 16
+            },
+            {
+              "selector": ".dom[1] .lbl > span",
+              "present": true,
+              "display": "block",
+              "visibility": "visible",
+              "opacity": "1",
+              "w": 90,
+              "h": 16
+            },
+            {
+              "selector": ".dom[2] .lbl > span",
+              "present": true,
+              "display": "block",
+              "visibility": "visible",
+              "opacity": "1",
+              "w": 90,
+              "h": 16
+            },
+            {
+              "selector": ".dom[3] .lbl > span",
+              "present": true,
+              "display": "block",
+              "visibility": "visible",
+              "opacity": "1",
+              "w": 90,
+              "h": 16
+            },
+            {
+              "selector": ".dom[4] .lbl > span",
+              "present": true,
+              "display": "block",
+              "visibility": "visible",
+              "opacity": "1",
+              "w": 188,
+              "h": 16
+            },
+            {
+              "selector": ".dom[0] .conf",
+              "present": true,
+              "display": "block",
+              "visibility": "visible",
+              "opacity": "1",
+              "w": 500,
+              "h": 14
+            },
+            {
+              "selector": ".dom[1] .conf",
+              "present": true,
+              "display": "block",
+              "visibility": "visible",
+              "opacity": "1",
+              "w": 500,
+              "h": 14
+            },
+            {
+              "selector": ".dom[2] .conf",
+              "present": true,
+              "display": "block",
+              "visibility": "visible",
+              "opacity": "1",
+              "w": 500,
+              "h": 14
+            },
+            {
+              "selector": ".dom[3] .conf",
+              "present": true,
+              "display": "block",
+              "visibility": "visible",
+              "opacity": "1",
+              "w": 500,
+              "h": 14
+            },
+            {
+              "selector": ".dom[4] .conf",
+              "present": true,
+              "display": "block",
+              "visibility": "visible",
+              "opacity": "1",
+              "w": 500,
+              "h": 14
+            },
+            {
+              "selector": ".ruler .fill[0]",
+              "present": true,
+              "display": "block",
+              "visibility": "visible",
+              "opacity": "1",
+              "w": 330,
+              "h": 8
+            },
+            {
+              "selector": ".ruler .fill[1]",
+              "present": true,
+              "display": "block",
+              "visibility": "visible",
+              "opacity": "1",
+              "w": 330,
+              "h": 8
+            },
+            {
+              "selector": ".ruler .fill[2]",
+              "present": true,
+              "display": "block",
+              "visibility": "visible",
+              "opacity": "1",
+              "w": 250,
+              "h": 8
+            },
+            {
+              "selector": ".ruler .fill[3]",
+              "present": true,
+              "display": "block",
+              "visibility": "visible",
+              "opacity": "1",
+              "w": 250,
+              "h": 8
+            },
+            {
+              "selector": ".ruler .fill[4]",
+              "present": true,
+              "display": "block",
+              "visibility": "visible",
+              "opacity": "1",
+              "w": 420,
+              "h": 8
+            }
+          ]
+        }
+      },
+      "screenAfter": {
+        "wrapPresent": true,
+        "wrapVisible": true,
+        "appPresent": true,
+        "appVisible": true,
+        "printReportEmpty": true,
+        "printModeClass": false,
+        "printBlockedClass": false,
+        "rows": 5,
+        "values": [
+          "3.3 — Defined",
+          "3.3 — Defined",
+          "2.5 — Defined",
+          "2.5 — Defined",
+          "4.2 — Quantitatively Managed"
+        ],
+        "valuesVisible": [
+          false,
+          false,
+          false,
+          false,
+          false
+        ],
+        "confs": [
+          "Confiança baixa — 1 de 3 respostas confirmada · leitura parcial",
+          "Confiança média — 3 de 3 respostas confirmadas · respostas divergentes entre si",
+          "Confiança média — 2 de 3 respostas confirmadas · 1 requer validação",
+          "Confiança média — 2 de 3 respostas confirmadas · 1 requer validação",
+          "Confiança média — 2 de 3 respostas confirmadas · 1 requer validação"
+        ],
+        "confsVisible": [
+          false,
+          false,
+          false,
+          false,
+          false
+        ],
+        "fills": 5,
+        "fillsVisible": 0,
+        "radarPresent": true,
+        "radarVisible": false,
+        "legendPresent": true,
+        "legendVisible": false,
+        "substitutes": 17,
+        "substitutesVisible": 17,
+        "p50ShellVisible": false,
+        "p50SuffVisible": true,
+        "p50ResultsVisible": true,
+        "diag": [
+          {
+            "selector": ".wrap",
+            "present": true,
+            "display": "block",
+            "visibility": "visible",
+            "opacity": "1",
+            "w": 1320,
+            "h": 4798
+          },
+          {
+            "selector": "#app",
+            "present": true,
+            "display": "block",
+            "visibility": "visible",
+            "opacity": "1",
+            "w": 1240,
+            "h": 4468
+          },
+          {
+            "selector": "#app .radar-box svg",
+            "present": true,
+            "display": "block",
+            "visibility": "hidden",
+            "opacity": "1",
+            "w": 420,
+            "h": 408
+          },
+          {
+            "selector": "#app .scale-legend",
+            "present": true,
+            "display": "none",
+            "visibility": "visible",
+            "opacity": "1",
+            "w": 0,
+            "h": 0
+          },
+          {
+            "selector": ".dom[0] .lbl > span",
+            "present": true,
+            "display": "none",
+            "visibility": "visible",
+            "opacity": "1",
+            "w": 0,
+            "h": 0
+          },
+          {
+            "selector": ".dom[1] .lbl > span",
+            "present": true,
+            "display": "none",
+            "visibility": "visible",
+            "opacity": "1",
+            "w": 0,
+            "h": 0
+          },
+          {
+            "selector": ".dom[2] .lbl > span",
+            "present": true,
+            "display": "none",
+            "visibility": "visible",
+            "opacity": "1",
+            "w": 0,
+            "h": 0
+          },
+          {
+            "selector": ".dom[3] .lbl > span",
+            "present": true,
+            "display": "none",
+            "visibility": "visible",
+            "opacity": "1",
+            "w": 0,
+            "h": 0
+          },
+          {
+            "selector": ".dom[4] .lbl > span",
+            "present": true,
+            "display": "none",
+            "visibility": "visible",
+            "opacity": "1",
+            "w": 0,
+            "h": 0
+          },
+          {
+            "selector": ".dom[0] .conf",
+            "present": true,
+            "display": "none",
+            "visibility": "visible",
+            "opacity": "1",
+            "w": 0,
+            "h": 0
+          },
+          {
+            "selector": ".dom[1] .conf",
+            "present": true,
+            "display": "none",
+            "visibility": "visible",
+            "opacity": "1",
+            "w": 0,
+            "h": 0
+          },
+          {
+            "selector": ".dom[2] .conf",
+            "present": true,
+            "display": "none",
+            "visibility": "visible",
+            "opacity": "1",
+            "w": 0,
+            "h": 0
+          },
+          {
+            "selector": ".dom[3] .conf",
+            "present": true,
+            "display": "none",
+            "visibility": "visible",
+            "opacity": "1",
+            "w": 0,
+            "h": 0
+          },
+          {
+            "selector": ".dom[4] .conf",
+            "present": true,
+            "display": "none",
+            "visibility": "visible",
+            "opacity": "1",
+            "w": 0,
+            "h": 0
+          },
+          {
+            "selector": ".ruler .fill[0]",
+            "present": true,
+            "display": "none",
+            "visibility": "visible",
+            "opacity": "1",
+            "w": 0,
+            "h": 0
+          },
+          {
+            "selector": ".ruler .fill[1]",
+            "present": true,
+            "display": "none",
+            "visibility": "visible",
+            "opacity": "1",
+            "w": 0,
+            "h": 0
+          },
+          {
+            "selector": ".ruler .fill[2]",
+            "present": true,
+            "display": "none",
+            "visibility": "visible",
+            "opacity": "1",
+            "w": 0,
+            "h": 0
+          },
+          {
+            "selector": ".ruler .fill[3]",
+            "present": true,
+            "display": "none",
+            "visibility": "visible",
+            "opacity": "1",
+            "w": 0,
+            "h": 0
+          },
+          {
+            "selector": ".ruler .fill[4]",
+            "present": true,
+            "display": "none",
+            "visibility": "visible",
+            "opacity": "1",
+            "w": 0,
+            "h": 0
+          }
+        ]
+      },
+      "screenPresentation": {
+        "rulerOpacity": [
+          "0.45",
+          "0.45",
+          "0.45",
+          "0.45",
+          "0.45"
+        ],
+        "radarBox": {
+          "radarBoxNeutralized": true,
+          "radarBoxPosition": "relative",
+          "radarNoteText": "Perfil de maturidade por domínio indisponível — evidência insuficiente.",
+          "radarNotePosition": "absolute",
+          "ariaHiddenNeutralized": 17
+        }
+      },
+      "continuousPresentation": {
+        "contract": "P50-PR1/continuous-presentation-v1",
+        "compared": true,
+        "baselineSha": "5d1a301e472dd1453f4056c6919ea818e6fd7768d67158321deaae9ad0c926cd",
+        "comparedAgainst": "baseline de ENTRADA da 5.0.3 (5d1a301e…), mesma fixture, mídia print",
+        "properties": [
+          "display",
+          "visibility",
+          "opacity",
+          "position",
+          "filter",
+          "transform",
+          "color",
+          "backgroundColor"
+        ],
+        "selectors": [
+          {
+            "key": ".ruler",
+            "selector": "#app .grid2 .panel .dom .ruler",
+            "expect": 5
+          },
+          {
+            "key": ".fill",
+            "selector": "#app .grid2 .panel .dom .ruler .fill",
+            "expect": 5
+          },
+          {
+            "key": ".conf",
+            "selector": "#app .grid2 .panel .dom .conf",
+            "expect": 5
+          },
+          {
+            "key": ".lbl > span",
+            "selector": "#app .grid2 .panel .dom .lbl > span",
+            "expect": 5
+          },
+          {
+            "key": ".radar-box",
+            "selector": "#app .radar-box",
+            "expect": 1
+          },
+          {
+            "key": ".scale-legend",
+            "selector": "#app .scale-legend",
+            "expect": 1
+          }
+        ],
+        "states": [
+          {
+            "state": "gate-bloqueado",
+            "fixture": "P50-F3",
+            "gate": "blocked",
+            "divergences": [],
+            "candidate": {
+              ".ruler": {
+                "count": 5,
+                "nodes": [
+                  {
+                    "tag": "div",
+                    "cls": "ruler",
+                    "display": "block",
+                    "visibility": "visible",
+                    "opacity": "1",
+                    "position": "relative",
+                    "filter": "none",
+                    "transform": "none",
+                    "color": "rgb(17, 17, 17)",
+                    "backgroundColor": "rgb(201, 201, 201)"
+                  },
+                  {
+                    "tag": "div",
+                    "cls": "ruler",
+                    "display": "block",
+                    "visibility": "visible",
+                    "opacity": "1",
+                    "position": "relative",
+                    "filter": "none",
+                    "transform": "none",
+                    "color": "rgb(17, 17, 17)",
+                    "backgroundColor": "rgb(201, 201, 201)"
+                  },
+                  {
+                    "tag": "div",
+                    "cls": "ruler",
+                    "display": "block",
+                    "visibility": "visible",
+                    "opacity": "1",
+                    "position": "relative",
+                    "filter": "none",
+                    "transform": "none",
+                    "color": "rgb(17, 17, 17)",
+                    "backgroundColor": "rgb(201, 201, 201)"
+                  },
+                  {
+                    "tag": "div",
+                    "cls": "ruler",
+                    "display": "block",
+                    "visibility": "visible",
+                    "opacity": "1",
+                    "position": "relative",
+                    "filter": "none",
+                    "transform": "none",
+                    "color": "rgb(17, 17, 17)",
+                    "backgroundColor": "rgb(201, 201, 201)"
+                  },
+                  {
+                    "tag": "div",
+                    "cls": "ruler",
+                    "display": "block",
+                    "visibility": "visible",
+                    "opacity": "1",
+                    "position": "relative",
+                    "filter": "none",
+                    "transform": "none",
+                    "color": "rgb(17, 17, 17)",
+                    "backgroundColor": "rgb(201, 201, 201)"
+                  }
+                ]
+              },
+              ".fill": {
+                "count": 5,
+                "nodes": [
+                  {
+                    "tag": "div",
+                    "cls": "fill",
+                    "display": "block",
+                    "visibility": "visible",
+                    "opacity": "1",
+                    "position": "absolute",
+                    "filter": "none",
+                    "transform": "none",
+                    "color": "rgb(17, 17, 17)",
+                    "backgroundColor": "rgb(218, 41, 28)"
+                  },
+                  {
+                    "tag": "div",
+                    "cls": "fill",
+                    "display": "block",
+                    "visibility": "visible",
+                    "opacity": "1",
+                    "position": "absolute",
+                    "filter": "none",
+                    "transform": "none",
+                    "color": "rgb(17, 17, 17)",
+                    "backgroundColor": "rgb(218, 41, 28)"
+                  },
+                  {
+                    "tag": "div",
+                    "cls": "fill",
+                    "display": "block",
+                    "visibility": "visible",
+                    "opacity": "1",
+                    "position": "absolute",
+                    "filter": "none",
+                    "transform": "none",
+                    "color": "rgb(17, 17, 17)",
+                    "backgroundColor": "rgb(218, 41, 28)"
+                  },
+                  {
+                    "tag": "div",
+                    "cls": "fill",
+                    "display": "block",
+                    "visibility": "visible",
+                    "opacity": "1",
+                    "position": "absolute",
+                    "filter": "none",
+                    "transform": "none",
+                    "color": "rgb(17, 17, 17)",
+                    "backgroundColor": "rgb(218, 41, 28)"
+                  },
+                  {
+                    "tag": "div",
+                    "cls": "fill",
+                    "display": "block",
+                    "visibility": "visible",
+                    "opacity": "1",
+                    "position": "absolute",
+                    "filter": "none",
+                    "transform": "none",
+                    "color": "rgb(17, 17, 17)",
+                    "backgroundColor": "rgb(218, 41, 28)"
+                  }
+                ]
+              },
+              ".conf": {
+                "count": 5,
+                "nodes": [
+                  {
+                    "tag": "div",
+                    "cls": "conf",
+                    "display": "block",
+                    "visibility": "visible",
+                    "opacity": "1",
+                    "position": "static",
+                    "filter": "none",
+                    "transform": "none",
+                    "color": "rgb(107, 107, 107)",
+                    "backgroundColor": "rgba(0, 0, 0, 0)"
+                  },
+                  {
+                    "tag": "div",
+                    "cls": "conf",
+                    "display": "block",
+                    "visibility": "visible",
+                    "opacity": "1",
+                    "position": "static",
+                    "filter": "none",
+                    "transform": "none",
+                    "color": "rgb(107, 107, 107)",
+                    "backgroundColor": "rgba(0, 0, 0, 0)"
+                  },
+                  {
+                    "tag": "div",
+                    "cls": "conf",
+                    "display": "block",
+                    "visibility": "visible",
+                    "opacity": "1",
+                    "position": "static",
+                    "filter": "none",
+                    "transform": "none",
+                    "color": "rgb(107, 107, 107)",
+                    "backgroundColor": "rgba(0, 0, 0, 0)"
+                  },
+                  {
+                    "tag": "div",
+                    "cls": "conf",
+                    "display": "block",
+                    "visibility": "visible",
+                    "opacity": "1",
+                    "position": "static",
+                    "filter": "none",
+                    "transform": "none",
+                    "color": "rgb(107, 107, 107)",
+                    "backgroundColor": "rgba(0, 0, 0, 0)"
+                  },
+                  {
+                    "tag": "div",
+                    "cls": "conf",
+                    "display": "block",
+                    "visibility": "visible",
+                    "opacity": "1",
+                    "position": "static",
+                    "filter": "none",
+                    "transform": "none",
+                    "color": "rgb(107, 107, 107)",
+                    "backgroundColor": "rgba(0, 0, 0, 0)"
+                  }
+                ]
+              },
+              ".lbl > span": {
+                "count": 5,
+                "nodes": [
+                  {
+                    "tag": "span",
+                    "cls": "",
+                    "display": "block",
+                    "visibility": "visible",
+                    "opacity": "1",
+                    "position": "static",
+                    "filter": "none",
+                    "transform": "none",
+                    "color": "rgb(61, 61, 61)",
+                    "backgroundColor": "rgba(0, 0, 0, 0)"
+                  },
+                  {
+                    "tag": "span",
+                    "cls": "",
+                    "display": "block",
+                    "visibility": "visible",
+                    "opacity": "1",
+                    "position": "static",
+                    "filter": "none",
+                    "transform": "none",
+                    "color": "rgb(61, 61, 61)",
+                    "backgroundColor": "rgba(0, 0, 0, 0)"
+                  },
+                  {
+                    "tag": "span",
+                    "cls": "",
+                    "display": "block",
+                    "visibility": "visible",
+                    "opacity": "1",
+                    "position": "static",
+                    "filter": "none",
+                    "transform": "none",
+                    "color": "rgb(61, 61, 61)",
+                    "backgroundColor": "rgba(0, 0, 0, 0)"
+                  },
+                  {
+                    "tag": "span",
+                    "cls": "",
+                    "display": "block",
+                    "visibility": "visible",
+                    "opacity": "1",
+                    "position": "static",
+                    "filter": "none",
+                    "transform": "none",
+                    "color": "rgb(61, 61, 61)",
+                    "backgroundColor": "rgba(0, 0, 0, 0)"
+                  },
+                  {
+                    "tag": "span",
+                    "cls": "",
+                    "display": "block",
+                    "visibility": "visible",
+                    "opacity": "1",
+                    "position": "static",
+                    "filter": "none",
+                    "transform": "none",
+                    "color": "rgb(61, 61, 61)",
+                    "backgroundColor": "rgba(0, 0, 0, 0)"
+                  }
+                ]
+              },
+              ".radar-box": {
+                "count": 1,
+                "nodes": [
+                  {
+                    "tag": "div",
+                    "cls": "radar-box",
+                    "display": "flex",
+                    "visibility": "visible",
+                    "opacity": "1",
+                    "position": "static",
+                    "filter": "none",
+                    "transform": "none",
+                    "color": "rgb(17, 17, 17)",
+                    "backgroundColor": "rgba(0, 0, 0, 0)"
+                  }
+                ]
+              },
+              ".scale-legend": {
+                "count": 1,
+                "nodes": [
+                  {
+                    "tag": "div",
+                    "cls": "scale-legend",
+                    "display": "flex",
+                    "visibility": "visible",
+                    "opacity": "1",
+                    "position": "static",
+                    "filter": "none",
+                    "transform": "none",
+                    "color": "rgb(107, 107, 107)",
+                    "backgroundColor": "rgba(0, 0, 0, 0)"
+                  }
+                ]
+              }
+            },
+            "baseline": {
+              ".ruler": {
+                "count": 5,
+                "nodes": [
+                  {
+                    "tag": "div",
+                    "cls": "ruler",
+                    "display": "block",
+                    "visibility": "visible",
+                    "opacity": "1",
+                    "position": "relative",
+                    "filter": "none",
+                    "transform": "none",
+                    "color": "rgb(17, 17, 17)",
+                    "backgroundColor": "rgb(201, 201, 201)"
+                  },
+                  {
+                    "tag": "div",
+                    "cls": "ruler",
+                    "display": "block",
+                    "visibility": "visible",
+                    "opacity": "1",
+                    "position": "relative",
+                    "filter": "none",
+                    "transform": "none",
+                    "color": "rgb(17, 17, 17)",
+                    "backgroundColor": "rgb(201, 201, 201)"
+                  },
+                  {
+                    "tag": "div",
+                    "cls": "ruler",
+                    "display": "block",
+                    "visibility": "visible",
+                    "opacity": "1",
+                    "position": "relative",
+                    "filter": "none",
+                    "transform": "none",
+                    "color": "rgb(17, 17, 17)",
+                    "backgroundColor": "rgb(201, 201, 201)"
+                  },
+                  {
+                    "tag": "div",
+                    "cls": "ruler",
+                    "display": "block",
+                    "visibility": "visible",
+                    "opacity": "1",
+                    "position": "relative",
+                    "filter": "none",
+                    "transform": "none",
+                    "color": "rgb(17, 17, 17)",
+                    "backgroundColor": "rgb(201, 201, 201)"
+                  },
+                  {
+                    "tag": "div",
+                    "cls": "ruler",
+                    "display": "block",
+                    "visibility": "visible",
+                    "opacity": "1",
+                    "position": "relative",
+                    "filter": "none",
+                    "transform": "none",
+                    "color": "rgb(17, 17, 17)",
+                    "backgroundColor": "rgb(201, 201, 201)"
+                  }
+                ]
+              },
+              ".fill": {
+                "count": 5,
+                "nodes": [
+                  {
+                    "tag": "div",
+                    "cls": "fill",
+                    "display": "block",
+                    "visibility": "visible",
+                    "opacity": "1",
+                    "position": "absolute",
+                    "filter": "none",
+                    "transform": "none",
+                    "color": "rgb(17, 17, 17)",
+                    "backgroundColor": "rgb(218, 41, 28)"
+                  },
+                  {
+                    "tag": "div",
+                    "cls": "fill",
+                    "display": "block",
+                    "visibility": "visible",
+                    "opacity": "1",
+                    "position": "absolute",
+                    "filter": "none",
+                    "transform": "none",
+                    "color": "rgb(17, 17, 17)",
+                    "backgroundColor": "rgb(218, 41, 28)"
+                  },
+                  {
+                    "tag": "div",
+                    "cls": "fill",
+                    "display": "block",
+                    "visibility": "visible",
+                    "opacity": "1",
+                    "position": "absolute",
+                    "filter": "none",
+                    "transform": "none",
+                    "color": "rgb(17, 17, 17)",
+                    "backgroundColor": "rgb(218, 41, 28)"
+                  },
+                  {
+                    "tag": "div",
+                    "cls": "fill",
+                    "display": "block",
+                    "visibility": "visible",
+                    "opacity": "1",
+                    "position": "absolute",
+                    "filter": "none",
+                    "transform": "none",
+                    "color": "rgb(17, 17, 17)",
+                    "backgroundColor": "rgb(218, 41, 28)"
+                  },
+                  {
+                    "tag": "div",
+                    "cls": "fill",
+                    "display": "block",
+                    "visibility": "visible",
+                    "opacity": "1",
+                    "position": "absolute",
+                    "filter": "none",
+                    "transform": "none",
+                    "color": "rgb(17, 17, 17)",
+                    "backgroundColor": "rgb(218, 41, 28)"
+                  }
+                ]
+              },
+              ".conf": {
+                "count": 5,
+                "nodes": [
+                  {
+                    "tag": "div",
+                    "cls": "conf",
+                    "display": "block",
+                    "visibility": "visible",
+                    "opacity": "1",
+                    "position": "static",
+                    "filter": "none",
+                    "transform": "none",
+                    "color": "rgb(107, 107, 107)",
+                    "backgroundColor": "rgba(0, 0, 0, 0)"
+                  },
+                  {
+                    "tag": "div",
+                    "cls": "conf",
+                    "display": "block",
+                    "visibility": "visible",
+                    "opacity": "1",
+                    "position": "static",
+                    "filter": "none",
+                    "transform": "none",
+                    "color": "rgb(107, 107, 107)",
+                    "backgroundColor": "rgba(0, 0, 0, 0)"
+                  },
+                  {
+                    "tag": "div",
+                    "cls": "conf",
+                    "display": "block",
+                    "visibility": "visible",
+                    "opacity": "1",
+                    "position": "static",
+                    "filter": "none",
+                    "transform": "none",
+                    "color": "rgb(107, 107, 107)",
+                    "backgroundColor": "rgba(0, 0, 0, 0)"
+                  },
+                  {
+                    "tag": "div",
+                    "cls": "conf",
+                    "display": "block",
+                    "visibility": "visible",
+                    "opacity": "1",
+                    "position": "static",
+                    "filter": "none",
+                    "transform": "none",
+                    "color": "rgb(107, 107, 107)",
+                    "backgroundColor": "rgba(0, 0, 0, 0)"
+                  },
+                  {
+                    "tag": "div",
+                    "cls": "conf",
+                    "display": "block",
+                    "visibility": "visible",
+                    "opacity": "1",
+                    "position": "static",
+                    "filter": "none",
+                    "transform": "none",
+                    "color": "rgb(107, 107, 107)",
+                    "backgroundColor": "rgba(0, 0, 0, 0)"
+                  }
+                ]
+              },
+              ".lbl > span": {
+                "count": 5,
+                "nodes": [
+                  {
+                    "tag": "span",
+                    "cls": "",
+                    "display": "block",
+                    "visibility": "visible",
+                    "opacity": "1",
+                    "position": "static",
+                    "filter": "none",
+                    "transform": "none",
+                    "color": "rgb(61, 61, 61)",
+                    "backgroundColor": "rgba(0, 0, 0, 0)"
+                  },
+                  {
+                    "tag": "span",
+                    "cls": "",
+                    "display": "block",
+                    "visibility": "visible",
+                    "opacity": "1",
+                    "position": "static",
+                    "filter": "none",
+                    "transform": "none",
+                    "color": "rgb(61, 61, 61)",
+                    "backgroundColor": "rgba(0, 0, 0, 0)"
+                  },
+                  {
+                    "tag": "span",
+                    "cls": "",
+                    "display": "block",
+                    "visibility": "visible",
+                    "opacity": "1",
+                    "position": "static",
+                    "filter": "none",
+                    "transform": "none",
+                    "color": "rgb(61, 61, 61)",
+                    "backgroundColor": "rgba(0, 0, 0, 0)"
+                  },
+                  {
+                    "tag": "span",
+                    "cls": "",
+                    "display": "block",
+                    "visibility": "visible",
+                    "opacity": "1",
+                    "position": "static",
+                    "filter": "none",
+                    "transform": "none",
+                    "color": "rgb(61, 61, 61)",
+                    "backgroundColor": "rgba(0, 0, 0, 0)"
+                  },
+                  {
+                    "tag": "span",
+                    "cls": "",
+                    "display": "block",
+                    "visibility": "visible",
+                    "opacity": "1",
+                    "position": "static",
+                    "filter": "none",
+                    "transform": "none",
+                    "color": "rgb(61, 61, 61)",
+                    "backgroundColor": "rgba(0, 0, 0, 0)"
+                  }
+                ]
+              },
+              ".radar-box": {
+                "count": 1,
+                "nodes": [
+                  {
+                    "tag": "div",
+                    "cls": "radar-box",
+                    "display": "flex",
+                    "visibility": "visible",
+                    "opacity": "1",
+                    "position": "static",
+                    "filter": "none",
+                    "transform": "none",
+                    "color": "rgb(17, 17, 17)",
+                    "backgroundColor": "rgba(0, 0, 0, 0)"
+                  }
+                ]
+              },
+              ".scale-legend": {
+                "count": 1,
+                "nodes": [
+                  {
+                    "tag": "div",
+                    "cls": "scale-legend",
+                    "display": "flex",
+                    "visibility": "visible",
+                    "opacity": "1",
+                    "position": "static",
+                    "filter": "none",
+                    "transform": "none",
+                    "color": "rgb(107, 107, 107)",
+                    "backgroundColor": "rgba(0, 0, 0, 0)"
+                  }
+                ]
+              }
+            }
+          },
+          {
+            "state": "gate-liberado",
+            "fixture": "P50-F5",
+            "gate": "released",
+            "divergences": [],
+            "candidate": {
+              ".ruler": {
+                "count": 5,
+                "nodes": [
+                  {
+                    "tag": "div",
+                    "cls": "ruler",
+                    "display": "block",
+                    "visibility": "visible",
+                    "opacity": "1",
+                    "position": "relative",
+                    "filter": "none",
+                    "transform": "none",
+                    "color": "rgb(17, 17, 17)",
+                    "backgroundColor": "rgb(201, 201, 201)"
+                  },
+                  {
+                    "tag": "div",
+                    "cls": "ruler",
+                    "display": "block",
+                    "visibility": "visible",
+                    "opacity": "1",
+                    "position": "relative",
+                    "filter": "none",
+                    "transform": "none",
+                    "color": "rgb(17, 17, 17)",
+                    "backgroundColor": "rgb(201, 201, 201)"
+                  },
+                  {
+                    "tag": "div",
+                    "cls": "ruler",
+                    "display": "block",
+                    "visibility": "visible",
+                    "opacity": "1",
+                    "position": "relative",
+                    "filter": "none",
+                    "transform": "none",
+                    "color": "rgb(17, 17, 17)",
+                    "backgroundColor": "rgb(201, 201, 201)"
+                  },
+                  {
+                    "tag": "div",
+                    "cls": "ruler",
+                    "display": "block",
+                    "visibility": "visible",
+                    "opacity": "1",
+                    "position": "relative",
+                    "filter": "none",
+                    "transform": "none",
+                    "color": "rgb(17, 17, 17)",
+                    "backgroundColor": "rgb(201, 201, 201)"
+                  },
+                  {
+                    "tag": "div",
+                    "cls": "ruler",
+                    "display": "block",
+                    "visibility": "visible",
+                    "opacity": "1",
+                    "position": "relative",
+                    "filter": "none",
+                    "transform": "none",
+                    "color": "rgb(17, 17, 17)",
+                    "backgroundColor": "rgb(201, 201, 201)"
+                  }
+                ]
+              },
+              ".fill": {
+                "count": 5,
+                "nodes": [
+                  {
+                    "tag": "div",
+                    "cls": "fill",
+                    "display": "block",
+                    "visibility": "visible",
+                    "opacity": "1",
+                    "position": "absolute",
+                    "filter": "none",
+                    "transform": "none",
+                    "color": "rgb(17, 17, 17)",
+                    "backgroundColor": "rgb(218, 41, 28)"
+                  },
+                  {
+                    "tag": "div",
+                    "cls": "fill",
+                    "display": "block",
+                    "visibility": "visible",
+                    "opacity": "1",
+                    "position": "absolute",
+                    "filter": "none",
+                    "transform": "none",
+                    "color": "rgb(17, 17, 17)",
+                    "backgroundColor": "rgb(218, 41, 28)"
+                  },
+                  {
+                    "tag": "div",
+                    "cls": "fill",
+                    "display": "block",
+                    "visibility": "visible",
+                    "opacity": "1",
+                    "position": "absolute",
+                    "filter": "none",
+                    "transform": "none",
+                    "color": "rgb(17, 17, 17)",
+                    "backgroundColor": "rgb(218, 41, 28)"
+                  },
+                  {
+                    "tag": "div",
+                    "cls": "fill",
+                    "display": "block",
+                    "visibility": "visible",
+                    "opacity": "1",
+                    "position": "absolute",
+                    "filter": "none",
+                    "transform": "none",
+                    "color": "rgb(17, 17, 17)",
+                    "backgroundColor": "rgb(218, 41, 28)"
+                  },
+                  {
+                    "tag": "div",
+                    "cls": "fill",
+                    "display": "block",
+                    "visibility": "visible",
+                    "opacity": "1",
+                    "position": "absolute",
+                    "filter": "none",
+                    "transform": "none",
+                    "color": "rgb(17, 17, 17)",
+                    "backgroundColor": "rgb(218, 41, 28)"
+                  }
+                ]
+              },
+              ".conf": {
+                "count": 5,
+                "nodes": [
+                  {
+                    "tag": "div",
+                    "cls": "conf",
+                    "display": "block",
+                    "visibility": "visible",
+                    "opacity": "1",
+                    "position": "static",
+                    "filter": "none",
+                    "transform": "none",
+                    "color": "rgb(107, 107, 107)",
+                    "backgroundColor": "rgba(0, 0, 0, 0)"
+                  },
+                  {
+                    "tag": "div",
+                    "cls": "conf",
+                    "display": "block",
+                    "visibility": "visible",
+                    "opacity": "1",
+                    "position": "static",
+                    "filter": "none",
+                    "transform": "none",
+                    "color": "rgb(107, 107, 107)",
+                    "backgroundColor": "rgba(0, 0, 0, 0)"
+                  },
+                  {
+                    "tag": "div",
+                    "cls": "conf",
+                    "display": "block",
+                    "visibility": "visible",
+                    "opacity": "1",
+                    "position": "static",
+                    "filter": "none",
+                    "transform": "none",
+                    "color": "rgb(107, 107, 107)",
+                    "backgroundColor": "rgba(0, 0, 0, 0)"
+                  },
+                  {
+                    "tag": "div",
+                    "cls": "conf",
+                    "display": "block",
+                    "visibility": "visible",
+                    "opacity": "1",
+                    "position": "static",
+                    "filter": "none",
+                    "transform": "none",
+                    "color": "rgb(107, 107, 107)",
+                    "backgroundColor": "rgba(0, 0, 0, 0)"
+                  },
+                  {
+                    "tag": "div",
+                    "cls": "conf",
+                    "display": "block",
+                    "visibility": "visible",
+                    "opacity": "1",
+                    "position": "static",
+                    "filter": "none",
+                    "transform": "none",
+                    "color": "rgb(107, 107, 107)",
+                    "backgroundColor": "rgba(0, 0, 0, 0)"
+                  }
+                ]
+              },
+              ".lbl > span": {
+                "count": 5,
+                "nodes": [
+                  {
+                    "tag": "span",
+                    "cls": "",
+                    "display": "block",
+                    "visibility": "visible",
+                    "opacity": "1",
+                    "position": "static",
+                    "filter": "none",
+                    "transform": "none",
+                    "color": "rgb(61, 61, 61)",
+                    "backgroundColor": "rgba(0, 0, 0, 0)"
+                  },
+                  {
+                    "tag": "span",
+                    "cls": "",
+                    "display": "block",
+                    "visibility": "visible",
+                    "opacity": "1",
+                    "position": "static",
+                    "filter": "none",
+                    "transform": "none",
+                    "color": "rgb(61, 61, 61)",
+                    "backgroundColor": "rgba(0, 0, 0, 0)"
+                  },
+                  {
+                    "tag": "span",
+                    "cls": "",
+                    "display": "block",
+                    "visibility": "visible",
+                    "opacity": "1",
+                    "position": "static",
+                    "filter": "none",
+                    "transform": "none",
+                    "color": "rgb(61, 61, 61)",
+                    "backgroundColor": "rgba(0, 0, 0, 0)"
+                  },
+                  {
+                    "tag": "span",
+                    "cls": "",
+                    "display": "block",
+                    "visibility": "visible",
+                    "opacity": "1",
+                    "position": "static",
+                    "filter": "none",
+                    "transform": "none",
+                    "color": "rgb(61, 61, 61)",
+                    "backgroundColor": "rgba(0, 0, 0, 0)"
+                  },
+                  {
+                    "tag": "span",
+                    "cls": "",
+                    "display": "block",
+                    "visibility": "visible",
+                    "opacity": "1",
+                    "position": "static",
+                    "filter": "none",
+                    "transform": "none",
+                    "color": "rgb(61, 61, 61)",
+                    "backgroundColor": "rgba(0, 0, 0, 0)"
+                  }
+                ]
+              },
+              ".radar-box": {
+                "count": 1,
+                "nodes": [
+                  {
+                    "tag": "div",
+                    "cls": "radar-box",
+                    "display": "flex",
+                    "visibility": "visible",
+                    "opacity": "1",
+                    "position": "static",
+                    "filter": "none",
+                    "transform": "none",
+                    "color": "rgb(17, 17, 17)",
+                    "backgroundColor": "rgba(0, 0, 0, 0)"
+                  }
+                ]
+              },
+              ".scale-legend": {
+                "count": 1,
+                "nodes": [
+                  {
+                    "tag": "div",
+                    "cls": "scale-legend",
+                    "display": "flex",
+                    "visibility": "visible",
+                    "opacity": "1",
+                    "position": "static",
+                    "filter": "none",
+                    "transform": "none",
+                    "color": "rgb(107, 107, 107)",
+                    "backgroundColor": "rgba(0, 0, 0, 0)"
+                  }
+                ]
+              }
+            },
+            "baseline": {
+              ".ruler": {
+                "count": 5,
+                "nodes": [
+                  {
+                    "tag": "div",
+                    "cls": "ruler",
+                    "display": "block",
+                    "visibility": "visible",
+                    "opacity": "1",
+                    "position": "relative",
+                    "filter": "none",
+                    "transform": "none",
+                    "color": "rgb(17, 17, 17)",
+                    "backgroundColor": "rgb(201, 201, 201)"
+                  },
+                  {
+                    "tag": "div",
+                    "cls": "ruler",
+                    "display": "block",
+                    "visibility": "visible",
+                    "opacity": "1",
+                    "position": "relative",
+                    "filter": "none",
+                    "transform": "none",
+                    "color": "rgb(17, 17, 17)",
+                    "backgroundColor": "rgb(201, 201, 201)"
+                  },
+                  {
+                    "tag": "div",
+                    "cls": "ruler",
+                    "display": "block",
+                    "visibility": "visible",
+                    "opacity": "1",
+                    "position": "relative",
+                    "filter": "none",
+                    "transform": "none",
+                    "color": "rgb(17, 17, 17)",
+                    "backgroundColor": "rgb(201, 201, 201)"
+                  },
+                  {
+                    "tag": "div",
+                    "cls": "ruler",
+                    "display": "block",
+                    "visibility": "visible",
+                    "opacity": "1",
+                    "position": "relative",
+                    "filter": "none",
+                    "transform": "none",
+                    "color": "rgb(17, 17, 17)",
+                    "backgroundColor": "rgb(201, 201, 201)"
+                  },
+                  {
+                    "tag": "div",
+                    "cls": "ruler",
+                    "display": "block",
+                    "visibility": "visible",
+                    "opacity": "1",
+                    "position": "relative",
+                    "filter": "none",
+                    "transform": "none",
+                    "color": "rgb(17, 17, 17)",
+                    "backgroundColor": "rgb(201, 201, 201)"
+                  }
+                ]
+              },
+              ".fill": {
+                "count": 5,
+                "nodes": [
+                  {
+                    "tag": "div",
+                    "cls": "fill",
+                    "display": "block",
+                    "visibility": "visible",
+                    "opacity": "1",
+                    "position": "absolute",
+                    "filter": "none",
+                    "transform": "none",
+                    "color": "rgb(17, 17, 17)",
+                    "backgroundColor": "rgb(218, 41, 28)"
+                  },
+                  {
+                    "tag": "div",
+                    "cls": "fill",
+                    "display": "block",
+                    "visibility": "visible",
+                    "opacity": "1",
+                    "position": "absolute",
+                    "filter": "none",
+                    "transform": "none",
+                    "color": "rgb(17, 17, 17)",
+                    "backgroundColor": "rgb(218, 41, 28)"
+                  },
+                  {
+                    "tag": "div",
+                    "cls": "fill",
+                    "display": "block",
+                    "visibility": "visible",
+                    "opacity": "1",
+                    "position": "absolute",
+                    "filter": "none",
+                    "transform": "none",
+                    "color": "rgb(17, 17, 17)",
+                    "backgroundColor": "rgb(218, 41, 28)"
+                  },
+                  {
+                    "tag": "div",
+                    "cls": "fill",
+                    "display": "block",
+                    "visibility": "visible",
+                    "opacity": "1",
+                    "position": "absolute",
+                    "filter": "none",
+                    "transform": "none",
+                    "color": "rgb(17, 17, 17)",
+                    "backgroundColor": "rgb(218, 41, 28)"
+                  },
+                  {
+                    "tag": "div",
+                    "cls": "fill",
+                    "display": "block",
+                    "visibility": "visible",
+                    "opacity": "1",
+                    "position": "absolute",
+                    "filter": "none",
+                    "transform": "none",
+                    "color": "rgb(17, 17, 17)",
+                    "backgroundColor": "rgb(218, 41, 28)"
+                  }
+                ]
+              },
+              ".conf": {
+                "count": 5,
+                "nodes": [
+                  {
+                    "tag": "div",
+                    "cls": "conf",
+                    "display": "block",
+                    "visibility": "visible",
+                    "opacity": "1",
+                    "position": "static",
+                    "filter": "none",
+                    "transform": "none",
+                    "color": "rgb(107, 107, 107)",
+                    "backgroundColor": "rgba(0, 0, 0, 0)"
+                  },
+                  {
+                    "tag": "div",
+                    "cls": "conf",
+                    "display": "block",
+                    "visibility": "visible",
+                    "opacity": "1",
+                    "position": "static",
+                    "filter": "none",
+                    "transform": "none",
+                    "color": "rgb(107, 107, 107)",
+                    "backgroundColor": "rgba(0, 0, 0, 0)"
+                  },
+                  {
+                    "tag": "div",
+                    "cls": "conf",
+                    "display": "block",
+                    "visibility": "visible",
+                    "opacity": "1",
+                    "position": "static",
+                    "filter": "none",
+                    "transform": "none",
+                    "color": "rgb(107, 107, 107)",
+                    "backgroundColor": "rgba(0, 0, 0, 0)"
+                  },
+                  {
+                    "tag": "div",
+                    "cls": "conf",
+                    "display": "block",
+                    "visibility": "visible",
+                    "opacity": "1",
+                    "position": "static",
+                    "filter": "none",
+                    "transform": "none",
+                    "color": "rgb(107, 107, 107)",
+                    "backgroundColor": "rgba(0, 0, 0, 0)"
+                  },
+                  {
+                    "tag": "div",
+                    "cls": "conf",
+                    "display": "block",
+                    "visibility": "visible",
+                    "opacity": "1",
+                    "position": "static",
+                    "filter": "none",
+                    "transform": "none",
+                    "color": "rgb(107, 107, 107)",
+                    "backgroundColor": "rgba(0, 0, 0, 0)"
+                  }
+                ]
+              },
+              ".lbl > span": {
+                "count": 5,
+                "nodes": [
+                  {
+                    "tag": "span",
+                    "cls": "",
+                    "display": "block",
+                    "visibility": "visible",
+                    "opacity": "1",
+                    "position": "static",
+                    "filter": "none",
+                    "transform": "none",
+                    "color": "rgb(61, 61, 61)",
+                    "backgroundColor": "rgba(0, 0, 0, 0)"
+                  },
+                  {
+                    "tag": "span",
+                    "cls": "",
+                    "display": "block",
+                    "visibility": "visible",
+                    "opacity": "1",
+                    "position": "static",
+                    "filter": "none",
+                    "transform": "none",
+                    "color": "rgb(61, 61, 61)",
+                    "backgroundColor": "rgba(0, 0, 0, 0)"
+                  },
+                  {
+                    "tag": "span",
+                    "cls": "",
+                    "display": "block",
+                    "visibility": "visible",
+                    "opacity": "1",
+                    "position": "static",
+                    "filter": "none",
+                    "transform": "none",
+                    "color": "rgb(61, 61, 61)",
+                    "backgroundColor": "rgba(0, 0, 0, 0)"
+                  },
+                  {
+                    "tag": "span",
+                    "cls": "",
+                    "display": "block",
+                    "visibility": "visible",
+                    "opacity": "1",
+                    "position": "static",
+                    "filter": "none",
+                    "transform": "none",
+                    "color": "rgb(61, 61, 61)",
+                    "backgroundColor": "rgba(0, 0, 0, 0)"
+                  },
+                  {
+                    "tag": "span",
+                    "cls": "",
+                    "display": "block",
+                    "visibility": "visible",
+                    "opacity": "1",
+                    "position": "static",
+                    "filter": "none",
+                    "transform": "none",
+                    "color": "rgb(61, 61, 61)",
+                    "backgroundColor": "rgba(0, 0, 0, 0)"
+                  }
+                ]
+              },
+              ".radar-box": {
+                "count": 1,
+                "nodes": [
+                  {
+                    "tag": "div",
+                    "cls": "radar-box",
+                    "display": "flex",
+                    "visibility": "visible",
+                    "opacity": "1",
+                    "position": "static",
+                    "filter": "none",
+                    "transform": "none",
+                    "color": "rgb(17, 17, 17)",
+                    "backgroundColor": "rgba(0, 0, 0, 0)"
+                  }
+                ]
+              },
+              ".scale-legend": {
+                "count": 1,
+                "nodes": [
+                  {
+                    "tag": "div",
+                    "cls": "scale-legend",
+                    "display": "flex",
+                    "visibility": "visible",
+                    "opacity": "1",
+                    "position": "static",
+                    "filter": "none",
+                    "transform": "none",
+                    "color": "rgb(107, 107, 107)",
+                    "backgroundColor": "rgba(0, 0, 0, 0)"
+                  }
+                ]
+              }
+            }
+          }
+        ]
+      }
+    }
+  },
+  "pageErrors": [],
+  "verdict": "PASS"
+}

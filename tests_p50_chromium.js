@@ -1,6 +1,9 @@
 /* ============================================================================
-   TESTES P50 · CHROMIUM — PHASE 5.0 · microfase 5.0.1
-   Escopo desta microfase: SOMENTE P50-ACC6 (estado acessível da seleção),
+   TESTES P50 · CHROMIUM — PHASE 5.0 · microfases 5.0.1 + 5.0.2 + 5.0.3
+   Escopo: P50-ACC6 (estado acessível da seleção), P50-SESUX1B (status de
+   sessão renderizado) e as verificações de ACEITE de UX — que NÃO pertencem
+   ao namespace de gate P50-VIS/P50-ACC e não o encerram.
+   Origem: P50-ACC6 é o gate
    gate nominalmente associado a UI-004. P50-ACC1..P50-ACC5 e P50-VIS1..VIS10
    pertencem às microfases posteriores e NÃO são antecipados aqui.
 
@@ -23,6 +26,30 @@ let skipped = 0;
 
 const EVIDENCE = path.join(__dirname, "docs_phase5", "evidence_p50");
 const shots = [];
+/* Sob campanha de MUTAÇÃO o produto está deliberadamente defeituoso: gravar
+   evidência nessa condição contaminaria o acervo com render mutado (defeito
+   H-19). As asserções continuam todas executando; apenas a ESCRITA de
+   arquivos é suprimida. Sem a variável, a evidência é gravada normalmente. */
+const NO_EVIDENCE = process.env.P50_NO_EVIDENCE === "1";
+if (NO_EVIDENCE) console.log("EVIDÊNCIA SUPRIMIDA (execução sob mutação): nenhum arquivo será gravado");
+
+/* B-503-EVIDENCE · integridade histórica.
+   Evidência é o retrato do estado no momento em que foi produzida, não um
+   arquivo vivo. Esta suíte grava EXCLUSIVAMENTE artefatos da microfase
+   corrente: qualquer nome de microfase anterior é asserido normalmente, mas
+   NUNCA regravado. Sem esta regra, uma execução posterior (ou uma execução sob
+   mutação) reescreve o acervo auditado de 5.0.1/5.0.2 sem que nenhuma decisão
+   de projeto o tenha tocado. */
+const EVIDENCE_PREFIX = "P50-5.0.3-";
+function evidenceWritable(name) {
+  if (NO_EVIDENCE) return false;
+  return name.indexOf(EVIDENCE_PREFIX) === 0;
+}
+function writeEvidence(file, data) {
+  if (!evidenceWritable(file)) return;
+  fs.mkdirSync(EVIDENCE, { recursive: true });
+  fs.writeFileSync(path.join(EVIDENCE, file), data, "utf8");
+}
 
 function resolveBrowser() {                       /* mesma ordem de playwright.config.js */
   const explicit = process.env.CHROME_PATH;
@@ -41,6 +68,7 @@ function resolveBrowser() {                       /* mesma ordem de playwright.c
 /* Screenshot do próprio elemento: garante que o componente esteja
    materialmente visível na imagem (M-502-3). */
 async function shotElement(page, selector, name) {
+  if (!evidenceWritable(name)) { shots.push(name); return; }   /* histórico: aferido, nunca regravado */
   fs.mkdirSync(EVIDENCE, { recursive: true });
   const loc = page.locator(selector).first();
   await loc.scrollIntoViewIfNeeded();
@@ -50,6 +78,7 @@ async function shotElement(page, selector, name) {
 }
 
 async function shotViewport(page, name) {
+  if (!evidenceWritable(name)) { shots.push(name); return; }   /* histórico: aferido, nunca regravado */
   fs.mkdirSync(EVIDENCE, { recursive: true });
   await page.waitForTimeout(400);
   await page.screenshot({ path: path.join(EVIDENCE, name), fullPage: false, animations: "disabled" });
@@ -57,6 +86,7 @@ async function shotViewport(page, name) {
 }
 
 async function shot(page, name) {
+  if (!evidenceWritable(name)) { shots.push(name); return; }   /* histórico: aferido, nunca regravado */
   fs.mkdirSync(EVIDENCE, { recursive: true });
   await page.waitForTimeout(600);
   await page.screenshot({ path: path.join(EVIDENCE, name), fullPage: true, animations: "disabled" });
@@ -86,6 +116,322 @@ async function applyFixture(page, fx) {
     while (step() > k + 1 && guard++ < 40) key("ArrowLeft");
     if (step() !== k + 1) throw new Error("navegação: step " + step() + " != " + (k + 1));
   }, [FX.P50_QIDS, fx.vec, fx.focusQuestion, fx.notes || null]);
+}
+
+/* Aplica o vetor da fixture pelos owners canônicos e alcança a tela de
+   RESULTADOS pela rota congelada. Espelha fixtures_p50.js::p50ApplyResults. */
+async function applyResults(page, fx) {
+  await page.goto(HTML_URL);
+  await page.evaluate(([qids, vec]) => {
+    window.__DEV.setArq(0);
+    qids.forEach((id, i) => window.__DEV.setAnswerById(id, vec[i]));
+    window.__DEV.showResults();
+  }, [FX.P50_QIDS, fx.vec]);
+}
+
+/* Leitura completa da superfície nova da 5.0.3, com layout medido no browser. */
+function readSuffSurface(page) {
+  return page.evaluate(() => {
+    const box = document.getElementById("p50-suff");
+    const res = document.getElementById("p50-results");
+    if (!box || !res) return null;
+    const t = e => (e ? (e.textContent || "").replace(/\s+/g, " ").trim() : null);
+    const vis = e => !!e && !!(e.offsetWidth || e.offsetHeight || e.getClientRects().length);
+    const se = document.scrollingElement;
+    const rect = e => { const r = e.getBoundingClientRect(); return { t: r.top + scrollY, b: r.bottom + scrollY, l: r.left, r: r.right }; };
+    const clipped = Array.from(document.querySelectorAll("#p50-suff *, #p50-results *"))
+      .filter(e => e.children.length === 0 && (e.textContent || "").trim())
+      .filter(e => e.scrollWidth > e.clientWidth + 1 || e.scrollHeight > e.clientHeight + 1).length;
+    const rSuff = rect(box), rRes = rect(res);
+    return {
+      gate: res.getAttribute("data-p50-gate"),
+      sufficientAttr: box.getAttribute("data-p50-sufficient"),
+      suffVisible: vis(box),
+      resVisible: vis(res),
+      globalLine: {
+        text: t(box.querySelector("[data-p50=\"suff-global\"]")),
+        confirmed: (box.querySelector("[data-p50=\"suff-global\"]") || {}).getAttribute &&
+                   box.querySelector("[data-p50=\"suff-global\"]").getAttribute("data-p50-confirmed"),
+        required: box.querySelector("[data-p50=\"suff-global\"]") &&
+                  box.querySelector("[data-p50=\"suff-global\"]").getAttribute("data-p50-required"),
+        missing: box.querySelector("[data-p50=\"suff-global\"]") &&
+                 box.querySelector("[data-p50=\"suff-global\"]").getAttribute("data-p50-missing")
+      },
+      deficits: Array.from(box.querySelectorAll("[data-p50=\"suff-deficit\"]")).map(n => ({
+        dom: Number(n.getAttribute("data-dom")), missing: Number(n.getAttribute("data-missing")),
+        text: t(n), accessible: n.getAttribute("aria-label") || t(n), visible: vis(n)
+      })),
+      axis: Array.from(box.querySelectorAll("[data-p50=\"suff-domain\"]")).map(n => ({
+        dom: Number(n.getAttribute("data-dom")),
+        confirmed: Number(n.getAttribute("data-p50-confirmed")),
+        toValidate: Number(n.getAttribute("data-p50-tovalidate")),
+        unanswered: Number(n.getAttribute("data-p50-unanswered")),
+        text: t(n), accessible: n.getAttribute("aria-label") || t(n)
+      })),
+      guidance: t(box.querySelector("[data-p50=\"suff-guidance\"]")),
+      verdict: t(res.querySelector("[data-p50=\"results-verdict\"]")),
+      domains: Array.from(res.querySelectorAll("[data-p50=\"results-domain\"]")).map(n => ({
+        dom: Number(n.getAttribute("data-dom")),
+        state: n.getAttribute("data-p50-state"),
+        value: t(n.querySelector("[data-p50=\"results-domain-value\"]")),
+        label: t(n.querySelector("[data-p50=\"results-domain-label\"]")),
+        accessible: n.getAttribute("aria-label") || t(n),
+        visible: vis(n)
+      })),
+      execCards: Array.from(res.querySelectorAll("[data-p50=\"exec-card\"]")).map(n => n.getAttribute("data-card")),
+      execCardsBox: !!res.querySelector("[data-p50=\"exec-cards\"]"),
+      overallEl: !!res.querySelector("[data-p50=\"overall\"]"),
+      stageEl: !!res.querySelector("[data-p50=\"stage\"]"),
+      layout: {
+        docScrollWidth: se.scrollWidth, viewportW: window.innerWidth, viewportH: window.innerHeight,
+        clippedNodes: clipped,
+        suffBottom: Math.round(rSuff.b), resTop: Math.round(rRes.t),
+        overlap: rSuff.b > rRes.t + 1,
+        suffRight: Math.round(rSuff.r), resRight: Math.round(rRes.r)
+      },
+      resText: t(res),
+
+      /* B-503-COHERENCE · superfície LEGADA medida no browser real.
+         Visibilidade aqui é layout de verdade (getComputedStyle + caixa),
+         não apenas presença de atributo. */
+      legacy: (function () {
+        const seen = e => {
+          if (!e) return false;
+          const cs = getComputedStyle(e);
+          if (cs.display === "none" || cs.visibility === "hidden" || Number(cs.opacity) === 0) return false;
+          const r = e.getBoundingClientRect();
+          return r.width > 0 && r.height > 0;
+        };
+        const rows = Array.from(document.querySelectorAll("#app .grid2 .panel .dom"));
+        const radar = document.querySelector("#app .radar-box");
+        const legend = document.querySelector("#app .scale-legend");
+        /* texto acessível da página de resultados, ignorando aria-hidden */
+        const accWalk = n => {
+          if (n.nodeType === 3) return n.nodeValue + " ";
+          if (n.nodeType !== 1) return "";
+          if (n.getAttribute("aria-hidden") === "true") return "";
+          const cs = getComputedStyle(n);
+          if (cs.display === "none" || cs.visibility === "hidden") return "";
+          const lbl = n.getAttribute("aria-label");
+          if (lbl) return lbl + " ";
+          let out = "";
+          for (const c of n.childNodes) out += accWalk(c);
+          return out;
+        };
+        return {
+          rows: rows.length,
+          /* nó CONGELADO: preservado no DOM, medido quanto a VISIBILIDADE real */
+          frozenValues: rows.map(r => t(r.querySelector(".lbl > span"))),
+          frozenValuesVisible: rows.map(r => seen(r.querySelector(".lbl > span"))),
+          frozenConfVisible: rows.map(r => seen(r.querySelector(".conf"))),
+          p50Values: rows.map(r => t(r.querySelector("[data-p50=\"legacy-domain-value\"]"))),
+          p50ValuesVisible: rows.map(r => seen(r.querySelector("[data-p50=\"legacy-domain-value\"]"))),
+          marks: rows.map(r => r.getAttribute("data-p50-legacy")),
+          stateNotes: rows.map((r, i) => t(r.querySelector("[data-p50=\"legacy-domain-state-" + i + "\"]"))),
+          fillsPresent: document.querySelectorAll("#app .ruler .fill").length,
+          /* domínios com score canônico: o renderer congelado só emite .fill
+             para esses (os UNSET recebem .ruler.unset + marcador) */
+          rulersScored: document.querySelectorAll("#app .ruler:not(.unset)").length,
+          fillsVisible: Array.from(document.querySelectorAll("#app .ruler .fill")).filter(seen).length,
+          radarVisible: seen(radar ? radar.querySelector("svg") : null),
+          radarNoteVisible: seen(document.querySelector("#app [data-p50=\"legacy-radar-note\"]")),
+          legendVisible: seen(legend),
+          bannerVisible: seen(document.querySelector("#app [data-p50=\"legacy-domain-banner\"]")),
+          accText: accWalk(document.getElementById("app")).replace(/\s+/g, " ").trim()
+        };
+      })()
+    };
+  });
+}
+
+/* ============================================================================
+   ACEITE-UX-5.0.3 — verificação de aceite em Chromium REAL.
+   NÃO é gate do namespace P50-VIS/P50-ACC (que permanecem reservados às
+   microfases previstas e NÃO são declarados encerrados aqui). Cada screenshot
+   corresponde às asserções executáveis abaixo; falha bloqueia a execução.
+   ========================================================================== */
+async function aceite503(browser, pageErrors) {
+  const detail = [];
+  const observed = [];
+  const D = [];
+
+  const check = (tag, m, expect) => {
+    if (!m) { detail.push(tag + ": superfície nova ausente"); return; }
+    observed.push(Object.assign({ fixture: tag }, m));
+    if (m.gate !== expect.gate) detail.push(tag + ": gate=" + m.gate + " (esperado " + expect.gate + ")");
+    if (m.sufficientAttr !== (expect.gate === "released" ? "true" : "false"))
+      detail.push(tag + ": data-p50-sufficient=" + m.sufficientAttr);
+    if (!m.suffVisible) detail.push(tag + ": painel de suficiência não visível");
+    if (!m.resVisible) detail.push(tag + ": superfície de resultados não visível");
+    /* déficits exatos, com nome acessível carregando o número */
+    const gotDef = m.deficits.map(x => x.dom + ":" + x.missing).join(",");
+    if (gotDef !== expect.deficits.join(",")) detail.push(tag + ": déficits [" + gotDef + "] != [" + expect.deficits.join(",") + "]");
+    m.deficits.forEach(x => {
+      if (!x.visible) detail.push(tag + ": déficit do domínio " + x.dom + " não visível");
+      if (!x.accessible || x.accessible.indexOf("+" + x.missing) < 0)
+        detail.push(tag + ": déficit sem número no texto acessível: " + x.accessible);
+    });
+    /* bloqueio: nenhum executive card, nenhum overall/estágio, n/d em todos */
+    if (expect.gate === "blocked") {
+      if (m.execCardsBox || m.execCards.length) detail.push(tag + ": executive cards sob gate fechado");
+      if (m.overallEl || m.stageEl) detail.push(tag + ": overall/estágio sob gate fechado");
+      if (!/BLOQUEADO/.test(m.verdict || "")) detail.push(tag + ": veredito visível não declara bloqueio");
+      if (!m.guidance) detail.push(tag + ": orientação construtiva ausente");
+      m.domains.forEach(dd => {
+        if (dd.state !== "unavailable") detail.push(tag + " dom " + dd.dom + ": estado " + dd.state);
+        if (dd.value !== "n/d") detail.push(tag + " dom " + dd.dom + ": valor " + dd.value);
+        if (!/Não avaliado/i.test(dd.label || "")) detail.push(tag + " dom " + dd.dom + ": sem 'Não avaliado'");
+        if (!/evidência insuficiente/i.test(dd.accessible || "")) detail.push(tag + " dom " + dd.dom + ": acessível sem qualificação");
+      });
+      if (/\d[.,]\d\s*\/\s*5[.,]0/.test(m.resText || "")) detail.push(tag + ": score consolidado visível sob bloqueio");
+    } else {
+      if (!m.execCardsBox) detail.push(tag + ": executive cards ausentes com gate aberto");
+      if (m.execCards.join(",") !== "strengths,priorities") detail.push(tag + ": cards = " + m.execCards.join(","));
+      if (m.guidance) detail.push(tag + ": orientação de insuficiência com gate aberto");
+      m.domains.forEach(dd => {
+        if (dd.state !== "scored") detail.push(tag + " dom " + dd.dom + ": estado " + dd.state + " com gate aberto");
+        if (!/^\d[.,]\d$/.test(dd.value || "")) detail.push(tag + " dom " + dd.dom + ": valor " + dd.value);
+      });
+    }
+    /* composição dos três estados sempre textual (não depende de cor) */
+    if (m.axis.length !== 5) detail.push(tag + ": composição por domínio incompleta (" + m.axis.length + ")");
+    m.axis.forEach(a => {
+      ["confirmada", "a validar", "não respondida"].forEach(w => {
+        if ((a.accessible || "").indexOf(w) < 0 && (a.accessible || "").indexOf(w + "s") < 0)
+          detail.push(tag + " dom " + a.dom + ": estado '" + w + "' ausente do texto acessível");
+      });
+    });
+    /* B-503-COHERENCE: a página inteira comunica UM só estado */
+    const LG = m.legacy, STAGE = /\b(Non-existent|Initial|Managed|Defined|Quantitatively Managed|Optimizing)\b/;
+    if (LG.rows !== 5) detail.push(tag + ": painel legado com " + LG.rows + " domínios");
+    if (expect.gate === "blocked") {
+      LG.frozenValuesVisible.forEach((vis, i) => {
+        if (vis) detail.push(tag + " legado dom " + i + ": score parcial '" + LG.frozenValues[i] + "' VISÍVEL na tela");
+      });
+      LG.frozenConfVisible.forEach((vis, i) => {
+        if (vis) detail.push(tag + " legado dom " + i + ": linha de confiança legada visível");
+      });
+      LG.p50Values.forEach((v, i) => {
+        if (v !== "n/d") detail.push(tag + " legado dom " + i + ": substituto honesto ausente ('" + v + "')");
+        if (!LG.p50ValuesVisible[i]) detail.push(tag + " legado dom " + i + ": substituto honesto não visível");
+      });
+      LG.marks.forEach((mk, i) => { if (mk !== "neutralized") detail.push(tag + " legado dom " + i + ": não neutralizado"); });
+      LG.stateNotes.forEach((n, i) => {
+        if (!/Não avaliado · evidência insuficiente/.test(n || "")) detail.push(tag + " legado dom " + i + ": rótulo de estado ausente");
+      });
+      if (LG.fillsVisible !== 0) detail.push(tag + ": " + LG.fillsVisible + " ruler(s) preenchido(s) VISÍVEL(is)");
+      /* Os preenchimentos PERMANECEM no DOM de propósito: o contrato congelado
+         de geometria UNSET (suíte UG) assere a sua presença e o seu style. O
+         que a errata exige é que não sejam VISÍVEIS nem acessíveis — e é isso
+         que se mede aqui, com layout real. */
+      if (LG.fillsPresent !== LG.rulersScored)
+        detail.push(tag + ": " + LG.fillsPresent + " preenchimento(s) no DOM, esperado " + LG.rulersScored +
+          " (estrutura congelada preservada)");
+      if (LG.radarVisible) detail.push(tag + ": radar parcial visível sob gate fechado");
+      if (!LG.radarNoteVisible) detail.push(tag + ": substituto acessível do radar ausente");
+      if (LG.legendVisible) detail.push(tag + ": legenda de maturidade visível sob gate fechado");
+      if (!LG.bannerVisible) detail.push(tag + ": painel legado sem declaração de insuficiência");
+      const st = (LG.accText || "").match(STAGE);
+      if (st) detail.push(tag + ": estágio de maturidade acessível na página: '" + st[0] + "'");
+    } else {
+      if (LG.fillsVisible !== LG.rulersScored)
+        detail.push(tag + ": " + LG.fillsVisible + " ruler(s) visível(is), esperado " + LG.rulersScored);
+      if (!LG.radarVisible) detail.push(tag + ": radar canônico não restaurado");
+      if (!LG.legendVisible) detail.push(tag + ": legenda de escala não restaurada");
+      if (LG.marks.some(x => x !== null)) detail.push(tag + ": marcador de neutralização stale com gate aberto");
+      if (LG.bannerVisible || LG.radarNoteVisible) detail.push(tag + ": nota de neutralização stale com gate aberto");
+      if (LG.p50Values.some(v => v)) detail.push(tag + ": substituto de insuficiência stale com gate aberto");
+      LG.frozenValuesVisible.forEach((vis, i) => {
+        if (!vis) detail.push(tag + " legado dom " + i + ": score canônico não voltou à tela");
+      });
+      LG.frozenValues.forEach((v, i) => {
+        if (!/^\d[.,]\d/.test(v || "")) detail.push(tag + " legado dom " + i + ": valor legado '" + v + "' não é score canônico");
+      });
+    }
+
+    /* layout: sem overflow horizontal, sem clipping, sem sobreposição */
+    if (m.layout.docScrollWidth > m.layout.viewportW)
+      detail.push(tag + ": overflow horizontal (" + m.layout.docScrollWidth + " > " + m.layout.viewportW + ")");
+    if (m.layout.clippedNodes) detail.push(tag + ": " + m.layout.clippedNodes + " nó(s) clipado(s)");
+    if (m.layout.overlap) detail.push(tag + ": painel de suficiência sobrepõe a superfície de resultados");
+  };
+
+  for (const vp of [{ w: 1440, h: 900 }, { w: 390, h: 844 }]) {
+    const pg = await browser.newPage({ viewport: { width: vp.w, height: vp.h } });
+    pg.on("pageerror", e => pageErrors.push("5.0.3 vp" + vp.w + ": " + String(e.message)));
+
+    if (vp.w === 1440) {
+      await applyResults(pg, FX.P50_F2);
+      check("P50-F2@1440", await readSuffSurface(pg), { gate: "blocked", deficits: ["1:1", "2:2", "3:1", "4:2"] });
+      await shot(pg, "P50-5.0.3-partial-insufficient-1440.png");
+
+      await applyResults(pg, FX.P50_F3);
+      check("P50-F3@1440", await readSuffSurface(pg), { gate: "blocked", deficits: ["0:1"] });
+      await shot(pg, "P50-5.0.3-near-threshold-1440.png");
+      /* Captura DO ELEMENTO: em fullPage a superfície nova fica no rodapé de
+         uma página muito alta. O recorte do componente torna a evidência
+         materialmente legível (mesma correção adotada em 5.0.2 · M-502-3). */
+      await shotElement(pg, "#p50-suff", "P50-5.0.3-panel-blocked-1440.png");
+      await shotElement(pg, "#p50-results", "P50-5.0.3-gate-blocked-1440.png");
+      /* superfície LEGADA neutralizada (B-503-COHERENCE), legível no recorte */
+      await shotElement(pg, "#app .res-head", "P50-5.0.3-legacy-head-blocked-1440.png");
+      await shotElement(pg, "#app .grid2 .panel", "P50-5.0.3-legacy-domains-blocked-1440.png");
+
+      await applyResults(pg, FX.P50_F4);
+      check("P50-F4@1440", await readSuffSurface(pg), { gate: "released", deficits: [] });
+      await shot(pg, "P50-5.0.3-exactly-sufficient-1440.png");
+      await shotElement(pg, "#p50-suff", "P50-5.0.3-panel-released-1440.png");
+      await shotElement(pg, "#p50-results", "P50-5.0.3-gate-released-1440.png");
+      await shotElement(pg, "#app .res-head", "P50-5.0.3-legacy-head-released-1440.png");
+      await shotElement(pg, "#app .grid2 .panel", "P50-5.0.3-legacy-domains-released-1440.png");
+
+      await applyResults(pg, FX.P50_F5);
+      check("P50-F5@1440", await readSuffSurface(pg), { gate: "released", deficits: [] });
+      await shot(pg, "P50-5.0.3-fully-sufficient-1440.png");
+
+      /* rebloqueio pelo CAMINHO REAL: #review -> ArrowLeft -> "Não sei" */
+      await applyResults(pg, FX.P50_F4);
+      const relocked = await pg.evaluate(() => {
+        const step = () => {
+          const m = ((document.getElementById("ptext") || {}).textContent || "").match(/^(\d+)\s*\//);
+          return m ? parseInt(m[1], 10) - 1 : null;
+        };
+        const key = kk => document.dispatchEvent(new KeyboardEvent("keydown", { key: kk, bubbles: true, cancelable: true }));
+        document.getElementById("review").click();
+        let guard = 0;
+        while (step() > 1 && guard++ < 40) key("ArrowLeft");
+        if (step() !== 1) return { error: "navegação real falhou: step " + step() };
+        const na = document.querySelector("#app .opts .opt[data-i=\"NA\"]");
+        if (!na) return { error: "botão canônico 'Não sei' ausente" };
+        na.click();
+        window.__DEV.showResults();
+        return { ok: true };
+      });
+      if (relocked.error) detail.push("relock@1440: " + relocked.error);
+      const mRe = await readSuffSurface(pg);
+      check("relock@1440", mRe, { gate: "blocked", deficits: ["0:1"] });
+      if (mRe && /Pontos fortes|Prioridades de evolução/.test(mRe.resText || ""))
+        detail.push("relock@1440: conteúdo executivo stale visível após o rebloqueio");
+      await shot(pg, "P50-5.0.3-relocked-1440.png");
+    } else {
+      await applyResults(pg, FX.P50_F3);
+      check("P50-F3@390", await readSuffSurface(pg), { gate: "blocked", deficits: ["0:1"] });
+      await shot(pg, "P50-5.0.3-insufficient-390.png");
+
+      await applyResults(pg, FX.P50_F4);
+      check("P50-F4@390", await readSuffSurface(pg), { gate: "released", deficits: [] });
+      await shot(pg, "P50-5.0.3-sufficient-390.png");
+    }
+    await pg.close();
+  }
+
+  const ok = detail.length === 0;
+  results.push({ id: "ACEITE-UX-5.0.3", ok });
+  console.log((ok ? "PASS" : "FAIL") +
+    "  ACEITE-UX-5.0.3 (verificação de aceite, NÃO é gate P50-VIS/P50-ACC) — gate de suficiência, déficits, n/d e layout da superfície nova" +
+    (ok ? "" : " [" + detail.slice(0, 8).join(" · ") + "]"));
+  D.push.apply(D, detail);
+  return { observed, detail: D };
 }
 
 async function acc6(page) {
@@ -314,6 +660,427 @@ async function sesux1b(page) {
   return observed;
 }
 
+/* ============================================================================
+   P50-PR1 — Legacy print surface preserved under insufficient gate
+   B-AUD-503-2 · a neutralização da superfície legada é decisão de TELA. O
+   print legado NÃO monta `#v32-print-report`: `preparePrint()` devolve
+   `{legacy:true}`, esvazia o contêiner e NÃO adiciona `v32-print-mode` — logo
+   `.wrap`/`#app` é a superfície impressa. Se `.p50-legacy-gone` /
+   `.p50-legacy-veiled` valessem no print, os cinco valores de domínio, os
+   cinco `.conf`, os cinco fills, o radar e a legenda sumiriam do papel e a
+   Phase 5 teria criado semântica de impressão que não lhe é autorizada.
+
+   Guard ADICIONAL e ESTREITO. NÃO encerra nem redefine P50-VIS10, que
+   permanece sendo a regressão congelada integral prevista na REV B.
+
+   Oráculo DUPLO, ambos independentes da implementação da Camada 5:
+     (A) baseline de ENTRADA da 5.0.3 (SHA 5d1a301e…), materializado do git e
+         medido sob a MESMA fixture e a MESMA mídia — comparação seletor a
+         seletor de presença, texto e visibilidade;
+     (B) invariante da Camada 1 (`__DEV.legacySnapshot()`), capturado ANTES de
+         qualquer leitura da decoração: os scores/conf que o renderer
+         congelado produziu têm de continuar no papel, com o mesmo texto.
+   (A) é best-effort quanto à DISPONIBILIDADE (repositório sem git), nunca
+   quanto ao VEREDITO: indisponível é declarado; divergente é FAIL. (B) é
+   sempre exigido, de modo que nenhum caminho leva a PASS vacuoso.
+   ========================================================================== */
+const PR1_BASELINE_SHA = "5d1a301e472dd1453f4056c6919ea818e6fd7768d67158321deaae9ad0c926cd";
+
+function pr1Baseline() {
+  try {
+    const { execFileSync } = require("child_process");
+    const crypto = require("crypto"), os = require("os");
+    const buf = execFileSync("git", ["show", "HEAD:quickscan_secops_soccmm_v3_2_dev.html"],
+      { cwd: __dirname, maxBuffer: 1 << 28 });
+    const got = crypto.createHash("sha256").update(buf).digest("hex");
+    if (got !== PR1_BASELINE_SHA)
+      return { ok: false, why: "baseline de entrada com SHA " + got.slice(0, 16) + " != " + PR1_BASELINE_SHA.slice(0, 16) };
+    const f = path.join(os.tmpdir(), "p50-pr1-baseline-" + PR1_BASELINE_SHA.slice(0, 12) + ".html");
+    fs.writeFileSync(f, buf);
+    return { ok: true, file: f };
+  } catch (e) { return { ok: false, why: String(e.message).split("\n")[0] }; }
+}
+
+/* Mede a superfície legada com visibilidade REAL (computed style + caixa),
+   nunca por presença de atributo, e devolve diagnóstico por seletor. */
+function pr1Measure(page) {
+  return page.evaluate(() => {
+    const t = e => (e ? (e.textContent || "").replace(/\s+/g, " ").trim() : null);
+    const seen = e => {
+      if (!e) return false;
+      const cs = getComputedStyle(e);
+      if (cs.display === "none" || cs.visibility === "hidden" || Number(cs.opacity) === 0) return false;
+      const r = e.getBoundingClientRect();
+      return r.width > 0 && r.height > 0;
+    };
+    const diag = (sel, e) => {
+      if (!e) return { selector: sel, present: false };
+      const cs = getComputedStyle(e), r = e.getBoundingClientRect();
+      return { selector: sel, present: true, display: cs.display, visibility: cs.visibility,
+               opacity: cs.opacity, w: Math.round(r.width), h: Math.round(r.height) };
+    };
+    const rows = Array.from(document.querySelectorAll("#app .grid2 .panel .dom"));
+    const fills = Array.from(document.querySelectorAll("#app .ruler .fill"));
+    const radar = document.querySelector("#app .radar-box svg");
+    const legend = document.querySelector("#app .scale-legend");
+    const pr = document.getElementById("v32-print-report");
+    const subs = Array.from(document.querySelectorAll("#app .p50-legacy-note"));
+    return {
+      /* superfície impressa no modo legado */
+      wrapPresent: !!document.querySelector(".wrap"), wrapVisible: seen(document.querySelector(".wrap")),
+      appPresent: !!document.getElementById("app"), appVisible: seen(document.getElementById("app")),
+      printReportEmpty: !pr || (pr.innerHTML || "") === "",
+      printModeClass: /\bv32-print-mode\b/.test(document.body.className),
+      printBlockedClass: /\bv32-print-blocked\b/.test(document.body.className),
+      /* os cinco de cada coisa */
+      rows: rows.length,
+      values: rows.map(r => t(r.querySelector(".lbl > span"))),
+      valuesVisible: rows.map(r => seen(r.querySelector(".lbl > span"))),
+      confs: rows.map(r => t(r.querySelector(".conf"))),
+      confsVisible: rows.map(r => seen(r.querySelector(".conf"))),
+      fills: fills.length, fillsVisible: fills.filter(seen).length,
+      radarPresent: !!radar, radarVisible: seen(radar),
+      legendPresent: !!legend, legendVisible: seen(legend),
+      /* substituto P50: presente no DOM, mas sem semântica NOVA de impressão */
+      substitutes: subs.length, substitutesVisible: subs.filter(seen).length,
+      p50ShellVisible: seen(document.getElementById("p50-shell")),
+      p50SuffVisible: seen(document.getElementById("p50-suff")),
+      p50ResultsVisible: seen(document.getElementById("p50-results")),
+      /* diagnóstico por seletor e propriedade (exigido em qualquer FAIL) */
+      diag: [diag(".wrap", document.querySelector(".wrap")), diag("#app", document.getElementById("app")),
+             diag("#app .radar-box svg", radar), diag("#app .scale-legend", legend)]
+        .concat(rows.map((r, i) => diag(".dom[" + i + "] .lbl > span", r.querySelector(".lbl > span"))))
+        .concat(rows.map((r, i) => diag(".dom[" + i + "] .conf", r.querySelector(".conf"))))
+        .concat(fills.map((f, i) => diag(".ruler .fill[" + i + "]", f)))
+    };
+  });
+}
+
+/* ============================================================================
+   B-AUD-FIN-503-1 · ORACLE DE APRESENTAÇÃO CONTÍNUA.
+
+   O guard anterior decidia visibilidade por booleano (`display:none`,
+   `visibility:hidden`, `opacity === 0`) e por texto. Uma regra de neutralização
+   desconfinada que apenas ATENUA — `opacity:.45` — ou que troca o contexto de
+   posicionamento — `position:relative` — passava intacta para o papel legado
+   sem que nada falhasse. Aqui a comparação com a baseline de ENTRADA passa a
+   ser por ESTILO COMPUTADO, propriedade a propriedade, seletor a seletor,
+   índice a índice, com cardinalidade conferida.
+
+   `opacity` NUNCA é reduzida a `=== 0`: qualquer divergência contra a baseline
+   reprova, inclusive `1 → 0.45`.
+   ========================================================================== */
+const PR1_STYLE_CONTRACT = "P50-PR1/continuous-presentation-v1";
+const PR1_STYLE_PROPS = ["display", "visibility", "opacity", "position",
+  "filter", "transform", "color", "backgroundColor"];
+const PR1_STYLE_SELECTORS = [
+  { key: ".ruler", sel: "#app .grid2 .panel .dom .ruler", expect: 5 },
+  { key: ".fill", sel: "#app .grid2 .panel .dom .ruler .fill", expect: 5 },
+  { key: ".conf", sel: "#app .grid2 .panel .dom .conf", expect: 5 },
+  { key: ".lbl > span", sel: "#app .grid2 .panel .dom .lbl > span", expect: 5 },
+  { key: ".radar-box", sel: "#app .radar-box", expect: 1 },
+  { key: ".scale-legend", sel: "#app .scale-legend", expect: 1 }
+];
+
+/* A Camada 1 aplica `.screen{animation:fade .35s ease}` (congelado). Medir o
+   estilo computado durante a animação devolve um `transform` intermediário e
+   torna a comparação NÃO determinística. Espera-se o repouso — que é também o
+   estado que o papel recebe. Guarda de tempo para nunca pendurar a suíte. */
+async function pr1Settle(pg) {
+  await pg.evaluate(() => Promise.race([
+    Promise.all(document.getAnimations().map(a => a.finished.catch(() => null))),
+    new Promise(r => setTimeout(r, 2000))
+  ]));
+  await pg.waitForTimeout(120);
+}
+
+function pr1Styles(page, props, selectors) {
+  return page.evaluate(([props, selectors]) => {
+    const out = {};
+    selectors.forEach(({ key, sel }) => {
+      const nodes = Array.from(document.querySelectorAll(sel));
+      out[key] = {
+        count: nodes.length,
+        nodes: nodes.map(e => {
+          const cs = getComputedStyle(e);
+          const st = { tag: e.tagName.toLowerCase(),
+            cls: (typeof e.className === "string" ? e.className : (e.className && e.className.baseVal) || "")
+              .split(/\s+/).filter(x => x && !/^p50-/.test(x)).sort().join(" ") };
+          props.forEach(p => { st[p] = cs[p]; });
+          return st;
+        })
+      };
+    });
+    return out;
+  }, [props, selectors]);
+}
+
+/* Compara candidato × baseline e devolve motivos NOMEADOS: seletor, índice,
+   propriedade, valor baseline e valor candidato. */
+function pr1DiffStyles(cand, base, state) {
+  const out = [];
+  PR1_STYLE_SELECTORS.forEach(({ key, expect }) => {
+    const c = cand[key], b = base[key];
+    if (b.count !== expect)
+      out.push(state + " · baseline com cardinalidade inesperada em " + key + ": " + b.count + " != " + expect);
+    if (c.count !== b.count) {
+      out.push(state + " · cardinalidade divergente em " + key + ": baseline " + b.count + ", candidato " + c.count);
+      return;
+    }
+    for (let i = 0; i < b.count; i++) {
+      const cn = c.nodes[i], bn = b.nodes[i];
+      if (cn.tag !== bn.tag || cn.cls !== bn.cls)
+        out.push(state + " · identidade do nó divergente em " + key + "[" + i + "]: baseline <" +
+          bn.tag + " class=\"" + bn.cls + "\">, candidato <" + cn.tag + " class=\"" + cn.cls + "\">");
+      PR1_STYLE_PROPS.forEach(p => {
+        if (cn[p] !== bn[p])
+          out.push(state + " · estilo divergente em " + key + "[" + i + "] propriedade " + p +
+            ": baseline " + JSON.stringify(bn[p]) + ", candidato " + JSON.stringify(cn[p]));
+      });
+    }
+  });
+  return out;
+}
+
+async function pr1Page(browser, url, pageErrors, tag, vec) {
+  const pg = await browser.newPage({ viewport: { width: 1440, height: 900 } });
+  pg.on("pageerror", e => pageErrors.push(tag + ": " + String(e.message)));
+  await pg.goto(url);
+  await pg.evaluate(([qids, v]) => {
+    window.__DEV.setArq(0);
+    qids.forEach((id, i) => window.__DEV.setAnswerById(id, v[i]));
+    window.__DEV.showResults();
+  }, [FX.P50_QIDS, vec || FX.P50_F3.vec]);
+  await pr1Settle(pg);
+  return pg;
+}
+
+/* Um estado completo do oracle contínuo: candidato e baseline sob a MESMA
+   fixture, ambos em mídia `print`, ambos em repouso de animação. */
+async function pr1StyleState(browser, baseFile, pageErrors, state, vec) {
+  const cp = await pr1Page(browser, HTML_URL, pageErrors, "P50-PR1/" + state, vec);
+  const bp = await pr1Page(browser, "file://" + baseFile, pageErrors, "P50-PR1/" + state + "/baseline", vec);
+  try {
+    await cp.evaluate(() => window.dispatchEvent(new Event("beforeprint")));
+    await bp.evaluate(() => window.dispatchEvent(new Event("beforeprint")));
+    await cp.emulateMedia({ media: "print" });
+    await bp.emulateMedia({ media: "print" });
+    await pr1Settle(cp); await pr1Settle(bp);
+    const cs = await pr1Styles(cp, PR1_STYLE_PROPS, PR1_STYLE_SELECTORS);
+    const bs = await pr1Styles(bp, PR1_STYLE_PROPS, PR1_STYLE_SELECTORS);
+    const gate = await cp.evaluate(() => {
+      const e = document.getElementById("p50-results");
+      return e ? e.getAttribute("data-p50-gate") : null;
+    });
+    return { gate, diffs: pr1DiffStyles(cs, bs, state), candidate: cs, baseline: bs };
+  } finally { await cp.close(); await bp.close(); }
+}
+
+async function pr1(browser, pageErrors) {
+  const detail = [];
+  const observed = {};
+  const page = await pr1Page(browser, HTML_URL, pageErrors, "P50-PR1");
+  try {
+    /* 1/2/3 · fixture insuficiente P50-F3, modo legado REAL, gate fechado.
+       O veredito canônico vem da Camada 1, não da superfície nova. */
+    const pre = await page.evaluate(() => ({
+      legacy: window.__DEV.V32.isLegacyModeV32(),
+      gate: (document.getElementById("p50-results") || {}).getAttribute
+        ? document.getElementById("p50-results").getAttribute("data-p50-gate") : null,
+      snapshot: JSON.parse(window.__DEV.legacySnapshot())
+    }));
+    observed.precondition = { legacy: pre.legacy, gate: pre.gate, canonicalSuff: pre.snapshot.suff };
+    if (pre.legacy !== true) detail.push("pré-condição: modo legado real ausente (isLegacyModeV32=" + pre.legacy + ")");
+    if (pre.snapshot.suff !== false) detail.push("pré-condição: P50-F3 não é insuficiente para a Camada 1");
+    if (pre.gate !== "blocked") detail.push("pré-condição: gate da UI = " + pre.gate + " (esperado blocked)");
+
+    /* (B) invariante independente: o que o renderer CONGELADO produziu. */
+    const scored = pre.snapshot.domains.filter(x => x.score !== null);
+    observed.canonicalDomains = pre.snapshot.domains;
+    if (scored.length !== 5) detail.push("pré-condição: Camada 1 produziu " + scored.length + " scores (esperado 5)");
+
+    /* 4 · TELA: a neutralização continua ativa e o substituto honesto aparece. */
+    await page.emulateMedia({ media: "screen" });
+    const scr = await pr1Measure(page);
+    observed.screen = scr;
+    if (scr.valuesVisible.some(Boolean)) detail.push("tela: valor de domínio legado visível sob gate fechado");
+    if (scr.confsVisible.some(Boolean)) detail.push("tela: .conf legado visível sob gate fechado");
+    if (scr.fillsVisible !== 0) detail.push("tela: " + scr.fillsVisible + " fill(s) visível(is) sob gate fechado");
+    if (scr.radarVisible) detail.push("tela: radar visível sob gate fechado");
+    if (scr.legendVisible) detail.push("tela: legenda visível sob gate fechado");
+    if (scr.substitutesVisible < 1) detail.push("tela: substituto honesto P50 não visível");
+
+    /* 5 · caminho REAL de print: o listener `beforeprint` registrado pela
+       Camada 1 — não uma chamada direta a preparePrint(). */
+    await page.evaluate(() => window.dispatchEvent(new Event("beforeprint")));
+
+    /* 6 · mídia print REAL no Chromium. */
+    await page.emulateMedia({ media: "print" });
+    const prn = await pr1Measure(page);
+    observed.print = prn;
+
+    /* 7 · `.wrap`/`#app` são a superfície impressa no modo legado. */
+    if (!prn.printReportEmpty) detail.push("print: #v32-print-report não está vazio no modo legado");
+    if (prn.printModeClass) detail.push("print: body recebeu v32-print-mode no modo legado");
+    if (prn.printBlockedClass) detail.push("print: body recebeu v32-print-blocked");
+    if (!prn.wrapVisible) detail.push("print: .wrap não é a superfície impressa (não visível)");
+    if (!prn.appVisible) detail.push("print: #app não é a superfície impressa (não visível)");
+
+    /* 8 · cinco valores, cinco .conf, cinco fills, radar e legenda no papel. */
+    if (prn.rows !== 5) detail.push("print: " + prn.rows + " linhas de domínio (esperado 5)");
+    prn.valuesVisible.forEach((v, i) => { if (!v) detail.push("print: valor do domínio " + i + " ausente do papel"); });
+    prn.confsVisible.forEach((v, i) => { if (!v) detail.push("print: .conf do domínio " + i + " ausente do papel"); });
+    if (prn.fills !== 5) detail.push("print: " + prn.fills + " fills presentes (esperado 5)");
+    if (prn.fillsVisible !== 5) detail.push("print: " + prn.fillsVisible + "/5 fills visíveis no papel");
+    if (!prn.radarVisible) detail.push("print: radar ausente do papel");
+    if (!prn.legendVisible) detail.push("print: legenda ausente do papel");
+    /* nenhum espaço vazio/mutilado: o texto impresso é o do renderer congelado */
+    prn.values.forEach((v, i) => {
+      if (!v) detail.push("print: valor do domínio " + i + " vazio (espaço mutilado)");
+    });
+    /* (B) o texto impresso corresponde ao score canônico da Camada 1 */
+    pre.snapshot.domains.forEach((dd, i) => {
+      if (dd.score === null) return;
+      /* o renderer congelado imprime "<score> — <estágio>"; o oráculo exige o
+         score canônico da Camada 1 como PREFIXO, sem presumir o rótulo. */
+      const want = dd.score.toFixed(1);
+      const got = prn.values[i] || "";
+      if (got.indexOf(want) !== 0)
+        detail.push("print: domínio " + i + " imprime '" + got + "' sem o score canônico " + want);
+    });
+
+    /* 10 · o substituto P50 não fabrica semântica nova de impressão. */
+    if (prn.substitutesVisible !== 0)
+      detail.push("print: " + prn.substitutesVisible + " substituto(s) P50 visível(is) — semântica nova de impressão");
+    if (prn.p50ShellVisible) detail.push("print: #p50-shell visível");
+    if (prn.p50SuffVisible) detail.push("print: #p50-suff visível");
+    if (prn.p50ResultsVisible) detail.push("print: #p50-results visível");
+
+    /* 9 · (A) comparação com o BASELINE DE ENTRADA, mesma fixture, mesma mídia. */
+    const base = pr1Baseline();
+    if (!base.ok) {
+      observed.baseline = { compared: false, why: base.why };
+      detail.push("baseline de entrada NÃO comparado (" + base.why + ") — oráculo (B) permanece exigido");
+    } else {
+      const bp = await pr1Page(browser, "file://" + base.file, pageErrors, "P50-PR1/baseline");
+      try {
+        await bp.evaluate(() => window.dispatchEvent(new Event("beforeprint")));
+        await bp.emulateMedia({ media: "print" });
+        const bm = await pr1Measure(bp);
+        observed.baseline = { compared: true, sha: PR1_BASELINE_SHA, print: bm };
+        const cmp = (k, a, b) => {
+          const sa = JSON.stringify(a), sb = JSON.stringify(b);
+          if (sa !== sb) detail.push("print difere do baseline de entrada em " + k + ": " + sa + " != " + sb);
+        };
+        cmp("rows", prn.rows, bm.rows);
+        cmp("values", prn.values, bm.values);
+        cmp("valuesVisible", prn.valuesVisible, bm.valuesVisible);
+        cmp("confs", prn.confs, bm.confs);
+        cmp("confsVisible", prn.confsVisible, bm.confsVisible);
+        cmp("fills", prn.fills, bm.fills);
+        cmp("fillsVisible", prn.fillsVisible, bm.fillsVisible);
+        cmp("radarVisible", prn.radarVisible, bm.radarVisible);
+        cmp("legendVisible", prn.legendVisible, bm.legendVisible);
+        cmp("wrapVisible", prn.wrapVisible, bm.wrapVisible);
+        cmp("appVisible", prn.appVisible, bm.appVisible);
+        cmp("printReportEmpty", prn.printReportEmpty, bm.printReportEmpty);
+      } finally { await bp.close(); }
+    }
+
+    /* 11 · volta à mídia screen: a neutralização volta a valer. */
+    await page.emulateMedia({ media: "screen" });
+    const back = await pr1Measure(page);
+    observed.screenAfter = back;
+    if (back.valuesVisible.some(Boolean)) detail.push("retorno à tela: valor de domínio legado voltou a aparecer");
+    if (back.fillsVisible !== 0) detail.push("retorno à tela: " + back.fillsVisible + " fill(s) visível(is)");
+    if (back.radarVisible) detail.push("retorno à tela: radar visível");
+    if (back.legendVisible) detail.push("retorno à tela: legenda visível");
+    if (back.substitutesVisible < 1) detail.push("retorno à tela: substituto honesto P50 desapareceu");
+
+    /* 12 · B-AUD-FIN-503-1 · a neutralização de TELA continua ativa e contínua.
+       Corrigir o print não pode apagar a apresentação honesta da tela: as
+       réguas seguem atenuadas e a `.radar-box` segue como contexto de
+       posicionamento da nota — ambas SOMENTE na tela. */
+    await pr1Settle(page);
+    const scrStyles = await pr1Styles(page, PR1_STYLE_PROPS, PR1_STYLE_SELECTORS);
+    const scrExtra = await page.evaluate(() => {
+      const rb = document.querySelector("#app .radar-box.p50-legacy-off");
+      const note = document.querySelector("#app .radar-box > .p50-legacy-note");
+      return {
+        radarBoxNeutralized: !!rb,
+        radarBoxPosition: rb ? getComputedStyle(rb).position : null,
+        radarNoteText: note ? (note.textContent || "").trim() : null,
+        radarNotePosition: note ? getComputedStyle(note).position : null,
+        ariaHiddenNeutralized: document.querySelectorAll("#app [data-p50-legacy=\"hidden\"][aria-hidden=\"true\"]").length
+      };
+    });
+    observed.screenPresentation = {
+      rulerOpacity: scrStyles[".ruler"].nodes.map(n => n.opacity),
+      radarBox: scrExtra
+    };
+    scrStyles[".ruler"].nodes.forEach((n, i) => {
+      if (n.opacity !== "0.45")
+        detail.push("tela: .ruler[" + i + "] com opacity " + JSON.stringify(n.opacity) +
+          " — a atenuação honesta de tela foi perdida (esperado \"0.45\")");
+    });
+    if (!scrExtra.radarBoxNeutralized)
+      detail.push("tela: .radar-box.p50-legacy-off ausente sob gate fechado");
+    if (scrExtra.radarBoxPosition !== "relative")
+      detail.push("tela: .radar-box.p50-legacy-off com position " + JSON.stringify(scrExtra.radarBoxPosition) +
+        " — a nota do radar perde o contexto de posicionamento (esperado \"relative\")");
+    if (scrExtra.radarNotePosition !== "absolute")
+      detail.push("tela: nota do radar com position " + JSON.stringify(scrExtra.radarNotePosition));
+    if (!scrExtra.ariaHiddenNeutralized)
+      detail.push("tela: nenhum nó congelado permanece fora da árvore acessível sob gate fechado");
+  } finally { await page.close(); }
+
+  /* ==========================================================================
+     13 · B-AUD-FIN-503-1 · ORACLE DE APRESENTAÇÃO CONTÍNUA contra a baseline.
+     Dois estados: gate BLOQUEADO (onde as classes/atributos de neutralização
+     existem) e gate LIBERADO (controle positivo de ausência de divergência).
+     ========================================================================== */
+  {
+    const base = pr1Baseline();
+    if (!base.ok) {
+      observed.continuousPresentation = { contract: PR1_STYLE_CONTRACT, compared: false, why: base.why };
+      detail.push("oracle de apresentação contínua NÃO executado (" + base.why + ")");
+    } else {
+      const states = [
+        { state: "gate-bloqueado", vec: FX.P50_F3.vec, wantGate: "blocked" },
+        { state: "gate-liberado", vec: FX.P50_F5.vec, wantGate: "released" }
+      ];
+      const rec = { contract: PR1_STYLE_CONTRACT, compared: true, baselineSha: PR1_BASELINE_SHA,
+        comparedAgainst: "baseline de ENTRADA da 5.0.3 (5d1a301e…), mesma fixture, mídia print",
+        properties: PR1_STYLE_PROPS,
+        selectors: PR1_STYLE_SELECTORS.map(s => ({ key: s.key, selector: s.sel, expect: s.expect })),
+        states: [] };
+      for (const st of states) {
+        const r = await pr1StyleState(browser, base.file, pageErrors, st.state, st.vec);
+        if (r.gate !== st.wantGate)
+          detail.push(st.state + " · pré-condição: gate da UI = " + r.gate + " (esperado " + st.wantGate + ")");
+        r.diffs.forEach(d => detail.push(d));
+        rec.states.push({ state: st.state, fixture: st.state === "gate-bloqueado" ? "P50-F3" : "P50-F5",
+          gate: r.gate, divergences: r.diffs, candidate: r.candidate, baseline: r.baseline });
+      }
+      observed.continuousPresentation = rec;
+    }
+  }
+
+  /* 14 · diagnóstico por seletor e propriedade em qualquer FAIL. */
+  const ok = detail.length === 0;
+  if (!ok && observed.print && observed.print.diag) {
+    observed.failureDiag = observed.print.diag.filter(d =>
+      !d.present || d.display === "none" || d.visibility === "hidden" || d.w === 0 || d.h === 0);
+  }
+  results.push({ id: "P50-PR1", ok });
+  console.log((ok ? "PASS" : "FAIL") +
+    "  P50-PR1 — Legacy print surface preserved under insufficient gate (guard estreito; NÃO encerra P50-VIS10)" +
+    (ok ? "" : " [" + detail.join(" · ") +
+      (observed.failureDiag && observed.failureDiag.length
+        ? " · diag: " + JSON.stringify(observed.failureDiag).slice(0, 400) : "") + "]"));
+  return { ok, detail, observed };
+}
+
 (async () => {
   let chromium;
   try { ({ chromium } = require("@playwright/test")); }
@@ -442,11 +1209,60 @@ async function sesux1b(page) {
       "  ACEITE-UX-5.0.1 (verificação de aceite, NÃO é gate P50-VIS) — mapa recolhido por padrão; pergunta e 1º card dentro da primeira dobra" +
       (foldOk ? "" : " [" + foldDetail.join(" · ") + "]"));
 
-    fs.mkdirSync(EVIDENCE, { recursive: true });
-    fs.writeFileSync(path.join(EVIDENCE, "P50-ACC6-selection-1440.json"),
+    /* ---- 5.0.3 · aceite em Chromium real + evidência própria ---- */
+    const aceite = await aceite503(b, pageErrors);
+    /* ---- B-AUD-503-2 · guard estreito da superfície de print legado ---- */
+    const prn1 = await pr1(b, pageErrors);
+    writeEvidence("P50-5.0.3-sufficiency-surface.json",
+      JSON.stringify({
+        check: "ACEITE-UX-5.0.3",
+        microfase: "5.0.3",
+        note: "Verificação de aceite em Chromium real. NÃO é gate do namespace P50-VIS/P50-ACC e não encerra P50-VIS1..P50-VIS10.",
+        browser: { name: "chromium", version: b.version(), executablePath: chromium.executablePath(),
+          resolutionOrigin: resolved.origin, specNominalVersion: "141.0.7390.37",
+          nominalDeviationAccepted: b.version() !== "141.0.7390.37" },
+        playwright: require("@playwright/test/package.json").version,
+        viewports: ["1440x900", "390x844"],
+        fixtures: ["P50-F2", "P50-F3", "P50-F4", "P50-F5", "relock(P50-F4 -> NA)"],
+        selectors: {
+          suffPanel: "#p50-suff", gate: "#p50-results[data-p50-gate]",
+          globalLine: "[data-p50=\"suff-global\"]", deficit: "[data-p50=\"suff-deficit\"]",
+          axis: "[data-p50=\"suff-domain\"]", guidance: "[data-p50=\"suff-guidance\"]",
+          domainRow: "[data-p50=\"results-domain\"]", execCards: "[data-p50=\"exec-cards\"]"
+        },
+        screenshots: shots.filter(n => n.indexOf("P50-5.0.3-") === 0),
+        observed: aceite.observed,
+        failures: aceite.detail,
+        /* B-AUD-503-2 · o guard de print legado tem oráculo próprio e é
+           registrado junto da evidência de aceite da mesma execução limpa. */
+        legacyPrintGuard: {
+          gate: "P50-PR1",
+          note: "Guard ADICIONAL e estreito. NÃO encerra nem redefine P50-VIS10.",
+          vis10Closed: false,
+          vis10Statement: "P50-VIS10 permanece ABERTO e integral; P50-PR1 não o encerra, não o redefine e não o substitui.",
+          fixture: "P50-F3", baselineSha: PR1_BASELINE_SHA,
+          /* B-AUD-FIN-503-1 · contrato do oracle de apresentação contínua */
+          continuousPresentationContract: {
+            version: PR1_STYLE_CONTRACT,
+            comparedAgainstBaseline: PR1_BASELINE_SHA,
+            comparedAgainstBaselineLabel: "baseline de ENTRADA da 5.0.3 (5d1a301e…), mesma fixture, mídia print",
+            properties: PR1_STYLE_PROPS,
+            selectors: PR1_STYLE_SELECTORS.map(s => ({ key: s.key, selector: s.sel, expect: s.expect })),
+            states: ["gate-bloqueado (P50-F3)", "gate-liberado (P50-F5)"],
+            opacityIsBinary: false,
+            divergences: (prn1.observed.continuousPresentation &&
+              prn1.observed.continuousPresentation.states || []).map(s =>
+                ({ state: s.state, fixture: s.fixture, gate: s.gate, divergences: s.divergences }))
+          },
+          ok: prn1.ok, failures: prn1.detail, observed: prn1.observed
+        },
+        pageErrors,
+        verdict: (aceite.detail.length || !prn1.ok) ? "FAIL" : "PASS"
+      }, null, 2) + "\n");
+    writeEvidence("P50-5.0.3-acc6-selection-1440.json",
       JSON.stringify({
         gate: "P50-ACC6",
-        microfase: "5.0.1",
+        microfase: "5.0.3 (execução corrente; a evidência histórica da 5.0.1 permanece congelada em P50-ACC6-selection-1440.json)",
         browser: { name: "chromium", version: b.version(), executablePath: chromium.executablePath(),
           resolutionOrigin: resolved.origin,
           specNominalVersion: "141.0.7390.37",
@@ -455,12 +1271,15 @@ async function sesux1b(page) {
         viewport: "1440x900",
         fixtures: ["P50-F2", "P50-F6"],
         pageErrors,
-        screenshots: shots.slice(),
+        /* Escopo da evidência: as capturas da 5.0.3 têm arquivo próprio
+           (P50-5.0.3-sufficiency-surface.json). Sem este recorte, o array
+           compartilhado faria a evidência histórica absorver nomes novos. */
+        screenshots: shots.filter(n => n.indexOf("P50-5.0.3-") !== 0),
         smokeNonNormative: smoke,
         sesux1b: sesuxObserved,
         note: "Screenshots são evidência visual mínima da 5.0.1. NÃO encerram P50-VIS1..P50-VIS10.",
         verdict: results.every(r => r.ok) ? "PASS" : "FAIL"
-      }, null, 2) + "\n", "utf8");
+      }, null, 2) + "\n");
   } finally { await b.close(); }
   finish();
 })();
@@ -468,7 +1287,7 @@ async function sesux1b(page) {
 function finish() {
   const fail = results.filter(r => !r.ok).length;
   const pass = results.length - fail;
-  console.log("\nP50 CHROMIUM (microfases 5.0.1+5.0.2): " + pass + " PASS · " + fail + " FAIL de " + results.length +
+  console.log("\nP50 CHROMIUM (microfases 5.0.1+5.0.2+5.0.3): " + pass + " PASS · " + fail + " FAIL de " + results.length +
     (skipped ? " · " + skipped + " NÃO EXECUTADO (requer Chromium real)" : ""));
   process.exit(fail ? 1 : 0);
 }

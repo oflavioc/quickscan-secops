@@ -150,11 +150,34 @@ T("UG8","sessão SUFICIENTE com 5 práticas UNSET: 5 vértices, nenhum score dil
   apply(w,vec);
   const sc=domScores(vec);
   const shape=q(d,"svg.radar .shape");
-  const app=txt(q(d,"#app"));
   const expected=SCORES[2];                                /* 3.3 — média das confirmadas, sem zero fantasma */
+  /* [ERRATA UG8 · 5.0.4] O oráculo de ausência de "n/d" governa o EIXO DE
+     DOMÍNIO/RADAR congelado — a propriedade real deste gate: nenhuma sessão
+     suficiente publica "n/d" onde os cinco domínios têm score. A expressão
+     anterior coletava `#app` INTEIRO, o que era proxy adequado enquanto não
+     existia um eixo POR PERGUNTA dentro de `#app`. A Camada 5 acrescenta esse
+     segundo eixo, no qual `UI-016a`/A-8/§12.2 exigem literalmente "n/d" para
+     perguntas ainda não respondidas — estado legítimo numa sessão globalmente
+     suficiente. A coleta passa a ser NOMINAL sobre a superfície congelada;
+     nenhuma asserção foi removida ou relaxada. UG9 continua sendo a regressão
+     canônica de "n/d" quando um DOMÍNIO está realmente UNSET. */
+  const domRows=Array.from(d.querySelectorAll("#app .grid2 .panel .dom"));
+  const radar=q(d,"#app svg.radar");
+  /* cardinalidade estrutural: ausência da superfície é FAIL, nunca PASS vacuoso */
+  if(domRows.length!==5) throw new Error("UG8: eixo de domínio com "+domRows.length+" linhas (esperadas 5)");
+  if(!radar) throw new Error("UG8: radar congelado #app svg.radar ausente");
+  if(!shape) throw new Error("UG8: polígono do radar ausente");
+  /* "n/d" tem de estar ausente NESTA superfície, linha a linha e no radar */
+  domRows.forEach((r,i)=>{ if((txt(r)||"").includes("n/d"))
+    throw new Error("UG8: 'n/d' no eixo congelado de domínio, linha "+i+": "+(txt(r)||"").replace(/\s+/g," ").trim()); });
+  if((txt(radar)||"").includes("n/d")) throw new Error("UG8: 'n/d' no radar congelado");
+  /* os CINCO valores observáveis são o score esperado — não uma ocorrência solta */
+  const shown=domRows.map(r=>{const s=r.querySelector(".lbl > span");return s?txt(s).trim():null;});
+  shown.forEach((v,i)=>{ if(v===null) throw new Error("UG8: valor de domínio ausente na linha "+i);
+    if(v.indexOf(expected.toFixed(1))!==0)
+      throw new Error("UG8: domínio "+i+" exibe '"+v+"' e não o score esperado "+expected.toFixed(1)); });
   return sc.every(s=>s===expected) && nPts(shape)===5 &&
-    !d.querySelector("svg.radar .unset-mark") &&
-    !app.includes("n/d") && app.includes("3.3");
+    !d.querySelector("svg.radar .unset-mark");
 });
 
 /* ===================== REGRESSÃO — rótulo "n/d" byte-idêntico ===================== */

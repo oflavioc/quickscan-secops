@@ -87,7 +87,15 @@ const PROTECTED = {
   "generate_icons_v32.py": "1acfe25c2f3ac3e4d76ce42eeb7ceec3108c1d3471c27e8f788e0168b8225bf7",
   "harness_m41_v313.js": "7ec750b293fa7421cd95acf1ff27e3cf7c8c492c6faf03e9f9160734149f14b0",
   "v3_1_3_functional_snapshot.json": "0abeaa7cc3a7e270fde015791a93bfbdb580803a915871e12811585c99555435",
-  "tests_unset_ug.js": "d2a3f804bb14e9156978407710a7a680f8dc4b71929546c28a719fbde1bae2e9",
+  /* EXCEÇÃO NOMINAL DE BOUNDARY · ERRATA AUTORIZADA UG8 (microfase 5.0.4).
+     O proprietário autorizou, por ato explícito e test-only, corrigir o ESCOPO do
+     oráculo de UG8 — que coletava `#app` inteiro e capturava o eixo POR PERGUNTA
+     da Camada 5, onde UI-016a/A-8/§12.2 exigem literalmente "n/d". A exceção é
+     estreita e não extensível: só o bloco de UG8 mudou; UG1..UG7 e UG9..UG13
+     permanecem byte-idênticos, a contagem segue 13 e nenhuma asserção foi
+     removida. P50-GOV1 continua fixando o arquivo BYTE A BYTE — apenas no valor
+     autorizado. Identidade anterior: d2a3f804bb14e9156978407710a7a680f8dc4b71929546c28a719fbde1bae2e9 */
+  "tests_unset_ug.js": "af129900d1c5e2b8f02a9582f4fc8ab26fecc617cc595c9f2a7508000cabcb91",
   "MANIFEST.sha256": "80369148582fab2c82c9504185fac13534f22c723646379d57c040fc6eed417e"
 };
 
@@ -248,6 +256,41 @@ T("P50-UX6", "navegação da superfície nova é presentation-only (respostas, n
   const afterPrev = canonical(w);
   if (before !== afterNext) throw new Error("avançar mutou estado canônico");
   if (before !== afterPrev) throw new Error("voltar mutou estado canônico");
+
+  /* 5.0.4 · UI-028 — as tabs de Results são estado APENAS de apresentação.
+     Trocar de tab não pode tocar resposta, nota, prioridade, landscape,
+     target ou refinement. Oráculo: captureCanonicalInputs() (P50-UX9). */
+  FX.p50ApplyResults(w, d, FX.P50_F5);
+  const tabs = qa(d, "#p50-results [data-p50=\"tab\"]");
+  const WANT_TABS = ["resumo", "dominios", "heatmap", "analise"];
+  if (tabs.length !== WANT_TABS.length)
+    throw new Error("esperadas " + WANT_TABS.length + " tabs de Results, obtidas " + tabs.length);
+  const ids = tabs.map(t => t.getAttribute("data-p50-tab"));
+  if (JSON.stringify(ids) !== JSON.stringify(WANT_TABS))
+    throw new Error("ordem/ids das tabs: " + JSON.stringify(ids));
+  if (ids.some(x => /framework|nist|cis|mapping/i.test(String(x))))
+    throw new Error("tab de framework mapping criada — proibida pela §15");
+  const labels = tabs.map(t => txt(t));
+  if (JSON.stringify(labels) !== JSON.stringify(["Resumo", "Domínios", "Heat Map", "Análise"]))
+    throw new Error("rótulos PT-BR das tabs: " + JSON.stringify(labels));
+  const beforeTabs = canonical(w);
+  WANT_TABS.forEach(id => {
+    const btn = q(d, "#p50-results [data-p50=\"tab\"][data-p50-tab=\"" + id + "\"]");
+    if (!btn) throw new Error("tab ausente: " + id);
+    btn.click();
+    if (canonical(w) !== beforeTabs) throw new Error("troca para a tab " + id + " mutou estado canônico");
+    const panel = q(d, "#p50-results [data-p50=\"panel\"][data-p50-tab=\"" + id + "\"]");
+    if (!panel) throw new Error("painel ausente: " + id);
+    if (panel.hasAttribute("hidden")) throw new Error("painel " + id + " continua oculto após seleção");
+    if (btn.getAttribute("aria-selected") !== "true")
+      throw new Error("aria-selected não acompanhou a tab " + id);
+    const others = qa(d, "#p50-results [data-p50=\"panel\"]").filter(x => x !== panel);
+    if (others.some(x => !x.hasAttribute("hidden")))
+      throw new Error("mais de um painel visível ao selecionar " + id);
+  });
+  /* nenhuma camada aspecto/capability entre domínio e pergunta (correção A-2) */
+  if (qa(d, "#p50-results [data-p50=\"aspect\"], #p50-results [data-aspect]").length)
+    throw new Error("camada aspecto/capability criada entre domínio e pergunta");
   return true;
 });
 
@@ -306,6 +349,28 @@ T("P50-UX9", "presentation state isolation: colapso da sidebar e foco não alter
   FX.p50Key(w, d, "ArrowDown", cards[0]);
   const after = canonical(w);
   if (before !== after) throw new Error("estado canônico alterado por ação de apresentação");
+
+  /* 5.0.4 · o estado de tab é efêmero e NÃO canônico: não entra no documento
+     exportado, não sobrevive como owner e não altera score nem suficiência. */
+  FX.p50ApplyResults(w, d, FX.P50_F9);
+  const beforeTab = canonical(w);
+  const scoreOf = () => JSON.stringify(w.__DEV.tgtCurrentProfile());
+  const suffOf = () => String(w.__P50SUFF.contract().sufficient);
+  const beforeScore = scoreOf(), beforeSuff = suffOf();
+  const beforeOv = JSON.stringify(w.__DEV.TARGET.overrides);
+  ["heatmap", "analise", "dominios", "resumo"].forEach(id => {
+    const btn = q(d, "#p50-results [data-p50=\"tab\"][data-p50-tab=\"" + id + "\"]");
+    if (!btn) throw new Error("tab ausente para isolamento: " + id);
+    btn.click();
+  });
+  if (canonical(w) !== beforeTab) throw new Error("tab alterou captureCanonicalInputs()");
+  if (scoreOf() !== beforeScore) throw new Error("tab alterou o score canônico");
+  if (suffOf() !== beforeSuff) throw new Error("tab alterou o veredito de suficiência");
+  if (JSON.stringify(w.__DEV.TARGET.overrides) !== beforeOv)
+    throw new Error("tab alterou TARGET_PROFILE.overrides");
+  const doc = w.__DEV.captureCanonicalInputs();
+  if (JSON.stringify(doc).indexOf("p50-tab") >= 0 || JSON.stringify(doc).indexOf("heatmap") >= 0)
+    throw new Error("estado de apresentação vazou para os inputs canônicos");
   /* Oráculos proibidos por P50-UX9 não podem ser usados por este arquivo.
      Os nomes são montados por concatenação para que o literal proibido NUNCA
      apareça contíguo no source e o lint não se auto-detecte. */
@@ -354,6 +419,34 @@ T("P50-UX10", "três estados de resposta com DOM, rótulo visível e nome acess�
   if (!/0([.,]0)?/.test(vis[2] + acc[2])) throw new Error("nível 0 confirmado foi omitido em vez de exibido");
   /* distinção não depende só de cor: data-* + texto presentes em todos */
   if (vis.some(v => v === "")) throw new Error("estado sem rótulo textual");
+
+  /* 5.0.4 · UI-015 — os MESMOS três estados no heat map domínio → pergunta. */
+  FX.p50ApplyResults(w, d, fx);
+  const cells = qa(d, "#p50-results [data-p50=\"hm-cell\"]");
+  if (cells.length !== 15) throw new Error("heat map com " + cells.length + " células (esperadas 15)");
+  const byQid = {};
+  cells.forEach(c => { byQid[c.getAttribute("data-qid")] = c; });
+  const cU = byQid["mandate"], cN = byQid["governance"], cZ = byQid["policies"];
+  if (!cU || !cN || !cZ) throw new Error("células do domínio 0 ausentes no heat map");
+  const hmState = [cU, cN, cZ].map(c => c.getAttribute("data-p50-ans"));
+  if (JSON.stringify(hmState) !== JSON.stringify(["unset", "na", "confirmed"]))
+    throw new Error("semântica de DOM no heat map: " + JSON.stringify(hmState));
+  const hmVis = [cU, cN, cZ].map(c => txt(c.querySelector("[data-p50=\"hm-state\"]")));
+  const hmAcc = [cU, cN, cZ].map(c => accName(c));
+  if (new Set(hmVis).size !== 3) throw new Error("rótulos do heat map não distintos: " + JSON.stringify(hmVis));
+  if (new Set(hmAcc).size !== 3) throw new Error("nomes acessíveis do heat map não distintos");
+  if (!/^n\/d$/.test(hmVis[0])) throw new Error("heat map: null deve exibir n/d, obtido " + hmVis[0]);
+  if (cU.hasAttribute("data-p50-level")) throw new Error("heat map: null recebeu nível");
+  if (/\b0([.,]0)?\b/.test(hmVis[0])) throw new Error("heat map: null renderizado como zero");
+  if (cN.hasAttribute("data-p50-level")) throw new Error("heat map: NA recebeu nível/score");
+  if (!/precisa validar/i.test(hmAcc[1])) throw new Error("heat map: NA sem rótulo canônico");
+  if (cZ.getAttribute("data-p50-level") !== "0") throw new Error("heat map: nível 0 confirmado ausente");
+  if (!/0[.,]0/.test(hmVis[2])) throw new Error("heat map: nível 0 confirmado omitido em vez de plotado");
+  /* 0 confirmado é plotado; null nunca fabrica preenchimento */
+  if (cU.getAttribute("data-p50-fill") !== "none")
+    throw new Error("heat map: célula UNSET fabricou preenchimento");
+  if (cZ.getAttribute("data-p50-fill") !== "level")
+    throw new Error("heat map: nível 0 confirmado não foi plotado");
   return true;
 });
 
@@ -900,9 +993,15 @@ T("P50-SUF0", "nenhum renderer é dono de lógica de suficiência; limiar declar
   if (!/function dataSufficiency\(stats\)\{\s*\n\s*return confirmedCount\(\) >= 10 && stats\.every\(s=>s\.n>=2\);/.test(html))
     throw new Error("dataSufficiency() não está byte-idêntica no build");
 
-  /* (f) nenhum símbolo da 5.0.4 antecipado */
-  const forbidden = ["heatmap", "heatMap", "heat-map", "drilldown", "drillDown", "drill-down",
-                     "currentVsTarget", "current-vs-target", "gapToTarget", "P50-VIS9"];
+  /* (f) nenhum símbolo de microfase FUTURA antecipado.
+     A 5.0.4 (heat map, drill-down, Current × Target) passou a ser escopo
+     AUTORIZADO e saiu desta lista; o lint continua vivo e agora protege a
+     fronteira seguinte — 5.0.5 (acessibilidade ampla, responsivo, fechamento
+     visual) — e a área permanentemente fora de escopo da fase (§15/§23):
+     framework mapping e semântica nova de print. */
+  const forbidden = ["axe-core", "axeCore", "runAxe", "P50-ACC7", "P50-VIS11",
+                     "frameworkMapping", "framework-mapping", "nistCsf", "nist-csf", "cisControls",
+                     "buildPrintReport", "preparePrint"];
   P50_NEW_MODULES.forEach(f => {
     const src = readIf(f); if (src === null) return;
     /* comentários são prosa normativa (inclusive a declaração do que NÃO foi
@@ -967,12 +1066,52 @@ T("P50-SUF1", "estado insuficiente não expõe overall, estágio nem executive c
     if (sec.querySelector("[data-p50=\"exec-card\"]")) throw new Error(fx.id + ": executive card presente sob gate fechado");
     if (sec.querySelector("[data-p50=\"overall\"]")) throw new Error(fx.id + ": overall presente sob gate fechado");
     if (sec.querySelector("[data-p50=\"stage\"]")) throw new Error(fx.id + ": estágio presente sob gate fechado");
-    const t = txt(sec);
+    /* H-27 · o texto é lido POR NÓ e reunido com separador. Concatenar
+       textContent de nós adjacentes cria fronteiras falsas ("0.0" seguido de
+       "1 de 2…" vira "0.01") e desarma silenciosamente os \b das asserções.
+       Este defeito do harness deixou passar score agregado sob gate fechado. */
+    /* O escopo textual EXCLUI as células/linhas de resposta CONFIRMADA: um
+       nível 0 confirmado vale 0.0 e UG7/UI-016a exigem que ele apareça. O que
+       esta varredura persegue é o zero FABRICADO por ausência de evidência —
+       e o agregado por domínio é conferido estruturalmente logo abaixo. */
+    const confirmedScope = e => !!(e.closest && e.closest("[data-p50-ans=\"confirmed\"]"));
+    const t = qa(d, "#p50-results *").filter(e => !confirmedScope(e)).map(e => {
+      let out = "";
+      for (let n = e.firstChild; n; n = n.nextSibling) if (n.nodeType === 3) out += n.nodeValue;
+      return out.trim();
+    }).filter(Boolean).join(" \u00b7 ");
     if (/\b\d[.,]\d\s*\/\s*5[.,]0\b/.test(t)) throw new Error(fx.id + ": score consolidado renderizado: " + t.slice(0, 120));
     if (/\b(Initial|Managed|Defined|Optimizing|Quantitatively Managed|Non-existent)\b/.test(t))
       throw new Error(fx.id + ": estágio executivo renderizado");
     /* nenhum zero fabricado por falta de evidência */
     if (/\b0[.,]0\b/.test(t)) throw new Error(fx.id + ": zero fabricado na superfície nova");
+
+    /* 5.0.4 · UI-013/UI-014 nas TRÊS visões novas: sob gate fechado nenhuma
+       delas pode publicar AGREGADO de domínio. O valor por PERGUNTA confirmada
+       continua exigido (UI-015/UI-016a) — o que é proibido é o agregado. */
+    qa(d, "#p50-results [data-p50=\"drill-score\"]").forEach((e, i) => {
+      if (/\d/.test(txt(e)))
+        throw new Error(fx.id + ": drill-down publica score agregado do domínio " + i + ": " + txt(e));
+    });
+    qa(d, "#p50-results [data-p50=\"ct-row\"]").forEach((r, i) => {
+      if (r.hasAttribute("data-p50-current"))
+        throw new Error(fx.id + ": Current × Target publica agregado do domínio " + i);
+      if (r.hasAttribute("data-p50-gap"))
+        throw new Error(fx.id + ": Current × Target publica gap sob gate fechado no domínio " + i);
+      const v = txt(r.querySelector("[data-p50=\"ct-current-value\"]"));
+      if (/\d/.test(v))
+        throw new Error(fx.id + ": Current × Target exibe valor atual " + v + " sob gate fechado");
+      const bar = r.querySelector("[data-p50=\"ct-current\"]");
+      if (bar && bar.getAttribute("data-p50-plotted") === "true")
+        throw new Error(fx.id + ": barra de current plotada sob gate fechado no domínio " + i);
+    });
+    /* o eixo por PERGUNTA permanece honesto e visível */
+    const conf = qa(d, "#p50-results [data-p50=\"hm-cell\"][data-p50-ans=\"confirmed\"]");
+    if (!conf.length) throw new Error(fx.id + ": heat map perdeu as respostas confirmadas");
+    conf.forEach(c => {
+      if (!/\d/.test(txt(c.querySelector("[data-p50=\"hm-state\"]"))))
+        throw new Error(fx.id + ": resposta confirmada deixou de exibir o seu valor por pergunta");
+    });
     /* completion e navegação continuam disponíveis (controles congelados) */
     if (!q(d, "#review")) throw new Error(fx.id + ": navegação de revisão indisponível");
     /* B-503-COHERENCE: a PÁGINA INTEIRA, não só #p50-results */
@@ -1999,6 +2138,153 @@ T("P50-COR2", "cor do domínio na dimensão de dados; acento de marca ausente do
   /* mapa congelado [data-dom] -> --ftnt-* permanece a autoridade */
   if (!/\[data-dom="0"\]\{\s*--dom-accent:var\(--ftnt-purple\);/.test(HTML))
     throw new Error("mapa congelado de cor por domínio ausente do build");
+
+  /* 5.0.4 · o heat map e o Current × Target são visualizações em que o DOMÍNIO
+     é a dimensão: a cor vem do token do próprio domínio, nunca do acento. */
+  FX.p50ApplyResults(w, d, FX.P50_F9);
+  const grid = q(d, "#p50-results [data-p50=\"heatmap\"]");
+  if (!grid) throw new Error("heat map ausente");
+  for (let i = 0; i < 5; i++) {
+    const row = q(d, "#p50-results [data-p50=\"hm-row\"][data-dom=\"" + i + "\"]");
+    if (!row) throw new Error("linha de domínio " + i + " ausente no heat map");
+    if (row.getAttribute("data-dom") !== String(i))
+      throw new Error("heat map: data-dom incorreto em " + i);
+    if ((row.getAttribute("style") || "").length) throw new Error("heat map: cor inline no domínio " + i);
+    const ct = q(d, "#p50-results [data-p50=\"ct-row\"][data-dom=\"" + i + "\"]");
+    if (!ct) throw new Error("linha Current × Target do domínio " + i + " ausente");
+    if ((ct.getAttribute("style") || "").length) throw new Error("Current × Target: cor inline no domínio " + i);
+  }
+  /* O proibido é COR inline. Custom properties de geometria/nível são
+     legítimas (o próprio runtime congelado plota `.fill` por style inline);
+     o que não pode existir é cor de dado escapando do token de domínio. */
+  const COLOR_INLINE = /(^|;)\s*(color|background|background-color|border[a-z-]*color|fill|stroke)\s*:/i;
+  const HEX_INLINE = /#[0-9a-fA-F]{3,8}\b|\brgba?\(|\bhsla?\(/i;
+  qa(d, "#p50-results [data-p50=\"hm-cell\"], #p50-results [data-p50=\"ct-current\"], #p50-results [data-p50=\"ct-target\"]").forEach(c => {
+    const st = c.getAttribute("style") || "";
+    if (COLOR_INLINE.test(st)) throw new Error("cor inline na dimensão de dados: " + st);
+    if (HEX_INLINE.test(st)) throw new Error("cor literal inline na dimensão de dados: " + st);
+  });
+  qa(d, "#p50-results [data-p50=\"hm-cell\"]").forEach(c => {
+    if (!c.hasAttribute("data-dom")) throw new Error("heat map: célula sem identidade de domínio");
+  });
+  /* o CSS da camada nova resolve a cor de dados por token de domínio */
+  if (!/\.p50-hm-cell[^{]*\{[^}]*var\(--dom-accent\)/.test(css.replace(/\s+/g, " ")) &&
+      !/--p50-hm-tint:\s*var\(--dom-accent\)/.test(css))
+    throw new Error("heat map não consome var(--dom-accent) como cor de dados");
+  return true;
+});
+
+T("P50-UX11", "UNSET × NONE no eixo de presence: DOM, rótulo visível e nome acessível distintos", () => {
+  const { w, d } = boot();
+  const fx = FX.P50_F7;
+  FX.p50ApplyResults(w, d, fx);
+
+  /* pré-condição: o estado veio dos owners canônicos, não da superfície nova */
+  const L = w.__DEV.V32.TECH_LANDSCAPE;
+  if (L["knowledge-management"].presence !== "UNSET")
+    throw new Error("pré-condição: capability A não está UNSET no runtime");
+  if (L["security-analytics"].presence !== "NONE")
+    throw new Error("pré-condição: capability B não está NONE no runtime");
+
+  const chip = id => q(d, "#p50-results [data-p50=\"presence-chip\"][data-cap=\"" + id + "\"]");
+  const a = chip("knowledge-management"), b = chip("security-analytics");
+  if (!a || !b) throw new Error("chips de presence ausentes na superfície nova");
+
+  /* (1) DOM semantics distintos */
+  const semA = a.getAttribute("data-p50-presence"), semB = b.getAttribute("data-p50-presence");
+  if (semA !== "UNSET") throw new Error("data-p50-presence de A = " + semA);
+  if (semB !== "NONE") throw new Error("data-p50-presence de B = " + semB);
+  if (semA === semB) throw new Error("DOM semantics de UNSET e NONE idênticos");
+
+  /* (2) rótulos visíveis distintos, vindos dos rótulos congelados */
+  const visA = txt(a.querySelector("[data-p50=\"presence-state\"]"));
+  const visB = txt(b.querySelector("[data-p50=\"presence-state\"]"));
+  if (!visA || !visB) throw new Error("chip de presence sem rótulo textual");
+  if (visA === visB) throw new Error("rótulos visíveis idênticos: " + visA);
+  if (!/não informado/i.test(visA)) throw new Error("UNSET sem o rótulo canônico: " + visA);
+  if (!/não existe|não utilizamos/i.test(visB)) throw new Error("NONE sem o rótulo canônico: " + visB);
+
+  /* (3) nomes acessíveis distintos */
+  const accA = accName(a), accB = accName(b);
+  if (accA === accB) throw new Error("nomes acessíveis idênticos");
+  if (!/não avaliad|não informad/i.test(accA)) throw new Error("nome acessível de UNSET: " + accA);
+  if (/não avaliad/i.test(accB)) throw new Error("NONE descrito como não avaliado: " + accB);
+
+  /* (4) UNSET nunca vira zero nem ausência confirmada */
+  if (/\b0([.,]0)?\b/.test(visA + " " + accA)) throw new Error("UNSET renderizado como zero");
+  if (a.hasAttribute("data-p50-level")) throw new Error("UNSET recebeu nível");
+  if (a.getAttribute("data-p50-confirmed") === "true")
+    throw new Error("UNSET marcado como estado confirmado");
+  if (b.getAttribute("data-p50-confirmed") !== "true")
+    throw new Error("NONE não é marcado como ausência CONFIRMADA");
+
+  /* (5) a distinção não depende só de cor: ambos carregam pista textual própria */
+  const cueA = a.getAttribute("data-p50-cue"), cueB = b.getAttribute("data-p50-cue");
+  if (!cueA || !cueB) throw new Error("chip de presence sem pista não cromática");
+  if (cueA === cueB) throw new Error("pista não cromática idêntica entre UNSET e NONE");
+
+  /* (6) cobertura total do enum canônico: nenhum estado vaza como enum cru */
+  const ENUM = w.__DEV.V32.ENUMS.presence;
+  if (!Array.isArray(ENUM) || !ENUM.length) throw new Error("enum canônico de presence ausente");
+  const src = readIf(RESULTS_JS) || "";
+  const mapDecl = (src.match(/P50_PRESENCE_LABEL\s*=\s*\{[\s\S]*?\}/) || [""])[0];
+  if (!mapDecl) throw new Error("rótulos de presence da Camada 5 ausentes");
+  ENUM.forEach(v => {
+    if (!new RegExp("\\b" + v + "\\s*:").test(mapDecl))
+      throw new Error("estado canônico de presence sem rótulo na Camada 5: " + v);
+  });
+  qa(d, "#p50-results [data-p50=\"presence-chip\"]").forEach(c => {
+    const st = txt(c.querySelector("[data-p50=\"presence-state\"]"));
+    if (ENUM.indexOf(st) >= 0) throw new Error("enum cru vazou para a tela: " + st);
+  });
+
+  /* (7) nenhuma presence é fabricada onde o runtime não a fornece */
+  const chips = qa(d, "#p50-results [data-p50=\"presence-chip\"]");
+  chips.forEach(c => {
+    const id = c.getAttribute("data-cap");
+    if (!L[id]) throw new Error("chip de capability inexistente no runtime: " + id);
+    if (c.getAttribute("data-p50-presence") !== L[id].presence)
+      throw new Error("presence divergente do owner canônico em " + id);
+  });
+  return true;
+});
+
+T("P50-COR3", "UNSET nas superfícies novas: cor do próprio domínio esmaecida + pista não cromática", () => {
+  const css = readIf(SHELL_CSS) || "";
+  if (!css) throw new Error("ui_p50_v32.css ausente");
+  const flat = css.replace(/\s+/g, " ");
+
+  /* (1) o encoding de UNSET existe e é ancorado no token do PRÓPRIO domínio */
+  const unsetRules = flat.match(/\[data-p50-ans="unset"\][^{]*\{[^}]*\}/g) || [];
+  if (!unsetRules.length) throw new Error("nenhuma regra de encoding para data-p50-ans=\"unset\"");
+  const joined = unsetRules.join(" ");
+  if (!/var\(--dom-accent\)/.test(joined))
+    throw new Error("UNSET não usa a cor do próprio domínio: " + joined.slice(0, 160));
+
+  /* (2) esmaecida — e nunca cinza genérico, nunca acento de marca */
+  if (!/opacity\s*:|--p50-unset-fade/.test(joined))
+    throw new Error("UNSET não é esmaecido (sem opacidade declarada)");
+  if (/var\(--ftnt-red\)|--ftnt-(grey|medium-grey|dark-grey|silver)\b/.test(joined))
+    throw new Error("UNSET usa cinza genérico ou acento de marca");
+
+  /* (3) tracejado+verde é encoding EXCLUSIVO do alvo: proibido em UNSET */
+  if (/var\(--ftnt-green\)/.test(joined))
+    throw new Error("UNSET usa o encoding exclusivo do cenário-alvo");
+
+  /* (4) pista NÃO cromática presente na regra de UNSET */
+  if (!/(border[^;]*dashed|repeating-linear-gradient|content\s*:)/.test(joined))
+    throw new Error("UNSET sem pista não cromática (tracejado/hachura/glifo)");
+
+  /* (5) no DOM real: a célula UNSET carrega pista textual e não fabrica valor */
+  const { w, d } = boot();
+  FX.p50ApplyResults(w, d, FX.P50_F6);
+  const cell = q(d, "#p50-results [data-p50=\"hm-cell\"][data-qid=\"mandate\"]");
+  if (!cell) throw new Error("célula UNSET ausente");
+  if (cell.getAttribute("data-p50-ans") !== "unset") throw new Error("célula não marcada como unset");
+  if (!cell.hasAttribute("data-p50-cue")) throw new Error("célula UNSET sem pista não cromática");
+  if (cell.getAttribute("data-dom") === null) throw new Error("célula UNSET sem identidade de domínio");
+  if (txt(cell.querySelector("[data-p50=\"hm-state\"]")) !== "n/d")
+    throw new Error("célula UNSET sem o rótulo textual n/d");
   return true;
 });
 
@@ -2015,5 +2301,5 @@ T("P50-IC3", "fonte única de ícones: nenhum mapa/asset paralelo nos módulos n
 /* ============================== RESUMO ============================== */
 const pass = results.filter(r => r.ok).length;
 const fail = results.length - pass;
-console.log("\nP50 CORE (microfases 5.0.1+5.0.2+5.0.3)" + (ONLY.length ? " [FILTRADO]" : "") + ": " + pass + " PASS · " + fail + " FAIL de " + results.length);
+console.log("\nP50 CORE (microfases 5.0.1+5.0.2+5.0.3+5.0.4)" + (ONLY.length ? " [FILTRADO]" : "") + ": " + pass + " PASS · " + fail + " FAIL de " + results.length);
 if (fail) process.exitCode = 1;

@@ -12,8 +12,20 @@
    rebloqueio ao voltar a ser insuficiente, `n/d` + "Não avaliado" nas
    superfícies novas aplicáveis e executive cards estritamente gated.
 
-   NÃO implementa (5.0.4, deliberadamente ausente): heat map domínio→pergunta,
-   drill-down analítico, visual Current × Target, gap de target, P50-VIS9.
+   MICROFASE 5.0.4 · TARGET & HEAT MAP VISUALIZATIONS (UI-015 · UI-016 ·
+   UI-017 · UI-018 · UI-019 · UI-028 · UI-030): tabs de Results sem framework
+   mapping, heat map domínio→pergunta, eixo de presence UNSET × NONE,
+   drill-down explicável e Current × Target derivado SOMENTE do alvo canônico.
+
+   Fontes canônicas consumidas, nenhuma delas reimplementada:
+     respostas          ans[k]                       (owner congelado)
+     score de domínio   domStat(i).score
+     perfis             tgtCurrentProfile() / computeTargetProfile(tgtEffectiveVector())
+     alvo               TARGET_PROFILE.overrides     (nunca fixo, nunca inferido)
+     presence           V32.TECH_LANDSCAPE[cap].presence
+     suficiência        window.__P50SUFF.contract()  (UI-012A)
+   O estado de tab é apresentação pura: vive em variável de módulo, não entra
+   em owner canônico algum, não é serializado e não dispara render congelado.
 
    Disciplina de consumo (UI-012A §regras de consumo · §5.4 da diretriz):
    este renderer consome EXCLUSIVAMENTE o contrato derivado estruturado. Ele
@@ -255,6 +267,428 @@
   }
 
   /* ==========================================================================
+     5.0.4 · MODELO DE DADOS ÚNICO (UI-015 · UI-017 · UI-030)
+     O heat map, o drill-down, o Current × Target e a alternativa acessível
+     consomem ESTA função e mais nada. Uma única derivação garante que a
+     tabela acessível não possa divergir do gráfico (P50-ACC5).
+     Nada aqui recalcula suficiência: o déficit vem pronto do contrato.
+     ========================================================================== */
+  var P50_ANS_LABEL = {
+    unset: { visible: "n/d", acc: "Não avaliado", cue: "tracejado" },
+    na: { visible: "Não sei", acc: "Não sei · precisa validar", cue: "italico" },
+    confirmed: { visible: null, acc: "confirmado", cue: "solido" }
+  };
+
+  function p50Overrides() {
+    return (typeof TARGET_PROFILE !== "undefined" && TARGET_PROFILE) ? TARGET_PROFILE.overrides : {};
+  }
+  function p50HasOverrides() {
+    var ov = p50Overrides();
+    for (var k in ov) { if (Object.prototype.hasOwnProperty.call(ov, k)) return true; }
+    return false;
+  }
+  function p50Round1(v) { return Math.round(v * 10) / 10; }
+
+  function p50Matrix(contract) {
+    var ov = p50Overrides();
+    var hasOv = p50HasOverrides();
+    /* UI-013/UI-014 · B-503-COHERENCE: o AGREGADO por domínio só existe quando
+       o veredito canônico abre. O eixo por PERGUNTA (UI-015/UI-016a) continua
+       honesto em qualquer estado — inclusive o nível 0 confirmado, que é
+       plotado normalmente (UG7). Não confundir os dois eixos foi exatamente o
+       defeito que a 5.0.3 corrigiu na superfície legada. */
+    var released = contract.sufficient === true;
+    /* perfil-alvo canônico: calculado pelo runtime congelado, nunca por nós */
+    var tgtStats = hasOv ? computeTargetProfile(tgtEffectiveVector()).stats : null;
+    var out = { domains: [], hasOverrides: hasOv, released: released };
+    for (var i = 0; i < DOMS.length; i++) {
+      var d = contract.domains[i];
+      var current = released ? domStat(i).score : null;   /* agregado: só com gate aberto */
+      var cells = [], domHasTarget = false;
+      for (var k = 0; k < QS.length; k++) {
+        if (QS[k].dom !== i) continue;
+        var a = ans[k];
+        var state = (a === null) ? "unset" : (a === "NA" ? "na" : "confirmed");
+        var level = (state === "confirmed") ? a : null;
+        var score = (level === null) ? null : SCORES[level];
+        var qid = QS[k].id;
+        var tLevel = Object.prototype.hasOwnProperty.call(ov, qid) ? ov[qid] : null;
+        if (tLevel !== null) domHasTarget = true;
+        var tScore = (tLevel === null) ? null : SCORES[tLevel];
+        cells.push({
+          k: k, qid: qid, lbl: QS[k].lbl, dom: i,
+          state: state, level: level, score: score,
+          targetLevel: tLevel, targetScore: tScore,
+          gap: (score !== null && tScore !== null) ? p50Round1(tScore - score) : null,
+          note: (typeof notes !== "undefined" && notes[k]) ? String(notes[k]) : ""
+        });
+      }
+      var domTarget = (domHasTarget && tgtStats) ? tgtStats[i].score : null;
+      out.domains.push({
+        dom: i, name: DOMS[i].pt, released: released,
+        deficit: d.missing, confirmed: d.confirmed, required: d.required,
+        current: current, hasTarget: domHasTarget, target: domTarget,
+        gap: (current !== null && domTarget !== null) ? p50Round1(domTarget - current) : null,
+        cells: cells
+      });
+    }
+    return out;
+  }
+
+  /* Texto de estado por célula — sempre presente, nunca só cor (UX-P7). */
+  function p50CellState(c) {
+    if (c.state === "confirmed") return c.score.toFixed(1);
+    return P50_ANS_LABEL[c.state].visible;
+  }
+  function p50CellAcc(c, domName, sufficient) {
+    var base = domName + " · " + c.lbl + ": ";
+    if (c.state === "confirmed") base += "confirmado · " + c.score.toFixed(1) + " de 5";
+    else base += P50_ANS_LABEL[c.state].acc + " · sem score";
+    if (c.targetScore !== null) {
+      base += " · alvo declarado " + c.targetScore.toFixed(1);
+      if (c.gap !== null) base += " · gap " + (c.gap >= 0 ? "+" : "") + c.gap.toFixed(1);
+    }
+    if (!sufficient) base += " · domínio com evidência insuficiente";
+    return base;
+  }
+
+  /* Aplica os atributos de dado a um nó — o MESMO conjunto no gráfico e na
+     alternativa acessível, de modo que a comparação campo a campo seja
+     estruturalmente impossível de divergir. */
+  function p50CellAttrs(node, c, dm) {
+    node.setAttribute("data-dom", String(c.dom));
+    node.setAttribute("data-qid", c.qid);
+    node.setAttribute("data-k", String(c.k));
+    node.setAttribute("data-p50-ans", c.state);
+    node.setAttribute("data-p50-domain-sufficient", dm.deficit === 0 ? "true" : "false");
+    node.setAttribute("data-p50-cue", P50_ANS_LABEL[c.state].cue);
+    if (c.level !== null) node.setAttribute("data-p50-level", String(c.level));
+    if (c.score !== null) node.setAttribute("data-p50-score", c.score.toFixed(1));
+    if (c.targetScore !== null) node.setAttribute("data-p50-target", c.targetScore.toFixed(1));
+    if (c.gap !== null) node.setAttribute("data-p50-gap", c.gap.toFixed(1));
+    return node;
+  }
+
+  /* ---------------- heat map domínio → pergunta (UI-015) ---------------- */
+  function p50HeatMap(mx, contract) {
+    var box = el("div", { "class": "p50-hm", "data-p50": "heatmap",
+      "role": "group", "aria-label": "Heat map de maturidade por domínio e pergunta" });
+    for (var i = 0; i < mx.domains.length; i++) {
+      var dm = mx.domains[i];
+      var row = el("div", { "class": "p50-hm-row", "data-p50": "hm-row", "data-dom": String(dm.dom),
+        "data-p50-domain-sufficient": dm.deficit === 0 ? "true" : "false" });
+      var head = el("div", { "class": "p50-hm-dom", "data-p50": "hm-dom" });
+      head.appendChild(el("span", { "class": "p50-hm-dom-name" }, dm.name));
+      head.appendChild(el("span", { "class": "p50-hm-dom-state", "data-p50": "hm-dom-state" },
+        dm.deficit === 0 ? "evidência suficiente"
+                         : "faltam " + dm.deficit + " · evidência insuficiente"));
+      row.appendChild(head);
+      var cellbox = el("div", { "class": "p50-hm-cells" });
+      for (var j = 0; j < dm.cells.length; j++) {
+        var c = dm.cells[j];
+        var cell = el("div", { "class": "p50-hm-cell", "data-p50": "hm-cell",
+          "data-p50-fill": c.state === "confirmed" ? "level" : "none" });
+        p50CellAttrs(cell, c, dm);
+        cell.setAttribute("aria-label", p50CellAcc(c, dm.name, dm.deficit === 0));
+        cell.appendChild(el("span", { "class": "p50-hm-q", "data-p50": "hm-q" }, c.lbl));
+        cell.appendChild(el("span", { "class": "p50-hm-state", "data-p50": "hm-state" }, p50CellState(c)));
+        if (c.targetScore !== null)
+          cell.appendChild(el("span", { "class": "p50-hm-target", "data-p50": "hm-target" },
+            "alvo " + c.targetScore.toFixed(1)));
+        cellbox.appendChild(cell);
+      }
+      row.appendChild(cellbox);
+      box.appendChild(row);
+    }
+    return box;
+  }
+
+  /* ------------- alternativa acessível do heat map (P50-ACC5) ------------- */
+  function p50AltTable(mx) {
+    var wrap = el("div", { "class": "p50-alt" });
+    var table = el("table", { "class": "p50-alt-table", "data-p50": "alt-table" });
+    table.appendChild(el("caption", { "class": "p50-alt-caption" },
+      "Alternativa acessível do heat map — mesmos dados, em tabela"));
+    var thead = el("thead"), htr = el("tr");
+    var HEADS = ["Domínio", "Pergunta", "Estado", "Atual", "Alvo", "Gap", "Suficiência"];
+    for (var h = 0; h < HEADS.length; h++) htr.appendChild(el("th", { "scope": "col" }, HEADS[h]));
+    thead.appendChild(htr); table.appendChild(thead);
+    var tbody = el("tbody");
+    for (var i = 0; i < mx.domains.length; i++) {
+      var dm = mx.domains[i];
+      for (var j = 0; j < dm.cells.length; j++) {
+        var c = dm.cells[j];
+        var tr = el("tr", { "class": "p50-alt-row", "data-p50": "alt-row" });
+        p50CellAttrs(tr, c, dm);
+        tr.appendChild(el("th", { "scope": "row" }, dm.name));
+        tr.appendChild(el("td", null, c.lbl));
+        tr.appendChild(el("td", null, c.state === "confirmed"
+          ? "Confirmado" : P50_ANS_LABEL[c.state].acc));
+        tr.appendChild(el("td", null, c.score === null ? "n/d" : c.score.toFixed(1)));
+        tr.appendChild(el("td", null, c.targetScore === null ? "sem alvo declarado" : c.targetScore.toFixed(1)));
+        tr.appendChild(el("td", null, c.gap === null ? "n/d" : (c.gap >= 0 ? "+" : "") + c.gap.toFixed(1)));
+        tr.appendChild(el("td", null, dm.deficit === 0
+          ? "suficiente" : "faltam " + dm.deficit));
+        tbody.appendChild(tr);
+      }
+    }
+    table.appendChild(tbody);
+    wrap.appendChild(table);
+    return wrap;
+  }
+
+  /* ---------------- eixo de presence (UI-016b · §12.2) ---------------- */
+  /* Rótulo VISÍVEL do eixo de presence. O runtime congelado mantém o seu mapa
+     dentro do IIFE de `ui_v32.js` e não o expõe à Camada 5; o VALOR canônico
+     (`V32.TECH_LANDSCAPE[cap].presence`) continua sendo o único owner, e este
+     mapa é apenas texto de apresentação PT-BR (UI-033A). P50-UX11 exige que a
+     cobertura seja total contra `V32.ENUMS.presence`: se o engine acrescentar
+     um estado, o gate falha em vez de vazar o enum cru para a tela. */
+  var P50_PRESENCE_LABEL = {
+    UNSET: "Não informado",
+    NONE: "Não existe / não utilizamos",
+    PARTIAL: "Existe parcialmente",
+    PRESENT: "Existe",
+    UNKNOWN: "Precisa ser validado"
+  };
+  var P50_PRESENCE_CUE = { UNSET: "tracejado", NONE: "barrado", PARTIAL: "meio",
+                           PRESENT: "solido", UNKNOWN: "interrogacao" };
+  var P50_PRESENCE_ACC = {
+    UNSET: "não informado · não avaliado, nunca ausência",
+    NONE: "ausência confirmada · estado declarado",
+    PARTIAL: "existe parcialmente · estado declarado",
+    PRESENT: "existe · estado declarado",
+    UNKNOWN: "precisa ser validado · estado declarado"
+  };
+  function p50CapDomain(cap) {
+    var ids = cap.questionIds || [];
+    for (var i = 0; i < ids.length; i++) {
+      for (var k = 0; k < QS.length; k++) if (QS[k].id === ids[i]) return QS[k].dom;
+    }
+    return null;
+  }
+  function p50PresenceStrip() {
+    var V = window.__DEV && window.__DEV.V32 ? window.__DEV.V32 : null;
+    if (!V || !V.TECH_LANDSCAPE || !V.CAPABILITIES) return null;
+    var box = el("div", { "class": "p50-presence", "data-p50": "presence",
+      "role": "group", "aria-label": "Contexto tecnológico declarado por capability" });
+    box.appendChild(el("h4", { "class": "p50-presence-title" }, "Contexto tecnológico declarado"));
+    box.appendChild(el("p", { "class": "p50-presence-lead" },
+      "Não informado e ausência confirmada são estados distintos: nenhum dos dois vira zero."));
+    var list = el("ul", { "class": "p50-presence-list" });
+    var ids = Object.keys(V.CAPABILITIES);
+    for (var i = 0; i < ids.length; i++) {
+      var id = ids[i], cap = V.CAPABILITIES[id], L = V.TECH_LANDSCAPE[id];
+      if (!L) continue;
+      var pres = L.presence;
+      var dom = p50CapDomain(cap);
+      var chip = el("li", { "class": "p50-presence-chip", "data-p50": "presence-chip",
+        "data-cap": id, "data-p50-presence": pres,
+        "data-p50-cue": P50_PRESENCE_CUE[pres] || "solido",
+        "data-p50-confirmed": pres === "UNSET" ? "false" : "true" });
+      if (dom === null) chip.setAttribute("data-p50-nodomain", "true");
+      else chip.setAttribute("data-dom", String(dom));
+      chip.setAttribute("aria-label", cap.name + ": " + (P50_PRESENCE_LABEL[pres] || pres) +
+        " · " + (P50_PRESENCE_ACC[pres] || ""));
+      chip.appendChild(el("span", { "class": "p50-presence-cap" }, cap.name));
+      chip.appendChild(el("span", { "class": "p50-presence-state", "data-p50": "presence-state" },
+        P50_PRESENCE_LABEL[pres] || pres));
+      list.appendChild(chip);
+    }
+    box.appendChild(list);
+    return box;
+  }
+
+  /* ---------------- drill-down domínio → pergunta (UI-030) ---------------- */
+  function p50DrillDown(mx) {
+    var box = el("div", { "class": "p50-drill", "data-p50": "drilldown" });
+    box.appendChild(el("p", { "class": "p50-drill-lead" },
+      "Cada score de domínio decompõe-se nas suas três perguntas. Notas são exibidas em somente leitura, tal como registradas."));
+    for (var i = 0; i < mx.domains.length; i++) {
+      var dm = mx.domains[i];
+      var sec = el("section", { "class": "p50-drill-dom", "data-p50": "drill-dom", "data-dom": String(dm.dom),
+        "data-p50-domain-sufficient": dm.deficit === 0 ? "true" : "false" });
+      var h = el("h4", { "class": "p50-drill-name" }, dm.name);
+      h.appendChild(el("span", { "class": "p50-drill-score", "data-p50": "drill-score" },
+        dm.current === null ? " · n/d" : " · " + dm.current.toFixed(1)));
+      sec.appendChild(h);
+      sec.appendChild(el("p", { "class": "p50-drill-state", "data-p50": "drill-state" },
+        !dm.released
+          ? "Não avaliado · evidência insuficiente — " + dm.confirmed + " de " + dm.required +
+            " respostas confirmadas; a decomposição abaixo é diagnóstico parcial, não veredito de maturidade"
+          : (dm.deficit === 0
+              ? dm.confirmed + " de " + dm.required + " respostas confirmadas · evidência suficiente"
+              : dm.confirmed + " de " + dm.required + " respostas confirmadas · faltam " + dm.deficit)));
+      var ul = el("ul", { "class": "p50-drill-qs" });
+      for (var j = 0; j < dm.cells.length; j++) {
+        var c = dm.cells[j];
+        var li = el("li", { "class": "p50-drill-q", "data-p50": "drill-q" });
+        p50CellAttrs(li, c, dm);
+        li.appendChild(el("span", { "class": "p50-drill-q-label" }, c.lbl));
+        li.appendChild(el("span", { "class": "p50-drill-q-state", "data-p50": "drill-q-state" },
+          c.state === "confirmed"
+            ? "confirmado · " + c.score.toFixed(1)
+            : P50_ANS_LABEL[c.state].acc));
+        if (c.note)
+          li.appendChild(el("p", { "class": "p50-drill-q-note", "data-p50": "drill-q-note" }, c.note));
+        else
+          li.appendChild(el("p", { "class": "p50-drill-q-nonote", "data-p50": "drill-q-nonote" },
+            "sem nota registrada"));
+        ul.appendChild(li);
+      }
+      sec.appendChild(ul);
+      box.appendChild(sec);
+    }
+    return box;
+  }
+
+  /* ---------------- Current × Target (UI-017 · UI-018 · UI-019) ----------- */
+  function p50CurrentTarget(mx) {
+    var box = el("div", { "class": "p50-ct", "data-p50": "current-target",
+      "role": "group", "aria-label": "Perfil atual e cenário-alvo por domínio" });
+    box.appendChild(el("h4", { "class": "p50-ct-title" }, "Atual × Alvo por domínio"));
+    if (!mx.released) {
+      /* UI-019 · sem base atual não há comparação: o alvo declarado pode ser
+         listado, mas nenhum delta é apresentado contra um current inexistente. */
+      box.appendChild(el("p", { "class": "p50-ct-blocked", "data-p50": "ct-blocked" },
+        "Perfil atual indisponível — evidência insuficiente. Nenhum valor atual, delta ou gap é apresentado até o gate canônico abrir."));
+    }
+    if (!mx.hasOverrides) {
+      box.appendChild(el("p", { "class": "p50-ct-empty", "data-p50": "ct-empty" },
+        "Nenhum cenário-alvo foi declarado nesta sessão. Sem alvo declarado, nenhum alvo é exibido — a superfície não arbitra um valor de referência."));
+    } else {
+      box.appendChild(el("p", { "class": "p50-ct-lead" },
+        "O alvo aparece somente nos domínios em que existe alvo declarado por pergunta. Visualizar o alvo não altera o resultado atual."));
+    }
+    var list = el("ul", { "class": "p50-ct-rows" });
+    for (var i = 0; i < mx.domains.length; i++) {
+      var dm = mx.domains[i];
+      var plotted = dm.current !== null;
+      var row = el("li", { "class": "p50-ct-row", "data-p50": "ct-row", "data-dom": String(dm.dom),
+        "data-p50-has-target": dm.hasTarget ? "true" : "false" });
+      if (dm.current !== null) row.setAttribute("data-p50-current", dm.current.toFixed(1));
+      if (dm.hasTarget && dm.target !== null) row.setAttribute("data-p50-target", dm.target.toFixed(1));
+      if (dm.hasTarget && dm.gap !== null) row.setAttribute("data-p50-gap", dm.gap.toFixed(1));
+      row.appendChild(el("span", { "class": "p50-ct-name", "data-p50": "ct-name" }, dm.name));
+
+      var track = el("span", { "class": "p50-ct-track", "data-p50": "ct-track" });
+      var bar = el("span", { "class": "p50-ct-bar", "data-p50": "ct-current",
+        "data-p50-plotted": plotted ? "true" : "false" });
+      /* UI-019: current ausente NÃO é desenhado como zero — a barra não é plotada. */
+      if (plotted) bar.style.setProperty("--p50-ct-w", (dm.current / 5 * 100).toFixed(2) + "%");
+      track.appendChild(bar);
+      if (dm.hasTarget && dm.target !== null) {
+        var mark = el("span", { "class": "p50-ct-mark", "data-p50": "ct-target" },
+          "alvo " + dm.target.toFixed(1));
+        mark.style.setProperty("--p50-ct-t", (dm.target / 5 * 100).toFixed(2) + "%");
+        track.appendChild(mark);
+      }
+      row.appendChild(track);
+      row.appendChild(el("span", { "class": "p50-ct-value", "data-p50": "ct-current-value" },
+        dm.current === null ? "n/d" : dm.current.toFixed(1)));
+      if (dm.hasTarget && dm.gap !== null)
+        row.appendChild(el("span", { "class": "p50-ct-gap", "data-p50": "ct-gap" },
+          (dm.gap >= 0 ? "+" : "") + dm.gap.toFixed(1)));
+      else if (dm.current === null && dm.hasTarget)
+        row.appendChild(el("span", { "class": "p50-ct-nogap", "data-p50": "ct-nogap" },
+          "sem base atual para comparar"));
+      list.appendChild(row);
+    }
+    box.appendChild(list);
+    return box;
+  }
+
+  /* ==========================================================================
+     5.0.4 · TABS DE RESULTS (UI-028) — estado APENAS de apresentação.
+     Trocar de tab não chama setter canônico, não dispara render() congelado e
+     não toca owner algum: apenas alterna `hidden` e o estado ARIA. O valor
+     corrente vive em variável de módulo para sobreviver a re-renders.
+     ========================================================================== */
+  var P50_TABS = [
+    { id: "resumo", label: "Resumo" },
+    { id: "dominios", label: "Domínios" },
+    { id: "heatmap", label: "Heat Map" },
+    { id: "analise", label: "Análise" }
+  ];
+  var p50ActiveTab = "resumo";
+
+  function p50ApplyTab(sec, id) {
+    var tabs = sec.querySelectorAll("[data-p50=\"tab\"]");
+    var panels = sec.querySelectorAll("[data-p50=\"panel\"]");
+    var i;
+    for (i = 0; i < tabs.length; i++) {
+      var on = tabs[i].getAttribute("data-p50-tab") === id;
+      tabs[i].setAttribute("aria-selected", on ? "true" : "false");
+      tabs[i].setAttribute("tabindex", on ? "0" : "-1");
+    }
+    for (i = 0; i < panels.length; i++) {
+      if (panels[i].getAttribute("data-p50-tab") === id) panels[i].removeAttribute("hidden");
+      else panels[i].setAttribute("hidden", "");
+    }
+  }
+
+  function p50WireTabs(sec) {
+    var tabs = sec.querySelectorAll("[data-p50=\"tab\"]");
+    function focusAt(n) {
+      var t = tabs[(n + tabs.length) % tabs.length];
+      p50ActiveTab = t.getAttribute("data-p50-tab");
+      p50ApplyTab(sec, p50ActiveTab);
+      t.focus();
+    }
+    for (var i = 0; i < tabs.length; i++) {
+      (function (btn, idx) {
+        btn.onclick = function () {
+          p50ActiveTab = btn.getAttribute("data-p50-tab");
+          p50ApplyTab(sec, p50ActiveTab);
+        };
+        btn.onkeydown = function (ev) {
+          var kk = ev.key;
+          if (kk === "ArrowRight") { ev.preventDefault(); focusAt(idx + 1); }
+          else if (kk === "ArrowLeft") { ev.preventDefault(); focusAt(idx - 1); }
+          else if (kk === "Home") { ev.preventDefault(); focusAt(0); }
+          else if (kk === "End") { ev.preventDefault(); focusAt(tabs.length - 1); }
+        };
+      })(tabs[i], i);
+    }
+  }
+
+  function p50TabBar() {
+    var bar = el("div", { "class": "p50-tabs", "data-p50": "tabs",
+      "role": "tablist", "aria-label": "Visões de resultados" });
+    for (var i = 0; i < P50_TABS.length; i++) {
+      var t = P50_TABS[i];
+      bar.appendChild(el("button", {
+        "type": "button", "class": "p50-tab", "data-p50": "tab", "data-p50-tab": t.id,
+        "id": "p50-tab-" + t.id, "role": "tab",
+        "aria-controls": "p50-panel-" + t.id, "aria-selected": "false", "tabindex": "-1"
+      }, t.label));
+    }
+    return bar;
+  }
+  function p50Panel(id) {
+    return el("div", { "class": "p50-panel", "data-p50": "panel", "data-p50-tab": id,
+      "id": "p50-panel-" + id, "role": "tabpanel", "aria-labelledby": "p50-tab-" + id,
+      "tabindex": "0" });
+  }
+
+  /* ==========================================================================
+     Painel RESUMO (UI-029) — dono da decisão de publicar conteúdo executivo.
+     UI-020: os executive cards só existem com o veredito canônico aberto.
+     Esta função é a ÂNCORA dos mutantes congelados M37 (estágio executivo sob
+     gate fechado) e M38 (cards sob gate fechado): o harness de mutação é
+     byte-idêntico nesta microfase, portanto a sequência literal abaixo é
+     contrato de teste e não pode ser dissolvida por refactor de apresentação.
+     ========================================================================== */
+  function p50BuildResumo(released) {
+    var sec = p50Panel("resumo");
+    var list = el("ul", { "class": "p50-res-domains", "data-p50": "results-domains" });
+    for (var i = 0; i < DOMS.length; i++) list.appendChild(p50DomainRow(i, released));
+    sec.appendChild(list);
+    if (released) sec.appendChild(p50ExecCards());
+    return sec;
+  }
+
+  /* ==========================================================================
      Superfície do gate executivo.
      ========================================================================== */
   function p50BuildResults(contract) {
@@ -275,11 +709,31 @@
         ? "A evidência registrada atende ao requisito canônico; os itens abaixo refletem somente as respostas confirmadas."
         : "Resultado ainda indisponível — as condições pendentes estão listadas no painel de suficiência acima."));
 
-    var list = el("ul", { "class": "p50-res-domains", "data-p50": "results-domains" });
-    for (var i = 0; i < DOMS.length; i++) list.appendChild(p50DomainRow(i, released));
-    sec.appendChild(list);
+    sec.appendChild(p50TabBar());
 
-    if (released) sec.appendChild(p50ExecCards());
+    /* --- Resumo (UI-029): veredito, domínios e cards estritamente gated --- */
+    sec.appendChild(p50BuildResumo(released));
+
+    /* --- as três visões novas da 5.0.4, sobre o modelo de dados único --- */
+    var mx = p50Matrix(contract);
+
+    var pDom = p50Panel("dominios");
+    pDom.appendChild(p50DrillDown(mx));
+    sec.appendChild(pDom);
+
+    var pHeat = p50Panel("heatmap");
+    pHeat.appendChild(p50HeatMap(mx, contract));
+    var strip = p50PresenceStrip();
+    if (strip) pHeat.appendChild(strip);
+    pHeat.appendChild(p50AltTable(mx));
+    sec.appendChild(pHeat);
+
+    var pAna = p50Panel("analise");
+    pAna.appendChild(p50CurrentTarget(mx));
+    sec.appendChild(pAna);
+
+    p50ApplyTab(sec, p50ActiveTab);
+    p50WireTabs(sec);
     return sec;
   }
 

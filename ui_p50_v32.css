@@ -1,5 +1,5 @@
 /* ============================================================================
-   PHASE 5.0 · microfase 5.0.1 — estilos da superfície nova (Camada 5)
+   PHASE 5.0 · microfases 5.0.1 + 5.0.2 + 5.0.3 — estilos da superfície nova (Camada 5)
    COR-01.1 · a cor de domínio vem EXCLUSIVAMENTE do mapa congelado
              [data-dom="N"] -> --dom-accent -> --ftnt-*  (ui_ux_v32.css).
              Zero hex literal é declarado aqui.
@@ -220,6 +220,132 @@
 .p50-ses .p50-ses-note{ margin:4px 0 0; color:var(--faint); font-size:12px; }
 #ses-actions + .p50-ses{ max-width:520px; }
 
+/* ==========================================================================
+   5.0.3 · SUFFICIENCY-AWARE RESULTS
+   Nenhum estado depende exclusivamente de cor: bloqueio, déficit e liberação
+   carregam rótulo textual próprio (ver ui_p50_suff_v32.js / ui_p50_results_v32.js).
+   ========================================================================== */
+#p50-suff, #p50-results{
+  max-width:820px;
+  margin:16px auto 0;
+  padding:14px 16px;
+  border:1px solid var(--line);
+  border-radius:8px;
+  background:var(--surface);
+  color:var(--text);
+  font-size:13.5px;
+  line-height:1.6;
+}
+#p50-suff .p50-suff-title, #p50-results .p50-res-title{
+  margin:0 0 8px;
+  font-size:13px;
+  font-weight:800;
+  letter-spacing:.06em;
+  text-transform:uppercase;
+  color:var(--muted);
+}
+
+/* ---------------- painel de suficiência ---------------- */
+#p50-suff[data-p50-sufficient="false"]{ border-left:3px solid var(--dom-accent); }
+#p50-suff .p50-suff-global{ margin:0; font-weight:700; }
+#p50-suff .p50-suff-deficits{ margin:8px 0 0; padding:0 0 0 18px; }
+#p50-suff .p50-suff-deficit{ margin:2px 0; color:var(--text); }
+#p50-suff .p50-suff-domains{
+  margin:10px 0 0; padding:0; list-style:none;
+  display:grid; grid-template-columns:minmax(0,1fr); gap:3px;
+}
+#p50-suff .p50-suff-domain{ color:var(--muted); font-size:12.5px; }
+#p50-suff .p50-suff-guidance{ margin:10px 0 0; color:var(--faint); font-size:12.5px; }
+
+/* ---------------- gate executivo ---------------- */
+#p50-results .p50-res-verdict{ margin:0; font-weight:800; }
+#p50-results[data-p50-gate="blocked"] .p50-res-verdict{ color:var(--text); }
+#p50-results[data-p50-gate="released"]{ border-left:3px solid var(--dom-accent); }
+#p50-results .p50-res-lead{ margin:4px 0 0; color:var(--muted); font-size:12.5px; }
+#p50-results .p50-res-domains{
+  margin:12px 0 0; padding:0; list-style:none;
+  display:grid; grid-template-columns:minmax(0,1fr); gap:4px;
+}
+#p50-results .p50-res-domain{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) auto;
+  align-items:baseline;
+  gap:4px 10px;
+  padding:6px 0;
+  border-bottom:1px solid var(--line);
+}
+#p50-results .p50-res-domain-name{ font-weight:700; }
+#p50-results .p50-res-domain-value{ font-variant-numeric:tabular-nums; text-align:right; }
+#p50-results .p50-res-domain[data-p50-state="unavailable"] .p50-res-domain-value{ color:var(--faint); }
+#p50-results .p50-res-domain-label{
+  grid-column:1 / -1; color:var(--muted); font-size:12px;
+}
+#p50-results .p50-res-cards{
+  margin:14px 0 0;
+  display:grid; grid-template-columns:minmax(0,1fr); gap:10px;
+}
+#p50-results .p50-res-card{
+  border:1px solid var(--line); border-radius:6px;
+  background:var(--surface2); padding:10px 12px;
+}
+#p50-results .p50-res-card-title{
+  margin:0 0 6px; font-size:12.5px; font-weight:800; color:var(--text);
+}
+#p50-results .p50-res-card-list{ margin:0; padding:0 0 0 18px; }
+#p50-results .p50-res-card-item{ margin:3px 0; }
+#p50-results .p50-res-card-cap{ font-weight:700; }
+#p50-results .p50-res-card-q{ color:var(--muted); }
+#p50-results .p50-res-card-q::before{ content:" · "; }
+#p50-results .p50-res-card-empty{ margin:0; color:var(--muted); font-size:12.5px; }
+
+@media (min-width:900px){
+  #p50-results .p50-res-cards{ grid-template-columns:repeat(2, minmax(0,1fr)); }
+}
+
+/* ==========================================================================
+   B-503-COHERENCE · neutralização da superfície LEGADA sob gate fechado.
+   Regras adicionadas AQUI, na Camada 5: `ui_v32.css` permanece byte-idêntico.
+   Duas formas de ocultar, pela razão certa:
+     .p50-legacy-gone    display:none      — onde nenhuma suíte mede caixa;
+     .p50-legacy-veiled  visibility:hidden — nos filhos do radar, cuja CAIXA é
+                         medida pelo gate congelado UG13.
+   O estado nunca depende só de cor: cada elemento neutralizado é substituído
+   por texto próprio ("n/d", "Não avaliado · evidência insuficiente", a nota do
+   radar e a declaração do painel).
+   ========================================================================== */
+/* B-AUD-503-2 · a neutralização é uma decisão de TELA. O print legado
+   (`preparePrint()`/`buildPrintReport()`, superfície congelada de governança)
+   imprime `.wrap`/`#app` diretamente: sem este confinamento, `display:none` e
+   `visibility:hidden` vazam para o papel e mutilam o relatório legado —
+   valores de domínio, `.conf`, fills, radar e legenda desapareceriam. A
+   Phase 5 não está autorizada a criar nova semântica de impressão, logo a
+   regra correta é NÃO agir no print, não é "agir de outro modo".
+
+   B-AUD-FIN-503-1 · o confinamento anterior cobria apenas `display` e
+   `visibility` — as duas formas BINÁRIAS de sumir. `opacity` e `position`
+   são apresentação CONTÍNUA da mesma decisão de neutralização e ficaram de
+   fora, alcançando o papel legado: sob gate fechado as cinco réguas saíam
+   impressas a 45% e a `.radar-box` mudava de contexto de posicionamento.
+   Toda decisão de neutralização da Camada 5 vive AQUI dentro. */
+@media screen{
+  #app .p50-legacy-gone{ display:none !important; }
+  #app .p50-legacy-veiled{ visibility:hidden !important; }
+  #app .radar-box.p50-legacy-off{ position:relative; }
+  #app .dom[data-p50-legacy="neutralized"] .ruler{ opacity:.45; }
+}
+
+#app .radar-box.p50-legacy-off > .p50-legacy-note{
+  position:absolute; top:0; right:0; bottom:0; left:0;
+  display:flex; align-items:center; justify-content:center;
+  margin:0; padding:0 14px; text-align:center;
+}
+#app .p50-legacy-note{
+  margin:6px 0 0; color:var(--muted);
+  font-size:12.5px; line-height:1.5; font-style:normal; font-weight:400;
+}
+#app .lbl > .p50-legacy-note{ margin:0; margin-left:auto; color:var(--faint); }
+
 @media print{
-  #app .p50-chips, #app .p50-cueblock, .p50-ses{ display:none !important; }
+  #app .p50-chips, #app .p50-cueblock, .p50-ses,
+  #p50-suff, #p50-results, #app .p50-legacy-note{ display:none !important; }
 }

@@ -1,0 +1,132 @@
+{
+  "gate": "P50-ACC6",
+  "microfase": "5.0.3 (execução corrente; a evidência histórica da 5.0.1 permanece congelada em P50-ACC6-selection-1440.json)",
+  "browser": {
+    "name": "chromium",
+    "version": "151.0.7922.34",
+    "executablePath": "/home/oflavioc/.cache/ms-playwright/chromium-1234/chrome-linux64/chrome",
+    "resolutionOrigin": "Chromium gerenciado pelo Playwright",
+    "specNominalVersion": "141.0.7390.37",
+    "nominalDeviationAccepted": true
+  },
+  "playwright": "1.62.1",
+  "viewport": "1440x900",
+  "fixtures": [
+    "P50-F2",
+    "P50-F6"
+  ],
+  "pageErrors": [],
+  "screenshots": [
+    "P50-ACC6-P50-F2-1440.png",
+    "P50-ACC6-P50-F6-1440.png",
+    "P50-5.0.2-evidence-P50-F8-1440.png",
+    "P50-5.0.2-evidence-P50-F10-1440.png",
+    "P50-5.0.2-session-exported-1440.png",
+    "P50-5.0.2-session-dirty-after-edit-1440.png",
+    "P50-5.0.1-default-collapsed-1440.png",
+    "P50-5.0.1-map-expanded-1440.png",
+    "P50-5.0.1-default-collapsed-390.png"
+  ],
+  "smokeNonNormative": {
+    "viewports": [
+      {
+        "viewport": {
+          "w": 1440,
+          "h": 900
+        },
+        "shellPresent": true,
+        "shellHeight": 285,
+        "collapsed": "true",
+        "sidebarVisible": false,
+        "toggleVisible": true,
+        "toggleLabel": "Mostrar mapa do assessment",
+        "questionTop": 456,
+        "firstCardTop": 642,
+        "documentScrollWidth": 1440,
+        "horizontalOverflow": false,
+        "stickyOverlapsFirstCard": false,
+        "clippedLabels": 0
+      },
+      {
+        "viewport": {
+          "w": 390,
+          "h": 844
+        },
+        "shellPresent": true,
+        "shellHeight": 355,
+        "collapsed": "true",
+        "sidebarVisible": false,
+        "toggleVisible": true,
+        "toggleLabel": "Mostrar mapa do assessment",
+        "questionTop": 550,
+        "firstCardTop": 762,
+        "documentScrollWidth": 390,
+        "horizontalOverflow": false,
+        "stickyOverlapsFirstCard": false,
+        "clippedLabels": 0
+      }
+    ],
+    "expanded": {
+      "collapsed": "false",
+      "sidebarVisible": true,
+      "domains": 5,
+      "questions": 15,
+      "unset": 13,
+      "na": 1,
+      "confirmed": 1
+    }
+  },
+  "sesux1b": [
+    {
+      "fixture": "fresh",
+      "state": "default",
+      "dirty": "false",
+      "visibleText": "Sessão não salva automaticamente. Exporte o arquivo da sessão para continuar depois.",
+      "accessibleText": "Sessão não salva automaticamente.Exporte o arquivo da sessão para continuar depois."
+    },
+    {
+      "fixture": "modified-not-exported",
+      "state": "default",
+      "dirty": "true",
+      "visibleText": "Sessão não salva automaticamente. Exporte o arquivo da sessão para continuar depois. Há alterações ainda não exportadas.",
+      "accessibleText": "Sessão não salva automaticamente.Exporte o arquivo da sessão para continuar depois.Há alterações ainda não exportadas."
+    },
+    {
+      "fixture": "export-success",
+      "state": "exported",
+      "dirty": "false",
+      "visibleText": "Sessão exportada. Guarde o arquivo JSON para retomar posteriormente.",
+      "accessibleText": "Sessão exportada.Guarde o arquivo JSON para retomar posteriormente."
+    },
+    {
+      "fixture": "post-export-modification",
+      "state": "default",
+      "dirty": "true",
+      "visibleText": "Sessão não salva automaticamente. Exporte o arquivo da sessão para continuar depois. Há alterações ainda não exportadas.",
+      "accessibleText": "Sessão não salva automaticamente.Exporte o arquivo da sessão para continuar depois.Há alterações ainda não exportadas."
+    },
+    {
+      "fixture": "import-success",
+      "state": "imported",
+      "dirty": "false",
+      "visibleText": "Sessão carregada do arquivo. Novas alterações não são salvas automaticamente.",
+      "accessibleText": "Sessão carregada do arquivo.Novas alterações não são salvas automaticamente."
+    },
+    {
+      "fixture": "post-import-modification",
+      "state": "default",
+      "dirty": "true",
+      "visibleText": "Sessão não salva automaticamente. Exporte o arquivo da sessão para continuar depois. Há alterações ainda não exportadas.",
+      "accessibleText": "Sessão não salva automaticamente.Exporte o arquivo da sessão para continuar depois.Há alterações ainda não exportadas."
+    },
+    {
+      "fixture": "export-failure",
+      "state": "export-failed",
+      "dirty": "true",
+      "visibleText": "Sessão não salva automaticamente. Exporte o arquivo da sessão para continuar depois. A última exportação não foi concluída — nenhum arquivo foi gerado. Há alterações ainda não exportadas.",
+      "accessibleText": "Sessão não salva automaticamente.Exporte o arquivo da sessão para continuar depois.A última exportação não foi concluída — nenhum arquivo foi gerado.Há alterações ainda não exportadas."
+    }
+  ],
+  "note": "Screenshots são evidência visual mínima da 5.0.1. NÃO encerram P50-VIS1..P50-VIS10.",
+  "verdict": "PASS"
+}

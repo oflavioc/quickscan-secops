@@ -6,7 +6,7 @@
    Gates desta microfase:
      governança   P50-GOV1 · P50-GOV2 · P50-GOV3
      experiência  P50-UX1 · P50-UX2 · P50-UX6 · P50-UX9 · P50-UX10 · P50-UX13
-     suficiência  P50-SUF0 · P50-SUF2
+     suficiência  P50-SUF0 .. P50-SUF8  (SUF7/SUF8 exaustivos, 1024 vetores)
      sessão       P50-SESUX1A
      identidade   P50-COR1 · P50-COR2 · P50-IC3
 
@@ -27,10 +27,29 @@ const HTML = fs.readFileSync(HTML_PATH, "utf8");
 
 const SHELL_JS = path.join(HERE, "ui_p50_shell_v32.js");
 const SHELL_CSS = path.join(HERE, "ui_p50_v32.css");
-const P50_NEW_MODULES = [SHELL_JS, SHELL_CSS];
+const SUFF_JS = path.join(HERE, "ui_p50_suff_v32.js");
+const RESULTS_JS = path.join(HERE, "ui_p50_results_v32.js");
+/* Camada derivada de suficiência: ÚNICO módulo autorizado a declarar limiares. */
+const P50_SUFF_MODULE = SUFF_JS;
+/* Renderers: nenhum deles pode declarar limiar, comparar contagem ou derivar
+   veredito próprio (UI-012A §regras de consumo; P50-SUF0 prospectivo). */
+const P50_RENDERER_MODULES = [SHELL_JS, RESULTS_JS, SHELL_CSS];
+/* Renderer DO GATE: além do acima, consome EXCLUSIVAMENTE o contrato — não lê
+   a contagem canônica para reconstruir mensagem alguma (§5.4 da diretriz).
+   O shell não é renderer de gate: ele exibe a moeda canônica (UI-009A) sem
+   possuir veredito, e por isso pode ler domStat().n para a contagem exibida. */
+const P50_GATE_RENDERER = RESULTS_JS;
+const P50_NEW_MODULES = [SHELL_JS, SUFF_JS, RESULTS_JS, SHELL_CSS];
 
 const results = [];
+/* Filtro OPCIONAL de execução (P50_ONLY="P50-SUF7,P50-SUF3").
+   Existe exclusivamente para a campanha de mutação, em que só o gate esperado
+   precisa ser executado por mutante. Sem a variável, a suíte executa tudo —
+   nenhum gate é enfraquecido, apenas não é invocado nessa passagem. */
+const ONLY = (process.env.P50_ONLY || "").split(",").map(x => x.trim()).filter(Boolean);
+if (ONLY.length) console.log("EXECUÇÃO FILTRADA (campanha de mutação): " + ONLY.join(", "));
 function T(id, label, fn) {
+  if (ONLY.length && ONLY.indexOf(id) < 0) return;
   let ok = false, err = "";
   try { ok = !!fn(); } catch (x) { err = " [" + x.message + "]"; }
   results.push({ id, ok });
@@ -468,40 +487,502 @@ T("P50-UX13", "composição de __uxDecor e do wrapper de render: captura única,
   if (!shellSrc) throw new Error("ui_p50_shell_v32.js ausente");
   if ((shellSrc.match(/window\.__uxDecor\s*=(?!=)/g) || []).length !== 1)
     throw new Error("owner único deve atribuir window.__uxDecor exatamente uma vez");
+
+  /* --- (i) 5.0.3 · os DOIS módulos novos participam da composição existente --- */
+  [SUFF_JS, RESULTS_JS].forEach(f => {
+    const src = readIf(f);
+    if (src === null) throw new Error(path.basename(f) + " ausente");
+    const code = src.replace(/\/\*[\s\S]*?\*\//g, "").replace(/(^|[^:])\/\/.*$/gm, "$1");
+    /* registra pela interface existente; nenhum agregador paralelo */
+    if (!/window\.__P50\.registerDecor\s*\(/.test(code))
+      throw new Error(path.basename(f) + " não registra decorator via window.__P50.registerDecor");
+    if (/__uxDecor/.test(code)) throw new Error(path.basename(f) + " toca em __uxDecor");
+    if (/\brender\s*=\s*function|\brender\s*=\s*\(/.test(code))
+      throw new Error(path.basename(f) + " instala wrapper próprio de render");
+    /* não recaptura o predecessor congelado nem cria segunda lista */
+    if (/Decorators\s*=\s*\[/.test(code)) throw new Error(path.basename(f) + " cria segundo array de decoradores");
+    /* nenhum owner paralelo de estado canônico */
+    [/\bans\s*\[[^\]]+\]\s*=(?!=)/, /\bnotes\s*\[[^\]]+\]\s*=(?!=)/, /businessPriority\.(add|delete|clear)/,
+     /TARGET_PROFILE\s*\.\s*overrides\s*\[[^\]]+\]\s*=(?!=)/].forEach(re => {
+      if (re.test(code)) throw new Error(path.basename(f) + " escreve owner canônico: " + re);
+    });
+    if (/localStorage|sessionStorage|indexedDB|fetch\s*\(|XMLHttpRequest/.test(code))
+      throw new Error(path.basename(f) + " introduz persistência ou rede");
+  });
+
+  /* (i2) prova MATERIAL: ordem previsível, idempotência e isolamento de falha
+     dos decoradores dos módulos novos sob o agregador único da 5.0.1. */
+  (function newModulesComposition() {
+    const R = boot();
+    if (!R.w.__P50SUFF || R.w.__P50SUFF.__installed !== true)
+      throw new Error("camada derivada não se instalou");
+    if (!R.w.__P50RESULTS || R.w.__P50RESULTS.__installed !== true)
+      throw new Error("módulo de resultados não se instalou");
+    /* dupla execução do IIFE é inofensiva (guarda de instalação) */
+    const before = R.w.__P50.diag();
+    FX.p50ApplyResults(R.w, R.d, FX.P50_F3);
+    const seq = [];
+    if (!R.d.querySelector("#p50-suff")) throw new Error("painel de suficiência não montou");
+    if (!R.d.querySelector("#p50-results")) throw new Error("superfície de resultados não montou");
+    /* ordem: suficiência antes de resultados (o consumidor lê o contrato) */
+    const nodes = Array.from(R.d.querySelectorAll("#p50-suff, #p50-results"));
+    nodes.forEach(n => seq.push(n.id));
+    if (seq.join(">") !== "p50-suff>p50-results")
+      throw new Error("ordem de montagem imprevisível: " + seq.join(">"));
+    /* idempotência: decorar novamente não duplica nem altera a superfície */
+    const app = R.d.querySelector("#app");
+    const snapSuff = R.d.querySelector("#p50-suff").outerHTML;
+    const snapRes = R.d.querySelector("#p50-results").outerHTML;
+    R.w.__uxDecor(app); R.w.__uxDecor(app);
+    if (R.d.querySelectorAll("#p50-suff").length !== 1) throw new Error("painel de suficiência duplicado");
+    if (R.d.querySelectorAll("#p50-results").length !== 1) throw new Error("superfície de resultados duplicada");
+    if (R.d.querySelector("#p50-suff").outerHTML !== snapSuff) throw new Error("painel de suficiência não idempotente");
+    if (R.d.querySelector("#p50-results").outerHTML !== snapRes) throw new Error("superfície de resultados não idempotente");
+    /* isolamento: falha do módulo de resultados não derruba o painel nem o congelado */
+    R.w.__P50RESULTS.__forceFailure(true);
+    R.w.console.error = () => {};
+    R.w.__uxDecor(app);
+    if (!R.d.querySelector("#p50-suff")) throw new Error("falha do módulo de resultados derrubou o painel de suficiência");
+    if (!R.d.querySelector("#ux-execrow")) throw new Error("falha do módulo de resultados derrubou a decoração congelada");
+    R.w.__P50RESULTS.__forceFailure(false);
+    R.w.__uxDecor(app);
+    if (!R.d.querySelector("#p50-results")) throw new Error("superfície não se recuperou após a falha isolada");
+    /* estado canônico intocado por toda a composição */
+    if (FX.p50ConfirmedByDomain(R.w.eval("QS.map((_,k)=>ans[k])")).join(",") !== "1,3,2,2,2")
+      throw new Error("composição alterou o estado canônico");
+    void before;
+  })();
   return true;
 });
 
+/* ---------------------------------------------------------------------------
+   Infraestrutura comum dos gates de suficiência da 5.0.3.
+
+   ORACLE — disciplina obrigatória (§10 da diretriz · REV B §25.4):
+   as FUNÇÕES REAIS do runtime (dataSufficiency, confirmedCount, domStat,
+   computeTargetProfile) e o DOM real são os OBJETOS SUBMETIDOS à comparação.
+   O oracle de correção são as equações independentes de soma/max declaradas
+   aqui, derivadas do vetor da fixture. É proibido copiar a fórmula de
+   dataSufficiency() para fabricar um segundo oracle equivalente por construção.
+--------------------------------------------------------------------------- */
+const REQ_GLOBAL_ORACLE = 10;   /* valor normativo, usado SOMENTE nas equações do oracle */
+const REQ_DOMAIN_ORACLE = 2;    /* valor normativo, usado SOMENTE nas equações do oracle */
+const deficitOracle = (req, have) => (req - have > 0 ? req - have : 0);
+
+/* Contrato esperado, recalculado a partir do vetor — nunca lido do produto. */
+function expectedContract(vec) {
+  const byDom = FX.p50ConfirmedByDomain(vec);
+  const confirmedGlobal = byDom.reduce((a, b) => a + b, 0);
+  const domains = byDom.map((n, i) => ({
+    domainId: i, confirmed: n, required: REQ_DOMAIN_ORACLE,
+    missing: deficitOracle(REQ_DOMAIN_ORACLE, n)
+  }));
+  const missingGlobal = deficitOracle(REQ_GLOBAL_ORACLE, confirmedGlobal);
+  return {
+    confirmedGlobal, requiredGlobal: REQ_GLOBAL_ORACLE, missingGlobal, domains,
+    sufficient: missingGlobal === 0 && domains.every(dd => dd.missing === 0)
+  };
+}
+
+/* Vetor de 15 posições que realiza as contagens (n0..n4) por domínio.
+   Slots não confirmados alternam null e "NA" — as duas formas de NÃO confirmar.
+   Os valores confirmados percorrem 0..3, de modo que `0` (NONE) confirma. */
+function vecOfCounts(ns) {
+  const v = new Array(15).fill(null);
+  for (let i = 0; i < 5; i++) {
+    for (let j = 0; j < 3; j++) {
+      const k = i * 3 + j;
+      v[k] = (j < ns[i]) ? ((i + j) % 4) : (j % 2 === 0 ? null : "NA");
+    }
+  }
+  return v;
+}
+
+/* Enumeração completa dos 4^5 = 1024 vetores de contagem. */
+function allCountVectors() {
+  const out = [];
+  for (let a = 0; a < 4; a++) for (let b = 0; b < 4; b++) for (let c = 0; c < 4; c++)
+    for (let e = 0; e < 4; e++) for (let f = 0; f < 4; f++) out.push([a, b, c, e, f]);
+  return out;
+}
+
+/* Funções REAIS do runtime (escopo global do script único do build). */
+const realCanonicalVerdict = w => w.dataSufficiency(w.eval("DOMS.map((_,i)=>domStat(i))"));
+const realTargetVerdict = (w, eff) => w.computeTargetProfile(eff).suff;
+const derivedContract = w => {
+  if (!w.__P50SUFF || typeof w.__P50SUFF.contract !== "function")
+    throw new Error("camada derivada de suficiência ausente (window.__P50SUFF.contract)");
+  return w.__P50SUFF.contract();
+};
+const applyVecOnly = (w, vec) => FX.p50ApplyVec(w, vec);
+
+/* ---------------------------------------------------------------------------
+   B-503-COHERENCE · varredura da PÁGINA INTEIRA de resultados.
+   Os gates de suficiência deixam de olhar apenas `#p50-results`: a exigência é
+   que a superfície LEGADA decorada e a superfície P50 comuniquem o MESMO
+   estado. Esconder visualmente mantendo texto contraditório na árvore
+   acessível não satisfaz o requisito — por isso o texto acessível é computado
+   ignorando subárvores `aria-hidden="true"`.
+--------------------------------------------------------------------------- */
+const STAGE_WORDS = /\b(Non-existent|Initial|Managed|Defined|Quantitatively Managed|Optimizing)\b/;
+
+function accessibleText(root) {
+  if (!root) return "";
+  let out = "";
+  (function walk(n) {
+    if (n.nodeType === 3) { out += n.nodeValue + " "; return; }
+    if (n.nodeType !== 1) return;
+    if (n.getAttribute && n.getAttribute("aria-hidden") === "true") return;
+    const cls = (n.getAttribute && n.getAttribute("class")) || "";
+    if (/\bp50-legacy-off\b/.test(cls) && !/\bp50-legacy-note\b/.test(cls)) {
+      /* neutralizado: só o substituto acessível permanece */
+      const note = n.querySelector && n.querySelector(".p50-legacy-note");
+      if (note) walk(note);
+      return;
+    }
+    const lbl = n.getAttribute && n.getAttribute("aria-label");
+    if (lbl) { out += lbl + " "; return; }
+    for (let i = 0; i < n.childNodes.length; i++) walk(n.childNodes[i]);
+  })(root);
+  return out.replace(/\s+/g, " ").trim();
+}
+
+function legacyProbe(d) {
+  const rows = qa(d, "#app .grid2 .panel .dom");
+  const radar = q(d, "#app .radar-box");
+  const legend = q(d, "#app .scale-legend");
+  const hidden = el => !!el && el.getAttribute("aria-hidden") === "true";
+  /* duas propriedades DISTINTAS: sair da tela e sair da árvore acessível.
+     Esconder à vista mantendo o texto acessível não satisfaz a errata. */
+  const offScreen = el => !!el && (el.classList.contains("p50-legacy-gone") ||
+                                   el.classList.contains("p50-legacy-veiled"));
+  const fills = qa(d, "#app .ruler .fill");
+  return {
+    rows: rows.length,
+    /* nó CONGELADO: nunca é mutado; a asserção é sobre estar fora da tela e da
+       árvore acessível. O texto honesto vive num elemento NOVO ao lado. */
+    frozenValues: rows.map(r => txt(r.querySelector(".lbl > span"))),
+    frozenValuesHidden: rows.map(r => hidden(r.querySelector(".lbl > span"))),
+    frozenValuesOffScreen: rows.map(r => offScreen(r.querySelector(".lbl > span"))),
+    frozenConfHidden: rows.map(r => hidden(r.querySelector(".conf"))),
+    p50Values: rows.map(r => txt(r.querySelector("[data-p50=\"legacy-domain-value\"]"))),
+    p50Confs: rows.map(r => txt(r.querySelector("[data-p50=\"legacy-domain-conf\"]"))),
+    marks: rows.map(r => r.getAttribute("data-p50-legacy")),
+    stateNotes: rows.map((r, i) => txt(r.querySelector("[data-p50=\"legacy-domain-state-" + i + "\"]"))),
+    fillsTotal: fills.length,
+    fillsExposed: fills.filter(f => !hidden(f)).length,
+    radarMark: radar ? radar.getAttribute("data-p50-legacy") : null,
+    radarKidsExposed: radar ? Array.from(radar.children)
+      .filter(c => !c.classList.contains("p50-legacy-note") && !hidden(c)).length : null,
+    radarNote: txt(q(d, "#app [data-p50=\"legacy-radar-note\"]")),
+    radarSvg: !!q(d, "#app .radar-box svg"),
+    legendHidden: hidden(legend),
+    banner: txt(q(d, "#app [data-p50=\"legacy-domain-banner\"]")),
+    accText: accessibleText(q(d, "#app")),
+    panelAcc: accessibleText(rows.length ? rows[0].parentNode : null),
+    p50Gate: (q(d, "#p50-results") || { getAttribute: () => null }).getAttribute("data-p50-gate"),
+    p50DomainStates: qa(d, "#p50-results [data-p50=\"results-domain\"]").map(n => n.getAttribute("data-p50-state"))
+  };
+}
+
+/* Sob gate FECHADO: uma única verdade em toda a página de resultados. */
+function assertPageBlocked(d, tag) {
+  const L = legacyProbe(d);
+  if (L.rows !== 5) throw new Error(tag + ": painel legado com " + L.rows + " domínios");
+  for (let i = 0; i < 5; i++) {
+    if (!L.frozenValuesOffScreen[i])
+      throw new Error(tag + " legado dom " + i + ": score parcial '" + L.frozenValues[i] + "' permanece visível na tela");
+    if (!L.frozenValuesHidden[i])
+      throw new Error(tag + " legado dom " + i + ": score parcial '" + L.frozenValues[i] + "' permanece na árvore acessível");
+    if (!L.frozenConfHidden[i])
+      throw new Error(tag + " legado dom " + i + ": linha de confiança legada segue exposta");
+    if (L.p50Values[i] !== "n/d")
+      throw new Error(tag + " legado dom " + i + ": substituto honesto ausente ('" + L.p50Values[i] + "')");
+    if (!/respostas confirmadas · diagnóstico parcial/.test(L.p50Confs[i] || ""))
+      throw new Error(tag + " legado dom " + i + ": contagem não rotulada como diagnóstico parcial");
+    if (L.marks[i] !== "neutralized")
+      throw new Error(tag + " legado dom " + i + ": não neutralizado (" + L.marks[i] + ")");
+    if (!/Não avaliado · evidência insuficiente/.test(L.stateNotes[i] || ""))
+      throw new Error(tag + " legado dom " + i + ": rótulo de estado ausente ('" + L.stateNotes[i] + "')");
+  }
+  if (L.fillsExposed !== 0) throw new Error(tag + ": " + L.fillsExposed + " ruler(s) preenchido(s) exposto(s)");
+  if (L.radarMark !== "neutralized") throw new Error(tag + ": radar parcial não neutralizado");
+  if (L.radarKidsExposed !== 0) throw new Error(tag + ": " + L.radarKidsExposed + " nó(s) do radar ainda expostos");
+  if (!L.radarNote) throw new Error(tag + ": radar sem substituto acessível");
+  if (!L.legendHidden) throw new Error(tag + ": legenda de escala de maturidade permanece exposta");
+  if (!L.banner) throw new Error(tag + ": painel legado sem declaração de insuficiência");
+  const stage = L.accText.match(STAGE_WORDS);
+  if (stage) throw new Error(tag + ": estágio de maturidade acessível na página: '" + stage[0] + "'");
+  const num = L.panelAcc.match(/\b\d[.,]\d\b/);
+  if (num) throw new Error(tag + ": score numérico acessível no painel legado: '" + num[0] + "'");
+  if (L.p50Gate !== "blocked") throw new Error(tag + ": superfície P50 não está bloqueada (" + L.p50Gate + ")");
+  if (L.p50DomainStates.length !== 5 || L.p50DomainStates.some(x => x !== "unavailable"))
+    throw new Error(tag + ": superfície P50 contradiz a legada: " + L.p50DomainStates.join(","));
+  return L;
+}
+
+/* Sob gate ABERTO: a superfície legada volta INTEIRA, sem marcador stale.
+   `checkCanonical` só se aplica quando houve render congelado no meio: sem
+   render, o texto do nó congelado é o que o renderer congelado deixou, e a
+   Camada 5 não o reescreve (é exatamente essa a disciplina). */
+function assertPageReleased(w, d, tag, checkCanonical) {
+  const L = legacyProbe(d);
+  if (L.rows !== 5) throw new Error(tag + ": painel legado com " + L.rows + " domínios");
+  if (qa(d, "#app [data-p50-legacy]").length !== 0)
+    throw new Error(tag + ": marcador de neutralização stale após o desbloqueio");
+  if (qa(d, "#app .p50-legacy-note").length !== 0)
+    throw new Error(tag + ": elemento de neutralização stale após o desbloqueio");
+  if (qa(d, "#app [aria-hidden=\"true\"].p50-legacy-gone, #app [aria-hidden=\"true\"].p50-legacy-veiled").length !== 0)
+    throw new Error(tag + ": nó congelado permanece oculto após o desbloqueio");
+  if (L.frozenValuesHidden.some(Boolean)) throw new Error(tag + ": valor legado permanece oculto");
+  if (L.fillsTotal !== 5) throw new Error(tag + ": " + L.fillsTotal + " preenchimento(s), esperado 5");
+  if (L.fillsExposed !== 5) throw new Error(tag + ": " + L.fillsExposed + " preenchimento(s) exposto(s), esperado 5");
+  if (!L.radarSvg) throw new Error(tag + ": radar canônico ausente");
+  if (L.radarKidsExposed === 0) throw new Error(tag + ": radar permanece oculto após o desbloqueio");
+  if (L.legendHidden) throw new Error(tag + ": legenda permanece oculta após o desbloqueio");
+  if (L.p50Gate !== "released") throw new Error(tag + ": superfície P50 não liberada (" + L.p50Gate + ")");
+  if (checkCanonical) {
+    for (let i = 0; i < 5; i++) {
+      const real = w.domStat(i).score;
+      if (real === null) throw new Error(tag + " dom " + i + ": score canônico null com gate aberto");
+      if (L.frozenValues[i].indexOf(real.toFixed(1)) !== 0)
+        throw new Error(tag + " legado dom " + i + ": '" + L.frozenValues[i] + "' != canônico " + real.toFixed(1));
+      const fill = qa(d, "#app .grid2 .panel .dom")[i].querySelector(".ruler .fill");
+      const want = "width:" + (real / 5 * 100) + "%";
+      if ((fill.getAttribute("style") || "").replace(/\s/g, "") !== want)
+        throw new Error(tag + " dom " + i + ": preenchimento '" + fill.getAttribute("style") + "' != canônico '" + want + "'");
+    }
+  }
+  return L;
+}
+
 /* ======================= 25.4 · SUFICIÊNCIA ======================= */
 
-T("P50-SUF0", "o renderer novo não é dono de lógica de suficiência (lint prospectivo)", () => {
-  const srcs = P50_NEW_MODULES.map(p => ({ p, s: readIf(p) })).filter(o => o.s !== null);
-  if (!srcs.length) throw new Error("nenhum módulo novo presente para lintar");
-  srcs.forEach(({ p, s }) => {
-    const code = s.replace(/\/\*[\s\S]*?\*\//g, "").replace(/(^|[^:])\/\/.*$/gm, "$1");
-    if (/dataSufficiency/.test(code)) throw new Error(path.basename(p) + " referencia dataSufficiency");
-    if (/\bsufficien/i.test(code)) throw new Error(path.basename(p) + " deriva suficiência");
-    /* nenhuma comparação de contagem que reimplemente o gate canônico */
-    const reGlobal = /(confirmed[A-Za-z]*|count[A-Za-z]*|total[A-Za-z]*)\s*(>=|>|<|<=)\s*10\b/i;
-    const reDomain = /(\.n|confirmed[A-Za-z]*|count[A-Za-z]*)\s*(>=|>|<|<=)\s*2\b/i;
-    if (reGlobal.test(code)) throw new Error(path.basename(p) + " contém comparação com o limiar global 10");
-    if (reDomain.test(code)) throw new Error(path.basename(p) + " contém comparação com o limiar de domínio 2");
-    if (/confirmedCount\s*\(\s*\)\s*(>=|>|<|<=)/.test(code))
-      throw new Error(path.basename(p) + " compara confirmedCount() diretamente");
+T("P50-SUF0", "nenhum renderer é dono de lógica de suficiência; limiar declarado uma única vez", () => {
+  FX.p50AssertFixtureCounts();      /* pré-condição: fixtures estruturalmente válidas */
+  const strip = src => src.replace(/\/\*[\s\S]*?\*\//g, "").replace(/(^|[^:])\/\/.*$/gm, "$1");
+
+  /* (a) renderers: sem veredito próprio, sem limiar, sem comparação de contagem */
+  const rends = P50_RENDERER_MODULES.map(f => ({ f, s: readIf(f) })).filter(o => o.s !== null);
+  if (rends.length !== P50_RENDERER_MODULES.length)
+    throw new Error("renderer ausente: " + P50_RENDERER_MODULES.filter(f => !fs.existsSync(f)).map(f => path.basename(f)).join(", "));
+  rends.forEach(({ f, s: src }) => {
+    const n = path.basename(f), code = strip(src);
+    if (/dataSufficiency/.test(code)) throw new Error(n + " referencia dataSufficiency");
+    if (f === P50_GATE_RENDERER) {
+      if (/\bconfirmedCount\s*\(/.test(code)) throw new Error(n + " chama confirmedCount() para reconstruir a mensagem");
+      if (/\bdomStat\s*\([^)]*\)\s*\.\s*n\b/.test(code)) throw new Error(n + " lê domStat().n para reconstruir a mensagem");
+    }
+    /* Qualquer comparação contra os limiares canônicos, sob qualquer forma —
+       identificador, chamada de função ou expressão — é reimplementação do
+       gate. `=== 2` não é banido: é a severidade que o motor congelado já
+       define (MAP[...].lv[a].s), e nunca um limiar de suficiência. */
+    if (/(>=|>|<|<=|===|==)\s*10\b/.test(code)) throw new Error(n + " contém comparação com o limiar global 10");
+    if (/(>=|>|<|<=)\s*2\b/.test(code)) throw new Error(n + " contém comparação com o limiar de domínio 2");
+    if (/confirmedCount\s*\(\s*\)\s*(>=|>|<|<=|===|==)/.test(code))
+      throw new Error(n + " compara confirmedCount() diretamente");
+    if (/domStat\s*\([^)]*\)\s*\.\s*n\s*(>=|>|<|<=|===|==)/.test(code))
+      throw new Error(n + " compara domStat().n diretamente");
+    if (/\bmissing\w*\s*=\s*[^=]*[-−]\s*(10|2)\b/.test(code)) throw new Error(n + " recalcula déficit a partir de limiar literal");
   });
-  /* e a superfície nova não emite veredito executivo em nenhuma fixture */
-  Object.values(FX.P50_FIXTURES).forEach(fx => {
-    const { w, d } = boot();
-    FX.p50ApplyFixture(w, d, fx);
-    const t = txt(q(d, "#p50-shell"));
+
+  /* (b) camada derivada: UMA única declaração nomeada dos dois limiares */
+  const suffSrc = readIf(P50_SUFF_MODULE);
+  if (suffSrc === null) throw new Error("ui_p50_suff_v32.js ausente");
+  const suffCode = strip(suffSrc);
+  if (/dataSufficiency/.test(suffCode))
+    throw new Error("a camada derivada delega a dataSufficiency() — a equivalência deixaria de ser provada");
+  const decl = suffCode.match(/P50_SUFF_REQUIRED\s*=\s*\{[^}]*\}/g) || [];
+  if (decl.length !== 1)
+    throw new Error("limiares declarados " + decl.length + " vez(es); esperado exatamente 1");
+  if (!/global\s*:\s*10\b/.test(decl[0]) || !/domain\s*:\s*2\b/.test(decl[0]))
+    throw new Error("declaração única não espelha os limiares canônicos: " + decl[0]);
+  const outside = suffCode.replace(decl[0], "");
+  if (/(required|threshold|limiar)\w*\s*[:=]\s*(10|2)\b/i.test(outside))
+    throw new Error("segunda declaração de limiar fora da declaração única");
+
+  /* ==========================================================================
+     (b2) RQ-AUD-2 · PROVENIÊNCIA DA MOEDA (UI-009A).
+     Declarar o limiar uma única vez não impede o pior caso: a camada derivada
+     RECONTAR respostas por conta própria e virar um owner paralelo da moeda de
+     suficiência. Duas provas complementares, porque nenhuma basta sozinha —
+     a estrutural não vê o runtime, e a de runtime não vê código morto.
+     ========================================================================== */
+
+  /* (b2.i) ESTRUTURAL: as leituras canônicas têm de estar lá, e a recontagem
+     paralela tem de estar ausente. */
+  if (!/confirmedGlobal\s*=\s*confirmedCount\s*\(\s*\)/.test(suffCode))
+    throw new Error("confirmedGlobal não é lido de confirmedCount() — owner paralelo da moeda global");
+  if (!/=\s*domStat\s*\(\s*i\s*\)\s*\.\s*n\b/.test(suffCode))
+    throw new Error("confirmações por domínio não são lidas de domStat(i).n — owner paralelo por domínio");
+  [[/\bans\s*\[/, "indexa ans[] diretamente"],
+   [/\bans\s*\.\s*(filter|reduce|forEach|map|every|some|length)\b/, "itera ans"],
+   [/\bQS\s*\[/, "indexa QS[] diretamente"],
+   [/\bQS\s*\.\s*(filter|reduce|forEach|map|every|some|length)\b/, "itera QS"]
+  ].forEach(([re, why]) => {
+    if (re.test(suffCode)) throw new Error("a camada derivada " + why + " para recontar respostas");
+  });
+  /* a FÓRMULA de confirmação pertence à Camada 1 e não pode ser reproduzida */
+  if (/!==\s*null[\s\S]{0,60}!==\s*"NA"/.test(suffCode) || /!==\s*"NA"[\s\S]{0,60}!==\s*null/.test(suffCode))
+    throw new Error("a camada derivada reproduz a fórmula de confirmação (v !== null && v !== \"NA\")");
+
+  /* (b2.ii) RUNTIME por SENTINELA: substitui temporariamente as funções
+     canônicas por sentinelas controladas e exige que o contrato REFLITA os
+     valores das sentinelas. Se o contrato recontasse por conta própria, os
+     números não mudariam. Nada de produção é alterado: as funções são
+     restauradas em `finally` e a ausência de estado residual é verificada. */
+  {
+    const { w: ws } = boot();
+    ws.__DEV.setArq(0);
+    ws.__DEV.showResults();
+    if (typeof ws.confirmedCount !== "function" || typeof ws.domStat !== "function")
+      throw new Error("owner canônico (confirmedCount/domStat) inalcançável no runtime");
+    const before = JSON.stringify(derivedContract(ws));
+    const origCC = ws.confirmedCount, origDS = ws.domStat;
+    let ccCalls = 0; const dsCalls = [];
+    try {
+      ws.confirmedCount = function () { ccCalls++; return 7; };
+      ws.domStat = function (i) { dsCalls.push(i); return { n: 100 + i, nNA: 0, idx: [], score: null, conf: null }; };
+      const c = derivedContract(ws);
+      if (ccCalls !== 1)
+        throw new Error("confirmedCount() invocado " + ccCalls + " vez(es) pelo contrato (esperado 1)");
+      if (c.confirmedGlobal !== 7)
+        throw new Error("confirmedGlobal = " + c.confirmedGlobal + " não reflete a sentinela (7) — moeda global recontada localmente");
+      if (dsCalls.join(",") !== c.domains.map(x => x.domainId).join(","))
+        throw new Error("domStat() não foi consultado uma vez por domínio na ordem canônica: [" + dsCalls.join(",") + "]");
+      c.domains.forEach((dd, i) => {
+        if (dd.confirmed !== 100 + i)
+          throw new Error("domínio " + i + ": confirmed = " + dd.confirmed + " não reflete a sentinela (" + (100 + i) + ") — recontagem paralela por domínio");
+      });
+    } finally {
+      ws.confirmedCount = origCC;
+      ws.domStat = origDS;
+    }
+    if (ws.confirmedCount !== origCC || ws.domStat !== origDS)
+      throw new Error("sentinela não foi restaurada — estado residual no runtime");
+    if (JSON.stringify(derivedContract(ws)) !== before)
+      throw new Error("estado residual: o contrato não voltou ao valor anterior à sentinela");
+  }
+
+  /* (c) equivalência material: a superfície nova nunca discorda do veredito canônico */
+  const { w, d } = boot();
+  [[0,0,0,0,0],[1,3,2,2,2],[2,2,2,2,2],[3,3,3,3,3],[3,3,3,3,1],[2,2,2,2,1]].forEach(ns => {
+    const vec = vecOfCounts(ns);
+    applyVecOnly(w, vec);
+    w.__DEV.setArq(0);
+    w.__DEV.showResults();
+    const canonical = realCanonicalVerdict(w);
+    const derived = derivedContract(w).sufficient;
+    if (derived !== canonical)
+      throw new Error("veredito derivado " + derived + " != canônico " + canonical + " em [" + ns + "]");
+    const sec = q(d, "#p50-results");
+    if (!sec) throw new Error("superfície nova de resultados ausente em [" + ns + "]");
+    const gate = sec.getAttribute("data-p50-gate");
+    if (gate !== (canonical ? "released" : "blocked"))
+      throw new Error("gate da UI '" + gate + "' != veredito canônico " + canonical + " em [" + ns + "]");
+  });
+
+  /* (d) o shell (5.0.1/5.0.2) permanece sem qualquer juízo de suficiência */
+  [FX.P50_F1, FX.P50_F2, FX.P50_F6].forEach(fx => {
+    const B = boot();
+    FX.p50ApplyFixture(B.w, B.d, fx);
+    const t = txt(q(B.d, "#p50-shell"));
     if (/\b(overall|maturidade geral|estágio|stage)\b/i.test(t))
       throw new Error("veredito executivo exibido pelo shell em " + fx.id);
     if (/(suficiên|insuficiên)/i.test(t))
       throw new Error("shell emite juízo de suficiência em " + fx.id);
   });
+
+  /* (e) ui_target_v32.js e a Camada 1 intactos */
+  if (sha(path.join(HERE, "ui_target_v32.js")) !== PROTECTED["ui_target_v32.js"])
+    throw new Error("ui_target_v32.js alterado");
+  const html = HTML;
+  if (!/function dataSufficiency\(stats\)\{\s*\n\s*return confirmedCount\(\) >= 10 && stats\.every\(s=>s\.n>=2\);/.test(html))
+    throw new Error("dataSufficiency() não está byte-idêntica no build");
+
+  /* (f) nenhum símbolo da 5.0.4 antecipado */
+  const forbidden = ["heatmap", "heatMap", "heat-map", "drilldown", "drillDown", "drill-down",
+                     "currentVsTarget", "current-vs-target", "gapToTarget", "P50-VIS9"];
+  P50_NEW_MODULES.forEach(f => {
+    const src = readIf(f); if (src === null) return;
+    /* comentários são prosa normativa (inclusive a declaração do que NÃO foi
+       implementado); a antecipação proibida é de CÓDIGO executável. */
+    const code = strip(src);
+    forbidden.forEach(sym => {
+      if (code.indexOf(sym) >= 0) throw new Error(path.basename(f) + " antecipa símbolo da 5.0.4: " + sym);
+    });
+  });
+  return true;
+});
+
+/* ============================================================================
+   RQ-AUD-1 · lint anti-duplicação dos módulos da Camada 5.
+   A candidata carregava 158 linhas de CSS duplicadas byte a byte (segundo
+   `@media print` de #p50-shell, segunda cópia do bloco 5.0.2 e segunda cópia
+   do bloco base 5.0.3). Duplicação integral é dívida de manutenção com risco
+   real: uma correção aplicada a uma cópia e não à outra produz divergência
+   silenciosa entre regras que o leitor supõe idênticas.
+   Oráculo estrutural e independente da implementação: janela deslizante sobre
+   as LINHAS SIGNIFICATIVAS (ignora vazias e delimitadores puros de comentário,
+   de modo que reindentação ou espaçamento não mascaram a repetição).
+   ========================================================================== */
+T("P50-DUP1", "nenhum módulo da Camada 5 contém bloco integralmente duplicado", () => {
+  const WINDOW = 12;                      /* "integral" = bloco, não uma linha isolada */
+  const offenders = [];
+  P50_NEW_MODULES.forEach(f => {
+    const src = readIf(f);
+    if (src === null) throw new Error("módulo P50 ausente: " + path.basename(f));
+    const sig = [];
+    src.split("\n").forEach((ln, i) => {
+      const t = ln.trim();
+      if (!t) return;
+      if (/^[/*=\-\s]*$/.test(t)) return;        /* moldura de comentário não é conteúdo */
+      sig.push({ line: i + 1, t });
+    });
+    const seen = new Map();
+    for (let k = 0; k + WINDOW <= sig.length; k++) {
+      const win = sig.slice(k, k + WINDOW);
+      const key = win.map(x => x.t).join("\n");
+      if (seen.has(key)) {
+        offenders.push(path.basename(f) + ": bloco de " + WINDOW +
+          " linhas significativas repetido (linha " + seen.get(key) + " e linha " + win[0].line + ")");
+        break;                                    /* um relato por arquivo basta para reprovar */
+      }
+      seen.set(key, win[0].line);
+    }
+  });
+  if (offenders.length) throw new Error(offenders.join(" · "));
+  return true;
+});
+
+T("P50-SUF1", "estado insuficiente não expõe overall, estágio nem executive card na superfície nova", () => {
+  [FX.P50_F2, FX.P50_F3].forEach(fx => {
+    const { w, d } = boot();
+    FX.p50ApplyResults(w, d, fx);
+    if (realCanonicalVerdict(w) !== false) throw new Error(fx.id + ": pré-condição — veredito canônico não é insuficiente");
+    const sec = q(d, "#p50-results");
+    if (!sec) throw new Error(fx.id + ": superfície nova de resultados ausente");
+    if (sec.getAttribute("data-p50-gate") !== "blocked") throw new Error(fx.id + ": gate não está bloqueado");
+    if (sec.querySelector("[data-p50=\"exec-cards\"]")) throw new Error(fx.id + ": executive cards presentes sob gate fechado");
+    if (sec.querySelector("[data-p50=\"exec-card\"]")) throw new Error(fx.id + ": executive card presente sob gate fechado");
+    if (sec.querySelector("[data-p50=\"overall\"]")) throw new Error(fx.id + ": overall presente sob gate fechado");
+    if (sec.querySelector("[data-p50=\"stage\"]")) throw new Error(fx.id + ": estágio presente sob gate fechado");
+    const t = txt(sec);
+    if (/\b\d[.,]\d\s*\/\s*5[.,]0\b/.test(t)) throw new Error(fx.id + ": score consolidado renderizado: " + t.slice(0, 120));
+    if (/\b(Initial|Managed|Defined|Optimizing|Quantitatively Managed|Non-existent)\b/.test(t))
+      throw new Error(fx.id + ": estágio executivo renderizado");
+    /* nenhum zero fabricado por falta de evidência */
+    if (/\b0[.,]0\b/.test(t)) throw new Error(fx.id + ": zero fabricado na superfície nova");
+    /* completion e navegação continuam disponíveis (controles congelados) */
+    if (!q(d, "#review")) throw new Error(fx.id + ": navegação de revisão indisponível");
+    /* B-503-COHERENCE: a PÁGINA INTEIRA, não só #p50-results */
+    assertPageBlocked(d, fx.id);
+  });
   return true;
 });
 
 T("P50-SUF2", "domínio sem resposta confirmada exibe n/d + 'Não avaliado', nunca 0.0", () => {
+  /* (a) sidebar do shell (superfície da 5.0.1) */
   [FX.P50_F1, FX.P50_F2, FX.P50_F6].forEach(fx => {
     const { w, d } = boot();
     FX.p50ApplyFixture(w, d, fx);
@@ -526,11 +1007,481 @@ T("P50-SUF2", "domínio sem resposta confirmada exibe n/d + 'Não avaliado', nun
           throw new Error(fx.id + " dom " + i + ": contagem '" + visible + "' != " + expected[i]);
       }
     }
-    /* a string "0.0"/"0,0" jamais aparece como score de domínio */
     const sidebar = txt(q(d, "#p50-shell [data-p50=\"sidebar\"]"));
     if (/\b0[.,]0\b/.test(sidebar.replace(/Confirmad[oa][^·]*·\s*0[.,]0/g, "")))
       throw new Error(fx.id + ": 0.0 renderizado na sidebar fora de resposta confirmada");
   });
+
+  /* (b) superfície nova de resultados (UI-014): sob gate fechado, TODO domínio
+     é n/d + "Não avaliado"; nenhum score parcial vira veredito executivo. */
+  [FX.P50_F2, FX.P50_F3].forEach(fx => {
+    const { w, d } = boot();
+    FX.p50ApplyResults(w, d, fx);
+    for (let i = 0; i < 5; i++) {
+      const row = q(d, "#p50-results [data-p50=\"results-domain\"][data-dom=\"" + i + "\"]");
+      if (!row) throw new Error(fx.id + ": linha de domínio " + i + " ausente na superfície nova");
+      if (row.getAttribute("data-p50-state") !== "unavailable")
+        throw new Error(fx.id + " dom " + i + ": estado " + row.getAttribute("data-p50-state") + " sob gate fechado");
+      const val = txt(row.querySelector("[data-p50=\"results-domain-value\"]"));
+      if (val !== "n/d") throw new Error(fx.id + " dom " + i + ": valor '" + val + "' != n/d");
+      if (!/Não avaliado/i.test(txt(row))) throw new Error(fx.id + " dom " + i + ": 'Não avaliado' ausente");
+      if (/\b\d[.,]\d\b/.test(txt(row))) throw new Error(fx.id + " dom " + i + ": número fabricado '" + txt(row) + "'");
+      if (!/evidência insuficiente/i.test(accName(row)))
+        throw new Error(fx.id + " dom " + i + ": nome acessível sem qualificação de insuficiência");
+    }
+    assertPageBlocked(d, fx.id + "/página");
+  });
+
+  /* (c) sob gate ABERTO, os domínios exibem o score CANÔNICO real */
+  [FX.P50_F4, FX.P50_F5].forEach(fx => {
+    const { w, d } = boot();
+    FX.p50ApplyResults(w, d, fx);
+    if (realCanonicalVerdict(w) !== true) throw new Error(fx.id + ": pré-condição — veredito canônico não é suficiente");
+    for (let i = 0; i < 5; i++) {
+      const row = q(d, "#p50-results [data-p50=\"results-domain\"][data-dom=\"" + i + "\"]");
+      if (!row) throw new Error(fx.id + ": linha de domínio " + i + " ausente");
+      if (row.getAttribute("data-p50-state") !== "scored")
+        throw new Error(fx.id + " dom " + i + ": não exibe score sob gate aberto");
+      const shown = txt(row.querySelector("[data-p50=\"results-domain-value\"]"));
+      const real = w.domStat(i).score;                     /* função REAL do runtime */
+      if (real === null) throw new Error(fx.id + " dom " + i + ": score canônico null sob gate aberto");
+      if (shown !== real.toFixed(1))
+        throw new Error(fx.id + " dom " + i + ": exibido '" + shown + "' != canônico " + real.toFixed(1));
+    }
+    assertPageReleased(w, d, fx.id + "/página", true);
+  });
+  return true;
+});
+
+T("P50-SUF3", "mensagem do gate provém campo a campo do contrato derivado", () => {
+  [FX.P50_F1, FX.P50_F2, FX.P50_F3].forEach(fx => {
+    const { w, d } = boot();
+    FX.p50ApplyResults(w, d, fx);
+    const exp = expectedContract(fx.vec);                   /* oracle independente */
+    const got = derivedContract(w);
+
+    if (got.confirmedGlobal !== exp.confirmedGlobal) throw new Error(fx.id + ": confirmedGlobal " + got.confirmedGlobal);
+    if (got.requiredGlobal !== exp.requiredGlobal) throw new Error(fx.id + ": requiredGlobal " + got.requiredGlobal);
+    if (got.missingGlobal !== exp.missingGlobal) throw new Error(fx.id + ": missingGlobal " + got.missingGlobal);
+    if (got.sufficient !== exp.sufficient) throw new Error(fx.id + ": sufficient " + got.sufficient);
+
+    /* linha global: números vindos do contrato, presentes no texto */
+    const g = q(d, "#p50-suff [data-p50=\"suff-global\"]");
+    if (!g) throw new Error(fx.id + ": linha global de suficiência ausente");
+    if (g.getAttribute("data-p50-confirmed") !== String(exp.confirmedGlobal)) throw new Error(fx.id + ": data-confirmed divergente");
+    if (g.getAttribute("data-p50-required") !== String(exp.requiredGlobal)) throw new Error(fx.id + ": data-required divergente");
+    if (g.getAttribute("data-p50-missing") !== String(exp.missingGlobal)) throw new Error(fx.id + ": data-missing divergente");
+    const gt = txt(g);
+    if (gt.indexOf(String(exp.confirmedGlobal)) < 0 || gt.indexOf(String(exp.requiredGlobal)) < 0)
+      throw new Error(fx.id + ": linha global não exibe confirmadas/requeridas: '" + gt + "'");
+    if (exp.missingGlobal > 0) {
+      if (!new RegExp("Falta(m)? " + exp.missingGlobal + " resposta").test(gt) && exp.missingGlobal !== 1)
+        throw new Error(fx.id + ": déficit global ausente do texto: '" + gt + "'");
+      if (exp.missingGlobal === 1 && !/Falta 1 resposta confirmada/.test(gt))
+        throw new Error(fx.id + ": singular incorreto: '" + gt + "'");
+    } else if (/Falta/i.test(gt)) {
+      throw new Error(fx.id + ": déficit global inexistente foi exibido: '" + gt + "'");
+    }
+
+    /* lista de pendências == exatamente os domínios com missing > 0 */
+    const deficits = qa(d, "#p50-suff [data-p50=\"suff-deficit\"]");
+    const shownIds = deficits.map(n => Number(n.getAttribute("data-dom"))).sort((a, b) => a - b);
+    const wantIds = exp.domains.filter(dd => dd.missing > 0).map(dd => dd.domainId).sort((a, b) => a - b);
+    if (shownIds.join(",") !== wantIds.join(","))
+      throw new Error(fx.id + ": pendências [" + shownIds + "] != déficits reais [" + wantIds + "]");
+    deficits.forEach(n => {
+      const i = Number(n.getAttribute("data-dom"));
+      const dd = exp.domains[i];
+      if (Number(n.getAttribute("data-missing")) !== dd.missing)
+        throw new Error(fx.id + " dom " + i + ": data-missing " + n.getAttribute("data-missing") + " != " + dd.missing);
+      const t = txt(n);
+      if (t.indexOf(FX.P50_DOM_PT[i]) < 0) throw new Error(fx.id + " dom " + i + ": domínio não nomeado: '" + t + "'");
+      if (t.indexOf("+" + dd.missing) < 0) throw new Error(fx.id + " dom " + i + ": déficit ausente: '" + t + "'");
+      if (!new RegExp("\\(" + dd.confirmed + " de " + dd.required + "\\)").test(t))
+        throw new Error(fx.id + " dom " + i + ": confirmadas/requeridas ausentes: '" + t + "'");
+      if (/-\d/.test(t)) throw new Error(fx.id + " dom " + i + ": déficit negativo exibido: '" + t + "'");
+      if (dd.missing === 1 && /respostas confirmadas necessárias/.test(t))
+        throw new Error(fx.id + " dom " + i + ": plural incorreto: '" + t + "'");
+      if (dd.missing > 1 && /\+\d resposta confirmada necessária/.test(t))
+        throw new Error(fx.id + " dom " + i + ": singular incorreto: '" + t + "'");
+    });
+    /* orientação construtiva presente somente enquanto insuficiente */
+    const guide = q(d, "#p50-suff [data-p50=\"suff-guidance\"]");
+    if (!exp.sufficient && !guide) throw new Error(fx.id + ": orientação para continuar ausente");
+    if (exp.sufficient && guide) throw new Error(fx.id + ": orientação de insuficiência exibida com gate aberto");
+  });
+  return true;
+});
+
+T("P50-SUF4", "transição real insuficiente → suficiente desbloqueia sem conteúdo stale", () => {
+  const { w, d } = boot();
+  FX.p50ApplyResults(w, d, FX.P50_F3);
+  if (realCanonicalVerdict(w) !== false) throw new Error("pré-condição: P50-F3 deveria ser insuficiente");
+  const sec0 = q(d, "#p50-results");
+  if (!sec0) throw new Error("superfície nova de resultados ausente");
+  if (sec0.getAttribute("data-p50-gate") !== "blocked") throw new Error("gate inicial não bloqueado");
+  const deficitsBefore = qa(d, "#p50-suff [data-p50=\"suff-deficit\"]").length;
+  if (deficitsBefore !== 1) throw new Error("P50-F3 deveria ter exatamente 1 domínio deficitário, tem " + deficitsBefore);
+  const canonBefore = FX.p50ConfirmedByDomain(FX.P50_F3.vec).join(",");
+
+  /* caminho REAL: voltar às perguntas pelo controle congelado e responder */
+  const rev = q(d, "#review");
+  if (!rev) throw new Error("controle congelado #review ausente");
+  rev.click();                                          /* #review -> última pergunta (congelado) */
+  /* Navegação REAL apenas para trás: ArrowLeft é o controle congelado que não
+     exige resposta prévia, portanto não altera nenhum estado ao caminhar. */
+  const goBackTo = k => {
+    let guard = 0;
+    while (FX.p50Step(d) > k + 1 && guard++ < 40) FX.p50Key(w, d, "ArrowLeft");
+    if (FX.p50Step(d) !== k + 1) throw new Error("navegação real falhou: step " + FX.p50Step(d) + " != " + (k + 1));
+  };
+  goBackTo(5);                                          /* Pessoas · knowledge (confirmada) */
+  const na = q(d, "#app .opts .opt[data-i=\"NA\"]");
+  if (!na) throw new Error("botão canônico 'Não sei' ausente");
+  na.click();                                           /* remove uma confirmação de Pessoas */
+  goBackTo(1);                                          /* Negócio · governance (déficit) */
+  const opt = q(d, "#app .opts .opt[data-i=\"1\"]");
+  if (!opt) throw new Error("botão canônico de opção ausente");
+  opt.click();                                          /* setter congelado + render() */
+  w.__DEV.showResults();
+
+  const eff = w.eval("QS.map((_,k)=>ans[k])");
+  const counts = FX.p50ConfirmedByDomain(eff);
+  if (counts.join(",") !== "2,2,2,2,2")
+    throw new Error("estado alcançado [" + counts + "] != contagens de P50-F4 [2,2,2,2,2]");
+  if (counts.join(",") === canonBefore) throw new Error("o caminho real não alterou o estado");
+  if (realCanonicalVerdict(w) !== true) throw new Error("veredito canônico não abriu após a transição");
+  const got = derivedContract(w);
+  if (got.sufficient !== true) throw new Error("contrato derivado não abriu");
+  if (got.missingGlobal !== 0) throw new Error("déficit global residual " + got.missingGlobal);
+  if (got.domains.some(dd => dd.missing !== 0)) throw new Error("déficit de domínio residual");
+
+  const sec = q(d, "#p50-results");
+  if (sec.getAttribute("data-p50-gate") !== "released") throw new Error("gate da UI não desbloqueou");
+  if (!sec.querySelector("[data-p50=\"exec-cards\"]")) throw new Error("executive cards não liberados");
+  if (qa(d, "#p50-suff [data-p50=\"suff-deficit\"]").length !== 0)
+    throw new Error("déficit stale permaneceu após o desbloqueio");
+  if (q(d, "#p50-suff [data-p50=\"suff-guidance\"]")) throw new Error("orientação de insuficiência stale");
+  if (/Resultado ainda indisponível/i.test(txt(sec))) throw new Error("mensagem de bloqueio stale no DOM acessível");
+  if (d.querySelectorAll("#p50-results").length !== 1) throw new Error("superfície de resultados duplicada");
+  if (d.querySelectorAll("#p50-suff").length !== 1) throw new Error("painel de suficiência duplicado");
+  /* B-503-COHERENCE: a superfície legada volta INTEIRA, sem reload e sem stale */
+  assertPageReleased(w, d, "unlock", true);
+  /* e também quando a decoração roda SEM render (caminho congelado sem rebuild) */
+  w.__uxDecor(q(d, "#app"));
+  assertPageReleased(w, d, "unlock/sem-render", false);
+  /* nenhuma resposta perdida pela transição */
+  if (w.eval("ans.filter(v=>v!==null&&v!=='NA').length") !== 10)
+    throw new Error("respostas perdidas na transição");
+
+  /* Desbloqueio SEM render (§3.4 da errata): toda transição por controle
+     congelado passa por render(), que reconstrói o #app inteiro e entrega uma
+     superfície legada nova — nesse caminho a restauração nunca é exercitada.
+     Aqui o MESMO nó #app, já neutralizado, é redecorado após o estado canônico
+     abrir o gate: a restauração tem de acontecer de fato. */
+  (function unlockWithoutRender() {
+    const N = boot();
+    FX.p50ApplyResults(N.w, N.d, FX.P50_F3);
+    if (realCanonicalVerdict(N.w) !== false) throw new Error("sem-render: P50-F3 deveria bloquear");
+    assertPageBlocked(N.d, "unlock-sem-render/1-bloqueado");
+    const appNode = q(N.d, "#app");
+    N.w.__DEV.setAnswerById("governance", 1);          /* owner canônico; NÃO renderiza */
+    if (realCanonicalVerdict(N.w) !== true) throw new Error("sem-render: veredito canônico não abriu");
+    N.w.__uxDecor(appNode);                            /* redecoração sobre o MESMO DOM */
+    if (q(N.d, "#app") !== appNode) throw new Error("sem-render: #app foi reconstruído (o caminho não foi exercitado)");
+    assertPageReleased(N.w, N.d, "unlock-sem-render/2-liberado", false);
+  })();
+  return true;
+});
+
+T("P50-SUF5", "transição real suficiente → insuficiente rebloqueia e limpa o executivo", () => {
+  [FX.P50_F4, FX.P50_F5].forEach(fx => {
+    const { w, d } = boot();
+    FX.p50ApplyResults(w, d, fx);
+    if (realCanonicalVerdict(w) !== true) throw new Error(fx.id + ": pré-condição — deveria estar suficiente");
+    const sec0 = q(d, "#p50-results");
+    if (!sec0) throw new Error(fx.id + ": superfície nova de resultados ausente");
+    if (sec0.getAttribute("data-p50-gate") !== "released") throw new Error(fx.id + ": gate inicial não liberado");
+    const execTextBefore = txt(sec0.querySelector("[data-p50=\"exec-cards\"]"));
+    if (!execTextBefore) throw new Error(fx.id + ": executive cards ausentes no estado suficiente");
+
+    /* caminho REAL: revisar e marcar respostas confirmadas de Negócio como
+       "Não sei", uma a uma, até o veredito CANÔNICO rebloquear. O número de
+       remoções necessárias depende da fixture e não é presumido. */
+    q(d, "#review").click();                          /* -> última pergunta (congelado) */
+    let removed = 0;
+    for (const k of [2, 1, 0]) {                      /* somente para trás: ArrowLeft */
+      if (!realCanonicalVerdict(w)) break;
+      const cur = w.eval("ans[" + k + "]");
+      if (cur === null || cur === "NA") continue;     /* já não confirma: nada a remover */
+      let guard = 0;
+      while (FX.p50Step(d) > k + 1 && guard++ < 40) FX.p50Key(w, d, "ArrowLeft");
+      if (FX.p50Step(d) !== k + 1) throw new Error(fx.id + ": navegação real falhou em k=" + k);
+      const naBtn = q(d, "#app .opts .opt[data-i=\"NA\"]");
+      if (!naBtn) throw new Error(fx.id + ": botão canônico 'Não sei' ausente");
+      naBtn.click();                                  /* setter congelado + render() */
+      removed++;
+    }
+    if (!removed) throw new Error(fx.id + ": nenhuma remoção real foi aplicada");
+    w.__DEV.showResults();
+
+    if (realCanonicalVerdict(w) !== false) throw new Error(fx.id + ": veredito canônico não rebloqueou");
+    const exp = expectedContract(w.eval("QS.map((_,k)=>ans[k])"));
+    const got = derivedContract(w);
+    if (got.sufficient !== false) throw new Error(fx.id + ": contrato derivado não rebloqueou");
+    if (got.domains[0].missing !== exp.domains[0].missing)
+      throw new Error(fx.id + ": déficit de Negócio " + got.domains[0].missing + " != " + exp.domains[0].missing);
+
+    const sec = q(d, "#p50-results");
+    if (sec.getAttribute("data-p50-gate") !== "blocked") throw new Error(fx.id + ": gate da UI não rebloqueou");
+    if (sec.querySelector("[data-p50=\"exec-cards\"]")) throw new Error(fx.id + ": executive cards permaneceram");
+    if (sec.querySelector("[data-p50=\"exec-card\"]")) throw new Error(fx.id + ": card executivo stale");
+    const t = txt(sec);
+    if (/\b\d[.,]\d\s*\/\s*5[.,]0\b/.test(t)) throw new Error(fx.id + ": score stale no DOM acessível");
+    if (/\b(Initial|Managed|Defined|Optimizing|Quantitatively Managed|Non-existent)\b/.test(t))
+      throw new Error(fx.id + ": estágio stale no DOM acessível");
+    const deficits = qa(d, "#p50-suff [data-p50=\"suff-deficit\"]");
+    if (deficits.length !== exp.domains.filter(dd => dd.missing > 0).length)
+      throw new Error(fx.id + ": déficits exibidos != déficits reais");
+    if (!q(d, "#p50-suff [data-p50=\"suff-guidance\"]")) throw new Error(fx.id + ": orientação construtiva ausente após rebloqueio");
+    if (d.querySelectorAll("#p50-results").length !== 1) throw new Error(fx.id + ": superfície duplicada");
+
+    /* A limpeza do conteúdo executivo NÃO pode depender do render congelado
+       recriar #app: existe caminho congelado que invoca a decoração SEM
+       render (ui_v32.js, botão de limpar landscape). Decorar de novo, sem
+       render, também não pode deixar superfície duplicada nem card stale. */
+    const appEl = q(d, "#app");
+    w.__uxDecor(appEl);
+    if (d.querySelectorAll("#p50-results").length !== 1)
+      throw new Error(fx.id + ": superfície duplicada após decoração sem render (limpeza de stale ausente)");
+    if (d.querySelectorAll("#p50-suff").length !== 1)
+      throw new Error(fx.id + ": painel de suficiência duplicado após decoração sem render");
+    if (qa(d, "#p50-results [data-p50=\"exec-cards\"]").length !== 0)
+      throw new Error(fx.id + ": card executivo stale após decoração sem render");
+    if (qa(d, "#p50-results [data-p50=\"exec-card\"]").length !== 0)
+      throw new Error(fx.id + ": exec-card stale após decoração sem render");
+    /* B-503-COHERENCE: a superfície legada é neutralizada NOVAMENTE no relock,
+       tanto após render congelado quanto na decoração sem render. */
+    assertPageBlocked(d, fx.id + "/relock");
+    w.__uxDecor(appEl);
+    assertPageBlocked(d, fx.id + "/relock/sem-render");
+  });
+
+  /* Ciclo COMPLETO bloqueado → liberado → bloqueado sobre a MESMA página.
+     É o único caminho que prova que a neutralização sobrevive a uma
+     restauração: sem ele, um módulo que perdesse a capacidade de neutralizar
+     depois de restaurar passaria despercebido (§3.4 da errata). */
+  (function fullCycle() {
+    const { w, d } = boot();
+    FX.p50ApplyResults(w, d, FX.P50_F3);
+    if (realCanonicalVerdict(w) !== false) throw new Error("ciclo: P50-F3 deveria bloquear");
+    assertPageBlocked(d, "ciclo/1-bloqueado");
+
+    /* liberar pelo caminho REAL */
+    q(d, "#review").click();
+    let guard = 0;
+    while (FX.p50Step(d) > 2 && guard++ < 40) FX.p50Key(w, d, "ArrowLeft");
+    if (FX.p50Step(d) !== 2) throw new Error("ciclo: navegação real falhou (liberar)");
+    q(d, "#app .opts .opt[data-i=\"2\"]").click();
+    w.__DEV.showResults();
+    if (realCanonicalVerdict(w) !== true) throw new Error("ciclo: veredito canônico não abriu");
+    assertPageReleased(w, d, "ciclo/2-liberado", true);
+
+    /* rebloquear pelo caminho REAL, sobre a MESMA página já restaurada */
+    q(d, "#review").click();
+    guard = 0;
+    while (FX.p50Step(d) > 2 && guard++ < 40) FX.p50Key(w, d, "ArrowLeft");
+    if (FX.p50Step(d) !== 2) throw new Error("ciclo: navegação real falhou (rebloquear)");
+    q(d, "#app .opts .opt[data-i=\"NA\"]").click();
+    w.__DEV.showResults();
+    if (realCanonicalVerdict(w) !== false) throw new Error("ciclo: veredito canônico não rebloqueou");
+    assertPageBlocked(d, "ciclo/3-rebloqueado");
+    const appNode = q(d, "#app");
+    w.__uxDecor(appNode);
+    assertPageBlocked(d, "ciclo/3-rebloqueado/sem-render");
+
+    /* 4-5: liberar e rebloquear SEM render, sobre o MESMO nó já neutralizado.
+       É aqui que a restauração roda de verdade — e, logo depois, a
+       neutralização precisa acontecer OUTRA VEZ sobre nós já restaurados. */
+    w.__DEV.setAnswerById("governance", 1);
+    if (realCanonicalVerdict(w) !== true) throw new Error("ciclo: veredito não abriu sem render");
+    w.__uxDecor(appNode);
+    if (q(d, "#app") !== appNode) throw new Error("ciclo: #app foi reconstruído");
+    assertPageReleased(w, d, "ciclo/4-liberado-sem-render", false);
+
+    w.__DEV.setAnswerById("governance", "NA");
+    if (realCanonicalVerdict(w) !== false) throw new Error("ciclo: veredito não rebloqueou sem render");
+    w.__uxDecor(appNode);
+    assertPageBlocked(d, "ciclo/5-rebloqueado-sem-render");
+  })();
+  return true;
+});
+
+T("P50-SUF6", "UNSET, NA e NONE distintos em tela, texto e nome acessível na superfície nova", () => {
+  /* P50-F6: Negócio tem null (q0), "NA" (q1) e 0 (q2) — os três estados juntos. */
+  const { w, d } = boot();
+  FX.p50ApplyResults(w, d, FX.P50_F6);
+  const row = q(d, "#p50-suff [data-p50=\"suff-domain\"][data-dom=\"0\"]");
+  if (!row) throw new Error("composição do domínio 0 ausente na superfície nova");
+  const nConf = Number(row.getAttribute("data-p50-confirmed"));
+  const nVal = Number(row.getAttribute("data-p50-tovalidate"));
+  const nUn = Number(row.getAttribute("data-p50-unanswered"));
+  if (nConf !== 1) throw new Error("NONE (0) não foi contado como confirmado: confirmadas=" + nConf);
+  if (nVal !== 1) throw new Error("\"NA\" não foi contado como a validar: " + nVal);
+  if (nUn !== 1) throw new Error("UNSET (null) não foi contado como não respondido: " + nUn);
+  const t = txt(row);
+  if (!/1 confirmada/.test(t)) throw new Error("estado confirmado ausente do texto: '" + t + "'");
+  if (!/1 a validar/.test(t)) throw new Error("estado 'a validar' ausente do texto: '" + t + "'");
+  if (!/1 não respondida/.test(t)) throw new Error("estado 'não respondida' ausente do texto: '" + t + "'");
+  const acc = accName(row);
+  ["confirmada", "a validar", "não respondida"].forEach(s => {
+    if (acc.indexOf(s) < 0) throw new Error("nome acessível sem o estado '" + s + "': '" + acc + "'");
+  });
+  /* a distinção não depende de cor: o texto sozinho já separa os três estados */
+  const stripped = t.replace(/\s+/g, " ");
+  if (stripped.indexOf("1 confirmada") === stripped.indexOf("1 a validar"))
+    throw new Error("estados não são textualmente distintos");
+
+  /* NONE nunca é apresentado como não respondido, e UNSET nunca pontua */
+  const dom0 = derivedContract(w).domains[0];
+  if (dom0.confirmed !== 1) throw new Error("contrato: NONE não confirma");
+  if (dom0.missing !== 1) throw new Error("contrato: déficit de Negócio deveria ser 1, é " + dom0.missing);
+
+  /* os três estados também permanecem distintos na superfície de perguntas */
+  const B = boot();
+  FX.p50ApplyFixture(B.w, B.d, FX.P50_F6);
+  const items = qa(B.d, "#p50-shell [data-p50=\"domain\"][data-dom=\"0\"] [data-p50=\"q\"]");
+  if (items.length !== 3) throw new Error("esperadas 3 perguntas no domínio 0, obtidas " + items.length);
+  const byQid = {};
+  items.forEach(li => { byQid[li.getAttribute("data-qid")] = li; });
+  const semantics = ["mandate", "governance", "policies"].map(id => {
+    const li = byQid[id];
+    if (!li) throw new Error("pergunta " + id + " ausente na sidebar");
+    return li.getAttribute("data-p50-ans");
+  });
+  if (semantics.join(",") !== "unset,na,confirmed")
+    throw new Error("estados na superfície de perguntas: " + semantics.join(","));
+  const accs = ["mandate", "governance", "policies"].map(id =>
+    accName(byQid[id].querySelector("[data-p50=\"q-state\"]")));
+  if (new Set(accs).size !== 3)
+    throw new Error("nomes acessíveis não distintos na superfície de perguntas: " + JSON.stringify(accs));
+  if (/\b0([.,]0)?\b/.test(accs[0])) throw new Error("UNSET apresentado como zero");
+  if (!/confirmad/i.test(accs[2])) throw new Error("NONE (0) não apresentado como confirmado");
+
+  /* Asserção nova de print/PDF permanece BLOQUEADA pela boundary normativa. */
+  console.log("      P50-SUF6 · new print/PDF assertion: BLOCKED by normative boundary; not counted as PASS");
+  return true;
+});
+
+T("P50-SUF7", "gate exaustivo do contrato derivado — 1024 vetores, campo a campo", () => {
+  const { w, d } = boot();
+  const vectors = allCountVectors();
+  if (vectors.length !== 1024) throw new Error("espaço incompleto: " + vectors.length);
+  let checked = 0, zeroConfirms = 0, nullSeen = 0, naSeen = 0;
+
+  vectors.forEach(ns => {
+    const vec = vecOfCounts(ns);
+    applyVecOnly(w, vec);
+    const got = derivedContract(w);
+    const exp = expectedContract(vec);
+    const fail = (field, e, o) => {
+      throw new Error("vetor [" + ns + "] campo " + field + ": esperado " + JSON.stringify(e) +
+        ", observado " + JSON.stringify(o) + ", estado aplicado " + JSON.stringify(vec));
+    };
+    if (got.confirmedGlobal !== ns[0] + ns[1] + ns[2] + ns[3] + ns[4]) fail("confirmedGlobal", ns.reduce((a, b) => a + b, 0), got.confirmedGlobal);
+    if (got.requiredGlobal !== REQ_GLOBAL_ORACLE) fail("requiredGlobal", REQ_GLOBAL_ORACLE, got.requiredGlobal);
+    if (got.missingGlobal !== exp.missingGlobal) fail("missingGlobal", exp.missingGlobal, got.missingGlobal);
+    if (!Array.isArray(got.domains) || got.domains.length !== 5) fail("domains.length", 5, got.domains && got.domains.length);
+    for (let i = 0; i < 5; i++) {
+      const g = got.domains[i], e = exp.domains[i];
+      if (g.domainId !== e.domainId) fail("domains[" + i + "].domainId", e.domainId, g.domainId);
+      if (g.confirmed !== ns[i]) fail("domains[" + i + "].confirmed", ns[i], g.confirmed);
+      if (g.required !== REQ_DOMAIN_ORACLE) fail("domains[" + i + "].required", REQ_DOMAIN_ORACLE, g.required);
+      if (g.missing !== e.missing) fail("domains[" + i + "].missing", e.missing, g.missing);
+      if (g.missing < 0) fail("domains[" + i + "].missing", ">= 0", g.missing);
+    }
+    if (got.missingGlobal < 0) fail("missingGlobal", ">= 0", got.missingGlobal);
+    if (got.sufficient !== exp.sufficient) fail("sufficient", exp.sufficient, got.sufficient);
+
+    /* equivalência com a FUNÇÃO REAL da Camada 1 */
+    const canonical = realCanonicalVerdict(w);
+    if (got.sufficient !== canonical) fail("derived.sufficient === dataSufficiency(stats)", canonical, got.sufficient);
+
+    /* razões emitidas == déficits exatos, sem domínio satisfeito e sem omissão */
+    const pending = w.__P50SUFF.pending(got);
+    if (!Array.isArray(pending)) fail("pending", "array", typeof pending);
+    const pendIds = pending.map(x => x.domainId).sort((a, b) => a - b);
+    const wantIds = exp.domains.filter(x => x.missing > 0).map(x => x.domainId);
+    if (pendIds.join(",") !== wantIds.join(",")) fail("pendências", wantIds, pendIds);
+    pending.forEach(x => {
+      const e = exp.domains[x.domainId];
+      if (x.missing !== e.missing) fail("pending[" + x.domainId + "].missing", e.missing, x.missing);
+      if (x.confirmed !== e.confirmed) fail("pending[" + x.domainId + "].confirmed", e.confirmed, x.confirmed);
+      if (x.required !== e.required) fail("pending[" + x.domainId + "].required", e.required, x.required);
+      if (x.missing <= 0) fail("pending[" + x.domainId + "].missing", "> 0", x.missing);
+    });
+
+    /* moeda canônica exercitada de fato neste vetor */
+    vec.forEach(v => { if (v === null) nullSeen++; else if (v === "NA") naSeen++; else if (v === 0) zeroConfirms++; });
+    checked++;
+  });
+
+  if (checked !== 1024) throw new Error("vetores verificados: " + checked);
+  if (zeroConfirms === 0) throw new Error("valor 0 (NONE) nunca exercitado como confirmação");
+  if (nullSeen === 0 || naSeen === 0) throw new Error("null/'NA' não exercitados como não confirmação");
+
+  /* moeda: substituir uma confirmação por null e por "NA" fecha o gate no limiar */
+  const base = vecOfCounts([2, 2, 2, 2, 2]);
+  applyVecOnly(w, base);
+  if (derivedContract(w).sufficient !== true) throw new Error("boundary [2,2,2,2,2] não é suficiente");
+  [null, "NA"].forEach(nonConfirming => {
+    const v = base.slice(); v[0] = nonConfirming;
+    applyVecOnly(w, v);
+    const c = derivedContract(w);
+    if (c.sufficient !== false) throw new Error("valor " + JSON.stringify(nonConfirming) + " confirmou indevidamente");
+    if (c.confirmedGlobal !== 9) throw new Error("contagem com " + JSON.stringify(nonConfirming) + ": " + c.confirmedGlobal);
+    if (c.sufficient !== realCanonicalVerdict(w)) throw new Error("divergência do veredito canônico na moeda");
+  });
+  const v0 = base.slice(); v0[0] = 0;                     /* NONE confirma */
+  applyVecOnly(w, v0);
+  const c0 = derivedContract(w);
+  if (c0.confirmedGlobal !== 10 || c0.sufficient !== true) throw new Error("0 (NONE) não confirmou");
+  if (c0.sufficient !== realCanonicalVerdict(w)) throw new Error("divergência do veredito canônico com NONE");
+  void d;
+  return true;
+});
+
+T("P50-SUF8", "equivalência tripla sobre o MESMO estado — 1024 vetores, sem leak", () => {
+  const { w } = boot();
+  const initial = canonical(w);                            /* estado canônico completo */
+  const vectors = allCountVectors();
+  let checked = 0;
+
+  vectors.forEach(ns => {
+    /* 1-2. aplicar o vetor ao owner canônico `ans` pelos setters permitidos */
+    const vec = vecOfCounts(ns);
+    applyVecOnly(w, vec);
+    /* 3. stats pela via canônica · 4. eff semanticamente idêntico ao aplicado */
+    const eff = vec.slice();
+    /* 5-6. funções REAIS, mesmo estado */
+    const canonicalVerdict = realCanonicalVerdict(w);
+    const targetVerdict = realTargetVerdict(w, eff);
+    const derived = derivedContract(w).sufficient;
+    /* 7. equivalência tripla exigida */
+    if (!(targetVerdict === canonicalVerdict && canonicalVerdict === derived))
+      throw new Error("vetor [" + ns + "]: computeTargetProfile=" + targetVerdict +
+        " dataSufficiency=" + canonicalVerdict + " derived=" + derived +
+        " estado " + JSON.stringify(vec));
+    /* 8. restaurar o owner antes do próximo vetor */
+    applyVecOnly(w, new Array(15).fill(null));
+    if (w.eval("ans.some(v=>v!==null)")) throw new Error("restauração incompleta no vetor [" + ns + "]");
+    checked++;
+  });
+
+  if (checked !== 1024) throw new Error("vetores verificados: " + checked);
+  if (canonical(w) !== initial) throw new Error("leak acumulado: estado canônico final != inicial");
+  if (sha(path.join(HERE, "ui_target_v32.js")) !== PROTECTED["ui_target_v32.js"])
+    throw new Error("ui_target_v32.js deixou de ser byte-idêntico");
   return true;
 });
 
@@ -1064,5 +2015,5 @@ T("P50-IC3", "fonte única de ícones: nenhum mapa/asset paralelo nos módulos n
 /* ============================== RESUMO ============================== */
 const pass = results.filter(r => r.ok).length;
 const fail = results.length - pass;
-console.log("\nP50 CORE (microfases 5.0.1+5.0.2): " + pass + " PASS · " + fail + " FAIL de " + results.length);
+console.log("\nP50 CORE (microfases 5.0.1+5.0.2+5.0.3)" + (ONLY.length ? " [FILTRADO]" : "") + ": " + pass + " PASS · " + fail + " FAIL de " + results.length);
 if (fail) process.exitCode = 1;

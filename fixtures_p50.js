@@ -1,9 +1,10 @@
 /* ============================================================================
-   FIXTURES P50 — PHASE 5.0 · microfase 5.0.1
-   Namespace fechado P50-F* (spec §26). Nesta microfase existem SOMENTE
-   P50-F1, P50-F2 e P50-F6 (decisão do proprietário, errata 5.0.1 §2/AMB-6).
-   P50-F3, F4, F5, F7, F8, F9, F10 NÃO são criadas aqui — nem como placeholder.
-   O arquivo é ampliado nas microfases seguintes até conter P50-F1..P50-F10.
+   FIXTURES P50 — PHASE 5.0 · microfases 5.0.1 + 5.0.2 + 5.0.3
+   Namespace fechado P50-F* (spec §26). Existem, nesta ordem de criação:
+     5.0.1  P50-F1 · P50-F2 · P50-F6
+     5.0.2  P50-F8 · P50-F10
+     5.0.3  P50-F3 · P50-F4 · P50-F5
+   P50-F7 e P50-F9 NÃO são criadas — nem como placeholder (§17.3 da diretriz).
 
    Nenhuma fixture inventa estado canônico: um vetor de 15 posições
    (null | 0..3 | "NA") é aplicado pelos owners reais do runtime congelado.
@@ -117,7 +118,56 @@ const P50_F10 = (() => {
   return { id: "P50-F10", name: "Adversarial content", vec: v, notes, landscape: "UNSET", focusQuestion: 0 };
 })();
 
-const P50_FIXTURES = { "P50-F1": P50_F1, "P50-F2": P50_F2, "P50-F6": P50_F6,
+/* ---------------------------------------------------------------------------
+   P50-F3 · Near threshold  (microfase 5.0.3)
+   Contagens confirmadas por domínio: [1, 3, 2, 2, 2] · total 10.
+   O requisito GLOBAL está satisfeito (10 de 10) e ainda assim o veredito é
+   INSUFICIENTE: Negócio permanece com 1 de 2 respostas confirmadas.
+   É a prova de que atingir o total global não basta.
+--------------------------------------------------------------------------- */
+const P50_F3 = (() => {
+  const v = nulls();
+  v[0] = 2;                          /* Negócio    · 1 confirmada  (déficit 1) */
+  v[3] = 1; v[4] = 2; v[5] = 3;      /* Pessoas    · 3 confirmadas             */
+  v[6] = 1; v[7] = 2;                /* Processos  · 2 confirmadas             */
+  v[9] = 2; v[10] = 1;               /* Tecnologia · 2 confirmadas             */
+  v[12] = 3; v[13] = 2;              /* Serviços   · 2 confirmadas             */
+  return { id: "P50-F3", name: "Near threshold", vec: v, landscape: "UNSET",
+           screen: "results", focusQuestion: 0 };
+})();
+
+/* ---------------------------------------------------------------------------
+   P50-F4 · Exactly sufficient  (microfase 5.0.3)
+   Contagens confirmadas por domínio: [2, 2, 2, 2, 2] · total 10.
+   Boundary mínimo exato do gate canônico: qualquer remoção de uma confirmação
+   volta a bloquear.
+--------------------------------------------------------------------------- */
+const P50_F4 = (() => {
+  const v = nulls();
+  v[0] = 2; v[1] = 1;
+  v[3] = 1; v[4] = 2;
+  v[6] = 2; v[7] = 1;
+  v[9] = 2; v[10] = 3;
+  v[12] = 1; v[13] = 2;
+  return { id: "P50-F4", name: "Exactly sufficient", vec: v, landscape: "UNSET",
+           screen: "results", focusQuestion: 0 };
+})();
+
+/* ---------------------------------------------------------------------------
+   P50-F5 · Fully sufficient  (microfase 5.0.3)
+   Contagens confirmadas por domínio: [3, 3, 3, 3, 3] · total 15.
+   Cobertura completa; nenhum déficit global ou por domínio.
+--------------------------------------------------------------------------- */
+const P50_F5 = (() => {
+  const v = nulls();
+  const lv = [2, 1, 3, 1, 2, 3, 2, 3, 1, 3, 2, 1, 2, 1, 3];
+  for (let k = 0; k < N; k++) v[k] = lv[k];
+  return { id: "P50-F5", name: "Fully sufficient", vec: v, landscape: "UNSET",
+           screen: "results", focusQuestion: 0 };
+})();
+
+const P50_FIXTURES = { "P50-F1": P50_F1, "P50-F2": P50_F2, "P50-F3": P50_F3,
+                       "P50-F4": P50_F4, "P50-F5": P50_F5, "P50-F6": P50_F6,
                        "P50-F8": P50_F8, "P50-F10": P50_F10 };
 
 /* ===================== aplicação sobre o runtime real ===================== */
@@ -168,6 +218,37 @@ function p50ApplyFixture(w, d, fx) {
   return fx;
 }
 
+/* Aplica a fixture e alcança a tela de RESULTADOS pelo owner canônico de
+   respostas + a rota congelada de resultados (mesma usada por realExport da
+   5.0.2). Não escreve derivado algum e não toca em suficiência. */
+function p50ApplyResults(w, d, fx) {
+  w.__DEV.setArq(0);
+  p50ApplyVec(w, fx.vec, fx.notes);
+  w.__DEV.showResults();
+  return fx;
+}
+
+/* Validação ESTRUTURAL das contagens declaradas de cada fixture: se o vetor
+   deixar de produzir as contagens documentadas, a fixture falha aqui — nunca
+   silenciosamente dentro de um gate. Oracle independente (p50ConfirmedByDomain). */
+const P50_FIXTURE_COUNTS = {
+  "P50-F1": [0, 0, 0, 0, 0],
+  "P50-F2": [2, 1, 0, 1, 0],
+  "P50-F3": [1, 3, 2, 2, 2],
+  "P50-F4": [2, 2, 2, 2, 2],
+  "P50-F5": [3, 3, 3, 3, 3],
+  "P50-F6": [1, 0, 0, 0, 0]
+};
+function p50AssertFixtureCounts() {
+  Object.keys(P50_FIXTURE_COUNTS).forEach(id => {
+    const got = p50ConfirmedByDomain(P50_FIXTURES[id].vec);
+    const want = P50_FIXTURE_COUNTS[id];
+    if (got.join(",") !== want.join(","))
+      throw new Error(id + ": contagens [" + got + "] != declaradas [" + want + "]");
+  });
+  return true;
+}
+
 /* Oráculo independente: contagem de confirmadas por domínio a partir do vetor,
    recalculada aqui, sem chamar domStat()/confirmedCount(). */
 function p50ConfirmedByDomain(vec) {
@@ -180,7 +261,8 @@ function p50ConfirmedTotal(vec) {
 
 module.exports = {
   P50_QIDS, P50_DOM_OF, P50_DOM_PT, P50_DOM_EN, P50_SCORES,
-  P50_F1, P50_F2, P50_F6, P50_F8, P50_F10, P50_FIXTURES, P50_ADVERSARIAL,
-  p50Step, p50Key, p50ApplyVec, p50GotoQuestion, p50ApplyFixture,
-  p50ConfirmedByDomain, p50ConfirmedTotal
+  P50_F1, P50_F2, P50_F3, P50_F4, P50_F5, P50_F6, P50_F8, P50_F10,
+  P50_FIXTURES, P50_ADVERSARIAL, P50_FIXTURE_COUNTS,
+  p50Step, p50Key, p50ApplyVec, p50GotoQuestion, p50ApplyFixture, p50ApplyResults,
+  p50ConfirmedByDomain, p50ConfirmedTotal, p50AssertFixtureCounts
 };

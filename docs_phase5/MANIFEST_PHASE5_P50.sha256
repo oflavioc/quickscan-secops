@@ -1,7 +1,7 @@
 # MANIFEST_PHASE5_P50.sha256 — delta da Phase 5.0
 # 5.0.1 Assessment Shell & Answer Semantics  (integrada em main · 70154a1b…)
 # 5.0.2 Evidence Capture & Progress UX       (integrada em main · e520c05d…)
-# 5.0.3 Sufficiency-Aware Results            (candidata SELADA · PASS COM RESSALVAS NAO BLOQUEANTES · aguarda revisao de PR)
+# 5.0.3 Sufficiency-Aware Results            (integrada em main · 4e30c8e4… · merge e0cde76f…)
 # gerado POR ULTIMO; exclui apenas a si proprio
 # Completude conferida por ORACULO INDEPENDENTE do manifesto: o delta reportado
 # por `git status --porcelain` — zero duplicatas, zero auto-referencia, zero ausentes.
@@ -19,14 +19,19 @@
 # registro de aceitacao MICROFASE_5_0_3_ACCEPTANCE.md; RQ-REAUD-FIN-1 aceita
 # pelo proprietario. Nenhum byte executavel alterado; o relatorio auditado
 # permanece em ea313469. Cardinalidade 47 -> 51 por estes quatro documentos.
-# Regenerado POR ULTIMO, depois da selagem documental.
+# CORRECAO POS-MERGE (test-only): P50-PR1 passou a resolver a baseline de
+# ENTRADA pelo COMMIT IMUTAVEL fe4a536a (era HEAD:, que apos a integracao
+# apontava para o proprio candidato). Somente tests_p50_chromium.js mudou;
+# zero byte de runtime, evidencia ou documento selado. Cardinalidade 51 -> 52
+# pelo relatorio POST_MERGE_FIX_P50_PR1_BASELINE.md.
+# Regenerado POR ULTIMO, depois da assurance direcionada desta correcao.
 1f9c7a5a8ad10b724f9caab86eead66eeb5ad6df1f397c4b41b0b75380577b09  ui_p50_shell_v32.js
 cdb4a6edcc8eee64c33d7410301ddcf059e725ffa588ca009b16fc7afd6e5a32  ui_p50_suff_v32.js
 9694ef05c518e2ad11100f2ce0b3c15a7e9be2587c5a2a59de51d6768d30e670  ui_p50_results_v32.js
 57a6fa7204a5de3bce6527785f1c318ce47ecf2c0acfe5c04cabe488d77d7620  ui_p50_v32.css
 90b2a7d2a3044094a3bafb48b6954a28d171e307733f451e4495b445023bc9b5  fixtures_p50.js
 ff6e26469c7ee41109e33068477d991c983d4d495969b5625ecadeb4a88927bc  tests_p50_core.js
-3295c91f2d12d932699a87bba85657c62127175f39cf028001580c324371052e  tests_p50_chromium.js
+52c5e1357dbb53b19bcff483e9521356b0b48063bdb6610df90114fc3bdf8847  tests_p50_chromium.js
 28f2e876d4f614baf83b02d0c23bbbf19a983d4b0a943e1b42d1f8c8c067ddf5  tests_p50_mutants.js
 bce37fef5e4722e6e6215186f33c9f0af030bb03e706504a30ca80fededc07bc  build_v32_html.py
 fc0bf13b5c32832c04121245f3512dcc0e66744d2d1164da598bab1ec924746f  package.json
@@ -42,6 +47,7 @@ f0e207554cc0ed5d63354212baf52df88d841209f5dc48494aa334f971af7cb5  docs_phase5/AU
 8d9ed98c2ec9107097a613da9c4d1cb849115ad0e77d1ac8d2ddaed50584bbea  docs_phase5/AUDITORIA_INDEPENDENTE_FINAL_MICROFASE_5_0_3.md
 ebdf69e6992725b5e71edd86047773f8cc224a48582828431a0cb679f87c752d  docs_phase5/AUDITORIA_INDEPENDENTE_REAUDITORIA_FINAL_MICROFASE_5_0_3.md
 74ba2e69090f81015fdfbabceccdd8f35b5dccbb1c3fff820e5b0ad081652db1  docs_phase5/MICROFASE_5_0_3_ACCEPTANCE.md
+b1474bf1b5a9e1caa3310dd0dad0bc08e0237d838611ff6dd1926179014bcb43  docs_phase5/POST_MERGE_FIX_P50_PR1_BASELINE.md
 59bbb13565351b75314c886c9e9001ed0040de24ff13cd6840a4c7bea66943af  docs_phase5/evidence_p50/P50-ACC6-selection-1440.json
 f749d27365d1168df57b15419ab891c87fd794ef1ec7b60c42255aeb2f362963  docs_phase5/evidence_p50/P50-mutation-5.0.1.json
 81fdbac91593a0e61931cc24afd8f4ea778fe336715b6d4fc35fc4b433f21748  docs_phase5/evidence_p50/P50-ACC6-P50-F2-1440.png

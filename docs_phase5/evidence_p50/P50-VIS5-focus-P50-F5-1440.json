@@ -1,0 +1,352 @@
+{
+  "gate": "P50-VIS5",
+  "microfase": "5.0.5",
+  "fixture": "P50-F5",
+  "surface": "results",
+  "viewport": "1440x900",
+  "method": "travessia EXCLUSIVAMENTE por teclado (Tab), com o ponto de partida de navegação sequencial reposicionado no <body> e o ciclo percorrido por inteiro; nas telas de resultados, uma travessia por tab. Indicador nominal = outline | box-shadow | border; contraste do indicador composto sobre o fundo efetivo, limiar 3:1",
+  "coverageFloor": [
+    {
+      "label": "tab selecionada de Results",
+      "min": 1
+    },
+    {
+      "label": "painel de Results",
+      "min": 1
+    },
+    {
+      "label": "região rolável da alternativa acessível",
+      "min": 1
+    },
+    {
+      "label": "exportar sessão",
+      "min": 1
+    },
+    {
+      "label": "importar sessão",
+      "min": 1
+    }
+  ],
+  "tabStops": [
+    "button#ux-ref-open",
+    "summary",
+    "button#v32cta",
+    "button.cta",
+    "button#editprio",
+    "button#review",
+    "button#restart",
+    "button#ux-newsession",
+    "button#ses-export",
+    "button#ses-import",
+    "button#ux-tgt-open",
+    "button#p50-tab-resumo",
+    "div#p50-panel-resumo",
+    "button#p50-tab-dominios",
+    "div#p50-panel-dominios",
+    "button#p50-tab-heatmap",
+    "div#p50-panel-heatmap",
+    "div[data-p50=\"alt-region\"].p50-alt",
+    "button#p50-tab-analise",
+    "div#p50-panel-analise"
+  ],
+  "elements": [
+    {
+      "case": "P50-F5/results@1440",
+      "sel": "button#ses-export",
+      "focusVisible": true,
+      "indicator": {
+        "kind": "outline",
+        "width": 2,
+        "color": "rgb(218, 41, 28)",
+        "style": "solid"
+      },
+      "box": {
+        "l": 100,
+        "t": 429.2,
+        "w": 143.2,
+        "h": 42
+      },
+      "clippedBy": null,
+      "contrast": {
+        "indicatorColor": "rgb(218, 41, 28)",
+        "ownBackground": "rgb(11,11,12)",
+        "ratioOwn": 4.043,
+        "aroundBackground": "rgb(11,11,12)",
+        "ratioAround": 4.043,
+        "threshold": 3
+      },
+      "verdict": "PASS"
+    },
+    {
+      "case": "P50-F5/results@1440",
+      "sel": "button#ses-import",
+      "focusVisible": true,
+      "indicator": {
+        "kind": "outline",
+        "width": 2,
+        "color": "rgb(218, 41, 28)",
+        "style": "solid"
+      },
+      "box": {
+        "l": 253.2,
+        "t": 429.2,
+        "w": 142.4,
+        "h": 42
+      },
+      "clippedBy": null,
+      "contrast": {
+        "indicatorColor": "rgb(218, 41, 28)",
+        "ownBackground": "rgb(11,11,12)",
+        "ratioOwn": 4.043,
+        "aroundBackground": "rgb(11,11,12)",
+        "ratioAround": 4.043,
+        "threshold": 3
+      },
+      "verdict": "PASS"
+    },
+    {
+      "case": "P50-F5/results@1440",
+      "sel": "button#p50-tab-resumo",
+      "focusVisible": true,
+      "indicator": {
+        "kind": "outline",
+        "width": 2,
+        "color": "rgb(245, 245, 244)",
+        "style": "solid"
+      },
+      "box": {
+        "l": 326,
+        "t": 427.5,
+        "w": 81.3,
+        "h": 44
+      },
+      "clippedBy": null,
+      "contrast": {
+        "indicatorColor": "rgb(245, 245, 244)",
+        "ownBackground": "rgb(21,21,23)",
+        "ratioOwn": 16.717,
+        "aroundBackground": "rgb(21,21,23)",
+        "ratioAround": 16.717,
+        "threshold": 3
+      },
+      "verdict": "PASS"
+    },
+    {
+      "case": "P50-F5/results@1440",
+      "sel": "div#p50-panel-resumo",
+      "focusVisible": true,
+      "indicator": {
+        "kind": "outline",
+        "width": 2,
+        "color": "rgb(245, 245, 244)",
+        "style": "solid"
+      },
+      "box": {
+        "l": 326,
+        "t": 71.5,
+        "w": 787,
+        "h": 828.8
+      },
+      "clippedBy": null,
+      "contrast": {
+        "indicatorColor": "rgb(245, 245, 244)",
+        "ownBackground": "rgb(21,21,23)",
+        "ratioOwn": 16.717,
+        "aroundBackground": "rgb(21,21,23)",
+        "ratioAround": 16.717,
+        "threshold": 3
+      },
+      "verdict": "PASS"
+    },
+    {
+      "case": "P50-F5/results@1440",
+      "sel": "button#p50-tab-dominios",
+      "focusVisible": true,
+      "indicator": {
+        "kind": "outline",
+        "width": 2,
+        "color": "rgb(245, 245, 244)",
+        "style": "solid"
+      },
+      "box": {
+        "l": 410.4,
+        "t": 427.5,
+        "w": 89.2,
+        "h": 44
+      },
+      "clippedBy": null,
+      "contrast": {
+        "indicatorColor": "rgb(245, 245, 244)",
+        "ownBackground": "rgb(21,21,23)",
+        "ratioOwn": 16.717,
+        "aroundBackground": "rgb(21,21,23)",
+        "ratioAround": 16.717,
+        "threshold": 3
+      },
+      "verdict": "PASS"
+    },
+    {
+      "case": "P50-F5/results@1440",
+      "sel": "div#p50-panel-dominios",
+      "focusVisible": true,
+      "indicator": {
+        "kind": "outline",
+        "width": 2,
+        "color": "rgb(245, 245, 244)",
+        "style": "solid"
+      },
+      "box": {
+        "l": 326,
+        "t": -0.5,
+        "w": 787,
+        "h": 1200.9
+      },
+      "clippedBy": null,
+      "contrast": {
+        "indicatorColor": "rgb(245, 245, 244)",
+        "ownBackground": "rgb(21,21,23)",
+        "ratioOwn": 16.717,
+        "aroundBackground": "rgb(21,21,23)",
+        "ratioAround": 16.717,
+        "threshold": 3
+      },
+      "verdict": "PASS"
+    },
+    {
+      "case": "P50-F5/results@1440",
+      "sel": "button#p50-tab-heatmap",
+      "focusVisible": true,
+      "indicator": {
+        "kind": "outline",
+        "width": 2,
+        "color": "rgb(245, 245, 244)",
+        "style": "solid"
+      },
+      "box": {
+        "l": 501.3,
+        "t": 427.5,
+        "w": 87.8,
+        "h": 44
+      },
+      "clippedBy": null,
+      "contrast": {
+        "indicatorColor": "rgb(245, 245, 244)",
+        "ownBackground": "rgb(21,21,23)",
+        "ratioOwn": 16.717,
+        "aroundBackground": "rgb(21,21,23)",
+        "ratioAround": 16.717,
+        "threshold": 3
+      },
+      "verdict": "PASS"
+    },
+    {
+      "case": "P50-F5/results@1440",
+      "sel": "div#p50-panel-heatmap",
+      "focusVisible": true,
+      "indicator": {
+        "kind": "outline",
+        "width": 2,
+        "color": "rgb(245, 245, 244)",
+        "style": "solid"
+      },
+      "box": {
+        "l": 326,
+        "t": -0.5,
+        "w": 787,
+        "h": 1272.2
+      },
+      "clippedBy": null,
+      "contrast": {
+        "indicatorColor": "rgb(245, 245, 244)",
+        "ownBackground": "rgb(21,21,23)",
+        "ratioOwn": 16.717,
+        "aroundBackground": "rgb(21,21,23)",
+        "ratioAround": 16.717,
+        "threshold": 3
+      },
+      "verdict": "PASS"
+    },
+    {
+      "case": "P50-F5/results@1440",
+      "sel": "div[data-p50=\"alt-region\"].p50-alt",
+      "focusVisible": true,
+      "indicator": {
+        "kind": "outline",
+        "width": 2,
+        "color": "rgb(245, 245, 244)",
+        "style": "solid"
+      },
+      "box": {
+        "l": 326,
+        "t": 393.1,
+        "w": 787,
+        "h": 506.6
+      },
+      "clippedBy": null,
+      "contrast": {
+        "indicatorColor": "rgb(245, 245, 244)",
+        "ownBackground": "rgb(21,21,23)",
+        "ratioOwn": 16.717,
+        "aroundBackground": "rgb(21,21,23)",
+        "ratioAround": 16.717,
+        "threshold": 3
+      },
+      "verdict": "PASS"
+    },
+    {
+      "case": "P50-F5/results@1440",
+      "sel": "button#p50-tab-analise",
+      "focusVisible": true,
+      "indicator": {
+        "kind": "outline",
+        "width": 2,
+        "color": "rgb(245, 245, 244)",
+        "style": "solid"
+      },
+      "box": {
+        "l": 593.7,
+        "t": 427.5,
+        "w": 76.3,
+        "h": 44
+      },
+      "clippedBy": null,
+      "contrast": {
+        "indicatorColor": "rgb(245, 245, 244)",
+        "ownBackground": "rgb(21,21,23)",
+        "ratioOwn": 16.717,
+        "aroundBackground": "rgb(21,21,23)",
+        "ratioAround": 16.717,
+        "threshold": 3
+      },
+      "verdict": "PASS"
+    },
+    {
+      "case": "P50-F5/results@1440",
+      "sel": "div#p50-panel-analise",
+      "focusVisible": true,
+      "indicator": {
+        "kind": "outline",
+        "width": 2,
+        "color": "rgb(245, 245, 244)",
+        "style": "solid"
+      },
+      "box": {
+        "l": 326,
+        "t": 494.5,
+        "w": 787,
+        "h": 270.2
+      },
+      "clippedBy": null,
+      "contrast": {
+        "indicatorColor": "rgb(245, 245, 244)",
+        "ownBackground": "rgb(21,21,23)",
+        "ratioOwn": 16.717,
+        "aroundBackground": "rgb(21,21,23)",
+        "ratioAround": 16.717,
+        "threshold": 3
+      },
+      "verdict": "PASS"
+    }
+  ],
+  "verdict": "PASS"
+}

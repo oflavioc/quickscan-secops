@@ -993,12 +993,21 @@ T("P50-SUF0", "nenhum renderer é dono de lógica de suficiência; limiar declar
   if (!/function dataSufficiency\(stats\)\{\s*\n\s*return confirmedCount\(\) >= 10 && stats\.every\(s=>s\.n>=2\);/.test(html))
     throw new Error("dataSufficiency() não está byte-idêntica no build");
 
-  /* (f) nenhum símbolo de microfase FUTURA antecipado.
-     A 5.0.4 (heat map, drill-down, Current × Target) passou a ser escopo
-     AUTORIZADO e saiu desta lista; o lint continua vivo e agora protege a
-     fronteira seguinte — 5.0.5 (acessibilidade ampla, responsivo, fechamento
-     visual) — e a área permanentemente fora de escopo da fase (§15/§23):
-     framework mapping e semântica nova de print. */
+  /* (f) nenhum símbolo fora da fronteira autorizada nos módulos de PRODUÇÃO.
+     R3 (auditoria 5.0.4) · a mensagem de diagnóstico ficara presa à microfase
+     anterior. Com a 5.0.5 AUTORIZADA, a lista deixa de guardar uma "microfase
+     futura" e passa a guardar duas coisas permanentes:
+
+       (i)  a área fora de escopo da Phase 5.0 por decisão normativa (§15/§23):
+            framework mapping NIST/CIS e qualquer semântica nova de print;
+       (ii) axe-core: é dependência EXCLUSIVA de teste (P50-ACC1, §29.3).
+            Nenhum byte de axe pode entrar em módulo de produção e, por
+            consequência, no HTML construído — este lint é a prova estrutural
+            dessa separação, e vale para sempre, não só nesta microfase.
+
+     Os sentinelas `P50-ACC7`/`P50-VIS11` permanecem: não existem na REV B
+     (§25.7 vai até ACC6; §25.6 até VIS10) e acusariam invenção de gate fora
+     da numeração normativa. */
   const forbidden = ["axe-core", "axeCore", "runAxe", "P50-ACC7", "P50-VIS11",
                      "frameworkMapping", "framework-mapping", "nistCsf", "nist-csf", "cisControls",
                      "buildPrintReport", "preparePrint"];
@@ -1008,8 +1017,18 @@ T("P50-SUF0", "nenhum renderer é dono de lógica de suficiência; limiar declar
        implementado); a antecipação proibida é de CÓDIGO executável. */
     const code = strip(src);
     forbidden.forEach(sym => {
-      if (code.indexOf(sym) >= 0) throw new Error(path.basename(f) + " antecipa símbolo da 5.0.4: " + sym);
+      if (code.indexOf(sym) >= 0)
+        throw new Error(path.basename(f) + " contém símbolo fora da fronteira autorizada " +
+          "(área fora de escopo §15/§23 ou dependência exclusiva de teste): " + sym);
     });
+  });
+
+  /* (g) prova POSITIVA de que a dependência de teste da 5.0.5 não alcança o
+     produto: o HTML CONSTRUÍDO não contém byte algum de axe-core (P50-ACC1,
+     §29.3 "axe-core não entra no HTML"). O lint de módulo (f) é a causa; esta
+     é a consequência observada no artefato entregável. */
+  ["axe-core", "axeCore", "AxeBuilder", "@axe-core/playwright"].forEach(sym => {
+    if (html.indexOf(sym) >= 0) throw new Error("HTML construído contém símbolo de axe: " + sym);
   });
   return true;
 });
@@ -2298,8 +2317,171 @@ T("P50-IC3", "fonte única de ícones: nenhum mapa/asset paralelo nos módulos n
   return true;
 });
 
+/* ==========================================================================
+   MICROFASE 5.0.5 · fechamento de identidade visual e de ícones
+   ========================================================================== */
+
+/* Autoridade congelada sobre as superfícies protegidas. Estes hashes fixam os
+   arquivos que a §29.4 declara protegidos e que governam a cor (V4+V5 vivem em
+   tests_visual/screen.spec.js) — pinar aqui é o guard estrutural de que a
+   Phase 5.0 não moveu a autoridade, e não uma reimplementação dela. */
+const FROZEN_VISUAL_AUTHORITY = {
+  "tests_visual/screen.spec.js": "6127d1de876d5dbc54b6fe70899d62aa48b576d2e8af6378381e4bcdb5cb1195",
+  "tests_visual/print.spec.js": "9fe2e998e6151b9fa447c334456605fa68d9c4b1b2469a2d6d5650d58f75565d",
+  "tests_visual/session.spec.js": "99956abdd43b0c946d2d9035c75fdeaae7a8bcba9e9d4051f31bb9647b0df499",
+  "tests_visual/fixtures.js": "1b3cead911563bcb53192a6b6312851d297ab10a1109ff876d8bf1bfc2c07a86",
+  "playwright.config.js": "9661deed970d595c62bc924708e1eb0b6d09c1c7db60176972819f1ea15b5dcf",
+  "tests_icons_m46.js": "f73f96e32951507135c0b36d968fe12e9ffbc268e8ad438ea2e6c861a8b88123"
+};
+
+T("P50-COR4", "regressão de autoridade: V4+V5 e superfícies congeladas de cor intactas", () => {
+  /* (a) os arquivos que HOSPEDAM a autoridade continuam byte-idênticos */
+  Object.keys(FROZEN_VISUAL_AUTHORITY).forEach(rel => {
+    const abs = path.join(HERE, rel);
+    if (!fs.existsSync(abs)) throw new Error(rel + " ausente");
+    const got = sha(abs);
+    if (got !== FROZEN_VISUAL_AUTHORITY[rel])
+      throw new Error(rel + " alterado (" + got.slice(0, 12) + "… != " + FROZEN_VISUAL_AUTHORITY[rel].slice(0, 12) + "…)");
+  });
+  /* (b) o teste V4+V5 continua existindo, nominalmente, com a asserção de token */
+  const screen = readIf(path.join(HERE, "tests_visual", "screen.spec.js")) || "";
+  if (!/test\('V4\+V5 progress semantics'/.test(screen))
+    throw new Error("o teste V4+V5 desapareceu de tests_visual/screen.spec.js");
+  ["--ftnt-purple", "--ftnt-green", "--ftnt-teal", "--ftnt-blue", "--ftnt-silver"].forEach(t => {
+    if (screen.indexOf(t) < 0) throw new Error("V4+V5 deixou de asserir o token congelado " + t);
+  });
+  /* (c) a fonte única dos tokens permanece a congelada, com os mesmos valores */
+  const uxcss = readIf(path.join(HERE, "ui_ux_v32.css")) || "";
+  const pairs = { "--ftnt-purple": "#9063CD", "--ftnt-green": "#3CB17E", "--ftnt-teal": "#2CCCD3",
+                  "--ftnt-blue": "#307FE2", "--ftnt-silver": "#A2B2C8" };
+  Object.keys(pairs).forEach(tok => {
+    const re = new RegExp(tok.replace(/-/g, "\\-") + "\\s*:\\s*" + pairs[tok], "i");
+    if (!re.test(uxcss)) throw new Error("token congelado " + tok + " não resolve mais para " + pairs[tok]);
+  });
+  /* (d) nenhuma paleta nova: os módulos da Camada 5 não declaram custom
+     property de cor própria — só CONSOMEM as congeladas (COR-01.1) */
+  P50_NEW_MODULES.forEach(f => {
+    const src = readIf(f); if (src === null) return;
+    const decls = (src.match(/--[a-z0-9-]*(color|hex|palette|ftnt)[a-z0-9-]*\s*:/gi) || []);
+    if (decls.length) throw new Error(path.basename(f) + " declara custom property de cor: " + decls.join(","));
+  });
+  /* (e) o HTML construído continua servindo os cinco tokens uma única vez */
+  Object.keys(pairs).forEach(tok => {
+    const n = (HTML.match(new RegExp(tok.replace(/-/g, "\\-") + "\\s*:", "g")) || []).length;
+    if (n !== 1) throw new Error("token " + tok + " declarado " + n + " vez(es) no HTML (esperado 1)");
+  });
+  return true;
+});
+
+T("P50-IC4", "regressão de ícones: ICONS 4.6 integral e superfícies congeladas intactas", () => {
+  /* (a) o resolvedor congelado e o gerador de assets continuam byte-idênticos
+     (já fixados em PROTECTED; reafirmados aqui pelo escopo do gate) */
+  ["ui_icons_v32.js", "generate_icons_v32.py", "ui_v32.js"].forEach(f => {
+    if (sha(path.join(HERE, f)) !== PROTECTED[f]) throw new Error(f + " alterado");
+  });
+  /* (b) a ponte continua expondo iconFor — fonte única da Camada 5 */
+  if (!/window\.__V32UI\s*=\s*\{[^}]*\biconFor\b/.test(HTML))
+    throw new Error("window.__V32UI deixou de expor iconFor");
+  /* (c) a suíte ICONS 4.6 é REEXECUTADA e precisa fechar 12/12.
+     Oráculo independente: a contagem sai do stdout da própria suíte congelada,
+     não de um relatório anterior. SKIP/timeout/exit != 0 reprovam. */
+  const cp = require("child_process");
+  const r = cp.spawnSync(process.execPath, ["tests_icons_m46.js"],
+    { cwd: HERE, encoding: "utf8", timeout: 10 * 60 * 1000, maxBuffer: 32 * 1024 * 1024 });
+  if (r.error) throw new Error("ICONS 4.6 não executou: " + String(r.error.message).split("\n")[0]);
+  if (r.status !== 0) throw new Error("ICONS 4.6 exit " + r.status);
+  const m = String(r.stdout || "").match(/ICONS 4\.6:\s*(\d+) PASS · (\d+) FAIL de (\d+)/);
+  if (!m) throw new Error("ICONS 4.6 sem linha de contagem no stdout");
+  if (+m[1] !== 12 || +m[2] !== 0 || +m[3] !== 12)
+    throw new Error("ICONS 4.6 regrediu: " + m[1] + " PASS / " + m[2] + " FAIL de " + m[3]);
+  return true;
+});
+
+/* ==========================================================================
+   Verificações de ACEITE das ressalvas R2 e R4 da auditoria independente da
+   5.0.4. NÃO são gates do namespace P50 — as ressalvas eram editoriais, não
+   requisitos normativos novos — e por isso levam identificador próprio, como
+   já fizeram as verificações ACEITE-UX das microfases anteriores.
+   ========================================================================== */
+T("ACEITE-R2-5.0.5", "contagem e limiar de suficiência são grandezas declaradas separadamente", () => {
+  const R = boot();
+  FX.p50ApplyVec(R.w, FX.P50_F5.vec);                   /* 15 confirmadas: gate ABERTO */
+  R.w.__DEV.showResults();
+  const d = R.d;
+  const g = q(d, "#p50-suff [data-p50=\"suff-global\"]");
+  if (!g) throw new Error("linha global ausente");
+  const gt = txt(g);
+  if (/\b15 de 10\b/.test(gt)) throw new Error("forma 'N de M' com N > M persiste na linha global: '" + gt + "'");
+  if (!/15 respostas confirmadas/.test(gt)) throw new Error("contagem real ausente: '" + gt + "'");
+  if (!/mínimo requerido: 10/.test(gt)) throw new Error("limiar não declarado como mínimo: '" + gt + "'");
+  const drills = qa(d, "#p50-results [data-p50=\"drill-state\"]").map(txt);
+  if (drills.length !== 5) throw new Error(drills.length + " linhas de drill-down (esperado 5)");
+  drills.forEach(t => {
+    if (/\b3 de 2\b/.test(t)) throw new Error("forma '3 de 2' persiste no drill-down: '" + t + "'");
+    if (!/respostas confirmadas · mínimo requerido: 2/.test(t))
+      throw new Error("redação do drill-down não separa contagem de limiar: '" + t + "'");
+  });
+  /* a forma "(N de M)" continua CORRETA e presente onde N < M (déficit) */
+  const P = boot();
+  FX.p50ApplyVec(P.w, FX.P50_F2.vec);                   /* gate FECHADO, com déficits */
+  P.w.__DEV.showResults();
+  const defs = qa(P.d, "#p50-suff [data-p50=\"suff-deficit\"]").map(txt);
+  if (!defs.length) throw new Error("nenhuma pendência exibida sob gate fechado");
+  if (!defs.some(t => /\(\d+ de \d+\)/.test(t)))
+    throw new Error("a forma '(N de M)' do déficit foi removida indevidamente");
+  return true;
+});
+
+T("ACEITE-R4-5.0.5", "nome acessível de presence sem redundância, com UNSET × NONE preservados", () => {
+  const R = boot();
+  FX.p50ApplyVec(R.w, FX.P50_F7.vec);
+  const L = R.w.__DEV.V32.TECH_LANDSCAPE;
+  L["knowledge-management"].presence = "UNSET"; L["knowledge-management"].declaredDriver = null;
+  L["security-analytics"].presence = "NONE";
+  R.w.__DEV.showResults();
+  const chip = st => q(R.d, "#p50-results [data-p50=\"presence-chip\"][data-p50-presence=\"" + st + "\"]");
+  const unset = chip("UNSET"), none = chip("NONE");
+  if (!unset || !none) throw new Error("chips UNSET/NONE ausentes");
+  const aU = unset.getAttribute("aria-label") || "", aN = none.getAttribute("aria-label") || "";
+  const visU = txt(unset.querySelector("[data-p50=\"presence-state\"]"));
+  /* (a) o rótulo visível não é repetido dentro do nome acessível */
+  const occurrences = aU.toLowerCase().split(visU.toLowerCase()).length - 1;
+  if (occurrences !== 1) throw new Error("rótulo '" + visU + "' aparece " + occurrences + "x no nome acessível: '" + aU + "'");
+  /* (b) a distinção normativa UI-016(b) permanece inteira */
+  if (aU === aN) throw new Error("nome acessível idêntico entre UNSET e NONE");
+  if (!/nunca ausência/.test(aU)) throw new Error("UNSET perdeu a declaração 'nunca ausência': '" + aU + "'");
+  if (!/ausência confirmada/.test(aN)) throw new Error("NONE perdeu 'ausência confirmada': '" + aN + "'");
+  if (unset.getAttribute("data-p50-confirmed") !== "false") throw new Error("UNSET marcado como confirmado");
+  if (none.getAttribute("data-p50-confirmed") !== "true") throw new Error("NONE não marcado como estado declarado");
+  return true;
+});
+
+T("ACEITE-UI048-5.0.5", "orientação sobre dado sensível junto ao campo de evidência", () => {
+  const R = boot();
+  FX.p50ApplyFixture(R.w, R.d, FX.P50_F2);              /* navegação pelos controles congelados */
+  const g = q(R.d, "#app [data-p50=\"evidence-guidance\"]");
+  if (!g) throw new Error("orientação ausente na tela de pergunta");
+  if (txt(g) !== "Evite registrar segredos, credenciais ou dados pessoais desnecessários.")
+    throw new Error("texto divergente: '" + txt(g) + "'");
+  /* tom informativo, não alarmista: sem role de alerta e sem aria-live */
+  if (g.getAttribute("role") || g.getAttribute("aria-live"))
+    throw new Error("orientação usa semântica de alerta");
+  /* ligada ao textarea congelado por atributo ADITIVO */
+  const tgl = q(R.d, "#notetgl");
+  if (!tgl) throw new Error("controle congelado de nota ausente");
+  tgl.click();
+  const ta = q(R.d, "#notetxt");
+  if (!ta) throw new Error("textarea congelado não abriu");
+  if (ta.getAttribute("aria-describedby") !== g.id && ta.getAttribute("aria-describedby") !== "p50-ev-guide")
+    throw new Error("textarea não referencia a orientação: '" + ta.getAttribute("aria-describedby") + "'");
+  /* a orientação não vira claim de persistência nem de segurança */
+  if (/salv|autom|segur[oa]|protegid|criptograf/i.test(txt(g)))
+    throw new Error("orientação faz claim indevido: '" + txt(g) + "'");
+  return true;
+});
+
 /* ============================== RESUMO ============================== */
 const pass = results.filter(r => r.ok).length;
 const fail = results.length - pass;
-console.log("\nP50 CORE (microfases 5.0.1+5.0.2+5.0.3+5.0.4)" + (ONLY.length ? " [FILTRADO]" : "") + ": " + pass + " PASS · " + fail + " FAIL de " + results.length);
+console.log("\nP50 CORE (microfases 5.0.1+5.0.2+5.0.3+5.0.4+5.0.5)" + (ONLY.length ? " [FILTRADO]" : "") + ": " + pass + " PASS · " + fail + " FAIL de " + results.length);
 if (fail) process.exitCode = 1;

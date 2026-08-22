@@ -1,0 +1,134 @@
+{
+  "gate": "P50-ACC1",
+  "microfase": "5.0.5",
+  "package": "@axe-core/playwright",
+  "version": "4.13.0",
+  "axeCore": {
+    "name": "axe-core",
+    "version": "4.13.0"
+  },
+  "tags": [
+    "wcag2a",
+    "wcag2aa",
+    "wcag21a",
+    "wcag21aa",
+    "wcag22aa"
+  ],
+  "containers": [
+    "#p50-shell",
+    "#p50-suff",
+    "#p50-results",
+    "#app .p50-chips",
+    "#app .p50-cueblock",
+    ".p50-ses"
+  ],
+  "blockingImpacts": [
+    "critical",
+    "serious"
+  ],
+  "acceptedLimitations": [],
+  "run": {
+    "fixture": "P50-F5",
+    "viewport": "1920x1080",
+    "scans": [
+      {
+        "surface": "assessment",
+        "containers": [
+          "#p50-shell",
+          "#app .p50-chips",
+          "#app .p50-cueblock",
+          ".p50-ses"
+        ],
+        "testEngine": {
+          "name": "axe-core",
+          "version": "4.13.0"
+        },
+        "passCount": 17,
+        "incompleteCount": 1,
+        "violations": [],
+        "settle": {
+          "runningAnimations": 0,
+          "waitedMs": 364
+        }
+      },
+      {
+        "surface": "results:resumo",
+        "containers": [
+          "#p50-suff",
+          "#p50-results",
+          ".p50-ses"
+        ],
+        "testEngine": {
+          "name": "axe-core",
+          "version": "4.13.0"
+        },
+        "passCount": 17,
+        "incompleteCount": 0,
+        "violations": [],
+        "settle": {
+          "runningAnimations": 0,
+          "waitedMs": 1
+        }
+      },
+      {
+        "surface": "results:dominios",
+        "containers": [
+          "#p50-suff",
+          "#p50-results",
+          ".p50-ses"
+        ],
+        "testEngine": {
+          "name": "axe-core",
+          "version": "4.13.0"
+        },
+        "passCount": 17,
+        "incompleteCount": 0,
+        "violations": [],
+        "settle": {
+          "runningAnimations": 0,
+          "waitedMs": 1
+        }
+      },
+      {
+        "surface": "results:heatmap",
+        "containers": [
+          "#p50-suff",
+          "#p50-results",
+          ".p50-ses"
+        ],
+        "testEngine": {
+          "name": "axe-core",
+          "version": "4.13.0"
+        },
+        "passCount": 19,
+        "incompleteCount": 2,
+        "violations": [],
+        "settle": {
+          "runningAnimations": 0,
+          "waitedMs": 1
+        }
+      },
+      {
+        "surface": "results:analise",
+        "containers": [
+          "#p50-suff",
+          "#p50-results",
+          ".p50-ses"
+        ],
+        "testEngine": {
+          "name": "axe-core",
+          "version": "4.13.0"
+        },
+        "passCount": 18,
+        "incompleteCount": 0,
+        "violations": [],
+        "settle": {
+          "runningAnimations": 0,
+          "waitedMs": 1
+        }
+      }
+    ],
+    "blockingViolations": [],
+    "verdict": "PASS"
+  }
+}

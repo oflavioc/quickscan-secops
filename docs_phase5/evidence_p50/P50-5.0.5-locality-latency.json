@@ -1,0 +1,66 @@
+{
+  "check": "ACEITE-LOCALIDADE-LATENCIA-5.0.5",
+  "microfase": "5.0.5",
+  "note": "UI-043/UI-044. Nenhum budget numérico é normado: os valores abaixo são MEDIDOS. O limiar de materialidade declarado (1000 ms) serve só para separar 'lento a ponto de prejudicar o uso' de 'medido e registrado'.",
+  "materialityThresholdMs": 1000,
+  "observed": {
+    "requests": {
+      "total": 1,
+      "external": [],
+      "schemes": [
+        "file"
+      ]
+    },
+    "latency": {
+      "dataset": "15 respostas confirmadas + nota longa nas 15 perguntas (dataset canônico máximo)",
+      "selection": {
+        "n": 12,
+        "min": 0.9,
+        "median": 1.1,
+        "max": 10.2
+      },
+      "navigation": {
+        "n": 24,
+        "min": 0.7,
+        "median": 0.9,
+        "max": 1.7
+      },
+      "openResults": {
+        "n": 1,
+        "min": 20.4,
+        "median": 20.4,
+        "max": 20.4
+      },
+      "tabSwitch": {
+        "n": 6,
+        "min": 0.5,
+        "median": 1.6,
+        "max": 3.1
+      },
+      "heatmapCells": 15
+    },
+    "htmlLint": {
+      "checked": [
+        "recurso remoto (src/href http)",
+        "@import remoto",
+        "fonte remota",
+        "endpoint de analytics",
+        "gtag/ga",
+        "fetch",
+        "XMLHttpRequest",
+        "WebSocket",
+        "navigator.sendBeacon",
+        "localStorage",
+        "sessionStorage",
+        "indexedDB",
+        "serviceWorker",
+        "EventSource",
+        "Notification",
+        "geolocation"
+      ],
+      "hits": []
+    }
+  },
+  "failures": [],
+  "verdict": "PASS"
+}

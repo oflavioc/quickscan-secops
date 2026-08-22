@@ -30,6 +30,16 @@
    Fora do escopo (microfases 5.0.3-5.0.5): camada derivada de suficiência,
    UI-009A, UI-012/012A/012B, results, heat map, target, assurance visual completa.
 
+   Acrescentado pela 5.0.5:
+     UI-031A  renderer REUTILIZÁVEL de ícone oficial (ICON-01.1/01.2), que
+              resolve exclusivamente por window.__V32UI.iconFor() e não
+              declara mapa, asset ou SVG paralelo. Nenhuma superfície P50
+              atual possui itemId canônico, logo nenhuma superfície visível
+              renderiza ícone: o renderer existe para consumo futuro e é
+              provado por fixture controlada (P50-IC1/P50-IC2), sem inventar
+              produto, recomendação ou seção decorativa.
+     UI-048   orientação curta junto ao campo de evidência.
+
    Disciplina de implementação: este módulo NÃO usa innerHTML. Todo texto entra
    por textContent e todo atributo por setAttribute — inclusive o texto livre de
    evidência, que é conteúdo do cliente.
@@ -422,9 +432,15 @@
       console.error("P50 note observer:", e.message);      /* falha isolada */
     }
   }
+  /* UI-048 · id único da orientação, referenciado por aria-describedby. */
+  var P50_EV_GUIDE_ID = "p50-ev-guide";
   function p50BindNoteObserver() {
     var ta = document.getElementById("notetxt");
     if (!ta) return;
+    /* A orientação vive na Camada 5 e o textarea é congelado: a ligação é
+       feita por atributo aditivo, reaplicada a cada render porque o textarea
+       é recriado pelo runtime congelado sempre que o painel de nota abre. */
+    if (document.getElementById(P50_EV_GUIDE_ID)) ta.setAttribute("aria-describedby", P50_EV_GUIDE_ID);
     if (ta.dataset.p50NoteBound === "1") return;            /* idempotente */
     ta.dataset.p50NoteBound = "1";
     ta.addEventListener("input", p50OnNoteInput);
@@ -520,6 +536,17 @@
       if (t) t.click();
     });
     block.appendChild(tglBtn);
+
+    /* UI-048 · o campo de evidência pode receber informação sensível do
+       cliente. A orientação é CURTA, factual e não alarmista, fica junto do
+       controle que abre o campo e é ligada ao próprio textarea congelado por
+       `aria-describedby` (atributo ADITIVO; o markup da Camada 1 permanece
+       intocado). Não é claim de persistência, de segurança ou de conformidade:
+       o produto continua local-first e sem gravação automática de sessão
+       (UI-011/UI-047). */
+    block.appendChild(el("p", {
+      id: P50_EV_GUIDE_ID, "class": "p50-ev-guide", "data-p50": "evidence-guidance"
+    }, "Evite registrar segredos, credenciais ou dados pessoais desnecessários."));
 
     var opts = scr.querySelector(".opts");
     if (opts) opts.insertAdjacentElement("afterend", block); else scr.appendChild(block);
@@ -618,8 +645,65 @@
   }
   p50Decorators.push(p50ResultsSessionDecor);
 
+  /* ============================================================
+     UI-031A · ICON-01 — renderer reutilizável de ícone oficial
+     ICON-01.1 · fonte ÚNICA: window.__V32UI.iconFor(itemId, name), do runtime
+                 congelado. Este módulo NÃO declara mapa itemId→asset, NÃO
+                 embute SVG/base64 de produto e NÃO duplica o mapa congelado
+                 de itemId para asset.
+     ICON-01.2 · o fallback determinístico de iniciais (.v32-icon-fb) é
+                 comportamento CORRETO e congelado para entidades sem asset
+                 (fortisat) e para abstrações de família; este renderer o
+                 devolve tal como veio e jamais o substitui pelo ícone de um
+                 produto específico.
+     ICON-01.3 · artwork intocado: o nó é adotado sem recolor, retrace ou
+                 recomposição; o `src` é byte-idêntico ao servido por ICONS_V32.
+
+     `iconFor()` devolve STRING de HTML — contrato do runtime congelado, que
+     não pode ser alterado. Para preservar a disciplina "zero innerHTML" desta
+     camada, a string é materializada por DOMParser (parser INERTE: não
+     executa script e não busca recurso enquanto o documento não é adotado) e
+     só então validada estruturalmente. Só dois formatos são aceitos —
+     `img.v32-icon` e `span.v32-icon-fb` —, sem filhos, sem atributo de
+     evento e em nó único; qualquer outra coisa devolve null em vez de entrar
+     na árvore viva. A validação é do CONSUMIDOR: ela não reimplementa a
+     resolução e não decide qual asset é o certo.
+
+     Nenhuma superfície P50 atual possui itemId canônico; portanto nenhuma
+     chama este renderer. Ele é exposto para consumo futuro e provado por
+     fixture controlada (P50-IC1/P50-IC2) — criar uma seção decorativa apenas
+     para exibi-lo fabricaria recomendação e é proibido.
+     ============================================================ */
+  function p50IconNode(itemId, name) {
+    var bridge = window.__V32UI;
+    if (!bridge || typeof bridge.iconFor !== "function") return null;
+    var markup;
+    try { markup = bridge.iconFor(itemId, name); }
+    catch (e) { p50ShellErrors++; console.error("P50 icon:", e.message); return null; }
+    if (typeof markup !== "string" || !markup) return null;
+    var doc;
+    try { doc = new DOMParser().parseFromString(markup, "text/html"); }
+    catch (e2) { p50ShellErrors++; console.error("P50 icon parse:", e2.message); return null; }
+    var body = doc && doc.body;
+    if (!body || body.childElementCount !== 1) return null;
+    if ((body.textContent || "").length && body.firstElementChild &&
+        (body.textContent || "") !== (body.firstElementChild.textContent || "")) return null;
+    var n = body.firstElementChild;
+    var cls = n.getAttribute("class");
+    var isAsset = (n.tagName === "IMG" && cls === "v32-icon");
+    var isFallback = (n.tagName === "SPAN" && cls === "v32-icon-fb");
+    if (!isAsset && !isFallback) return null;
+    if (n.firstElementChild) return null;
+    for (var i = 0; i < n.attributes.length; i++)
+      if (/^on/i.test(n.attributes[i].name)) return null;
+    return document.importNode(n, true);
+  }
+
   window.__P50 = {
     __installed: true,
+    /* UI-031A · exposto para consumo por superfície que venha a possuir itemId
+       canônico. Devolve NÓ pronto ou null; nunca string, nunca HTML. */
+    iconNode: p50IconNode,
     registerDecor: function (fn) { if (typeof fn === "function") p50Decorators.push(fn); },
     decorate: function () { p50BuildShell(); p50DecorateAnswers(); },
     diag: function () {

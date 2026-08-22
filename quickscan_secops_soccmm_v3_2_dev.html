@@ -593,6 +593,43 @@ body[data-uxscreen="refinement"] #ux-progress-mobile{ display:none !important; }
    Superfície NÃO geométrica (§12.2 bloco d): sem eixo, polígono ou marcador.
    ========================================================================== */
 
+/* ==========================================================================
+   MICROFASE 5.0.5 · TOKENS DERIVADOS DA CAMADA 5
+   Nenhuma cor nova é declarada aqui: os dois tokens abaixo DERIVAM dos tokens
+   congelados (`--dom-accent`, que resolve para `--ftnt-*`, e `--text`).
+   COR-01.1 permanece intacta — zero hex literal, zero paleta nova.
+
+   --p50-focus  · UI-037/P50-VIS5. O anel de foco NÃO pode depender de
+                  `--dom-accent`: essa custom property só existe sob
+                  `[data-dom]` e é INDEFINIDA na raiz de `#p50-results` e
+                  `#p50-suff`. Uma `var()` indefinida invalida a declaração
+                  inteira no tempo de valor computado, de modo que
+                  `outline: 2px solid var(--dom-accent)` virava
+                  `outline-style: none` — o indicador de foco simplesmente
+                  não existia em toda a superfície de resultados. O foco é
+                  estado de UI, não dimensão de dado (COR-01.2), logo usa o
+                  token de texto congelado e tem contraste garantido.
+   --p50-dom-text · UI-032. A cor de domínio COMO TEXTO não alcança 4.5:1
+                  sobre o tema dark congelado (pior caso medido:
+                  --ftnt-purple sobre --surface2 = 3.93:1). A spec manda
+                  atingir o contraste "ou usar variante/peso que o atinja",
+                  nunca afrouxar a exigência. A variante é derivada do
+                  PRÓPRIO token do domínio, preservando a identidade de matiz,
+                  e vale SÓ para texto: bordas, trilhos, hachuras e
+                  preenchimentos continuam com `var(--dom-accent)` puro,
+                  porque ali o domínio é a dimensão de dados.
+                  Pior caso após a derivação: 5.37:1.
+   ========================================================================== */
+#p50-shell, #p50-suff, #p50-results,
+#app .p50-chips, #app .p50-cueblock, .p50-ses,
+#app .opts[data-p50="answers"]{
+  --p50-focus:var(--text);
+}
+#p50-shell [data-dom], #p50-suff [data-dom], #p50-results [data-dom],
+#app [data-dom]{
+  --p50-dom-text:color-mix(in srgb, var(--dom-accent) 80%, var(--text));
+}
+
 #p50-shell{
   display:grid;
   grid-template-columns:minmax(0,1fr);
@@ -621,7 +658,7 @@ body[data-uxscreen="refinement"] #ux-progress-mobile{ display:none !important; }
   letter-spacing:.06em;
   text-transform:uppercase;
   font-size:11.5px;
-  color:var(--dom-accent);
+  color:var(--p50-dom-text);
 }
 #p50-shell .p50-pos{ margin:0 0 2px; font-weight:700; }
 #p50-shell .p50-domprog,
@@ -640,7 +677,7 @@ body[data-uxscreen="refinement"] #ux-progress-mobile{ display:none !important; }
   cursor:pointer;
 }
 #p50-shell .p50-btn:hover{ border-color:var(--dom-accent); }
-#p50-shell .p50-btn:focus-visible{ outline:2px solid var(--dom-accent); outline-offset:2px; }
+#p50-shell .p50-btn:focus-visible{ outline:2px solid var(--p50-focus, var(--text)); outline-offset:2px; }
 #p50-shell .p50-btn[disabled]{ opacity:.45; cursor:default; }
 #p50-shell .p50-btn-ghost{ background:transparent; color:var(--muted); }
 
@@ -661,7 +698,7 @@ body[data-uxscreen="refinement"] #ux-progress-mobile{ display:none !important; }
   font-weight:800;
   letter-spacing:.05em;
   text-transform:uppercase;
-  color:var(--dom-accent);
+  color:var(--p50-dom-text);
 }
 #p50-shell .p50-domstate{ margin:0; font-size:12.5px; font-weight:700; }
 #p50-shell .p50-domstate-label{ margin:0; font-size:12px; color:var(--faint); }
@@ -688,7 +725,7 @@ body[data-uxscreen="refinement"] #ux-progress-mobile{ display:none !important; }
 #p50-shell .p50-q[aria-current="step"]{ font-weight:700; }
 #p50-shell .p50-q[aria-current="step"] .p50-qlabel::before{
   content:"▸ ";
-  color:var(--dom-accent);
+  color:var(--p50-dom-text);
 }
 #p50-shell .p50-qlabel{ color:var(--text); }
 #p50-shell .p50-qstate{ white-space:nowrap; font-size:12px; }
@@ -711,9 +748,17 @@ body[data-uxscreen="refinement"] #ux-progress-mobile{ display:none !important; }
 #app .opts[data-p50="answers"] .opt[data-p50-selected="true"]{
   box-shadow:inset 3px 0 0 0 var(--dom-accent);
 }
+/* P50-VIS5 · `ui_ux_v32.css` (protegido) aplica, no breakpoint estreito,
+   `.opts,.navrow,.screen{max-width:100vw; overflow-x:hidden}`. Como o card
+   ocupa exatamente a largura de `.opts` (medido em 390 px: ambos 43..372 px),
+   um anel com deslocamento POSITIVO sai cortado nas laterais. O anel é então
+   desenhado PARA DENTRO da própria caixa do card — sempre, em todos os
+   viewports, para que o indicador não mude de forma conforme a largura.
+   Nada é removido: espessura, cor e a condição `:focus-visible` continuam as
+   mesmas, e o contraste medido contra o fundo do card é 14:1. */
 #app .opts[data-p50="answers"] .opt:focus-visible{
-  outline:2px solid var(--dom-accent);
-  outline-offset:2px;
+  outline:2px solid var(--p50-focus, var(--text));
+  outline-offset:-3px;
 }
 
 /* ---------------- responsivo mínimo desta microfase ---------------- */
@@ -751,7 +796,7 @@ body[data-uxscreen="refinement"] #ux-progress-mobile{ display:none !important; }
   font-size:11.5px; line-height:1.5;
   white-space:nowrap;
 }
-#app .p50-chip[data-p50-chip="dom"]{ color:var(--dom-accent); border-color:var(--dom-accent); }
+#app .p50-chip[data-p50-chip="dom"]{ color:var(--p50-dom-text); border-color:var(--dom-accent); }
 #app .p50-chip-ev[data-p50-evidence="present"]{ color:var(--text); border-style:solid; }
 #app .p50-chip-ev[data-p50-evidence="none"]{ color:var(--faint); border-style:dashed; }
 
@@ -772,7 +817,7 @@ body[data-uxscreen="refinement"] #ux-progress-mobile{ display:none !important; }
 }
 #app .p50-ev-lab{
   display:block; font-size:11px; font-weight:800;
-  letter-spacing:.06em; text-transform:uppercase; color:var(--dom-accent);
+  letter-spacing:.06em; text-transform:uppercase; color:var(--p50-dom-text);
 }
 #app .p50-ev-txt{
   margin:4px 0 0; color:var(--text); font-size:13px; line-height:1.55;
@@ -784,8 +829,13 @@ body[data-uxscreen="refinement"] #ux-progress-mobile{ display:none !important; }
   border:1px solid var(--line); border-radius:6px;
   background:var(--surface2); color:var(--text); font:inherit; cursor:pointer;
 }
+/* UI-048 · orientação curta junto ao campo de evidência. Tom informativo:
+   sem cor de alerta, sem ícone de risco — o texto é a mensagem inteira. */
+#app .p50-ev-guide{
+  margin:0; color:var(--muted); font-size:12px; line-height:1.5;
+}
 #app .p50-cueblock .p50-btn:hover{ border-color:var(--dom-accent); }
-#app .p50-cueblock .p50-btn:focus-visible{ outline:2px solid var(--dom-accent); outline-offset:2px; }
+#app .p50-cueblock .p50-btn:focus-visible{ outline:2px solid var(--p50-focus, var(--text)); outline-offset:2px; }
 
 /* ---------------- status de sessão (UI-011) ---------------- */
 .p50-ses{
@@ -908,13 +958,13 @@ body[data-uxscreen="refinement"] #ux-progress-mobile{ display:none !important; }
   font:inherit; font-size:13px; cursor:pointer;
 }
 #p50-results .p50-tab:hover{ border-color:var(--dom-accent); }
-#p50-results .p50-tab:focus-visible{ outline:2px solid var(--dom-accent); outline-offset:2px; }
+#p50-results .p50-tab:focus-visible{ outline:2px solid var(--p50-focus, var(--text)); outline-offset:2px; }
 #p50-results .p50-tab[aria-selected="true"]{
   background:var(--surface); color:var(--text); font-weight:700;
   border-bottom-color:var(--surface);
 }
 #p50-results .p50-panel{ margin:14px 0 0; }
-#p50-results .p50-panel:focus-visible{ outline:2px solid var(--dom-accent); outline-offset:3px; }
+#p50-results .p50-panel:focus-visible{ outline:2px solid var(--p50-focus, var(--text)); outline-offset:3px; }
 
 /* ---------------- heat map domínio → pergunta (UI-015) ---------------- */
 #p50-results .p50-hm{ display:grid; gap:10px; }
@@ -928,7 +978,7 @@ body[data-uxscreen="refinement"] #ux-progress-mobile{ display:none !important; }
 }
 #p50-results .p50-hm-dom-name{
   font-size:12px; font-weight:800; letter-spacing:.05em;
-  text-transform:uppercase; color:var(--dom-accent);
+  text-transform:uppercase; color:var(--p50-dom-text);
 }
 #p50-results .p50-hm-dom-state{ font-size:12px; color:var(--muted); }
 #p50-results .p50-hm-row[data-p50-domain-sufficient="false"] .p50-hm-dom-state{ font-style:italic; }
@@ -1021,7 +1071,7 @@ body[data-uxscreen="refinement"] #ux-progress-mobile{ display:none !important; }
 }
 #p50-results .p50-drill-name{
   margin:0; font-size:12.5px; font-weight:800;
-  letter-spacing:.04em; text-transform:uppercase; color:var(--dom-accent);
+  letter-spacing:.04em; text-transform:uppercase; color:var(--p50-dom-text);
 }
 #p50-results .p50-drill-score{ font-variant-numeric:tabular-nums; color:var(--text); }
 #p50-results .p50-drill-state{ margin:2px 0 6px; color:var(--muted); font-size:12px; }
@@ -1064,7 +1114,7 @@ body[data-uxscreen="refinement"] #ux-progress-mobile{ display:none !important; }
   padding:6px 0; border-bottom:1px solid var(--line);
 }
 #p50-results .p50-ct-name{
-  font-size:12.5px; font-weight:700; color:var(--dom-accent);
+  font-size:12.5px; font-weight:700; color:var(--p50-dom-text);
   overflow-wrap:anywhere; min-width:0;
 }
 #p50-results .p50-ct-track{
@@ -1078,6 +1128,14 @@ body[data-uxscreen="refinement"] #ux-progress-mobile{ display:none !important; }
   background:var(--dom-accent);
 }
 #p50-results .p50-ct-bar[data-p50-plotted="true"]{ width:var(--p50-ct-w); }
+/* R1 · marcador explícito de ZERO CONFIRMADO na origem da trilha.
+   Existe somente quando há valor plotado e ele é exatamente 0.0; uma linha
+   sem base atual (plotted="false") não recebe marcador algum. Cor do PRÓPRIO
+   domínio (COR-01.2) — não é o acento de marca e não é o tracejado do alvo. */
+#p50-results .p50-ct-zero{
+  position:absolute; left:0; top:-3px; bottom:-3px;
+  width:0; border-left:3px solid var(--dom-accent); border-radius:2px;
+}
 #p50-results .p50-ct-mark{
   position:absolute; top:-3px; bottom:-3px;
   left:var(--p50-ct-t);
@@ -1097,6 +1155,9 @@ body[data-uxscreen="refinement"] #ux-progress-mobile{ display:none !important; }
 
 /* ---------------- alternativa acessível (P50-ACC5) ---------------- */
 #p50-results .p50-alt{ margin:14px 0 0; overflow-x:auto; }
+/* região rolável focável (P50-ACC1 · WCAG 2.1.1): o foco precisa ser visível,
+   pela mesma razão que qualquer outro controle do fluxo crítico. */
+#p50-results .p50-alt:focus-visible{ outline:2px solid var(--p50-focus, var(--text)); outline-offset:2px; }
 #p50-results .p50-alt-table{
   width:100%; border-collapse:collapse; font-size:12px;
 }
@@ -1112,7 +1173,7 @@ body[data-uxscreen="refinement"] #ux-progress-mobile{ display:none !important; }
 #p50-results .p50-alt-table thead th{
   color:var(--muted); font-size:11px; letter-spacing:.05em; text-transform:uppercase;
 }
-#p50-results .p50-alt-table tbody th{ color:var(--dom-accent); font-weight:700; white-space:nowrap; }
+#p50-results .p50-alt-table tbody th{ color:var(--p50-dom-text); font-weight:700; white-space:nowrap; }
 #p50-results .p50-alt-row[data-p50-ans="unset"] td{ color:var(--faint); }
 
 @media (min-width:900px){
@@ -1122,6 +1183,26 @@ body[data-uxscreen="refinement"] #ux-progress-mobile{ display:none !important; }
     align-items:center; gap:4px 12px;
   }
   #p50-results .p50-ct-name{ grid-column:1; }
+}
+
+/* ==========================================================================
+   P50-VIS5 · anel de foco dos controles CONGELADOS do fluxo crítico.
+   Medido em 390 px: `#next` preenche exatamente a largura de `.navrow`
+   (43..372 px) e `.navrow` tem `overflow-x:hidden`; com `outline-offset`
+   positivo o anel é desenhado em 39..376 px e sai cortado. O mesmo ocorre com
+   `#ses-export`/`#ses-import` dentro de `section.screen`.
+   A Camada 1 e `ui_v32.css` são PROTEGIDOS: a regra de overflow deles não é
+   tocada e nenhum indicador é removido. O anel apenas passa a ser desenhado
+   PARA DENTRO da caixa do próprio controle, onde nada o corta — espessura,
+   cor e a regra congelada de `:focus-visible` continuam idênticas.
+   Confinado a `@media screen`, pela mesma razão de B-AUD-FIN-503-1: decisão
+   de tela não pode vazar para o papel.
+   ========================================================================== */
+@media screen{
+  #app .navrow .nextlink:focus-visible,
+  #app .navrow .back:focus-visible,
+  #app #ses-export:focus-visible,
+  #app #ses-import:focus-visible{ outline-offset:-3px; }
 }
 
 /* ==========================================================================
@@ -5354,6 +5435,16 @@ if (window.__DEV) Object.assign(window.__DEV, { openExportModal, openImportPicke
    Fora do escopo (microfases 5.0.3-5.0.5): camada derivada de suficiência,
    UI-009A, UI-012/012A/012B, results, heat map, target, assurance visual completa.
 
+   Acrescentado pela 5.0.5:
+     UI-031A  renderer REUTILIZÁVEL de ícone oficial (ICON-01.1/01.2), que
+              resolve exclusivamente por window.__V32UI.iconFor() e não
+              declara mapa, asset ou SVG paralelo. Nenhuma superfície P50
+              atual possui itemId canônico, logo nenhuma superfície visível
+              renderiza ícone: o renderer existe para consumo futuro e é
+              provado por fixture controlada (P50-IC1/P50-IC2), sem inventar
+              produto, recomendação ou seção decorativa.
+     UI-048   orientação curta junto ao campo de evidência.
+
    Disciplina de implementação: este módulo NÃO usa innerHTML. Todo texto entra
    por textContent e todo atributo por setAttribute — inclusive o texto livre de
    evidência, que é conteúdo do cliente.
@@ -5746,9 +5837,15 @@ if (window.__DEV) Object.assign(window.__DEV, { openExportModal, openImportPicke
       console.error("P50 note observer:", e.message);      /* falha isolada */
     }
   }
+  /* UI-048 · id único da orientação, referenciado por aria-describedby. */
+  var P50_EV_GUIDE_ID = "p50-ev-guide";
   function p50BindNoteObserver() {
     var ta = document.getElementById("notetxt");
     if (!ta) return;
+    /* A orientação vive na Camada 5 e o textarea é congelado: a ligação é
+       feita por atributo aditivo, reaplicada a cada render porque o textarea
+       é recriado pelo runtime congelado sempre que o painel de nota abre. */
+    if (document.getElementById(P50_EV_GUIDE_ID)) ta.setAttribute("aria-describedby", P50_EV_GUIDE_ID);
     if (ta.dataset.p50NoteBound === "1") return;            /* idempotente */
     ta.dataset.p50NoteBound = "1";
     ta.addEventListener("input", p50OnNoteInput);
@@ -5844,6 +5941,17 @@ if (window.__DEV) Object.assign(window.__DEV, { openExportModal, openImportPicke
       if (t) t.click();
     });
     block.appendChild(tglBtn);
+
+    /* UI-048 · o campo de evidência pode receber informação sensível do
+       cliente. A orientação é CURTA, factual e não alarmista, fica junto do
+       controle que abre o campo e é ligada ao próprio textarea congelado por
+       `aria-describedby` (atributo ADITIVO; o markup da Camada 1 permanece
+       intocado). Não é claim de persistência, de segurança ou de conformidade:
+       o produto continua local-first e sem gravação automática de sessão
+       (UI-011/UI-047). */
+    block.appendChild(el("p", {
+      id: P50_EV_GUIDE_ID, "class": "p50-ev-guide", "data-p50": "evidence-guidance"
+    }, "Evite registrar segredos, credenciais ou dados pessoais desnecessários."));
 
     var opts = scr.querySelector(".opts");
     if (opts) opts.insertAdjacentElement("afterend", block); else scr.appendChild(block);
@@ -5942,8 +6050,65 @@ if (window.__DEV) Object.assign(window.__DEV, { openExportModal, openImportPicke
   }
   p50Decorators.push(p50ResultsSessionDecor);
 
+  /* ============================================================
+     UI-031A · ICON-01 — renderer reutilizável de ícone oficial
+     ICON-01.1 · fonte ÚNICA: window.__V32UI.iconFor(itemId, name), do runtime
+                 congelado. Este módulo NÃO declara mapa itemId→asset, NÃO
+                 embute SVG/base64 de produto e NÃO duplica o mapa congelado
+                 de itemId para asset.
+     ICON-01.2 · o fallback determinístico de iniciais (.v32-icon-fb) é
+                 comportamento CORRETO e congelado para entidades sem asset
+                 (fortisat) e para abstrações de família; este renderer o
+                 devolve tal como veio e jamais o substitui pelo ícone de um
+                 produto específico.
+     ICON-01.3 · artwork intocado: o nó é adotado sem recolor, retrace ou
+                 recomposição; o `src` é byte-idêntico ao servido por ICONS_V32.
+
+     `iconFor()` devolve STRING de HTML — contrato do runtime congelado, que
+     não pode ser alterado. Para preservar a disciplina "zero innerHTML" desta
+     camada, a string é materializada por DOMParser (parser INERTE: não
+     executa script e não busca recurso enquanto o documento não é adotado) e
+     só então validada estruturalmente. Só dois formatos são aceitos —
+     `img.v32-icon` e `span.v32-icon-fb` —, sem filhos, sem atributo de
+     evento e em nó único; qualquer outra coisa devolve null em vez de entrar
+     na árvore viva. A validação é do CONSUMIDOR: ela não reimplementa a
+     resolução e não decide qual asset é o certo.
+
+     Nenhuma superfície P50 atual possui itemId canônico; portanto nenhuma
+     chama este renderer. Ele é exposto para consumo futuro e provado por
+     fixture controlada (P50-IC1/P50-IC2) — criar uma seção decorativa apenas
+     para exibi-lo fabricaria recomendação e é proibido.
+     ============================================================ */
+  function p50IconNode(itemId, name) {
+    var bridge = window.__V32UI;
+    if (!bridge || typeof bridge.iconFor !== "function") return null;
+    var markup;
+    try { markup = bridge.iconFor(itemId, name); }
+    catch (e) { p50ShellErrors++; console.error("P50 icon:", e.message); return null; }
+    if (typeof markup !== "string" || !markup) return null;
+    var doc;
+    try { doc = new DOMParser().parseFromString(markup, "text/html"); }
+    catch (e2) { p50ShellErrors++; console.error("P50 icon parse:", e2.message); return null; }
+    var body = doc && doc.body;
+    if (!body || body.childElementCount !== 1) return null;
+    if ((body.textContent || "").length && body.firstElementChild &&
+        (body.textContent || "") !== (body.firstElementChild.textContent || "")) return null;
+    var n = body.firstElementChild;
+    var cls = n.getAttribute("class");
+    var isAsset = (n.tagName === "IMG" && cls === "v32-icon");
+    var isFallback = (n.tagName === "SPAN" && cls === "v32-icon-fb");
+    if (!isAsset && !isFallback) return null;
+    if (n.firstElementChild) return null;
+    for (var i = 0; i < n.attributes.length; i++)
+      if (/^on/i.test(n.attributes[i].name)) return null;
+    return document.importNode(n, true);
+  }
+
   window.__P50 = {
     __installed: true,
+    /* UI-031A · exposto para consumo por superfície que venha a possuir itemId
+       canônico. Devolve NÓ pronto ou null; nunca string, nunca HTML. */
+    iconNode: p50IconNode,
     registerDecor: function (fn) { if (typeof fn === "function") p50Decorators.push(fn); },
     decorate: function () { p50BuildShell(); p50DecorateAnswers(); },
     diag: function () {
@@ -6095,8 +6260,14 @@ if (window.__DEV) Object.assign(window.__DEV, { openExportModal, openImportPicke
              plural(contract.missingGlobal, "resposta confirmada", "respostas confirmadas") +
              " no total (" + contract.confirmedGlobal + " de " + contract.requiredGlobal + ").";
     }
-    return contract.confirmedGlobal + " de " + contract.requiredGlobal +
-           " respostas confirmadas no total.";
+    /* R2 (auditoria 5.0.4) · com o gate aberto, `confirmedGlobal` pode superar
+       `requiredGlobal` e a forma "15 de 10" lia-se como erro. Contagem e
+       limiar passam a ser grandezas declaradas separadamente. Os dois números
+       continuam vindo do contrato (UI-012A); nenhum literal 10/2 aqui. As
+       linhas de DÉFICIT preservam a forma "(N de M)", correta quando N < M. */
+    return contract.confirmedGlobal + " " +
+           plural(contract.confirmedGlobal, "resposta confirmada", "respostas confirmadas") +
+           " no total · mínimo requerido: " + contract.requiredGlobal + ".";
   }
   function p50DeficitLine(entry) {
     return DOMS[entry.domainId].pt + ": +" + entry.missing + " " +
@@ -6613,7 +6784,15 @@ if (window.__DEV) Object.assign(window.__DEV, { openExportModal, openImportPicke
 
   /* ------------- alternativa acessível do heat map (P50-ACC5) ------------- */
   function p50AltTable(mx) {
-    var wrap = el("div", { "class": "p50-alt" });
+    /* P50-ACC1 (axe · scrollable-region-focusable) · a alternativa acessível
+       rola horizontalmente em telas estreitas (`.p50-alt{overflow-x:auto}`).
+       Uma região rolável precisa de acesso por TECLADO: sem foco próprio, quem
+       navega só por teclado não alcança as colunas que ficaram fora da vista.
+       O contêiner passa a ser focável e nomeado — a tabela em si permanece
+       exatamente a mesma, e nenhum dado muda. */
+    var wrap = el("div", { "class": "p50-alt", "data-p50": "alt-region",
+      tabindex: "0", role: "group",
+      "aria-label": "Alternativa acessível do heat map · região rolável horizontalmente" });
     var table = el("table", { "class": "p50-alt-table", "data-p50": "alt-table" });
     table.appendChild(el("caption", { "class": "p50-alt-caption" },
       "Alternativa acessível do heat map — mesmos dados, em tabela"));
@@ -6661,8 +6840,14 @@ if (window.__DEV) Object.assign(window.__DEV, { openExportModal, openImportPicke
   };
   var P50_PRESENCE_CUE = { UNSET: "tracejado", NONE: "barrado", PARTIAL: "meio",
                            PRESENT: "solido", UNKNOWN: "interrogacao" };
+  /* R4 (auditoria 5.0.4) · o nome acessível compõe-se de `rótulo visível` +
+     este complemento. Repetir "não informado" aqui produzia
+     "Não informado · não informado · não avaliado…" no leitor de tela. O
+     complemento passa a acrescentar SOMENTE o que o rótulo não diz — e a
+     distinção normativa UNSET × NONE (UI-016b) continua inteira: "não
+     avaliado, nunca ausência" contra "ausência confirmada · estado declarado". */
   var P50_PRESENCE_ACC = {
-    UNSET: "não informado · não avaliado, nunca ausência",
+    UNSET: "não avaliado, nunca ausência",
     NONE: "ausência confirmada · estado declarado",
     PARTIAL: "existe parcialmente · estado declarado",
     PRESENT: "existe · estado declarado",
@@ -6720,13 +6905,22 @@ if (window.__DEV) Object.assign(window.__DEV, { openExportModal, openImportPicke
       h.appendChild(el("span", { "class": "p50-drill-score", "data-p50": "drill-score" },
         dm.current === null ? " · n/d" : " · " + dm.current.toFixed(1)));
       sec.appendChild(h);
+      /* R2 (auditoria 5.0.4) · `dm.confirmed` é a contagem REAL (até 3) e
+         `dm.required` é o LIMIAR canônico (2). A forma "3 de 2" era
+         aritmeticamente honesta e lia-se como erro. A redação passa a separar
+         as duas grandezas — contagem primeiro, limiar declarado como mínimo —
+         sem alterar valor algum: os dois números continuam vindo do contrato
+         derivado (UI-012A) e o renderer segue sem literais 10/2. */
       sec.appendChild(el("p", { "class": "p50-drill-state", "data-p50": "drill-state" },
         !dm.released
-          ? "Não avaliado · evidência insuficiente — " + dm.confirmed + " de " + dm.required +
-            " respostas confirmadas; a decomposição abaixo é diagnóstico parcial, não veredito de maturidade"
+          ? "Não avaliado · evidência insuficiente — " + dm.confirmed +
+            " respostas confirmadas · mínimo requerido: " + dm.required +
+            "; a decomposição abaixo é diagnóstico parcial, não veredito de maturidade"
           : (dm.deficit === 0
-              ? dm.confirmed + " de " + dm.required + " respostas confirmadas · evidência suficiente"
-              : dm.confirmed + " de " + dm.required + " respostas confirmadas · faltam " + dm.deficit)));
+              ? dm.confirmed + " respostas confirmadas · mínimo requerido: " + dm.required +
+                " · evidência suficiente"
+              : dm.confirmed + " respostas confirmadas · mínimo requerido: " + dm.required +
+                " · faltam " + dm.deficit)));
       var ul = el("ul", { "class": "p50-drill-qs" });
       for (var j = 0; j < dm.cells.length; j++) {
         var c = dm.cells[j];
@@ -6785,6 +6979,19 @@ if (window.__DEV) Object.assign(window.__DEV, { openExportModal, openImportPicke
       /* UI-019: current ausente NÃO é desenhado como zero — a barra não é plotada. */
       if (plotted) bar.style.setProperty("--p50-ct-w", (dm.current / 5 * 100).toFixed(2) + "%");
       track.appendChild(bar);
+      /* R1 (auditoria 5.0.4) · um `current` CONFIRMADO igual a 0.0 produz barra
+         de largura zero — graficamente indistinguível de uma linha sem base
+         atual (`plotted="false"`). A desambiguação existia apenas no rótulo
+         adjacente. Acrescenta-se aqui o marcador explícito de origem, presente
+         SOMENTE quando há valor plotado e ele é exatamente zero: zero
+         confirmado é dado (UG7), ausência de base não é. O texto permanece
+         "0.0" × "n/d" e o marcador usa a cor do PRÓPRIO domínio (COR-01.2),
+         nunca o acento de marca, nunca o encoding tracejado do alvo. */
+      if (plotted && dm.current === 0) {
+        bar.setAttribute("data-p50-zero", "true");
+        track.appendChild(el("span", { "class": "p50-ct-zero", "data-p50": "ct-zero",
+          "aria-hidden": "true" }));
+      }
       if (dm.hasTarget && dm.target !== null) {
         var mark = el("span", { "class": "p50-ct-mark", "data-p50": "ct-target" },
           "alvo " + dm.target.toFixed(1));

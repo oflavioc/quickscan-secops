@@ -405,7 +405,15 @@
 
   /* ------------- alternativa acessível do heat map (P50-ACC5) ------------- */
   function p50AltTable(mx) {
-    var wrap = el("div", { "class": "p50-alt" });
+    /* P50-ACC1 (axe · scrollable-region-focusable) · a alternativa acessível
+       rola horizontalmente em telas estreitas (`.p50-alt{overflow-x:auto}`).
+       Uma região rolável precisa de acesso por TECLADO: sem foco próprio, quem
+       navega só por teclado não alcança as colunas que ficaram fora da vista.
+       O contêiner passa a ser focável e nomeado — a tabela em si permanece
+       exatamente a mesma, e nenhum dado muda. */
+    var wrap = el("div", { "class": "p50-alt", "data-p50": "alt-region",
+      tabindex: "0", role: "group",
+      "aria-label": "Alternativa acessível do heat map · região rolável horizontalmente" });
     var table = el("table", { "class": "p50-alt-table", "data-p50": "alt-table" });
     table.appendChild(el("caption", { "class": "p50-alt-caption" },
       "Alternativa acessível do heat map — mesmos dados, em tabela"));
@@ -453,8 +461,14 @@
   };
   var P50_PRESENCE_CUE = { UNSET: "tracejado", NONE: "barrado", PARTIAL: "meio",
                            PRESENT: "solido", UNKNOWN: "interrogacao" };
+  /* R4 (auditoria 5.0.4) · o nome acessível compõe-se de `rótulo visível` +
+     este complemento. Repetir "não informado" aqui produzia
+     "Não informado · não informado · não avaliado…" no leitor de tela. O
+     complemento passa a acrescentar SOMENTE o que o rótulo não diz — e a
+     distinção normativa UNSET × NONE (UI-016b) continua inteira: "não
+     avaliado, nunca ausência" contra "ausência confirmada · estado declarado". */
   var P50_PRESENCE_ACC = {
-    UNSET: "não informado · não avaliado, nunca ausência",
+    UNSET: "não avaliado, nunca ausência",
     NONE: "ausência confirmada · estado declarado",
     PARTIAL: "existe parcialmente · estado declarado",
     PRESENT: "existe · estado declarado",
@@ -512,13 +526,22 @@
       h.appendChild(el("span", { "class": "p50-drill-score", "data-p50": "drill-score" },
         dm.current === null ? " · n/d" : " · " + dm.current.toFixed(1)));
       sec.appendChild(h);
+      /* R2 (auditoria 5.0.4) · `dm.confirmed` é a contagem REAL (até 3) e
+         `dm.required` é o LIMIAR canônico (2). A forma "3 de 2" era
+         aritmeticamente honesta e lia-se como erro. A redação passa a separar
+         as duas grandezas — contagem primeiro, limiar declarado como mínimo —
+         sem alterar valor algum: os dois números continuam vindo do contrato
+         derivado (UI-012A) e o renderer segue sem literais 10/2. */
       sec.appendChild(el("p", { "class": "p50-drill-state", "data-p50": "drill-state" },
         !dm.released
-          ? "Não avaliado · evidência insuficiente — " + dm.confirmed + " de " + dm.required +
-            " respostas confirmadas; a decomposição abaixo é diagnóstico parcial, não veredito de maturidade"
+          ? "Não avaliado · evidência insuficiente — " + dm.confirmed +
+            " respostas confirmadas · mínimo requerido: " + dm.required +
+            "; a decomposição abaixo é diagnóstico parcial, não veredito de maturidade"
           : (dm.deficit === 0
-              ? dm.confirmed + " de " + dm.required + " respostas confirmadas · evidência suficiente"
-              : dm.confirmed + " de " + dm.required + " respostas confirmadas · faltam " + dm.deficit)));
+              ? dm.confirmed + " respostas confirmadas · mínimo requerido: " + dm.required +
+                " · evidência suficiente"
+              : dm.confirmed + " respostas confirmadas · mínimo requerido: " + dm.required +
+                " · faltam " + dm.deficit)));
       var ul = el("ul", { "class": "p50-drill-qs" });
       for (var j = 0; j < dm.cells.length; j++) {
         var c = dm.cells[j];
@@ -577,6 +600,19 @@
       /* UI-019: current ausente NÃO é desenhado como zero — a barra não é plotada. */
       if (plotted) bar.style.setProperty("--p50-ct-w", (dm.current / 5 * 100).toFixed(2) + "%");
       track.appendChild(bar);
+      /* R1 (auditoria 5.0.4) · um `current` CONFIRMADO igual a 0.0 produz barra
+         de largura zero — graficamente indistinguível de uma linha sem base
+         atual (`plotted="false"`). A desambiguação existia apenas no rótulo
+         adjacente. Acrescenta-se aqui o marcador explícito de origem, presente
+         SOMENTE quando há valor plotado e ele é exatamente zero: zero
+         confirmado é dado (UG7), ausência de base não é. O texto permanece
+         "0.0" × "n/d" e o marcador usa a cor do PRÓPRIO domínio (COR-01.2),
+         nunca o acento de marca, nunca o encoding tracejado do alvo. */
+      if (plotted && dm.current === 0) {
+        bar.setAttribute("data-p50-zero", "true");
+        track.appendChild(el("span", { "class": "p50-ct-zero", "data-p50": "ct-zero",
+          "aria-hidden": "true" }));
+      }
       if (dm.hasTarget && dm.target !== null) {
         var mark = el("span", { "class": "p50-ct-mark", "data-p50": "ct-target" },
           "alvo " + dm.target.toFixed(1));

@@ -1,0 +1,101 @@
+{
+  "gates": [
+    "P50-IC1",
+    "P50-IC2"
+  ],
+  "microfase": "5.0.5",
+  "source": "window.__V32UI.iconFor(itemId, name) — ponte congelada; nenhum mapa, SVG ou asset paralelo",
+  "renderer": "window.__P50.iconNode(itemId, name) — devolve NÓ validado ou null; nunca string",
+  "noDecorativeSurface": "nenhuma superfície P50 possui itemId canônico e nenhuma renderiza ícone",
+  "assetItems": [
+    "fortisiem",
+    "fortianalyzer",
+    "fortiedr",
+    "fortisoar"
+  ],
+  "fallbackItems": [
+    "fortisat",
+    "endpoint-family",
+    "fortimail-family",
+    "identity-family",
+    "soc-platform-family"
+  ],
+  "observed": {
+    "rendererPresent": true,
+    "iconsInP50Surface": 0,
+    "frozenIconsStillRendered": 0,
+    "asset": [
+      {
+        "itemId": "fortisiem",
+        "tag": "IMG",
+        "cls": "v32-icon",
+        "dataIcon": "FortiSIEM",
+        "srcMatchesOracle": true,
+        "srcLength": 5218
+      },
+      {
+        "itemId": "fortianalyzer",
+        "tag": "IMG",
+        "cls": "v32-icon",
+        "dataIcon": "FortiAnalyzer",
+        "srcMatchesOracle": true,
+        "srcLength": 1058
+      },
+      {
+        "itemId": "fortiedr",
+        "tag": "IMG",
+        "cls": "v32-icon",
+        "dataIcon": "FortiEDR",
+        "srcMatchesOracle": true,
+        "srcLength": 4746
+      },
+      {
+        "itemId": "fortisoar",
+        "tag": "IMG",
+        "cls": "v32-icon",
+        "dataIcon": "FortiSOAR",
+        "srcMatchesOracle": true,
+        "srcLength": 11974
+      }
+    ],
+    "fallback": [
+      {
+        "itemId": "fortisat",
+        "tag": "SPAN",
+        "cls": "v32-icon-fb",
+        "initials": "SA",
+        "hasProductSrc": false
+      },
+      {
+        "itemId": "endpoint-family",
+        "tag": "SPAN",
+        "cls": "v32-icon-fb",
+        "initials": "NE",
+        "hasProductSrc": false
+      },
+      {
+        "itemId": "fortimail-family",
+        "tag": "SPAN",
+        "cls": "v32-icon-fb",
+        "initials": "MA",
+        "hasProductSrc": false
+      },
+      {
+        "itemId": "identity-family",
+        "tag": "SPAN",
+        "cls": "v32-icon-fb",
+        "initials": "NE",
+        "hasProductSrc": false
+      },
+      {
+        "itemId": "soc-platform-family",
+        "tag": "SPAN",
+        "cls": "v32-icon-fb",
+        "initials": "NE",
+        "hasProductSrc": false
+      }
+    ]
+  },
+  "failures": [],
+  "verdict": "PASS"
+}

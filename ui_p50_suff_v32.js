@@ -113,8 +113,14 @@
              plural(contract.missingGlobal, "resposta confirmada", "respostas confirmadas") +
              " no total (" + contract.confirmedGlobal + " de " + contract.requiredGlobal + ").";
     }
-    return contract.confirmedGlobal + " de " + contract.requiredGlobal +
-           " respostas confirmadas no total.";
+    /* R2 (auditoria 5.0.4) · com o gate aberto, `confirmedGlobal` pode superar
+       `requiredGlobal` e a forma "15 de 10" lia-se como erro. Contagem e
+       limiar passam a ser grandezas declaradas separadamente. Os dois números
+       continuam vindo do contrato (UI-012A); nenhum literal 10/2 aqui. As
+       linhas de DÉFICIT preservam a forma "(N de M)", correta quando N < M. */
+    return contract.confirmedGlobal + " " +
+           plural(contract.confirmedGlobal, "resposta confirmada", "respostas confirmadas") +
+           " no total · mínimo requerido: " + contract.requiredGlobal + ".";
   }
   function p50DeficitLine(entry) {
     return DOMS[entry.domainId].pt + ": +" + entry.missing + " " +

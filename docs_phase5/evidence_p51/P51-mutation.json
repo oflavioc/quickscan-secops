@@ -1,0 +1,174 @@
+{
+  "baseline": {
+    "/mnt/c/Projetos/QuickScan-SOC-CMM/phase5/ui_p50_v32.css": "749cbb989ddcb51feaef3af5dd8cbc6caf1cbc08eac70da60bde36cca239dc93",
+    "/mnt/c/Projetos/QuickScan-SOC-CMM/phase5/ui_p50_shell_v32.js": "f8302d68f61bc37c5064a657120f52abb68b81ca2861541f0550e3ae787b4bd0",
+    "/mnt/c/Projetos/QuickScan-SOC-CMM/phase5/ui_journey_v32.js": "4758148a94f4b6e788fc7bf7bef13ab00150f68c0a050308b694bacbf51ecade",
+    "/mnt/c/Projetos/QuickScan-SOC-CMM/phase5/ui_v32.js": "61e71dcc191aabb2a74a7061173ede8a5d75fa5dda81bb03e7ad02360677d766",
+    "/mnt/c/Projetos/QuickScan-SOC-CMM/phase5/ui_p50_results_v32.js": "4c2965f7befdf2f907d6502d28f94ef8f8603cbf4a9cd3fdecc802d6e4a8b66e",
+    "/mnt/c/Projetos/QuickScan-SOC-CMM/phase5/USER_GUIDE.md": "98d97a2a3bf5f928a5f4a8e6995cb1b51e77e1a77897ec23aaabad01ccbd181d"
+  },
+  "detected": 20,
+  "total": 20,
+  "mutants": [
+    {
+      "id": "M51-01",
+      "desc": "layout desktop volta a empilhar mapa e pergunta",
+      "gate": "P51-VIS1",
+      "detected": true,
+      "restored": true,
+      "failLine": "FAIL  P51-VIS1 — composição: duas colunas reais em desktop, uma em telas estreitas, sem overflow [@1440: mapa e pergunta se sobrepõem horizontalmente (1280px) — não são colunas · @1440: pergunta começa abaixo do mapa inteiro (empilhamento) — top 1068.5 vs fim do mapa 1023.5 · @1440: 1º card de respo"
+    },
+    {
+      "id": "M51-02",
+      "desc": "reintroduz um segundo botão de evidência focável",
+      "gate": "P51-UX1",
+      "detected": true,
+      "restored": true,
+      "failLine": "FAIL  P51-UX1 — uma única ação de evidência visível e focável, com um só nome acessível [2 controles de evidência focáveis: 'Registrar evidência ou observação'#evidence-open | 'Adicionar evidência ou observação'#notetgl]"
+    },
+    {
+      "id": "M51-03",
+      "desc": "exemplo de MSSP vaza para um qid incorreto",
+      "gate": "P51-UX2",
+      "detected": true,
+      "restored": true,
+      "failLine": "FAIL  P51-UX2 — ajuda contextual específica por pergunta, indexada pelo qid canônico [exemplo de MSSP aparece em mandate]"
+    },
+    {
+      "id": "M51-04",
+      "desc": "jornada perde o número do estágio",
+      "gate": "P51-JN1",
+      "detected": true,
+      "restored": true,
+      "failLine": "FAIL  P51-JN1 — jornada com seis nós numerados 0–5, nome e estados distinguíveis [nó 0: número '']"
+    },
+    {
+      "id": "M51-05",
+      "desc": "tag de domínio sai da ordem canônica de DOMS",
+      "gate": "P51-COR5",
+      "detected": true,
+      "restored": true,
+      "failLine": "FAIL  P51-COR5 — tags de domínio das superfícies novas usam o mapa canônico [tag de domínio da tela de pergunta fora da ordem canônica: 'x0']"
+    },
+    {
+      "id": "M51-06",
+      "desc": "FortiClient descrito como plataforma universal",
+      "gate": "P51-REC1",
+      "detected": true,
+      "restored": true,
+      "failLine": "FAIL  P51-REC1 — recomendações acionáveis junto do gap, sem overclaim nem duplicação [FortiClient citado sem escopo de endpoint: ' FortiClient administrado por EMS — plataforma universal de gestão de vulnerabilidades para todo o ambiente; validar ade']"
+    },
+    {
+      "id": "M51-07",
+      "desc": "recomendação é anexada ao gap errado",
+      "gate": "P51-REC1",
+      "detected": true,
+      "restored": true,
+      "failLine": "FAIL  P51-REC1 — recomendações acionáveis junto do gap, sem overclaim nem duplicação [apoio anexado a um gap fora do mapeamento normativo: 'training']"
+    },
+    {
+      "id": "M51-08",
+      "desc": "option do cenário-alvo volta a herdar cor/fundo",
+      "gate": "P51-VIS2",
+      "detected": true,
+      "restored": true,
+      "failLine": "FAIL  P51-VIS2 — select do cenário-alvo legível: cor, fundo e color-scheme explícitos em select e options [@390 mandate: option 'Manter atual' sem fundo explícito (rgba(0, 0, 0, 0)) · @390 mandate: option 'Mandato e objetivos formalizados · 3.3' sem fundo explícito (rgba(0, 0, 0, 0)) · @390 mandate:"
+    },
+    {
+      "id": "M51-09",
+      "desc": "label da sessão fica stale após import sem label",
+      "gate": "P51-RPT2",
+      "detected": true,
+      "restored": true,
+      "failLine": "FAIL  P51-RPT2 — metadados de sessão honestos e distintos da data de geração [label ficou stale após import sem rótulo: 'Cliente Anterior']"
+    },
+    {
+      "id": "M51-10",
+      "desc": "data de geração usada como data da sessão",
+      "gate": "P51-RPT2",
+      "detected": true,
+      "restored": true,
+      "failLine": "FAIL  P51-RPT2 — metadados de sessão honestos e distintos da data de geração [data da sessão e de geração vêm do mesmo instante]"
+    },
+    {
+      "id": "M51-11",
+      "desc": "régua marca posição mesmo sem suficiência",
+      "gate": "P51-PDF1",
+      "detected": true,
+      "restored": true,
+      "failLine": "FAIL  P51-PDF1 — PDF real em A4: capa, metadados, régua, legenda, emblema, anexo e ausência de controles [insuficiente: régua marcou posição com dados insuficientes · insuficiente: régua não declara estágio indeterminado]"
+    },
+    {
+      "id": "M51-12",
+      "desc": "régua diverge de stageOf() numa borda",
+      "gate": "P51-RPT3",
+      "detected": true,
+      "restored": true,
+      "failLine": "FAIL  P51-RPT3 — régua de estágio derivada de stageOf(), incluindo bordas [divergência em 2.9: stageOf='Definido' régua='Gerenciado quantitativamente']"
+    },
+    {
+      "id": "M51-13",
+      "desc": "ordem/cor de dois domínios trocada no sistema gráfico",
+      "gate": "P51-RPT4",
+      "detected": true,
+      "restored": true,
+      "failLine": "FAIL  P51-RPT4 — legenda dos domínios na ordem de DOMS e nas cores de PR_DOM_HEX [legenda 0: cor 'background:#3CB17E' != #9063CD]"
+    },
+    {
+      "id": "M51-14",
+      "desc": "SVG do emblema passa a variar com o score",
+      "gate": "P51-RPT5",
+      "detected": true,
+      "restored": true,
+      "failLine": "FAIL  P51-RPT5 — emblema e faixa: SVG determinístico, neutro e acessível [SVG 'pentagon' varia entre sessão baixa e alta (não é neutro)]"
+    },
+    {
+      "id": "M51-15",
+      "desc": "emblema perde os rótulos completos dos domínios",
+      "gate": "P51-RPT5",
+      "detected": true,
+      "restored": true,
+      "failLine": "FAIL  P51-RPT5 — emblema e faixa: SVG determinístico, neutro e acessível [pentagon: rótulo 'Negócio' ausente dos textos do gráfico (vistos: [\"1\",\"2\",\"3\",\"4\",\"5\",\"N\",\"P\",\"P\",\"T\",\"S\"])]"
+    },
+    {
+      "id": "M51-16",
+      "desc": "capa colide com o cabeçalho no PDF",
+      "gate": "P51-PDF1",
+      "detected": true,
+      "restored": true,
+      "failLine": "FAIL  P51-PDF1 — PDF real em A4: capa, metadados, régua, legenda, emblema, anexo e ausência de controles [suficiente-com-label: capa e cabeçalho colidem (head top 0 < fim da capa 178) · suficiente-com-label: capa fora do fluxo do documento (position absolute) · suficiente-sem-label: capa e cabeçalho"
+    },
+    {
+      "id": "M51-17",
+      "desc": "sinal do gap Current × Target invertido na matriz única (AUD-02)",
+      "gate": "P51-VIS3",
+      "detected": true,
+      "restored": true,
+      "failLine": "FAIL  P51-VIS3 — gap Current × Target com sinal correto em célula, rótulo acessível, tabela e domínio [P50-F9 (alvos declarados na fixture) · mandate: gap -3.3 != alvo−atual 3.3]"
+    },
+    {
+      "id": "M51-18",
+      "desc": "agregado do relatório volta à forma sem arredondamento (regresso do B1)",
+      "gate": "P51-RPT6",
+      "detected": true,
+      "restored": true,
+      "failLine": "FAIL  P51-RPT6 — estágio coerente entre KPI, régua, jornada, leitura executiva e tela nas fronteiras [0.5: KPI diz 'Inexistente' e o canônico é 'Inicial']"
+    },
+    {
+      "id": "M51-19",
+      "desc": "manual volta a descrever o score geral como média das respostas (R2)",
+      "gate": "P51-DOC13",
+      "detected": true,
+      "restored": true,
+      "failLine": "FAIL  P51-DOC13 — manual descreve o score geral e a ordem do relatório como o produto os produz [§8 não descreve o score geral como média dos cinco scores de domínio]"
+    },
+    {
+      "id": "M51-20",
+      "desc": "manual volta a listar régua e legenda como seções próprias (R3)",
+      "gate": "P51-DOC13",
+      "detected": true,
+      "restored": true,
+      "failLine": "FAIL  P51-DOC13 — manual descreve o score geral e a ordem do relatório como o produto os produz [§12 lista 12 seções para 10 emitidas]"
+    }
+  ]
+}

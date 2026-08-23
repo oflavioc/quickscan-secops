@@ -602,7 +602,7 @@ async function sesux1b(page) {
   /* Volta à pergunta pelo controle congelado e digita evidência pelo evento real. */
   const realNoteEdit = text => page.evaluate(t => {
     document.getElementById("review").click();
-    document.querySelector("#app [data-p50=\"evidence-open\"]").click();
+    document.getElementById("notetgl").click();   /* UAT-03: controle único */
     const ta = document.getElementById("notetxt");
     ta.value = t;
     ta.dispatchEvent(new Event("input", { bubbles: true }));
@@ -1755,7 +1755,7 @@ const P50_SURFACE_ASSESSMENT = {
     { sel: "#app .question", min: 1 },
     { sel: "#app .opts .opt", min: 5 },
     { sel: '#app .p50-chips [data-p50="chip"]', min: 3 },
-    { sel: '#app [data-p50="evidence-open"]', min: 1 },
+    { sel: '#notetgl', min: 1 },                       /* UAT-03: controle único de evidência */
     { sel: '#app [data-p50="evidence-guidance"]', min: 1 },
     { sel: "#notetgl", min: 1 }
   ],
@@ -1956,7 +1956,6 @@ const P50_CRITICAL_SELECTOR = [
   "#p50-shell .p50-nav .p50-btn",
   '#p50-shell button[data-p50="sidebar-toggle"]',
   "#app .opts .opt",
-  '#app [data-p50="evidence-open"]',
   "#notetgl",
   "#notetxt",
   "#prev", "#next",
@@ -2068,7 +2067,7 @@ async function vis5(browser, pageErrors) {
     assessment: [
       { label: "botões de navegação do shell P50", re: /^button.*p50-btn/ },
       { label: "answer cards congelados", re: /^button\.opt/, min: 5 },
-      { label: "atalho de evidência da Camada 5", re: /evidence-open/ },
+      { label: "controle único de evidência (#notetgl)", re: /^button#notetgl$/ },
       { label: "controle congelado de nota (#notetgl)", re: /^button#notetgl$/ },
       { label: "campo de nota congelado (#notetxt)", re: /^textarea#notetxt$/ },
       { label: "avanço congelado (#next)", re: /^button#next$/ }
@@ -2645,7 +2644,7 @@ async function acc3(browser, pageErrors) {
 --------------------------------------------------------------------------- */
 const P50_INTERACTIVE_SELECTOR = [
   "#p50-shell button", "#p50-shell a[href]",
-  '#app [data-p50="evidence-open"]',
+  "#notetgl",
   "#p50-results button", "#p50-results a[href]",
   ".p50-ses button"
 ].join(", ");
@@ -3268,6 +3267,312 @@ async function localidadeELatencia(browser, pageErrors) {
   return { ok, detail, observed };
 }
 
+
+/* ============================================================================
+   PHASE 5.1 · gates de tela e de PDF (namespace P51-*)
+   ========================================================================== */
+const P51_VPS = [[390,844],[768,1024],[1024,768],[1440,900],[2560,1080]];
+
+/* P51-VIS1 — composição responsiva da tela de pergunta (UAT-01).
+   Mede CAIXAS REAIS: em desktop largo a pergunta e o mapa precisam ocupar
+   colunas distintas (sobreposição horizontal zero e topos comparáveis); em
+   telas estreitas, uma coluna. Overflow e clipping são medidos em todos. */
+async function p51vis1(browser, pageErrors) {
+  const detail = [], observed = [];
+  for (const [w, h] of P51_VPS) {
+    const ctx = await browser.newContext({ viewport: { width: w, height: h } });
+    const pg = await ctx.newPage();
+    pg.on("pageerror", e => pageErrors.push("P51-VIS1@" + w + ": " + String(e.message)));
+    try {
+      await pg.addInitScript(P50_PAGE_HELPERS);
+      await applyFixture(pg, FX.P50_F2);
+      /* mapa aberto: é o estado que produzia o empilhamento reclamado */
+      await pg.evaluate(() => {
+        const t = document.querySelector('#p50-shell button[data-p50="sidebar-toggle"]');
+        if (t && document.getElementById("p50-shell").getAttribute("data-p50-collapsed") === "true") t.click();
+      });
+      await p50Settle(pg);
+      const m = await pg.evaluate(() => {
+        const se = document.scrollingElement;
+        const box = e => { const b = e.getBoundingClientRect();
+          return { l: +b.left.toFixed(1), r: +b.right.toFixed(1), t: +(b.top + scrollY).toFixed(1),
+                   b: +(b.bottom + scrollY).toFixed(1), w: +b.width.toFixed(1) }; };
+        const shell = document.getElementById("p50-shell");
+        const app = document.getElementById("app");
+        const question = document.querySelector("#app .question");
+        const card = document.querySelector("#app .opts .opt");
+        const sb = shell.getBoundingClientRect(), ab = app.getBoundingClientRect();
+        const overlapX = Math.max(0, Math.min(sb.right, ab.right) - Math.max(sb.left, ab.left));
+        const clipped = Array.from(document.querySelectorAll("#p50-shell *, #app *"))
+          .filter(e => e.children.length === 0 && (e.textContent || "").trim())
+          .filter(e => e.scrollWidth > e.clientWidth + 1).length;
+        return {
+          viewport: { w: innerWidth, h: innerHeight },
+          shell: box(shell), app: box(app),
+          question: question ? box(question) : null,
+          firstCard: card ? box(card) : null,
+          overlapX: +overlapX.toFixed(1),
+          documentScrollWidth: se.scrollWidth,
+          overflowX: se.scrollWidth - innerWidth,
+          clipped,
+          wrapWidth: +document.querySelector(".wrap").getBoundingClientRect().width.toFixed(1)
+        };
+      });
+      m.viewportKey = w + "x" + h;
+      observed.push(m);
+      const tag = "@" + w;
+      if (m.overflowX > 0) detail.push(tag + ": overflow horizontal " + m.overflowX + "px");
+      if (m.clipped) detail.push(tag + ": " + m.clipped + " texto(s) clipado(s)");
+      if (w >= 1180) {
+        /* duas colunas REAIS: sem sobreposição horizontal entre mapa e pergunta */
+        if (m.overlapX > 0)
+          detail.push(tag + ": mapa e pergunta se sobrepõem horizontalmente (" + m.overlapX + "px) — não são colunas");
+        /* a pergunta não pode começar abaixo de todo o mapa */
+        if (m.question && m.question.t >= m.shell.b - 1)
+          detail.push(tag + ": pergunta começa abaixo do mapa inteiro (empilhamento) — top " +
+            m.question.t + " vs fim do mapa " + m.shell.b);
+        /* aproveitamento: a faixa útil não pode ser uma tira estreita */
+        const uso = m.wrapWidth / m.viewport.w;
+        if (uso < 0.72) detail.push(tag + ": faixa central estreita — .wrap usa " + (uso * 100).toFixed(0) + "% da tela");
+      } else {
+        /* uma coluna: mapa e pergunta empilhados é o comportamento correto */
+        if (m.overlapX <= 0 && m.shell.w > 0 && m.app.w > 0)
+          detail.push(tag + ": em tela estreita mapa e pergunta deveriam compartilhar a coluna");
+      }
+      if (m.firstCard && m.firstCard.t > m.shell.b && w >= 1180)
+        detail.push(tag + ": 1º card de resposta empurrado para baixo do mapa");
+    } catch (e) {
+      detail.push("@" + w + ": exceção " + String(e.message).split("\n")[0]);
+    } finally { await ctx.close(); }
+  }
+  const ok = detail.length === 0;
+  results.push({ id: "P51-VIS1", ok });
+  console.log((ok ? "PASS" : "FAIL") + "  P51-VIS1 — composição: duas colunas reais em desktop, uma em telas estreitas, sem overflow" +
+    (ok ? "" : " [" + detail.join(" · ") + "]"));
+  return { ok, detail, observed };
+}
+
+/* P51-VIS2 — legibilidade do select do cenário-alvo (UAT-08), fechado e aberto.
+   O popup nativo não é inspecionável, então o oráculo mede o que o determina:
+   cor, fundo e `color-scheme` do próprio select E de cada <option>. */
+async function p51vis2(browser, pageErrors) {
+  const detail = [], observed = [];
+  for (const [w, h] of [[390, 844], [1440, 900]]) {
+    const ctx = await browser.newContext({ viewport: { width: w, height: h } });
+    const pg = await ctx.newPage();
+    pg.on("pageerror", e => pageErrors.push("P51-VIS2@" + w + ": " + String(e.message)));
+    try {
+      await pg.addInitScript(P50_PAGE_HELPERS);
+      await applyResults(pg, FX.P50_F9);
+      /* com perfil já declarado o controle é "Editar cenário-alvo"; sem perfil,
+         "Definir cenário-alvo". O gate abre o que existir no estado corrente. */
+      const abriu = await pg.evaluate(() => {
+        const b = document.getElementById("ux-tgt-open") || document.getElementById("ux-tgt-edit");
+        if (b) { b.click(); return true; }
+        return false;
+      });
+      await p50Settle(pg);
+      const m = await pg.evaluate(() => {
+        const sels = Array.from(document.querySelectorAll("#ux-target select[data-qid]"));
+        return sels.slice(0, 4).map(sel => {
+          const cs = getComputedStyle(sel);
+          const opts = Array.from(sel.options).map(o => {
+            const os = getComputedStyle(o);
+            return { text: (o.textContent || "").slice(0, 40), color: os.color, bg: os.backgroundColor };
+          });
+          return { qid: sel.getAttribute("data-qid"), color: cs.color, bg: cs.backgroundColor,
+                   colorScheme: cs.colorScheme, border: cs.borderTopStyle + " " + cs.borderTopWidth,
+                   options: opts, count: sel.options.length };
+        });
+      });
+      observed.push({ viewport: w + "x" + h, opened: abriu, selects: m });
+      const tag = "@" + w;
+      if (!abriu) { detail.push(tag + ": controle de cenário-alvo não abriu"); continue; }
+      if (!m.length) { detail.push(tag + ": nenhum select de alvo encontrado"); continue; }
+      m.forEach(sl => {
+        if (!/dark/i.test(sl.colorScheme))
+          detail.push(tag + " " + sl.qid + ": color-scheme '" + sl.colorScheme + "' não fixa o esquema do popup nativo");
+        const bg = p50ParseColor(sl.bg), fg = p50ParseColor(sl.color);
+        if (!bg || bg.a === 0)
+          detail.push(tag + " " + sl.qid + ": background do select transparente (" + sl.bg + ")");
+        if (bg && fg) {
+          const r = p50Ratio(p50Composite(fg, [bg.r, bg.g, bg.b]), [bg.r, bg.g, bg.b]);
+          if (r < 4.5) detail.push(tag + " " + sl.qid + ": contraste do select " + r + ":1");
+        }
+        if (!sl.count) detail.push(tag + " " + sl.qid + ": select sem opções");
+        sl.options.forEach(o => {
+          const ob = p50ParseColor(o.bg), of = p50ParseColor(o.color);
+          if (!ob || ob.a === 0)
+            detail.push(tag + " " + sl.qid + ": option '" + o.text + "' sem fundo explícito (" + o.bg + ")");
+          if (ob && of) {
+            const r = p50Ratio(p50Composite(of, [ob.r, ob.g, ob.b]), [ob.r, ob.g, ob.b]);
+            if (r < 4.5) detail.push(tag + " " + sl.qid + ": option '" + o.text + "' contraste " + r + ":1");
+          }
+        });
+      });
+    } catch (e) {
+      detail.push("@" + w + ": exceção " + String(e.message).split("\n")[0]);
+    } finally { await ctx.close(); }
+  }
+  const ok = detail.length === 0;
+  results.push({ id: "P51-VIS2", ok });
+  console.log((ok ? "PASS" : "FAIL") + "  P51-VIS2 — select do cenário-alvo legível: cor, fundo e color-scheme explícitos em select e options" +
+    (ok ? "" : " [" + detail.join(" · ") + "]"));
+  return { ok, detail, observed };
+}
+
+/* P51-PDF1 — PDF REAL: capa, cabeçalho, régua, legenda, emblema e anexo.
+   Renderiza o documento em A4 e inspeciona o resultado, não apenas o DOM. */
+async function p51pdf(browser, pageErrors) {
+  const detail = [], observed = [];
+  const CENARIOS = [
+    { id: "suficiente-com-label", vec: FX.P50_F5.vec, label: "Cliente Alfa" },
+    { id: "suficiente-sem-label", vec: FX.P50_F5.vec, label: null },
+    { id: "insuficiente", vec: FX.P50_F2.vec, label: "Cliente Beta" },
+    { id: "zero-confirmado", vec: new Array(15).fill(0), label: "Cliente Zero" },
+    { id: "unicode", vec: FX.P50_F5.vec, label: "Cliente 😀 Ácentos — «tudo»" }
+  ];
+  for (const c of CENARIOS) {
+    const ctx = await browser.newContext({ viewport: { width: 1440, height: 900 } });
+    const pg = await ctx.newPage();
+    pg.on("pageerror", e => pageErrors.push("P51-PDF1/" + c.id + ": " + String(e.message)));
+    try {
+      await pg.goto(HTML_URL);
+      await pg.evaluate(([qids, vec, label]) => {
+        window.__DEV.setArq(0);
+        qids.forEach((id, i) => window.__DEV.setAnswerById(id, vec[i]));
+        const L = window.__DEV.V32.TECH_LANDSCAPE, ids = Object.keys(L);
+        if (ids[0]) L[ids[0]].presence = "PRESENT";
+        if (label) {
+          const doc = window.__DEV.buildSessionDocument(label);
+          window.__DEV.importSessionDocument(JSON.parse(JSON.stringify(doc)));
+        }
+        window.__DEV.showResults();
+        window.__DEV.preparePrint();
+      }, [FX.P50_QIDS, c.vec, c.label]);
+      await p50Settle(pg);
+      /* A geometria da capa só existe sob MÍDIA PRINT: as regras de `.pr-cover`
+         vivem em @media print. Medir sem emular a mídia lia um layout que o
+         papel nunca terá — foi assim que o mutante de colisão de capa passou. */
+      await pg.emulateMedia({ media: "print" });
+      await pg.waitForTimeout(200);
+      const dom = await pg.evaluate(() => {
+        const el = document.getElementById("v32-print-report");
+        const t = s => { const n = el.querySelector(s); return n ? (n.textContent || "").replace(/\s+/g, " ").trim() : null; };
+        const cover = el.querySelector("#pr-cover");
+        /* `scrollWidth`/`clientWidth` não têm significado em elementos SVG:
+           medi-los ali produzia falso positivo nos rótulos do emblema. O ajuste
+           dos textos SVG é geométrico (viewBox fixo) e é asserido por conteúdo;
+           aqui medem-se apenas caixas HTML. */
+        const clip = Array.from(el.querySelectorAll("*"))
+          .filter(e => e.namespaceURI === "http://www.w3.org/1999/xhtml")
+          .filter(e => e.children.length === 0 && (e.textContent || "").trim())
+          .filter(e => e.scrollWidth > e.clientWidth + 1 || e.scrollHeight > e.clientHeight + 1)
+          .map(e => String(e.className || e.tagName) + ":" + (e.textContent || "").slice(0, 30));
+        const cb = cover ? cover.getBoundingClientRect() : null;
+        const head = el.querySelector(".pr-head");
+        const hb = head ? head.getBoundingClientRect() : null;
+        return {
+          cover: !!cover,
+          coverHeight: cb ? Math.round(cb.height) : null,
+          coverPosition: cover ? getComputedStyle(cover.parentElement || cover).position : null,
+          coverOutOfFlow: cover ? (function(){
+            for (let n = cover; n && n !== el; n = n.parentElement){
+              const ps = getComputedStyle(n).position;
+              if (ps === "absolute" || ps === "fixed") return true;
+            }
+            return false;
+          })() : false,
+          headTop: hb ? Math.round(hb.top) : null,
+          coverBottom: cb ? Math.round(cb.bottom) : null,
+          session: t('[data-pr-meta="session"]'),
+          sessionDate: t('[data-pr-meta="sessionDate"]'),
+          generatedAt: t('[data-pr-meta="generatedAt"]'),
+          tool: t('[data-pr-meta="tool"]'),
+          howto: !!el.querySelector("#pr-howto"),
+          howtoItens: el.querySelectorAll("#pr-howto li").length,
+          howtoChars: (function(){ const b=el.querySelector("#pr-howto");
+            return b ? b.textContent.replace(/\s+/g," ").trim().length : 0; })(),
+          ruler: !!el.querySelector("#pr-stage-ruler"),
+          rulerMark: !!el.querySelector("[data-rl-mark]"),
+          rulerRead: t("[data-rl-read]"),
+          bands: el.querySelectorAll("[data-rl-band]").length,
+          legend: el.querySelectorAll("[data-dom-legend]").length,
+          penta: !!el.querySelector('svg[data-qs-mark="pentagon"]'),
+          band: !!el.querySelector('svg[data-qs-mark="band"]'),
+          annex: el.querySelectorAll("#pr-annex .pr-card").length,
+          gapSupport: el.querySelectorAll("[data-pr-gap-support]").length,
+          controls: el.querySelectorAll("button, select, textarea, input").length,
+          clipped: clip
+        };
+      });
+      await pg.emulateMedia({ media: null });
+      const pdf = await pg.pdf({ format: "A4", printBackground: true, margin: { top: "14mm", bottom: "14mm", left: "14mm", right: "14mm" } });
+      dom.pdfBytes = pdf.length;
+      dom.scenario = c.id;
+      observed.push(dom);
+      const tag = c.id;
+      if (!dom.cover) detail.push(tag + ": capa ausente");
+      if (!dom.ruler || dom.bands !== 6) detail.push(tag + ": régua ausente ou com " + dom.bands + " faixas");
+      /* adendo documental · §4: caixa curta de leitura no próprio relatório */
+      if (!dom.howto) detail.push(tag + ": caixa 'Como interpretar este relatório' ausente do PDF");
+      if (dom.howtoItens < 5 || dom.howtoItens > 8)
+        detail.push(tag + ": caixa interpretativa com " + dom.howtoItens + " itens");
+      if (dom.howtoChars > 900) detail.push(tag + ": caixa interpretativa longa demais (" + dom.howtoChars + " caracteres)");
+      if (dom.legend !== 5) detail.push(tag + ": legenda com " + dom.legend + " domínios");
+      if (!dom.penta || !dom.band) detail.push(tag + ": emblema/faixa ausentes");
+      if (dom.annex !== 15) detail.push(tag + ": anexo com " + dom.annex + " itens (esperado 15)");
+      if (dom.controls !== 0) detail.push(tag + ": " + dom.controls + " controle(s) interativo(s) no print");
+      if (dom.clipped.length) detail.push(tag + ": texto cortado -> " + dom.clipped.slice(0, 3).join(" | "));
+      if (dom.coverBottom !== null && dom.headTop !== null && dom.headTop < dom.coverBottom - 1)
+        detail.push(tag + ": capa e cabeçalho colidem (head top " + dom.headTop + " < fim da capa " + dom.coverBottom + ")");
+      if (dom.coverOutOfFlow) detail.push(tag + ": capa fora do fluxo do documento (position " + dom.coverPosition + ")");
+      if (dom.coverHeight !== null && dom.coverHeight > 900)
+        detail.push(tag + ": capa ocupa " + dom.coverHeight + "px — desperdício desproporcional");
+      if (!(dom.pdfBytes > 20000)) detail.push(tag + ": PDF de " + dom.pdfBytes + " bytes");
+      /* metadados por cenário */
+      if (c.label && dom.session !== c.label) detail.push(tag + ": Sessão '" + dom.session + "' != '" + c.label + "'");
+      if (!c.label && dom.session !== "Sem rótulo") detail.push(tag + ": sessão sem label deveria dizer 'Sem rótulo'");
+      /* comparar as STRINGS renderizadas seria frágil: numa execução automática
+         a sessão e o relatório caem no mesmo segundo. O que precisa ser
+         distinto é a FONTE semântica e o RÓTULO. */
+      const meta = await pg.evaluate(() => {
+        const m = window.__DEV.qsSessionMeta();
+        const el = document.getElementById("v32-print-report");
+        return { sessionISO: m.sessionDateISO, generatedISO: m.generatedAtISO,
+                 labels: Array.from(el.querySelectorAll(".pr-cover-meta dt")).map(e => e.textContent.trim()) };
+      });
+      dom.meta = meta;
+      if (meta.sessionISO && meta.sessionISO === meta.generatedISO)
+        detail.push(tag + ": data da sessão e de geração vêm do mesmo instante");
+      if (meta.labels.indexOf("Relatório gerado em") < 0)
+        detail.push(tag + ": rótulo 'Relatório gerado em' ausente");
+      if (meta.labels.filter(l => /Data da sessão|Sessão registrada em/.test(l)).length !== 1)
+        detail.push(tag + ": rótulo de data da sessão ausente/duplicado: " + JSON.stringify(meta.labels));
+      if (c.label && meta.labels.indexOf("Sessão registrada em") < 0)
+        detail.push(tag + ": documento importado não usa o rótulo honesto de proveniência");
+      /* n/d nunca vira marcador em zero */
+      if (tag === "insuficiente") {
+        if (dom.rulerMark) detail.push(tag + ": régua marcou posição com dados insuficientes");
+        if (!/não determinado/i.test(dom.rulerRead || "")) detail.push(tag + ": régua não declara estágio indeterminado");
+      }
+      if (tag === "zero-confirmado") {
+        if (!dom.rulerMark) detail.push(tag + ": zero confirmado deveria ter marcador em 0");
+        if (!/0\.0/.test(dom.rulerRead || "")) detail.push(tag + ": leitura da régua '" + dom.rulerRead + "'");
+      }
+      if (tag === "unicode" && dom.session !== c.label)
+        detail.push(tag + ": label Unicode corrompido -> '" + dom.session + "'");
+    } catch (e) {
+      detail.push(c.id + ": exceção " + String(e.message).split("\n")[0]);
+    } finally { await ctx.close(); }
+  }
+  const ok = detail.length === 0;
+  results.push({ id: "P51-PDF1", ok });
+  console.log((ok ? "PASS" : "FAIL") + "  P51-PDF1 — PDF real em A4: capa, metadados, régua, legenda, emblema, anexo e ausência de controles" +
+    (ok ? "" : " [" + detail.join(" · ") + "]"));
+  return { ok, detail, observed };
+}
+
 (async () => {
   /* §25.6 · sem browser resolvível TODOS os gates Chromium desta suíte são
      declarados NÃO EXECUTADOS, um a um. SKIP nunca conta como PASS e não
@@ -3276,7 +3581,8 @@ async function localidadeELatencia(browser, pageErrors) {
     "P50-ACC6", "P50-SESUX1B", "P50-PR1",
     "P50-VIS7", "P50-VIS8", "P50-VIS9", "P50-ACC5",
     "P50-VIS1", "P50-VIS2", "P50-VIS3", "P50-VIS4", "P50-VIS5", "P50-VIS6", "P50-VIS10",
-    "P50-ACC1", "P50-ACC2", "P50-ACC3", "P50-ACC4", "P50-IC1", "P50-IC2"
+    "P50-ACC1", "P50-ACC2", "P50-ACC3", "P50-ACC4", "P50-IC1", "P50-IC2",
+    "P51-VIS1", "P51-VIS2", "P51-PDF1"
   ];
   function skipAll(reason) {
     P50_CHROMIUM_GATES.forEach(g => {
@@ -3436,6 +3742,11 @@ async function localidadeELatencia(browser, pageErrors) {
     const gIcons = await ic1ic2(b, pageErrors);
     const gR1 = await aceiteR1(b, pageErrors);
     const gLocal = await localidadeELatencia(b, pageErrors);
+    /* ---- Phase 5.1 · UAT e relatório executivo ---- */
+    const g51a = await p51vis1(b, pageErrors);
+    const g51b = await p51vis2(b, pageErrors);
+    const g51c = await p51pdf(b, pageErrors);
+
     const gPrint = await vis10(prn1.ok, pageErrors);
 
     /* P50-geometry.json — medidas consolidadas + pageErrors (§25.6/§30.4). */
@@ -3592,7 +3903,7 @@ async function localidadeELatencia(browser, pageErrors) {
 function finish() {
   const fail = results.filter(r => !r.ok).length;
   const pass = results.length - fail;
-  console.log("\nP50 CHROMIUM (microfases 5.0.1+5.0.2+5.0.3+5.0.4+5.0.5): " + pass + " PASS · " + fail + " FAIL de " + results.length +
+  console.log("\nP50 CHROMIUM + P51 (microfases 5.0.1..5.0.5 + Phase 5.1): " + pass + " PASS · " + fail + " FAIL de " + results.length +
     (skipped ? " · " + skipped + " NÃO EXECUTADO (requer Chromium real)" : ""));
   process.exit(fail ? 1 : 0);
 }

@@ -682,16 +682,290 @@ function prCards(ids, ctxs, pres){
     return body.replace(/<details class="v32-why">[\s\S]*?<\/details>/, prWhy(id,c));
   }).join("");
 }
+/* ==========================================================================
+   PHASE 5.1 · SISTEMA GRÁFICO DOS CINCO DOMÍNIOS (RPT-05)
+   Dois formatos do MESMO sistema: emblema pentagonal (capa) e faixa compacta
+   (cabeçalho). Ambos são IDENTIDADE ESTÁTICA, nunca visualização de dado:
+   nenhum fill, tamanho, opacidade ou segmento responde a answers, scores,
+   suficiência, Target ou gaps. A prova disso é o gate P51-RPT5, que exige o
+   SVG byte-idêntico entre uma sessão de score mínimo e outra de score alto.
+
+   Geometria própria: cinco nós dispostos num pentágono regular (emblema) e
+   cinco segmentos iguais numa faixa (cabeçalho). Não é roda de níveis e não
+   reproduz o gráfico do SOC-CMM oficial. Tudo inline, manual e determinístico:
+   sem imagem externa, sem base64, sem fonte remota, sem novo asset.
+
+   Cores exclusivamente de PR_DOM_HEX, na ordem canônica de DOMS. O acento de
+   marca #DA291C NÃO entra como cor de domínio.
+   ========================================================================== */
+/* Vértices do pentágono, pré-calculados e FIXOS (nada é derivado de dado).
+   Ângulos a partir do topo, em passos de 72°, raio 34 sobre centro (50,52). */
+const QS_PENTA = [
+  { x: 50.0, y: 18.0, lx: 50.0, ly: 10.5, anchor: "middle" },
+  { x: 82.3, y: 41.5, lx: 89.0, ly: 39.0, anchor: "start"  },
+  { x: 70.0, y: 79.6, lx: 74.5, ly: 90.5, anchor: "middle" },
+  { x: 30.0, y: 79.6, lx: 25.5, ly: 90.5, anchor: "middle" },
+  { x: 17.7, y: 41.5, lx: 11.0, ly: 39.0, anchor: "end"    }
+];
+function qsPentagonSVG(){
+  const nomes = DOMS.map(d=>d.pt);
+  const linha = QS_PENTA.map(p=>`${p.x},${p.y}`).join(" ");
+  const nos = QS_PENTA.map((p,i)=>
+    `<circle cx="${p.x}" cy="${p.y}" r="7.2" fill="${PR_DOM_HEX[i]}" stroke="#1C1C1F" stroke-width="1.4"></circle>` +
+    `<text x="${p.x}" y="${(p.y+2.9).toFixed(1)}" font-size="7.2" font-weight="700" text-anchor="middle" fill="#0B0B0C">${i+1}</text>`
+  ).join("");
+  const rotulos = QS_PENTA.map((p,i)=>
+    `<text x="${p.lx}" y="${p.ly}" font-size="6.6" text-anchor="${p.anchor}" fill="#3A3A40">${esc32(nomes[i])}</text>`
+  ).join("");
+  return `<svg class="qs-mark qs-mark-penta" data-qs-mark="pentagon" viewBox="0 0 100 100" width="132" height="132" role="img" aria-labelledby="qs-penta-t qs-penta-d">`
+    + `<title id="qs-penta-t">Cinco domínios do Quickscan</title>`
+    + `<desc id="qs-penta-d">Emblema de identidade: ${esc32(nomes.join(", "))}. Elemento gráfico fixo, não representa resultados.</desc>`
+    + `<g aria-hidden="true"><polygon points="${linha}" fill="none" stroke="#C9C9CF" stroke-width="1.2"></polygon>${nos}</g>`
+    + `<g>${rotulos}</g></svg>`;
+}
+function qsBandSVG(){
+  const nomes = DOMS.map(d=>d.pt);
+  const w = 34, gap = 2, h = 7;
+  const segs = nomes.map((n,i)=>{
+    const x = i*(w+gap);
+    return `<rect x="${x}" y="0" width="${w}" height="${h}" rx="2" fill="${PR_DOM_HEX[i]}"></rect>`
+      + `<text x="${x + w/2}" y="${h + 8}" font-size="6.4" text-anchor="middle" fill="#3A3A40">${esc32(n)}</text>`;
+  }).join("");
+  const total = nomes.length*(w+gap) - gap;
+  return `<svg class="qs-mark qs-mark-band" data-qs-mark="band" viewBox="0 0 ${total} 18" width="200" height="20" role="img" aria-labelledby="qs-band-t qs-band-d">`
+    + `<title id="qs-band-t">Cinco domínios do Quickscan</title>`
+    + `<desc id="qs-band-d">Faixa de identidade: ${esc32(nomes.join(", "))}. Elemento gráfico fixo, não representa resultados.</desc>`
+    + `<g>${segs}</g></svg>`;
+}
+/* RPT-04 · legenda explícita, mesma ordem e mesmas cores, com índice estável
+   para que o significado sobreviva à impressão em preto e branco. */
+function qsDomainLegendHTML(){
+  return `<div class="pr-domlegend" id="pr-domlegend">`
+    + DOMS.map((d,i)=>`<span class="pr-domleg" data-dom-legend="${i}"><span class="pr-domsw" data-dom-sw style="background:${PR_DOM_HEX[i]}"></span>${i+1}. ${esc32(d.pt)}</span>`).join("")
+    + `</div>`;
+}
+
+/* ==========================================================================
+   PHASE 5.1 · RPT-03 — RÉGUA DE LEITURA DO ESTÁGIO (0–5)
+   As faixas NÃO são uma nova fonte normativa: são DERIVADAS de stageOf(),
+   varrendo o intervalo 0..5 e registrando onde a função canônica troca de
+   estágio. Se stageOf() mudar, a régua muda junto — por construção. Os
+   literais 0.5/1.5/2.5/3.5/4.5 não aparecem aqui.
+   ========================================================================== */
+function qsStageBands(){
+  const passo = 0.01, bands = [];
+  let atual = stageOf(0), ini = 0;
+  for (let i = 1; i <= 500; i++){
+    const v = Math.round(i*passo*100)/100;
+    const s = stageOf(v);
+    if (s.pt !== atual.pt){ bands.push({ from: ini, to: v, stage: atual }); atual = s; ini = v; }
+  }
+  bands.push({ from: ini, to: 5, stage: atual });
+  return bands;
+}
+if (typeof window !== "undefined") window.__QS_STAGE_RULER = {
+  bands: qsStageBands,
+  stageAt: v => stageOf(v)
+};
+function qsStageRulerHTML(overall, suff){
+  const bands = qsStageBands();
+  const determinado = suff && overall !== null;
+  const pct = v => (Math.max(0, Math.min(5, v)) / 5 * 100).toFixed(2);
+  const segs = bands.map((b,i)=>{
+    const largura = ((b.to - b.from)/5*100).toFixed(2);
+    return `<span class="pr-rl-band" data-rl-band="${i}" style="width:${largura}%">`
+      + `<span class="pr-rl-n">${i}</span><span class="pr-rl-s">${esc32(b.stage.pt)}</span></span>`;
+  }).join("");
+  const marcador = determinado
+    ? `<span class="pr-rl-mark" data-rl-mark style="left:${pct(overall)}%" aria-hidden="true"></span>`
+    : "";
+  const leitura = determinado
+    ? `<div class="pr-rl-read" data-rl-read><b>${overall.toFixed(1)} / 5</b> · ${esc32(stageOf(overall).pt)}</div>`
+    : `<div class="pr-rl-read pr-rl-nd" data-rl-read>Estágio não determinado — dados insuficientes</div>`;
+  return `<div class="pr-ruler" id="pr-stage-ruler" role="img" aria-label="${determinado
+      ? "Régua de maturidade de 0 a 5. Score geral " + overall.toFixed(1) + ", estágio " + esc32(stageOf(overall).pt) + "."
+      : "Régua de maturidade de 0 a 5. Estágio não determinado por dados insuficientes."}">
+    <div class="pr-rl-track">${segs}${marcador}</div>${leitura}</div>`;
+}
+
+/* ==========================================================================
+   PHASE 5.1 · RPT-01/RPT-02 — CAPA EXECUTIVA E METADADOS DA SESSÃO
+   ========================================================================== */
+function qsFmtDateBR(iso){
+  if (!iso) return null;
+  const d = new Date(iso);
+  if (isNaN(d.getTime())) return null;
+  const p = n => String(n).padStart(2,"0");
+  /* segundos incluídos: a data da sessão e a de geração podem cair no mesmo
+     minuto, e o relatório precisa ser rastreável ao instante. */
+  return `${p(d.getDate())}/${p(d.getMonth()+1)}/${d.getFullYear()} ${p(d.getHours())}:${p(d.getMinutes())}:${p(d.getSeconds())}`;
+}
+function qsSessionMeta(){
+  const m = (typeof window!=="undefined" && window.__P51SESMETA && typeof window.__P51SESMETA.read==="function")
+    ? window.__P51SESMETA.read() : null;
+  const build = (typeof window!=="undefined" && window.__QS_BUILD_META) || {};
+  const out = {
+    label: (m && m.label) ? m.label : null,
+    toolVersion: build.toolVersion || "não informada",
+    generatedAtISO: new Date().toISOString(),
+    sessionDateLabel: "Data da sessão",
+    sessionDateISO: m ? m.startedAt : null,
+    sessionDateText: null
+  };
+  if (m && m.origin === "imported"){
+    /* `createdAt` do documento é o instante da EXPORTAÇÃO original, não o
+       início da avaliação: rotula-se com honestidade. */
+    out.sessionDateLabel = "Sessão registrada em";
+    out.sessionDateISO = m.importedCreatedAt;
+    out.sessionDateText = m.importedCreatedAtMissing ? "Data original não informada" : null;
+  }
+  if (!out.sessionDateText) out.sessionDateText = qsFmtDateBR(out.sessionDateISO) || "Data não disponível";
+  out.generatedAtText = qsFmtDateBR(out.generatedAtISO);
+  return out;
+}
+function qsCoverHTML(){
+  const m = qsSessionMeta();
+  return `<div class="pr-cover" id="pr-cover">
+    <div class="pr-cover-mark">${qsPentagonSVG()}</div>
+    <div class="pr-cover-txt">
+      <div class="pr-cover-brand">Fortinet</div>
+      <h1 class="pr-cover-title">Quickscan SecOps · SOC-CMM</h1>
+      <div class="pr-cover-sub">Relatório indicativo de maturidade de operações de segurança</div>
+      <div class="pr-cover-disc">Screening indicativo de alto nível — não substitui assessment formal.</div>
+      <dl class="pr-cover-meta">
+        <div><dt>Sessão</dt><dd data-pr-meta="session">${m.label ? esc32(m.label) : "Sem rótulo"}</dd></div>
+        <div><dt>${esc32(m.sessionDateLabel)}</dt><dd data-pr-meta="sessionDate">${esc32(m.sessionDateText)}</dd></div>
+        <div><dt>Relatório gerado em</dt><dd data-pr-meta="generatedAt">${esc32(m.generatedAtText||"")}</dd></div>
+        <div><dt>Versão da ferramenta</dt><dd data-pr-meta="tool">${esc32(m.toolVersion)}</dd></div>
+      </dl>
+      ${qsDomainLegendHTML()}
+    </div></div>`;
+}
+
+/* ==========================================================================
+   PHASE 5.1 · UAT-07 — CAMINHOS DE APOIO JUNTO DO GAP
+   A recomendação útil passa a aparecer ONDE o gap é lido, e não apenas no
+   bloco residual do fim do relatório. Regras que este bloco respeita:
+     · separa "capability a desenvolver" de "produtos/serviços que podem apoiar";
+     · explica, em uma frase, POR QUE cada opção apareceu a partir do contexto
+       DECLARADO — nunca a partir de suposição;
+     · não afirma que produto é requisito, solução completa ou compra
+       recomendada; não inventa licenciamento, sizing, arquitetura ou cobertura;
+     · quando falta contexto declarado, diz "validar aderência" em vez de
+       recomendar;
+     · o bloco final de apoio continua existindo para as capabilities que não
+       têm gap correspondente, sem duplicar o mesmo card.
+   O mapeamento abaixo é condicionado e conservador; a fonte conceitual é a
+   documentação oficial de cada produto.
+   ========================================================================== */
+const QS_GAP_SUPPORT = {
+  "detection-lifecycle": {
+    cap: "Ciclo de vida dos casos de uso de detecção",
+    opts: [
+      { n: "FortiSIEM", w: "coleta, correlação e analytics quando a detecção precisa cobrir fontes heterogêneas" },
+      { n: "FortiAnalyzer", w: "logging e analytics quando a operação já é majoritariamente Fortinet" },
+      { n: "FortiSOAR", w: "orquestração do ciclo de investigação e resposta dos casos de uso" },
+      { n: "FortiSOC", w: "abordagem integrada de SOC, como opção de plataforma — nunca como produto obrigatório" }
+    ]
+  },
+  "logs": {
+    cap: "Centralização e retenção de logs",
+    opts: [
+      { n: "FortiAnalyzer", w: "logging e analytics no ecossistema Fortinet declarado" },
+      { n: "FortiSIEM", w: "necessidade SIEM ampla de TI/OT, com múltiplas fontes e correlação em escala" },
+      { n: "FortiSOC", w: "abordagem integrada, condicionada à arquitetura declarada" }
+    ]
+  },
+  "automation": {
+    cap: "Automação e orquestração da resposta",
+    opts: [
+      { n: "FortiSOAR", w: "playbooks, integrações e padronização do tratamento" },
+      { n: "Automação nativa de FortiAnalyzer/FortiSIEM", w: "somente quando a necessidade e a arquitetura declaradas forem compatíveis" }
+    ]
+  },
+  "vulnerability-management": {
+    cap: "Gestão de vulnerabilidades",
+    opts: [
+      { n: "FortiClient administrado por EMS", w: "descoberta, inventário, varredura e patching no escopo de endpoint; não substitui uma plataforma completa de gestão de vulnerabilidades" },
+      { n: "FortiRecon", w: "exposição externa (EASM/DRPS) — pertinente à superfície externa, não à gestão interna" }
+    ]
+  }
+};
+/* Capability canônica associada ao qid, quando existir. Sem inventar vínculo. */
+function qsCapIdForQid(qid){
+  const ids = Object.keys(V32.CAPABILITIES || {});
+  for (const id of ids){
+    if ((V32.CAPABILITIES[id].questionIds || []).includes(qid)) return id;
+  }
+  return null;
+}
+function qsGapSupportHTML(f){
+  const m = QS_GAP_SUPPORT[f.id];
+  if (!m) return "";
+  const capId = qsCapIdForQid(f.id);
+  const L = capId && V32.TECH_LANDSCAPE ? V32.TECH_LANDSCAPE[capId] : null;
+  const declarado = !!(L && L.presence && L.presence !== "UNSET");
+  /* A capability nomeada aqui é a CANÔNICA do runtime (`MAP[qid].cap`), não uma
+     segunda redação própria: um único dono do nome evita que a tabela de apoio
+     e o motor divirjam — e permite que o gate compare contra fonte externa à
+     tabela, em vez de validá-la contra si mesma. */
+  const capCanon = (MAP[f.id] && MAP[f.id].cap) ? MAP[f.id].cap : m.cap;
+  const cabec = `<div class="pr-gapsup-cap" data-pr-gap-cap>Para a capability <b>${esc32(capCanon)}</b>:</div>`;
+  if (!declarado){
+    /* sem contexto declarado não se recomenda: valida-se. */
+    return `<div class="pr-gapsup" data-pr-gap-support data-pr-gap-qid="${escAttr(f.id)}"><div class="pr-gapsup-h">Possíveis caminhos de apoio</div>
+      ${cabec}
+      <div class="pr-gapsup-why" data-pr-gap-why>Contexto tecnológico não declarado para esta capability: as opções abaixo exigem <b>validar aderência</b> antes de qualquer recomendação.</div>
+      <ul class="pr-gapsup-list">${m.opts.map(o=>`<li data-pr-gap-opt><b>${esc32(o.n)}</b> — <span class="pr-mut">${esc32(o.w)}; validar aderência ao contexto do cliente.</span></li>`).join("")}</ul></div>`;
+  }
+  const estado = PRESENCE_LABELS[L.presence] || L.presence;
+  return `<div class="pr-gapsup" data-pr-gap-support data-pr-gap-qid="${escAttr(f.id)}"><div class="pr-gapsup-h">Possíveis caminhos de apoio</div>
+    ${cabec}
+    <div class="pr-gapsup-why" data-pr-gap-why>Apareceu porque o gap acima foi observado e o contexto declarado para esta capability é <b>${esc32(estado)}</b>. As opções são caminhos possíveis, a validar — não são requisito nem compra recomendada.</div>
+    <ul class="pr-gapsup-list">${m.opts.map(o=>`<li data-pr-gap-opt><b>${esc32(o.n)}</b> — <span class="pr-mut">${esc32(o.w)}.</span></li>`).join("")}</ul></div>`;
+}
+
+/* ==========================================================================
+   PHASE 5.1 · ADENDO — CAIXA "COMO INTERPRETAR ESTE RELATÓRIO"
+   Ajuda curta no próprio documento, logo após o resumo de maturidade. Não
+   substitui o USER_GUIDE.md: comunica em poucas linhas as regras de leitura
+   que evitam os mal-entendidos mais caros — contexto tecnológico não muda a
+   nota, `n/d` não é zero, Target é cenário desejado e recomendação é
+   possibilidade condicionada. Estático: não depende de score, suficiência,
+   Target nem contexto declarado.
+   ========================================================================== */
+function qsHowToReadHTML(){
+  return `<div class="pr-howto" id="pr-howto">
+    <div class="pr-howto-h">Como interpretar este relatório</div>
+    <ul class="pr-howto-list">
+      <li>O <b>score</b> e o <b>estágio</b> vêm exclusivamente das <b>respostas confirmadas</b> do assessment.</li>
+      <li>O <b>contexto tecnológico não altera a nota</b>: ter a ferramenta não eleva a maturidade.</li>
+      <li>O contexto <b>refina a classificação do gap e as recomendações</b> — é o que torna a leitura acionável.</li>
+      <li><b>n/d</b> significa <b>não avaliado</b>, nunca zero; zero confirmado é um resultado medido.</li>
+      <li>O <b>cenário-alvo</b> é um estado desejado e declarado, não previsão nem compromisso.</li>
+      <li>As <b>recomendações são possibilidades</b> condicionadas ao contexto informado, sujeitas a validação.</li>
+    </ul></div>`;
+}
+
 function buildPrintReport(){
   const ctxRes = V32.buildRecommendationContext();               /* recompute — nunca cache */
   const ctxs = ctxRes.contexts;
   const stats = DOMS.map((_,i)=>domStat(i));
   const suff = dataSufficiency(stats);
   const scored = stats.filter(s=>s.score!==null);
-  const overall = suff && scored.length ? (scored.reduce((a,s)=>a+s.score,0)/scored.length) : null;
+  /* ERRATA B1 · agregado do relatorio na forma canonica (mesma de renderResults,
+     legacySnapshot, computeTargetProfile e buildNarrativeSnapshot): arredondar ANTES
+     de nomear o estagio, para que numero impresso e nome da faixa nunca divirjam. */
+  const overall = suff && scored.length ? Math.round(scored.reduce((a,s)=>a+s.score,0)/scored.length*10)/10 : null;
   const {findings, validate} = computeFindings();
   const prios = [...businessPriority].map(qid=>findings.find(f=>f.id===qid)).filter(Boolean);
-  let h = `<div class="pr-head"><div class="pr-brand">Fortinet · Quickscan SecOps · SOC-CMM</div>
+  /* RPT-01 · abertura executiva. A capa vem ANTES do cabeçalho corrente, que
+     permanece intacto para as seções seguintes (o gate congelado de print
+     continua encontrando `.pr-head`). RPT-05 · a faixa dos cinco domínios
+     acompanha a marca no cabeçalho. */
+  let h = qsCoverHTML();
+  h += `<div class="pr-head"><div class="pr-brand">Fortinet · Quickscan SecOps · SOC-CMM</div>
+    <div class="pr-headmark">${qsBandSVG()}</div>
     <div class="pr-disc">Screening indicativo de alto nível — não substitui assessment formal.</div></div>`;
   /* B — resumo de maturidade */
   h += `<div class="pr-sec" id="pr-maturity"><h2>Resumo de maturidade</h2>
@@ -701,9 +975,12 @@ function buildPrintReport(){
       <div class="pr-kpi"><b>${suff ? "adequada" : "insuficiente"}</b><span>Suficiência da sessão</span></div>
       ${typeof arq==="number" && ARQ[arq] ? `<div class="pr-kpi"><b>${esc32(ARQ[arq].t)}</b><span>Arquétipo declarado</span></div>` : ""}
     </div>
+    ${qsStageRulerHTML(overall, suff)}
     <table class="pr-doms"><tr>${stats.map((s,i)=>`<th><span class="pr-domsw" style="background:${PR_DOM_HEX[i]}"></span>${esc32(DOMS[i].pt)}</th>`).join("")}</tr>
     <tr>${stats.map(s=>`<td>${s.score===null?"n/d":s.score.toFixed(1)}</td>`).join("")}</tr></table>
     ${prRadarSVG(stats)}</div>`;
+  /* §4 do adendo: a caixa vem logo APÓS o resumo de maturidade. */
+  h += qsHowToReadHTML();
   /* C — prioridades */
   if (prios.length) h += `<div class="pr-sec" id="pr-prios"><h2>Prioridades declaradas pelo negócio</h2>
     ${prios.map((f,i)=>`<div class="pr-card"><b>${i+1}. ${esc32(qLabel(f.id))}</b></div>`).join("")}</div>`;
@@ -719,7 +996,7 @@ function buildPrintReport(){
         <b>${esc32(q.lbl)}</b> <span class="pr-mut">· domínio ${esc32(DOMS[q.dom].pt)}</span>
         <div><i class="pr-lab">Evidência declarada:</i> ${esc32(opt.t)}${opt.d?` — <span class="pr-mut">${esc32(opt.d)}</span>`:""}</div>
         ${cap?`<div><i class="pr-lab">Capability a desenvolver:</i> ${esc32(cap)}</div>`:""}
-        ${obs}</div>`;}).join("")}</div>`;
+        ${obs}${qsGapSupportHTML(f)}</div>`;}).join("")}</div>`;
   if (ctxRes.legacyMode){ h += `<div class="pr-foot">Relatório V3.1.3 · contexto tecnológico não informado nesta sessão.</div>`; return { html:h, ctxRes }; }
   /* E — contexto declarado */
   const decl = Object.keys(V32.TECH_LANDSCAPE).filter(id=>V32.TECH_LANDSCAPE[id].presence!=="UNSET");
@@ -839,6 +1116,9 @@ renderResults = function(app){
 window.__V32UI = { openEditor, esc32, iconFor, ARCH_FIELDS };   /* [4.8.0.2-3] contrato real de arquitetura */   /* [4.5.0.2-B] mesma função exposta; zero resolver paralelo */
 window.__DEV = {
   V32,
+  PR_DOM_HEX, QS_GAP_SUPPORT,                   /* [5.1] superfícies de leitura para os gates */
+  PRESENCE_LABELS, STATUS_LABELS, CLASS_LABELS, /* [5.1-adendo] rótulos canônicos p/ conferência do manual */
+  qsStageBands, qsSessionMeta,                  /* [5.1] régua derivada e metadados ativos */
   setAnswerById: (qid, v) => { const k = QS.findIndex(q=>q.id===qid); if (k>=0) ans[k]=v; },
   setArq: i => { arq = i; },
   setPriorities: ids => { businessPriority.clear(); ids.forEach(id=>businessPriority.add(id)); },

@@ -1,0 +1,186 @@
+{
+  "html": "e8857a9da789367b6a20c4c0aa848cc3db550f99d243f052d12ccd1aa55b8513",
+  "nota": "Evidência regenerada APÓS o adendo documental; inclui a caixa 'Como interpretar este relatório'.",
+  "scenarios": [
+    {
+      "sessao": "Cliente Alfa",
+      "rotulos": [
+        "Sessão",
+        "Sessão registrada em",
+        "Relatório gerado em",
+        "Versão da ferramenta"
+      ],
+      "dataSessao": "22/08/2026 14:14:12",
+      "gerado": "22/08/2026 14:14:12",
+      "tool": "3.4.0-dev.4.8.0.7",
+      "comoInterpretar": {
+        "presente": true,
+        "itens": 6,
+        "caracteres": 544
+      },
+      "regua": "3.3 / 5 · Definido",
+      "marcador": true,
+      "faixas": 6,
+      "legenda": 5,
+      "apoios": 1,
+      "anexo": 15,
+      "controles": 0,
+      "importOk": true,
+      "tgtOk": {
+        "mandate": true,
+        "governance": true
+      },
+      "cenario": "suficiente-com-label",
+      "pdf": "P51-report-suficiente-com-label.pdf",
+      "bytes": 168086
+    },
+    {
+      "sessao": "Cliente Importado",
+      "rotulos": [
+        "Sessão",
+        "Sessão registrada em",
+        "Relatório gerado em",
+        "Versão da ferramenta"
+      ],
+      "dataSessao": "22/08/2026 14:14:13",
+      "gerado": "22/08/2026 14:14:13",
+      "tool": "3.4.0-dev.4.8.0.7",
+      "comoInterpretar": {
+        "presente": true,
+        "itens": 6,
+        "caracteres": 544
+      },
+      "regua": "3.3 / 5 · Definido",
+      "marcador": true,
+      "faixas": 6,
+      "legenda": 5,
+      "apoios": 1,
+      "anexo": 15,
+      "controles": 0,
+      "importOk": true,
+      "tgtOk": {},
+      "cenario": "importada-com-createdAt",
+      "pdf": "P51-report-importada-com-createdAt.pdf",
+      "bytes": 148865
+    },
+    {
+      "sessao": "Sem rótulo",
+      "rotulos": [
+        "Sessão",
+        "Data da sessão",
+        "Relatório gerado em",
+        "Versão da ferramenta"
+      ],
+      "dataSessao": "22/08/2026 14:14:13",
+      "gerado": "22/08/2026 14:14:13",
+      "tool": "3.4.0-dev.4.8.0.7",
+      "comoInterpretar": {
+        "presente": true,
+        "itens": 6,
+        "caracteres": 544
+      },
+      "regua": "3.3 / 5 · Definido",
+      "marcador": true,
+      "faixas": 6,
+      "legenda": 5,
+      "apoios": 1,
+      "anexo": 15,
+      "controles": 0,
+      "importOk": null,
+      "tgtOk": {},
+      "cenario": "suficiente-sem-label",
+      "pdf": "P51-report-suficiente-sem-label.pdf",
+      "bytes": 148853
+    },
+    {
+      "sessao": "Cliente Beta",
+      "rotulos": [
+        "Sessão",
+        "Sessão registrada em",
+        "Relatório gerado em",
+        "Versão da ferramenta"
+      ],
+      "dataSessao": "22/08/2026 14:14:13",
+      "gerado": "22/08/2026 14:14:13",
+      "tool": "3.4.0-dev.4.8.0.7",
+      "comoInterpretar": {
+        "presente": true,
+        "itens": 6,
+        "caracteres": 544
+      },
+      "regua": "Estágio não determinado — dados insuficientes",
+      "marcador": false,
+      "faixas": 6,
+      "legenda": 5,
+      "apoios": 0,
+      "anexo": 15,
+      "controles": 0,
+      "importOk": true,
+      "tgtOk": {},
+      "cenario": "insuficiente",
+      "pdf": "P51-report-insuficiente.pdf",
+      "bytes": 146888
+    },
+    {
+      "sessao": "Cliente Zero",
+      "rotulos": [
+        "Sessão",
+        "Sessão registrada em",
+        "Relatório gerado em",
+        "Versão da ferramenta"
+      ],
+      "dataSessao": "22/08/2026 14:14:14",
+      "gerado": "22/08/2026 14:14:14",
+      "tool": "3.4.0-dev.4.8.0.7",
+      "comoInterpretar": {
+        "presente": true,
+        "itens": 6,
+        "caracteres": 544
+      },
+      "regua": "0.0 / 5 · Inexistente",
+      "marcador": true,
+      "faixas": 6,
+      "legenda": 5,
+      "apoios": 4,
+      "anexo": 15,
+      "controles": 0,
+      "importOk": true,
+      "tgtOk": {},
+      "cenario": "zero-confirmado",
+      "pdf": "P51-report-zero-confirmado.pdf",
+      "bytes": 279228
+    },
+    {
+      "sessao": "Cliente 😀 Ácentos — «tudo»",
+      "rotulos": [
+        "Sessão",
+        "Sessão registrada em",
+        "Relatório gerado em",
+        "Versão da ferramenta"
+      ],
+      "dataSessao": "22/08/2026 14:14:14",
+      "gerado": "22/08/2026 14:14:14",
+      "tool": "3.4.0-dev.4.8.0.7",
+      "comoInterpretar": {
+        "presente": true,
+        "itens": 6,
+        "caracteres": 544
+      },
+      "regua": "3.3 / 5 · Definido",
+      "marcador": true,
+      "faixas": 6,
+      "legenda": 5,
+      "apoios": 1,
+      "anexo": 15,
+      "controles": 0,
+      "importOk": true,
+      "tgtOk": {
+        "mandate": true,
+        "governance": true
+      },
+      "cenario": "unicode",
+      "pdf": "P51-report-unicode.pdf",
+      "bytes": 176493
+    }
+  ]
+}

@@ -166,10 +166,12 @@ test('V8 journey nodes', async ({ page }) => {
     label: (n.querySelector('.jn-label')||{}).textContent || '',
     box: n.getBoundingClientRect().toJSON() })));
   expect(dom.map(d=>d.name)).toEqual(model.names);              // nomes vêm de stageOf(), não do teste
-  expect(dom[model.cur].label).toContain('PERFIL ATUAL');
-  if (model.tgt >= 0) expect(dom[model.tgt].label).toContain('CENÁRIO-ALVO');
-  if (model.next >= 0) expect(dom[model.next].label, 'label de PRÓXIMO ESTÁGIO').toContain('PRÓXIMO ESTÁGIO');
-  else expect(dom.map(d=>d.label).join(' '), 'top stage não fabrica próximo').not.toContain('PRÓXIMO ESTÁGIO');
+  /* Phase 5.1/UAT-05: o rótulo passou a 'Perfil atual' (a caixa alta é do
+     CSS). A propriedade — rótulo certo no nó certo — não mudou. */
+  expect(dom[model.cur].label).toMatch(/PERFIL ATUAL/i);
+  if (model.tgt >= 0) expect(dom[model.tgt].label).toMatch(/CEN[ÁA]RIO-ALVO/i);
+  if (model.next >= 0) expect(dom[model.next].label, 'label de PRÓXIMO ESTÁGIO').toMatch(/PR[ÓO]XIMO EST[ÁA]GIO/i);
+  else expect(dom.map(d=>d.label).join(' '), 'top stage não fabrica próximo').not.toMatch(/PR[ÓO]XIMO EST[ÁA]GIO/i);
   if (W() > 720) {
     const sorted = [...dom].sort((a,b)=>a.box.x-b.box.x);
     for (let i=1;i<sorted.length;i++)
@@ -192,7 +194,7 @@ test('V8 journey nodes', async ({ page }) => {
     return { top: m.top, next: m.next, nodes: document.querySelectorAll('#ux-journey .jn-node').length, labels };
   });
   if (top.top) { expect(top.next).toBe(-1);
-    expect(top.labels.join(' ')).not.toContain('PRÓXIMO ESTÁGIO');
+    expect(top.labels.join(' ')).not.toMatch(/PR[ÓO]XIMO EST[ÁA]GIO/i);
     expect(top.nodes).toBe(model.names.length); }
   await shot(page, 'V8-top-stage');
 });

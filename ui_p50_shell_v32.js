@@ -84,6 +84,72 @@
     return now !== p50CleanSnapshot;
   }
 
+  /* ============================================================
+     PHASE 5.1 · RPT-02 — METADADOS ATIVOS DA SESSÃO
+     Owner PRÓPRIO e separado dos inputs de cálculo. Não entra em
+     `captureCanonicalInputs()`, não entra em score, suficiência, Target,
+     recommendations nem no payload M41, e NÃO altera o schema v1: o documento
+     exportado continua exatamente com as mesmas chaves.
+
+     Semântica honesta de data — o ponto delicado desta rodada:
+       · sessão NOVA: `startedAt` é capturado UMA vez, na carga do módulo, e
+         permanece estável enquanto a sessão viver. É a "Data da sessão".
+       · sessão IMPORTADA: o `createdAt` do documento validado é o instante em
+         que aquele documento foi EXPORTADO — não o início da avaliação. Por
+         isso ele NUNCA é apresentado como "Data da sessão": é rotulado como
+         "Sessão registrada em". Reinterpretar o campo histórico em silêncio
+         seria mentir sobre a proveniência.
+       · `createdAt` ausente num documento importado: registra-se
+         explicitamente "Data original não informada". Nada é fabricado.
+       · export BEM-SUCEDIDO pode atualizar o label ativo; export recusado ou
+         com falha não altera metadado algum.
+       · nova sessão/reset: novo `startedAt` e label limpo.
+     Internamente tudo é ISO 8601; a formatação pt-BR acontece na apresentação.
+     ============================================================ */
+  var p51Meta = {
+    startedAt: new Date().toISOString(),
+    label: null,
+    origin: "new",              /* "new" | "imported" */
+    importedCreatedAt: null,    /* ISO do documento importado, quando houver */
+    importedCreatedAtMissing: false
+  };
+  function p51MetaReset() {
+    p51Meta.startedAt = new Date().toISOString();
+    p51Meta.label = null;
+    p51Meta.origin = "new";
+    p51Meta.importedCreatedAt = null;
+    p51Meta.importedCreatedAtMissing = false;
+  }
+  function p51MetaOnExport(label) {
+    /* só um export efetivamente bem-sucedido promove o label a ativo */
+    if (typeof label === "string" && label.trim()) p51Meta.label = label;
+  }
+  function p51MetaOnImport(doc) {
+    if (!doc || typeof doc !== "object") return;
+    p51Meta.origin = "imported";
+    p51Meta.label = (typeof doc.label === "string" && doc.label.trim()) ? doc.label : null;
+    if (typeof doc.createdAt === "string" && doc.createdAt.trim()) {
+      p51Meta.importedCreatedAt = doc.createdAt;
+      p51Meta.importedCreatedAtMissing = false;
+    } else {
+      p51Meta.importedCreatedAt = null;
+      p51Meta.importedCreatedAtMissing = true;
+    }
+  }
+  /* Contrato de leitura consumido pelo relatório. Devolve SEMPRE cópia. */
+  window.__P51SESMETA = {
+    read: function () {
+      return {
+        label: p51Meta.label,
+        origin: p51Meta.origin,
+        startedAt: p51Meta.startedAt,
+        importedCreatedAt: p51Meta.importedCreatedAt,
+        importedCreatedAtMissing: p51Meta.importedCreatedAtMissing
+      };
+    },
+    reset: p51MetaReset
+  };
+
   /* Observadores de export/import — mesmo padrão aprovado em AMB-1:
      captura única, predecessor SEMPRE invocado e inalterado, retorno repassado
      intacto, falha isolada. Nao duplicam nem substituem a logica de Session
@@ -107,8 +173,11 @@
     downloadSession = function () {
       var r = p50SesInvoke("download", p50PrevDownloadSession, this, arguments);
       try {
-        if (r && r.ok) { p50SesState = "exported"; p50MarkClean(); }
-        else { p50SesState = "export-failed"; }
+        if (r && r.ok) {
+          p50SesState = "exported"; p50MarkClean();
+          p51MetaOnExport(arguments.length ? arguments[0] : null);   /* só no sucesso */
+        }
+        else { p50SesState = "export-failed"; }                      /* falha não toca metadado */
         p50UpdateSessionStatus();
       } catch (e) { console.error("P50 session status:", e.message); }
       return r;
@@ -120,12 +189,26 @@
     importSessionDocument = function () {
       var r = p50SesInvoke("import", p50PrevImportSessionDocument, this, arguments);
       try {
-        if (r && r.ok) { p50SesState = "imported"; p50MarkClean(); }
+        if (r && r.ok) {
+          p50SesState = "imported"; p50MarkClean();
+          p51MetaOnImport(arguments.length ? arguments[0] : null);   /* documento já validado */
+        }
         p50UpdateSessionStatus();
       } catch (e) { console.error("P50 session status:", e.message); }
       return r;
     };
     p50SesWrapCount++;
+
+    /* Phase 5.1 · a ponte de teste `window.__DEV` guardou uma REFERÊNCIA às
+       funções originais, capturada antes destes wrappers. Resultado: o fluxo
+       real da UI passava pelo wrapper (e atualizava status e metadados), mas
+       qualquer chamada por `__DEV` passava ao largo — duas verdades para a
+       mesma operação. As duas superfícies passam a apontar para a MESMA função
+       envolvida; o predecessor continua sendo invocado exatamente uma vez. */
+    if (window.__DEV) {
+      window.__DEV.importSessionDocument = importSessionDocument;
+      if (typeof downloadSession === "function") window.__DEV.downloadSession = downloadSession;
+    }
   }
 
   /* ============================================================
@@ -460,6 +543,149 @@
   }
 
   /* ============================================================
+     PHASE 5.1 · APRESENTAÇÃO DE PERGUNTA E AJUDA CONTEXTUAL
+     Tabelas da Camada 5, indexadas pelo `qid` CANÔNICO. Nada aqui altera
+     pergunta, opção, valor, score ou semântica: são textos de apresentação e
+     de ajuda ao entrevistador, aplicados por decoração pós-render.
+     ============================================================ */
+
+  /* UAT-02 · rótulo de apresentação. "Mandato", isolado, lê-se como jargão.
+     No contexto desta pergunta o termo significa autorização formal,
+     patrocínio, responsabilidade e autoridade concedidos à operação. O rótulo
+     CANÔNICO (`QS[k].lbl`) permanece intocado e continua sendo o que o
+     relatório imprime — inclusive porque o gate congelado UI 3.3.2/P21 assere
+     literalmente "Mandato e objetivos" no PDF. */
+  var P51_Q_TITLE = {
+    "mandate": "Direcionamento, autoridade e objetivos"
+  };
+  var P51_Q_SUPPORT = {
+    "mandate": "A operação possui missão, patrocínio, autoridade e objetivos formalmente definidos " +
+               "e ligados às prioridades do negócio? (mandato formal)"
+  };
+
+  /* UAT-04 · ajuda contextual ESPECÍFICA por pergunta.
+     Antes, o mesmo exemplo de MSSP/SLA aparecia nas 15 perguntas — ruído que
+     induzia a resposta errada. Cada entrada descreve O QUE REGISTRAR e dá um
+     EXEMPLO realista da prática. Linguagem descritiva: nenhuma entrada sugere
+     resposta, exige vendor ou inventa informação sobre o cliente. O exemplo de
+     MSSP/SLA fica exclusivamente na cobertura de monitoramento. */
+  var P51_Q_HELP = {
+    "mandate": {
+      what: "Registre o charter da operação, quem patrocina, quais metas foram acordadas, em que fórum são revistas e quem responde por elas.",
+      ex: "Ex.: charter aprovado pelo CISO em 03/2025; sponsor é o Diretor de TI; metas revistas no comitê trimestral; responsável nomeado."
+    },
+    "governance": {
+      what: "Registre a cadência do comitê, que decisões ele toma, o RACI vigente, as métricas acompanhadas e como as aprovações são formalizadas.",
+      ex: "Ex.: comitê mensal com ata; RACI publicado; três métricas acompanhadas; exceções aprovadas pelo dono do risco."
+    },
+    "policies": {
+      what: "Registre quais políticas se aplicam à operação, a periodicidade de revisão, como exceções são tratadas, a retenção definida e o endereçamento de LGPD.",
+      ex: "Ex.: política de segurança revista anualmente; exceções com prazo e dono; retenção de logs por 12 meses; DPO consultado para dados pessoais."
+    },
+    "team-capacity": {
+      what: "Registre a cobertura de horário, as funções existentes, a escala de turnos, o número de FTEs e as dependências de terceiros.",
+      ex: "Ex.: quatro analistas das 8h às 18h em dias úteis, um líder técnico, plantão por sobreaviso; duas funções acumuladas pela mesma pessoa."
+    },
+    "training": {
+      what: "Registre o plano de capacitação, as trilhas por função, exercícios práticos realizados, certificações e a frequência com que tudo isso acontece.",
+      ex: "Ex.: trilha de detecção para N1; tabletop semestral; duas certificações em andamento; sem orçamento formal de treinamento."
+    },
+    "knowledge": {
+      what: "Registre a existência de runbooks, como é feito o handover entre turnos, onde o conhecimento fica guardado e qual o bus factor da operação.",
+      ex: "Ex.: runbooks em wiki interna, cobrindo 6 dos 12 cenários; handover verbal; um analista concentra o conhecimento de rede."
+    },
+    "incident-response": {
+      what: "Registre o plano de resposta, a matriz de severidades, os SLAs acordados, a rotina de acionamento e o que é feito após o incidente.",
+      ex: "Ex.: plano aprovado com quatro severidades; acionamento por telefone e grupo; pós-incidente formal apenas para severidade 1."
+    },
+    "detection-lifecycle": {
+      what: "Registre o inventário de casos de uso, quem é dono de cada um, o ciclo de vida aplicado, o tuning periódico e a cobertura frente ao MITRE ATT&CK.",
+      ex: "Ex.: 40 regras ativas sem dono formal; revisão sob demanda; cobertura ATT&CK não medida; falsos positivos tratados caso a caso."
+    },
+    "automation": {
+      what: "Registre os playbooks existentes, as integrações em uso, onde há aprovação humana e se existe caminho de rollback.",
+      ex: "Ex.: dois playbooks de enriquecimento; integração com o service desk; bloqueio exige aprovação do líder; rollback manual."
+    },
+    "logs": {
+      what: "Registre as fontes coletadas, o tempo de retenção, se há parsing e normalização, que correlação existe e quais lacunas de cobertura são conhecidas.",
+      ex: "Ex.: firewall, AD e endpoint coletados; 90 dias em linha; servidores de aplicação fora da coleta; correlação limitada a duas regras."
+    },
+    "endpoint": {
+      what: "Registre a cobertura do parque, quem gerencia a plataforma, se há EDR/XDR, a capacidade de isolamento e as exceções aplicadas.",
+      ex: "Ex.: antivírus em 95% das estações e EDR em 40%; servidores críticos com exceção; isolamento remoto ainda não habilitado."
+    },
+    "network-visibility": {
+      what: "Registre os segmentos monitorados, se há NDR, a visibilidade leste-oeste, o tratamento de tráfego criptografado e as lacunas conhecidas.",
+      ex: "Ex.: visibilidade no perímetro; tráfego entre VLANs sem inspeção; TLS sem inspeção na saída; ambiente de fábrica fora do escopo."
+    },
+    "monitoring-coverage": {
+      what: "Registre o horário efetivo de monitoramento, a existência de plantão, os SLAs de atendimento e como funciona o escalonamento fora do horário.",
+      ex: "Ex.: MSSP cobre 8×5; plantão interno fora do horário; SLA P1 de 30 min; escalonamento definido apenas para severidade alta."
+    },
+    "external-surface": {
+      what: "Registre como a superfície externa é descoberta e acompanhada (EASM/DRPS), o monitoramento de credenciais expostas, a frequência e o tratamento dado aos achados.",
+      ex: "Ex.: inventário externo mantido em planilha; varredura trimestral; credenciais vazadas checadas de forma reativa."
+    },
+    "vulnerability-management": {
+      what: "Registre o escopo coberto, a frequência de varredura, o critério de priorização, os SLAs de correção, o tratamento de exceções e a validação da correção.",
+      ex: "Ex.: varredura mensal em servidores; estações fora do ciclo; priorização por CVSS; SLA de 30 dias para crítico; correção sem reteste."
+    }
+  };
+
+  /* Aplica o rótulo e o apoio de apresentação (UAT-02). O `.qnum` congelado é
+     reescrito para expor o título num nó próprio; a numeração da Camada 1
+     permanece a mesma. */
+  function p51DecorateQuestionTitle(scr, qq) {
+    var qnum = scr.querySelector(".qnum");
+    if (!qnum) return;
+    if (qnum.querySelector('[data-p50="question-title"]')) return;    /* idempotente */
+    var raw = (qnum.textContent || "");
+    var sep = raw.lastIndexOf(" · ");
+    var prefixo = sep > 0 ? raw.slice(0, sep + 3) : "";
+    var titulo = P51_Q_TITLE[qq.id] || qq.lbl;
+    qnum.textContent = prefixo;
+    qnum.appendChild(el("span", {
+      "class": "p51-qtitle", "data-p50": "question-title", "data-qid": qq.id,
+      "data-p51-canonical": qq.lbl
+    }, titulo));
+    var apoio = P51_Q_SUPPORT[qq.id];
+    if (!apoio) return;
+    var alvo = scr.querySelector(".question");
+    if (!alvo || alvo.parentNode.querySelector('[data-p50="question-support"]')) return;
+    alvo.insertAdjacentElement("afterend", el("p", {
+      "class": "p51-qsupport", "data-p50": "question-support", "data-qid": qq.id
+    }, apoio));
+  }
+
+  /* Rótulos do ÚNICO controle de evidência (UAT-03) + ajuda por pergunta
+     (UAT-04). O exemplo genérico congelado (`.ex`) é substituído pelo conteúdo
+     específico do `qid`; a remoção é do NÓ, não apenas visual. */
+  function p51DecorateEvidence(scr, qq, hasNote) {
+    var tgl = document.getElementById("notetgl");
+    if (tgl) {
+      var aberto = !!scr.querySelector(".notebox");
+      tgl.textContent = aberto ? "Fechar evidência ou observação"
+                               : (hasNote ? "Editar evidência ou observação"
+                                          : "Adicionar evidência ou observação");
+      tgl.setAttribute("data-p50", "evidence-toggle");
+      tgl.setAttribute("aria-expanded", aberto ? "true" : "false");
+      tgl.setAttribute("aria-controls", "notetxt");
+    }
+    var box = scr.querySelector(".notebox");
+    if (!box) return;
+    var velho = box.querySelector(".ex");
+    if (velho && velho.parentNode) velho.parentNode.removeChild(velho);   /* nó removido */
+    if (box.querySelector('[data-p50="evidence-help"]')) return;          /* idempotente */
+    var h = P51_Q_HELP[qq.id];
+    if (!h) return;
+    var wrap = el("div", { "class": "p51-help", "data-p50": "evidence-help", "data-qid": qq.id });
+    wrap.appendChild(el("p", { "class": "p51-help-what", "data-p50": "evidence-help-what" },
+      "O que registrar: " + h.what));
+    wrap.appendChild(el("p", { "class": "p51-help-ex", "data-p50": "evidence-help-example" }, h.ex));
+    box.appendChild(wrap);
+  }
+
+  /* ============================================================
      5.0.2 · UI-005 (cue) · UI-007 (indicador) · UI-008 (chips)
      Toda informação exibida tem provenance observável no runtime.
      Nenhuma taxonomia nova, nenhum weight/importance, nenhum framework.
@@ -526,16 +752,13 @@
       block.appendChild(ev);
     }
 
-    /* Atalho para o campo canônico congelado. NÃO escreve em notes[k]:
-       delega ao controle congelado, que é o único setter da nota. */
-    var tglBtn = el("button", {
-      type: "button", "class": "p50-btn p50-btn-ghost", "data-p50": "evidence-open"
-    }, hasNote ? "Editar evidência ou observação" : "Registrar evidência ou observação");
-    tglBtn.addEventListener("click", function () {
-      var t = document.getElementById("notetgl");        /* setter congelado */
-      if (t) t.click();
-    });
-    block.appendChild(tglBtn);
+    /* UAT-03 · o proxy P50 de evidência foi REMOVIDO, não apenas escondido.
+       Existia um segundo botão ("Registrar evidência ou observação") que apenas
+       reencaminhava o clique para `#notetgl`: duas paradas de Tab e dois nomes
+       acessíveis para a mesma ação. A partir da Phase 5.1 o controle canônico
+       congelado é o único acionador visível e focável, e recebe aqui apenas a
+       APARÊNCIA e os RÓTULOS desejados (decoração aditiva; o handler, o setter
+       e o markup da Camada 1 permanecem intocados). */
 
     /* UI-048 · o campo de evidência pode receber informação sensível do
        cliente. A orientação é CURTA, factual e não alarmista, fica junto do
@@ -550,6 +773,10 @@
 
     var opts = scr.querySelector(".opts");
     if (opts) opts.insertAdjacentElement("afterend", block); else scr.appendChild(block);
+
+    /* Phase 5.1 · apresentação da pergunta e controle único de evidência. */
+    p51DecorateQuestionTitle(scr, qq);
+    p51DecorateEvidence(scr, qq, hasNote);
 
     p50BindNoteObserver();
   }

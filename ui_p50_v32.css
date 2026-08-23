@@ -670,3 +670,146 @@
   #app .p50-chips, #app .p50-cueblock, .p50-ses,
   #p50-suff, #p50-results, #app .p50-legacy-note{ display:none !important; }
 }
+
+/* ==========================================================================
+   PHASE 5.1 · UAT-01 — COMPOSIÇÃO RESPONSIVA DA TELA DE PERGUNTA
+   O problema medido: `body[data-uxscreen="question"] .wrap` era limitado a
+   860px, e o mapa do assessment ficava EMPILHADO acima da pergunta. Em 1440px
+   ou mais, isso produzia uma faixa central estreita com grande vazio lateral e
+   empurrava a pergunta para baixo de toda a lista de domínios.
+
+   Correção: a partir de 1180px a `.wrap` da tela de pergunta vira uma grade de
+   duas colunas reais — a pergunta (`#app`) na coluna principal e o shell P50
+   (orientação + mapa) numa coluna lateral útil. Abaixo disso, volta a uma
+   coluna, com o mapa recolhível e sem overflow horizontal.
+
+   A ordem do DOM é preservada (shell antes de `#app`): a orientação — domínio,
+   posição, progresso e navegação — é contexto legítimo antes da pergunta, e a
+   ordem de foco continua correspondendo à ordem de leitura. Nenhum nó é
+   duplicado e nenhuma superfície congelada é reescrita: isto é layout.
+   Confinado a @media screen para não alcançar o papel.
+   ========================================================================== */
+@media screen and (min-width:1180px){
+  body[data-uxscreen="question"] .wrap{
+    max-width:1360px;
+    display:grid;
+    grid-template-columns:minmax(0,1fr) 340px;
+    grid-template-areas:"main side";
+    align-items:start;
+    column-gap:32px;
+  }
+  body[data-uxscreen="question"] .wrap > #p50-shell{ grid-area:side; }
+  body[data-uxscreen="question"] .wrap > #app{ grid-area:main; min-width:0; }
+  /* o shell deixa de ser uma faixa central e passa a ser um trilho lateral */
+  body[data-uxscreen="question"] #p50-shell{
+    grid-template-columns:minmax(0,1fr);
+    max-width:none; margin:0; padding:0;
+    position:sticky; top:14px;
+  }
+  body[data-uxscreen="question"] #p50-shell .p50-orient{ position:static; grid-column:1; }
+  body[data-uxscreen="question"] #p50-shell .p50-sidebar{ grid-column:1; }
+  /* a pergunta ocupa a coluna principal sem herdar o teto estreito */
+  body[data-uxscreen="question"] #app .opts,
+  body[data-uxscreen="question"] #app .p50-chips,
+  body[data-uxscreen="question"] #app .p50-cueblock{ max-width:none; }
+}
+/* Ultrawide: a tela precisa ser aproveitada de verdade — 1640px fixos deixavam
+   64% de uma 2560 em branco, que é exatamente a "faixa central estreita" que a
+   UAT-01 proíbe. A largura passa a acompanhar a viewport, com um teto para não
+   virar uma linha infinita, e a linha de LEITURA é limitada dentro da coluna
+   principal para preservar o conforto do texto. */
+@media screen and (min-width:1800px){
+  body[data-uxscreen="question"] .wrap{
+    max-width:min(94vw, 2100px);
+    grid-template-columns:minmax(0,1fr) 400px;
+    column-gap:44px;
+  }
+  body[data-uxscreen="question"] #app .question,
+  body[data-uxscreen="question"] #app .hint,
+  body[data-uxscreen="question"] #app .p51-qsupport,
+  body[data-uxscreen="question"] #app .opts,
+  body[data-uxscreen="question"] #app .p50-cueblock,
+  body[data-uxscreen="question"] #app .notebar{ max-width:1180px; }
+}
+/* 1024px: lateral mais estreita, ainda legível */
+@media screen and (min-width:1024px) and (max-width:1179px){
+  body[data-uxscreen="question"] .wrap{ max-width:100%; }
+  body[data-uxscreen="question"] #p50-shell{ max-width:none; }
+}
+
+/* ==========================================================================
+   PHASE 5.1 · UAT-05 — RÉGUA DA JORNADA DE MATURIDADE
+   Seis nós de MESMA geometria e área visual, cada um com número 0–5 e nome do
+   estágio sempre presentes. Estado vai por forma + texto, nunca só por cor:
+   atual é marcador preenchido, próximo é anel, alvo tem losango próprio, e
+   passado/futuro se distinguem pelo preenchimento do disco.
+   ========================================================================== */
+#ux-journey .jn-track, #v32-print-report .jn-track{ align-items:flex-start; }
+.jn-node{ min-width:96px; gap:5px; }
+.jn-mark{
+  display:flex; align-items:center; justify-content:center;
+  width:28px; height:28px; border-radius:50%;
+  border:2px solid var(--faint); background:transparent;
+  font-size:12px; line-height:1; color:var(--muted);
+}
+.jn-num{ font-weight:800; font-variant-numeric:tabular-nums; }
+.jn-node[data-jn-state="past"] .jn-mark{ background:var(--surface2); border-color:var(--muted); color:var(--text); }
+.jn-node[data-jn-state="current"] .jn-mark{
+  background:var(--ftnt-blue); border-color:var(--ftnt-blue); color:var(--bg);
+  box-shadow:0 0 0 3px var(--surface2);
+}
+.jn-node[data-jn-state="next"] .jn-mark{ border-width:3px; border-style:double; border-color:var(--ftnt-silver); color:var(--text); }
+.jn-node[data-jn-state="target"] .jn-mark{ border-color:var(--ftnt-green); border-style:dashed; color:var(--text); }
+.jn-node[data-jn-target="true"] .jn-mark::after{ content:"◆"; margin-left:3px; font-size:8px; color:var(--ftnt-green); }
+.jn-node[data-jn-state="undetermined"] .jn-mark{ border-style:dotted; color:var(--faint); }
+.jn-name{ font-size:11.5px; line-height:1.25; }
+.jn-node[data-jn-state="current"] .jn-name{ font-weight:800; }
+.jn-label{ font-size:9.5px; font-weight:800; letter-spacing:.06em; text-transform:uppercase; }
+.jn-link{ margin-top:14px; }
+/* A variante de IMPRESSÃO da jornada vive em `ui_v32.css`, junto do restante do
+   relatório: o papel precisa de cinzas próprios, e um módulo da Camada 5 não
+   declara hex literal (COR-01.1, provado por P50-COR1). */
+
+/* ==========================================================================
+   PHASE 5.1 · UAT-08 — LEGIBILIDADE DO SELECT DO CENÁRIO-ALVO  (P0)
+   O select herdava `background:transparent` e `color:inherit`. No Windows o
+   popup nativo das `<option>` usa a paleta CLARA do sistema, então o texto
+   quase branco do tema escuro caía sobre fundo branco — ilegível justamente
+   na hora de escolher o alvo. A correção declara explicitamente cor, fundo,
+   `color-scheme`, borda e foco, e NÃO depende de cor herdada pela `<option>`.
+   ========================================================================== */
+#ux-target .ux-tgt-row select,
+#ux-target select[data-qid]{
+  color-scheme:dark;
+  color:var(--text);
+  background-color:var(--surface2);
+  border:1px solid var(--line);
+  border-radius:8px;
+  padding:7px 9px;
+  font:inherit;
+  min-height:38px;
+}
+#ux-target .ux-tgt-row select option,
+#ux-target select[data-qid] option{
+  color:var(--text);
+  background-color:var(--surface2);
+}
+#ux-target .ux-tgt-row select:hover,
+#ux-target select[data-qid]:hover{ border-color:var(--dom-accent); }
+#ux-target .ux-tgt-row select:focus-visible,
+#ux-target select[data-qid]:focus-visible{
+  outline:2px solid var(--p50-focus, var(--text)); outline-offset:2px;
+}
+#ux-target .ux-tgt-row select:disabled,
+#ux-target select[data-qid]:disabled{ color:var(--muted); background-color:var(--surface); opacity:1; }
+
+/* ==========================================================================
+   PHASE 5.1 · apresentação da pergunta e ajuda contextual (UAT-02 / UAT-04)
+   ========================================================================== */
+#app .p51-qtitle{ font-weight:700; }
+#app .p51-qsupport{
+  margin:6px 0 0; color:var(--muted); font-size:13.5px; line-height:1.55; max-width:760px;
+}
+#app .p51-help{ margin-top:8px; display:grid; gap:4px; }
+#app .p51-help-what{ margin:0; color:var(--text); font-size:12.5px; line-height:1.5; }
+#app .p51-help-ex{ margin:0; color:var(--faint); font-size:12px; line-height:1.5; }

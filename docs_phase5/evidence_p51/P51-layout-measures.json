@@ -1,0 +1,116 @@
+{
+  "source": "file:// (build pós-adendo)",
+  "html": "e8857a9da789367b6a20c4c0aa848cc3db550f99d243f052d12ccd1aa55b8513",
+  "measures": [
+    {
+      "wrap": 390,
+      "vw": 390,
+      "shell": {
+        "l": 18,
+        "r": 372,
+        "t": 122,
+        "w": 354
+      },
+      "app": {
+        "l": 18,
+        "r": 372,
+        "t": 1212,
+        "w": 354
+      },
+      "overlapX": 354,
+      "overflowX": 0,
+      "ajuda": true,
+      "titulo": "Direcionamento, autoridade e objetivos",
+      "botoesEvid": 1,
+      "viewport": "390x844"
+    },
+    {
+      "wrap": 768,
+      "vw": 768,
+      "shell": {
+        "l": 23,
+        "r": 745,
+        "t": 98,
+        "w": 722
+      },
+      "app": {
+        "l": 23,
+        "r": 745,
+        "t": 1066,
+        "w": 722
+      },
+      "overlapX": 721.9375,
+      "overflowX": 0,
+      "ajuda": true,
+      "titulo": "Direcionamento, autoridade e objetivos",
+      "botoesEvid": 1,
+      "viewport": "768x1024"
+    },
+    {
+      "wrap": 1024,
+      "vw": 1024,
+      "shell": {
+        "l": 31,
+        "r": 993,
+        "t": 98,
+        "w": 963
+      },
+      "app": {
+        "l": 31,
+        "r": 993,
+        "t": 1066,
+        "w": 963
+      },
+      "overlapX": 962.5625,
+      "overflowX": 0,
+      "ajuda": true,
+      "titulo": "Direcionamento, autoridade e objetivos",
+      "botoesEvid": 1,
+      "viewport": "1024x768"
+    },
+    {
+      "wrap": 1360,
+      "vw": 1440,
+      "shell": {
+        "l": 1020,
+        "r": 1360,
+        "t": 28,
+        "w": 340
+      },
+      "app": {
+        "l": 80,
+        "r": 988,
+        "t": 28,
+        "w": 908
+      },
+      "overlapX": 0,
+      "overflowX": 0,
+      "ajuda": true,
+      "titulo": "Direcionamento, autoridade e objetivos",
+      "botoesEvid": 1,
+      "viewport": "1440x900"
+    },
+    {
+      "wrap": 2100,
+      "vw": 2560,
+      "shell": {
+        "l": 1890,
+        "r": 2290,
+        "t": 28,
+        "w": 400
+      },
+      "app": {
+        "l": 270,
+        "r": 1846,
+        "t": 28,
+        "w": 1576
+      },
+      "overlapX": 0,
+      "overflowX": 0,
+      "ajuda": true,
+      "titulo": "Direcionamento, autoridade e objetivos",
+      "botoesEvid": 1,
+      "viewport": "2560x1080"
+    }
+  ]
+}

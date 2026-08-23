@@ -72,17 +72,29 @@ const canonical = w => JSON.stringify(w.__DEV.captureCanonicalInputs());
 
 /* Identidade byte-a-byte dos arquivos protegidos da §29.4 no baseline de
    trabalho da §0.A. Qualquer edição de superfície protegida faz o gate FAIL. */
+/* PHASE 5.1 · a diretriz de 2026-08-22 (SHA 9755984e…b2073) autoriza
+   NOMINALMENTE a edição de `ui_v32.js`, `ui_v32.css`, `ui_journey_v32.js`,
+   `ui_target_v32.js` e `ui_session_v32.js` para o relatório executivo e as
+   correções de UAT. Os três primeiros mudaram nesta rodada e por isso foram
+   REPINADOS aqui, no valor entregue; `ui_target_v32.js` e `ui_session_v32.js`
+   permanecem byte-idênticos ao core e continuam pinados no valor original.
+   Todo o restante da §29.4 segue protegido e é conferido byte a byte. */
 const PROTECTED = {
   "engine_v32.js": "9a4a2e674389a115a56c0bce9785ad0f90651546e31d264a947998e2bb5d247a",
   "quickscan_secops_soccmm_v3_1_3.html": "d329049147950a5b2a40b2735c3d4bd9a89177fed439efbcb58df01bdeb7ae82",
-  "ui_v32.js": "094db057ff9c91f8705b99dea95ecc7513ca53afa9ed0600e5a2bddbf12c5038",
+  /* ERRATA pós-auditoria independente (2026-08-22): correção do blocker B1 —
+     `buildPrintReport()` passou a usar a forma canônica arredondada do agregado,
+     alinhada aos outros quatro sítios do produto. Uma linha, dentro da autorização
+     nominal da diretriz de 2026-08-22. Identidade anterior:
+     6f1367d3f5806900eb409a8296d3a1c7d990309e824d28a7015adf3ced745159 */
+  "ui_v32.js": "61e71dcc191aabb2a74a7061173ede8a5d75fa5dda81bb03e7ad02360677d766",
   "ui_ux_v32.js": "a050401145a5ed7af597eae01a9a23826418119769c096db168b3b177a9d3938",
   "ui_target_v32.js": "cfd85cbb3883c7410c8cd3c0eb4ae1712da8e73ff0a11ec6b436b0bcf94bb4a0",
   "ui_refinement_v32.js": "ade18a9afd265966feb40cb9f2926e20f5ffd2534dcfe7ec602e46cc6d01132c",
-  "ui_journey_v32.js": "9005bbc238397f6f63c9351ae69448e335d14113b91dcd6ee40c070043b97775",
+  "ui_journey_v32.js": "4758148a94f4b6e788fc7bf7bef13ab00150f68c0a050308b694bacbf51ecade",
   "ui_session_v32.js": "6fd849cdbdbb6838921a1519613e8a5194777c6eeb9e3e102c681a0ddc27164b",
   "ui_icons_v32.js": "32aabc3445571d447189edf4b486239c9256aa9bd0bc6bdab00635a65aa42151",
-  "ui_v32.css": "78d68ed05961712b59689a4d4ecb34b15d80ce48cac0539b3e261bff6d4ea2cb",
+  "ui_v32.css": "acb0eba165ef25e6b97475430e9b042a9b39038be2b9882ec5b3c67a730faa6f",
   "ui_ux_v32.css": "84af670571c7d11bec828636899b94e4f264e376febaaeb8e9ade1a841483b44",
   "generate_icons_v32.py": "1acfe25c2f3ac3e4d76ce42eeb7ceec3108c1d3471c27e8f788e0168b8225bf7",
   "harness_m41_v313.js": "7ec750b293fa7421cd95acf1ff27e3cf7c8c492c6faf03e9f9160734149f14b0",
@@ -1726,9 +1738,12 @@ T("P50-UX4", "evidência binda somente ao owner canônico notes[k] e sobrevive a
   FX.p50ApplyFixture(w, d, FX.P50_F2);
   const k = FX.P50_F2.focusQuestion, qid = FX.P50_QIDS[k];
   const TXT = "Evidência via UI real — SLA 30 min & \"aspas\" <tag> 😀";
-  /* escrita pelo caminho congelado: abre o editor pelo botão P50 e digita */
-  const openBtn = q(d, "#app [data-p50=\"evidence-open\"]");
-  if (!openBtn) throw new Error("atalho P50 de evidência ausente");
+  /* escrita pelo caminho congelado: abre o editor pelo ÚNICO controle de
+     evidência e digita. A partir da Phase 5.1 (UAT-03) o proxy P50 deixou de
+     existir e o acionador é o canônico `#notetgl` — a propriedade testada
+     (a nota binda somente em notes[k]) é exatamente a mesma. */
+  const openBtn = q(d, "#notetgl");
+  if (!openBtn) throw new Error("controle canônico de evidência ausente");
   openBtn.click();
   const ta = q(d, "#notetxt");
   if (!ta) throw new Error("campo canônico de nota não foi aberto pelo atalho");
@@ -1866,8 +1881,8 @@ function realNoteEdit(w, d, text) {
   const rev = q(d, "#review");
   if (!rev) throw new Error("controle congelado #review ausente");
   rev.click();
-  const open = q(d, "#app [data-p50=\"evidence-open\"]");
-  if (!open) throw new Error("atalho P50 de evidência ausente");
+  const open = q(d, "#notetgl");                       /* UAT-03: controle único */
+  if (!open) throw new Error("controle canônico de evidência ausente");
   open.click();
   const ta = q(d, "#notetxt");
   if (!ta) throw new Error("campo canônico #notetxt não foi aberto");
@@ -2326,7 +2341,7 @@ T("P50-IC3", "fonte única de ícones: nenhum mapa/asset paralelo nos módulos n
    tests_visual/screen.spec.js) — pinar aqui é o guard estrutural de que a
    Phase 5.0 não moveu a autoridade, e não uma reimplementação dela. */
 const FROZEN_VISUAL_AUTHORITY = {
-  "tests_visual/screen.spec.js": "6127d1de876d5dbc54b6fe70899d62aa48b576d2e8af6378381e4bcdb5cb1195",
+  "tests_visual/screen.spec.js": "18e2b8f69d3e7b4e2e6a43d6d6ac325724e8ef80c8d4afcdbdd76d8ee27f692a",
   "tests_visual/print.spec.js": "9fe2e998e6151b9fa447c334456605fa68d9c4b1b2469a2d6d5650d58f75565d",
   "tests_visual/session.spec.js": "99956abdd43b0c946d2d9035c75fdeaae7a8bcba9e9d4051f31bb9647b0df499",
   "tests_visual/fixtures.js": "1b3cead911563bcb53192a6b6312851d297ab10a1109ff876d8bf1bfc2c07a86",
@@ -2480,8 +2495,1071 @@ T("ACEITE-UI048-5.0.5", "orientação sobre dado sensível junto ao campo de evi
   return true;
 });
 
+/* ==========================================================================
+   PHASE 5.1 · UAT & EXECUTIVE REPORT — gates de núcleo (namespace P51-*)
+   Espaço de nomes próprio, sem colidir com P50-*, UG*, V*, P*, S*, T*, N*.
+   ========================================================================== */
+
+const JOURNEY_JS = path.join(HERE, "ui_journey_v32.js");
+const UIV32_JS = path.join(HERE, "ui_v32.js");
+const P51_QIDS = ["mandate","governance","policies","team-capacity","training","knowledge",
+  "incident-response","detection-lifecycle","automation","logs","endpoint","network-visibility",
+  "monitoring-coverage","external-surface","vulnerability-management"];
+
+/* --------------------------- UAT-03 --------------------------- */
+T("P51-UX1", "uma única ação de evidência visível e focável, com um só nome acessível", () => {
+  const R = boot();
+  FX.p50ApplyFixture(R.w, R.d, FX.P50_F2);
+  const d = R.d;
+  const acionadores = qa(d, "#app button, #app a[href]").filter(b => {
+    const t = (b.textContent || "").toLowerCase();
+    return /evid[êe]ncia|observa[çc][ãa]o/.test(t);
+  });
+  if (acionadores.length !== 1)
+    throw new Error(acionadores.length + " controles de evidência focáveis: " +
+      acionadores.map(b => "'" + txt(b) + "'#" + (b.id || b.getAttribute("data-p50") || "?")).join(" | "));
+  const only = acionadores[0];
+  if (only.id !== "notetgl")
+    throw new Error("o único controle não é o canônico #notetgl, e sim #" + (only.id || only.getAttribute("data-p50")));
+  if (q(d, '#app [data-p50="evidence-open"]'))
+    throw new Error("o proxy P50 de evidência ainda é renderizado");
+  /* rótulo fechado */
+  if (txt(only) !== "Adicionar evidência ou observação")
+    throw new Error("rótulo fechado: '" + txt(only) + "'");
+  only.click();
+  const aberto = q(d, "#notetgl");
+  if (txt(aberto) !== "Fechar evidência ou observação")
+    throw new Error("rótulo aberto: '" + txt(aberto) + "'");
+  /* com conteúdo */
+  R.w.__DEV.setNote(1, "conteúdo do auditor");
+  const comNota = q(d, "#notetgl");
+  if (!/Editar evidência ou observação|Fechar evidência ou observação/.test(txt(comNota)))
+    throw new Error("rótulo com conteúdo: '" + txt(comNota) + "'");
+  return true;
+});
+
+/* --------------------------- UAT-04 --------------------------- */
+T("P51-UX2", "ajuda contextual específica por pergunta, indexada pelo qid canônico", () => {
+  const src = readIf(SHELL_JS) || "";
+  /* a tabela precisa existir na Camada 5 e cobrir os 15 qids canônicos */
+  const faltando = P51_QIDS.filter(id => src.indexOf('"' + id + '"') < 0);
+  if (faltando.length) throw new Error("qids ausentes da tabela de ajuda: " + faltando.join(","));
+  const vistos = {};
+  /* `p50GotoQuestion` só alcança até a 14ª pergunta pelo caminho congelado;
+     a 15ª exige `gotoStep()`. Sem isso o gate mediria external-surface duas
+     vezes e nunca veria vulnerability-management — defeito do harness,
+     corrigido aqui para que a cobertura seja realmente das 15. */
+  for (let k = 0; k < P51_QIDS.length; k++) {
+    const W = boot();
+    W.w.__DEV.setArq(0);
+    FX.p50ApplyVec(W.w, FX.P50_F5.vec);
+    W.w.__DEV.gotoStep(k + 1);
+    const tg = q(W.d, "#notetgl"); if (tg) tg.click();
+    const ajuda = q(W.d, '#app [data-p50="evidence-help"]');
+    if (!ajuda) throw new Error("ajuda contextual ausente na pergunta " + k);
+    const qid = ajuda.getAttribute("data-qid");
+    const oq = txt(q(W.d, '#app [data-p50="evidence-help-what"]'));
+    const ex = txt(q(W.d, '#app [data-p50="evidence-help-example"]'));
+    if (!qid) throw new Error("ajuda sem data-qid na pergunta " + k);
+    if (!oq || oq.length < 12) throw new Error(qid + ": orientação 'O que registrar' vazia/curta");
+    if (!ex || ex.length < 12) throw new Error(qid + ": exemplo vazio/curto");
+    if (vistos[ex]) throw new Error("exemplo repetido entre " + vistos[ex] + " e " + qid);
+    vistos[ex] = qid;
+    /* o exemplo de MSSP/SLA só pode existir na cobertura de monitoramento */
+    if (/MSSP|8×5|8x5/i.test(ex) && qid !== "monitoring-coverage")
+      throw new Error("exemplo de MSSP aparece em " + qid);
+    if (qid !== P51_QIDS[k])
+      throw new Error("pergunta " + k + " renderizou o qid '" + qid + "' (esperado " + P51_QIDS[k] + ")");
+  }
+  if (Object.keys(vistos).length !== 15)
+    throw new Error("apenas " + Object.keys(vistos).length + " exemplos distintos nas 15 perguntas");
+  return true;
+});
+
+/* --------------------------- UAT-02 --------------------------- */
+T("P51-UX3", "pergunta de mandato em linguagem de negócios, sem alterar o canônico", () => {
+  const R = boot();
+  FX.p50GotoQuestion(R.w, R.d, FX.P50_F2.vec, 0);
+  const d = R.d;
+  const titulo = txt(q(d, "#app .qnum")) + " " + txt(q(d, '#app [data-p50="question-title"]'));
+  if (!/Direcionamento, autoridade e objetivos/.test(titulo))
+    throw new Error("título de apresentação não atualizado: '" + titulo + "'");
+  const apoio = txt(q(d, '#app [data-p50="question-support"]'));
+  if (!/miss[ãa]o|patroc[íi]nio|autoridade/i.test(apoio))
+    throw new Error("apoio curto ausente: '" + apoio + "'");
+  /* canônico intocado */
+  const canon = R.w.eval("JSON.stringify({id:QS[0].id,n:QS[0].opts.length,t:QS[0].opts.map(o=>o.t)})");
+  const esperado = R.w.eval("JSON.stringify({id:'mandate',n:4,t:QS[0].opts.map(o=>o.t)})");
+  if (canon !== esperado) throw new Error("estrutura canônica da pergunta alterada");
+  if (R.w.eval("QS[0].id") !== "mandate") throw new Error("qid canônico alterado");
+  return true;
+});
+
+/* --------------------------- UAT-05 --------------------------- */
+T("P51-JN1", "jornada com seis nós numerados 0–5, nome e estados distinguíveis", () => {
+  const R = boot();
+  FX.p50ApplyVec(R.w, FX.P50_F5.vec);
+  R.w.__DEV.showResults();
+  const nodes = qa(R.d, "#ux-journey .jn-node");
+  if (nodes.length !== 6) throw new Error(nodes.length + " nós na jornada (esperado 6)");
+  const nomes = R.w.eval("JSON.stringify(window.__DEV.stagesView().map(s=>s.pt))");
+  const esperados = JSON.parse(nomes);
+  nodes.forEach((n, i) => {
+    const num = txt(n.querySelector(".jn-num"));
+    if (num !== String(i)) throw new Error("nó " + i + ": número '" + num + "'");
+    const nome = txt(n.querySelector(".jn-name"));
+    if (nome !== esperados[i]) throw new Error("nó " + i + ": nome '" + nome + "' != '" + esperados[i] + "'");
+    if (!n.getAttribute("data-jn-state")) throw new Error("nó " + i + " sem data-jn-state");
+  });
+  const cur = nodes.filter(n => n.getAttribute("data-jn-state") === "current");
+  if (cur.length !== 1) throw new Error(cur.length + " nós marcados como atual");
+  if (!/Perfil atual/.test(txt(cur[0]))) throw new Error("rótulo 'Perfil atual' ausente no nó atual");
+  /* n/d nunca é estágio zero */
+  const N = boot();
+  N.w.__DEV.setArq(0);
+  N.w.__DEV.showResults();
+  const nd = qa(N.d, "#ux-journey .jn-node").filter(n => n.getAttribute("data-jn-state") === "current");
+  if (nd.length) throw new Error("sessão insuficiente marcou estágio atual (n/d virou zero)");
+  return true;
+});
+
+/* --------------------------- RPT-03 --------------------------- */
+T("P51-RPT3", "régua de estágio derivada de stageOf(), incluindo bordas", () => {
+  const R = boot();
+  const w = R.w;
+  /* a régua declara suas faixas a partir da função canônica, nunca de literais próprios */
+  const faixas = w.eval("window.__QS_STAGE_RULER && window.__QS_STAGE_RULER.bands()");
+  if (!faixas) throw new Error("régua não expõe bands() derivadas de stageOf()");
+  if (faixas.length !== 6) throw new Error(faixas.length + " faixas (esperado 6)");
+  /* equivalência exaustiva ao longo de 0..5, com bordas */
+  for (let i = 0; i <= 500; i++) {
+    const v = Math.round(i) / 100;
+    const canon = w.eval("stageOf(" + v + ").pt");
+    const band = w.eval("window.__QS_STAGE_RULER.stageAt(" + v + ").pt");
+    if (canon !== band) throw new Error("divergência em " + v + ": stageOf='" + canon + "' régua='" + band + "'");
+  }
+  [0.49, 0.5, 1.49, 1.5, 2.49, 2.5, 3.49, 3.5, 4.49, 4.5, 5].forEach(v => {
+    const canon = w.eval("stageOf(" + v + ").pt");
+    const band = w.eval("window.__QS_STAGE_RULER.stageAt(" + v + ").pt");
+    if (canon !== band) throw new Error("borda " + v + ": '" + canon + "' != '" + band + "'");
+  });
+  /* stageOf permanece byte-idêntica no build */
+  if (!/function stageOf\(v\)\{\s*\n\s*if\(v < 0\.5\)/.test(HTML))
+    throw new Error("stageOf() não está byte-idêntica no HTML construído");
+  return true;
+});
+
+/* --------------------------- RPT-01 / RPT-02 / RPT-04 / RPT-05 --------------------------- */
+function p51Report(w) { return w.eval("window.__DEV.buildPrintReport().html"); }
+function p51Dom(w, html) {
+  const host = w.document.createElement("div");
+  host.innerHTML = html;
+  return host;
+}
+
+T("P51-RPT1", "capa executiva com título, subtítulo, disclaimer, emblema e metadados", () => {
+  const R = boot();
+  FX.p50ApplyVec(R.w, FX.P50_F5.vec);
+  R.w.__DEV.showResults();
+  const host = p51Dom(R.w, p51Report(R.w));
+  const capa = host.querySelector("#pr-cover");
+  if (!capa) throw new Error("capa ausente do relatório");
+  if (!/Quickscan SecOps · SOC-CMM/.test(txt(capa.querySelector(".pr-cover-title"))))
+    throw new Error("título da capa ausente");
+  if (!/Relatório indicativo de maturidade/.test(txt(capa.querySelector(".pr-cover-sub"))))
+    throw new Error("subtítulo da capa ausente");
+  if (!/Screening indicativo/.test(txt(capa)))
+    throw new Error("disclaimer ausente da capa");
+  if (!capa.querySelector('svg[data-qs-mark="pentagon"]'))
+    throw new Error("emblema pentagonal ausente da capa");
+  if (!capa.querySelector('[data-pr-meta="tool"]'))
+    throw new Error("metadados de sessão ausentes da capa");
+  /* o conteúdo seguinte começa em Resumo de maturidade */
+  const secs = Array.from(host.querySelectorAll(".pr-sec")).map(e => e.id);
+  if (secs[0] !== "pr-maturity")
+    throw new Error("primeira seção após a capa é '" + secs[0] + "'");
+  return true;
+});
+
+T("P51-RPT2", "metadados de sessão honestos e distintos da data de geração", () => {
+  const R = boot();
+  FX.p50ApplyVec(R.w, FX.P50_F5.vec);
+  R.w.__DEV.showResults();
+  const host = p51Dom(R.w, p51Report(R.w));
+  const get = k => txt(host.querySelector('[data-pr-meta="' + k + '"]'));
+  const sessao = get("session"), dataSessao = get("sessionDate"), gerado = get("generatedAt"), tool = get("tool");
+  if (!sessao) throw new Error("campo Sessão ausente");
+  if (!/Sem rótulo/.test(sessao)) throw new Error("sessão sem label deveria dizer 'Sem rótulo': '" + sessao + "'");
+  if (!dataSessao) throw new Error("Data da sessão ausente");
+  if (!gerado) throw new Error("Relatório gerado em ausente");
+  /* O que importa não é a string, e sim a FONTE: os dois campos precisam vir
+     de instantes distintos e ser rotulados distintamente. Comparar apenas o
+     texto formatado seria frágil quando ambos caem no mesmo segundo. */
+  const meta = R.w.__DEV.qsSessionMeta();
+  if (!meta.sessionDateISO) throw new Error("sessionDateISO ausente");
+  if (!meta.generatedAtISO) throw new Error("generatedAtISO ausente");
+  if (meta.sessionDateISO === meta.generatedAtISO)
+    throw new Error("data da sessão e de geração vêm do mesmo instante");
+  const rotulos = qa(host, "dt").map(e => txt(e));
+  if (rotulos.indexOf("Relatório gerado em") < 0)
+    throw new Error("rótulo 'Relatório gerado em' ausente");
+  if (rotulos.filter(r => /Data da sessão|Sessão registrada em/.test(r)).length !== 1)
+    throw new Error("rótulo de data da sessão ausente ou duplicado: " + JSON.stringify(rotulos));
+  /* sessão importada: createdAt é o instante do EXPORT original, e por isso
+     precisa aparecer com rótulo honesto, nunca como "Data da sessão". */
+  const I = boot();
+  FX.p50ApplyVec(I.w, FX.P50_F5.vec);
+  const doc = I.w.__DEV.buildSessionDocument("Cliente Importado");
+  I.w.__DEV.importSessionDocument(JSON.parse(JSON.stringify(doc)));
+  I.w.__DEV.showResults();
+  const hi = p51Dom(I.w, p51Report(I.w));
+  const rotI = qa(hi, "dt").map(e => txt(e));
+  if (rotI.indexOf("Sessão registrada em") < 0)
+    throw new Error("documento importado não usa o rótulo honesto: " + JSON.stringify(rotI));
+  if (txt(hi.querySelector('[data-pr-meta="session"]')) !== "Cliente Importado")
+    throw new Error("label importado não refletido: '" + txt(hi.querySelector('[data-pr-meta="session"]')) + "'");
+  /* label STALE: importar um documento SEM label depois de um COM label não
+     pode deixar o rótulo anterior colado (mutante M51-09). */
+  const S2 = boot();
+  FX.p50ApplyVec(S2.w, FX.P50_F5.vec);
+  const comLabel = S2.w.__DEV.buildSessionDocument("Cliente Anterior");
+  S2.w.__DEV.importSessionDocument(JSON.parse(JSON.stringify(comLabel)));
+  const semLabel = S2.w.__DEV.buildSessionDocument(null);
+  S2.w.__DEV.importSessionDocument(JSON.parse(JSON.stringify(semLabel)));
+  S2.w.__DEV.showResults();
+  const hs = p51Dom(S2.w, p51Report(S2.w));
+  if (txt(hs.querySelector('[data-pr-meta="session"]')) !== "Sem rótulo")
+    throw new Error("label ficou stale após import sem rótulo: '" +
+      txt(hs.querySelector('[data-pr-meta="session"]')) + "'");
+  /* createdAt ausente não pode ser fabricado */
+  const A = boot();
+  FX.p50ApplyVec(A.w, FX.P50_F5.vec);
+  const docA = A.w.__DEV.buildSessionDocument("Sem data");
+  delete docA.createdAt;
+  A.w.__DEV.importSessionDocument(JSON.parse(JSON.stringify(docA)));
+  A.w.__DEV.showResults();
+  const ha = p51Dom(A.w, p51Report(A.w));
+  if (txt(ha.querySelector('[data-pr-meta="sessionDate"]')) !== "Data original não informada")
+    throw new Error("createdAt ausente foi fabricado: '" + txt(ha.querySelector('[data-pr-meta="sessionDate"]')) + "'");
+  const tv = R.w.eval("window.__QS_BUILD_META.toolVersion");
+  if (tool.indexOf(tv) < 0) throw new Error("versão da ferramenta '" + tool + "' != '" + tv + "'");
+  return true;
+});
+
+T("P51-RPT4", "legenda dos domínios na ordem de DOMS e nas cores de PR_DOM_HEX", () => {
+  const R = boot();
+  FX.p50ApplyVec(R.w, FX.P50_F5.vec);
+  R.w.__DEV.showResults();
+  const host = p51Dom(R.w, p51Report(R.w));
+  const leg = host.querySelector("#pr-domlegend");
+  if (!leg) throw new Error("legenda de domínios ausente");
+  const itens = Array.from(leg.querySelectorAll("[data-dom-legend]"));
+  if (itens.length !== 5) throw new Error(itens.length + " itens na legenda");
+  const nomes = R.w.eval("JSON.stringify(DOMS.map(d=>d.pt))");
+  const hexes = R.w.eval("JSON.stringify(window.__DEV.PR_DOM_HEX || [])");
+  const esperadoNomes = JSON.parse(nomes);
+  const esperadoHex = JSON.parse(hexes);
+  itens.forEach((it, i) => {
+    if (txt(it).indexOf(esperadoNomes[i]) < 0)
+      throw new Error("legenda " + i + ": '" + txt(it) + "' não contém '" + esperadoNomes[i] + "'");
+    if (it.getAttribute("data-dom-legend") !== String(i))
+      throw new Error("legenda " + i + ": índice estável ausente/errado");
+    const sw = it.querySelector("[data-dom-sw]");
+    const style = sw ? (sw.getAttribute("style") || "") : "";
+    if (esperadoHex.length && style.toUpperCase().indexOf(esperadoHex[i].toUpperCase()) < 0)
+      throw new Error("legenda " + i + ": cor '" + style + "' != " + esperadoHex[i]);
+  });
+  return true;
+});
+
+T("P51-RPT5", "emblema e faixa: SVG determinístico, neutro e acessível", () => {
+  const baixa = boot();
+  baixa.w.__DEV.setArq(0);
+  P51_QIDS.forEach(id => baixa.w.__DEV.setAnswerById(id, 0));
+  baixa.w.__DEV.showResults();
+  const hb = p51Dom(baixa.w, p51Report(baixa.w));
+
+  const alta = boot();
+  alta.w.__DEV.setArq(0);
+  P51_QIDS.forEach(id => alta.w.__DEV.setAnswerById(id, 3));
+  alta.w.__DEV.setTarget && alta.w.__DEV.setTarget("mandate", 3);
+  alta.w.__DEV.showResults();
+  const ha = p51Dom(alta.w, p51Report(alta.w));
+
+  ["pentagon", "band"].forEach(kind => {
+    const a = hb.querySelector('svg[data-qs-mark="' + kind + '"]');
+    const b = ha.querySelector('svg[data-qs-mark="' + kind + '"]');
+    if (!a || !b) throw new Error("SVG '" + kind + "' ausente em um dos relatórios");
+    if (a.outerHTML !== b.outerHTML)
+      throw new Error("SVG '" + kind + "' varia entre sessão baixa e alta (não é neutro)");
+    if (a.getAttribute("role") !== "img") throw new Error(kind + ": role=img ausente");
+    if (!a.querySelector("title") || !a.querySelector("desc"))
+      throw new Error(kind + ": <title>/<desc> ausentes");
+    if (!/Cinco domínios do Quickscan/i.test(a.querySelector("title").textContent))
+      throw new Error(kind + ": nome acessível não explica os cinco domínios");
+    if (/<image|base64|url\(/i.test(a.outerHTML))
+      throw new Error(kind + ": SVG não é inline/determinístico (imagem ou url externa)");
+    const hexes = JSON.parse(alta.w.eval("JSON.stringify(window.__DEV.PR_DOM_HEX || [])"));
+    hexes.forEach(hx => {
+      if (a.outerHTML.toUpperCase().indexOf(hx.toUpperCase()) < 0)
+        throw new Error(kind + ": cor canônica " + hx + " ausente");
+    });
+    if (/#DA291C/i.test(a.outerHTML)) throw new Error(kind + ": acento de marca usado como cor de domínio");
+    /* Rótulos completos. Medir `textContent` do SVG inteiro era frágil: o
+       <desc> repete os nomes e mascarava a perda dos rótulos reais (mutante
+       M51-15). A medição passa a olhar SOMENTE os nós de texto de rótulo. */
+    const rot = Array.from(a.querySelectorAll("text"))
+      .filter(t => !t.closest("title") && !t.closest("desc"))
+      .map(t => (t.textContent || "").trim());
+    JSON.parse(alta.w.eval("JSON.stringify(DOMS.map(d=>d.pt))")).forEach(nm => {
+      if (rot.indexOf(nm) < 0)
+        throw new Error(kind + ": rótulo '" + nm + "' ausente dos textos do gráfico (vistos: " + JSON.stringify(rot) + ")");
+    });
+  });
+  return true;
+});
+
+/* --------------------------- ERRATA B1 · RPT-03 (coerência entre superfícies) ---------------------------
+   O gate P51-RPT3 prova que a régua DERIVA de stageOf(); não prova que o VALOR
+   alimentado à régua é o mesmo agregado canônico da tela. Foi por essa fresta
+   que o blocker B1 passou: `buildPrintReport()` calculava o agregado SEM
+   arredondar, imprimia `toFixed(1)` (que arredonda) e nomeava a faixa a partir
+   do valor bruto — publicando, no MESMO documento, um número de fronteira com o
+   nome da faixa de baixo, contra a jornada e a leitura executiva do próprio PDF.
+
+   Este gate ancora a propriedade que faltava: em vetores de FRONTEIRA, as cinco
+   superfícies que nomeiam o estágio dizem a mesma coisa.
+
+   Não vacuidade: os vetores não são escolhidos à mão. Um oráculo próprio
+   enumera as 14 pontuações de domínio alcançáveis (n=2 e n=3 confirmadas) e as
+   537.824 combinações, e seleciona, para cada score de fronteira exibido
+   (0.5/1.5/2.5/3.5/4.5), um vetor DENTRO da janela do defeito — aquele em que
+   `stageOf(média bruta) !== stageOf(média arredondada)`. Se as cinco janelas
+   não forem encontradas, o gate falha em vez de passar vazio; e qualquer
+   regresso à forma sem arredondamento faz este gate FAIL por construção.
+------------------------------------------------------------------------------- */
+T("P51-RPT6", "estágio coerente entre KPI, régua, jornada, leitura executiva e tela nas fronteiras", () => {
+  const R0 = boot();
+  const w0 = R0.w;
+
+  /* 1 · o oráculo local de faixas é DERIVADO da stageOf() do runtime, nunca de
+     literais próprios: varre 0..5 e registra onde a função canônica troca. */
+  const nomes = JSON.parse(w0.eval("JSON.stringify(Array.from({length:501},(_,i)=>stageOf(i/100).pt))"));
+  const bordas = [];
+  for (let i = 1; i <= 500; i++) if (nomes[i] !== nomes[i - 1]) bordas.push(Math.round(i) / 100);
+  if (bordas.length !== 5) throw new Error(bordas.length + " bordas derivadas de stageOf() (esperado 5)");
+  const faixaDe = v => bordas.filter(b => v >= b).length;
+  const nomeDaFaixa = [0].concat(bordas.map(b => Math.round(b * 100))).map(i => nomes[i]);
+  if (nomeDaFaixa.length !== 6) throw new Error(nomeDaFaixa.length + " faixas no oráculo local (esperado 6)");
+  /* conferência do oráculo local contra o runtime, ponto a ponto */
+  for (let i = 0; i <= 500; i++) {
+    const v = Math.round(i) / 100;
+    if (nomeDaFaixa[faixaDe(v)] !== nomes[i])
+      throw new Error("oráculo local de faixas diverge de stageOf() em " + v);
+  }
+
+  /* 2 · pontuações de domínio alcançáveis, recalculadas aqui a partir de SCORES */
+  const SC = FX.P50_SCORES;
+  const r1 = v => Math.round(v * 10) / 10;
+  const porScore = new Map();
+  const reg = (s, t) => { if (!porScore.has(s)) porScore.set(s, t); };
+  for (let a = 0; a < 4; a++) for (let b = 0; b < 4; b++) {
+    reg(r1((SC[a] + SC[b]) / 2), [a, b, null]);                 /* domínio com n=2 */
+    for (let c = 0; c < 4; c++) reg(r1((SC[a] + SC[b] + SC[c]) / 3), [a, b, c]);
+  }
+  const vals = Array.from(porScore.keys()).sort((x, y) => x - y);
+  if (vals.length !== 14) throw new Error(vals.length + " pontuações de domínio alcançáveis (esperado 14)");
+  /* o runtime concorda com o oráculo: mesma média por domínio */
+  if (w0.eval("JSON.stringify(SCORES)") !== JSON.stringify(SC))
+    throw new Error("tabela SCORES do runtime diverge da do oráculo");
+
+  /* 3 · janela do defeito: média bruta e média arredondada em faixas diferentes */
+  const alvo = new Map();
+  let divergentes = 0, total = 0;
+  for (const s0 of vals) for (const s1 of vals) for (const s2 of vals) for (const s3 of vals) for (const s4 of vals) {
+    total++;
+    const m = (s0 + s1 + s2 + s3 + s4) / 5, r = r1(m);
+    if (faixaDe(m) !== faixaDe(r)) { divergentes++; if (!alvo.has(r)) alvo.set(r, [s0, s1, s2, s3, s4]); }
+  }
+  if (total !== 537824) throw new Error(total + " combinações enumeradas (esperado 537824)");
+  if (!divergentes) throw new Error("nenhuma combinação na janela do defeito — gate vazio");
+  [0.5, 1.5, 2.5, 3.5, 4.5].forEach(b => {
+    if (!alvo.has(b)) throw new Error("sem vetor de fronteira para o score exibido " + b.toFixed(1));
+  });
+
+  /* 4 · cada fronteira é exercida nas cinco superfícies */
+  Array.from(alvo.keys()).filter(b => [0.5, 1.5, 2.5, 3.5, 4.5].indexOf(b) >= 0).sort((x, y) => x - y).forEach(esperadoNum => {
+    const doms = alvo.get(esperadoNum);
+    const vec = new Array(15).fill(null);
+    doms.forEach((s, i) => porScore.get(s).forEach((ai, j) => { vec[i * 3 + j] = ai; }));
+    const bruta = doms.reduce((a, b) => a + b, 0) / 5;
+    /* não vacuidade por vetor: a forma sem arredondamento nomeia OUTRA faixa */
+    if (nomeDaFaixa[faixaDe(esperadoNum)] === nomeDaFaixa[faixaDe(bruta)])
+      throw new Error("vetor de " + esperadoNum.toFixed(1) + " fora da janela do defeito");
+    /* suficiência canônica atendida pelo próprio vetor */
+    const conf = FX.p50ConfirmedTotal(vec), porDom = FX.p50ConfirmedByDomain(vec);
+    if (conf < 10 || porDom.some(n => n < 2))
+      throw new Error("vetor de " + esperadoNum.toFixed(1) + " não é suficiente: " + conf + " / " + JSON.stringify(porDom));
+
+    const R = boot();
+    R.w.__DEV.setArq(0);
+    FX.p50ApplyVec(R.w, vec);
+    /* uma capability declarada tira o relatório do modo legado V3.1.3, em que a
+       jornada e a leitura executiva não são emitidas — é nelas que a
+       autocontradição intradocumento do B1 aparecia. */
+    FX.p50ApplyPresence(R.w, { "security-analytics": "NONE" });
+    R.w.__DEV.showResults();
+
+    /* referência canônica: o agregado da tela, arredondado, passado por stageOf() */
+    const snap = JSON.parse(R.w.__DEV.legacySnapshot());
+    if (snap.suff !== true) throw new Error("vetor de " + esperadoNum.toFixed(1) + ": suficiência do runtime false");
+    if (r1(snap.overall) !== esperadoNum)
+      throw new Error("agregado da tela " + snap.overall + " != " + esperadoNum.toFixed(1));
+    const canon = R.w.eval("stageOf(" + snap.overall + ").pt");
+
+    /* superfície 1 · jornada NA TELA */
+    const telaCur = qa(R.d, "#ux-journey .jn-node").filter(n => n.getAttribute("data-jn-state") === "current");
+    if (telaCur.length !== 1) throw new Error(esperadoNum.toFixed(1) + ": " + telaCur.length + " nós atuais na tela");
+    const telaNome = txt(telaCur[0].querySelector(".jn-name"));
+
+    const host = p51Dom(R.w, p51Report(R.w));
+    /* superfície 2 · KPI "Estágio indicativo" do resumo de maturidade */
+    const kpi = qa(host, "#pr-maturity .pr-kpi")
+      .find(k => /Estágio indicativo/.test(txt(k.querySelector("span"))));
+    if (!kpi) throw new Error(esperadoNum.toFixed(1) + ": KPI de estágio ausente do relatório");
+    const kpiNome = txt(kpi.querySelector("b"));
+    /* superfície 3 · leitura da régua */
+    const leitura = txt(host.querySelector("#pr-stage-ruler [data-rl-read]")).replace(/\s+/g, " ");
+    /* superfície 4 · jornada NO RELATÓRIO */
+    if (!host.querySelector("#pr-journey"))
+      throw new Error(esperadoNum.toFixed(1) + ": relatório sem jornada — o modo legado não exercita a contradição");
+    const prCur = qa(host, "#pr-journey .jn-node").filter(n => n.getAttribute("data-jn-state") === "current");
+    if (prCur.length !== 1) throw new Error(esperadoNum.toFixed(1) + ": " + prCur.length + " nós atuais no relatório");
+    const prNome = txt(prCur[0].querySelector(".jn-name"));
+    /* superfície 5 · leitura executiva */
+    const narr = txt(host.querySelector("#pr-journey .jn-narrative")).replace(/\s+/g, " ");
+    const mNarr = narr.match(/posiciona a operação em ([^(]+)\(([\d.]+)\/5\)/);
+    if (!mNarr) throw new Error(esperadoNum.toFixed(1) + ": leitura executiva sem posicionamento: '" + narr.slice(0, 120) + "'");
+    const narrNome = mNarr[1].trim(), narrNum = mNarr[2];
+
+    const num = esperadoNum.toFixed(1);
+    if (kpiNome !== canon)
+      throw new Error(num + ": KPI diz '" + kpiNome + "' e o canônico é '" + canon + "'");
+    if (leitura !== num + " / 5 · " + canon)
+      throw new Error(num + ": régua lê '" + leitura + "' (esperado '" + num + " / 5 · " + canon + "')");
+    if (prNome !== canon)
+      throw new Error(num + ": jornada do relatório diz '" + prNome + "' e o KPI/canônico é '" + canon + "'");
+    if (telaNome !== canon)
+      throw new Error(num + ": jornada da tela diz '" + telaNome + "' e o relatório diz '" + canon + "'");
+    if (narrNome !== canon || narrNum !== num)
+      throw new Error(num + ": leitura executiva diz '" + narrNome + " (" + narrNum + "/5)'");
+    /* o número impresso no KPI é o mesmo da régua e da leitura executiva */
+    const kpiNum = txt(qa(host, "#pr-maturity .pr-kpi")
+      .find(k => /Score geral indicativo/.test(txt(k.querySelector("span")))).querySelector("b"));
+    if (kpiNum !== num + " / 5")
+      throw new Error(num + ": KPI de score lê '" + kpiNum + "'");
+  });
+  return true;
+});
+
+/* --------------------------- UAT-07 --------------------------- */
+T("P51-REC1", "recomendações acionáveis junto do gap, sem overclaim nem duplicação", () => {
+  const R = boot();
+  R.w.__DEV.setArq(0);
+  /* estado com gaps altos em detecção/logs/automação e contexto declarado */
+  ["mandate","governance","policies","team-capacity","training","knowledge",
+   "incident-response","detection-lifecycle","automation","logs","endpoint","network-visibility",
+   "monitoring-coverage","external-surface","vulnerability-management"].forEach(id => R.w.__DEV.setAnswerById(id, 0));
+  const L = R.w.__DEV.V32.TECH_LANDSCAPE;
+  Object.keys(L).slice(0, 3).forEach((id, i) => { L[id].presence = ["NONE","PARTIAL","PRESENT"][i]; });
+  R.w.__DEV.showResults();
+  const host = p51Dom(R.w, p51Report(R.w));
+  const cards = Array.from(host.querySelectorAll("#pr-findings .pr-card"));
+  if (!cards.length) throw new Error("nenhum gap no relatório");
+  let comApoio = 0;
+  cards.forEach(c => {
+    const apoio = c.querySelector('[data-pr-gap-support]');
+    if (!apoio) return;
+    comApoio++;
+    if (!/Possíveis caminhos de apoio/i.test(txt(apoio)))
+      throw new Error("bloco de apoio sem o título exigido");
+    if (!apoio.querySelector('[data-pr-gap-cap]'))
+      throw new Error("apoio sem separar 'capability a desenvolver'");
+    if (!apoio.querySelector('[data-pr-gap-why]'))
+      throw new Error("apoio sem explicar por que a opção apareceu");
+  });
+  if (!comApoio) throw new Error("nenhum gap recebeu 'Possíveis caminhos de apoio'");
+  /* correspondência gap ↔ apoio: o bloco precisa pertencer AO gap em que está.
+     Sem esta asserção, mover a chave da tabela para outro qid passava batido
+     (mutante M51-07). */
+  const TAB = R.w.__DEV.QS_GAP_SUPPORT || {};
+  cards.forEach(c => {
+    const apoio = c.querySelector("[data-pr-gap-support]");
+    if (!apoio) return;
+    const qid = apoio.getAttribute("data-pr-gap-qid");
+    if (!qid) throw new Error("bloco de apoio sem identificação do gap");
+    if (!TAB[qid]) throw new Error("apoio anexado a um gap fora da tabela canônica: '" + qid + "'");
+    /* Oráculo INDEPENDENTE da tabela de apoio: a capability nomeada tem de ser
+       a canônica do motor para AQUELE qid. Comparar com a própria tabela seria
+       equivalente por construção e deixava passar o apoio anexado ao gap errado. */
+    const capTxt = txt(apoio.querySelector("[data-pr-gap-cap]"));
+    const capCanon = R.w.eval("(MAP['" + qid + "']||{}).cap || ''");
+    if (!capCanon) throw new Error("qid '" + qid + "' sem capability canônica no motor");
+    if (capTxt.indexOf(capCanon) < 0)
+      throw new Error("apoio do gap '" + qid + "' declara '" + capTxt + "', canônica é '" + capCanon + "'");
+    TAB[qid].opts.forEach(o => {
+      if (txt(apoio).indexOf(o.n) < 0)
+        throw new Error("apoio do gap '" + qid + "' não lista a opção '" + o.n + "'");
+    });
+  });
+  /* ÂNCORA NORMATIVA, externa ao produto: a diretriz da Phase 5.1 (§UAT-07)
+     nomeia o mapeamento mínimo — casos de uso de detecção, centralização de
+     logs, automação e gestão de vulnerabilidades. Validar a tabela contra ela
+     mesma seria equivalente por construção; por isso o conjunto autorizado é
+     declarado AQUI e o produto é conferido contra ele. */
+  const QIDS_AUTORIZADOS = ["detection-lifecycle", "logs", "automation", "vulnerability-management"];
+  const qidsVistos = cards.map(c => { const a = c.querySelector("[data-pr-gap-support]");
+    return a ? a.getAttribute("data-pr-gap-qid") : null; }).filter(Boolean);
+  qidsVistos.forEach(qid => {
+    if (QIDS_AUTORIZADOS.indexOf(qid) < 0)
+      throw new Error("apoio anexado a um gap fora do mapeamento normativo: '" + qid + "'");
+  });
+  QIDS_AUTORIZADOS.forEach(qid => {
+    const lbl = R.w.eval("(QS.find(x=>x.id==='" + qid + "')||{}).lbl || ''");
+    const temGap = !!lbl && cards.some(c => txt(c).indexOf(lbl) >= 0);
+    if (temGap && qidsVistos.indexOf(qid) < 0)
+      throw new Error("gap normativo '" + qid + "' existe mas ficou sem caminhos de apoio");
+  });
+  /* toda entrada da tabela cujo gap existe precisa ter aparecido no gap certo */
+  const qidsComApoio = cards.map(c => { const a = c.querySelector("[data-pr-gap-support]");
+    return a ? a.getAttribute("data-pr-gap-qid") : null; }).filter(Boolean);
+  Object.keys(TAB).forEach(qid => {
+    const lbl = R.w.eval("(QS.find(x=>x.id==='" + qid + "')||{}).lbl || ''");
+    const temGap = !!lbl && cards.some(c => txt(c).indexOf(lbl) >= 0);
+    if (temGap && qidsComApoio.indexOf(qid) < 0)
+      throw new Error("gap '" + qid + "' existe mas não recebeu o apoio correspondente");
+  });
+  /* overclaim proibido */
+  const todo = host.textContent.replace(/\s+/g, " ");
+  /* FortiClient/EMS precisa aparecer com ESCOPO DE ENDPOINT explícito e nunca
+     como substituto universal de uma plataforma de gestão de vulnerabilidades. */
+  /* divisão por FRASE em vez de janela de N caracteres: o tamanho da janela
+     era detalhe do oráculo e mascarava a frase real quando ela crescia. */
+  const fc = todo.split(".").filter(fr => /FortiClient/i.test(fr));
+  if (!fc.length) throw new Error("FortiClient ausente do relatório de gaps");
+  fc.forEach(frase => {
+    if (!/endpoint/i.test(frase))
+      throw new Error("FortiClient citado sem escopo de endpoint: '" + frase.slice(0, 120) + "'");
+    if (/\buniversal\b/i.test(frase) || /substitui uma plataforma/i.test(frase.replace(/não substitui uma plataforma/i, "")))
+      throw new Error("FortiClient descrito além do escopo de endpoint: '" + frase.slice(0, 120) + "'");
+  });
+  /* Overclaim: a MESMA expressão é legítima quando negada ("não são requisito
+     nem compra recomendada"). O oráculo olha a janela imediatamente anterior
+     para não confundir a ressalva com a afirmação que ela nega. */
+  const OVER = /(é obrigatório|requisito obrigatório|solução completa|compra recomendada)/gi;
+  let mm;
+  while ((mm = OVER.exec(todo)) !== null) {
+    const antes = todo.slice(Math.max(0, mm.index - 60), mm.index).toLowerCase();
+    if (!/\b(não|nunca|sem|nem)\b/.test(antes))
+      throw new Error("overclaim de produto: '" + todo.slice(Math.max(0, mm.index - 60), mm.index + 40) + "'");
+  }
+  return true;
+});
+
+/* --------------------------- UAT-06 --------------------------- */
+T("P51-COR5", "tags de domínio das superfícies novas usam o mapa canônico", () => {
+  const R = boot();
+  FX.p50ApplyVec(R.w, FX.P50_F5.vec);
+  R.w.__DEV.showResults();
+  const tags = qa(R.d, '#p50-results [data-dom], #p50-suff [data-dom], #p50-shell [data-dom]');
+  if (tags.length < 5) throw new Error("apenas " + tags.length + " elementos com data-dom nas superfícies novas");
+  tags.forEach(t => {
+    const v = t.getAttribute("data-dom");
+    if (!/^[0-4]$/.test(v)) throw new Error("data-dom fora da ordem canônica de DOMS: '" + v + "'");
+  });
+  /* A tela de PERGUNTA também carrega tag de domínio (chip da Camada 5) e
+     estava fora do alcance do gate — o mutante M51-05 passou por essa fresta.
+     Agora as duas superfícies são cobertas. */
+  const Q = boot();
+  FX.p50ApplyFixture(Q.w, Q.d, FX.P50_F2);
+  const chips = qa(Q.d, '#app [data-dom]');
+  if (!chips.length) throw new Error("nenhuma tag de domínio na tela de pergunta");
+  chips.forEach(t => {
+    const v = t.getAttribute("data-dom");
+    if (!/^[0-4]$/.test(v))
+      throw new Error("tag de domínio da tela de pergunta fora da ordem canônica: '" + v + "'");
+  });
+  const chipDom = q(Q.d, '#app [data-p50-chip="dom"]');
+  if (!chipDom) throw new Error("chip de domínio ausente na tela de pergunta");
+  const esperado = String(Q.w.eval("QS[" + (FX.P50_F2.focusQuestion) + "].dom"));
+  if (chipDom.getAttribute("data-dom") !== esperado)
+    throw new Error("chip de domínio aponta '" + chipDom.getAttribute("data-dom") + "' e a pergunta é do domínio " + esperado);
+  /* nenhum hex de domínio declarado nos módulos novos (a cor vem do token) */
+  const DOM_HEX = ["#9063CD", "#3CB17E", "#2CCCD3", "#307FE2", "#A2B2C8"];
+  P50_NEW_MODULES.forEach(f => {
+    const src = readIf(f); if (src === null) return;
+    DOM_HEX.forEach(hx => {
+      if (new RegExp(hx, "i").test(src))
+        throw new Error(path.basename(f) + " duplica o hex de domínio " + hx);
+    });
+  });
+  return true;
+});
+
+/* --------------------------- ERRATA R1 · sinal do gap Current × Target ---------------------------
+   Ressalva R1 da auditoria independente: a mutação adversarial AUD-02 inverteu
+   o sinal do gap na MATRIZ ÚNICA de `ui_p50_results_v32.js` — a que alimenta
+   heat map, drill-down, Current × Target e a tabela acessível — e sobreviveu a
+   todos os gates (61+27+31+30+13 verdes). O produto entregue estava correto,
+   mas a propriedade "sem gap negativo não intencional", da qual o `USER_GUIDE.md`
+   §9 e o checklist pré-entrega dependem, não tinha gate.
+
+   P50-VIS9 protege o sinal do gap POR DOMÍNIO; a fresta era o gap POR PRÁTICA.
+   Este gate fecha a fresta nas quatro superfícies que publicam o valor, com
+   oráculo próprio: SCORES canônico + os overrides do owner de Target, sem
+   chamar a matriz que está sendo validada.
+------------------------------------------------------------------------------- */
+T("P51-VIS3", "gap Current × Target com sinal correto em célula, rótulo acessível, tabela e domínio", () => {
+  const SC = FX.P50_SCORES;
+  const r1 = v => Math.round(v * 10) / 10;
+  const nGap = s => (s === null ? null : Number(s));
+
+  /* alvo declarado em TODAS as práticas: exercita as 15 células, não uma amostra.
+     O setter canônico recusa alvo não superior ao atual, então o vetor de nível 1
+     de P50-F9 com alvo 3 é legítimo em todas elas. */
+  const alvos = {};
+  FX.P50_QIDS.forEach(id => { alvos[id] = 3; });
+  const cenarios = [
+    { nome: "P50-F9 (alvos declarados na fixture)", vec: FX.P50_F9.vec, targets: FX.P50_F9.targets },
+    { nome: "alvo em todas as 15 práticas", vec: FX.P50_F9.vec, targets: alvos }
+  ];
+
+  cenarios.forEach(cen => {
+    const R = boot();
+    R.w.__DEV.setArq(0);
+    FX.p50ApplyResults(R.w, R.d, { vec: cen.vec, targets: cen.targets });
+
+    /* oráculo: nível-alvo lido do owner canônico de Target, score da tabela SCORES */
+    const ov = JSON.parse(R.w.eval("JSON.stringify(window.__DEV.TARGET.overrides)"));
+    const esperado = {};
+    FX.P50_QIDS.forEach((qid, k) => {
+      const a = cen.vec[k];
+      const cur = (a === null || a === "NA") ? null : SC[a];
+      const tl = Object.prototype.hasOwnProperty.call(ov, qid) ? ov[qid] : null;
+      const tgt = tl === null ? null : SC[tl];
+      esperado[qid] = {
+        cur: cur, tgt: tgt,
+        gap: (cur !== null && tgt !== null) ? r1(tgt - cur) : null,
+        nivelAtual: (a === null || a === "NA") ? null : a, nivelAlvo: tl
+      };
+    });
+    if (!Object.keys(ov).length) throw new Error(cen.nome + ": nenhum override aplicado — cenário vazio");
+
+    const cells = qa(R.d, "#p50-results [data-p50=\"hm-cell\"]");
+    if (cells.length !== 15) throw new Error(cen.nome + ": " + cells.length + " células no heat map");
+    const linhas = qa(R.d, "#p50-results [data-p50=\"alt-row\"]");
+    if (linhas.length !== 15) throw new Error(cen.nome + ": " + linhas.length + " linhas na tabela acessível");
+    const porQid = {}; linhas.forEach(r => { porQid[r.getAttribute("data-qid")] = r; });
+
+    cells.forEach(c => {
+      const qid = c.getAttribute("data-qid"), e = esperado[qid];
+      if (!e) throw new Error(cen.nome + ": célula de qid desconhecido '" + qid + "'");
+      const g = c.getAttribute("data-p50-gap");
+
+      /* 1 · o valor publicado é exatamente alvo − atual */
+      if (e.gap === null) {
+        if (g !== null) throw new Error(cen.nome + " · " + qid + ": gap '" + g + "' sem par atual/alvo");
+      } else {
+        if (g === null) throw new Error(cen.nome + " · " + qid + ": gap ausente (esperado " + e.gap.toFixed(1) + ")");
+        if (nGap(g) !== e.gap)
+          throw new Error(cen.nome + " · " + qid + ": gap " + g + " != alvo−atual " + e.gap.toFixed(1));
+        /* 2 · SINAL: alvo declarado é estritamente superior ao atual confirmado,
+           logo o gap publicado nunca pode ser negativo (nem zero invertido). */
+        if (e.nivelAlvo !== null && e.nivelAtual !== null && e.nivelAlvo > e.nivelAtual && nGap(g) <= 0)
+          throw new Error(cen.nome + " · " + qid + ": alvo nível " + e.nivelAlvo + " > atual nível " +
+            e.nivelAtual + " mas o gap publicado é " + g);
+        if (nGap(g) < 0) throw new Error(cen.nome + " · " + qid + ": gap negativo publicado (" + g + ")");
+      }
+
+      /* 3 · o rótulo acessível carrega o MESMO valor com o mesmo sinal */
+      const acc = accName(c);
+      if (e.gap !== null) {
+        const marca = "gap " + (e.gap >= 0 ? "+" : "") + e.gap.toFixed(1);
+        if (acc.indexOf(marca) < 0)
+          throw new Error(cen.nome + " · " + qid + ": rótulo acessível sem '" + marca + "' (" + acc + ")");
+      }
+      if (/gap\s+-/.test(acc)) throw new Error(cen.nome + " · " + qid + ": rótulo acessível com gap negativo (" + acc + ")");
+
+      /* 4 · a tabela acessível publica o mesmo valor, com sinal explícito */
+      const lin = porQid[qid];
+      if (!lin) throw new Error(cen.nome + " · " + qid + ": ausente da tabela acessível");
+      if (lin.getAttribute("data-p50-gap") !== g)
+        throw new Error(cen.nome + " · " + qid + ": tabela '" + lin.getAttribute("data-p50-gap") + "' != heat map '" + g + "'");
+      if (e.gap !== null) {
+        const cel = qa(lin, "td").map(td => txt(td));
+        const alvoTxt = (e.gap >= 0 ? "+" : "") + e.gap.toFixed(1);
+        if (cel.indexOf(alvoTxt) < 0)
+          throw new Error(cen.nome + " · " + qid + ": coluna Gap sem '" + alvoTxt + "' (" + JSON.stringify(cel) + ")");
+      }
+    });
+
+    /* 5 · o eixo por DOMÍNIO obedece ao mesmo sinal (P50-VIS9 mede em Chromium;
+       aqui a propriedade é reafirmada no mesmo estado das células) */
+    qa(R.d, "#p50-results [data-p50=\"ct-row\"]").forEach(row => {
+      const g = row.getAttribute("data-p50-gap");
+      if (g === null) return;
+      const cur = Number(row.getAttribute("data-p50-current"));
+      const tgt = Number(row.getAttribute("data-p50-target"));
+      if (nGap(g) !== r1(tgt - cur))
+        throw new Error(cen.nome + " · domínio " + row.getAttribute("data-dom") + ": gap " + g + " != " + r1(tgt - cur).toFixed(1));
+      if (nGap(g) < 0)
+        throw new Error(cen.nome + " · domínio " + row.getAttribute("data-dom") + ": gap agregado negativo (" + g + ")");
+    });
+
+    /* 6 · varredura final: nenhum gap negativo em superfície alguma dos resultados */
+    const negativos = qa(R.d, "#p50-results [data-p50-gap]")
+      .filter(n => Number(n.getAttribute("data-p50-gap")) < 0)
+      .map(n => (n.getAttribute("data-qid") || "dom" + n.getAttribute("data-dom")) + "=" + n.getAttribute("data-p50-gap"));
+    if (negativos.length)
+      throw new Error(cen.nome + ": gap negativo em " + negativos.join(", "));
+  });
+  return true;
+});
+
+/* ==========================================================================
+   PHASE 5.1 · ADENDO DOCUMENTAL — documentation assurance (P51-DOC*)
+   Verificação FACTUAL do manual e da landing page: existência, links, e as
+   afirmações que evitam os mal-entendidos caros. Sem burocracia de suíte
+   documental antiga — apenas o que muda a leitura do usuário.
+   ========================================================================== */
+const USER_GUIDE = path.join(HERE, "USER_GUIDE.md");
+const README_MD = path.join(HERE, "README.md");
+/* A ênfase markdown (**negrito**) não muda o texto que o usuário lê; compará-la
+   literalmente fazia o oráculo falhar por tipografia. A leitura normaliza a
+   ênfase e o espaçamento, preservando as palavras. */
+const mdPlain = t => String(t || "").replace(/\*\*/g, "").replace(/\s+/g, " ");
+const guideTxt = () => readIf(USER_GUIDE) || "";
+const readmeTxt = () => readIf(README_MD) || "";
+const guidePlain = () => mdPlain(guideTxt());
+
+T("P51-DOC1", "manual e landing page existem e se referenciam", () => {
+  const g = guideTxt(), r = readmeTxt();
+  if (!g) throw new Error("USER_GUIDE.md ausente");
+  if (!r) throw new Error("README.md ausente");
+  if (g.length < 6000) throw new Error("USER_GUIDE.md curto demais (" + g.length + " bytes)");
+  if (r.indexOf("USER_GUIDE.md") < 0) throw new Error("README.md não aponta para o manual");
+  if (!/\[.*\]\(USER_GUIDE\.md\)/.test(r)) throw new Error("README.md não traz link markdown para o manual");
+  /* landing page não é relatório de fase */
+  [/microfase/i, /evidence package/i, /P50-[A-Z]/, /auditoria independente/i].forEach(re => {
+    if (re.test(r)) throw new Error("README.md contém conteúdo de governança de fase: " + re);
+  });
+  return true;
+});
+
+T("P51-DOC2", "manual afirma explicitamente que contexto tecnológico não muda o score", () => {
+  const g = guideTxt();
+  if (!/influência zero sobre o score/i.test(g))
+    throw new Error("afirmação de influência zero sobre o score ausente");
+  if (!/diagnóstico.*contexto tecnológico informa a prescrição/i.test(g.replace(/\s+/g, " ")))
+    throw new Error("frase 'o assessment informa o diagnóstico…' ausente");
+  if (!/presença de tecnologia não eleva|Tecnologia não eleva maturidade/i.test(g))
+    throw new Error("manual não diz que tecnologia não eleva maturidade");
+  return true;
+});
+
+T("P51-DOC3", "tabela de influência do contexto está completa e coerente", () => {
+  const g = guidePlain();
+  const LINHAS = [
+    ["Score geral e por domínio", "Nenhuma"],
+    ["Estágio de maturidade", "Nenhuma"],
+    ["Suficiência", "Nenhuma"],
+    ["Gap e severidade derivados das respostas", "Nenhuma"],
+    ["Classificação operacional do gap", "Alta"],
+    ["Produto/serviço sugerido", "Muito alta"],
+    ["Comprar × adotar × expandir × otimizar", "Muito alta"],
+    ["Supressão de recomendação redundante", "Muito alta"],
+    ["Rota arquitetural", "Alta"],
+    ["Conteúdo do relatório", "Alta"]
+  ];
+  LINHAS.forEach(([comp, infl]) => {
+    const re = new RegExp("\\|\\s*(\\*\\*)?" + comp.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") +
+      "(\\*\\*)?\\s*\\|\\s*" + infl + "\\s*\\|");
+    if (!re.test(g)) throw new Error("linha ausente/divergente na tabela de influência: '" + comp + "' → '" + infl + "'");
+  });
+  return true;
+});
+
+T("P51-DOC4", "manual distingue n/d de zero confirmado", () => {
+  const g = guidePlain();
+  if (!/`n\/d` nunca significa zero|n\/d.{0,40}nunca significa zero/i.test(g))
+    throw new Error("afirmação 'n/d nunca significa zero' ausente");
+  if (!/Ausência de evidência.{0,120}evidência de ausência/i.test(g))
+    throw new Error("distinção ausência de evidência × evidência de ausência ausente");
+  if (!/0\.0.{0,160}(entra no cálculo|pontua)/i.test(g))
+    throw new Error("manual não explica que 0.0 confirmado entra no cálculo");
+  return true;
+});
+
+T("P51-DOC5", "manual distingue data da sessão da data de geração do relatório", () => {
+  const g = guidePlain();
+  if (!/Data da sessão × data de geração|data de geração do relatório são diferentes/i.test(g))
+    throw new Error("distinção entre data da sessão e de geração ausente");
+  if (g.indexOf("Sessão registrada em") < 0)
+    throw new Error("rótulo honesto de documento importado ausente do manual");
+  if (g.indexOf("Data original não informada") < 0)
+    throw new Error("manual não documenta o caso de data ausente");
+  if (!/não salva automaticamente/i.test(g))
+    throw new Error("manual não avisa que a aplicação não salva automaticamente");
+  return true;
+});
+
+T("P51-DOC6", "manual explica o cenário-alvo sem prometer resultado", () => {
+  const g = guidePlain();
+  if (!/cenário desejado, não promessa nem previsão/i.test(g))
+    throw new Error("Target descrito sem a ressalva de que não é promessa");
+  if (!/não altera as respostas atuais/i.test(g))
+    throw new Error("manual não diz que o Target não altera as respostas atuais");
+  if (!/score-alvo é derivado/i.test(g))
+    throw new Error("manual não diz que o score-alvo é derivado das respostas/overrides");
+  ["Perfil atual", "Próximo estágio", "Cenário-alvo"].forEach(t => {
+    if (g.indexOf(t) < 0) throw new Error("termo da jornada ausente do manual: " + t);
+  });
+  return true;
+});
+
+T("P51-DOC7", "glossário define mandato formal em linguagem de negócios", () => {
+  const g = guidePlain();
+  if (g.indexOf("mandato formal") < 0) throw new Error("verbete 'mandato formal' ausente");
+  ["autorização", "patrocínio", "responsabilidade", "autoridade"].forEach(t => {
+    const re = new RegExp("mandato formal[^|]*\\|[^|]*" + t, "i");
+    if (!re.test(g)) throw new Error("definição de mandato formal sem o elemento: " + t);
+  });
+  return true;
+});
+
+T("P51-DOC8", "limitações das recomendações Fortinet estão explícitas e sem overclaim", () => {
+  const g = guidePlain();
+  if (!/possibilidade de apoio, não requisito automático/i.test(g))
+    throw new Error("manual não declara que produto é possibilidade, não requisito");
+  /* FortiClient EMS jamais como VM universal */
+  const fc = g.split(".").filter(f => /FortiClient/i.test(f));
+  if (!fc.length) throw new Error("FortiClient ausente do manual");
+  const escopo = g.match(/FortiClient[^|]*\|[^|]*\|[^|]*\|/);
+  if (!/endpoint/i.test(escopo ? escopo[0] : "")) throw new Error("FortiClient sem escopo de endpoint no manual");
+  if (!/não é.{0,60}plataforma universal|não substitui/i.test(escopo ? escopo[0] : ""))
+    throw new Error("manual não nega explicitamente o uso universal do FortiClient");
+  if (/FortiClient[^.]{0,140}\b(universal|toda a gest[ãa]o|substitui uma plataforma)\b/i
+        .test(g.replace(/não é uma plataforma universal|não é.{0,20}plataforma universal|não substitui/gi, "")))
+    throw new Error("overclaim de FortiClient no manual");
+  if (!/FortiRecon[^|]*\|[^|]*exposição externa/i.test(g))
+    throw new Error("FortiRecon sem delimitação de exposição externa");
+  return true;
+});
+
+T("P51-DOC9", "manual traz checklist pré-entrega acionável", () => {
+  const g = guideTxt();
+  if (!/Checklist pré-entrega/i.test(g)) throw new Error("checklist pré-entrega ausente");
+  const bloco = g.split(/Checklist pré-entrega/i)[1] || "";
+  const itens = (bloco.match(/^- \[ \] /gm) || []).length;
+  if (itens < 8) throw new Error("checklist com " + itens + " itens (mínimo 8)");
+  ["cliente/sessão", "contexto", "prioridades", "suficiência", "alvo", "gaps", "sensível", "PDF", "JSON"]
+    .forEach(t => { if (bloco.toLowerCase().indexOf(t.toLowerCase()) < 0)
+      throw new Error("checklist sem o item: " + t); });
+  return true;
+});
+
+T("P51-DOC10", "manual e README não inventam pricing, SKU ou licenciamento", () => {
+  const alvo = mdPlain(guideTxt() + " " + readmeTxt());
+  /* Citar o termo para NEGÁ-LO ("não trazem preço, SKU, dimensionamento…") é o
+     comportamento correto; o que se proíbe é a AFIRMAÇÃO. O oráculo olha a
+     janela anterior, como no gate de overclaim de produto. */
+  const PROIBIDO = [/\bSKU\b/gi, /\bpre[çc]o\b/gi, /\bpricing\b/gi, /R\$\s?\d/g, /US\$\s?\d/g,
+                    /\blicen[çc]a[s]? por\b/gi, /\bcusto estimado\b/gi, /\bsizing\b/gi,
+                    /\b\d+\s*(vCPU|GB de RAM|EPS|nós licenciados)\b/gi];
+  PROIBIDO.forEach(re => {
+    let m; re.lastIndex = 0;
+    while ((m = re.exec(alvo)) !== null) {
+      const antes = alvo.slice(Math.max(0, m.index - 80), m.index).toLowerCase();
+      if (!/\b(não|nem|sem|nunca)\b/.test(antes))
+        throw new Error("conteúdo comercial/dimensionamento afirmado: '" +
+          alvo.slice(Math.max(0, m.index - 60), m.index + 30) + "'");
+    }
+  });
+  /* a menção legítima é a NEGAÇÃO explícita */
+  if (!/não.{0,60}(preço|SKU|dimensionamento|licenciamento presumido)/i.test(guidePlain()))
+    throw new Error("manual não declara que não traz preço/SKU/licenciamento");
+  return true;
+});
+
+T("P51-DOC11", "manual coincide LITERALMENTE com os rótulos finais da UI", () => {
+  const g = guideTxt();
+  const R = boot();
+  const w = R.w;
+  /* estágios canônicos, na ordem do runtime */
+  const estagios = JSON.parse(w.eval("JSON.stringify(window.__DEV.stagesView().map(s=>s.pt))"));
+  estagios.forEach(e => { if (g.indexOf(e) < 0)
+    throw new Error("estágio da UI ausente do manual: '" + e + "'"); });
+  /* domínios na ordem canônica */
+  JSON.parse(w.eval("JSON.stringify(DOMS.map(d=>d.pt))")).forEach(d => {
+    if (g.indexOf(d) < 0) throw new Error("domínio ausente do manual: '" + d + "'"); });
+  /* estados de presença e status operacional, como a UI os escreve */
+  const pres = JSON.parse(w.eval("JSON.stringify(window.__DEV.PRESENCE_LABELS)"));
+  Object.keys(pres).forEach(k => { if (g.indexOf(pres[k]) < 0)
+    throw new Error("estado de presença ausente do manual: '" + pres[k] + "'"); });
+  const st = JSON.parse(w.eval("JSON.stringify(window.__DEV.STATUS_LABELS)"));
+  Object.keys(st).forEach(k => { if (g.indexOf(st[k]) < 0)
+    throw new Error("status operacional ausente do manual: '" + st[k] + "'"); });
+  /* rótulos de ação e de estado que o usuário vê */
+  ["Adicionar evidência ou observação", "Não sei · precisa validar", "Sem rótulo",
+   "Sessão registrada em", "Data original não informada", "Perfil atual", "Próximo estágio"]
+    .forEach(t => { if (g.indexOf(t) < 0)
+      throw new Error("rótulo da UI ausente do manual: '" + t + "'"); });
+  /* Limite real de prioridades, DERIVADO do runtime congelado: adiciona-se pelo
+     owner canônico até que ele pare de aceitar, e conta-se. Fixar o número no
+     próprio gate seria um oráculo falso — inventado, não medido. */
+  const lim = w.eval("(function(){ businessPriority.clear();" +
+    " QS.forEach(function(q){ if(businessPriority.size < 99) togglePriority(q.id); });" +
+    " var n = businessPriority.size; businessPriority.clear(); return n; })()");
+  if (!(lim >= 1 && lim <= 15)) throw new Error("limite de prioridades não derivável do runtime: " + lim);
+  const EXTENSO = { 1:"uma", 2:"duas", 3:"três", 4:"quatro", 5:"cinco" };
+  const alvoLim = new RegExp("(até|no máximo)\\s+(" + lim + "|" + (EXTENSO[lim] || "") + ")\\b", "i");
+  if (!alvoLim.test(g))
+    throw new Error("manual não declara o limite real de prioridades (" + lim + ")");
+  return true;
+});
+
+T("P51-DOC12", "caixa 'Como interpretar este relatório' no PDF, curta e após o resumo", () => {
+  const R = boot();
+  FX.p50ApplyVec(R.w, FX.P50_F5.vec);
+  R.w.__DEV.showResults();
+  const host = p51Dom(R.w, p51Report(R.w));
+  const box = host.querySelector("#pr-howto");
+  if (!box) throw new Error("caixa 'Como interpretar este relatório' ausente do relatório");
+  if (txt(box.querySelector(".pr-howto-h")) !== "Como interpretar este relatório")
+    throw new Error("título da caixa: '" + txt(box.querySelector(".pr-howto-h")) + "'");
+  /* posição: depois do resumo de maturidade */
+  const nodes = Array.from(host.children);
+  const iMat = nodes.findIndex(n => n.id === "pr-maturity");
+  const iBox = nodes.findIndex(n => n.id === "pr-howto");
+  if (iMat < 0 || iBox < 0) throw new Error("resumo ou caixa fora do nível esperado do documento");
+  if (iBox !== iMat + 1) throw new Error("a caixa não vem imediatamente após o resumo de maturidade");
+  /* curta: não repete o manual */
+  const itens = box.querySelectorAll("li").length;
+  if (itens < 5 || itens > 8) throw new Error(itens + " itens na caixa (esperado entre 5 e 8)");
+  const chars = txt(box).length;
+  if (chars > 900) throw new Error("caixa longa demais (" + chars + " caracteres)");
+  /* conteúdo exigido pelo adendo */
+  const t = txt(box).replace(/\s+/g, " ");
+  [[/score.{0,60}estágio.{0,80}respostas confirmadas/i, "score/estágio vêm das respostas confirmadas"],
+   [/contexto tecnológico não altera a nota/i, "contexto não altera a nota"],
+   [/refina.{0,60}(classificação|recomenda)/i, "contexto refina classificação e recomendações"],
+   [/n\/d.{0,60}não avaliado.{0,20}nunca zero|n\/d.{0,40}não avaliado/i, "n/d é não avaliado, não zero"],
+   [/cenário-alvo.{0,60}desejado/i, "Target é cenário desejado"],
+   [/recomendações são possibilidades/i, "recomendações são possibilidades condicionadas"]]
+    .forEach(([re, nome]) => { if (!re.test(t)) throw new Error("caixa não comunica: " + nome); });
+  /* neutralidade: a caixa é estática e não varia com os dados */
+  const B = boot();
+  B.w.__DEV.setArq(0);
+  FX.P50_QIDS.forEach(id => B.w.__DEV.setAnswerById(id, 0));
+  B.w.__DEV.showResults();
+  const hostB = p51Dom(B.w, p51Report(B.w));
+  if (hostB.querySelector("#pr-howto").outerHTML !== box.outerHTML)
+    throw new Error("a caixa interpretativa varia com os dados da sessão");
+  return true;
+});
+
+/* --------------------------- ERRATA R2 + R3 --------------------------- */
+/* Duas imprecisões factuais do manual apontadas pela auditoria independente:
+     R2 · §8 dizia "Média das respostas confirmadas" para o score GERAL, que na
+          verdade é a média dos cinco scores de domínio (cada um já arredondado).
+          O consultor que refizesse a conta descrita obtinha outro número.
+     R3 · §12 listava "Como interpretar → Régua → Legenda" como seções próprias,
+          quando a legenda está NA CAPA e a régua está DENTRO do resumo de
+          maturidade, antes da caixa interpretativa.
+   O gate não confere redação: confere o FATO contra o runtime e contra o
+   documento realmente produzido. */
+T("P51-DOC13", "manual descreve o score geral e a ordem do relatório como o produto os produz", () => {
+  const g = guidePlain();
+
+  /* ---- R2 · a fórmula descrita é a que o produto executa ---- */
+  const R = boot();
+  R.w.__DEV.setArq(0);
+  /* domínios com quantidades DIFERENTES de respostas confirmadas: é aí que a
+     média das respostas e a média dos domínios divergem. */
+  const vec = [1, 1, 1, 2, 2, null, 3, 3, null, 0, 0, null, 3, 3, null];
+  FX.p50ApplyVec(R.w, vec);
+  FX.p50ApplyPresence(R.w, { "security-analytics": "NONE" });
+  R.w.__DEV.showResults();
+  const snap = JSON.parse(R.w.__DEV.legacySnapshot());
+  if (snap.suff !== true) throw new Error("cenário de conferência não abriu o gate de suficiência");
+  const SC = FX.P50_SCORES, r1 = v => Math.round(v * 10) / 10;
+  const conf = vec.map((a, k) => ({ a: a, dom: FX.P50_DOM_OF[k] })).filter(x => x.a !== null && x.a !== "NA");
+  const mediaRespostas = r1(conf.reduce((s, x) => s + SC[x.a], 0) / conf.length);
+  const porDom = [0, 1, 2, 3, 4].map(i => {
+    const v = conf.filter(x => x.dom === i).map(x => SC[x.a]);
+    return r1(v.reduce((a, b) => a + b, 0) / v.length);
+  });
+  const mediaDominios = r1(porDom.reduce((a, b) => a + b, 0) / 5);
+  if (mediaRespostas === mediaDominios)
+    throw new Error("cenário não distingue as duas contas — gate vazio (ambas " + mediaDominios + ")");
+  if (snap.overall !== mediaDominios)
+    throw new Error("o produto não usa a média dos domínios: overall=" + snap.overall + " domínios=" + mediaDominios);
+  /* o manual precisa descrever a conta que o produto faz, e não a outra */
+  if (!/score .{0,12}geral.{0,80}m[ée]dia dos .{0,12}cinco scores de dom[íi]nio/i.test(g))
+    throw new Error("§8 não descreve o score geral como média dos cinco scores de domínio");
+  if (!/score .{0,12}por dom[íi]nio.{0,80}m[ée]dia das respostas confirmadas/i.test(g))
+    throw new Error("§8 não descreve o score por domínio como média das respostas confirmadas");
+  if (/Score 0–5\.\s*M[ée]dia das respostas confirmadas\. Por dom[íi]nio e geral\./i.test(g))
+    throw new Error("§8 mantém a redação imprecisa do score geral");
+
+  /* ---- R3 · a lista de §12 reproduz a ordem realmente emitida ---- */
+  FX.p50ApplyTargets(R.w, { "mandate": 3 });
+  R.w.__DEV.setPriorities(["logs"]);
+  R.w.__DEV.showResults();
+  const host = p51Dom(R.w, p51Report(R.w));
+  const ordemReal = Array.from(host.children).map(n => n.id).filter(Boolean);
+  const ESPERADO = [
+    { ids: ["pr-cover"], re: /capa e metadados/i },
+    { ids: ["pr-maturity"], re: /resumo de maturidade/i },
+    { ids: ["pr-howto"], re: /como interpretar este relat[óo]rio/i },
+    { ids: ["pr-prios"], re: /prioridades declaradas pelo neg[óo]cio/i },
+    { ids: ["pr-findings"], re: /gaps de maturidade observados/i },
+    { ids: ["pr-landscape"], re: /contexto tecnol[óo]gico declarado/i },
+    { ids: ["pr-interp", "pr-support"], re: /interpreta[çc][ãa]o do contexto/i },
+    { ids: ["pr-journey"], re: /jornada de maturidade/i },
+    { ids: ["pr-target"], re: /cen[áa]rio-alvo/i },
+    { ids: ["pr-annex"], re: /anexo/i }
+  ];
+  const idsEsperados = ESPERADO.reduce((a, e) => a.concat(e.ids), []);
+  if (JSON.stringify(ordemReal) !== JSON.stringify(idsEsperados))
+    throw new Error("ordem real do relatório mudou: " + JSON.stringify(ordemReal));
+  /* legenda na CAPA e régua DENTRO do resumo — o ponto exato de R3 */
+  if (!host.querySelector("#pr-cover #pr-domlegend"))
+    throw new Error("legenda dos domínios não está na capa");
+  if (!host.querySelector("#pr-maturity #pr-stage-ruler"))
+    throw new Error("régua de estágios não está dentro do resumo de maturidade");
+
+  /* a lista numerada de §12 do manual, na ordem em que o manual a escreve */
+  const sec12 = guideTxt().split(/^## 12 · /m)[1];
+  if (!sec12) throw new Error("§12 ausente do manual");
+  const itens = sec12.split(/^## /m)[0].split(/\n(?=\s*\d+\.\s)/)
+    .filter(x => /^\s*\d+\.\s/.test(x)).map(mdPlain).map(x => x.trim());
+  if (itens.length !== ESPERADO.length)
+    throw new Error("§12 lista " + itens.length + " seções para " + ESPERADO.length + " emitidas");
+  ESPERADO.forEach((e, i) => {
+    if (!e.re.test(itens[i]))
+      throw new Error("§12 item " + (i + 1) + " não corresponde a " + e.ids.join("+") + ": '" + itens[i].slice(0, 80) + "'");
+  });
+  /* o manual precisa dizer ONDE legenda e régua vivem, e não listá-las como seções */
+  if (!/legenda dos dom[íi]nios/i.test(itens[0])) throw new Error("§12 não põe a legenda na capa");
+  if (!/r[ée]gua/i.test(itens[1])) throw new Error("§12 não põe a régua no resumo de maturidade");
+  if (itens.some((t, i) => i > 1 && /^\d+\.\s+\*?\*?(R[ée]gua|Legenda)/i.test(t)))
+    throw new Error("§12 ainda lista régua ou legenda como seção própria");
+  return true;
+});
+
 /* ============================== RESUMO ============================== */
 const pass = results.filter(r => r.ok).length;
 const fail = results.length - pass;
-console.log("\nP50 CORE (microfases 5.0.1+5.0.2+5.0.3+5.0.4+5.0.5)" + (ONLY.length ? " [FILTRADO]" : "") + ": " + pass + " PASS · " + fail + " FAIL de " + results.length);
+console.log("\nP50 CORE + P51 (microfases 5.0.1..5.0.5 + Phase 5.1)" + (ONLY.length ? " [FILTRADO]" : "") + ": " + pass + " PASS · " + fail + " FAIL de " + results.length);
 if (fail) process.exitCode = 1;

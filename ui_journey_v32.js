@@ -153,16 +153,41 @@ function buildExecutiveNarrative(snap){
 /* [E/T/U] renderização do journey */
 function journeyHTML(snap, forPrint){
   const m=journeyModel(snap);
+  /* UAT-05 · régua de seis estágios com geometria uniforme.
+     Antes: glifos ○ • ● ◎ ◆ de tamanhos diferentes, sem número e sem estado
+     legível — os estágios não se distinguiam. Agora cada nó tem a MESMA
+     geometria e área visual, carrega sempre o número 0–5 e o nome do estágio,
+     e o estado vai num atributo (`data-jn-state`) + rótulo textual, de modo
+     que forma e texto — não apenas cor — carregam o significado.
+     `n/d` nunca vira estágio zero: sem suficiência, nenhum nó é "current". */
   const nodes=m.stages.map((s,i)=>{
-    let cls="jn-past", mark="○", labels=[];
-    if(m.cur>=0 && i<m.cur){ cls="jn-past"; mark="•"; }
-    if(i===m.cur){ cls="jn-cur"; mark="●"; labels.push("PERFIL ATUAL"); }
-    if(i===m.next){ cls+=" jn-next"; mark=i===m.cur?mark:"◎"; labels.push(m.top?"":"PRÓXIMO ESTÁGIO"); }
-    if(i===m.tgt){ cls+=" jn-tgt"; mark="◆"; labels.push("CENÁRIO-ALVO"); }
-    if(m.cur<0){ cls="jn-past"; mark="○"; }
-    return `<div class="jn-node ${cls}"><span class="jn-mark" aria-hidden="true">${mark}</span>
+    const estados=[];
+    if(m.cur>=0 && i<m.cur) estados.push("past");
+    if(i===m.cur) estados.push("current");
+    if(i===m.next && !m.top) estados.push("next");
+    if(i===m.tgt) estados.push("target");
+    if(!estados.length) estados.push(m.cur<0 ? "undetermined" : "future");
+    const principal = estados.indexOf("current")>=0 ? "current"
+                    : estados.indexOf("target")>=0 ? "target"
+                    : estados.indexOf("next")>=0 ? "next"
+                    : estados[0];
+    const labels=[];
+    if(estados.indexOf("current")>=0) labels.push("Perfil atual");
+    if(estados.indexOf("next")>=0) labels.push("Próximo estágio");
+    if(estados.indexOf("target")>=0) labels.push("Cenário-alvo");
+    /* As classes LEGADAS (`jn-cur`, `jn-next`, `jn-tgt`, `jn-past`) são mantidas
+       de forma aditiva: as suítes congeladas JOURNEY 4.5 e o gate visual V8
+       selecionam por elas, e a Phase 5.1 não tem motivo para quebrar contratos
+       de seleção — o que ela muda é a APRESENTAÇÃO do nó, não a sua identidade. */
+    const LEGADO = { current:"jn-cur", next:"jn-next", target:"jn-tgt",
+                     past:"jn-past", future:"jn-past", undetermined:"jn-past" };
+    const legadas = estados.map(e=>LEGADO[e]).filter((v,i,a)=>v && a.indexOf(v)===i);
+    const cls=["jn-node","jn-"+principal].concat(legadas).concat(estados.map(e=>"jn-is-"+e)).join(" ");
+    return `<div class="${cls}" data-jn-state="${principal}" data-jn-index="${i}"${
+        estados.indexOf("target")>=0?' data-jn-target="true"':""}>
+      <span class="jn-mark" aria-hidden="true"><span class="jn-num">${i}</span></span>
       <span class="jn-name">${esc32(s.pt)}</span>
-      ${labels.filter(Boolean).length?`<span class="jn-label">${labels.filter(Boolean).join(" · ")}</span>`:""}</div>`;
+      ${labels.length?`<span class="jn-label">${labels.map(x=>esc32(x)).join(" · ")}</span>`:""}</div>`;
   }).join(`<span class="jn-link" aria-hidden="true"></span>`);
   const head = m.cur<0
     ? `<div class="jn-nd"><b>Posicionamento atual: n/d</b><br>Não há evidência suficiente neste Quickscan para posicionar a operação com segurança em um estágio de maturidade.</div>`

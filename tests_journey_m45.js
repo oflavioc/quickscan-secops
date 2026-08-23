@@ -14,14 +14,21 @@ T("N1-N2","Journey usa os stages canônicos; marker ATUAL = stageOf(score)",()=>
   const snap=w.__DEV.buildNarrativeSnapshot();
   const curName=txt(d.querySelector("#ux-journey .jn-cur .jn-name"));
   return names.join("|")===L.map(s=>s.pt).join("|") && curName===snap.maturity.stage.pt &&
-    txt(d.querySelector(".jn-cur .jn-label")).includes("PERFIL ATUAL");
+    /* Phase 5.1/UAT-05: o rótulo passou a "Perfil atual" (caixa alta fica a
+       cargo do CSS). A propriedade — rótulo do perfil atual no nó atual — é a
+       mesma; a comparação deixa de depender de tipografia. */
+    /PERFIL ATUAL/i.test(txt(d.querySelector(".jn-cur .jn-label")));
 });
 T("N3","insufficient: sem current fabricado; Posicionamento n/d",()=>{
   const {w,d}=boot();["mandate","logs","endpoint","automation","training"].forEach(id=>w.__DEV.setAnswerById(id,1));
   w.__DEV.setArq(0);w.__DEV.showResults();
   const j=q(d,"#ux-journey");
   return !j.querySelector(".jn-cur") && txt(j).includes("Posicionamento atual: n/d") &&
-    txt(j).includes("Não há evidência suficiente") && !txt(j).includes("PRÓXIMO ESTÁGIO");
+    txt(j).includes("Não há evidência suficiente") &&
+    /* a ausência do PRÓXIMO ESTÁGIO é medida nos RÓTULOS dos nós, não no texto
+       inteiro: a nota explicativa do bloco cita "próximo estágio" em prosa e
+       não é um marcador de estado. */
+    !Array.from(j.querySelectorAll(".jn-label")).some(e=>/PR[ÓO]XIMO EST[ÁA]GIO/i.test(txt(e)));
 });
 T("N4-N5","next é imediatamente posterior; top stage não cria sexto nível",()=>{
   const {w,d}=boot();answerAll(w,1);w.__DEV.showResults();
@@ -41,7 +48,7 @@ T("N6-N7","sem TARGET → sem marker; target suficiente → marker no stage exat
   const snap=w.__DEV.buildNarrativeSnapshot();
   const tgtName=txt(d.querySelector("#ux-journey .jn-tgt .jn-name"));
   return none && tgtName===snap.target.stage.pt &&
-    txt(d.querySelector(".jn-tgt .jn-label")).includes("CENÁRIO-ALVO");
+    /CEN[ÁA]RIO-ALVO/i.test(txt(d.querySelector(".jn-tgt .jn-label")));
 });
 T("N8-N9","target no mesmo stage não vira avanço; target >1 stage independe de NEXT",()=>{
   const {w}=boot();answerAll(w,1);w.__DEV.setTarget("logs",2);w.__DEV.showResults?.();
@@ -160,15 +167,24 @@ T("N30-N32","screen e PDF com a MESMA narrativa; PDF insufficient não fabrica s
   const pj=txt(B.d.querySelector("#pr-journey"));
   B.w.__DEV.finishPrint();
   return scr===pdf && scr.length>200 && hasJn &&
-    pj.includes("Posicionamento atual: n/d") && !pj.includes("PERFIL ATUAL");
+    pj.includes("Posicionamento atual: n/d") &&
+    !Array.from(B.d.querySelectorAll("#pr-journey .jn-label")).some(e=>/PERFIL ATUAL/i.test(txt(e)));
 });
 T("N33-N34","mobile sem régua comprimida (coluna); distinção sem cor (shapes+labels)",()=>{
   const css=fs.readFileSync(path.join(__dirname,"quickscan_secops_soccmm_v3_2_dev.html"),"utf8");
   const {w,d}=boot();answerAll(w,1);IDS.forEach(id=>w.__DEV.setTarget(id,3));w.__DEV.showResults();
   const marks=Array.from(d.querySelectorAll("#ux-journey .jn-mark")).map(e=>txt(e));
+  /* Phase 5.1/UAT-05: os glifos ○ • ● ◎ ◆ foram substituídos por uma régua de
+     seis nós de mesma geometria, em que a distinção SEM COR passa a ser feita
+     por número (0–5), forma do marcador declarada em `data-jn-state` e rótulo
+     textual. A propriedade auditada continua sendo "distinguir sem depender de
+     cor" — e agora é verificada de forma mais forte, exigindo os três sinais. */
+  const estados=Array.from(d.querySelectorAll("#ux-journey .jn-node")).map(e=>e.getAttribute("data-jn-state"));
+  const numeros=Array.from(d.querySelectorAll("#ux-journey .jn-num")).map(e=>txt(e));
   return /max-width:720px\)\{\s*\n?\s*\.jn-track\{ flex-direction:column/.test(css) &&
-    marks.includes("●") && marks.includes("◆") &&
-    txt(q(d,"#ux-journey")).includes("PERFIL ATUAL") && txt(q(d,"#ux-journey")).includes("CENÁRIO-ALVO");
+    estados.includes("current") && estados.includes("target") &&
+    numeros.join(",")==="0,1,2,3,4,5" && marks.length===6 &&
+    /PERFIL ATUAL/i.test(txt(q(d,"#ux-journey"))) && /CEN[ÁA]RIO-ALVO/i.test(txt(q(d,"#ux-journey")));
 });
 
 /* ===== [4.5.0.1] ===== */

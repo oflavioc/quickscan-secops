@@ -124,3 +124,101 @@
 @media print{ .v32-comm{border-top-color:#ddd;} #v32-print-report .v32-comm-t{color:#888;} }
 
 @media print{ .pr-domsw{display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:5px;vertical-align:baseline;} }
+
+/* ==========================================================================
+   PHASE 5.1 · RELATÓRIO EXECUTIVO
+   Capa (RPT-01), régua de estágio (RPT-03), legenda de domínios (RPT-04),
+   sistema gráfico dos cinco domínios (RPT-05) e caminhos de apoio junto do
+   gap (UAT-07). Tudo confinado a @media print / #v32-print-report: a tela
+   permanece exatamente como estava.
+   ========================================================================== */
+@media print{
+  /* --- RPT-01 · abertura executiva ---------------------------------------
+     Meia página por padrão: a capa abre o documento sem gastar uma folha
+     inteira. `break-inside:avoid` impede que ela se parta entre páginas. */
+  #v32-print-report .pr-cover{
+    display:flex; gap:16px; align-items:flex-start;
+    border:1px solid #ddd; border-left:6px solid #DA291C; border-radius:6px;
+    padding:14px 16px; margin:0 0 14px; break-inside:avoid;
+  }
+  #v32-print-report .pr-cover-mark{flex:0 0 auto;}
+  #v32-print-report .pr-cover-txt{flex:1 1 auto; min-width:0;}
+  #v32-print-report .pr-cover-brand{font-size:10px; font-weight:800; letter-spacing:.14em;
+    text-transform:uppercase; color:#DA291C;}
+  #v32-print-report .pr-cover-title{font-size:20px; font-weight:800; color:#111; margin:2px 0 0; line-height:1.15;}
+  #v32-print-report .pr-cover-sub{font-size:12px; color:#333; margin-top:3px;}
+  #v32-print-report .pr-cover-disc{font-size:10px; color:#666; margin-top:6px;}
+  #v32-print-report .pr-cover-meta{display:grid; grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:4px 18px; margin-top:10px;}
+  #v32-print-report .pr-cover-meta div{display:flex; gap:6px; align-items:baseline; min-width:0;}
+  #v32-print-report .pr-cover-meta dt{font-size:9px; font-weight:800; letter-spacing:.08em;
+    text-transform:uppercase; color:#888; white-space:nowrap;}
+  #v32-print-report .pr-cover-meta dd{font-size:10.5px; color:#111; overflow-wrap:anywhere; min-width:0;}
+
+  /* --- RPT-05 · faixa dos cinco domínios no cabeçalho --------------------- */
+  #v32-print-report .pr-headmark{margin:4px 0 2px;}
+  #v32-print-report .qs-mark{display:block;}
+  #v32-print-report .qs-mark-band{margin:0;}
+
+  /* --- RPT-04 · legenda dos domínios ------------------------------------- */
+  #v32-print-report .pr-domlegend{display:flex; flex-wrap:wrap; gap:4px 12px; margin-top:9px;}
+  #v32-print-report .pr-domleg{font-size:9.5px; color:#333; white-space:nowrap;}
+
+  /* --- RPT-03 · régua de leitura do estágio ------------------------------
+     Números, nomes e contorno do marcador carregam o significado: em P&B a
+     leitura continua íntegra sem depender de cor. */
+  #v32-print-report .pr-ruler{margin:8px 0 10px; break-inside:avoid;}
+  #v32-print-report .pr-rl-track{position:relative; display:flex; width:100%;
+    border:1px solid #bbb; border-radius:4px; overflow:hidden;}
+  #v32-print-report .pr-rl-band{display:flex; flex-direction:column; align-items:center;
+    justify-content:center; padding:3px 1px; border-right:1px solid #ddd; min-width:0;}
+  #v32-print-report .pr-rl-band:last-child{border-right:0;}
+  #v32-print-report .pr-rl-n{font-size:10px; font-weight:800; color:#111;}
+  #v32-print-report .pr-rl-s{font-size:7.4px; color:#555; text-align:center; line-height:1.15;
+    overflow-wrap:anywhere;}
+  #v32-print-report .pr-rl-mark{position:absolute; top:-3px; bottom:-3px; width:0;
+    border-left:3px solid #111; transform:translateX(-1.5px);}
+  #v32-print-report .pr-rl-mark::after{content:"▲"; position:absolute; left:-4.5px; top:-8px;
+    font-size:8px; color:#111;}
+  #v32-print-report .pr-rl-read{font-size:11px; color:#111; margin-top:5px;}
+  #v32-print-report .pr-rl-nd{color:#666; font-style:italic;}
+
+  /* --- UAT-07 · caminhos de apoio junto do gap --------------------------- */
+  #v32-print-report .pr-gapsup{margin-top:7px; padding:6px 9px; border:1px dashed #ccc;
+    border-radius:5px; background:#fafafa; break-inside:avoid;}
+  #v32-print-report .pr-gapsup-h{font-size:9.5px; font-weight:800; letter-spacing:.07em;
+    text-transform:uppercase; color:#555;}
+  #v32-print-report .pr-gapsup-cap{font-size:10.5px; margin-top:3px;}
+  #v32-print-report .pr-gapsup-why{font-size:10px; color:#444; margin-top:3px;}
+  #v32-print-report .pr-gapsup-list{margin:4px 0 0; padding-left:16px;}
+  #v32-print-report .pr-gapsup-list li{font-size:10.5px; margin:2px 0;}
+}
+
+/* ==========================================================================
+   PHASE 5.1 · UAT-05 — jornada de maturidade no PAPEL.
+   Mesma semântica da tela, em cinzas de impressão: número, nome, contorno e
+   preenchimento carregam o estado sem depender de cor.
+   ========================================================================== */
+@media print{
+  #v32-print-report .jn-mark{border-color:#666; color:#111; width:24px; height:24px;}
+  #v32-print-report .jn-node[data-jn-state="current"] .jn-mark{background:#111; color:#fff; border-color:#111;}
+  #v32-print-report .jn-node[data-jn-state="next"] .jn-mark{border-style:double; border-width:3px;}
+  #v32-print-report .jn-node[data-jn-state="target"] .jn-mark{border-style:dashed;}
+  #v32-print-report .jn-name{color:#333;}
+  #v32-print-report .jn-label{color:#555;}
+}
+
+/* ==========================================================================
+   PHASE 5.1 · ADENDO — caixa "Como interpretar este relatório".
+   Compacta por desenho: ocupa uma fração pequena da página e não repete o
+   manual. `break-inside:avoid` mantém a caixa inteira na mesma folha.
+   ========================================================================== */
+@media print{
+  #v32-print-report .pr-howto{margin:10px 0 14px; padding:8px 11px;
+    border:1px solid #ddd; border-left:4px solid #DA291C; border-radius:5px;
+    background:#fafafa; break-inside:avoid;}
+  #v32-print-report .pr-howto-h{font-size:10px; font-weight:800; letter-spacing:.07em;
+    text-transform:uppercase; color:#555; margin-bottom:3px;}
+  #v32-print-report .pr-howto-list{margin:0; padding-left:15px;}
+  #v32-print-report .pr-howto-list li{font-size:9.8px; line-height:1.42; color:#222; margin:1px 0;}
+}

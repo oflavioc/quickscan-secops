@@ -346,6 +346,104 @@ footer b{color:var(--muted);}
 
 @media print{ .pr-domsw{display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:5px;vertical-align:baseline;} }
 
+/* ==========================================================================
+   PHASE 5.1 · RELATÓRIO EXECUTIVO
+   Capa (RPT-01), régua de estágio (RPT-03), legenda de domínios (RPT-04),
+   sistema gráfico dos cinco domínios (RPT-05) e caminhos de apoio junto do
+   gap (UAT-07). Tudo confinado a @media print / #v32-print-report: a tela
+   permanece exatamente como estava.
+   ========================================================================== */
+@media print{
+  /* --- RPT-01 · abertura executiva ---------------------------------------
+     Meia página por padrão: a capa abre o documento sem gastar uma folha
+     inteira. `break-inside:avoid` impede que ela se parta entre páginas. */
+  #v32-print-report .pr-cover{
+    display:flex; gap:16px; align-items:flex-start;
+    border:1px solid #ddd; border-left:6px solid #DA291C; border-radius:6px;
+    padding:14px 16px; margin:0 0 14px; break-inside:avoid;
+  }
+  #v32-print-report .pr-cover-mark{flex:0 0 auto;}
+  #v32-print-report .pr-cover-txt{flex:1 1 auto; min-width:0;}
+  #v32-print-report .pr-cover-brand{font-size:10px; font-weight:800; letter-spacing:.14em;
+    text-transform:uppercase; color:#DA291C;}
+  #v32-print-report .pr-cover-title{font-size:20px; font-weight:800; color:#111; margin:2px 0 0; line-height:1.15;}
+  #v32-print-report .pr-cover-sub{font-size:12px; color:#333; margin-top:3px;}
+  #v32-print-report .pr-cover-disc{font-size:10px; color:#666; margin-top:6px;}
+  #v32-print-report .pr-cover-meta{display:grid; grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:4px 18px; margin-top:10px;}
+  #v32-print-report .pr-cover-meta div{display:flex; gap:6px; align-items:baseline; min-width:0;}
+  #v32-print-report .pr-cover-meta dt{font-size:9px; font-weight:800; letter-spacing:.08em;
+    text-transform:uppercase; color:#888; white-space:nowrap;}
+  #v32-print-report .pr-cover-meta dd{font-size:10.5px; color:#111; overflow-wrap:anywhere; min-width:0;}
+
+  /* --- RPT-05 · faixa dos cinco domínios no cabeçalho --------------------- */
+  #v32-print-report .pr-headmark{margin:4px 0 2px;}
+  #v32-print-report .qs-mark{display:block;}
+  #v32-print-report .qs-mark-band{margin:0;}
+
+  /* --- RPT-04 · legenda dos domínios ------------------------------------- */
+  #v32-print-report .pr-domlegend{display:flex; flex-wrap:wrap; gap:4px 12px; margin-top:9px;}
+  #v32-print-report .pr-domleg{font-size:9.5px; color:#333; white-space:nowrap;}
+
+  /* --- RPT-03 · régua de leitura do estágio ------------------------------
+     Números, nomes e contorno do marcador carregam o significado: em P&B a
+     leitura continua íntegra sem depender de cor. */
+  #v32-print-report .pr-ruler{margin:8px 0 10px; break-inside:avoid;}
+  #v32-print-report .pr-rl-track{position:relative; display:flex; width:100%;
+    border:1px solid #bbb; border-radius:4px; overflow:hidden;}
+  #v32-print-report .pr-rl-band{display:flex; flex-direction:column; align-items:center;
+    justify-content:center; padding:3px 1px; border-right:1px solid #ddd; min-width:0;}
+  #v32-print-report .pr-rl-band:last-child{border-right:0;}
+  #v32-print-report .pr-rl-n{font-size:10px; font-weight:800; color:#111;}
+  #v32-print-report .pr-rl-s{font-size:7.4px; color:#555; text-align:center; line-height:1.15;
+    overflow-wrap:anywhere;}
+  #v32-print-report .pr-rl-mark{position:absolute; top:-3px; bottom:-3px; width:0;
+    border-left:3px solid #111; transform:translateX(-1.5px);}
+  #v32-print-report .pr-rl-mark::after{content:"▲"; position:absolute; left:-4.5px; top:-8px;
+    font-size:8px; color:#111;}
+  #v32-print-report .pr-rl-read{font-size:11px; color:#111; margin-top:5px;}
+  #v32-print-report .pr-rl-nd{color:#666; font-style:italic;}
+
+  /* --- UAT-07 · caminhos de apoio junto do gap --------------------------- */
+  #v32-print-report .pr-gapsup{margin-top:7px; padding:6px 9px; border:1px dashed #ccc;
+    border-radius:5px; background:#fafafa; break-inside:avoid;}
+  #v32-print-report .pr-gapsup-h{font-size:9.5px; font-weight:800; letter-spacing:.07em;
+    text-transform:uppercase; color:#555;}
+  #v32-print-report .pr-gapsup-cap{font-size:10.5px; margin-top:3px;}
+  #v32-print-report .pr-gapsup-why{font-size:10px; color:#444; margin-top:3px;}
+  #v32-print-report .pr-gapsup-list{margin:4px 0 0; padding-left:16px;}
+  #v32-print-report .pr-gapsup-list li{font-size:10.5px; margin:2px 0;}
+}
+
+/* ==========================================================================
+   PHASE 5.1 · UAT-05 — jornada de maturidade no PAPEL.
+   Mesma semântica da tela, em cinzas de impressão: número, nome, contorno e
+   preenchimento carregam o estado sem depender de cor.
+   ========================================================================== */
+@media print{
+  #v32-print-report .jn-mark{border-color:#666; color:#111; width:24px; height:24px;}
+  #v32-print-report .jn-node[data-jn-state="current"] .jn-mark{background:#111; color:#fff; border-color:#111;}
+  #v32-print-report .jn-node[data-jn-state="next"] .jn-mark{border-style:double; border-width:3px;}
+  #v32-print-report .jn-node[data-jn-state="target"] .jn-mark{border-style:dashed;}
+  #v32-print-report .jn-name{color:#333;}
+  #v32-print-report .jn-label{color:#555;}
+}
+
+/* ==========================================================================
+   PHASE 5.1 · ADENDO — caixa "Como interpretar este relatório".
+   Compacta por desenho: ocupa uma fração pequena da página e não repete o
+   manual. `break-inside:avoid` mantém a caixa inteira na mesma folha.
+   ========================================================================== */
+@media print{
+  #v32-print-report .pr-howto{margin:10px 0 14px; padding:8px 11px;
+    border:1px solid #ddd; border-left:4px solid #DA291C; border-radius:5px;
+    background:#fafafa; break-inside:avoid;}
+  #v32-print-report .pr-howto-h{font-size:10px; font-weight:800; letter-spacing:.07em;
+    text-transform:uppercase; color:#555; margin-bottom:3px;}
+  #v32-print-report .pr-howto-list{margin:0; padding-left:15px;}
+  #v32-print-report .pr-howto-list li{font-size:9.8px; line-height:1.42; color:#222; margin:1px 0;}
+}
+
 /* V32_CSS_END */
 /* V32_UXCSS_BEGIN */
  /* ============ PHASE 4.1 · LAYOUT TOKENS & UX ============ */
@@ -1252,6 +1350,149 @@ body[data-uxscreen="refinement"] #ux-progress-mobile{ display:none !important; }
   #app .p50-chips, #app .p50-cueblock, .p50-ses,
   #p50-suff, #p50-results, #app .p50-legacy-note{ display:none !important; }
 }
+
+/* ==========================================================================
+   PHASE 5.1 · UAT-01 — COMPOSIÇÃO RESPONSIVA DA TELA DE PERGUNTA
+   O problema medido: `body[data-uxscreen="question"] .wrap` era limitado a
+   860px, e o mapa do assessment ficava EMPILHADO acima da pergunta. Em 1440px
+   ou mais, isso produzia uma faixa central estreita com grande vazio lateral e
+   empurrava a pergunta para baixo de toda a lista de domínios.
+
+   Correção: a partir de 1180px a `.wrap` da tela de pergunta vira uma grade de
+   duas colunas reais — a pergunta (`#app`) na coluna principal e o shell P50
+   (orientação + mapa) numa coluna lateral útil. Abaixo disso, volta a uma
+   coluna, com o mapa recolhível e sem overflow horizontal.
+
+   A ordem do DOM é preservada (shell antes de `#app`): a orientação — domínio,
+   posição, progresso e navegação — é contexto legítimo antes da pergunta, e a
+   ordem de foco continua correspondendo à ordem de leitura. Nenhum nó é
+   duplicado e nenhuma superfície congelada é reescrita: isto é layout.
+   Confinado a @media screen para não alcançar o papel.
+   ========================================================================== */
+@media screen and (min-width:1180px){
+  body[data-uxscreen="question"] .wrap{
+    max-width:1360px;
+    display:grid;
+    grid-template-columns:minmax(0,1fr) 340px;
+    grid-template-areas:"main side";
+    align-items:start;
+    column-gap:32px;
+  }
+  body[data-uxscreen="question"] .wrap > #p50-shell{ grid-area:side; }
+  body[data-uxscreen="question"] .wrap > #app{ grid-area:main; min-width:0; }
+  /* o shell deixa de ser uma faixa central e passa a ser um trilho lateral */
+  body[data-uxscreen="question"] #p50-shell{
+    grid-template-columns:minmax(0,1fr);
+    max-width:none; margin:0; padding:0;
+    position:sticky; top:14px;
+  }
+  body[data-uxscreen="question"] #p50-shell .p50-orient{ position:static; grid-column:1; }
+  body[data-uxscreen="question"] #p50-shell .p50-sidebar{ grid-column:1; }
+  /* a pergunta ocupa a coluna principal sem herdar o teto estreito */
+  body[data-uxscreen="question"] #app .opts,
+  body[data-uxscreen="question"] #app .p50-chips,
+  body[data-uxscreen="question"] #app .p50-cueblock{ max-width:none; }
+}
+/* Ultrawide: a tela precisa ser aproveitada de verdade — 1640px fixos deixavam
+   64% de uma 2560 em branco, que é exatamente a "faixa central estreita" que a
+   UAT-01 proíbe. A largura passa a acompanhar a viewport, com um teto para não
+   virar uma linha infinita, e a linha de LEITURA é limitada dentro da coluna
+   principal para preservar o conforto do texto. */
+@media screen and (min-width:1800px){
+  body[data-uxscreen="question"] .wrap{
+    max-width:min(94vw, 2100px);
+    grid-template-columns:minmax(0,1fr) 400px;
+    column-gap:44px;
+  }
+  body[data-uxscreen="question"] #app .question,
+  body[data-uxscreen="question"] #app .hint,
+  body[data-uxscreen="question"] #app .p51-qsupport,
+  body[data-uxscreen="question"] #app .opts,
+  body[data-uxscreen="question"] #app .p50-cueblock,
+  body[data-uxscreen="question"] #app .notebar{ max-width:1180px; }
+}
+/* 1024px: lateral mais estreita, ainda legível */
+@media screen and (min-width:1024px) and (max-width:1179px){
+  body[data-uxscreen="question"] .wrap{ max-width:100%; }
+  body[data-uxscreen="question"] #p50-shell{ max-width:none; }
+}
+
+/* ==========================================================================
+   PHASE 5.1 · UAT-05 — RÉGUA DA JORNADA DE MATURIDADE
+   Seis nós de MESMA geometria e área visual, cada um com número 0–5 e nome do
+   estágio sempre presentes. Estado vai por forma + texto, nunca só por cor:
+   atual é marcador preenchido, próximo é anel, alvo tem losango próprio, e
+   passado/futuro se distinguem pelo preenchimento do disco.
+   ========================================================================== */
+#ux-journey .jn-track, #v32-print-report .jn-track{ align-items:flex-start; }
+.jn-node{ min-width:96px; gap:5px; }
+.jn-mark{
+  display:flex; align-items:center; justify-content:center;
+  width:28px; height:28px; border-radius:50%;
+  border:2px solid var(--faint); background:transparent;
+  font-size:12px; line-height:1; color:var(--muted);
+}
+.jn-num{ font-weight:800; font-variant-numeric:tabular-nums; }
+.jn-node[data-jn-state="past"] .jn-mark{ background:var(--surface2); border-color:var(--muted); color:var(--text); }
+.jn-node[data-jn-state="current"] .jn-mark{
+  background:var(--ftnt-blue); border-color:var(--ftnt-blue); color:var(--bg);
+  box-shadow:0 0 0 3px var(--surface2);
+}
+.jn-node[data-jn-state="next"] .jn-mark{ border-width:3px; border-style:double; border-color:var(--ftnt-silver); color:var(--text); }
+.jn-node[data-jn-state="target"] .jn-mark{ border-color:var(--ftnt-green); border-style:dashed; color:var(--text); }
+.jn-node[data-jn-target="true"] .jn-mark::after{ content:"◆"; margin-left:3px; font-size:8px; color:var(--ftnt-green); }
+.jn-node[data-jn-state="undetermined"] .jn-mark{ border-style:dotted; color:var(--faint); }
+.jn-name{ font-size:11.5px; line-height:1.25; }
+.jn-node[data-jn-state="current"] .jn-name{ font-weight:800; }
+.jn-label{ font-size:9.5px; font-weight:800; letter-spacing:.06em; text-transform:uppercase; }
+.jn-link{ margin-top:14px; }
+/* A variante de IMPRESSÃO da jornada vive em `ui_v32.css`, junto do restante do
+   relatório: o papel precisa de cinzas próprios, e um módulo da Camada 5 não
+   declara hex literal (COR-01.1, provado por P50-COR1). */
+
+/* ==========================================================================
+   PHASE 5.1 · UAT-08 — LEGIBILIDADE DO SELECT DO CENÁRIO-ALVO  (P0)
+   O select herdava `background:transparent` e `color:inherit`. No Windows o
+   popup nativo das `<option>` usa a paleta CLARA do sistema, então o texto
+   quase branco do tema escuro caía sobre fundo branco — ilegível justamente
+   na hora de escolher o alvo. A correção declara explicitamente cor, fundo,
+   `color-scheme`, borda e foco, e NÃO depende de cor herdada pela `<option>`.
+   ========================================================================== */
+#ux-target .ux-tgt-row select,
+#ux-target select[data-qid]{
+  color-scheme:dark;
+  color:var(--text);
+  background-color:var(--surface2);
+  border:1px solid var(--line);
+  border-radius:8px;
+  padding:7px 9px;
+  font:inherit;
+  min-height:38px;
+}
+#ux-target .ux-tgt-row select option,
+#ux-target select[data-qid] option{
+  color:var(--text);
+  background-color:var(--surface2);
+}
+#ux-target .ux-tgt-row select:hover,
+#ux-target select[data-qid]:hover{ border-color:var(--dom-accent); }
+#ux-target .ux-tgt-row select:focus-visible,
+#ux-target select[data-qid]:focus-visible{
+  outline:2px solid var(--p50-focus, var(--text)); outline-offset:2px;
+}
+#ux-target .ux-tgt-row select:disabled,
+#ux-target select[data-qid]:disabled{ color:var(--muted); background-color:var(--surface); opacity:1; }
+
+/* ==========================================================================
+   PHASE 5.1 · apresentação da pergunta e ajuda contextual (UAT-02 / UAT-04)
+   ========================================================================== */
+#app .p51-qtitle{ font-weight:700; }
+#app .p51-qsupport{
+  margin:6px 0 0; color:var(--muted); font-size:13.5px; line-height:1.55; max-width:760px;
+}
+#app .p51-help{ margin-top:8px; display:grid; gap:4px; }
+#app .p51-help-what{ margin:0; color:var(--text); font-size:12.5px; line-height:1.5; }
+#app .p51-help-ex{ margin:0; color:var(--faint); font-size:12px; line-height:1.5; }
 
 /* V32_P50CSS_END */
 </style>
@@ -3658,16 +3899,290 @@ function prCards(ids, ctxs, pres){
     return body.replace(/<details class="v32-why">[\s\S]*?<\/details>/, prWhy(id,c));
   }).join("");
 }
+/* ==========================================================================
+   PHASE 5.1 · SISTEMA GRÁFICO DOS CINCO DOMÍNIOS (RPT-05)
+   Dois formatos do MESMO sistema: emblema pentagonal (capa) e faixa compacta
+   (cabeçalho). Ambos são IDENTIDADE ESTÁTICA, nunca visualização de dado:
+   nenhum fill, tamanho, opacidade ou segmento responde a answers, scores,
+   suficiência, Target ou gaps. A prova disso é o gate P51-RPT5, que exige o
+   SVG byte-idêntico entre uma sessão de score mínimo e outra de score alto.
+
+   Geometria própria: cinco nós dispostos num pentágono regular (emblema) e
+   cinco segmentos iguais numa faixa (cabeçalho). Não é roda de níveis e não
+   reproduz o gráfico do SOC-CMM oficial. Tudo inline, manual e determinístico:
+   sem imagem externa, sem base64, sem fonte remota, sem novo asset.
+
+   Cores exclusivamente de PR_DOM_HEX, na ordem canônica de DOMS. O acento de
+   marca #DA291C NÃO entra como cor de domínio.
+   ========================================================================== */
+/* Vértices do pentágono, pré-calculados e FIXOS (nada é derivado de dado).
+   Ângulos a partir do topo, em passos de 72°, raio 34 sobre centro (50,52). */
+const QS_PENTA = [
+  { x: 50.0, y: 18.0, lx: 50.0, ly: 10.5, anchor: "middle" },
+  { x: 82.3, y: 41.5, lx: 89.0, ly: 39.0, anchor: "start"  },
+  { x: 70.0, y: 79.6, lx: 74.5, ly: 90.5, anchor: "middle" },
+  { x: 30.0, y: 79.6, lx: 25.5, ly: 90.5, anchor: "middle" },
+  { x: 17.7, y: 41.5, lx: 11.0, ly: 39.0, anchor: "end"    }
+];
+function qsPentagonSVG(){
+  const nomes = DOMS.map(d=>d.pt);
+  const linha = QS_PENTA.map(p=>`${p.x},${p.y}`).join(" ");
+  const nos = QS_PENTA.map((p,i)=>
+    `<circle cx="${p.x}" cy="${p.y}" r="7.2" fill="${PR_DOM_HEX[i]}" stroke="#1C1C1F" stroke-width="1.4"></circle>` +
+    `<text x="${p.x}" y="${(p.y+2.9).toFixed(1)}" font-size="7.2" font-weight="700" text-anchor="middle" fill="#0B0B0C">${i+1}</text>`
+  ).join("");
+  const rotulos = QS_PENTA.map((p,i)=>
+    `<text x="${p.lx}" y="${p.ly}" font-size="6.6" text-anchor="${p.anchor}" fill="#3A3A40">${esc32(nomes[i])}</text>`
+  ).join("");
+  return `<svg class="qs-mark qs-mark-penta" data-qs-mark="pentagon" viewBox="0 0 100 100" width="132" height="132" role="img" aria-labelledby="qs-penta-t qs-penta-d">`
+    + `<title id="qs-penta-t">Cinco domínios do Quickscan</title>`
+    + `<desc id="qs-penta-d">Emblema de identidade: ${esc32(nomes.join(", "))}. Elemento gráfico fixo, não representa resultados.</desc>`
+    + `<g aria-hidden="true"><polygon points="${linha}" fill="none" stroke="#C9C9CF" stroke-width="1.2"></polygon>${nos}</g>`
+    + `<g>${rotulos}</g></svg>`;
+}
+function qsBandSVG(){
+  const nomes = DOMS.map(d=>d.pt);
+  const w = 34, gap = 2, h = 7;
+  const segs = nomes.map((n,i)=>{
+    const x = i*(w+gap);
+    return `<rect x="${x}" y="0" width="${w}" height="${h}" rx="2" fill="${PR_DOM_HEX[i]}"></rect>`
+      + `<text x="${x + w/2}" y="${h + 8}" font-size="6.4" text-anchor="middle" fill="#3A3A40">${esc32(n)}</text>`;
+  }).join("");
+  const total = nomes.length*(w+gap) - gap;
+  return `<svg class="qs-mark qs-mark-band" data-qs-mark="band" viewBox="0 0 ${total} 18" width="200" height="20" role="img" aria-labelledby="qs-band-t qs-band-d">`
+    + `<title id="qs-band-t">Cinco domínios do Quickscan</title>`
+    + `<desc id="qs-band-d">Faixa de identidade: ${esc32(nomes.join(", "))}. Elemento gráfico fixo, não representa resultados.</desc>`
+    + `<g>${segs}</g></svg>`;
+}
+/* RPT-04 · legenda explícita, mesma ordem e mesmas cores, com índice estável
+   para que o significado sobreviva à impressão em preto e branco. */
+function qsDomainLegendHTML(){
+  return `<div class="pr-domlegend" id="pr-domlegend">`
+    + DOMS.map((d,i)=>`<span class="pr-domleg" data-dom-legend="${i}"><span class="pr-domsw" data-dom-sw style="background:${PR_DOM_HEX[i]}"></span>${i+1}. ${esc32(d.pt)}</span>`).join("")
+    + `</div>`;
+}
+
+/* ==========================================================================
+   PHASE 5.1 · RPT-03 — RÉGUA DE LEITURA DO ESTÁGIO (0–5)
+   As faixas NÃO são uma nova fonte normativa: são DERIVADAS de stageOf(),
+   varrendo o intervalo 0..5 e registrando onde a função canônica troca de
+   estágio. Se stageOf() mudar, a régua muda junto — por construção. Os
+   literais 0.5/1.5/2.5/3.5/4.5 não aparecem aqui.
+   ========================================================================== */
+function qsStageBands(){
+  const passo = 0.01, bands = [];
+  let atual = stageOf(0), ini = 0;
+  for (let i = 1; i <= 500; i++){
+    const v = Math.round(i*passo*100)/100;
+    const s = stageOf(v);
+    if (s.pt !== atual.pt){ bands.push({ from: ini, to: v, stage: atual }); atual = s; ini = v; }
+  }
+  bands.push({ from: ini, to: 5, stage: atual });
+  return bands;
+}
+if (typeof window !== "undefined") window.__QS_STAGE_RULER = {
+  bands: qsStageBands,
+  stageAt: v => stageOf(v)
+};
+function qsStageRulerHTML(overall, suff){
+  const bands = qsStageBands();
+  const determinado = suff && overall !== null;
+  const pct = v => (Math.max(0, Math.min(5, v)) / 5 * 100).toFixed(2);
+  const segs = bands.map((b,i)=>{
+    const largura = ((b.to - b.from)/5*100).toFixed(2);
+    return `<span class="pr-rl-band" data-rl-band="${i}" style="width:${largura}%">`
+      + `<span class="pr-rl-n">${i}</span><span class="pr-rl-s">${esc32(b.stage.pt)}</span></span>`;
+  }).join("");
+  const marcador = determinado
+    ? `<span class="pr-rl-mark" data-rl-mark style="left:${pct(overall)}%" aria-hidden="true"></span>`
+    : "";
+  const leitura = determinado
+    ? `<div class="pr-rl-read" data-rl-read><b>${overall.toFixed(1)} / 5</b> · ${esc32(stageOf(overall).pt)}</div>`
+    : `<div class="pr-rl-read pr-rl-nd" data-rl-read>Estágio não determinado — dados insuficientes</div>`;
+  return `<div class="pr-ruler" id="pr-stage-ruler" role="img" aria-label="${determinado
+      ? "Régua de maturidade de 0 a 5. Score geral " + overall.toFixed(1) + ", estágio " + esc32(stageOf(overall).pt) + "."
+      : "Régua de maturidade de 0 a 5. Estágio não determinado por dados insuficientes."}">
+    <div class="pr-rl-track">${segs}${marcador}</div>${leitura}</div>`;
+}
+
+/* ==========================================================================
+   PHASE 5.1 · RPT-01/RPT-02 — CAPA EXECUTIVA E METADADOS DA SESSÃO
+   ========================================================================== */
+function qsFmtDateBR(iso){
+  if (!iso) return null;
+  const d = new Date(iso);
+  if (isNaN(d.getTime())) return null;
+  const p = n => String(n).padStart(2,"0");
+  /* segundos incluídos: a data da sessão e a de geração podem cair no mesmo
+     minuto, e o relatório precisa ser rastreável ao instante. */
+  return `${p(d.getDate())}/${p(d.getMonth()+1)}/${d.getFullYear()} ${p(d.getHours())}:${p(d.getMinutes())}:${p(d.getSeconds())}`;
+}
+function qsSessionMeta(){
+  const m = (typeof window!=="undefined" && window.__P51SESMETA && typeof window.__P51SESMETA.read==="function")
+    ? window.__P51SESMETA.read() : null;
+  const build = (typeof window!=="undefined" && window.__QS_BUILD_META) || {};
+  const out = {
+    label: (m && m.label) ? m.label : null,
+    toolVersion: build.toolVersion || "não informada",
+    generatedAtISO: new Date().toISOString(),
+    sessionDateLabel: "Data da sessão",
+    sessionDateISO: m ? m.startedAt : null,
+    sessionDateText: null
+  };
+  if (m && m.origin === "imported"){
+    /* `createdAt` do documento é o instante da EXPORTAÇÃO original, não o
+       início da avaliação: rotula-se com honestidade. */
+    out.sessionDateLabel = "Sessão registrada em";
+    out.sessionDateISO = m.importedCreatedAt;
+    out.sessionDateText = m.importedCreatedAtMissing ? "Data original não informada" : null;
+  }
+  if (!out.sessionDateText) out.sessionDateText = qsFmtDateBR(out.sessionDateISO) || "Data não disponível";
+  out.generatedAtText = qsFmtDateBR(out.generatedAtISO);
+  return out;
+}
+function qsCoverHTML(){
+  const m = qsSessionMeta();
+  return `<div class="pr-cover" id="pr-cover">
+    <div class="pr-cover-mark">${qsPentagonSVG()}</div>
+    <div class="pr-cover-txt">
+      <div class="pr-cover-brand">Fortinet</div>
+      <h1 class="pr-cover-title">Quickscan SecOps · SOC-CMM</h1>
+      <div class="pr-cover-sub">Relatório indicativo de maturidade de operações de segurança</div>
+      <div class="pr-cover-disc">Screening indicativo de alto nível — não substitui assessment formal.</div>
+      <dl class="pr-cover-meta">
+        <div><dt>Sessão</dt><dd data-pr-meta="session">${m.label ? esc32(m.label) : "Sem rótulo"}</dd></div>
+        <div><dt>${esc32(m.sessionDateLabel)}</dt><dd data-pr-meta="sessionDate">${esc32(m.sessionDateText)}</dd></div>
+        <div><dt>Relatório gerado em</dt><dd data-pr-meta="generatedAt">${esc32(m.generatedAtText||"")}</dd></div>
+        <div><dt>Versão da ferramenta</dt><dd data-pr-meta="tool">${esc32(m.toolVersion)}</dd></div>
+      </dl>
+      ${qsDomainLegendHTML()}
+    </div></div>`;
+}
+
+/* ==========================================================================
+   PHASE 5.1 · UAT-07 — CAMINHOS DE APOIO JUNTO DO GAP
+   A recomendação útil passa a aparecer ONDE o gap é lido, e não apenas no
+   bloco residual do fim do relatório. Regras que este bloco respeita:
+     · separa "capability a desenvolver" de "produtos/serviços que podem apoiar";
+     · explica, em uma frase, POR QUE cada opção apareceu a partir do contexto
+       DECLARADO — nunca a partir de suposição;
+     · não afirma que produto é requisito, solução completa ou compra
+       recomendada; não inventa licenciamento, sizing, arquitetura ou cobertura;
+     · quando falta contexto declarado, diz "validar aderência" em vez de
+       recomendar;
+     · o bloco final de apoio continua existindo para as capabilities que não
+       têm gap correspondente, sem duplicar o mesmo card.
+   O mapeamento abaixo é condicionado e conservador; a fonte conceitual é a
+   documentação oficial de cada produto.
+   ========================================================================== */
+const QS_GAP_SUPPORT = {
+  "detection-lifecycle": {
+    cap: "Ciclo de vida dos casos de uso de detecção",
+    opts: [
+      { n: "FortiSIEM", w: "coleta, correlação e analytics quando a detecção precisa cobrir fontes heterogêneas" },
+      { n: "FortiAnalyzer", w: "logging e analytics quando a operação já é majoritariamente Fortinet" },
+      { n: "FortiSOAR", w: "orquestração do ciclo de investigação e resposta dos casos de uso" },
+      { n: "FortiSOC", w: "abordagem integrada de SOC, como opção de plataforma — nunca como produto obrigatório" }
+    ]
+  },
+  "logs": {
+    cap: "Centralização e retenção de logs",
+    opts: [
+      { n: "FortiAnalyzer", w: "logging e analytics no ecossistema Fortinet declarado" },
+      { n: "FortiSIEM", w: "necessidade SIEM ampla de TI/OT, com múltiplas fontes e correlação em escala" },
+      { n: "FortiSOC", w: "abordagem integrada, condicionada à arquitetura declarada" }
+    ]
+  },
+  "automation": {
+    cap: "Automação e orquestração da resposta",
+    opts: [
+      { n: "FortiSOAR", w: "playbooks, integrações e padronização do tratamento" },
+      { n: "Automação nativa de FortiAnalyzer/FortiSIEM", w: "somente quando a necessidade e a arquitetura declaradas forem compatíveis" }
+    ]
+  },
+  "vulnerability-management": {
+    cap: "Gestão de vulnerabilidades",
+    opts: [
+      { n: "FortiClient administrado por EMS", w: "descoberta, inventário, varredura e patching no escopo de endpoint; não substitui uma plataforma completa de gestão de vulnerabilidades" },
+      { n: "FortiRecon", w: "exposição externa (EASM/DRPS) — pertinente à superfície externa, não à gestão interna" }
+    ]
+  }
+};
+/* Capability canônica associada ao qid, quando existir. Sem inventar vínculo. */
+function qsCapIdForQid(qid){
+  const ids = Object.keys(V32.CAPABILITIES || {});
+  for (const id of ids){
+    if ((V32.CAPABILITIES[id].questionIds || []).includes(qid)) return id;
+  }
+  return null;
+}
+function qsGapSupportHTML(f){
+  const m = QS_GAP_SUPPORT[f.id];
+  if (!m) return "";
+  const capId = qsCapIdForQid(f.id);
+  const L = capId && V32.TECH_LANDSCAPE ? V32.TECH_LANDSCAPE[capId] : null;
+  const declarado = !!(L && L.presence && L.presence !== "UNSET");
+  /* A capability nomeada aqui é a CANÔNICA do runtime (`MAP[qid].cap`), não uma
+     segunda redação própria: um único dono do nome evita que a tabela de apoio
+     e o motor divirjam — e permite que o gate compare contra fonte externa à
+     tabela, em vez de validá-la contra si mesma. */
+  const capCanon = (MAP[f.id] && MAP[f.id].cap) ? MAP[f.id].cap : m.cap;
+  const cabec = `<div class="pr-gapsup-cap" data-pr-gap-cap>Para a capability <b>${esc32(capCanon)}</b>:</div>`;
+  if (!declarado){
+    /* sem contexto declarado não se recomenda: valida-se. */
+    return `<div class="pr-gapsup" data-pr-gap-support data-pr-gap-qid="${escAttr(f.id)}"><div class="pr-gapsup-h">Possíveis caminhos de apoio</div>
+      ${cabec}
+      <div class="pr-gapsup-why" data-pr-gap-why>Contexto tecnológico não declarado para esta capability: as opções abaixo exigem <b>validar aderência</b> antes de qualquer recomendação.</div>
+      <ul class="pr-gapsup-list">${m.opts.map(o=>`<li data-pr-gap-opt><b>${esc32(o.n)}</b> — <span class="pr-mut">${esc32(o.w)}; validar aderência ao contexto do cliente.</span></li>`).join("")}</ul></div>`;
+  }
+  const estado = PRESENCE_LABELS[L.presence] || L.presence;
+  return `<div class="pr-gapsup" data-pr-gap-support data-pr-gap-qid="${escAttr(f.id)}"><div class="pr-gapsup-h">Possíveis caminhos de apoio</div>
+    ${cabec}
+    <div class="pr-gapsup-why" data-pr-gap-why>Apareceu porque o gap acima foi observado e o contexto declarado para esta capability é <b>${esc32(estado)}</b>. As opções são caminhos possíveis, a validar — não são requisito nem compra recomendada.</div>
+    <ul class="pr-gapsup-list">${m.opts.map(o=>`<li data-pr-gap-opt><b>${esc32(o.n)}</b> — <span class="pr-mut">${esc32(o.w)}.</span></li>`).join("")}</ul></div>`;
+}
+
+/* ==========================================================================
+   PHASE 5.1 · ADENDO — CAIXA "COMO INTERPRETAR ESTE RELATÓRIO"
+   Ajuda curta no próprio documento, logo após o resumo de maturidade. Não
+   substitui o USER_GUIDE.md: comunica em poucas linhas as regras de leitura
+   que evitam os mal-entendidos mais caros — contexto tecnológico não muda a
+   nota, `n/d` não é zero, Target é cenário desejado e recomendação é
+   possibilidade condicionada. Estático: não depende de score, suficiência,
+   Target nem contexto declarado.
+   ========================================================================== */
+function qsHowToReadHTML(){
+  return `<div class="pr-howto" id="pr-howto">
+    <div class="pr-howto-h">Como interpretar este relatório</div>
+    <ul class="pr-howto-list">
+      <li>O <b>score</b> e o <b>estágio</b> vêm exclusivamente das <b>respostas confirmadas</b> do assessment.</li>
+      <li>O <b>contexto tecnológico não altera a nota</b>: ter a ferramenta não eleva a maturidade.</li>
+      <li>O contexto <b>refina a classificação do gap e as recomendações</b> — é o que torna a leitura acionável.</li>
+      <li><b>n/d</b> significa <b>não avaliado</b>, nunca zero; zero confirmado é um resultado medido.</li>
+      <li>O <b>cenário-alvo</b> é um estado desejado e declarado, não previsão nem compromisso.</li>
+      <li>As <b>recomendações são possibilidades</b> condicionadas ao contexto informado, sujeitas a validação.</li>
+    </ul></div>`;
+}
+
 function buildPrintReport(){
   const ctxRes = V32.buildRecommendationContext();               /* recompute — nunca cache */
   const ctxs = ctxRes.contexts;
   const stats = DOMS.map((_,i)=>domStat(i));
   const suff = dataSufficiency(stats);
   const scored = stats.filter(s=>s.score!==null);
-  const overall = suff && scored.length ? (scored.reduce((a,s)=>a+s.score,0)/scored.length) : null;
+  /* ERRATA B1 · agregado do relatorio na forma canonica (mesma de renderResults,
+     legacySnapshot, computeTargetProfile e buildNarrativeSnapshot): arredondar ANTES
+     de nomear o estagio, para que numero impresso e nome da faixa nunca divirjam. */
+  const overall = suff && scored.length ? Math.round(scored.reduce((a,s)=>a+s.score,0)/scored.length*10)/10 : null;
   const {findings, validate} = computeFindings();
   const prios = [...businessPriority].map(qid=>findings.find(f=>f.id===qid)).filter(Boolean);
-  let h = `<div class="pr-head"><div class="pr-brand">Fortinet · Quickscan SecOps · SOC-CMM</div>
+  /* RPT-01 · abertura executiva. A capa vem ANTES do cabeçalho corrente, que
+     permanece intacto para as seções seguintes (o gate congelado de print
+     continua encontrando `.pr-head`). RPT-05 · a faixa dos cinco domínios
+     acompanha a marca no cabeçalho. */
+  let h = qsCoverHTML();
+  h += `<div class="pr-head"><div class="pr-brand">Fortinet · Quickscan SecOps · SOC-CMM</div>
+    <div class="pr-headmark">${qsBandSVG()}</div>
     <div class="pr-disc">Screening indicativo de alto nível — não substitui assessment formal.</div></div>`;
   /* B — resumo de maturidade */
   h += `<div class="pr-sec" id="pr-maturity"><h2>Resumo de maturidade</h2>
@@ -3677,9 +4192,12 @@ function buildPrintReport(){
       <div class="pr-kpi"><b>${suff ? "adequada" : "insuficiente"}</b><span>Suficiência da sessão</span></div>
       ${typeof arq==="number" && ARQ[arq] ? `<div class="pr-kpi"><b>${esc32(ARQ[arq].t)}</b><span>Arquétipo declarado</span></div>` : ""}
     </div>
+    ${qsStageRulerHTML(overall, suff)}
     <table class="pr-doms"><tr>${stats.map((s,i)=>`<th><span class="pr-domsw" style="background:${PR_DOM_HEX[i]}"></span>${esc32(DOMS[i].pt)}</th>`).join("")}</tr>
     <tr>${stats.map(s=>`<td>${s.score===null?"n/d":s.score.toFixed(1)}</td>`).join("")}</tr></table>
     ${prRadarSVG(stats)}</div>`;
+  /* §4 do adendo: a caixa vem logo APÓS o resumo de maturidade. */
+  h += qsHowToReadHTML();
   /* C — prioridades */
   if (prios.length) h += `<div class="pr-sec" id="pr-prios"><h2>Prioridades declaradas pelo negócio</h2>
     ${prios.map((f,i)=>`<div class="pr-card"><b>${i+1}. ${esc32(qLabel(f.id))}</b></div>`).join("")}</div>`;
@@ -3695,7 +4213,7 @@ function buildPrintReport(){
         <b>${esc32(q.lbl)}</b> <span class="pr-mut">· domínio ${esc32(DOMS[q.dom].pt)}</span>
         <div><i class="pr-lab">Evidência declarada:</i> ${esc32(opt.t)}${opt.d?` — <span class="pr-mut">${esc32(opt.d)}</span>`:""}</div>
         ${cap?`<div><i class="pr-lab">Capability a desenvolver:</i> ${esc32(cap)}</div>`:""}
-        ${obs}</div>`;}).join("")}</div>`;
+        ${obs}${qsGapSupportHTML(f)}</div>`;}).join("")}</div>`;
   if (ctxRes.legacyMode){ h += `<div class="pr-foot">Relatório V3.1.3 · contexto tecnológico não informado nesta sessão.</div>`; return { html:h, ctxRes }; }
   /* E — contexto declarado */
   const decl = Object.keys(V32.TECH_LANDSCAPE).filter(id=>V32.TECH_LANDSCAPE[id].presence!=="UNSET");
@@ -3815,6 +4333,9 @@ renderResults = function(app){
 window.__V32UI = { openEditor, esc32, iconFor, ARCH_FIELDS };   /* [4.8.0.2-3] contrato real de arquitetura */   /* [4.5.0.2-B] mesma função exposta; zero resolver paralelo */
 window.__DEV = {
   V32,
+  PR_DOM_HEX, QS_GAP_SUPPORT,                   /* [5.1] superfícies de leitura para os gates */
+  PRESENCE_LABELS, STATUS_LABELS, CLASS_LABELS, /* [5.1-adendo] rótulos canônicos p/ conferência do manual */
+  qsStageBands, qsSessionMeta,                  /* [5.1] régua derivada e metadados ativos */
   setAnswerById: (qid, v) => { const k = QS.findIndex(q=>q.id===qid); if (k>=0) ans[k]=v; },
   setArq: i => { arq = i; },
   setPriorities: ids => { businessPriority.clear(); ids.forEach(id=>businessPriority.add(id)); },
@@ -4617,16 +5138,41 @@ function buildExecutiveNarrative(snap){
 /* [E/T/U] renderização do journey */
 function journeyHTML(snap, forPrint){
   const m=journeyModel(snap);
+  /* UAT-05 · régua de seis estágios com geometria uniforme.
+     Antes: glifos ○ • ● ◎ ◆ de tamanhos diferentes, sem número e sem estado
+     legível — os estágios não se distinguiam. Agora cada nó tem a MESMA
+     geometria e área visual, carrega sempre o número 0–5 e o nome do estágio,
+     e o estado vai num atributo (`data-jn-state`) + rótulo textual, de modo
+     que forma e texto — não apenas cor — carregam o significado.
+     `n/d` nunca vira estágio zero: sem suficiência, nenhum nó é "current". */
   const nodes=m.stages.map((s,i)=>{
-    let cls="jn-past", mark="○", labels=[];
-    if(m.cur>=0 && i<m.cur){ cls="jn-past"; mark="•"; }
-    if(i===m.cur){ cls="jn-cur"; mark="●"; labels.push("PERFIL ATUAL"); }
-    if(i===m.next){ cls+=" jn-next"; mark=i===m.cur?mark:"◎"; labels.push(m.top?"":"PRÓXIMO ESTÁGIO"); }
-    if(i===m.tgt){ cls+=" jn-tgt"; mark="◆"; labels.push("CENÁRIO-ALVO"); }
-    if(m.cur<0){ cls="jn-past"; mark="○"; }
-    return `<div class="jn-node ${cls}"><span class="jn-mark" aria-hidden="true">${mark}</span>
+    const estados=[];
+    if(m.cur>=0 && i<m.cur) estados.push("past");
+    if(i===m.cur) estados.push("current");
+    if(i===m.next && !m.top) estados.push("next");
+    if(i===m.tgt) estados.push("target");
+    if(!estados.length) estados.push(m.cur<0 ? "undetermined" : "future");
+    const principal = estados.indexOf("current")>=0 ? "current"
+                    : estados.indexOf("target")>=0 ? "target"
+                    : estados.indexOf("next")>=0 ? "next"
+                    : estados[0];
+    const labels=[];
+    if(estados.indexOf("current")>=0) labels.push("Perfil atual");
+    if(estados.indexOf("next")>=0) labels.push("Próximo estágio");
+    if(estados.indexOf("target")>=0) labels.push("Cenário-alvo");
+    /* As classes LEGADAS (`jn-cur`, `jn-next`, `jn-tgt`, `jn-past`) são mantidas
+       de forma aditiva: as suítes congeladas JOURNEY 4.5 e o gate visual V8
+       selecionam por elas, e a Phase 5.1 não tem motivo para quebrar contratos
+       de seleção — o que ela muda é a APRESENTAÇÃO do nó, não a sua identidade. */
+    const LEGADO = { current:"jn-cur", next:"jn-next", target:"jn-tgt",
+                     past:"jn-past", future:"jn-past", undetermined:"jn-past" };
+    const legadas = estados.map(e=>LEGADO[e]).filter((v,i,a)=>v && a.indexOf(v)===i);
+    const cls=["jn-node","jn-"+principal].concat(legadas).concat(estados.map(e=>"jn-is-"+e)).join(" ");
+    return `<div class="${cls}" data-jn-state="${principal}" data-jn-index="${i}"${
+        estados.indexOf("target")>=0?' data-jn-target="true"':""}>
+      <span class="jn-mark" aria-hidden="true"><span class="jn-num">${i}</span></span>
       <span class="jn-name">${esc32(s.pt)}</span>
-      ${labels.filter(Boolean).length?`<span class="jn-label">${labels.filter(Boolean).join(" · ")}</span>`:""}</div>`;
+      ${labels.length?`<span class="jn-label">${labels.map(x=>esc32(x)).join(" · ")}</span>`:""}</div>`;
   }).join(`<span class="jn-link" aria-hidden="true"></span>`);
   const head = m.cur<0
     ? `<div class="jn-nd"><b>Posicionamento atual: n/d</b><br>Não há evidência suficiente neste Quickscan para posicionar a operação com segurança em um estágio de maturidade.</div>`
@@ -5489,6 +6035,72 @@ if (window.__DEV) Object.assign(window.__DEV, { openExportModal, openImportPicke
     return now !== p50CleanSnapshot;
   }
 
+  /* ============================================================
+     PHASE 5.1 · RPT-02 — METADADOS ATIVOS DA SESSÃO
+     Owner PRÓPRIO e separado dos inputs de cálculo. Não entra em
+     `captureCanonicalInputs()`, não entra em score, suficiência, Target,
+     recommendations nem no payload M41, e NÃO altera o schema v1: o documento
+     exportado continua exatamente com as mesmas chaves.
+
+     Semântica honesta de data — o ponto delicado desta rodada:
+       · sessão NOVA: `startedAt` é capturado UMA vez, na carga do módulo, e
+         permanece estável enquanto a sessão viver. É a "Data da sessão".
+       · sessão IMPORTADA: o `createdAt` do documento validado é o instante em
+         que aquele documento foi EXPORTADO — não o início da avaliação. Por
+         isso ele NUNCA é apresentado como "Data da sessão": é rotulado como
+         "Sessão registrada em". Reinterpretar o campo histórico em silêncio
+         seria mentir sobre a proveniência.
+       · `createdAt` ausente num documento importado: registra-se
+         explicitamente "Data original não informada". Nada é fabricado.
+       · export BEM-SUCEDIDO pode atualizar o label ativo; export recusado ou
+         com falha não altera metadado algum.
+       · nova sessão/reset: novo `startedAt` e label limpo.
+     Internamente tudo é ISO 8601; a formatação pt-BR acontece na apresentação.
+     ============================================================ */
+  var p51Meta = {
+    startedAt: new Date().toISOString(),
+    label: null,
+    origin: "new",              /* "new" | "imported" */
+    importedCreatedAt: null,    /* ISO do documento importado, quando houver */
+    importedCreatedAtMissing: false
+  };
+  function p51MetaReset() {
+    p51Meta.startedAt = new Date().toISOString();
+    p51Meta.label = null;
+    p51Meta.origin = "new";
+    p51Meta.importedCreatedAt = null;
+    p51Meta.importedCreatedAtMissing = false;
+  }
+  function p51MetaOnExport(label) {
+    /* só um export efetivamente bem-sucedido promove o label a ativo */
+    if (typeof label === "string" && label.trim()) p51Meta.label = label;
+  }
+  function p51MetaOnImport(doc) {
+    if (!doc || typeof doc !== "object") return;
+    p51Meta.origin = "imported";
+    p51Meta.label = (typeof doc.label === "string" && doc.label.trim()) ? doc.label : null;
+    if (typeof doc.createdAt === "string" && doc.createdAt.trim()) {
+      p51Meta.importedCreatedAt = doc.createdAt;
+      p51Meta.importedCreatedAtMissing = false;
+    } else {
+      p51Meta.importedCreatedAt = null;
+      p51Meta.importedCreatedAtMissing = true;
+    }
+  }
+  /* Contrato de leitura consumido pelo relatório. Devolve SEMPRE cópia. */
+  window.__P51SESMETA = {
+    read: function () {
+      return {
+        label: p51Meta.label,
+        origin: p51Meta.origin,
+        startedAt: p51Meta.startedAt,
+        importedCreatedAt: p51Meta.importedCreatedAt,
+        importedCreatedAtMissing: p51Meta.importedCreatedAtMissing
+      };
+    },
+    reset: p51MetaReset
+  };
+
   /* Observadores de export/import — mesmo padrão aprovado em AMB-1:
      captura única, predecessor SEMPRE invocado e inalterado, retorno repassado
      intacto, falha isolada. Nao duplicam nem substituem a logica de Session
@@ -5512,8 +6124,11 @@ if (window.__DEV) Object.assign(window.__DEV, { openExportModal, openImportPicke
     downloadSession = function () {
       var r = p50SesInvoke("download", p50PrevDownloadSession, this, arguments);
       try {
-        if (r && r.ok) { p50SesState = "exported"; p50MarkClean(); }
-        else { p50SesState = "export-failed"; }
+        if (r && r.ok) {
+          p50SesState = "exported"; p50MarkClean();
+          p51MetaOnExport(arguments.length ? arguments[0] : null);   /* só no sucesso */
+        }
+        else { p50SesState = "export-failed"; }                      /* falha não toca metadado */
         p50UpdateSessionStatus();
       } catch (e) { console.error("P50 session status:", e.message); }
       return r;
@@ -5525,12 +6140,26 @@ if (window.__DEV) Object.assign(window.__DEV, { openExportModal, openImportPicke
     importSessionDocument = function () {
       var r = p50SesInvoke("import", p50PrevImportSessionDocument, this, arguments);
       try {
-        if (r && r.ok) { p50SesState = "imported"; p50MarkClean(); }
+        if (r && r.ok) {
+          p50SesState = "imported"; p50MarkClean();
+          p51MetaOnImport(arguments.length ? arguments[0] : null);   /* documento já validado */
+        }
         p50UpdateSessionStatus();
       } catch (e) { console.error("P50 session status:", e.message); }
       return r;
     };
     p50SesWrapCount++;
+
+    /* Phase 5.1 · a ponte de teste `window.__DEV` guardou uma REFERÊNCIA às
+       funções originais, capturada antes destes wrappers. Resultado: o fluxo
+       real da UI passava pelo wrapper (e atualizava status e metadados), mas
+       qualquer chamada por `__DEV` passava ao largo — duas verdades para a
+       mesma operação. As duas superfícies passam a apontar para a MESMA função
+       envolvida; o predecessor continua sendo invocado exatamente uma vez. */
+    if (window.__DEV) {
+      window.__DEV.importSessionDocument = importSessionDocument;
+      if (typeof downloadSession === "function") window.__DEV.downloadSession = downloadSession;
+    }
   }
 
   /* ============================================================
@@ -5865,6 +6494,149 @@ if (window.__DEV) Object.assign(window.__DEV, { openExportModal, openImportPicke
   }
 
   /* ============================================================
+     PHASE 5.1 · APRESENTAÇÃO DE PERGUNTA E AJUDA CONTEXTUAL
+     Tabelas da Camada 5, indexadas pelo `qid` CANÔNICO. Nada aqui altera
+     pergunta, opção, valor, score ou semântica: são textos de apresentação e
+     de ajuda ao entrevistador, aplicados por decoração pós-render.
+     ============================================================ */
+
+  /* UAT-02 · rótulo de apresentação. "Mandato", isolado, lê-se como jargão.
+     No contexto desta pergunta o termo significa autorização formal,
+     patrocínio, responsabilidade e autoridade concedidos à operação. O rótulo
+     CANÔNICO (`QS[k].lbl`) permanece intocado e continua sendo o que o
+     relatório imprime — inclusive porque o gate congelado UI 3.3.2/P21 assere
+     literalmente "Mandato e objetivos" no PDF. */
+  var P51_Q_TITLE = {
+    "mandate": "Direcionamento, autoridade e objetivos"
+  };
+  var P51_Q_SUPPORT = {
+    "mandate": "A operação possui missão, patrocínio, autoridade e objetivos formalmente definidos " +
+               "e ligados às prioridades do negócio? (mandato formal)"
+  };
+
+  /* UAT-04 · ajuda contextual ESPECÍFICA por pergunta.
+     Antes, o mesmo exemplo de MSSP/SLA aparecia nas 15 perguntas — ruído que
+     induzia a resposta errada. Cada entrada descreve O QUE REGISTRAR e dá um
+     EXEMPLO realista da prática. Linguagem descritiva: nenhuma entrada sugere
+     resposta, exige vendor ou inventa informação sobre o cliente. O exemplo de
+     MSSP/SLA fica exclusivamente na cobertura de monitoramento. */
+  var P51_Q_HELP = {
+    "mandate": {
+      what: "Registre o charter da operação, quem patrocina, quais metas foram acordadas, em que fórum são revistas e quem responde por elas.",
+      ex: "Ex.: charter aprovado pelo CISO em 03/2025; sponsor é o Diretor de TI; metas revistas no comitê trimestral; responsável nomeado."
+    },
+    "governance": {
+      what: "Registre a cadência do comitê, que decisões ele toma, o RACI vigente, as métricas acompanhadas e como as aprovações são formalizadas.",
+      ex: "Ex.: comitê mensal com ata; RACI publicado; três métricas acompanhadas; exceções aprovadas pelo dono do risco."
+    },
+    "policies": {
+      what: "Registre quais políticas se aplicam à operação, a periodicidade de revisão, como exceções são tratadas, a retenção definida e o endereçamento de LGPD.",
+      ex: "Ex.: política de segurança revista anualmente; exceções com prazo e dono; retenção de logs por 12 meses; DPO consultado para dados pessoais."
+    },
+    "team-capacity": {
+      what: "Registre a cobertura de horário, as funções existentes, a escala de turnos, o número de FTEs e as dependências de terceiros.",
+      ex: "Ex.: quatro analistas das 8h às 18h em dias úteis, um líder técnico, plantão por sobreaviso; duas funções acumuladas pela mesma pessoa."
+    },
+    "training": {
+      what: "Registre o plano de capacitação, as trilhas por função, exercícios práticos realizados, certificações e a frequência com que tudo isso acontece.",
+      ex: "Ex.: trilha de detecção para N1; tabletop semestral; duas certificações em andamento; sem orçamento formal de treinamento."
+    },
+    "knowledge": {
+      what: "Registre a existência de runbooks, como é feito o handover entre turnos, onde o conhecimento fica guardado e qual o bus factor da operação.",
+      ex: "Ex.: runbooks em wiki interna, cobrindo 6 dos 12 cenários; handover verbal; um analista concentra o conhecimento de rede."
+    },
+    "incident-response": {
+      what: "Registre o plano de resposta, a matriz de severidades, os SLAs acordados, a rotina de acionamento e o que é feito após o incidente.",
+      ex: "Ex.: plano aprovado com quatro severidades; acionamento por telefone e grupo; pós-incidente formal apenas para severidade 1."
+    },
+    "detection-lifecycle": {
+      what: "Registre o inventário de casos de uso, quem é dono de cada um, o ciclo de vida aplicado, o tuning periódico e a cobertura frente ao MITRE ATT&CK.",
+      ex: "Ex.: 40 regras ativas sem dono formal; revisão sob demanda; cobertura ATT&CK não medida; falsos positivos tratados caso a caso."
+    },
+    "automation": {
+      what: "Registre os playbooks existentes, as integrações em uso, onde há aprovação humana e se existe caminho de rollback.",
+      ex: "Ex.: dois playbooks de enriquecimento; integração com o service desk; bloqueio exige aprovação do líder; rollback manual."
+    },
+    "logs": {
+      what: "Registre as fontes coletadas, o tempo de retenção, se há parsing e normalização, que correlação existe e quais lacunas de cobertura são conhecidas.",
+      ex: "Ex.: firewall, AD e endpoint coletados; 90 dias em linha; servidores de aplicação fora da coleta; correlação limitada a duas regras."
+    },
+    "endpoint": {
+      what: "Registre a cobertura do parque, quem gerencia a plataforma, se há EDR/XDR, a capacidade de isolamento e as exceções aplicadas.",
+      ex: "Ex.: antivírus em 95% das estações e EDR em 40%; servidores críticos com exceção; isolamento remoto ainda não habilitado."
+    },
+    "network-visibility": {
+      what: "Registre os segmentos monitorados, se há NDR, a visibilidade leste-oeste, o tratamento de tráfego criptografado e as lacunas conhecidas.",
+      ex: "Ex.: visibilidade no perímetro; tráfego entre VLANs sem inspeção; TLS sem inspeção na saída; ambiente de fábrica fora do escopo."
+    },
+    "monitoring-coverage": {
+      what: "Registre o horário efetivo de monitoramento, a existência de plantão, os SLAs de atendimento e como funciona o escalonamento fora do horário.",
+      ex: "Ex.: MSSP cobre 8×5; plantão interno fora do horário; SLA P1 de 30 min; escalonamento definido apenas para severidade alta."
+    },
+    "external-surface": {
+      what: "Registre como a superfície externa é descoberta e acompanhada (EASM/DRPS), o monitoramento de credenciais expostas, a frequência e o tratamento dado aos achados.",
+      ex: "Ex.: inventário externo mantido em planilha; varredura trimestral; credenciais vazadas checadas de forma reativa."
+    },
+    "vulnerability-management": {
+      what: "Registre o escopo coberto, a frequência de varredura, o critério de priorização, os SLAs de correção, o tratamento de exceções e a validação da correção.",
+      ex: "Ex.: varredura mensal em servidores; estações fora do ciclo; priorização por CVSS; SLA de 30 dias para crítico; correção sem reteste."
+    }
+  };
+
+  /* Aplica o rótulo e o apoio de apresentação (UAT-02). O `.qnum` congelado é
+     reescrito para expor o título num nó próprio; a numeração da Camada 1
+     permanece a mesma. */
+  function p51DecorateQuestionTitle(scr, qq) {
+    var qnum = scr.querySelector(".qnum");
+    if (!qnum) return;
+    if (qnum.querySelector('[data-p50="question-title"]')) return;    /* idempotente */
+    var raw = (qnum.textContent || "");
+    var sep = raw.lastIndexOf(" · ");
+    var prefixo = sep > 0 ? raw.slice(0, sep + 3) : "";
+    var titulo = P51_Q_TITLE[qq.id] || qq.lbl;
+    qnum.textContent = prefixo;
+    qnum.appendChild(el("span", {
+      "class": "p51-qtitle", "data-p50": "question-title", "data-qid": qq.id,
+      "data-p51-canonical": qq.lbl
+    }, titulo));
+    var apoio = P51_Q_SUPPORT[qq.id];
+    if (!apoio) return;
+    var alvo = scr.querySelector(".question");
+    if (!alvo || alvo.parentNode.querySelector('[data-p50="question-support"]')) return;
+    alvo.insertAdjacentElement("afterend", el("p", {
+      "class": "p51-qsupport", "data-p50": "question-support", "data-qid": qq.id
+    }, apoio));
+  }
+
+  /* Rótulos do ÚNICO controle de evidência (UAT-03) + ajuda por pergunta
+     (UAT-04). O exemplo genérico congelado (`.ex`) é substituído pelo conteúdo
+     específico do `qid`; a remoção é do NÓ, não apenas visual. */
+  function p51DecorateEvidence(scr, qq, hasNote) {
+    var tgl = document.getElementById("notetgl");
+    if (tgl) {
+      var aberto = !!scr.querySelector(".notebox");
+      tgl.textContent = aberto ? "Fechar evidência ou observação"
+                               : (hasNote ? "Editar evidência ou observação"
+                                          : "Adicionar evidência ou observação");
+      tgl.setAttribute("data-p50", "evidence-toggle");
+      tgl.setAttribute("aria-expanded", aberto ? "true" : "false");
+      tgl.setAttribute("aria-controls", "notetxt");
+    }
+    var box = scr.querySelector(".notebox");
+    if (!box) return;
+    var velho = box.querySelector(".ex");
+    if (velho && velho.parentNode) velho.parentNode.removeChild(velho);   /* nó removido */
+    if (box.querySelector('[data-p50="evidence-help"]')) return;          /* idempotente */
+    var h = P51_Q_HELP[qq.id];
+    if (!h) return;
+    var wrap = el("div", { "class": "p51-help", "data-p50": "evidence-help", "data-qid": qq.id });
+    wrap.appendChild(el("p", { "class": "p51-help-what", "data-p50": "evidence-help-what" },
+      "O que registrar: " + h.what));
+    wrap.appendChild(el("p", { "class": "p51-help-ex", "data-p50": "evidence-help-example" }, h.ex));
+    box.appendChild(wrap);
+  }
+
+  /* ============================================================
      5.0.2 · UI-005 (cue) · UI-007 (indicador) · UI-008 (chips)
      Toda informação exibida tem provenance observável no runtime.
      Nenhuma taxonomia nova, nenhum weight/importance, nenhum framework.
@@ -5931,16 +6703,13 @@ if (window.__DEV) Object.assign(window.__DEV, { openExportModal, openImportPicke
       block.appendChild(ev);
     }
 
-    /* Atalho para o campo canônico congelado. NÃO escreve em notes[k]:
-       delega ao controle congelado, que é o único setter da nota. */
-    var tglBtn = el("button", {
-      type: "button", "class": "p50-btn p50-btn-ghost", "data-p50": "evidence-open"
-    }, hasNote ? "Editar evidência ou observação" : "Registrar evidência ou observação");
-    tglBtn.addEventListener("click", function () {
-      var t = document.getElementById("notetgl");        /* setter congelado */
-      if (t) t.click();
-    });
-    block.appendChild(tglBtn);
+    /* UAT-03 · o proxy P50 de evidência foi REMOVIDO, não apenas escondido.
+       Existia um segundo botão ("Registrar evidência ou observação") que apenas
+       reencaminhava o clique para `#notetgl`: duas paradas de Tab e dois nomes
+       acessíveis para a mesma ação. A partir da Phase 5.1 o controle canônico
+       congelado é o único acionador visível e focável, e recebe aqui apenas a
+       APARÊNCIA e os RÓTULOS desejados (decoração aditiva; o handler, o setter
+       e o markup da Camada 1 permanecem intocados). */
 
     /* UI-048 · o campo de evidência pode receber informação sensível do
        cliente. A orientação é CURTA, factual e não alarmista, fica junto do
@@ -5955,6 +6724,10 @@ if (window.__DEV) Object.assign(window.__DEV, { openExportModal, openImportPicke
 
     var opts = scr.querySelector(".opts");
     if (opts) opts.insertAdjacentElement("afterend", block); else scr.appendChild(block);
+
+    /* Phase 5.1 · apresentação da pergunta e controle único de evidência. */
+    p51DecorateQuestionTitle(scr, qq);
+    p51DecorateEvidence(scr, qq, hasNote);
 
     p50BindNoteObserver();
   }

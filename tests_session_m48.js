@@ -251,16 +251,29 @@ T("S36","object URL revogado após export",()=>{
     /^quickscan-secops_Teste_\d{8}-\d{4}\.json$/.test(r.filename);
 });
 T("S37","PDF após import mantém a semântica da sessão original",()=>{
+  /* Phase 5.1/RPT-02: a capa passou a declarar a PROVENIÊNCIA da sessão, e por
+     desenho ela DIFERE entre o documento original e o importado ("Data da
+     sessão" x "Sessão registrada em", além do instante de geração). A
+     propriedade que este gate protege — o CORPO do relatório sobrevive ao
+     round-trip sem alteração semântica — é medida excluindo a capa; e a nova
+     obrigação (a proveniência ser declarada com honestidade) é asserida à
+     parte, em vez de silenciada. */
+  const corpo = doc0 => { const c=doc0.querySelector("#pr-cover"); if(c) c.remove();
+    return txt(doc0).replace(/\s+/g," "); };
+  const clone = el => { const h=el.ownerDocument.createElement("div"); h.innerHTML=el.innerHTML; return h; };
   const {w,d}=boot(); richSession(w,d);
   w.__DEV.preparePrint();
-  const pre=txt(q(d,"#v32-print-report")).replace(/\s+/g," ");
+  const pre=corpo(clone(q(d,"#v32-print-report")));
+  const capaPre=txt(q(d,"#pr-cover"));
   w.__DEV.finishPrint();
   const doc=w.__DEV.buildSessionDocument();
   const B=boot(); B.w.__DEV.importSessionDocument(doc);
   B.w.__DEV.preparePrint();
-  const post=txt(q(B.d,"#v32-print-report")).replace(/\s+/g," ");
+  const post=corpo(clone(q(B.d,"#v32-print-report")));
+  const capaPost=txt(q(B.d,"#pr-cover"));
   B.w.__DEV.finishPrint();
-  return pre===post && pre.length>500;
+  const proveniencia = capaPre.includes("Data da sessão") && capaPost.includes("Sessão registrada em");
+  return pre===post && pre.length>500 && proveniencia;
 });
 T("S38","controles de sessão ausentes do relatório de impressão",()=>{
   const {w,d}=boot(); richSession(w,d);

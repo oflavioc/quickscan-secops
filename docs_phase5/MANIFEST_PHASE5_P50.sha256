@@ -3,36 +3,58 @@
 # 5.0.2 Evidence Capture & Progress UX       (integrada em main · e520c05d…)
 # 5.0.3 Sufficiency-Aware Results            (integrada em main · 4e30c8e4… · merge e0cde76f…)
 # 5.0.4 Target & Heat Map Visualizations     (integrada em main · e527ef66… · merge 3b8d76be…)
-# 5.0.5 Accessibility, Responsive & Visual Closure  (CANDIDATA · branch feat/phase5-5-0-5;
+# 5.0.5 Accessibility, Responsive & Visual Closure  (integrada em main · 09fd0fce… · merge af279a68…)
+# 5.1   UAT & Executive Report Polish + ADENDO DOCUMENTAL (guia de uso)
+#       adendo SHA-256 1896c270d5064a701dee062cfebf02f5d0fbfab15363da39196764859d75cef8
+#       (CANDIDATA · branch feat/phase5-5-1-uat-report;
 #       nenhum commit, push, PR, merge, tag, freeze, release ou deployment foi realizado)
 # gerado POR ULTIMO; exclui apenas a si proprio
 # Completude conferida por ORACULO INDEPENDENTE do manifesto: a uniao entre os
 # caminhos ja registrados nas entregas anteriores e o delta reportado por
 # `git status --porcelain` — zero duplicatas, zero auto-referencia, zero ausentes.
+# EXCLUSAO NOMINAL: `AGENTS.md` (nao rastreado, preexistente no worktree e alheio
+# a esta fase) fica FORA do manifesto por decisao declarada, nao por omissao.
 # As evidencias de 5.0.1 a 5.0.4 permanecem BYTE A BYTE como nos commits auditados:
 # a suite de 5.0.5 grava exclusivamente artefatos da microfase corrente (prefixo
 # P50-5.0.5-) e os artefatos que a spec exige POR NOME (P50-geometry.json,
 # P50-ACC1-axe-*, P50-VIS5-focus-*, P50-ACC4-contrast.json), verificados como
 # inexistentes no acervo antes da implementacao.
-# baseline de ENTRADA da 5.0.5 (HTML): d7c532097ac00548212085579c434e4dab69d14b7ed51ad86ab68377fd6cdb8c
-# baseline de SAIDA   da 5.0.5 (HTML): c40d97358beaf52f286209b93143f74f4665011a1229f65015c2e6561efce09f
+# baseline de ENTRADA da 5.1 (HTML): c40d97358beaf52f286209b93143f74f4665011a1229f65015c2e6561efce09f
+# baseline de SAIDA   da 5.1 (HTML): 12bb950f58f203c56cf6621973663be1ac71b4e026d618a910ebb0f3eebbf9d9
+#   (pos-ERRATA de 2026-08-22; o valor pos-adendo era
+#    e8857a9da789367b6a20c4c0aa848cc3db550f99d243f052d12ccd1aa55b8513)
+# ERRATA pos-auditoria independente (parecer SHA-256
+#   6320eac04eae61d6078b2d59404e17423eea133456a89d855bdae73b32c1ff82): corrige o blocker B1 e
+#   fecha as ressalvas R1, R2 e R3. Delta da errata: ui_v32.js, tests_p50_core.js,
+#   tests_p51_mutants.js, USER_GUIDE.md, o HTML derivado, PHASE_5_1_UAT_REPORT.md,
+#   evidence_p51/P51-mutation.json (regenerado 20/20) e o novo
+#   evidence_p51/P51-ERRATA-suites.txt. Ver PHASE_5_1_UAT_REPORT.md secao 0.
 # engine_v32.js e payload funcional M41 permanecem byte-identicos ao core 4.8.0.7.
 # build_v32_html.py permanece byte-identico (nenhuma injecao nova foi necessaria).
 # package.json/package-lock.json: unico delta e a devDependency de teste
 # @axe-core/playwright@4.13.0 (exata) e a transitiva axe-core@4.13.0; nenhum byte
 # de axe entra no HTML construido.
-957141ec1e26a945b22969c649a3b0a1e41f4855eb69d4ea73889e765aaffbf6  ui_p50_shell_v32.js
+# SELAGEM DE INTEGRACAO da Phase 5.1 (2026-08-22), por ato do proprietario:
+#   docs_phase5/PHASE_5_1_INTEGRATION_ACCEPTANCE.md registra o aceite formal.
+#   Pareceres independentes importados byte a byte e conferidos por `cmp`:
+#     AUDITORIA_INDEPENDENTE_PHASE_5_1_UAT_REPORT.md          6320eac0...b32c1ff82  (FAIL, blocker B1)
+#     AUDITORIA_INDEPENDENTE_REAUDITORIA_PHASE_5_1_ERRATA.md  5deced7c...43643da5f  (PASS c/ ressalvas)
+#   Nenhum byte executavel mudou na selagem: HTML, engine, modulos da Camada 5,
+#   CSS, suites, builder e package files permanecem exatamente como auditados.
+#   O HTML nao foi reconstruido; evidencias, screenshots e PDFs nao foram regerados.
+#   Nao ha tag, release, promocao para producao nem deployment: nao foram autorizados.
+f8302d68f61bc37c5064a657120f52abb68b81ca2861541f0550e3ae787b4bd0  ui_p50_shell_v32.js
 a9931330021949b581da29012be7669edf75529aaaaa9c2f13d0165494b86f5b  ui_p50_suff_v32.js
 4c2965f7befdf2f907d6502d28f94ef8f8603cbf4a9cd3fdecc802d6e4a8b66e  ui_p50_results_v32.js
-3e4835200c7faa6cef53d7719648100c9c3d416e74c7d6a2cba933606bee4a50  ui_p50_v32.css
+749cbb989ddcb51feaef3af5dd8cbc6caf1cbc08eac70da60bde36cca239dc93  ui_p50_v32.css
 08610c8f92238eefb82a07ec57cb1ab9cdbb626cad1c9483d278e26ed572443f  fixtures_p50.js
-b2b8b01f07cbc3bcba017c8ab8156ca05415dfaa4c7204eae4a133d8709c38b8  tests_p50_core.js
-d06860c78f844e2dbc0e964bddd743a05fb87e8275cad2183bcd27d52f3294a4  tests_p50_chromium.js
+7481b674869a114d44f3c00c2db3d0ee418e659ebe2b852c956c3418f49d1794  tests_p50_core.js
+39f932c636b514b8dde21edd0178b97dba0fcf9f33dc6021ffa71584fb7cf029  tests_p50_chromium.js
 28f2e876d4f614baf83b02d0c23bbbf19a983d4b0a943e1b42d1f8c8c067ddf5  tests_p50_mutants.js
 af129900d1c5e2b8f02a9582f4fc8ab26fecc617cc595c9f2a7508000cabcb91  tests_unset_ug.js
 bce37fef5e4722e6e6215186f33c9f0af030bb03e706504a30ca80fededc07bc  build_v32_html.py
 1c8d844d972ccb4a691d8c5b3c3d544d5b514bef68eb5187dbe60121164304c7  package.json
-c40d97358beaf52f286209b93143f74f4665011a1229f65015c2e6561efce09f  quickscan_secops_soccmm_v3_2_dev.html
+12bb950f58f203c56cf6621973663be1ac71b4e026d618a910ebb0f3eebbf9d9  quickscan_secops_soccmm_v3_2_dev.html
 4518700b78c00331025680c3d381d025343baf949fcef7628a851b3a937dd3ca  docs_phase5/MICROFASE_5_0_1_REPORT.md
 1b02bd914dd10dc2dcba8e402d058d4c9f9576000d8e1e3ff63611b3cf27e540  docs_phase5/MICROFASE_5_0_2_REPORT.md
 ea313469ea84df6dd6c1ed9b80b24220bd94c09469e5836e66efd56edb375ff5  docs_phase5/MICROFASE_5_0_3_REPORT.md
@@ -135,3 +157,36 @@ f6a18b0efc511f759bcbf1d7e1e7455177564cf2edd26bf69fa0c1307ac61688  docs_phase5/ev
 a69207287c7bfb0a37227aa254ecb4119a3086009e7ba8e1fb8f5fa98c97c1e6  docs_phase5/AUDITORIA_INDEPENDENTE_FECHAMENTO_PHASE_5_0.md
 4e9bd9fbd3390bb7ab37420b9f3613a40c98fd6261f1a49cfc313eea8df54cb6  docs_phase5/PHASE_5_0_CLOSURE_ACCEPTANCE.md
 ba0e723ff35832af47acedfd93a242dc95974338f2faa2995d50c8047af9f95d  docs_phase5/REVALIDACAO_INDEPENDENTE_PROVENIENCIA_PHASE_5_0.md
+1e839d737c907a29d4fb91491ce9816a7ec9262ffcdcbd78eea6f1dab4817a16  tests_journey_m45.js
+5b4174b79fd110aa50fd74c06410423c3b17db9a6056abf9cf008ce00be5f181  tests_session_m48.js
+18e2b8f69d3e7b4e2e6a43d6d6ac325724e8ef80c8d4afcdbdd76d8ee27f692a  tests_visual/screen.spec.js
+4758148a94f4b6e788fc7bf7bef13ab00150f68c0a050308b694bacbf51ecade  ui_journey_v32.js
+acb0eba165ef25e6b97475430e9b042a9b39038be2b9882ec5b3c67a730faa6f  ui_v32.css
+61e71dcc191aabb2a74a7061173ede8a5d75fa5dda81bb03e7ad02360677d766  ui_v32.js
+e0608b0ba95a4acabbf9d7aebf11e1fdccfcc21fe8287c7370c4691529c54851  docs_phase5/PHASE_5_1_UAT_REPORT.md
+54cb13d33372a5d2a21db93495757d52b0aa887f5e6d1dbfa45f5673fb1f89cb  docs_phase5/evidence_p51/P51-ERRATA-suites.txt
+a97c8d798d3d1ba8d1d0214663447025453d61fa78cae2340b5a12c788004adc  docs_phase5/evidence_p51/P51-layout-measures.json
+ef38a97aeb78e2e4395834fc98fcf2d4d07294b9aa4e1522ee81ce7a96d945bb  docs_phase5/evidence_p51/P51-mutation.json
+2c6201b52215a55e1a6ac355603020f4b6fa26559d693ca81751a1cbe7d8bb8b  docs_phase5/evidence_p51/P51-pdf-evidence.json
+cc74b89af899b92a6cbdf40bf4e597f2b70af12d23c630c37c481a77bd0e8dc5  docs_phase5/evidence_p51/P51-question-1024.png
+bd010a0e6ce0e5ac64065a8c1c52170a86e6df513a966919a26f62bedf1f8ecb  docs_phase5/evidence_p51/P51-question-1440.png
+197692ca46e6584a8b177223b583960a22b4f4e400f57e5e303f10cce2d80855  docs_phase5/evidence_p51/P51-question-2560.png
+e11a949f24345393649c68ef09d09ad114fdcf52e4738bb15068d1e5c7048644  docs_phase5/evidence_p51/P51-question-390.png
+5df19fa60bb2536945bb6a337130bd11461232e10b09d45e92d99d513b95f27d  docs_phase5/evidence_p51/P51-question-768.png
+68f0ba566133c941fc20020e8dec2fba0a7d33ab42a1bac1554f7d7b2ba04afb  docs_phase5/evidence_p51/P51-report-importada-com-createdAt.pdf
+f93ab1e20d7acef1c838c9294e38ab419c496f7d675366d24dfac18f35368da2  docs_phase5/evidence_p51/P51-report-insuficiente.pdf
+f20cd2b07060a91922b5b799edbb0d4e4383c8e59c5ad41014c0625ec5b9316d  docs_phase5/evidence_p51/P51-report-suficiente-com-label.pdf
+06c2782dee2deb0835b33e5d3ffaf18a3a352f45bf2c7336260f353966aab5e9  docs_phase5/evidence_p51/P51-report-suficiente-sem-label.pdf
+6adaec3e6ddbe740c5c9a2cd0951df431807c463ebf7fa5166b14ecbfa96b655  docs_phase5/evidence_p51/P51-report-unicode.pdf
+d9d6258c9de5df75abb179b12600f8816bc3c9f9fb827e324d03da81b7237c67  docs_phase5/evidence_p51/P51-report-zero-confirmado.pdf
+f65e4f9e44b352f32594532117808c90705211ed437d55a907381327b168e68b  docs_phase5/evidence_p51/P51-results-1024.png
+07390899ba928ed564b0b6ab9521f810da288694d3bd425e0360ce7b7a42535b  docs_phase5/evidence_p51/P51-results-1440.png
+6d9387975235d87ca4047a955606d4b90c064afe1fee14a72c5cb7afbecba366  docs_phase5/evidence_p51/P51-results-2560.png
+db9d73e511b6b9c50464e9c045945a95bb3b32c22f2fdee1c6cc96bdef5d6b5c  docs_phase5/evidence_p51/P51-results-390.png
+7a3e6c629041cbf2d5aa0c1d91a25b3f7119c4c453e3e0fa7080325e0c47f30a  docs_phase5/evidence_p51/P51-results-768.png
+3e3a66ab048ef7c1bb7d77d0f2e7c50ee83a90dc33269763f0f78b17eede7839  tests_p51_mutants.js
+b7924ce0f142ad773e7159f0dd726a26aec1122214c87039ff31b3a5a6322a64  README.md
+98d97a2a3bf5f928a5f4a8e6995cb1b51e77e1a77897ec23aaabad01ccbd181d  USER_GUIDE.md
+6320eac04eae61d6078b2d59404e17423eea133456a89d855bdae73b32c1ff82  docs_phase5/AUDITORIA_INDEPENDENTE_PHASE_5_1_UAT_REPORT.md
+5deced7ce81fa3af5cc87fda70e65e4630fee15434e4eb5bc97e56d43643da5f  docs_phase5/AUDITORIA_INDEPENDENTE_REAUDITORIA_PHASE_5_1_ERRATA.md
+47b65e9d15b8c7e8d8d8799dd780d03dcf0bcf179c9969887e320c57ae767c0c  docs_phase5/PHASE_5_1_INTEGRATION_ACCEPTANCE.md

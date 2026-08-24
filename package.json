@@ -11,7 +11,10 @@
     "test:p50": "node tests_p50_core.js",
     "test:p50vis": "node tests_p50_chromium.js",
     "test:m41": "node harness_m41_v313.js quickscan_secops_soccmm_v3_2_dev.html --compare v3_1_3_functional_snapshot.json --out /dev/null",
-    "test:all": "npm run build && npm run test:engine && npm run test:ui && npm run test:unset && npm run test:p50 && npm run test:p50vis && npm run test:m41",
+    "test:p52": "node tests_p52_layout.js",
+    "test:p52vis": "node tests_p52_chromium.js",
+    "test:p52mut": "node tests_p52_mutants.js",
+    "test:all": "npm run build && npm run test:engine && npm run test:ui && npm run test:unset && npm run test:p50 && npm run test:p50vis && npm run test:p52 && npm run test:p52vis && npm run test:m41",
     "test:ui31": "node tests_ui_m31.js",
     "test:ui32": "node tests_ui_m32.js",
     "test:ui33": "node tests_ui_m33.js",
@@ -24,7 +27,7 @@
     "test:icons46": "node tests_icons_m46.js",
     "test:visual": "playwright test",
     "test:full": "npm run test:all && npm run test:visual",
-    "test:session": "node --max-old-space-size=3072 tests_session_m48.js"
+    "test:session": "node --max-old-space-size=4608 tests_session_m48.js"
   },
   "dependencies": {
     "jsdom": "30.0.1"

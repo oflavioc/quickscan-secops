@@ -1,0 +1,34 @@
+{
+  "P52-F1@1440/novas": [],
+  "P52-F1@1440/tela": {
+    "candidato": [],
+    "baseline": [
+      "color-contrast|serious|b1332|b111",
+      "color-contrast|serious|b3814|b111",
+      "color-contrast|serious|b888|b222",
+      "color-contrast|serious|b1432|b111"
+    ]
+  },
+  "P52-F1@1440/nossos": [],
+  "P52-F3@1440/novas": [],
+  "P52-F3@1440/tela": {
+    "candidato": [],
+    "baseline": [
+      "color-contrast|serious|b1332|b111",
+      "color-contrast|serious|b889|b222",
+      "color-contrast|serious|b1432|b111"
+    ]
+  },
+  "P52-F3@1440/nossos": [],
+  "P52-F1@390/novas": [],
+  "P52-F1@390/tela": {
+    "candidato": [],
+    "baseline": [
+      "color-contrast|serious|b1332|b111",
+      "color-contrast|serious|b3814|b111",
+      "color-contrast|serious|b889|b222",
+      "color-contrast|serious|b1432|b111"
+    ]
+  },
+  "P52-F1@390/nossos": []
+}

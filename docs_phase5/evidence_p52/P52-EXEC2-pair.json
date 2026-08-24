@@ -1,0 +1,42 @@
+[
+  {
+    "vp": 390,
+    "advance": 342,
+    "reading": 342
+  },
+  {
+    "vp": 768,
+    "advance": 705,
+    "reading": 705
+  },
+  {
+    "vp": 1024,
+    "advance": 951,
+    "reading": 951
+  },
+  {
+    "vp": 1280,
+    "advance": 456,
+    "reading": 456
+  },
+  {
+    "vp": 1440,
+    "advance": 520,
+    "reading": 520
+  },
+  {
+    "vp": 1920,
+    "advance": 707,
+    "reading": 707
+  },
+  {
+    "vp": 2560,
+    "advance": 1004,
+    "reading": 1004
+  },
+  {
+    "vp": 3440,
+    "advance": 1015,
+    "reading": 1015
+  }
+]

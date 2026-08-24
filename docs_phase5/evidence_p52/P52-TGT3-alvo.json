@@ -1,0 +1,305 @@
+{
+  "1440/vazio": {
+    "secao": {
+      "l": 328,
+      "w": 1063,
+      "inner": 1063
+    },
+    "bloco": {
+      "l": 328,
+      "w": 1063,
+      "inner": 1023
+    },
+    "area": {
+      "l": 328,
+      "w": 1063,
+      "inner": 1063
+    },
+    "filhos": [
+      {
+        "cls": "ux-micro",
+        "l": 349,
+        "w": 548,
+        "inner": 548
+      },
+      {
+        "cls": "btn2",
+        "l": 349,
+        "w": 163,
+        "inner": 123
+      }
+    ],
+    "tabela": null,
+    "micro": {
+      "l": 349,
+      "w": 548,
+      "inner": 548,
+      "px": 14.5
+    },
+    "editado": false
+  },
+  "1440/editado": {
+    "secao": {
+      "l": 328,
+      "w": 1063,
+      "inner": 1063
+    },
+    "bloco": {
+      "l": 328,
+      "w": 1063,
+      "inner": 1023
+    },
+    "area": {
+      "l": 328,
+      "w": 1063,
+      "inner": 1063
+    },
+    "filhos": [
+      {
+        "cls": "ux-tgt-kpis",
+        "l": 349,
+        "w": 1021,
+        "inner": 1021
+      },
+      {
+        "cls": "ux-tgt-legend",
+        "l": 349,
+        "w": 1021,
+        "inner": 1021
+      },
+      {
+        "cls": "ux-tgt-table",
+        "l": 349,
+        "w": 1021,
+        "inner": 1021
+      },
+      {
+        "cls": "ux-tgt-ovs",
+        "l": 349,
+        "w": 1021,
+        "inner": 1021
+      },
+      {
+        "cls": "ux-tgt-disc",
+        "l": 349,
+        "w": 521,
+        "inner": 497
+      },
+      {
+        "cls": "ux-ctxactions",
+        "l": 349,
+        "w": 1021,
+        "inner": 989
+      }
+    ],
+    "tabela": {
+      "l": 349,
+      "w": 1021,
+      "inner": 1021
+    },
+    "micro": null,
+    "editado": true
+  },
+  "1920/vazio": {
+    "secao": {
+      "l": 411,
+      "w": 1443,
+      "inner": 1443
+    },
+    "bloco": {
+      "l": 411,
+      "w": 1443,
+      "inner": 1403
+    },
+    "area": {
+      "l": 411,
+      "w": 1443,
+      "inner": 1443
+    },
+    "filhos": [
+      {
+        "cls": "ux-micro",
+        "l": 432,
+        "w": 548,
+        "inner": 548
+      },
+      {
+        "cls": "btn2",
+        "l": 432,
+        "w": 163,
+        "inner": 123
+      }
+    ],
+    "tabela": null,
+    "micro": {
+      "l": 432,
+      "w": 548,
+      "inner": 548,
+      "px": 14.5
+    },
+    "editado": false
+  },
+  "1920/editado": {
+    "secao": {
+      "l": 411,
+      "w": 1443,
+      "inner": 1443
+    },
+    "bloco": {
+      "l": 411,
+      "w": 1443,
+      "inner": 1403
+    },
+    "area": {
+      "l": 411,
+      "w": 1443,
+      "inner": 1443
+    },
+    "filhos": [
+      {
+        "cls": "ux-tgt-kpis",
+        "l": 432,
+        "w": 1401,
+        "inner": 1401
+      },
+      {
+        "cls": "ux-tgt-legend",
+        "l": 432,
+        "w": 1401,
+        "inner": 1401
+      },
+      {
+        "cls": "ux-tgt-table",
+        "l": 432,
+        "w": 1401,
+        "inner": 1401
+      },
+      {
+        "cls": "ux-tgt-ovs",
+        "l": 432,
+        "w": 1401,
+        "inner": 1401
+      },
+      {
+        "cls": "ux-tgt-disc",
+        "l": 432,
+        "w": 521,
+        "inner": 497
+      },
+      {
+        "cls": "ux-ctxactions",
+        "l": 432,
+        "w": 1401,
+        "inner": 1369
+      }
+    ],
+    "tabela": {
+      "l": 432,
+      "w": 1401,
+      "inner": 1401
+    },
+    "micro": null,
+    "editado": true
+  },
+  "2560/vazio": {
+    "secao": {
+      "l": 439,
+      "w": 2038,
+      "inner": 2038
+    },
+    "bloco": {
+      "l": 439,
+      "w": 2038,
+      "inner": 1998
+    },
+    "area": {
+      "l": 439,
+      "w": 2038,
+      "inner": 2038
+    },
+    "filhos": [
+      {
+        "cls": "ux-micro",
+        "l": 460,
+        "w": 548,
+        "inner": 548
+      },
+      {
+        "cls": "btn2",
+        "l": 460,
+        "w": 163,
+        "inner": 123
+      }
+    ],
+    "tabela": null,
+    "micro": {
+      "l": 460,
+      "w": 548,
+      "inner": 548,
+      "px": 14.5
+    },
+    "editado": false
+  },
+  "2560/editado": {
+    "secao": {
+      "l": 439,
+      "w": 2038,
+      "inner": 2038
+    },
+    "bloco": {
+      "l": 439,
+      "w": 2038,
+      "inner": 1998
+    },
+    "area": {
+      "l": 439,
+      "w": 2038,
+      "inner": 2038
+    },
+    "filhos": [
+      {
+        "cls": "ux-tgt-kpis",
+        "l": 460,
+        "w": 1996,
+        "inner": 1996
+      },
+      {
+        "cls": "ux-tgt-legend",
+        "l": 460,
+        "w": 1996,
+        "inner": 1996
+      },
+      {
+        "cls": "ux-tgt-table",
+        "l": 460,
+        "w": 1996,
+        "inner": 1996
+      },
+      {
+        "cls": "ux-tgt-ovs",
+        "l": 460,
+        "w": 1996,
+        "inner": 1996
+      },
+      {
+        "cls": "ux-tgt-disc",
+        "l": 460,
+        "w": 521,
+        "inner": 497
+      },
+      {
+        "cls": "ux-ctxactions",
+        "l": 460,
+        "w": 1996,
+        "inner": 1964
+      }
+    ],
+    "tabela": {
+      "l": 460,
+      "w": 1996,
+      "inner": 1996
+    },
+    "micro": null,
+    "editado": true
+  }
+}

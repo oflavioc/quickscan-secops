@@ -1,0 +1,137 @@
+{
+  "card": {
+    "w": 1062.734375,
+    "ctaH": 47.921875,
+    "ctaW": 258.71875,
+    "badge": "Opcional",
+    "badgeVisible": true,
+    "title": "Adicionar contexto tecnológico"
+  },
+  "groups": {
+    "total": 6,
+    "open": [
+      {
+        "gid": "g1",
+        "open": true,
+        "state": "open",
+        "borderLeftW": "4px",
+        "borderLeftC": "rgb(48, 127, 226)",
+        "bg": "rgb(28, 28, 31)",
+        "weight": "700",
+        "color": "rgb(245, 245, 244)",
+        "stateText": null,
+        "expanded": "true",
+        "marker": "\"▾\""
+      }
+    ],
+    "closed": [
+      {
+        "gid": "g2",
+        "open": false,
+        "state": "closed",
+        "borderLeftW": "4px",
+        "borderLeftC": "rgb(44, 44, 49)",
+        "bg": "rgb(21, 21, 23)",
+        "weight": "600",
+        "color": "rgb(173, 173, 180)",
+        "stateText": null,
+        "expanded": "false",
+        "marker": "\"▸\""
+      },
+      {
+        "gid": "g3",
+        "open": false,
+        "state": "closed",
+        "borderLeftW": "4px",
+        "borderLeftC": "rgb(44, 44, 49)",
+        "bg": "rgb(21, 21, 23)",
+        "weight": "600",
+        "color": "rgb(173, 173, 180)",
+        "stateText": null,
+        "expanded": "false",
+        "marker": "\"▸\""
+      },
+      {
+        "gid": "arch",
+        "open": false,
+        "state": "closed",
+        "borderLeftW": "4px",
+        "borderLeftC": "rgb(44, 44, 49)",
+        "bg": "rgb(21, 21, 23)",
+        "weight": "600",
+        "color": "rgb(173, 173, 180)",
+        "stateText": null,
+        "expanded": "false",
+        "marker": "\"▸\""
+      },
+      {
+        "gid": "plat",
+        "open": false,
+        "state": "closed",
+        "borderLeftW": "4px",
+        "borderLeftC": "rgb(44, 44, 49)",
+        "bg": "rgb(21, 21, 23)",
+        "weight": "600",
+        "color": "rgb(173, 173, 180)",
+        "stateText": null,
+        "expanded": "false",
+        "marker": "\"▸\""
+      },
+      {
+        "gid": "sig",
+        "open": false,
+        "state": "closed",
+        "borderLeftW": "4px",
+        "borderLeftC": "rgb(44, 44, 49)",
+        "bg": "rgb(21, 21, 23)",
+        "weight": "600",
+        "color": "rgb(173, 173, 180)",
+        "stateText": null,
+        "expanded": "false",
+        "marker": "\"▸\""
+      }
+    ]
+  },
+  "selects": [
+    {
+      "color": "rgb(245, 245, 244)",
+      "bg": "rgb(28, 28, 31)",
+      "id": "v32-pres-knowledge-management"
+    },
+    {
+      "color": "rgb(245, 245, 244)",
+      "bg": "rgb(28, 28, 31)",
+      "id": "v32-pres-incident-management"
+    },
+    {
+      "color": "rgb(245, 245, 244)",
+      "bg": "rgb(28, 28, 31)",
+      "id": "v32-pres-detection-engineering"
+    },
+    {
+      "color": "rgb(245, 245, 244)",
+      "bg": "rgb(28, 28, 31)",
+      "id": "v32-pres-security-analytics"
+    },
+    {
+      "color": "rgb(245, 245, 244)",
+      "bg": "rgb(28, 28, 31)",
+      "id": "v32-pres-security-automation"
+    },
+    {
+      "color": "rgb(245, 245, 244)",
+      "bg": "rgb(28, 28, 31)",
+      "id": "v32-pres-continuous-monitoring"
+    },
+    {
+      "color": "rgb(245, 245, 244)",
+      "bg": "rgb(28, 28, 31)",
+      "id": "v32-pres-soc-platform"
+    },
+    {
+      "color": "rgb(245, 245, 244)",
+      "bg": "rgb(28, 28, 31)",
+      "id": "v32-pres-threat-intelligence"
+    }
+  ]
+}

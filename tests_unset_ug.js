@@ -84,30 +84,126 @@ T("UG3","régua de domínio: UNSET não gera .fill; gera .ruler.unset com marcad
     set.querySelector(".fill").getAttribute("style").includes("width:34%");   /* 1.7/5 */
 });
 
-T("UG4","radar do PDF: vértice UNSET omitido e SVG mantém exatamente 5 <text> (invariante P22 C)",()=>{
+/* ==========================================================================
+   MIGRAÇÃO DE GATE · ERRATA DA AUDITORIA EXTERNA SÊNIOR DE FRONTEND · B-01
+   (parecer SHA-256 f5a9f70e7a5ee658ef86775d8dab93ce2cb15974604a7ed7f1dcd99e13b58dae)
+
+   FATO ESTRUTURAL descoberto ao corrigir B-01, e que explica as três migrações
+   deste arquivo: a regra canônica de suficiência é
+       confirmedCount() >= 10  E  todo domínio com n >= 2.
+   Um domínio sem score tem n = 0, logo QUALQUER sessão com domínio `n/d` tem o
+   gate FECHADO. Portanto o radar de `#pr-maturity` com vértice omitido por
+   UNSET DE DOMÍNIO só existia quando a publicação era proibida — ele era o
+   próprio B-01, medido de outro ângulo.
+
+   O que UG4 afirmava, linha a linha:
+     nPts(poly)===4        → quatro vértices de score publicados com o gate FECHADO
+     marks.length===1      → um marcador de eixo n/d nesse mesmo radar
+     dashedAxes.length===1 → um eixo pontilhado nesse mesmo radar
+     nText===5             → cinco rótulos (invariante P22 C)
+
+   As três primeiras afirmavam publicação sob gate fechado e foram substituídas
+   pela asserção correta: NADA de score por domínio é publicado. A quarta —
+   a invariante P22 (C) de cinco rótulos — não foi removida: passou para o
+   CONTROLE POSITIVO, executado no único estado em que o radar pode existir
+   (gate aberto), onde a geometria UNSET continua provada no nível de PRÁTICA
+   (UG8) e o zero confirmado continua plotável (UG7).
+   ========================================================================== */
+T("UG4","radar do PDF sob gate fechado: nenhum vértice de score é fabricado; com o gate aberto o radar mantém 5 <text> (invariante P22 C)",()=>{
   const {w,d}=boot();
+  /* (a) NEGATIVO — domínio 4 inteiro n/d ⇒ n=0 ⇒ gate canônico FECHADO */
   apply(w,IDS.map((_,k)=>DOM_OF[k]===4?null:1));
   declareCtx(w,d);
   w.__DEV.preparePrint();
-  const svg=d.querySelector("#pr-maturity .pr-radar");
-  const poly=svg.querySelector("polygon[stroke='#DA291C']");
-  const marks=svg.querySelectorAll("circle[stroke='#999']");
-  const dashedAxes=Array.from(svg.querySelectorAll("line")).filter(l=>l.getAttribute("stroke-dasharray"));
-  const nText=svg.querySelectorAll("text").length;
+  const svgFechado=d.querySelector("#pr-maturity .pr-radar");
+  const celulas=Array.from(d.querySelectorAll("#pr-maturity .pr-doms td")).map(t=>txt(t).trim());
+  const nota=d.querySelector("#pr-nopub");
   w.__DEV.finishPrint();
-  return nPts(poly)===4 && marks.length===1 && dashedAxes.length===1 && nText===5;
+  const fechadoOk = svgFechado===null &&
+    celulas.length===5 && celulas.every(c=>c==="n/d") &&
+    !!nota && /Evid[êe]ncia insuficiente/.test(txt(nota));
+
+  /* (b) CONTROLE POSITIVO — gate ABERTO: o radar existe, tem os cinco vértices
+         e mantém exatamente cinco <text>. Sem isto o gate passaria por ausência
+         de conteúdo, e não por correção. */
+  const {w:w2,d:d2}=boot();
+  apply(w2,IDS.map(()=>1));
+  declareCtx(w2,d2);
+  w2.__DEV.preparePrint();
+  const svgAberto=d2.querySelector("#pr-maturity .pr-radar");
+  const polyAberto=svgAberto?svgAberto.querySelector("polygon[stroke='#DA291C']"):null;
+  const nTextAberto=svgAberto?svgAberto.querySelectorAll("text").length:0;
+  w2.__DEV.finishPrint();
+  const abertoOk = !!svgAberto && nPts(polyAberto)===5 && nTextAberto===5;
+
+  return fechadoOk && abertoOk;
 });
 
-T("UG5","overlay de alvo (tela): eixo sem alvo efetivo é omitido do polígono do cenário-alvo",()=>{
+/* ==========================================================================
+   MIGRAÇÃO DE GATE · ERRATA FINAL · ALTO-1
+   (parecer SHA-256 70904c113096d9a95617a80daf9eb7df28d27c1a0e0837f510fbffaa53b04120)
+
+   O que UG5 afirmava, linha a linha:
+     !!t                        → o overlay do alvo EXISTE no radar de tela
+     nPts(t)===4                → com quatro vértices, sob gate canônico FECHADO
+     stroke-dasharray presente  → encoding tracejado exclusivo do alvo. PRESERVADO.
+     stroke === "#3CB17E"       → cor exclusiva do alvo.                PRESERVADO.
+
+   As duas primeiras afirmavam PUBLICAÇÃO GEOMÉTRICA do cenário-alvo com o gate
+   canônico fechado — a mesma classe de ALTO-1, medida no radar de tela. Vale
+   aqui o mesmo FATO ESTRUTURAL de UG4/UG6: um domínio sem score tem n = 0, logo
+   o overlay de quatro vértices só existia quando a publicação era proibida.
+
+   O parecer classificou esse overlay como "hoje inofensivo" porque a superfície
+   legada de tela está oculta por CSS. Esta errata NÃO aceita esse fundamento: a
+   §5.1 da instrução proíbe expressamente "depender de CSS sem corrigir a decisão
+   na origem da publicação". A decisão passou para a origem, e o gate acompanha.
+
+   As duas asserções de ENCODING não foram removidas: passaram para o CONTROLE
+   POSITIVO, executado no único estado em que o overlay pode existir (gate
+   aberto). A omissão de vértice por UNSET continua provada no nível de PRÁTICA
+   por UG1 e UG8, e o zero confirmado continua plotável por UG7.
+   ========================================================================== */
+T("UG5","overlay de alvo (tela): sob gate canônico fechado nenhum polígono do alvo é criado; com gate aberto existe com 5 vértices e encoding tracejado verde exclusivo",()=>{
+  /* (a) NEGATIVO — Serviços inteiro n/d ⇒ n=0 ⇒ gate canônico FECHADO */
   const {w,d}=boot();
   apply(w,IDS.map((_,k)=>DOM_OF[k]===4?null:1));
   w.__DEV.setTarget("logs",3); w.__DEV.showResults();
-  const t=d.querySelector(".ux-target-shape");
-  return !!t && nPts(t)===4 && !!t.getAttribute("stroke-dasharray") &&
-    t.getAttribute("stroke")==="#3CB17E";
+  const fechadoOk = d.querySelector(".ux-target-shape")===null &&
+    d.querySelector("#ux-tgt-radarlegend")===null &&
+    /perfil atual/i.test(d.querySelector("svg.radar").getAttribute("aria-label")||"") &&
+    !/cen[áa]rio-alvo/i.test(d.querySelector("svg.radar").getAttribute("aria-label")||"") &&
+    Object.keys(w.__DEV.TARGET.overrides).length===1;      /* o alvo continua SALVO */
+
+  /* (b) CONTROLE POSITIVO — gate ABERTO: o overlay existe, com cinco vértices
+         e o encoding exclusivo preservado byte a byte. Sem isto o gate passaria
+         por ausência de conteúdo, e não por correção. */
+  const {w:w2,d:d2}=boot();
+  apply(w2,IDS.map(()=>1));
+  w2.__DEV.setTarget("logs",3); w2.__DEV.showResults();
+  const t=d2.querySelector(".ux-target-shape");
+  const abertoOk = !!t && nPts(t)===5 && !!t.getAttribute("stroke-dasharray") &&
+    t.getAttribute("stroke")==="#3CB17E" &&
+    /cen[áa]rio-alvo/i.test(d2.querySelector("svg.radar").getAttribute("aria-label")||"");
+
+  return fechadoOk && abertoOk;
 });
 
-T("UG6","radar de alvo (PDF): ambos os polígonos omitem UNSET; tracejado do alvo preservado",()=>{
+/* MIGRAÇÃO DE GATE · ERRATA DA AUDITORIA EXTERNA · B-01 (mesma causa de UG4).
+   O que UG6 afirmava, linha a linha:
+     nPts(cur)===4   → quatro vértices do perfil ATUAL publicados com o gate FECHADO
+     nPts(tgt)===4   → quatro vértices do cenário-alvo, cujo vetor efetivo TAMBÉM
+                       tem o gate fechado (o domínio Serviços continua sem resposta:
+                       n = 0 nos dois perfis)
+     stroke-dasharray no alvo  → encoding exclusivo do alvo. PRESERVADO.
+     note contém "Serviços"    → a omissão é explicada em texto. PRESERVADO em
+                                 forma mais forte: a nota passa a dizer POR QUE.
+
+   As duas primeiras afirmavam publicação por domínio sob gate fechado e foram
+   invertidas. As duas últimas continuam asseridas. O controle positivo, com o
+   gate ABERTO nos dois perfis, garante que o gate não passa por ausência de
+   conteúdo: ali os dois polígonos têm de existir, com cinco vértices cada. */
+T("UG6","radar de alvo (PDF): sob gate fechado nenhum perfil publica score por domínio — INCLUSIVE com o vetor-alvo suficiente (caso B); com gate aberto a comparação volta completa",()=>{
   const {w,d}=boot();
   apply(w,IDS.map((_,k)=>DOM_OF[k]===4?null:1));
   declareCtx(w,d);
@@ -117,10 +213,90 @@ T("UG6","radar de alvo (PDF): ambos os polígonos omitem UNSET; tracejado do alv
   const polys=Array.from(sec.querySelectorAll("svg.pr-radar polygon")).filter(p=>p.getAttribute("stroke"));
   const cur=polys.find(p=>p.getAttribute("stroke")==="#307FE2");
   const tgt=polys.find(p=>p.getAttribute("stroke")==="#3CB17E");
-  const note=sec.querySelector(".pr-radar-nd");
+  const note=sec.querySelector('[data-pr-nopub="target"]');
+  const celulas=Array.from(sec.querySelectorAll(".pr-doms td")).map(t=>txt(t).trim());
+  /* coluna 2 de cada linha é o ATUAL: nenhuma pode ser numérica */
+  const atuais=[]; for(let i=0;i<celulas.length;i+=5) atuais.push(celulas[i+1]);
   w.__DEV.finishPrint();
-  return nPts(cur)===4 && nPts(tgt)===4 && !!tgt.getAttribute("stroke-dasharray") &&
-    !!note && txt(note).includes("Serviços");
+  const fechadoOk = nPts(cur)===0 && nPts(tgt)===0 && !!tgt.getAttribute("stroke-dasharray") &&
+    !!note && /Evid[êe]ncia insuficiente/.test(txt(note)) &&
+    atuais.length===5 && atuais.every(c=>c==="n/d");
+
+  /* ==========================================================================
+     ERRATA FINAL · ALTO-1 · CASO B, o quadrante que faltava.
+
+     O caso negativo acima mantém o vetor-alvo TAMBÉM insuficiente (Serviços
+     com n = 0 nos dois perfis), de modo que `nPts(tgt)===0` passava por
+     ausência de conteúdo. Era exatamente esse o ponto cego apontado pelo
+     parecer 70904c113096d9a95617a80daf9eb7df28d27c1a0e0837f510fbffaa53b04120
+     (§10 ALTO-1, tabela "Ponto cego de gate").
+
+     Aqui o vetor efetivo do alvo é DELIBERADAMENTE SUFICIENTE — cinco alvos
+     sobre práticas nunca respondidas, um por domínio, levando o alvo a 10
+     confirmadas e n = 2 em todos os domínios — enquanto o perfil ATUAL
+     permanece com cinco confirmadas e o gate FECHADO. A suficiência do alvo é
+     asserida ANTES das demais verificações: sem ela o caso seria vacuoso.
+     ========================================================================== */
+  const {w:wB,d:dB}=boot();
+  const VEC_B=[1,null,null,1,null,null,1,null,null,1,null,null,1,null,null];
+  apply(wB,VEC_B);
+  declareCtx(wB,dB);
+  [["governance",3],["training",2],["detection-lifecycle",3],["endpoint",2],["external-surface",3]]
+    .forEach(([qid,v])=>{ if(wB.__DEV.setTarget(qid,v)!==true) throw new Error("setTarget recusou "+qid); });
+  wB.__DEV.showResults();
+  /* GUARDA DE NÃO-VACUIDADE: o gate do ALVO tem de estar materialmente ABERTO,
+     e o do ATUAL materialmente FECHADO. Oracle recalculado aqui, sem chamar a
+     decisão de publicação sob teste. */
+  const curB=wB.__DEV.tgtCurrentProfile();
+  const tgtB=wB.__DEV.computeTargetProfile(wB.__DEV.tgtEffectiveVector());
+  const oracleB=domScores(VEC_B.map((v,k)=>{
+    const ov={governance:3,training:2,"detection-lifecycle":3,endpoint:2,"external-surface":3}[IDS[k]];
+    return ov===undefined? v : ov; }));
+  const cenarioB = curB.suff===false && tgtB.suff===true && tgtB.overall!==null &&
+    oracleB.every(x=>x!==null);
+  wB.__DEV.preparePrint();
+  const secB=dB.querySelector("#pr-target");
+  const polysB=Array.from(secB.querySelectorAll("svg.pr-radar polygon")).filter(p=>p.getAttribute("stroke"));
+  const curPB=polysB.find(p=>p.getAttribute("stroke")==="#307FE2");
+  const tgtPB=polysB.find(p=>p.getAttribute("stroke")==="#3CB17E");
+  const celB=Array.from(secB.querySelectorAll(".pr-doms td")).map(t=>txt(t).trim());
+  const kpisB=Array.from(secB.querySelectorAll(".pr-kpi")).map(k=>txt(k).trim());
+  const notaB=txt(secB.querySelector('[data-pr-nopub="target"]'));
+  const linhasB=[]; for(let i=0;i<celB.length;i+=5) linhasB.push(celB.slice(i,i+5));
+  wB.__DEV.finishPrint();
+  const kpiAlvoB=kpisB.find(x=>/Cen[áa]rio-alvo/.test(x))||"";
+  const casoB = cenarioB &&
+    linhasB.length===5 &&
+    linhasB.every(l=>l[1]==="n/d") &&                       /* coluna ATUAL */
+    linhasB.every(l=>l[3]==="n/d") &&                       /* coluna ALVO  */
+    linhasB.every(l=>l[4]==="n/d") &&                       /* GAP          */
+    linhasB.every(l=>l[2]==="") &&                          /* nenhuma SETA */
+    nPts(curPB)===0 && nPts(tgtPB)===0 &&
+    !/\d[.,]\d/.test(kpiAlvoB) &&                           /* nenhum score de alvo */
+    !/Inexistente|Inicial|Definido|Gerenciado|Otimiz/i.test(kpiAlvoB) &&   /* nenhum ESTÁGIO */
+    /cen[áa]rio-alvo está salvo/i.test(notaB) &&             /* mensagem neutra e honesta */
+    !/previs[ãa]o|resultado validado/i.test(notaB) &&
+    Object.keys(wB.__DEV.TARGET.overrides).length===5;       /* o alvo continua SALVO e íntegro */
+
+  /* CONTROLE POSITIVO · gate ABERTO: os dois polígonos existem, com 5 vértices. */
+  const {w:w2,d:d2}=boot();
+  apply(w2,IDS.map(()=>1));
+  declareCtx(w2,d2);
+  w2.__DEV.setTarget("logs",3); w2.__DEV.showResults();
+  w2.__DEV.preparePrint();
+  const sec2=d2.querySelector("#pr-target");
+  const p2=Array.from(sec2.querySelectorAll("svg.pr-radar polygon")).filter(p=>p.getAttribute("stroke"));
+  const cur2=p2.find(p=>p.getAttribute("stroke")==="#307FE2");
+  const tgt2=p2.find(p=>p.getAttribute("stroke")==="#3CB17E");
+  const cel2=Array.from(sec2.querySelectorAll(".pr-doms td")).map(t=>txt(t).trim());
+  const linhas2=[]; for(let i=0;i<cel2.length;i+=5) linhas2.push(cel2.slice(i,i+5));
+  w2.__DEV.finishPrint();
+  /* sob gate ABERTO a comparação volta completa: setas presentes e valores
+     numéricos dos dois lados — o gate não pode passar por supressão geral. */
+  const abertoOk = nPts(cur2)===5 && nPts(tgt2)===5 &&
+    linhas2.length===5 && linhas2.every(l=>l[2]==="→") &&
+    linhas2.every(l=>/^\d\.\d$/.test(l[1])) && linhas2.every(l=>/^\d\.\d$/.test(l[3]));
+  return fechadoOk && casoB && abertoOk;
 });
 
 /* ===================== NEGATIVO — NONE/zero confirmado continua sendo zero ===================== */
@@ -182,7 +358,21 @@ T("UG8","sessão SUFICIENTE com 5 práticas UNSET: 5 vértices, nenhum score dil
 
 /* ===================== REGRESSÃO — rótulo "n/d" byte-idêntico ===================== */
 
-T("UG9","rótulo canônico 'n/d' preservado byte a byte em tela, régua e PDF",()=>{
+/* MIGRAÇÃO DE GATE · ERRATA DA AUDITORIA EXTERNA · B-01 (mesma causa de UG4).
+   O que UG9 afirmava, linha a linha:
+     radarVals[4]==="n/d" · domLbls[4]==="n/d" · prCell[4]==="n/d"
+        → o rótulo canônico `n/d` é o MESMO nos três meios. PRESERVADO.
+     radarVals[0]==="1.7" · domLbls[0].startsWith("1.7") · prRadar contém "n/d"
+        → publicação numérica do domínio 0 no radar de tela e na caixa de
+          domínio, com o gate FECHADO. Estas afirmavam B-01 no DOM legado.
+
+   A afirmação sobre o rótulo canônico é a razão de ser do gate e continua
+   integral — agora nos CINCO domínios e nos três meios, que é o que o parecer
+   exige por coerência tela × papel. As afirmações de publicação numérica sob
+   gate fechado foram substituídas pelo seu oposto verificável no PAPEL (a
+   superfície que chega ao cliente) e por um controle positivo com o gate
+   ABERTO, onde `1.7` DEVE aparecer nos três meios. */
+T("UG9","rótulo canônico 'n/d' preservado byte a byte em tela, régua e PDF; sob gate fechado o papel não publica score por domínio",()=>{
   const {w,d}=boot();
   apply(w,IDS.map((_,k)=>DOM_OF[k]===4?null:1));
   const radarVals=Array.from(d.querySelectorAll("svg.radar text.v")).map(t=>txt(t).trim());
@@ -190,11 +380,24 @@ T("UG9","rótulo canônico 'n/d' preservado byte a byte em tela, régua e PDF",(
   declareCtx(w,d);
   w.__DEV.preparePrint();
   const prCell=Array.from(d.querySelectorAll("#pr-maturity .pr-doms td")).map(t=>txt(t).trim());
-  const prRadar=txt(d.querySelector("#pr-maturity .pr-radar"));
+  const nota=d.querySelector("#pr-nopub");
   w.__DEV.finishPrint();
-  return radarVals.length===5 && radarVals[4]==="n/d" && radarVals[0]==="1.7" &&
-    domLbls[4]==="n/d" && domLbls[0].startsWith("1.7") &&
-    prCell[4]==="n/d" && prRadar.includes("n/d");
+  const fechadoOk =
+    radarVals.length===5 && radarVals[4]==="n/d" &&        /* rótulo canônico: PRESERVADO */
+    domLbls[4]==="n/d" &&                                   /* rótulo canônico: PRESERVADO */
+    prCell.length===5 && prCell.every(c=>c==="n/d") &&      /* papel: nenhum score publicado */
+    !!nota && /n\/d/.test(txt(nota));                       /* e o papel explica por quê */
+
+  /* CONTROLE POSITIVO · gate ABERTO: `1.7` aparece nos três meios, byte a byte. */
+  const {w:w2,d:d2}=boot();
+  apply(w2,IDS.map(()=>1));
+  const rv2=Array.from(d2.querySelectorAll("svg.radar text.v")).map(t=>txt(t).trim());
+  const dl2=Array.from(d2.querySelectorAll(".panel .dom .lbl > span")).map(t=>txt(t).trim());
+  declareCtx(w2,d2);
+  w2.__DEV.preparePrint();
+  const pc2=Array.from(d2.querySelectorAll("#pr-maturity .pr-doms td")).map(t=>txt(t).trim());
+  w2.__DEV.finishPrint();
+  return fechadoOk && rv2[0]==="1.7" && dl2[0].startsWith("1.7") && pc2[0]==="1.7";
 });
 
 T("UG10","EQUIVALÊNCIA: sem UNSET, a geometria é byte-idêntica à fórmula legada",()=>{

@@ -1,0 +1,1229 @@
+{
+  "ferramenta": "tools_p52_pdf_census.js",
+  "html": "quickscan_secops_soccmm_v3_2_dev.html",
+  "htmlSha256": "dfbe2f3bdda58d00367d9a90cb6ea5ee2ea8a8639fd63618ec7773438bfac85a",
+  "poppler": true,
+  "preferencias": {
+    "formato": "A4",
+    "escala": "100%",
+    "fundos": true,
+    "cabecalhoRodapeNavegador": false,
+    "margens": "12mm"
+  },
+  "casos": {
+    "1-suficiente-contexto-prioridades": {
+      "contextoInformado": true,
+      "oraculo": {
+        "confirmadas": 15,
+        "suff": true,
+        "porDominio": [
+          {
+            "n": 3,
+            "score": 0.6
+          },
+          {
+            "n": 3,
+            "score": 1.1
+          },
+          {
+            "n": 3,
+            "score": 1.1
+          },
+          {
+            "n": 3,
+            "score": 1.1
+          },
+          {
+            "n": 3,
+            "score": 1.1
+          }
+        ],
+        "overall": 1,
+        "publicaveis": [
+          0.6,
+          1.1,
+          1.1,
+          1.1,
+          1.1
+        ]
+      },
+      "modo": {
+        "classes": "v32-print-mode",
+        "printMode": true,
+        "reportLen": 130797,
+        "legacyMode": false
+      },
+      "dom": {
+        "wrapDisplay": "none",
+        "celulasDominio": [
+          "0.6",
+          "1.1",
+          "1.1",
+          "1.1",
+          "1.1"
+        ],
+        "radarRotulos": [
+          "Negócio 0.6",
+          "Pessoas 1.1",
+          "Processos 1.1",
+          "Tecnologia 1.1",
+          "Serviços 1.1"
+        ],
+        "kpiGlobal": "1.0 / 5",
+        "secoes": [
+          "pr-maturity",
+          "pr-prios",
+          "pr-findings",
+          "pr-landscape",
+          "pr-interp",
+          "pr-support",
+          "pr-arch",
+          "pr-journey",
+          "pr-annex"
+        ]
+      },
+      "arquivo": "1-suficiente-contexto-prioridades.pdf",
+      "bytes": 348592,
+      "sha256": "6eb22c480456300be565601cf9157f4e5be0320fcd0e2c40833074b700c4e3e6",
+      "totalPaginas": 11,
+      "paginas": [
+        {
+          "n": 1,
+          "larguraPt": 595.91998,
+          "alturaPt": 842.88,
+          "a4": true,
+          "caracteres": 1547,
+          "linhas": 79,
+          "tintaPct": 10.13,
+          "primeiraLinha": "FORTINET",
+          "ultimaLinha": "Processos 1.1"
+        },
+        {
+          "n": 2,
+          "larguraPt": 595.91998,
+          "alturaPt": 842.88,
+          "a4": true,
+          "caracteres": 2973,
+          "linhas": 49,
+          "tintaPct": 13.04,
+          "primeiraLinha": "Prioridades declaradas pelo negócio",
+          "ultimaLinha": "Gap moderado de maturidade"
+        },
+        {
+          "n": 3,
+          "larguraPt": 595.91998,
+          "alturaPt": 842.88,
+          "a4": true,
+          "caracteres": 3367,
+          "linhas": 52,
+          "tintaPct": 13.19,
+          "primeiraLinha": "Casos de uso de detecção · domínio Processos",
+          "ultimaLinha": "Não existe / não utilizamos"
+        },
+        {
+          "n": 4,
+          "larguraPt": 595.91998,
+          "alturaPt": 842.88,
+          "a4": true,
+          "caracteres": 2155,
+          "linhas": 39,
+          "tintaPct": 10.01,
+          "primeiraLinha": "Detecção e resposta em endpoint",
+          "ultimaLinha": "Tecnologia: não informado · Classificação: Contexto tecnológico não informado"
+        },
+        {
+          "n": 5,
+          "larguraPt": 595.91998,
+          "alturaPt": 842.88,
+          "a4": true,
+          "caracteres": 1574,
+          "linhas": 30,
+          "tintaPct": 7.36,
+          "primeiraLinha": "Analytics de segurança (SIEM/data lake) Ausência confirmada de tecnologia (whitespace)",
+          "ultimaLinha": "Tecnologia: não informado · Classificação: Contexto tecnológico não informado"
+        },
+        {
+          "n": 6,
+          "larguraPt": 595.91998,
+          "alturaPt": 842.88,
+          "a4": true,
+          "caracteres": 2243,
+          "linhas": 39,
+          "tintaPct": 11.2,
+          "primeiraLinha": "Gestão e resposta a incidentes Contexto tecnológico não informado",
+          "ultimaLinha": "Tecnologia: não informado · Classificação: Contexto tecnológico não informado"
+        },
+        {
+          "n": 7,
+          "larguraPt": 595.91998,
+          "alturaPt": 842.88,
+          "a4": true,
+          "caracteres": 2579,
+          "linhas": 40,
+          "tintaPct": 11.19,
+          "primeiraLinha": "Engenharia de detecção Contexto tecnológico não informado",
+          "ultimaLinha": "Tecnologia: não informado · Classificação: Contexto tecnológico não informado"
+        },
+        {
+          "n": 8,
+          "larguraPt": 595.91998,
+          "alturaPt": 842.88,
+          "a4": true,
+          "caracteres": 1940,
+          "linhas": 34,
+          "tintaPct": 8.96,
+          "primeiraLinha": "Gestão contínua de vulnerabilidades Contexto tecnológico não informado",
+          "ultimaLinha": "Rota B — FortiSOC (plataforma SOC unificada, SaaS) como opção arquitetural"
+        },
+        {
+          "n": 9,
+          "larguraPt": 595.91998,
+          "alturaPt": 842.88,
+          "a4": true,
+          "caracteres": 1446,
+          "linhas": 33,
+          "tintaPct": 7.39,
+          "primeiraLinha": "Jornada de maturidade",
+          "ultimaLinha": "serviços identificados devem ser tratados como possíveis habilitadores das práticas priorizadas."
+        },
+        {
+          "n": 10,
+          "larguraPt": 595.91998,
+          "alturaPt": 842.88,
+          "a4": true,
+          "caracteres": 2337,
+          "linhas": 43,
+          "tintaPct": 11.1,
+          "primeiraLinha": "Anexo — respostas da sessão",
+          "ultimaLinha": "Eventos críticos podem permanecer sem triagem durante períodos em que o negócio exige resposta."
+        },
+        {
+          "n": 11,
+          "larguraPt": 595.91998,
+          "alturaPt": 842.88,
+          "a4": true,
+          "caracteres": 389,
+          "linhas": 7,
+          "tintaPct": 1.93,
+          "primeiraLinha": "14. A superfície externa é monitorada — credenciais vazadas, marca, exposição na internet?",
+          "ultimaLinha": "Quickscan SecOps · SOC-CMM · Fortinet — relatório contextual V3.2"
+        }
+      ],
+      "textoPorPagina": [
+        {
+          "n": 1,
+          "texto": "FORTINET Negócio 1 Serviços Quickscan SecOps · SOC-CMM 5 2 Pessoas Relatório indicativo de maturidade de operações de segurança Screening indicativo de alto nível. Não substitui um assessment formal. SESSÃO Sem rótulo 4 3 Tecnologia Processos DATA DA SESSÃO 23/08/2026 23:51:25 RELATÓRIO GERADO EM 23/08/2026 VERSÃO DA FERRAMENTA 3.4.0- 23:51:26 dev.4.8.0.7 COBERTURA DA EVIDÊNCIA 15 de 15 respostas confirmadas 1. Negócio Negócio Pessoas 2. Pessoas 3. Processos 4. Tecnologia 5. Serviços Processos Tecnologia Serviços Screening indicativo de alto nível. Não substitui um assessment formal. COMO INTERPRETAR ESTE RELATÓRIO O score e o estágio vêm exclusivamente das respostas confirmadas do assessment. O contexto tecnológico não altera a nota: ter a ferramenta não eleva a maturidade. O contexto refina a classificação do gap e as recomendações — é o que torna a leitura acionável. n/d significa não avaliado, nunca zero; zero confirmado é um resultado medido. O cenário-alvo é um estado desejado e declarado, não previsão nem compromisso. As recomendações são possibilidades condicionadas ao contexto informado, sujeitas a validação. Resumo de maturidade 1.0 / 5 Inicial 15 de 15 Sem operação formal Score geral indicativo Estágio indicativo Respostas confirmadas Arquétipo declarado 0 1 2 3 4 5 Inexistente Inicial Gerenciado Definido Gerenciado quantitativamente Em otimização ▲ Você está aqui 1.0 / 5 · Inicial Negócio Pessoas Processos Tecnologia Serviços 0.6 1.1 1.1 1.1 1.1 Negócio 0.6 Serviços 1.1 Tecnologia 1.1 Pessoas 1.1 Processos 1.1"
+        },
+        {
+          "n": 2,
+          "texto": "Prioridades declaradas pelo negócio 1. A operação de segurança tem objetivos e direcionamento claros, conectados… 2. A equipe de segurança tem capacidade e redundância compatíveis com a… 3. Como os eventos e logs de segurança são centralizados e analisados hoje? Gaps de maturidade observados Gap alto de maturidade Direcionamento e objetivos · domínio Negócio EVIDÊNCIA DECLARADA: Não há direcionamento formal — Segurança atua principalmente por demanda. CAPABILITY A DESENVOLVER: Direcionamento e responsabilidades de segurança Gap alto de maturidade Governança · domínio Negócio EVIDÊNCIA DECLARADA: Responsabilidade indefinida — Ninguém possui claramente a accountability. CAPABILITY A DESENVOLVER: Governança e reporte de risco Gap alto de maturidade Capacidade do time · domínio Pessoas EVIDÊNCIA DECLARADA: Capacidade insuficiente — A demanda excede a equipe; atividades relevantes ficam sem dono. CAPABILITY A DESENVOLVER: Capacidade e resiliência do time Gap alto de maturidade Resposta a incidentes · domínio Processos EVIDÊNCIA DECLARADA: Sem processo definido — A resposta depende da situação e de quem está disponível. CAPABILITY A DESENVOLVER: Gestão e execução de resposta a incidentes Gap alto de maturidade Centralização de logs · domínio Tecnologia EVIDÊNCIA DECLARADA: Sem centralização — Cada ferramenta mantém seus logs; a investigação depende de consultas isoladas. CAPABILITY A DESENVOLVER: Análise centralizada, correlação e retenção de eventos POSSÍVEIS CAMINHOS DE APOIO Para a capability Análise centralizada, correlação e retenção de eventos: Apareceu porque o gap acima foi observado e o contexto declarado para esta capability é Não existe / não utilizamos. As opções são caminhos possíveis, a validar — não são requisito nem compra recomendada. FortiAnalyzer — logging e analytics no ecossistema Fortinet declarado. FortiSIEM — necessidade SIEM ampla de TI/OT, com múltiplas fontes e correlação em escala. FortiSOC — abordagem integrada, condicionada à arquitetura declarada. Gap alto de maturidade Cobertura de monitoramento · domínio Serviços EVIDÊNCIA DECLARADA: Cobertura insuficiente para a necessidade — Eventos críticos podem permanecer sem triagem durante períodos em que o negócio exige resposta. CAPABILITY A DESENVOLVER: Cobertura de monitoramento alinhada ao risco Políticas e privacidade · domínio Negócio EVIDÊNCIA DECLARADA: Existem parcialmente — Documentos dispersos ou pouco comunicados. CAPABILITY A DESENVOLVER: Políticas de segurança e privacidade (LGPD) Gap moderado de maturidade Gap moderado de maturidade Capacitação · domínio Pessoas EVIDÊNCIA DECLARADA: Treinamento eventual — Depende de iniciativa individual ou necessidade pontual. CAPABILITY A DESENVOLVER: Desenvolvimento de competências do time Conhecimento operacional · domínio Pessoas EVIDÊNCIA DECLARADA: Documentação parcial — Existe, mas desatualizada ou incompleta. CAPABILITY A DESENVOLVER: Gestão de conhecimento operacional Gap moderado de maturidade"
+        },
+        {
+          "n": 3,
+          "texto": "Casos de uso de detecção · domínio Processos EVIDÊNCIA DECLARADA: Gestão reativa — Regras ajustadas após falsos positivos, incidentes ou problemas. CAPABILITY A DESENVOLVER: Ciclo de vida de detecção (detection engineering) Gap moderado de maturidade POSSÍVEIS CAMINHOS DE APOIO Para a capability Ciclo de vida de detecção (detection engineering): Contexto tecnológico não declarado para esta capability: as opções abaixo exigem validar aderência antes de qualquer recomendação. FortiSIEM — coleta, correlação e analytics quando a detecção precisa cobrir fontes heterogêneas; validar aderência ao contexto do cliente. FortiAnalyzer — logging e analytics quando a operação já é majoritariamente Fortinet; validar aderência ao contexto do cliente. FortiSOAR — orquestração do ciclo de investigação e resposta dos casos de uso; validar aderência ao contexto do cliente. FortiSOC — abordagem integrada de SOC, como opção de plataforma — nunca como produto obrigatório; validar aderência ao contexto do cliente. Gap moderado de maturidade Automação · domínio Processos EVIDÊNCIA DECLARADA: Automações pontuais — Scripts ou integrações isoladas. CAPABILITY A DESENVOLVER: Orquestração e automação de resposta POSSÍVEIS CAMINHOS DE APOIO Para a capability Orquestração e automação de resposta: Contexto tecnológico não declarado para esta capability: as opções abaixo exigem validar aderência antes de qualquer recomendação. FortiSOAR — playbooks, integrações e padronização do tratamento; validar aderência ao contexto do cliente. Automação nativa de FortiAnalyzer/FortiSIEM — somente quando a necessidade e a arquitetura declaradas forem compatíveis; validar aderência ao contexto do cliente. Gap moderado de maturidade Proteção de endpoint · domínio Tecnologia EVIDÊNCIA DECLARADA: EDR parcial — Somente parte do parque, ou com funções limitadas. CAPABILITY A DESENVOLVER: Detecção e resposta em endpoint (EDR) Gap moderado de maturidade Visibilidade de rede · domínio Tecnologia EVIDÊNCIA DECLARADA: Visibilidade parcial — Alguns segmentos ou ferramentas fornecem visibilidade, mas existem lacunas relevantes de cobertura ou análise. CAPABILITY A DESENVOLVER: Network Detection & Response Gap moderado de maturidade Superfície externa · domínio Serviços EVIDÊNCIA DECLARADA: Consultas pontuais — Após incidentes ou por demanda. CAPABILITY A DESENVOLVER: Gestão de exposição externa (EASM/DRPS) Gap moderado de maturidade Gestão de vulnerabilidades · domínio Serviços EVIDÊNCIA DECLARADA: Scans recorrentes sem ciclo — A descoberta acontece; a correção não segue processo consistente. CAPABILITY A DESENVOLVER: Gestão contínua de vulnerabilidades POSSÍVEIS CAMINHOS DE APOIO Para a capability Gestão contínua de vulnerabilidades: Contexto tecnológico não declarado para esta capability: as opções abaixo exigem validar aderência antes de qualquer recomendação. FortiClient administrado por EMS — descoberta, inventário, varredura e patching no escopo de endpoint; não substitui uma plataforma completa de gestão de vulnerabilidades; validar aderência ao contexto do cliente. FortiRecon — exposição externa (EASM/DRPS) — pertinente à superfície externa, não à gestão interna; validar aderência ao contexto do cliente. Contexto tecnológico declarado Analytics de segurança (SIEM/data lake) Plataforma de SOC unificada Não existe / não utilizamos Não existe / não utilizamos"
+        },
+        {
+          "n": 4,
+          "texto": "Detecção e resposta em endpoint Não existe / não utilizamos Interpretação do contexto Analytics de segurança (SIEM/data lake) Ausência confirmada de tecnologia (whitespace) Gap de maturidade com ausência confirmada — candidato a conversa de aquisição na próxima etapa. Plataforma de SOC unificada Capability não avaliada pelo quickscan Registrada apenas como contexto; não afeta a maturidade. Detecção e resposta em endpoint Ausência confirmada de tecnologia (whitespace) Gap de maturidade com ausência confirmada — candidato a conversa de aquisição na próxima etapa. Como a Fortinet pode apoiar — contexto declarado Apoio nas prioridades declaradas Governança do SOC Apoio baseado na maturidade prioridade declarada Apoio baseado na maturidade — Landscape tecnológico não se aplica a esta capability. POR QUE APARECEU Maturidade: gap alto — origem: “A operação de segurança tem objetivos e direcionamento claros, conectados…”; “Há governança de segurança estabelecida — papéis, responsabilidades…” Prioridade declarada pelo negócio: “A operação de segurança tem objetivos e direcionamento claros, conectados…” Tecnologia: não informado · Classificação: Contexto tecnológico não informado Capacidade do time Apoio baseado na maturidade prioridade declarada Apoio baseado na maturidade — Landscape tecnológico não se aplica a esta capability. SERVIÇOS FortiGuard SOCaaS serviço operacional · Operação O PÇÕ ES D E CO NS UM O/LI CE NC IA ME NTO FortiPoints · elegibilidade confirmada mecanismo: pontos universais (FortiFlex, FortiSIEM points, advanced/IR service points, contratos anuais) Créditos consolidados utilizados no ecossistema FortiMarketplace; quando aplicável, podem ser transferidos para FortiFlex Points. pontos de serviços avançados/IR cobertos pelo FortiPoints (fonte oficial) Página oficial ↗ (https://www.fortinet.com/products/socaas) POR QUE APARECEU Maturidade: gap alto — origem: “A equipe de segurança tem capacidade e redundância compatíveis com a…” Prioridade declarada pelo negócio: “A equipe de segurança tem capacidade e redundância compatíveis com a…” Tecnologia: não informado · Classificação: Contexto tecnológico não informado"
+        },
+        {
+          "n": 5,
+          "texto": "Analytics de segurança (SIEM/data lake) Ausência confirmada de tecnologia (whitespace) prioridade declarada TECNOLOGIA — OFERTAS FortiAnalyzer aquisição candidata Página oficial ↗ (https://www.fortinet.com/products/management/fortianalyzer) FortiSIEM aquisição candidata Página oficial ↗ (https://www.fortinet.com/products/siem/fortisiem) POR QUE APARECEU Maturidade: gap alto — origem: “Como os eventos e logs de segurança são centralizados e analisados hoje?” Prioridade declarada pelo negócio: “Como os eventos e logs de segurança são centralizados e analisados hoje?” Tecnologia: ausência confirmada · Classificação: Ausência confirmada de tecnologia (whitespace) Apoio direto — ausência confirmada de tecnologia Detecção e resposta em endpoint Ausência confirmada de tecnologia (whitespace) TECNOLOGIA — OFERTAS NE Fortinet Endpoint Security modalidade a definir oferta a definir no aprofundamento POR QUE APARECEU Maturidade: gap moderado — origem: “Qual a capacidade de detecção e resposta nos endpoints hoje?” Tecnologia: ausência confirmada · Classificação: Ausência confirmada de tecnologia (whitespace) Leitura base — contexto tecnológico não informado Gestão de conhecimento Contexto tecnológico não informado Leitura V3.1.3 preservada (maturidade: gap moderado). Informe o contexto desta capability para interpretação V3.2 — nenhum produto é inferido sem contexto. POR QUE APARECEU Maturidade: gap moderado — origem: “O conhecimento da operação está documentado — ou concentrado em…” Tecnologia: não informado · Classificação: Contexto tecnológico não informado"
+        },
+        {
+          "n": 6,
+          "texto": "Gestão e resposta a incidentes Contexto tecnológico não informado Leitura V3.1.3 preservada (maturidade: gap alto). Informe o contexto desta capability para interpretação V3.2 — nenhum produto é inferido sem contexto. SERVIÇOS FortiGuard Incident Readiness Subscription serviço operacional · Preparação O PÇÕ ES D E CO NS UM O/LI CE NC IA ME NTO FortiPoints · elegibilidade confirmada mecanismo: pontos universais (FortiFlex, FortiSIEM points, advanced/IR service points, contratos anuais) Créditos consolidados utilizados no ecossistema FortiMarketplace; quando aplicável, podem ser transferidos para FortiFlex Points. pontos de serviços avançados/IR cobertos pelo FortiPoints (fonte oficial) Incident Response Plan Development serviço operacional · Preparação O PÇÕ ES D E CO NS UM O/LI CE NC IA ME NTO FortiPoints · elegibilidade confirmada mecanismo: pontos universais (FortiFlex, FortiSIEM points, advanced/IR service points, contratos anuais) Créditos consolidados utilizados no ecossistema FortiMarketplace; quando aplicável, podem ser transferidos para FortiFlex Points. pontos de serviços avançados/IR cobertos pelo FortiPoints (fonte oficial) Incident Response Playbook Development serviço operacional · Preparação O PÇÕ ES D E CO NS UM O/LI CE NC IA ME NTO FortiPoints · elegibilidade confirmada mecanismo: pontos universais (FortiFlex, FortiSIEM points, advanced/IR service points, contratos anuais) Créditos consolidados utilizados no ecossistema FortiMarketplace; quando aplicável, podem ser transferidos para FortiFlex Points. pontos de serviços avançados/IR cobertos pelo FortiPoints (fonte oficial) Cybersecurity Tabletop Exercise serviço operacional · Preparação O PÇÕ ES D E CO NS UM O/LI CE NC IA ME NTO FortiPoints · elegibilidade confirmada mecanismo: pontos universais (FortiFlex, FortiSIEM points, advanced/IR service points, contratos anuais) Créditos consolidados utilizados no ecossistema FortiMarketplace; quando aplicável, podem ser transferidos para FortiFlex Points. pontos de serviços avançados/IR cobertos pelo FortiPoints (fonte oficial) POR QUE APARECEU Maturidade: gap alto — origem: “Como a resposta a incidentes acontece hoje?” Tecnologia: não informado · Classificação: Contexto tecnológico não informado"
+        },
+        {
+          "n": 7,
+          "texto": "Engenharia de detecção Contexto tecnológico não informado Leitura V3.1.3 preservada (maturidade: gap moderado). Informe o contexto desta capability para interpretação V3.2 — nenhum produto é inferido sem contexto. POR QUE APARECEU Maturidade: gap moderado — origem: “As detecções são gerenciadas como casos de uso — criadas, validadas…” Tecnologia: não informado · Classificação: Contexto tecnológico não informado Automação de segurança (SOAR) Contexto tecnológico não informado Leitura V3.1.3 preservada (maturidade: gap moderado). Informe o contexto desta capability para interpretação V3.2 — nenhum produto é inferido sem contexto. POR QUE APARECEU Maturidade: gap moderado — origem: “Ações de triagem e resposta são automatizadas — ou 100% manuais?” Tecnologia: não informado · Classificação: Contexto tecnológico não informado Monitoramento contínuo Contexto tecnológico não informado Leitura V3.1.3 preservada (maturidade: gap alto). Informe o contexto desta capability para interpretação V3.2 — nenhum produto é inferido sem contexto. SERVIÇOS FortiGuard SOCaaS serviço operacional · Operação O PÇÕ ES D E CO NS UM O/LI CE NC IA ME NTO FortiPoints · elegibilidade confirmada mecanismo: pontos universais (FortiFlex, FortiSIEM points, advanced/IR service points, contratos anuais) Créditos consolidados utilizados no ecossistema FortiMarketplace; quando aplicável, podem ser transferidos para FortiFlex Points. pontos de serviços avançados/IR cobertos pelo FortiPoints (fonte oficial) Página oficial ↗ (https://www.fortinet.com/products/socaas) POR QUE APARECEU Maturidade: gap alto — origem: “A operação possui cobertura de monitoramento compatível com a…” Tecnologia: não informado · Classificação: Contexto tecnológico não informado Network Detection & Response Contexto tecnológico não informado Leitura V3.1.3 preservada (maturidade: gap moderado). Informe o contexto desta capability para interpretação V3.2 — nenhum produto é inferido sem contexto. POR QUE APARECEU Maturidade: gap moderado — origem: “A operação possui visibilidade e capacidade de detectar…” Tecnologia: não informado · Classificação: Contexto tecnológico não informado Gestão de exposição externa (EASM/DRPS) Contexto tecnológico não informado Leitura V3.1.3 preservada (maturidade: gap moderado). Informe o contexto desta capability para interpretação V3.2 — nenhum produto é inferido sem contexto. POR QUE APARECEU Maturidade: gap moderado — origem: “A superfície externa é monitorada — credenciais vazadas, marca,…” Tecnologia: não informado · Classificação: Contexto tecnológico não informado"
+        },
+        {
+          "n": 8,
+          "texto": "Gestão contínua de vulnerabilidades Contexto tecnológico não informado Leitura V3.1.3 preservada (maturidade: gap moderado). Informe o contexto desta capability para interpretação V3.2 — nenhum produto é inferido sem contexto. SERVIÇOS Vulnerability Assessment serviço operacional · Avaliação O PÇÕ ES D E CO NS UM O/LI CE NC IA ME NTO FortiPoints · elegibilidade confirmada mecanismo: pontos universais (FortiFlex, FortiSIEM points, advanced/IR service points, contratos anuais) Créditos consolidados utilizados no ecossistema FortiMarketplace; quando aplicável, podem ser transferidos para FortiFlex Points. pontos de serviços avançados/IR cobertos pelo FortiPoints (fonte oficial) POR QUE APARECEU Maturidade: gap moderado — origem: “A gestão de vulnerabilidades é contínua e priorizada — não apenas um…” Tecnologia: não informado · Classificação: Contexto tecnológico não informado Apoio baseado na maturidade Competências e desenvolvimento Apoio baseado na maturidade Apoio baseado na maturidade — Landscape tecnológico não se aplica a esta capability. SERVIÇOS Incident Response Training serviço operacional · Preparação O PÇÕ ES D E CO NS UM O/LI CE NC IA ME NTO FortiPoints · elegibilidade confirmada mecanismo: pontos universais (FortiFlex, FortiSIEM points, advanced/IR service points, contratos anuais) Créditos consolidados utilizados no ecossistema FortiMarketplace; quando aplicável, podem ser transferidos para FortiFlex Points. pontos de serviços avançados/IR cobertos pelo FortiPoints (fonte oficial) POR QUE APARECEU Maturidade: gap moderado — origem: “Quem opera segurança recebe treinamento e desenvolvimento contínuos?” Tecnologia: não informado · Classificação: Contexto tecnológico não informado Leitura arquitetural 4 gaps confirmados em capabilities core; ausência confirmada de plataforma SOC. Rota A — evoluir a stack atual por capability Rota B — FortiSOC (plataforma SOC unificada, SaaS) como opção arquitetural"
+        },
+        {
+          "n": 9,
+          "texto": "Jornada de maturidade 0 Inexistente 1 2 3 4 5 Inicial Gerenciado Definido PRÓXIMO ESTÁGIO Gerenciado quantitativamente Em otimização PERFIL ATUAL PA R A AVA N Ç A R Formalizar direcionamento, responsabilidades e critérios de decisão. Dimensionar e sustentar a capacidade do time. Consolidar centralização, correlação e retenção de eventos. O próximo estágio representa a próxima faixa do modelo de maturidade. A transição depende da evolução consistente das práticas e das evidências correspondentes. Leitura executiva O Quickscan posiciona a operação em Inicial (1.0/5), com maior consistência relativa em Pessoas, Processos, Tecnologia e Serviços e oportunidades mais relevantes de evolução em Negócio. A distribuição mostra que a evolução não é uniforme entre os domínios avaliados. Considerando as prioridades declaradas pelo negócio — Direcionamento e objetivos, Capacidade do time e Centralização de logs —, foram observados 6 gaps altos e 9 moderados, que concentram os principais pontos de evolução identificados nesta sessão. Os próximos passos mais consistentes envolvem: formalizar direcionamento, responsabilidades e critérios de decisão; dimensionar e sustentar a capacidade do time; consolidar centralização, correlação e retenção de eventos. O contexto tecnológico declarado foi considerado na leitura das oportunidades. As soluções e serviços identificados devem ser tratados como possíveis habilitadores das práticas priorizadas."
+        },
+        {
+          "n": 10,
+          "texto": "Anexo — respostas da sessão 1. A operação de segurança tem direcionamento, responsabilidades e objetivos claros, conectados ao negócio? Não há direcionamento formal Segurança atua principalmente por demanda. 2. Há governança de segurança estabelecida — papéis, responsabilidades e reporte à liderança? Responsabilidade indefinida Ninguém possui claramente a accountability. 3. Políticas de segurança e privacidade (incluindo LGPD) estão definidas e vigentes? Existem parcialmente Documentos dispersos ou pouco comunicados. 4. A equipe de segurança tem capacidade e redundância compatíveis com a demanda — sem depender de poucas pessoas? Capacidade insuficiente A demanda excede a equipe; atividades relevantes ficam sem dono. 5. Quem opera segurança recebe treinamento e desenvolvimento contínuos? Treinamento eventual Depende de iniciativa individual ou necessidade pontual. 6. O conhecimento da operação está documentado — ou concentrado em poucas cabeças? Documentação parcial Existe, mas desatualizada ou incompleta. 7. Como a resposta a incidentes acontece hoje? Sem processo definido A resposta depende da situação e de quem está disponível. 8. As detecções são gerenciadas como casos de uso — criadas, validadas e revisadas? Gestão reativa Regras ajustadas após falsos positivos, incidentes ou problemas. 9. Ações de triagem e resposta são automatizadas — ou 100% manuais? Automações pontuais Scripts ou integrações isoladas. 10. Como os eventos e logs de segurança são centralizados e analisados hoje? Sem centralização Cada ferramenta mantém seus logs; a investigação depende de consultas isoladas. 11. Qual a capacidade de detecção e resposta nos endpoints hoje? EDR parcial Somente parte do parque, ou com funções limitadas. 12. A operação possui visibilidade e capacidade de detectar comportamento suspeito no tráfego de rede, inclusive tráfego leste-oeste e ativos onde agentes não chegam? Visibilidade parcial Alguns segmentos ou ferramentas fornecem visibilidade, mas existem lacunas relevantes de cobertura ou análise. 13. A operação possui cobertura de monitoramento compatível com a criticidade, os SLAs e o risco do negócio — inclusive fora do horário comercial quando necessário? Cobertura insuficiente para a necessidade Eventos críticos podem permanecer sem triagem durante períodos em que o negócio exige resposta."
+        },
+        {
+          "n": 11,
+          "texto": "14. A superfície externa é monitorada — credenciais vazadas, marca, exposição na internet? Consultas pontuais Após incidentes ou por demanda. 15. A gestão de vulnerabilidades é contínua e priorizada — não apenas um scan eventual? Scans recorrentes sem ciclo A descoberta acontece; a correção não segue processo consistente. Quickscan SecOps · SOC-CMM · Fortinet — relatório contextual V3.2"
+        }
+      ],
+      "errosDePagina": []
+    },
+    "2-suficiente-sem-contexto-prioridades": {
+      "contextoInformado": false,
+      "oraculo": {
+        "confirmadas": 15,
+        "suff": true,
+        "porDominio": [
+          {
+            "n": 3,
+            "score": 0.6
+          },
+          {
+            "n": 3,
+            "score": 1.1
+          },
+          {
+            "n": 3,
+            "score": 1.1
+          },
+          {
+            "n": 3,
+            "score": 1.1
+          },
+          {
+            "n": 3,
+            "score": 1.1
+          }
+        ],
+        "overall": 1,
+        "publicaveis": [
+          0.6,
+          1.1,
+          1.1,
+          1.1,
+          1.1
+        ]
+      },
+      "modo": {
+        "classes": "v32-print-mode",
+        "printMode": true,
+        "reportLen": 29740,
+        "legacyMode": true
+      },
+      "dom": {
+        "wrapDisplay": "none",
+        "celulasDominio": [
+          "0.6",
+          "1.1",
+          "1.1",
+          "1.1",
+          "1.1"
+        ],
+        "radarRotulos": [
+          "Negócio 0.6",
+          "Pessoas 1.1",
+          "Processos 1.1",
+          "Tecnologia 1.1",
+          "Serviços 1.1"
+        ],
+        "kpiGlobal": "1.0 / 5",
+        "secoes": [
+          "pr-maturity",
+          "pr-prios",
+          "pr-findings",
+          "pr-landscape",
+          "pr-journey",
+          "pr-annex"
+        ]
+      },
+      "arquivo": "2-suficiente-sem-contexto-prioridades.pdf",
+      "bytes": 209606,
+      "sha256": "3d058cbb68de1d2109d6f737a348bc5dc9c93a051d86987aaabb4033d248ac59",
+      "totalPaginas": 6,
+      "paginas": [
+        {
+          "n": 1,
+          "larguraPt": 595.91998,
+          "alturaPt": 842.88,
+          "a4": true,
+          "caracteres": 1547,
+          "linhas": 79,
+          "tintaPct": 10.13,
+          "primeiraLinha": "FORTINET",
+          "ultimaLinha": "Processos 1.1"
+        },
+        {
+          "n": 2,
+          "larguraPt": 595.91998,
+          "alturaPt": 842.88,
+          "a4": true,
+          "caracteres": 3025,
+          "linhas": 49,
+          "tintaPct": 14.84,
+          "primeiraLinha": "Prioridades declaradas pelo negócio",
+          "ultimaLinha": "CAPABILITY A DESENVOLVER: Gestão de conhecimento operacional"
+        },
+        {
+          "n": 3,
+          "larguraPt": 595.91998,
+          "alturaPt": 842.88,
+          "a4": true,
+          "caracteres": 3608,
+          "linhas": 53,
+          "tintaPct": 13.92,
+          "primeiraLinha": "Casos de uso de detecção · domínio Processos",
+          "ultimaLinha": "apoio em base geral, sem afirmar aderência a produto algum."
+        },
+        {
+          "n": 4,
+          "larguraPt": 595.91998,
+          "alturaPt": 842.88,
+          "a4": true,
+          "caracteres": 1382,
+          "linhas": 33,
+          "tintaPct": 7.06,
+          "primeiraLinha": "Jornada de maturidade",
+          "ultimaLinha": "ou ausência de ferramentas."
+        },
+        {
+          "n": 5,
+          "larguraPt": 595.91998,
+          "alturaPt": 842.88,
+          "a4": true,
+          "caracteres": 2337,
+          "linhas": 43,
+          "tintaPct": 11.1,
+          "primeiraLinha": "Anexo — respostas da sessão",
+          "ultimaLinha": "Eventos críticos podem permanecer sem triagem durante períodos em que o negócio exige resposta."
+        },
+        {
+          "n": 6,
+          "larguraPt": 595.91998,
+          "alturaPt": 842.88,
+          "a4": true,
+          "caracteres": 439,
+          "linhas": 7,
+          "tintaPct": 2.04,
+          "primeiraLinha": "14. A superfície externa é monitorada — credenciais vazadas, marca, exposição na internet?",
+          "ultimaLinha": "Quickscan SecOps · SOC-CMM · Fortinet — relatório contextual V3.2 · contexto tecnológico não informado nesta sessão"
+        }
+      ],
+      "textoPorPagina": [
+        {
+          "n": 1,
+          "texto": "FORTINET Negócio 1 Serviços Quickscan SecOps · SOC-CMM 5 2 Pessoas Relatório indicativo de maturidade de operações de segurança Screening indicativo de alto nível. Não substitui um assessment formal. SESSÃO Sem rótulo 4 3 Tecnologia Processos DATA DA SESSÃO 23/08/2026 23:51:27 RELATÓRIO GERADO EM 23/08/2026 VERSÃO DA FERRAMENTA 3.4.0- 23:51:27 dev.4.8.0.7 COBERTURA DA EVIDÊNCIA 15 de 15 respostas confirmadas 1. Negócio Negócio Pessoas 2. Pessoas 3. Processos 4. Tecnologia 5. Serviços Processos Tecnologia Serviços Screening indicativo de alto nível. Não substitui um assessment formal. COMO INTERPRETAR ESTE RELATÓRIO O score e o estágio vêm exclusivamente das respostas confirmadas do assessment. O contexto tecnológico não altera a nota: ter a ferramenta não eleva a maturidade. O contexto refina a classificação do gap e as recomendações — é o que torna a leitura acionável. n/d significa não avaliado, nunca zero; zero confirmado é um resultado medido. O cenário-alvo é um estado desejado e declarado, não previsão nem compromisso. As recomendações são possibilidades condicionadas ao contexto informado, sujeitas a validação. Resumo de maturidade 1.0 / 5 Inicial 15 de 15 Sem operação formal Score geral indicativo Estágio indicativo Respostas confirmadas Arquétipo declarado 0 1 2 3 4 5 Inexistente Inicial Gerenciado Definido Gerenciado quantitativamente Em otimização ▲ Você está aqui 1.0 / 5 · Inicial Negócio Pessoas Processos Tecnologia Serviços 0.6 1.1 1.1 1.1 1.1 Negócio 0.6 Serviços 1.1 Tecnologia 1.1 Pessoas 1.1 Processos 1.1"
+        },
+        {
+          "n": 2,
+          "texto": "Prioridades declaradas pelo negócio 1. A operação de segurança tem objetivos e direcionamento claros, conectados… 2. A equipe de segurança tem capacidade e redundância compatíveis com a… 3. Como os eventos e logs de segurança são centralizados e analisados hoje? Gaps de maturidade observados Gap alto de maturidade Direcionamento e objetivos · domínio Negócio EVIDÊNCIA DECLARADA: Não há direcionamento formal — Segurança atua principalmente por demanda. CAPABILITY A DESENVOLVER: Direcionamento e responsabilidades de segurança Gap alto de maturidade Governança · domínio Negócio EVIDÊNCIA DECLARADA: Responsabilidade indefinida — Ninguém possui claramente a accountability. CAPABILITY A DESENVOLVER: Governança e reporte de risco Gap alto de maturidade Capacidade do time · domínio Pessoas EVIDÊNCIA DECLARADA: Capacidade insuficiente — A demanda excede a equipe; atividades relevantes ficam sem dono. CAPABILITY A DESENVOLVER: Capacidade e resiliência do time Gap alto de maturidade Resposta a incidentes · domínio Processos EVIDÊNCIA DECLARADA: Sem processo definido — A resposta depende da situação e de quem está disponível. CAPABILITY A DESENVOLVER: Gestão e execução de resposta a incidentes Gap alto de maturidade Centralização de logs · domínio Tecnologia EVIDÊNCIA DECLARADA: Sem centralização — Cada ferramenta mantém seus logs; a investigação depende de consultas isoladas. CAPABILITY A DESENVOLVER: Análise centralizada, correlação e retenção de eventos POSSÍVEIS CAMINHOS DE APOIO Para a capability Análise centralizada, correlação e retenção de eventos: Contexto tecnológico não declarado para esta capability: as opções abaixo exigem validar aderência antes de qualquer recomendação. FortiAnalyzer — logging e analytics no ecossistema Fortinet declarado; validar aderência ao contexto do cliente. FortiSIEM — necessidade SIEM ampla de TI/OT, com múltiplas fontes e correlação em escala; validar aderência ao contexto do cliente. FortiSOC — abordagem integrada, condicionada à arquitetura declarada; validar aderência ao contexto do cliente. Gap alto de maturidade Cobertura de monitoramento · domínio Serviços EVIDÊNCIA DECLARADA: Cobertura insuficiente para a necessidade — Eventos críticos podem permanecer sem triagem durante períodos em que o negócio exige resposta. CAPABILITY A DESENVOLVER: Cobertura de monitoramento alinhada ao risco Gap moderado de maturidade Políticas e privacidade · domínio Negócio EVIDÊNCIA DECLARADA: Existem parcialmente — Documentos dispersos ou pouco comunicados. CAPABILITY A DESENVOLVER: Políticas de segurança e privacidade (LGPD) Gap moderado de maturidade Capacitação · domínio Pessoas EVIDÊNCIA DECLARADA: Treinamento eventual — Depende de iniciativa individual ou necessidade pontual. CAPABILITY A DESENVOLVER: Desenvolvimento de competências do time Gap moderado de maturidade Conhecimento operacional · domínio Pessoas EVIDÊNCIA DECLARADA: Documentação parcial — Existe, mas desatualizada ou incompleta. CAPABILITY A DESENVOLVER: Gestão de conhecimento operacional"
+        },
+        {
+          "n": 3,
+          "texto": "Casos de uso de detecção · domínio Processos EVIDÊNCIA DECLARADA: Gestão reativa — Regras ajustadas após falsos positivos, incidentes ou problemas. CAPABILITY A DESENVOLVER: Ciclo de vida de detecção (detection engineering) Gap moderado de maturidade POSSÍVEIS CAMINHOS DE APOIO Para a capability Ciclo de vida de detecção (detection engineering): Contexto tecnológico não declarado para esta capability: as opções abaixo exigem validar aderência antes de qualquer recomendação. FortiSIEM — coleta, correlação e analytics quando a detecção precisa cobrir fontes heterogêneas; validar aderência ao contexto do cliente. FortiAnalyzer — logging e analytics quando a operação já é majoritariamente Fortinet; validar aderência ao contexto do cliente. FortiSOAR — orquestração do ciclo de investigação e resposta dos casos de uso; validar aderência ao contexto do cliente. FortiSOC — abordagem integrada de SOC, como opção de plataforma — nunca como produto obrigatório; validar aderência ao contexto do cliente. Gap moderado de maturidade Automação · domínio Processos EVIDÊNCIA DECLARADA: Automações pontuais — Scripts ou integrações isoladas. CAPABILITY A DESENVOLVER: Orquestração e automação de resposta POSSÍVEIS CAMINHOS DE APOIO Para a capability Orquestração e automação de resposta: Contexto tecnológico não declarado para esta capability: as opções abaixo exigem validar aderência antes de qualquer recomendação. FortiSOAR — playbooks, integrações e padronização do tratamento; validar aderência ao contexto do cliente. Automação nativa de FortiAnalyzer/FortiSIEM — somente quando a necessidade e a arquitetura declaradas forem compatíveis; validar aderência ao contexto do cliente. Gap moderado de maturidade Proteção de endpoint · domínio Tecnologia EVIDÊNCIA DECLARADA: EDR parcial — Somente parte do parque, ou com funções limitadas. CAPABILITY A DESENVOLVER: Detecção e resposta em endpoint (EDR) Gap moderado de maturidade Visibilidade de rede · domínio Tecnologia EVIDÊNCIA DECLARADA: Visibilidade parcial — Alguns segmentos ou ferramentas fornecem visibilidade, mas existem lacunas relevantes de cobertura ou análise. CAPABILITY A DESENVOLVER: Network Detection & Response Gap moderado de maturidade Superfície externa · domínio Serviços EVIDÊNCIA DECLARADA: Consultas pontuais — Após incidentes ou por demanda. CAPABILITY A DESENVOLVER: Gestão de exposição externa (EASM/DRPS) Gap moderado de maturidade Gestão de vulnerabilidades · domínio Serviços EVIDÊNCIA DECLARADA: Scans recorrentes sem ciclo — A descoberta acontece; a correção não segue processo consistente. CAPABILITY A DESENVOLVER: Gestão contínua de vulnerabilidades POSSÍVEIS CAMINHOS DE APOIO Para a capability Gestão contínua de vulnerabilidades: Contexto tecnológico não declarado para esta capability: as opções abaixo exigem validar aderência antes de qualquer recomendação. FortiClient administrado por EMS — descoberta, inventário, varredura e patching no escopo de endpoint; não substitui uma plataforma completa de gestão de vulnerabilidades; validar aderência ao contexto do cliente. FortiRecon — exposição externa (EASM/DRPS) — pertinente à superfície externa, não à gestão interna; validar aderência ao contexto do cliente. Contexto tecnológico Não informado nesta sessão não informado Nenhuma capability, contexto de arquitetura, plataforma, licenciamento ou requisito específico foi declarado nesta sessão. A ausência de contexto é um estado legítimo e completo do assessment: ela não altera score, estágio, suficiência nem gaps — apenas mantém a leitura de apoio em base geral, sem afirmar aderência a produto algum."
+        },
+        {
+          "n": 4,
+          "texto": "Jornada de maturidade 0 Inexistente 1 2 3 4 5 Inicial Gerenciado Definido PRÓXIMO ESTÁGIO Gerenciado quantitativamente Em otimização PERFIL ATUAL PA R A AVA N Ç A R Formalizar direcionamento, responsabilidades e critérios de decisão. Dimensionar e sustentar a capacidade do time. Consolidar centralização, correlação e retenção de eventos. O próximo estágio representa a próxima faixa do modelo de maturidade. A transição depende da evolução consistente das práticas e das evidências correspondentes. Leitura executiva O Quickscan posiciona a operação em Inicial (1.0/5), com maior consistência relativa em Pessoas, Processos, Tecnologia e Serviços e oportunidades mais relevantes de evolução em Negócio. A distribuição mostra que a evolução não é uniforme entre os domínios avaliados. Considerando as prioridades declaradas pelo negócio — Direcionamento e objetivos, Capacidade do time e Centralização de logs —, foram observados 6 gaps altos e 9 moderados, que concentram os principais pontos de evolução identificados nesta sessão. Os próximos passos mais consistentes envolvem: formalizar direcionamento, responsabilidades e critérios de decisão; dimensionar e sustentar a capacidade do time; consolidar centralização, correlação e retenção de eventos. O contexto tecnológico não foi informado nesta sessão; por isso, a leitura evita inferir presença ou ausência de ferramentas."
+        },
+        {
+          "n": 5,
+          "texto": "Anexo — respostas da sessão 1. A operação de segurança tem direcionamento, responsabilidades e objetivos claros, conectados ao negócio? Não há direcionamento formal Segurança atua principalmente por demanda. 2. Há governança de segurança estabelecida — papéis, responsabilidades e reporte à liderança? Responsabilidade indefinida Ninguém possui claramente a accountability. 3. Políticas de segurança e privacidade (incluindo LGPD) estão definidas e vigentes? Existem parcialmente Documentos dispersos ou pouco comunicados. 4. A equipe de segurança tem capacidade e redundância compatíveis com a demanda — sem depender de poucas pessoas? Capacidade insuficiente A demanda excede a equipe; atividades relevantes ficam sem dono. 5. Quem opera segurança recebe treinamento e desenvolvimento contínuos? Treinamento eventual Depende de iniciativa individual ou necessidade pontual. 6. O conhecimento da operação está documentado — ou concentrado em poucas cabeças? Documentação parcial Existe, mas desatualizada ou incompleta. 7. Como a resposta a incidentes acontece hoje? Sem processo definido A resposta depende da situação e de quem está disponível. 8. As detecções são gerenciadas como casos de uso — criadas, validadas e revisadas? Gestão reativa Regras ajustadas após falsos positivos, incidentes ou problemas. 9. Ações de triagem e resposta são automatizadas — ou 100% manuais? Automações pontuais Scripts ou integrações isoladas. 10. Como os eventos e logs de segurança são centralizados e analisados hoje? Sem centralização Cada ferramenta mantém seus logs; a investigação depende de consultas isoladas. 11. Qual a capacidade de detecção e resposta nos endpoints hoje? EDR parcial Somente parte do parque, ou com funções limitadas. 12. A operação possui visibilidade e capacidade de detectar comportamento suspeito no tráfego de rede, inclusive tráfego leste-oeste e ativos onde agentes não chegam? Visibilidade parcial Alguns segmentos ou ferramentas fornecem visibilidade, mas existem lacunas relevantes de cobertura ou análise. 13. A operação possui cobertura de monitoramento compatível com a criticidade, os SLAs e o risco do negócio — inclusive fora do horário comercial quando necessário? Cobertura insuficiente para a necessidade Eventos críticos podem permanecer sem triagem durante períodos em que o negócio exige resposta."
+        },
+        {
+          "n": 6,
+          "texto": "14. A superfície externa é monitorada — credenciais vazadas, marca, exposição na internet? Consultas pontuais Após incidentes ou por demanda. 15. A gestão de vulnerabilidades é contínua e priorizada — não apenas um scan eventual? Scans recorrentes sem ciclo A descoberta acontece; a correção não segue processo consistente. Quickscan SecOps · SOC-CMM · Fortinet — relatório contextual V3.2 · contexto tecnológico não informado nesta sessão"
+        }
+      ],
+      "errosDePagina": []
+    },
+    "3-insuficiente-contexto": {
+      "contextoInformado": true,
+      "oraculo": {
+        "confirmadas": 4,
+        "suff": false,
+        "porDominio": [
+          {
+            "n": 2,
+            "score": 2.5
+          },
+          {
+            "n": 1,
+            "score": 0
+          },
+          {
+            "n": 0,
+            "score": null
+          },
+          {
+            "n": 1,
+            "score": 5
+          },
+          {
+            "n": 0,
+            "score": null
+          }
+        ],
+        "overall": null,
+        "publicaveis": [
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      "modo": {
+        "classes": "v32-print-mode",
+        "printMode": true,
+        "reportLen": 33414,
+        "legacyMode": false
+      },
+      "dom": {
+        "wrapDisplay": "none",
+        "celulasDominio": [
+          "n/d",
+          "n/d",
+          "n/d",
+          "n/d",
+          "n/d"
+        ],
+        "radarRotulos": [],
+        "kpiGlobal": "n/d",
+        "secoes": [
+          "pr-maturity",
+          "pr-findings",
+          "pr-landscape",
+          "pr-interp",
+          "pr-support",
+          "pr-journey",
+          "pr-annex"
+        ]
+      },
+      "arquivo": "3-insuficiente-contexto.pdf",
+      "bytes": 148700,
+      "sha256": "8392bd08f1c88a8f405371cbd09c2356ad3b7f1b18e48fd4cf386631231e8d50",
+      "totalPaginas": 6,
+      "paginas": [
+        {
+          "n": 1,
+          "larguraPt": 595.91998,
+          "alturaPt": 842.88,
+          "a4": true,
+          "caracteres": 2265,
+          "linhas": 83,
+          "tintaPct": 13.79,
+          "primeiraLinha": "FORTINET",
+          "ultimaLinha": "CAPABILITY A DESENVOLVER: Direcionamento e responsabilidades de segurança"
+        },
+        {
+          "n": 2,
+          "larguraPt": 595.91998,
+          "alturaPt": 842.88,
+          "a4": true,
+          "caracteres": 1696,
+          "linhas": 44,
+          "tintaPct": 8.85,
+          "primeiraLinha": "Contexto tecnológico declarado",
+          "ultimaLinha": "Evidência insuficiente para classificar — validar em aprofundamento."
+        },
+        {
+          "n": 3,
+          "larguraPt": 595.91998,
+          "alturaPt": 842.88,
+          "a4": true,
+          "caracteres": 2224,
+          "linhas": 38,
+          "tintaPct": 8.78,
+          "primeiraLinha": "Como a Fortinet pode apoiar — contexto declarado",
+          "ultimaLinha": "Tecnologia: não informado · Classificação: Requer validação"
+        },
+        {
+          "n": 4,
+          "larguraPt": 595.91998,
+          "alturaPt": 842.88,
+          "a4": true,
+          "caracteres": 2364,
+          "linhas": 41,
+          "tintaPct": 9.29,
+          "primeiraLinha": "Detecção e resposta em endpoint Requer validação",
+          "ultimaLinha": "Tecnologia: não informado · Classificação: Contexto tecnológico não informado"
+        },
+        {
+          "n": 5,
+          "larguraPt": 595.91998,
+          "alturaPt": 842.88,
+          "a4": true,
+          "caracteres": 1331,
+          "linhas": 32,
+          "tintaPct": 6.83,
+          "primeiraLinha": "Jornada de maturidade",
+          "ultimaLinha": "tecnológico declarado foi considerado na leitura das oportunidades."
+        },
+        {
+          "n": 6,
+          "larguraPt": 595.91998,
+          "alturaPt": 842.88,
+          "a4": true,
+          "caracteres": 2045,
+          "linhas": 39,
+          "tintaPct": 10.73,
+          "primeiraLinha": "Anexo — respostas da sessão",
+          "ultimaLinha": "Quickscan SecOps · SOC-CMM · Fortinet — relatório contextual V3.2"
+        }
+      ],
+      "textoPorPagina": [
+        {
+          "n": 1,
+          "texto": "FORTINET Negócio 1 Serviços Quickscan SecOps · SOC-CMM 5 2 Pessoas Relatório indicativo de maturidade de operações de segurança Screening indicativo de alto nível. Não substitui um assessment formal. SESSÃO Sem rótulo 4 3 Tecnologia Processos DATA DA SESSÃO 23/08/2026 23:51:27 RELATÓRIO GERADO EM 23/08/2026 VERSÃO DA FERRAMENTA 3.4.0- 23:51:29 dev.4.8.0.7 COBERTURA DA EVIDÊNCIA 4 de 15 respostas confirmadas 1. Negócio Negócio Pessoas 2. Pessoas 3. Processos 4. Tecnologia 5. Serviços Processos Tecnologia Serviços Screening indicativo de alto nível. Não substitui um assessment formal. COMO INTERPRETAR ESTE RELATÓRIO O score e o estágio vêm exclusivamente das respostas confirmadas do assessment. O contexto tecnológico não altera a nota: ter a ferramenta não eleva a maturidade. O contexto refina a classificação do gap e as recomendações — é o que torna a leitura acionável. n/d significa não avaliado, nunca zero; zero confirmado é um resultado medido. O cenário-alvo é um estado desejado e declarado, não previsão nem compromisso. As recomendações são possibilidades condicionadas ao contexto informado, sujeitas a validação. Resumo de maturidade n/d — 4 de 15 Sem operação formal Score geral indicativo Estágio: suficiência de dados não atingida Respostas confirmadas Arquétipo declarado 0 1 2 3 4 5 Inexistente Inicial Gerenciado Definido Gerenciado quantitativamente Em otimização Estágio não determinado: dados insuficientes Negócio Pessoas Processos Tecnologia Serviços n/d n/d n/d n/d n/d Evidência insuficiente: nenhum score de maturidade por domínio é publicado até o gate canônico abrir. n/d significa não avaliado — nunca zero. 4 de 15 respostas confirmadas; a regra canônica exige ao menos 10 confirmadas e ao menos 2 por domínio. Gaps de maturidade observados Gap alto de maturidade Capacidade do time · domínio Pessoas EVIDÊNCIA DECLARADA: Capacidade insuficiente — A demanda excede a equipe; atividades relevantes ficam sem dono. CAPABILITY A DESENVOLVER: Capacidade e resiliência do time Gap moderado de maturidade Direcionamento e objetivos · domínio Negócio EVIDÊNCIA DECLARADA: Direcionamento informal — Prioridades existem, mas dependem da liderança e de pessoas. CAPABILITY A DESENVOLVER: Direcionamento e responsabilidades de segurança"
+        },
+        {
+          "n": 2,
+          "texto": "Contexto tecnológico declarado Analytics de segurança (SIEM/data lake) Plataforma de SOC unificada Não existe / não utilizamos Não existe / não utilizamos Detecção e resposta em endpoint Não existe / não utilizamos Interpretação do contexto Competências e desenvolvimento Requer validação Evidência insuficiente para classificar — validar em aprofundamento. Gestão de conhecimento Requer validação Evidência insuficiente para classificar — validar em aprofundamento. Gestão e resposta a incidentes Requer validação Evidência insuficiente para classificar — validar em aprofundamento. Engenharia de detecção Requer validação Evidência insuficiente para classificar — validar em aprofundamento. Analytics de segurança (SIEM/data lake) Possível divergência a validar (maturidade alta sem tecnologia) Maturidade declarada alta sem tecnologia — validar em aprofundamento. Automação de segurança (SOAR) Requer validação Evidência insuficiente para classificar — validar em aprofundamento. Monitoramento contínuo Requer validação Evidência insuficiente para classificar — validar em aprofundamento. Plataforma de SOC unificada Capability não avaliada pelo quickscan Registrada apenas como contexto; não afeta a maturidade. Detecção e resposta em endpoint Requer validação Evidência insuficiente para classificar — validar em aprofundamento. Network Detection & Response Requer validação Evidência insuficiente para classificar — validar em aprofundamento. Gestão de exposição externa (EASM/DRPS) Requer validação Evidência insuficiente para classificar — validar em aprofundamento. Gestão contínua de vulnerabilidades Requer validação Evidência insuficiente para classificar — validar em aprofundamento."
+        },
+        {
+          "n": 3,
+          "texto": "Como a Fortinet pode apoiar — contexto declarado A validar em aprofundamento Competências e desenvolvimento Requer validação O que validar: respostas em branco/NA nas perguntas de origem. POR QUE APARECEU Maturidade: a validar — origem: “Quem opera segurança recebe treinamento e desenvolvimento contínuos?” Tecnologia: não informado · Classificação: Requer validação Gestão de conhecimento Requer validação O que validar: respostas em branco/NA nas perguntas de origem. POR QUE APARECEU Maturidade: a validar — origem: “O conhecimento da operação está documentado — ou concentrado em…” Tecnologia: não informado · Classificação: Requer validação Gestão e resposta a incidentes Requer validação O que validar: respostas em branco/NA nas perguntas de origem. POR QUE APARECEU Maturidade: a validar — origem: “Como a resposta a incidentes acontece hoje?” Tecnologia: não informado · Classificação: Requer validação Engenharia de detecção Requer validação O que validar: respostas em branco/NA nas perguntas de origem. POR QUE APARECEU Maturidade: a validar — origem: “As detecções são gerenciadas como casos de uso — criadas, validadas…” Tecnologia: não informado · Classificação: Requer validação Analytics de segurança (SIEM/data lake) Possível divergência a validar (maturidade alta sem tecnologia) O que validar: classificação requer validação em aprofundamento. maturidade declarada alta sem tecnologia — validar divergência POR QUE APARECEU Maturidade: maduro — origem: “Como os eventos e logs de segurança são centralizados e analisados hoje?” Tecnologia: ausência confirmada · Classificação: Possível divergência a validar (maturidade alta sem tecnologia) Automação de segurança (SOAR) Requer validação O que validar: respostas em branco/NA nas perguntas de origem. POR QUE APARECEU Maturidade: a validar — origem: “Ações de triagem e resposta são automatizadas — ou 100% manuais?” Tecnologia: não informado · Classificação: Requer validação Monitoramento contínuo Requer validação O que validar: respostas em branco/NA nas perguntas de origem. POR QUE APARECEU Maturidade: a validar — origem: “A operação possui cobertura de monitoramento compatível com a…” Tecnologia: não informado · Classificação: Requer validação"
+        },
+        {
+          "n": 4,
+          "texto": "Detecção e resposta em endpoint Requer validação O que validar: respostas em branco/NA nas perguntas de origem. POR QUE APARECEU Maturidade: a validar — origem: “Qual a capacidade de detecção e resposta nos endpoints hoje?” Tecnologia: ausência confirmada · Classificação: Requer validação Network Detection & Response Requer validação O que validar: respostas em branco/NA nas perguntas de origem. POR QUE APARECEU Maturidade: a validar — origem: “A operação possui visibilidade e capacidade de detectar…” Tecnologia: não informado · Classificação: Requer validação Gestão de exposição externa (EASM/DRPS) Requer validação O que validar: respostas em branco/NA nas perguntas de origem. POR QUE APARECEU Maturidade: a validar — origem: “A superfície externa é monitorada — credenciais vazadas, marca,…” Tecnologia: não informado · Classificação: Requer validação Gestão contínua de vulnerabilidades Requer validação O que validar: respostas em branco/NA nas perguntas de origem. POR QUE APARECEU Maturidade: a validar — origem: “A gestão de vulnerabilidades é contínua e priorizada — não apenas um…” Tecnologia: não informado · Classificação: Requer validação Apoio baseado na maturidade Governança do SOC Apoio baseado na maturidade Apoio baseado na maturidade — Landscape tecnológico não se aplica a esta capability. POR QUE APARECEU Maturidade: gap moderado — origem: “A operação de segurança tem objetivos e direcionamento claros, conectados…” Tecnologia: não informado · Classificação: Contexto tecnológico não informado Capacidade do time Apoio baseado na maturidade Apoio baseado na maturidade — Landscape tecnológico não se aplica a esta capability. SERVIÇOS FortiGuard SOCaaS serviço operacional · Operação O PÇÕ ES D E CO NS UM O/LI CE NC IA ME NTO FortiPoints · elegibilidade confirmada mecanismo: pontos universais (FortiFlex, FortiSIEM points, advanced/IR service points, contratos anuais) Créditos consolidados utilizados no ecossistema FortiMarketplace; quando aplicável, podem ser transferidos para FortiFlex Points. pontos de serviços avançados/IR cobertos pelo FortiPoints (fonte oficial) Página oficial ↗ (https://www.fortinet.com/products/socaas) POR QUE APARECEU Maturidade: gap alto — origem: “A equipe de segurança tem capacidade e redundância compatíveis com a…” Tecnologia: não informado · Classificação: Contexto tecnológico não informado"
+        },
+        {
+          "n": 5,
+          "texto": "Jornada de maturidade Posicionamento atual: n/d Não há evidência suficiente neste Quickscan para posicionar a operação com segurança em um estágio de maturidade. 0 1 2 3 4 5 Inexistente Inicial Gerenciado Definido Gerenciado quantitativamente Em otimização PA R A AVA N Ç A R Dimensionar e sustentar a capacidade do time. Formalizar direcionamento, responsabilidades e critérios de decisão. O próximo estágio representa a próxima faixa do modelo de maturidade. A transição depende da evolução consistente das práticas e das evidências correspondentes. Leitura executiva As respostas disponíveis ainda não são suficientes para posicionar a operação em um estágio de maturidade com segurança. Ainda assim, o Quickscan identifica sinais relevantes nos gaps já confirmados durante a sessão. Nenhuma prioridade específica foi declarada nesta sessão; foram observados 1 gap alto e 1 moderado, que concentram os principais pontos de evolução identificados nesta sessão. O próximo passo mais consistente é completar e validar as evidências pendentes, em vez de perseguir um estágio artificial. Em paralelo, os sinais já confirmados apontam para: dimensionar e sustentar a capacidade do time; formalizar direcionamento, responsabilidades e critérios de decisão. O contexto tecnológico declarado foi considerado na leitura das oportunidades."
+        },
+        {
+          "n": 6,
+          "texto": "Anexo — respostas da sessão 1. A operação de segurança tem direcionamento, responsabilidades e objetivos claros, conectados ao negócio? Direcionamento informal Prioridades existem, mas dependem da liderança e de pessoas. 2. Há governança de segurança estabelecida — papéis, responsabilidades e reporte à liderança? Governança formalizada Papéis, responsabilidades, fóruns e reporte definidos. 3. Políticas de segurança e privacidade (incluindo LGPD) estão definidas e vigentes? — sem resposta 4. A equipe de segurança tem capacidade e redundância compatíveis com a demanda — sem depender de poucas pessoas? Capacidade insuficiente A demanda excede a equipe; atividades relevantes ficam sem dono. 5. Quem opera segurança recebe treinamento e desenvolvimento contínuos? — sem resposta 6. O conhecimento da operação está documentado — ou concentrado em poucas cabeças? — sem resposta 7. Como a resposta a incidentes acontece hoje? Não sei / precisa validar 8. As detecções são gerenciadas como casos de uso — criadas, validadas e revisadas? — sem resposta 9. Ações de triagem e resposta são automatizadas — ou 100% manuais? — sem resposta 10. Como os eventos e logs de segurança são centralizados e analisados hoje? Cobertura gerenciada e otimizada Fontes, qualidade, retenção e casos de uso monitorados e ajustados conforme risco. 11. Qual a capacidade de detecção e resposta nos endpoints hoje? — sem resposta 12. A operação possui visibilidade e capacidade de detectar comportamento suspeito no tráfego de rede, inclusive tráfego leste-oeste e ativos onde agentes não chegam? — sem resposta 13. A operação possui cobertura de monitoramento compatível com a criticidade, os SLAs e o risco do negócio — inclusive fora do horário comercial quando necessário? — sem resposta 14. A superfície externa é monitorada — credenciais vazadas, marca, exposição na internet? — sem resposta 15. A gestão de vulnerabilidades é contínua e priorizada — não apenas um scan eventual? — sem resposta Quickscan SecOps · SOC-CMM · Fortinet — relatório contextual V3.2"
+        }
+      ],
+      "errosDePagina": []
+    },
+    "4-insuficiente-sem-contexto": {
+      "contextoInformado": false,
+      "oraculo": {
+        "confirmadas": 4,
+        "suff": false,
+        "porDominio": [
+          {
+            "n": 2,
+            "score": 2.5
+          },
+          {
+            "n": 1,
+            "score": 0
+          },
+          {
+            "n": 0,
+            "score": null
+          },
+          {
+            "n": 1,
+            "score": 5
+          },
+          {
+            "n": 0,
+            "score": null
+          }
+        ],
+        "overall": null,
+        "publicaveis": [
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      "modo": {
+        "classes": "v32-print-mode",
+        "printMode": true,
+        "reportLen": 16220,
+        "legacyMode": true
+      },
+      "dom": {
+        "wrapDisplay": "none",
+        "celulasDominio": [
+          "n/d",
+          "n/d",
+          "n/d",
+          "n/d",
+          "n/d"
+        ],
+        "radarRotulos": [],
+        "kpiGlobal": "n/d",
+        "secoes": [
+          "pr-maturity",
+          "pr-findings",
+          "pr-landscape",
+          "pr-journey",
+          "pr-annex"
+        ]
+      },
+      "arquivo": "4-insuficiente-sem-contexto.pdf",
+      "bytes": 94457,
+      "sha256": "b964536d2892439f3463f6ba4631412b22e6fad60bec4fa1f4729fdf5640c64d",
+      "totalPaginas": 3,
+      "paginas": [
+        {
+          "n": 1,
+          "larguraPt": 595.91998,
+          "alturaPt": 842.88,
+          "a4": true,
+          "caracteres": 2265,
+          "linhas": 83,
+          "tintaPct": 13.8,
+          "primeiraLinha": "FORTINET",
+          "ultimaLinha": "CAPABILITY A DESENVOLVER: Direcionamento e responsabilidades de segurança"
+        },
+        {
+          "n": 2,
+          "larguraPt": 595.91998,
+          "alturaPt": 842.88,
+          "a4": true,
+          "caracteres": 1774,
+          "linhas": 39,
+          "tintaPct": 8.78,
+          "primeiraLinha": "Contexto tecnológico",
+          "ultimaLinha": "ferramentas."
+        },
+        {
+          "n": 3,
+          "larguraPt": 595.91998,
+          "alturaPt": 842.88,
+          "a4": true,
+          "caracteres": 2095,
+          "linhas": 39,
+          "tintaPct": 10.84,
+          "primeiraLinha": "Anexo — respostas da sessão",
+          "ultimaLinha": "Quickscan SecOps · SOC-CMM · Fortinet — relatório contextual V3.2 · contexto tecnológico não informado nesta sessão"
+        }
+      ],
+      "textoPorPagina": [
+        {
+          "n": 1,
+          "texto": "FORTINET Negócio 1 Serviços Quickscan SecOps · SOC-CMM 5 2 Pessoas Relatório indicativo de maturidade de operações de segurança Screening indicativo de alto nível. Não substitui um assessment formal. SESSÃO Sem rótulo 4 3 Tecnologia Processos DATA DA SESSÃO 23/08/2026 23:51:29 RELATÓRIO GERADO EM 23/08/2026 VERSÃO DA FERRAMENTA 3.4.0- 23:51:29 dev.4.8.0.7 COBERTURA DA EVIDÊNCIA 4 de 15 respostas confirmadas 1. Negócio Negócio Pessoas 2. Pessoas 3. Processos 4. Tecnologia 5. Serviços Processos Tecnologia Serviços Screening indicativo de alto nível. Não substitui um assessment formal. COMO INTERPRETAR ESTE RELATÓRIO O score e o estágio vêm exclusivamente das respostas confirmadas do assessment. O contexto tecnológico não altera a nota: ter a ferramenta não eleva a maturidade. O contexto refina a classificação do gap e as recomendações — é o que torna a leitura acionável. n/d significa não avaliado, nunca zero; zero confirmado é um resultado medido. O cenário-alvo é um estado desejado e declarado, não previsão nem compromisso. As recomendações são possibilidades condicionadas ao contexto informado, sujeitas a validação. Resumo de maturidade n/d — 4 de 15 Sem operação formal Score geral indicativo Estágio: suficiência de dados não atingida Respostas confirmadas Arquétipo declarado 0 1 2 3 4 5 Inexistente Inicial Gerenciado Definido Gerenciado quantitativamente Em otimização Estágio não determinado: dados insuficientes Negócio Pessoas Processos Tecnologia Serviços n/d n/d n/d n/d n/d Evidência insuficiente: nenhum score de maturidade por domínio é publicado até o gate canônico abrir. n/d significa não avaliado — nunca zero. 4 de 15 respostas confirmadas; a regra canônica exige ao menos 10 confirmadas e ao menos 2 por domínio. Gaps de maturidade observados Gap alto de maturidade Capacidade do time · domínio Pessoas EVIDÊNCIA DECLARADA: Capacidade insuficiente — A demanda excede a equipe; atividades relevantes ficam sem dono. CAPABILITY A DESENVOLVER: Capacidade e resiliência do time Gap moderado de maturidade Direcionamento e objetivos · domínio Negócio EVIDÊNCIA DECLARADA: Direcionamento informal — Prioridades existem, mas dependem da liderança e de pessoas. CAPABILITY A DESENVOLVER: Direcionamento e responsabilidades de segurança"
+        },
+        {
+          "n": 2,
+          "texto": "Contexto tecnológico Não informado nesta sessão não informado Nenhuma capability, contexto de arquitetura, plataforma, licenciamento ou requisito específico foi declarado nesta sessão. A ausência de contexto é um estado legítimo e completo do assessment: ela não altera score, estágio, suficiência nem gaps — apenas mantém a leitura de apoio em base geral, sem afirmar aderência a produto algum. Jornada de maturidade Posicionamento atual: n/d Não há evidência suficiente neste Quickscan para posicionar a operação com segurança em um estágio de maturidade. 0 1 2 3 4 5 Inexistente Inicial Gerenciado Definido Gerenciado quantitativamente Em otimização PA R A AVA N Ç A R Dimensionar e sustentar a capacidade do time. Formalizar direcionamento, responsabilidades e critérios de decisão. O próximo estágio representa a próxima faixa do modelo de maturidade. A transição depende da evolução consistente das práticas e das evidências correspondentes. Leitura executiva As respostas disponíveis ainda não são suficientes para posicionar a operação em um estágio de maturidade com segurança. Ainda assim, o Quickscan identifica sinais relevantes nos gaps já confirmados durante a sessão. Nenhuma prioridade específica foi declarada nesta sessão; foram observados 1 gap alto e 1 moderado, que concentram os principais pontos de evolução identificados nesta sessão. O próximo passo mais consistente é completar e validar as evidências pendentes, em vez de perseguir um estágio artificial. Em paralelo, os sinais já confirmados apontam para: dimensionar e sustentar a capacidade do time; formalizar direcionamento, responsabilidades e critérios de decisão. O contexto tecnológico não foi informado nesta sessão; por isso, a leitura evita inferir presença ou ausência de ferramentas."
+        },
+        {
+          "n": 3,
+          "texto": "Anexo — respostas da sessão 1. A operação de segurança tem direcionamento, responsabilidades e objetivos claros, conectados ao negócio? Direcionamento informal Prioridades existem, mas dependem da liderança e de pessoas. 2. Há governança de segurança estabelecida — papéis, responsabilidades e reporte à liderança? Governança formalizada Papéis, responsabilidades, fóruns e reporte definidos. 3. Políticas de segurança e privacidade (incluindo LGPD) estão definidas e vigentes? — sem resposta 4. A equipe de segurança tem capacidade e redundância compatíveis com a demanda — sem depender de poucas pessoas? Capacidade insuficiente A demanda excede a equipe; atividades relevantes ficam sem dono. 5. Quem opera segurança recebe treinamento e desenvolvimento contínuos? — sem resposta 6. O conhecimento da operação está documentado — ou concentrado em poucas cabeças? — sem resposta 7. Como a resposta a incidentes acontece hoje? Não sei / precisa validar 8. As detecções são gerenciadas como casos de uso — criadas, validadas e revisadas? — sem resposta 9. Ações de triagem e resposta são automatizadas — ou 100% manuais? — sem resposta 10. Como os eventos e logs de segurança são centralizados e analisados hoje? Cobertura gerenciada e otimizada Fontes, qualidade, retenção e casos de uso monitorados e ajustados conforme risco. 11. Qual a capacidade de detecção e resposta nos endpoints hoje? — sem resposta 12. A operação possui visibilidade e capacidade de detectar comportamento suspeito no tráfego de rede, inclusive tráfego leste-oeste e ativos onde agentes não chegam? — sem resposta 13. A operação possui cobertura de monitoramento compatível com a criticidade, os SLAs e o risco do negócio — inclusive fora do horário comercial quando necessário? — sem resposta 14. A superfície externa é monitorada — credenciais vazadas, marca, exposição na internet? — sem resposta 15. A gestão de vulnerabilidades é contínua e priorizada — não apenas um scan eventual? — sem resposta Quickscan SecOps · SOC-CMM · Fortinet — relatório contextual V3.2 · contexto tecnológico não informado nesta sessão"
+        }
+      ],
+      "errosDePagina": []
+    },
+    "5-fronteira-de-estagio": {
+      "contextoInformado": true,
+      "oraculo": {
+        "confirmadas": 15,
+        "suff": true,
+        "porDominio": [
+          {
+            "n": 3,
+            "score": 1.7
+          },
+          {
+            "n": 3,
+            "score": 1.7
+          },
+          {
+            "n": 3,
+            "score": 1.7
+          },
+          {
+            "n": 3,
+            "score": 1.7
+          },
+          {
+            "n": 3,
+            "score": 1.7
+          }
+        ],
+        "overall": 1.7,
+        "publicaveis": [
+          1.7,
+          1.7,
+          1.7,
+          1.7,
+          1.7
+        ]
+      },
+      "modo": {
+        "classes": "v32-print-mode",
+        "printMode": true,
+        "reportLen": 130255,
+        "legacyMode": false
+      },
+      "dom": {
+        "wrapDisplay": "none",
+        "celulasDominio": [
+          "1.7",
+          "1.7",
+          "1.7",
+          "1.7",
+          "1.7"
+        ],
+        "radarRotulos": [
+          "Negócio 1.7",
+          "Pessoas 1.7",
+          "Processos 1.7",
+          "Tecnologia 1.7",
+          "Serviços 1.7"
+        ],
+        "kpiGlobal": "1.7 / 5",
+        "secoes": [
+          "pr-maturity",
+          "pr-prios",
+          "pr-findings",
+          "pr-landscape",
+          "pr-interp",
+          "pr-support",
+          "pr-arch",
+          "pr-journey",
+          "pr-annex"
+        ]
+      },
+      "arquivo": "5-fronteira-de-estagio.pdf",
+      "bytes": 334668,
+      "sha256": "b4e554492ad8041da4914dcaf7dca9444487216a6cc0b147bdc2e10145bafa1e",
+      "totalPaginas": 12,
+      "paginas": [
+        {
+          "n": 1,
+          "larguraPt": 595.91998,
+          "alturaPt": 842.88,
+          "a4": true,
+          "caracteres": 1553,
+          "linhas": 79,
+          "tintaPct": 10.26,
+          "primeiraLinha": "FORTINET",
+          "ultimaLinha": "Processos 1.7"
+        },
+        {
+          "n": 2,
+          "larguraPt": 595.91998,
+          "alturaPt": 842.88,
+          "a4": true,
+          "caracteres": 2770,
+          "linhas": 45,
+          "tintaPct": 11.72,
+          "primeiraLinha": "Prioridades declaradas pelo negócio",
+          "ultimaLinha": "contexto do cliente."
+        },
+        {
+          "n": 3,
+          "larguraPt": 595.91998,
+          "alturaPt": 842.88,
+          "a4": true,
+          "caracteres": 3409,
+          "linhas": 53,
+          "tintaPct": 13.69,
+          "primeiraLinha": "Automação · domínio Processos",
+          "ultimaLinha": "Não existe / não utilizamos"
+        },
+        {
+          "n": 4,
+          "larguraPt": 595.91998,
+          "alturaPt": 842.88,
+          "a4": true,
+          "caracteres": 1902,
+          "linhas": 36,
+          "tintaPct": 8.89,
+          "primeiraLinha": "Plataforma de SOC unificada",
+          "ultimaLinha": "Tecnologia: ausência confirmada · Classificação: Ausência confirmada de tecnologia (whitespace)"
+        },
+        {
+          "n": 5,
+          "larguraPt": 595.91998,
+          "alturaPt": 842.88,
+          "a4": true,
+          "caracteres": 857,
+          "linhas": 16,
+          "tintaPct": 3.85,
+          "primeiraLinha": "Detecção e resposta em endpoint Ausência confirmada de tecnologia (whitespace)",
+          "ultimaLinha": "Tecnologia: não informado · Classificação: Contexto tecnológico não informado"
+        },
+        {
+          "n": 6,
+          "larguraPt": 595.91998,
+          "alturaPt": 842.88,
+          "a4": true,
+          "caracteres": 2251,
+          "linhas": 39,
+          "tintaPct": 11.24,
+          "primeiraLinha": "Gestão e resposta a incidentes Contexto tecnológico não informado",
+          "ultimaLinha": "Tecnologia: não informado · Classificação: Contexto tecnológico não informado"
+        },
+        {
+          "n": 7,
+          "larguraPt": 595.91998,
+          "alturaPt": 842.88,
+          "a4": true,
+          "caracteres": 2587,
+          "linhas": 40,
+          "tintaPct": 11.23,
+          "primeiraLinha": "Engenharia de detecção Contexto tecnológico não informado",
+          "ultimaLinha": "Tecnologia: não informado · Classificação: Contexto tecnológico não informado"
+        },
+        {
+          "n": 8,
+          "larguraPt": 595.91998,
+          "alturaPt": 842.88,
+          "a4": true,
+          "caracteres": 1756,
+          "linhas": 31,
+          "tintaPct": 8.2,
+          "primeiraLinha": "Gestão contínua de vulnerabilidades Contexto tecnológico não informado",
+          "ultimaLinha": "Tecnologia: não informado · Classificação: Contexto tecnológico não informado"
+        },
+        {
+          "n": 9,
+          "larguraPt": 595.91998,
+          "alturaPt": 842.88,
+          "a4": true,
+          "caracteres": 1528,
+          "linhas": 40,
+          "tintaPct": 7.4,
+          "primeiraLinha": "Competências e desenvolvimento Apoio baseado na maturidade",
+          "ultimaLinha": "consistente das práticas e das evidências correspondentes."
+        },
+        {
+          "n": 10,
+          "larguraPt": 595.91998,
+          "alturaPt": 842.88,
+          "a4": true,
+          "caracteres": 816,
+          "linhas": 11,
+          "tintaPct": 4.14,
+          "primeiraLinha": "Leitura executiva",
+          "ultimaLinha": "priorizadas."
+        },
+        {
+          "n": 11,
+          "larguraPt": 595.91998,
+          "alturaPt": 842.88,
+          "a4": true,
+          "caracteres": 2357,
+          "linhas": 43,
+          "tintaPct": 11.08,
+          "primeiraLinha": "Anexo — respostas da sessão",
+          "ultimaLinha": "Existe plantão, contato ou serviço fora do horário, mas com lacunas de escala, SLA ou formalização."
+        },
+        {
+          "n": 12,
+          "larguraPt": 595.91998,
+          "alturaPt": 842.88,
+          "a4": true,
+          "caracteres": 389,
+          "linhas": 7,
+          "tintaPct": 1.93,
+          "primeiraLinha": "14. A superfície externa é monitorada — credenciais vazadas, marca, exposição na internet?",
+          "ultimaLinha": "Quickscan SecOps · SOC-CMM · Fortinet — relatório contextual V3.2"
+        }
+      ],
+      "textoPorPagina": [
+        {
+          "n": 1,
+          "texto": "FORTINET Negócio 1 Serviços Quickscan SecOps · SOC-CMM 5 2 Pessoas Relatório indicativo de maturidade de operações de segurança Screening indicativo de alto nível. Não substitui um assessment formal. SESSÃO Sem rótulo 4 3 Tecnologia Processos DATA DA SESSÃO 23/08/2026 23:51:30 RELATÓRIO GERADO EM 23/08/2026 VERSÃO DA FERRAMENTA 3.4.0- 23:51:31 dev.4.8.0.7 COBERTURA DA EVIDÊNCIA 15 de 15 respostas confirmadas 1. Negócio Negócio Pessoas 2. Pessoas 3. Processos 4. Tecnologia 5. Serviços Processos Tecnologia Serviços Screening indicativo de alto nível. Não substitui um assessment formal. COMO INTERPRETAR ESTE RELATÓRIO O score e o estágio vêm exclusivamente das respostas confirmadas do assessment. O contexto tecnológico não altera a nota: ter a ferramenta não eleva a maturidade. O contexto refina a classificação do gap e as recomendações — é o que torna a leitura acionável. n/d significa não avaliado, nunca zero; zero confirmado é um resultado medido. O cenário-alvo é um estado desejado e declarado, não previsão nem compromisso. As recomendações são possibilidades condicionadas ao contexto informado, sujeitas a validação. Resumo de maturidade 1.7 / 5 Gerenciado 15 de 15 Sem operação formal Score geral indicativo Estágio indicativo Respostas confirmadas Arquétipo declarado 0 1 2 3 4 5 Inexistente Inicial Gerenciado Definido Gerenciado quantitativamente Em otimização ▲ Você está aqui 1.7 / 5 · Gerenciado Negócio Pessoas Processos Tecnologia Serviços 1.7 1.7 1.7 1.7 1.7 Negócio 1.7 Serviços 1.7 Tecnologia 1.7 Pessoas 1.7 Processos 1.7"
+        },
+        {
+          "n": 2,
+          "texto": "Prioridades declaradas pelo negócio 1. A operação de segurança tem objetivos e direcionamento claros, conectados… Gaps de maturidade observados Direcionamento e objetivos · domínio Negócio EVIDÊNCIA DECLARADA: Direcionamento informal — Prioridades existem, mas dependem da liderança e de pessoas. CAPABILITY A DESENVOLVER: Direcionamento e responsabilidades de segurança Gap moderado de maturidade Gap moderado de maturidade Governança · domínio Negócio EVIDÊNCIA DECLARADA: Papéis informais — Sabe-se quem faz o quê, mas sem estrutura consistente. CAPABILITY A DESENVOLVER: Governança e reporte de risco Políticas e privacidade · domínio Negócio EVIDÊNCIA DECLARADA: Existem parcialmente — Documentos dispersos ou pouco comunicados. CAPABILITY A DESENVOLVER: Políticas de segurança e privacidade (LGPD) Gap moderado de maturidade Gap moderado de maturidade Capacidade do time · domínio Pessoas EVIDÊNCIA DECLARADA: Dependência de poucas pessoas — A operação funciona, mas depende de indivíduos específicos, sem redundância. CAPABILITY A DESENVOLVER: Capacidade e resiliência do time Gap moderado de maturidade Capacitação · domínio Pessoas EVIDÊNCIA DECLARADA: Treinamento eventual — Depende de iniciativa individual ou necessidade pontual. CAPABILITY A DESENVOLVER: Desenvolvimento de competências do time Gap moderado de maturidade Conhecimento operacional · domínio Pessoas EVIDÊNCIA DECLARADA: Documentação parcial — Existe, mas desatualizada ou incompleta. CAPABILITY A DESENVOLVER: Gestão de conhecimento operacional Gap moderado de maturidade Resposta a incidentes · domínio Processos EVIDÊNCIA DECLARADA: Processo informal — Há uma forma habitual de atuar, mas varia por equipe e caso. CAPABILITY A DESENVOLVER: Gestão e execução de resposta a incidentes Gap moderado de maturidade Casos de uso de detecção · domínio Processos EVIDÊNCIA DECLARADA: Gestão reativa — Regras ajustadas após falsos positivos, incidentes ou problemas. CAPABILITY A DESENVOLVER: Ciclo de vida de detecção (detection engineering) POSSÍVEIS CAMINHOS DE APOIO Para a capability Ciclo de vida de detecção (detection engineering): Contexto tecnológico não declarado para esta capability: as opções abaixo exigem validar aderência antes de qualquer recomendação. FortiSIEM — coleta, correlação e analytics quando a detecção precisa cobrir fontes heterogêneas; validar aderência ao contexto do cliente. FortiAnalyzer — logging e analytics quando a operação já é majoritariamente Fortinet; validar aderência ao contexto do cliente. FortiSOAR — orquestração do ciclo de investigação e resposta dos casos de uso; validar aderência ao contexto do cliente. FortiSOC — abordagem integrada de SOC, como opção de plataforma — nunca como produto obrigatório; validar aderência ao contexto do cliente."
+        },
+        {
+          "n": 3,
+          "texto": "Automação · domínio Processos EVIDÊNCIA DECLARADA: Automações pontuais — Scripts ou integrações isoladas. CAPABILITY A DESENVOLVER: Orquestração e automação de resposta Gap moderado de maturidade POSSÍVEIS CAMINHOS DE APOIO Para a capability Orquestração e automação de resposta: Contexto tecnológico não declarado para esta capability: as opções abaixo exigem validar aderência antes de qualquer recomendação. FortiSOAR — playbooks, integrações e padronização do tratamento; validar aderência ao contexto do cliente. Automação nativa de FortiAnalyzer/FortiSIEM — somente quando a necessidade e a arquitetura declaradas forem compatíveis; validar aderência ao contexto do cliente. Gap moderado de maturidade Centralização de logs · domínio Tecnologia EVIDÊNCIA DECLARADA: Centralização parcial — Algumas fontes críticas integradas, com lacunas de cobertura ou retenção. CAPABILITY A DESENVOLVER: Análise centralizada, correlação e retenção de eventos POSSÍVEIS CAMINHOS DE APOIO Para a capability Análise centralizada, correlação e retenção de eventos: Apareceu porque o gap acima foi observado e o contexto declarado para esta capability é Não existe / não utilizamos. As opções são caminhos possíveis, a validar — não são requisito nem compra recomendada. FortiAnalyzer — logging e analytics no ecossistema Fortinet declarado. FortiSIEM — necessidade SIEM ampla de TI/OT, com múltiplas fontes e correlação em escala. FortiSOC — abordagem integrada, condicionada à arquitetura declarada. Gap moderado de maturidade Proteção de endpoint · domínio Tecnologia EVIDÊNCIA DECLARADA: EDR parcial — Somente parte do parque, ou com funções limitadas. CAPABILITY A DESENVOLVER: Detecção e resposta em endpoint (EDR) Gap moderado de maturidade Visibilidade de rede · domínio Tecnologia EVIDÊNCIA DECLARADA: Visibilidade parcial — Alguns segmentos ou ferramentas fornecem visibilidade, mas existem lacunas relevantes de cobertura ou análise. CAPABILITY A DESENVOLVER: Network Detection & Response Gap moderado de maturidade Cobertura de monitoramento · domínio Serviços EVIDÊNCIA DECLARADA: Cobertura parcial ou informal — Existe plantão, contato ou serviço fora do horário, mas com lacunas de escala, SLA ou formalização. CAPABILITY A DESENVOLVER: Cobertura de monitoramento alinhada ao risco Gap moderado de maturidade Superfície externa · domínio Serviços EVIDÊNCIA DECLARADA: Consultas pontuais — Após incidentes ou por demanda. CAPABILITY A DESENVOLVER: Gestão de exposição externa (EASM/DRPS) Gap moderado de maturidade Gestão de vulnerabilidades · domínio Serviços EVIDÊNCIA DECLARADA: Scans recorrentes sem ciclo — A descoberta acontece; a correção não segue processo consistente. CAPABILITY A DESENVOLVER: Gestão contínua de vulnerabilidades POSSÍVEIS CAMINHOS DE APOIO Para a capability Gestão contínua de vulnerabilidades: Contexto tecnológico não declarado para esta capability: as opções abaixo exigem validar aderência antes de qualquer recomendação. FortiClient administrado por EMS — descoberta, inventário, varredura e patching no escopo de endpoint; não substitui uma plataforma completa de gestão de vulnerabilidades; validar aderência ao contexto do cliente. FortiRecon — exposição externa (EASM/DRPS) — pertinente à superfície externa, não à gestão interna; validar aderência ao contexto do cliente. Contexto tecnológico declarado Analytics de segurança (SIEM/data lake) Não existe / não utilizamos"
+        },
+        {
+          "n": 4,
+          "texto": "Plataforma de SOC unificada Não existe / não utilizamos Detecção e resposta em endpoint Não existe / não utilizamos Interpretação do contexto Analytics de segurança (SIEM/data lake) Ausência confirmada de tecnologia (whitespace) Gap de maturidade com ausência confirmada — candidato a conversa de aquisição na próxima etapa. Plataforma de SOC unificada Capability não avaliada pelo quickscan Registrada apenas como contexto; não afeta a maturidade. Detecção e resposta em endpoint Ausência confirmada de tecnologia (whitespace) Gap de maturidade com ausência confirmada — candidato a conversa de aquisição na próxima etapa. Como a Fortinet pode apoiar — contexto declarado Apoio nas prioridades declaradas Governança do SOC Apoio baseado na maturidade prioridade declarada Apoio baseado na maturidade — Landscape tecnológico não se aplica a esta capability. POR QUE APARECEU Maturidade: gap moderado — origem: “A operação de segurança tem objetivos e direcionamento claros, conectados…”; “Há governança de segurança estabelecida — papéis, responsabilidades…”; “Políticas de segurança e privacidade (incluindo LGPD) estão…” Prioridade declarada pelo negócio: “A operação de segurança tem objetivos e direcionamento claros, conectados…” Tecnologia: não informado · Classificação: Contexto tecnológico não informado Apoio direto — ausência confirmada de tecnologia Analytics de segurança (SIEM/data lake) Ausência confirmada de tecnologia (whitespace) TECNOLOGIA — OFERTAS FortiAnalyzer aquisição candidata Página oficial ↗ (https://www.fortinet.com/products/management/fortianalyzer) FortiSIEM aquisição candidata Página oficial ↗ (https://www.fortinet.com/products/siem/fortisiem) POR QUE APARECEU Maturidade: gap moderado — origem: “Como os eventos e logs de segurança são centralizados e analisados hoje?” Tecnologia: ausência confirmada · Classificação: Ausência confirmada de tecnologia (whitespace)"
+        },
+        {
+          "n": 5,
+          "texto": "Detecção e resposta em endpoint Ausência confirmada de tecnologia (whitespace) TECNOLOGIA — OFERTAS NE Fortinet Endpoint Security modalidade a definir oferta a definir no aprofundamento POR QUE APARECEU Maturidade: gap moderado — origem: “Qual a capacidade de detecção e resposta nos endpoints hoje?” Tecnologia: ausência confirmada · Classificação: Ausência confirmada de tecnologia (whitespace) Leitura base — contexto tecnológico não informado Gestão de conhecimento Contexto tecnológico não informado Leitura V3.1.3 preservada (maturidade: gap moderado). Informe o contexto desta capability para interpretação V3.2 — nenhum produto é inferido sem contexto. POR QUE APARECEU Maturidade: gap moderado — origem: “O conhecimento da operação está documentado — ou concentrado em…” Tecnologia: não informado · Classificação: Contexto tecnológico não informado"
+        },
+        {
+          "n": 6,
+          "texto": "Gestão e resposta a incidentes Contexto tecnológico não informado Leitura V3.1.3 preservada (maturidade: gap moderado). Informe o contexto desta capability para interpretação V3.2 — nenhum produto é inferido sem contexto. SERVIÇOS FortiGuard Incident Readiness Subscription serviço operacional · Preparação O PÇÕ ES D E CO NS UM O/LI CE NC IA ME NTO FortiPoints · elegibilidade confirmada mecanismo: pontos universais (FortiFlex, FortiSIEM points, advanced/IR service points, contratos anuais) Créditos consolidados utilizados no ecossistema FortiMarketplace; quando aplicável, podem ser transferidos para FortiFlex Points. pontos de serviços avançados/IR cobertos pelo FortiPoints (fonte oficial) Incident Response Plan Development serviço operacional · Preparação O PÇÕ ES D E CO NS UM O/LI CE NC IA ME NTO FortiPoints · elegibilidade confirmada mecanismo: pontos universais (FortiFlex, FortiSIEM points, advanced/IR service points, contratos anuais) Créditos consolidados utilizados no ecossistema FortiMarketplace; quando aplicável, podem ser transferidos para FortiFlex Points. pontos de serviços avançados/IR cobertos pelo FortiPoints (fonte oficial) Incident Response Playbook Development serviço operacional · Preparação O PÇÕ ES D E CO NS UM O/LI CE NC IA ME NTO FortiPoints · elegibilidade confirmada mecanismo: pontos universais (FortiFlex, FortiSIEM points, advanced/IR service points, contratos anuais) Créditos consolidados utilizados no ecossistema FortiMarketplace; quando aplicável, podem ser transferidos para FortiFlex Points. pontos de serviços avançados/IR cobertos pelo FortiPoints (fonte oficial) Cybersecurity Tabletop Exercise serviço operacional · Preparação O PÇÕ ES D E CO NS UM O/LI CE NC IA ME NTO FortiPoints · elegibilidade confirmada mecanismo: pontos universais (FortiFlex, FortiSIEM points, advanced/IR service points, contratos anuais) Créditos consolidados utilizados no ecossistema FortiMarketplace; quando aplicável, podem ser transferidos para FortiFlex Points. pontos de serviços avançados/IR cobertos pelo FortiPoints (fonte oficial) POR QUE APARECEU Maturidade: gap moderado — origem: “Como a resposta a incidentes acontece hoje?” Tecnologia: não informado · Classificação: Contexto tecnológico não informado"
+        },
+        {
+          "n": 7,
+          "texto": "Engenharia de detecção Contexto tecnológico não informado Leitura V3.1.3 preservada (maturidade: gap moderado). Informe o contexto desta capability para interpretação V3.2 — nenhum produto é inferido sem contexto. POR QUE APARECEU Maturidade: gap moderado — origem: “As detecções são gerenciadas como casos de uso — criadas, validadas…” Tecnologia: não informado · Classificação: Contexto tecnológico não informado Automação de segurança (SOAR) Contexto tecnológico não informado Leitura V3.1.3 preservada (maturidade: gap moderado). Informe o contexto desta capability para interpretação V3.2 — nenhum produto é inferido sem contexto. POR QUE APARECEU Maturidade: gap moderado — origem: “Ações de triagem e resposta são automatizadas — ou 100% manuais?” Tecnologia: não informado · Classificação: Contexto tecnológico não informado Monitoramento contínuo Contexto tecnológico não informado Leitura V3.1.3 preservada (maturidade: gap moderado). Informe o contexto desta capability para interpretação V3.2 — nenhum produto é inferido sem contexto. SERVIÇOS FortiGuard SOCaaS serviço operacional · Operação O PÇÕ ES D E CO NS UM O/LI CE NC IA ME NTO FortiPoints · elegibilidade confirmada mecanismo: pontos universais (FortiFlex, FortiSIEM points, advanced/IR service points, contratos anuais) Créditos consolidados utilizados no ecossistema FortiMarketplace; quando aplicável, podem ser transferidos para FortiFlex Points. pontos de serviços avançados/IR cobertos pelo FortiPoints (fonte oficial) Página oficial ↗ (https://www.fortinet.com/products/socaas) POR QUE APARECEU Maturidade: gap moderado — origem: “A operação possui cobertura de monitoramento compatível com a…” Tecnologia: não informado · Classificação: Contexto tecnológico não informado Network Detection & Response Contexto tecnológico não informado Leitura V3.1.3 preservada (maturidade: gap moderado). Informe o contexto desta capability para interpretação V3.2 — nenhum produto é inferido sem contexto. POR QUE APARECEU Maturidade: gap moderado — origem: “A operação possui visibilidade e capacidade de detectar…” Tecnologia: não informado · Classificação: Contexto tecnológico não informado Gestão de exposição externa (EASM/DRPS) Contexto tecnológico não informado Leitura V3.1.3 preservada (maturidade: gap moderado). Informe o contexto desta capability para interpretação V3.2 — nenhum produto é inferido sem contexto. POR QUE APARECEU Maturidade: gap moderado — origem: “A superfície externa é monitorada — credenciais vazadas, marca,…” Tecnologia: não informado · Classificação: Contexto tecnológico não informado"
+        },
+        {
+          "n": 8,
+          "texto": "Gestão contínua de vulnerabilidades Contexto tecnológico não informado Leitura V3.1.3 preservada (maturidade: gap moderado). Informe o contexto desta capability para interpretação V3.2 — nenhum produto é inferido sem contexto. SERVIÇOS Vulnerability Assessment serviço operacional · Avaliação O PÇÕ ES D E CO NS UM O/LI CE NC IA ME NTO FortiPoints · elegibilidade confirmada mecanismo: pontos universais (FortiFlex, FortiSIEM points, advanced/IR service points, contratos anuais) Créditos consolidados utilizados no ecossistema FortiMarketplace; quando aplicável, podem ser transferidos para FortiFlex Points. pontos de serviços avançados/IR cobertos pelo FortiPoints (fonte oficial) POR QUE APARECEU Maturidade: gap moderado — origem: “A gestão de vulnerabilidades é contínua e priorizada — não apenas um…” Tecnologia: não informado · Classificação: Contexto tecnológico não informado Apoio baseado na maturidade Capacidade do time Apoio baseado na maturidade Apoio baseado na maturidade — Landscape tecnológico não se aplica a esta capability. SERVIÇOS FortiGuard SOCaaS serviço operacional · Operação O PÇÕ ES D E CO NS UM O/LI CE NC IA ME NTO FortiPoints · elegibilidade confirmada mecanismo: pontos universais (FortiFlex, FortiSIEM points, advanced/IR service points, contratos anuais) Créditos consolidados utilizados no ecossistema FortiMarketplace; quando aplicável, podem ser transferidos para FortiFlex Points. pontos de serviços avançados/IR cobertos pelo FortiPoints (fonte oficial) Página oficial ↗ (https://www.fortinet.com/products/socaas) POR QUE APARECEU Maturidade: gap moderado — origem: “A equipe de segurança tem capacidade e redundância compatíveis com a…” Tecnologia: não informado · Classificação: Contexto tecnológico não informado"
+        },
+        {
+          "n": 9,
+          "texto": "Competências e desenvolvimento Apoio baseado na maturidade Apoio baseado na maturidade — Landscape tecnológico não se aplica a esta capability. SERVIÇOS Incident Response Training serviço operacional · Preparação O PÇÕ ES D E CO NS UM O/LI CE NC IA ME NTO FortiPoints · elegibilidade confirmada mecanismo: pontos universais (FortiFlex, FortiSIEM points, advanced/IR service points, contratos anuais) Créditos consolidados utilizados no ecossistema FortiMarketplace; quando aplicável, podem ser transferidos para FortiFlex Points. pontos de serviços avançados/IR cobertos pelo FortiPoints (fonte oficial) POR QUE APARECEU Maturidade: gap moderado — origem: “Quem opera segurança recebe treinamento e desenvolvimento contínuos?” Tecnologia: não informado · Classificação: Contexto tecnológico não informado Leitura arquitetural 4 gaps confirmados em capabilities core; ausência confirmada de plataforma SOC. Rota A — evoluir a stack atual por capability Rota B — FortiSOC (plataforma SOC unificada, SaaS) como opção arquitetural Jornada de maturidade 0 1 Inexistente Inicial 2 3 4 5 Gerenciado Definido PRÓXIMO ESTÁGIO Gerenciado quantitativamente Em otimização PERFIL ATUAL PA R A AVA N Ç A R Formalizar direcionamento, responsabilidades e critérios de decisão. Estruturar governança e acompanhamento executivo da operação. Consolidar políticas e padrões operacionais. O próximo estágio representa a próxima faixa do modelo de maturidade. A transição depende da evolução consistente das práticas e das evidências correspondentes."
+        },
+        {
+          "n": 10,
+          "texto": "Leitura executiva O Quickscan posiciona a operação em Gerenciado (1.7/5). Os domínios apresentam resultados próximos entre si, indicando um perfil relativamente equilibrado dentro do estágio atual. Considerando as prioridades declaradas pelo negócio — Direcionamento e objetivos —, foram observados 0 gaps altos e 15 moderados, que concentram os principais pontos de evolução identificados nesta sessão. Os próximos passos mais consistentes envolvem: formalizar direcionamento, responsabilidades e critérios de decisão; estruturar governança e acompanhamento executivo da operação; consolidar políticas e padrões operacionais. O contexto tecnológico declarado foi considerado na leitura das oportunidades. As soluções e serviços identificados devem ser tratados como possíveis habilitadores das práticas priorizadas."
+        },
+        {
+          "n": 11,
+          "texto": "Anexo — respostas da sessão 1. A operação de segurança tem direcionamento, responsabilidades e objetivos claros, conectados ao negócio? Direcionamento informal Prioridades existem, mas dependem da liderança e de pessoas. 2. Há governança de segurança estabelecida — papéis, responsabilidades e reporte à liderança? Papéis informais Sabe-se quem faz o quê, mas sem estrutura consistente. 3. Políticas de segurança e privacidade (incluindo LGPD) estão definidas e vigentes? Existem parcialmente Documentos dispersos ou pouco comunicados. 4. A equipe de segurança tem capacidade e redundância compatíveis com a demanda — sem depender de poucas pessoas? Dependência de poucas pessoas A operação funciona, mas depende de indivíduos específicos, sem redundância. 5. Quem opera segurança recebe treinamento e desenvolvimento contínuos? Treinamento eventual Depende de iniciativa individual ou necessidade pontual. 6. O conhecimento da operação está documentado — ou concentrado em poucas cabeças? Documentação parcial Existe, mas desatualizada ou incompleta. 7. Como a resposta a incidentes acontece hoje? Processo informal Há uma forma habitual de atuar, mas varia por equipe e caso. 8. As detecções são gerenciadas como casos de uso — criadas, validadas e revisadas? Gestão reativa Regras ajustadas após falsos positivos, incidentes ou problemas. 9. Ações de triagem e resposta são automatizadas — ou 100% manuais? Automações pontuais Scripts ou integrações isoladas. 10. Como os eventos e logs de segurança são centralizados e analisados hoje? Centralização parcial Algumas fontes críticas integradas, com lacunas de cobertura ou retenção. 11. Qual a capacidade de detecção e resposta nos endpoints hoje? EDR parcial Somente parte do parque, ou com funções limitadas. 12. A operação possui visibilidade e capacidade de detectar comportamento suspeito no tráfego de rede, inclusive tráfego leste-oeste e ativos onde agentes não chegam? Visibilidade parcial Alguns segmentos ou ferramentas fornecem visibilidade, mas existem lacunas relevantes de cobertura ou análise. 13. A operação possui cobertura de monitoramento compatível com a criticidade, os SLAs e o risco do negócio — inclusive fora do horário comercial quando necessário? Cobertura parcial ou informal Existe plantão, contato ou serviço fora do horário, mas com lacunas de escala, SLA ou formalização."
+        },
+        {
+          "n": 12,
+          "texto": "14. A superfície externa é monitorada — credenciais vazadas, marca, exposição na internet? Consultas pontuais Após incidentes ou por demanda. 15. A gestão de vulnerabilidades é contínua e priorizada — não apenas um scan eventual? Scans recorrentes sem ciclo A descoberta acontece; a correção não segue processo consistente. Quickscan SecOps · SOC-CMM · Fortinet — relatório contextual V3.2"
+        }
+      ],
+      "errosDePagina": []
+    },
+    "6-sem-prioridades": {
+      "contextoInformado": true,
+      "oraculo": {
+        "confirmadas": 15,
+        "suff": true,
+        "porDominio": [
+          {
+            "n": 3,
+            "score": 0.6
+          },
+          {
+            "n": 3,
+            "score": 1.1
+          },
+          {
+            "n": 3,
+            "score": 1.1
+          },
+          {
+            "n": 3,
+            "score": 1.1
+          },
+          {
+            "n": 3,
+            "score": 1.1
+          }
+        ],
+        "overall": 1,
+        "publicaveis": [
+          0.6,
+          1.1,
+          1.1,
+          1.1,
+          1.1
+        ]
+      },
+      "modo": {
+        "classes": "v32-print-mode",
+        "printMode": true,
+        "reportLen": 129695,
+        "legacyMode": false
+      },
+      "dom": {
+        "wrapDisplay": "none",
+        "celulasDominio": [
+          "0.6",
+          "1.1",
+          "1.1",
+          "1.1",
+          "1.1"
+        ],
+        "radarRotulos": [
+          "Negócio 0.6",
+          "Pessoas 1.1",
+          "Processos 1.1",
+          "Tecnologia 1.1",
+          "Serviços 1.1"
+        ],
+        "kpiGlobal": "1.0 / 5",
+        "secoes": [
+          "pr-maturity",
+          "pr-findings",
+          "pr-landscape",
+          "pr-interp",
+          "pr-support",
+          "pr-arch",
+          "pr-journey",
+          "pr-annex"
+        ]
+      },
+      "arquivo": "6-sem-prioridades.pdf",
+      "bytes": 334937,
+      "sha256": "bca5c3d1bbd446d1efb29e5351c07b352e7e7dd82ebb0d5c30ae5451087a1c9c",
+      "totalPaginas": 12,
+      "paginas": [
+        {
+          "n": 1,
+          "larguraPt": 595.91998,
+          "alturaPt": 842.88,
+          "a4": true,
+          "caracteres": 1547,
+          "linhas": 79,
+          "tintaPct": 10.13,
+          "primeiraLinha": "FORTINET",
+          "ultimaLinha": "Processos 1.1"
+        },
+        {
+          "n": 2,
+          "larguraPt": 595.91998,
+          "alturaPt": 842.88,
+          "a4": true,
+          "caracteres": 2710,
+          "linhas": 45,
+          "tintaPct": 11.35,
+          "primeiraLinha": "Gaps de maturidade observados",
+          "ultimaLinha": "CAPABILITY A DESENVOLVER: Gestão de conhecimento operacional"
+        },
+        {
+          "n": 3,
+          "larguraPt": 595.91998,
+          "alturaPt": 842.88,
+          "a4": true,
+          "caracteres": 3367,
+          "linhas": 52,
+          "tintaPct": 13.19,
+          "primeiraLinha": "Casos de uso de detecção · domínio Processos",
+          "ultimaLinha": "Não existe / não utilizamos"
+        },
+        {
+          "n": 4,
+          "larguraPt": 595.91998,
+          "alturaPt": 842.88,
+          "a4": true,
+          "caracteres": 1599,
+          "linhas": 34,
+          "tintaPct": 9.25,
+          "primeiraLinha": "Detecção e resposta em endpoint",
+          "ultimaLinha": "Tecnologia: ausência confirmada · Classificação: Ausência confirmada de tecnologia (whitespace)"
+        },
+        {
+          "n": 5,
+          "larguraPt": 595.91998,
+          "alturaPt": 842.88,
+          "a4": true,
+          "caracteres": 460,
+          "linhas": 7,
+          "tintaPct": 1.76,
+          "primeiraLinha": "Leitura base — contexto tecnológico não informado",
+          "ultimaLinha": "Tecnologia: não informado · Classificação: Contexto tecnológico não informado"
+        },
+        {
+          "n": 6,
+          "larguraPt": 595.91998,
+          "alturaPt": 842.88,
+          "a4": true,
+          "caracteres": 2243,
+          "linhas": 39,
+          "tintaPct": 11.2,
+          "primeiraLinha": "Gestão e resposta a incidentes Contexto tecnológico não informado",
+          "ultimaLinha": "Tecnologia: não informado · Classificação: Contexto tecnológico não informado"
+        },
+        {
+          "n": 7,
+          "larguraPt": 595.91998,
+          "alturaPt": 842.88,
+          "a4": true,
+          "caracteres": 2579,
+          "linhas": 40,
+          "tintaPct": 11.19,
+          "primeiraLinha": "Engenharia de detecção Contexto tecnológico não informado",
+          "ultimaLinha": "Tecnologia: não informado · Classificação: Contexto tecnológico não informado"
+        },
+        {
+          "n": 8,
+          "larguraPt": 595.91998,
+          "alturaPt": 842.88,
+          "a4": true,
+          "caracteres": 2158,
+          "linhas": 37,
+          "tintaPct": 9.45,
+          "primeiraLinha": "Gestão contínua de vulnerabilidades Contexto tecnológico não informado",
+          "ultimaLinha": "Tecnologia: não informado · Classificação: Contexto tecnológico não informado"
+        },
+        {
+          "n": 9,
+          "larguraPt": 595.91998,
+          "alturaPt": 842.88,
+          "a4": true,
+          "caracteres": 1529,
+          "linhas": 40,
+          "tintaPct": 7.4,
+          "primeiraLinha": "Competências e desenvolvimento Apoio baseado na maturidade",
+          "ultimaLinha": "consistente das práticas e das evidências correspondentes."
+        },
+        {
+          "n": 10,
+          "larguraPt": 595.91998,
+          "alturaPt": 842.88,
+          "a4": true,
+          "caracteres": 877,
+          "linhas": 11,
+          "tintaPct": 4.41,
+          "primeiraLinha": "Leitura executiva",
+          "ultimaLinha": "priorizadas."
+        },
+        {
+          "n": 11,
+          "larguraPt": 595.91998,
+          "alturaPt": 842.88,
+          "a4": true,
+          "caracteres": 2337,
+          "linhas": 43,
+          "tintaPct": 11.1,
+          "primeiraLinha": "Anexo — respostas da sessão",
+          "ultimaLinha": "Eventos críticos podem permanecer sem triagem durante períodos em que o negócio exige resposta."
+        },
+        {
+          "n": 12,
+          "larguraPt": 595.91998,
+          "alturaPt": 842.88,
+          "a4": true,
+          "caracteres": 389,
+          "linhas": 7,
+          "tintaPct": 1.93,
+          "primeiraLinha": "14. A superfície externa é monitorada — credenciais vazadas, marca, exposição na internet?",
+          "ultimaLinha": "Quickscan SecOps · SOC-CMM · Fortinet — relatório contextual V3.2"
+        }
+      ],
+      "textoPorPagina": [
+        {
+          "n": 1,
+          "texto": "FORTINET Negócio 1 Serviços Quickscan SecOps · SOC-CMM 5 2 Pessoas Relatório indicativo de maturidade de operações de segurança Screening indicativo de alto nível. Não substitui um assessment formal. SESSÃO Sem rótulo 4 3 Tecnologia Processos DATA DA SESSÃO 23/08/2026 23:51:31 RELATÓRIO GERADO EM 23/08/2026 VERSÃO DA FERRAMENTA 3.4.0- 23:51:33 dev.4.8.0.7 COBERTURA DA EVIDÊNCIA 15 de 15 respostas confirmadas 1. Negócio Negócio Pessoas 2. Pessoas 3. Processos 4. Tecnologia 5. Serviços Processos Tecnologia Serviços Screening indicativo de alto nível. Não substitui um assessment formal. COMO INTERPRETAR ESTE RELATÓRIO O score e o estágio vêm exclusivamente das respostas confirmadas do assessment. O contexto tecnológico não altera a nota: ter a ferramenta não eleva a maturidade. O contexto refina a classificação do gap e as recomendações — é o que torna a leitura acionável. n/d significa não avaliado, nunca zero; zero confirmado é um resultado medido. O cenário-alvo é um estado desejado e declarado, não previsão nem compromisso. As recomendações são possibilidades condicionadas ao contexto informado, sujeitas a validação. Resumo de maturidade 1.0 / 5 Inicial 15 de 15 Sem operação formal Score geral indicativo Estágio indicativo Respostas confirmadas Arquétipo declarado 0 1 2 3 4 5 Inexistente Inicial Gerenciado Definido Gerenciado quantitativamente Em otimização ▲ Você está aqui 1.0 / 5 · Inicial Negócio Pessoas Processos Tecnologia Serviços 0.6 1.1 1.1 1.1 1.1 Negócio 0.6 Serviços 1.1 Tecnologia 1.1 Pessoas 1.1 Processos 1.1"
+        },
+        {
+          "n": 2,
+          "texto": "Gaps de maturidade observados Gap alto de maturidade Direcionamento e objetivos · domínio Negócio EVIDÊNCIA DECLARADA: Não há direcionamento formal — Segurança atua principalmente por demanda. CAPABILITY A DESENVOLVER: Direcionamento e responsabilidades de segurança Gap alto de maturidade Governança · domínio Negócio EVIDÊNCIA DECLARADA: Responsabilidade indefinida — Ninguém possui claramente a accountability. CAPABILITY A DESENVOLVER: Governança e reporte de risco Gap alto de maturidade Capacidade do time · domínio Pessoas EVIDÊNCIA DECLARADA: Capacidade insuficiente — A demanda excede a equipe; atividades relevantes ficam sem dono. CAPABILITY A DESENVOLVER: Capacidade e resiliência do time Gap alto de maturidade Resposta a incidentes · domínio Processos EVIDÊNCIA DECLARADA: Sem processo definido — A resposta depende da situação e de quem está disponível. CAPABILITY A DESENVOLVER: Gestão e execução de resposta a incidentes Gap alto de maturidade Centralização de logs · domínio Tecnologia EVIDÊNCIA DECLARADA: Sem centralização — Cada ferramenta mantém seus logs; a investigação depende de consultas isoladas. CAPABILITY A DESENVOLVER: Análise centralizada, correlação e retenção de eventos POSSÍVEIS CAMINHOS DE APOIO Para a capability Análise centralizada, correlação e retenção de eventos: Apareceu porque o gap acima foi observado e o contexto declarado para esta capability é Não existe / não utilizamos. As opções são caminhos possíveis, a validar — não são requisito nem compra recomendada. FortiAnalyzer — logging e analytics no ecossistema Fortinet declarado. FortiSIEM — necessidade SIEM ampla de TI/OT, com múltiplas fontes e correlação em escala. FortiSOC — abordagem integrada, condicionada à arquitetura declarada. Cobertura de monitoramento · domínio Serviços EVIDÊNCIA DECLARADA: Cobertura insuficiente para a necessidade — Eventos críticos podem permanecer sem triagem durante Gap alto de maturidade períodos em que o negócio exige resposta. CAPABILITY A DESENVOLVER: Cobertura de monitoramento alinhada ao risco Gap moderado de maturidade Políticas e privacidade · domínio Negócio EVIDÊNCIA DECLARADA: Existem parcialmente — Documentos dispersos ou pouco comunicados. CAPABILITY A DESENVOLVER: Políticas de segurança e privacidade (LGPD) Gap moderado de maturidade Capacitação · domínio Pessoas EVIDÊNCIA DECLARADA: Treinamento eventual — Depende de iniciativa individual ou necessidade pontual. CAPABILITY A DESENVOLVER: Desenvolvimento de competências do time Gap moderado de maturidade Conhecimento operacional · domínio Pessoas EVIDÊNCIA DECLARADA: Documentação parcial — Existe, mas desatualizada ou incompleta. CAPABILITY A DESENVOLVER: Gestão de conhecimento operacional"
+        },
+        {
+          "n": 3,
+          "texto": "Casos de uso de detecção · domínio Processos EVIDÊNCIA DECLARADA: Gestão reativa — Regras ajustadas após falsos positivos, incidentes ou problemas. CAPABILITY A DESENVOLVER: Ciclo de vida de detecção (detection engineering) Gap moderado de maturidade POSSÍVEIS CAMINHOS DE APOIO Para a capability Ciclo de vida de detecção (detection engineering): Contexto tecnológico não declarado para esta capability: as opções abaixo exigem validar aderência antes de qualquer recomendação. FortiSIEM — coleta, correlação e analytics quando a detecção precisa cobrir fontes heterogêneas; validar aderência ao contexto do cliente. FortiAnalyzer — logging e analytics quando a operação já é majoritariamente Fortinet; validar aderência ao contexto do cliente. FortiSOAR — orquestração do ciclo de investigação e resposta dos casos de uso; validar aderência ao contexto do cliente. FortiSOC — abordagem integrada de SOC, como opção de plataforma — nunca como produto obrigatório; validar aderência ao contexto do cliente. Gap moderado de maturidade Automação · domínio Processos EVIDÊNCIA DECLARADA: Automações pontuais — Scripts ou integrações isoladas. CAPABILITY A DESENVOLVER: Orquestração e automação de resposta POSSÍVEIS CAMINHOS DE APOIO Para a capability Orquestração e automação de resposta: Contexto tecnológico não declarado para esta capability: as opções abaixo exigem validar aderência antes de qualquer recomendação. FortiSOAR — playbooks, integrações e padronização do tratamento; validar aderência ao contexto do cliente. Automação nativa de FortiAnalyzer/FortiSIEM — somente quando a necessidade e a arquitetura declaradas forem compatíveis; validar aderência ao contexto do cliente. Gap moderado de maturidade Proteção de endpoint · domínio Tecnologia EVIDÊNCIA DECLARADA: EDR parcial — Somente parte do parque, ou com funções limitadas. CAPABILITY A DESENVOLVER: Detecção e resposta em endpoint (EDR) Gap moderado de maturidade Visibilidade de rede · domínio Tecnologia EVIDÊNCIA DECLARADA: Visibilidade parcial — Alguns segmentos ou ferramentas fornecem visibilidade, mas existem lacunas relevantes de cobertura ou análise. CAPABILITY A DESENVOLVER: Network Detection & Response Gap moderado de maturidade Superfície externa · domínio Serviços EVIDÊNCIA DECLARADA: Consultas pontuais — Após incidentes ou por demanda. CAPABILITY A DESENVOLVER: Gestão de exposição externa (EASM/DRPS) Gap moderado de maturidade Gestão de vulnerabilidades · domínio Serviços EVIDÊNCIA DECLARADA: Scans recorrentes sem ciclo — A descoberta acontece; a correção não segue processo consistente. CAPABILITY A DESENVOLVER: Gestão contínua de vulnerabilidades POSSÍVEIS CAMINHOS DE APOIO Para a capability Gestão contínua de vulnerabilidades: Contexto tecnológico não declarado para esta capability: as opções abaixo exigem validar aderência antes de qualquer recomendação. FortiClient administrado por EMS — descoberta, inventário, varredura e patching no escopo de endpoint; não substitui uma plataforma completa de gestão de vulnerabilidades; validar aderência ao contexto do cliente. FortiRecon — exposição externa (EASM/DRPS) — pertinente à superfície externa, não à gestão interna; validar aderência ao contexto do cliente. Contexto tecnológico declarado Analytics de segurança (SIEM/data lake) Plataforma de SOC unificada Não existe / não utilizamos Não existe / não utilizamos"
+        },
+        {
+          "n": 4,
+          "texto": "Detecção e resposta em endpoint Não existe / não utilizamos Interpretação do contexto Analytics de segurança (SIEM/data lake) Ausência confirmada de tecnologia (whitespace) Gap de maturidade com ausência confirmada — candidato a conversa de aquisição na próxima etapa. Plataforma de SOC unificada Capability não avaliada pelo quickscan Registrada apenas como contexto; não afeta a maturidade. Detecção e resposta em endpoint Ausência confirmada de tecnologia (whitespace) Gap de maturidade com ausência confirmada — candidato a conversa de aquisição na próxima etapa. Como a Fortinet pode apoiar — contexto declarado Apoio direto — ausência confirmada de tecnologia Analytics de segurança (SIEM/data lake) Ausência confirmada de tecnologia (whitespace) TECNOLOGIA — OFERTAS FortiAnalyzer aquisição candidata Página oficial ↗ (https://www.fortinet.com/products/management/fortianalyzer) FortiSIEM aquisição candidata Página oficial ↗ (https://www.fortinet.com/products/siem/fortisiem) POR QUE APARECEU Maturidade: gap alto — origem: “Como os eventos e logs de segurança são centralizados e analisados hoje?” Tecnologia: ausência confirmada · Classificação: Ausência confirmada de tecnologia (whitespace) Detecção e resposta em endpoint Ausência confirmada de tecnologia (whitespace) TECNOLOGIA — OFERTAS NE Fortinet Endpoint Security modalidade a definir oferta a definir no aprofundamento POR QUE APARECEU Maturidade: gap moderado — origem: “Qual a capacidade de detecção e resposta nos endpoints hoje?” Tecnologia: ausência confirmada · Classificação: Ausência confirmada de tecnologia (whitespace)"
+        },
+        {
+          "n": 5,
+          "texto": "Leitura base — contexto tecnológico não informado Gestão de conhecimento Contexto tecnológico não informado Leitura V3.1.3 preservada (maturidade: gap moderado). Informe o contexto desta capability para interpretação V3.2 — nenhum produto é inferido sem contexto. POR QUE APARECEU Maturidade: gap moderado — origem: “O conhecimento da operação está documentado — ou concentrado em…” Tecnologia: não informado · Classificação: Contexto tecnológico não informado"
+        },
+        {
+          "n": 6,
+          "texto": "Gestão e resposta a incidentes Contexto tecnológico não informado Leitura V3.1.3 preservada (maturidade: gap alto). Informe o contexto desta capability para interpretação V3.2 — nenhum produto é inferido sem contexto. SERVIÇOS FortiGuard Incident Readiness Subscription serviço operacional · Preparação O PÇÕ ES D E CO NS UM O/LI CE NC IA ME NTO FortiPoints · elegibilidade confirmada mecanismo: pontos universais (FortiFlex, FortiSIEM points, advanced/IR service points, contratos anuais) Créditos consolidados utilizados no ecossistema FortiMarketplace; quando aplicável, podem ser transferidos para FortiFlex Points. pontos de serviços avançados/IR cobertos pelo FortiPoints (fonte oficial) Incident Response Plan Development serviço operacional · Preparação O PÇÕ ES D E CO NS UM O/LI CE NC IA ME NTO FortiPoints · elegibilidade confirmada mecanismo: pontos universais (FortiFlex, FortiSIEM points, advanced/IR service points, contratos anuais) Créditos consolidados utilizados no ecossistema FortiMarketplace; quando aplicável, podem ser transferidos para FortiFlex Points. pontos de serviços avançados/IR cobertos pelo FortiPoints (fonte oficial) Incident Response Playbook Development serviço operacional · Preparação O PÇÕ ES D E CO NS UM O/LI CE NC IA ME NTO FortiPoints · elegibilidade confirmada mecanismo: pontos universais (FortiFlex, FortiSIEM points, advanced/IR service points, contratos anuais) Créditos consolidados utilizados no ecossistema FortiMarketplace; quando aplicável, podem ser transferidos para FortiFlex Points. pontos de serviços avançados/IR cobertos pelo FortiPoints (fonte oficial) Cybersecurity Tabletop Exercise serviço operacional · Preparação O PÇÕ ES D E CO NS UM O/LI CE NC IA ME NTO FortiPoints · elegibilidade confirmada mecanismo: pontos universais (FortiFlex, FortiSIEM points, advanced/IR service points, contratos anuais) Créditos consolidados utilizados no ecossistema FortiMarketplace; quando aplicável, podem ser transferidos para FortiFlex Points. pontos de serviços avançados/IR cobertos pelo FortiPoints (fonte oficial) POR QUE APARECEU Maturidade: gap alto — origem: “Como a resposta a incidentes acontece hoje?” Tecnologia: não informado · Classificação: Contexto tecnológico não informado"
+        },
+        {
+          "n": 7,
+          "texto": "Engenharia de detecção Contexto tecnológico não informado Leitura V3.1.3 preservada (maturidade: gap moderado). Informe o contexto desta capability para interpretação V3.2 — nenhum produto é inferido sem contexto. POR QUE APARECEU Maturidade: gap moderado — origem: “As detecções são gerenciadas como casos de uso — criadas, validadas…” Tecnologia: não informado · Classificação: Contexto tecnológico não informado Automação de segurança (SOAR) Contexto tecnológico não informado Leitura V3.1.3 preservada (maturidade: gap moderado). Informe o contexto desta capability para interpretação V3.2 — nenhum produto é inferido sem contexto. POR QUE APARECEU Maturidade: gap moderado — origem: “Ações de triagem e resposta são automatizadas — ou 100% manuais?” Tecnologia: não informado · Classificação: Contexto tecnológico não informado Monitoramento contínuo Contexto tecnológico não informado Leitura V3.1.3 preservada (maturidade: gap alto). Informe o contexto desta capability para interpretação V3.2 — nenhum produto é inferido sem contexto. SERVIÇOS FortiGuard SOCaaS serviço operacional · Operação O PÇÕ ES D E CO NS UM O/LI CE NC IA ME NTO FortiPoints · elegibilidade confirmada mecanismo: pontos universais (FortiFlex, FortiSIEM points, advanced/IR service points, contratos anuais) Créditos consolidados utilizados no ecossistema FortiMarketplace; quando aplicável, podem ser transferidos para FortiFlex Points. pontos de serviços avançados/IR cobertos pelo FortiPoints (fonte oficial) Página oficial ↗ (https://www.fortinet.com/products/socaas) POR QUE APARECEU Maturidade: gap alto — origem: “A operação possui cobertura de monitoramento compatível com a…” Tecnologia: não informado · Classificação: Contexto tecnológico não informado Network Detection & Response Contexto tecnológico não informado Leitura V3.1.3 preservada (maturidade: gap moderado). Informe o contexto desta capability para interpretação V3.2 — nenhum produto é inferido sem contexto. POR QUE APARECEU Maturidade: gap moderado — origem: “A operação possui visibilidade e capacidade de detectar…” Tecnologia: não informado · Classificação: Contexto tecnológico não informado Gestão de exposição externa (EASM/DRPS) Contexto tecnológico não informado Leitura V3.1.3 preservada (maturidade: gap moderado). Informe o contexto desta capability para interpretação V3.2 — nenhum produto é inferido sem contexto. POR QUE APARECEU Maturidade: gap moderado — origem: “A superfície externa é monitorada — credenciais vazadas, marca,…” Tecnologia: não informado · Classificação: Contexto tecnológico não informado"
+        },
+        {
+          "n": 8,
+          "texto": "Gestão contínua de vulnerabilidades Contexto tecnológico não informado Leitura V3.1.3 preservada (maturidade: gap moderado). Informe o contexto desta capability para interpretação V3.2 — nenhum produto é inferido sem contexto. SERVIÇOS Vulnerability Assessment serviço operacional · Avaliação O PÇÕ ES D E CO NS UM O/LI CE NC IA ME NTO FortiPoints · elegibilidade confirmada mecanismo: pontos universais (FortiFlex, FortiSIEM points, advanced/IR service points, contratos anuais) Créditos consolidados utilizados no ecossistema FortiMarketplace; quando aplicável, podem ser transferidos para FortiFlex Points. pontos de serviços avançados/IR cobertos pelo FortiPoints (fonte oficial) POR QUE APARECEU Maturidade: gap moderado — origem: “A gestão de vulnerabilidades é contínua e priorizada — não apenas um…” Tecnologia: não informado · Classificação: Contexto tecnológico não informado Apoio baseado na maturidade Governança do SOC Apoio baseado na maturidade Apoio baseado na maturidade — Landscape tecnológico não se aplica a esta capability. POR QUE APARECEU Maturidade: gap alto — origem: “A operação de segurança tem objetivos e direcionamento claros, conectados…”; “Há governança de segurança estabelecida — papéis, responsabilidades…” Tecnologia: não informado · Classificação: Contexto tecnológico não informado Capacidade do time Apoio baseado na maturidade Apoio baseado na maturidade — Landscape tecnológico não se aplica a esta capability. SERVIÇOS FortiGuard SOCaaS serviço operacional · Operação O PÇÕ ES D E CO NS UM O/LI CE NC IA ME NTO FortiPoints · elegibilidade confirmada mecanismo: pontos universais (FortiFlex, FortiSIEM points, advanced/IR service points, contratos anuais) Créditos consolidados utilizados no ecossistema FortiMarketplace; quando aplicável, podem ser transferidos para FortiFlex Points. pontos de serviços avançados/IR cobertos pelo FortiPoints (fonte oficial) Página oficial ↗ (https://www.fortinet.com/products/socaas) POR QUE APARECEU Maturidade: gap alto — origem: “A equipe de segurança tem capacidade e redundância compatíveis com a…” Tecnologia: não informado · Classificação: Contexto tecnológico não informado"
+        },
+        {
+          "n": 9,
+          "texto": "Competências e desenvolvimento Apoio baseado na maturidade Apoio baseado na maturidade — Landscape tecnológico não se aplica a esta capability. SERVIÇOS Incident Response Training serviço operacional · Preparação O PÇÕ ES D E CO NS UM O/LI CE NC IA ME NTO FortiPoints · elegibilidade confirmada mecanismo: pontos universais (FortiFlex, FortiSIEM points, advanced/IR service points, contratos anuais) Créditos consolidados utilizados no ecossistema FortiMarketplace; quando aplicável, podem ser transferidos para FortiFlex Points. pontos de serviços avançados/IR cobertos pelo FortiPoints (fonte oficial) POR QUE APARECEU Maturidade: gap moderado — origem: “Quem opera segurança recebe treinamento e desenvolvimento contínuos?” Tecnologia: não informado · Classificação: Contexto tecnológico não informado Leitura arquitetural 4 gaps confirmados em capabilities core; ausência confirmada de plataforma SOC. Rota A — evoluir a stack atual por capability Rota B — FortiSOC (plataforma SOC unificada, SaaS) como opção arquitetural Jornada de maturidade 0 Inexistente 1 2 3 4 5 Inicial Gerenciado Definido PRÓXIMO ESTÁGIO Gerenciado quantitativamente Em otimização PERFIL ATUAL PA R A AVA N Ç A R Formalizar direcionamento, responsabilidades e critérios de decisão. Estruturar governança e acompanhamento executivo da operação. Dimensionar e sustentar a capacidade do time. O próximo estágio representa a próxima faixa do modelo de maturidade. A transição depende da evolução consistente das práticas e das evidências correspondentes."
+        },
+        {
+          "n": 10,
+          "texto": "Leitura executiva O Quickscan posiciona a operação em Inicial (1.0/5), com maior consistência relativa em Pessoas, Processos, Tecnologia e Serviços e oportunidades mais relevantes de evolução em Negócio. A distribuição mostra que a evolução não é uniforme entre os domínios avaliados. Nenhuma prioridade específica foi declarada nesta sessão; foram observados 6 gaps altos e 9 moderados, que concentram os principais pontos de evolução identificados nesta sessão. Os próximos passos mais consistentes envolvem: formalizar direcionamento, responsabilidades e critérios de decisão; estruturar governança e acompanhamento executivo da operação; dimensionar e sustentar a capacidade do time. O contexto tecnológico declarado foi considerado na leitura das oportunidades. As soluções e serviços identificados devem ser tratados como possíveis habilitadores das práticas priorizadas."
+        },
+        {
+          "n": 11,
+          "texto": "Anexo — respostas da sessão 1. A operação de segurança tem direcionamento, responsabilidades e objetivos claros, conectados ao negócio? Não há direcionamento formal Segurança atua principalmente por demanda. 2. Há governança de segurança estabelecida — papéis, responsabilidades e reporte à liderança? Responsabilidade indefinida Ninguém possui claramente a accountability. 3. Políticas de segurança e privacidade (incluindo LGPD) estão definidas e vigentes? Existem parcialmente Documentos dispersos ou pouco comunicados. 4. A equipe de segurança tem capacidade e redundância compatíveis com a demanda — sem depender de poucas pessoas? Capacidade insuficiente A demanda excede a equipe; atividades relevantes ficam sem dono. 5. Quem opera segurança recebe treinamento e desenvolvimento contínuos? Treinamento eventual Depende de iniciativa individual ou necessidade pontual. 6. O conhecimento da operação está documentado — ou concentrado em poucas cabeças? Documentação parcial Existe, mas desatualizada ou incompleta. 7. Como a resposta a incidentes acontece hoje? Sem processo definido A resposta depende da situação e de quem está disponível. 8. As detecções são gerenciadas como casos de uso — criadas, validadas e revisadas? Gestão reativa Regras ajustadas após falsos positivos, incidentes ou problemas. 9. Ações de triagem e resposta são automatizadas — ou 100% manuais? Automações pontuais Scripts ou integrações isoladas. 10. Como os eventos e logs de segurança são centralizados e analisados hoje? Sem centralização Cada ferramenta mantém seus logs; a investigação depende de consultas isoladas. 11. Qual a capacidade de detecção e resposta nos endpoints hoje? EDR parcial Somente parte do parque, ou com funções limitadas. 12. A operação possui visibilidade e capacidade de detectar comportamento suspeito no tráfego de rede, inclusive tráfego leste-oeste e ativos onde agentes não chegam? Visibilidade parcial Alguns segmentos ou ferramentas fornecem visibilidade, mas existem lacunas relevantes de cobertura ou análise. 13. A operação possui cobertura de monitoramento compatível com a criticidade, os SLAs e o risco do negócio — inclusive fora do horário comercial quando necessário? Cobertura insuficiente para a necessidade Eventos críticos podem permanecer sem triagem durante períodos em que o negócio exige resposta."
+        },
+        {
+          "n": 12,
+          "texto": "14. A superfície externa é monitorada — credenciais vazadas, marca, exposição na internet? Consultas pontuais Após incidentes ou por demanda. 15. A gestão de vulnerabilidades é contínua e priorizada — não apenas um scan eventual? Scans recorrentes sem ciclo A descoberta acontece; a correção não segue processo consistente. Quickscan SecOps · SOC-CMM · Fortinet — relatório contextual V3.2"
+        }
+      ],
+      "errosDePagina": []
+    }
+  }
+}

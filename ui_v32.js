@@ -74,13 +74,14 @@ const TSTATE_LABELS = { UNSET:"não informado", NONE:"ausência confirmada", UNK
 const SIG_LABELS = { activeIncident:"Incidente ativo", suspectedCompromise:"Suspeita de comprometimento",
   ransomwareConcern:"Preocupação com ransomware", dataLeakageConcern:"Vazamento de dados",
   insiderRiskConcern:"Insider risk", shadowAIConcern:"Shadow AI", usesPrivateLLMs:"Uso de LLM privado",
-  organizationBuildsAIApps:"Aplicações/agentes de IA", aiRuntimeSecurityConcern:"Segurança de runtime de IA",
+  organizationBuildsAIApps:"Aplicações corporativas de IA (copilots e chatbots)",
+  aiRuntimeSecurityConcern:"Segurança de runtime de IA",
   wantsSOCAssessment:"Interesse em SOC Assessment", becConcern:"Preocupação com BEC",
   emailSecurityConcern:"Segurança de e-mail", complianceDataProtection:"Compliance de proteção de dados",
   identityRiskConcern:"Risco de identidade", pamRequirement:"Requisito de PAM",
   wantsSOCDevelopment:"Desenvolvimento de SOC", wantsIRReadiness:"Prontidão de IR",
-  aiUsageRisk:"Risco de uso de IA", usesAgenticAI:"Agentes de IA",
-  promptInjectionConcern:"Prompt injection", llmDataLeakageConcern:"Vazamento via LLM",
+  aiUsageRisk:"Risco e governança do uso de IA", usesAgenticAI:"Agentes autônomos de IA",
+  promptInjectionConcern:"Prompt injection", llmDataLeakageConcern:"Vazamento de dados via LLM",
   edrSpecificNeed:"Necessidade específica de EDR" };
 const sigPT = k => SIG_LABELS[k] || k;
 function qLabel(qid){
@@ -113,7 +114,11 @@ function landscapeGroups(){
   const ids = Object.keys(V32.CAPABILITIES).filter(id => V32.CAPABILITIES[id].landscapeEnabled);
   return [
     { id:"g1", t:"SOC & Operations", open:true,  caps: ids.filter(id => V32.CAPABILITIES[id].scope==="core-soc") },
-    { id:"g2", t:"Detection & Telemetry", open:true, caps: ids.filter(id => V32.CAPABILITIES[id].scope==="secops") },
+    /* PHASE 5.2 · REV B (CTX-B §3.1): ao ENTRAR no editor só a primeira família
+       fica aberta. Abrir três de uma vez transformava o editor numa parede de
+       campos. O estado continua sendo apresentação: `prevOpen` preserva o que
+       o facilitador abriu e nada é perdido ao fechar e reabrir. */
+    { id:"g2", t:"Detection & Telemetry", open:false, caps: ids.filter(id => V32.CAPABILITIES[id].scope==="secops") },
     { id:"g3", t:"Advanced / Adjacent Controls", open:false, caps: ids.filter(id => V32.CAPABILITIES[id].scope==="adjacent-control") }
   ];
 }
@@ -163,8 +168,16 @@ function hideLegacyRecommendation(app, hide){
      escopo e permanece visível. Comportamento temporário de Print/PDF e "Próximo passo":
      seguem visíveis; a recomendação legada oculta também não sai no print (display:none). */
   const screen = app.querySelector("section.screen"); if(!screen) return;
+  /* PHASE 5.2 · o workspace desktop reagrupa as superfícies de resultado em
+     seções. Os três blocos de recomendação legada continuam CONTÍGUOS e na
+     MESMA ordem relativa, mas dentro da seção de apoio. O escopo da varredura
+     passa a ser essa seção quando ela existe; a REGRA de ocultação não muda em
+     nada — sem este hook, `renderBlocks()` chamado fora de `render()` (ação
+     "Limpar contexto tecnológico") varreria uma lista de filhos que já não
+     contém os blocos e deixaria a recomendação legada oculta indevidamente. */
+  const scope = screen.querySelector('[data-p52-legacy-scope="support"]') || screen;
   let hiding = false;
-  Array.from(screen.children).forEach(node=>{
+  Array.from(scope.children).forEach(node=>{
     if (node.id==="v32panel"){ hiding=false; return; }
     const isTitle = node.classList && node.classList.contains("section-title");
     if (isTitle){
@@ -292,12 +305,12 @@ function capEditor(capId){
         <select id="v32-pres-${capId}" data-cap="${capId}">${presOpts}</select></label>
     </div>
     ${L.presence==="NONE" ? `<div class="v32-micro" role="note">Use esta opção somente quando a ausência da capacidade/tecnologia tiver sido confirmada.</div>` : ""}
-    ${L.presence!=="UNSET" ? `<label class="v32-driver-lab">Motivo declarado para aprofundamento · opcional
-      <input type="text" id="v32-driver-${capId}" value="${escAttr((L.declaredDriver&&L.declaredDriver.note)||"")}"></label>` : ""}
     ${showSols ? `<div class="v32-sols" id="v32-sols-${capId}">
         ${(L.solutions||[]).map((s,i)=>solRow(capId,i,s)).join("")}
-        <button class="btn2 v32-add" id="v32-add-${capId}" data-cap="${capId}" type="button">Adicionar tecnologia</button>
+        <button class="btn2 v32-add" id="v32-add-${capId}" data-cap="${capId}" type="button">+ Adicionar tecnologia</button>
       </div>` : ""}
+    ${L.presence!=="UNSET" ? `<label class="v32-driver-lab">Contexto complementar da capability · opcional
+      <input type="text" id="v32-driver-${capId}" value="${escAttr((L.declaredDriver&&L.declaredDriver.note)||"")}"></label>` : ""}
   </div>`;
 }
 let editorOrigin = "results";
@@ -498,7 +511,13 @@ function candidateHTML(c){
   const co = (c.commercialOptions||[]).map(o=>{
     const pn = (V32.COMMERCIAL_PROGRAMS[o.program]||{}).name || o.program;
     return `<span class="v32-tag">${esc32(pn)} · elegibilidade ${esc32(ELIG_LABELS[o.eligibility]||o.eligibility)}</span>`; }).join("");
-  return `<li class="v32-cand">${iconFor(c.itemId, name)}<strong>${esc32(name)}</strong> <span class="v32-kind">${esc32(kind)}</span>${vr}${sn}${sig}${commercialHTML(c.commercialOptions)}</li>`;
+  /* PHASE 5.2 · REV B (SUPPORT-B §8.1): o link oficial acompanha a oferta em
+     TODAS as variantes, sempre que o item canônico tiver URL cadastrada. Sem
+     URL, nenhum link é inventado. Na tela abre em nova aba com `rel=noopener`;
+     no papel a mesma âncora é impressa com o endereço legível. */
+  const cUrl = (V32.OFFERINGS[c.itemId]||{}).url || "";
+  const cLnk = cUrl ? `<a class="p52-sup-link" data-p52="sup-link" href="${escAttr(cUrl)}" target="_blank" rel="noopener">Página oficial ↗</a>` : "";
+  return `<li class="v32-cand" data-item-id="${escAttr(c.itemId)}">${iconFor(c.itemId, name)}<strong>${esc32(name)}</strong> <span class="v32-kind p52-sup-badge">${esc32(kind)}</span>${vr}${sn}${sig}${commercialHTML(c.commercialOptions)}${cLnk}</li>`;
 }
 function serviceHTML(s){
   const svc = V32.SERVICES[s.serviceId]||{};
@@ -508,9 +527,11 @@ function serviceHTML(s){
   const trg = (s.triggeredBy||[]).filter(t=>t!=="capability-gap");
   const elig = s.note && /validar/i.test(s.note)
     ? `<div class="v32-scopenote v32-elig">Elegibilidade técnica: ${esc32(s.note.replace(/^elegível — /,""))}</div>` : "";
-  return `<li class="v32-svc">${iconFor(s.serviceId, svc.name)}<strong>${esc32(svc.name||s.serviceId)}</strong>
-    <span class="v32-kind">${esc32(LIFECYCLE_LABELS[s.lifecycle]||s.lifecycle)}</span>
-    ${trg.length?`<span class="v32-scopenote">gatilho: ${esc32(trg.map(sigPT).join(", "))}</span>`:""}${elig}${commercialHTML(s.commercialOptions)}</li>`;
+  const sUrl = svc.url || "";
+  const sLnk = sUrl ? `<a class="p52-sup-link" data-p52="sup-link" href="${escAttr(sUrl)}" target="_blank" rel="noopener">Página oficial ↗</a>` : "";
+  return `<li class="v32-svc" data-item-id="${escAttr(s.serviceId)}">${iconFor(s.serviceId, svc.name)}<strong>${esc32(svc.name||s.serviceId)}</strong>
+    <span class="v32-kind p52-sup-badge">serviço operacional · ${esc32(LIFECYCLE_LABELS[s.lifecycle]||s.lifecycle)}</span>
+    ${trg.length?`<span class="v32-scopenote">gatilho: ${esc32(trg.map(sigPT).join(", "))}</span>`:""}${elig}${commercialHTML(s.commercialOptions)}${sLnk}</li>`;
 }
 function whyHTMLOf(id, c){
   const m = c.maturity || {};
@@ -701,11 +722,11 @@ function prCards(ids, ctxs, pres){
 /* Vértices do pentágono, pré-calculados e FIXOS (nada é derivado de dado).
    Ângulos a partir do topo, em passos de 72°, raio 34 sobre centro (50,52). */
 const QS_PENTA = [
-  { x: 50.0, y: 18.0, lx: 50.0, ly: 10.5, anchor: "middle" },
-  { x: 82.3, y: 41.5, lx: 89.0, ly: 39.0, anchor: "start"  },
-  { x: 70.0, y: 79.6, lx: 74.5, ly: 90.5, anchor: "middle" },
-  { x: 30.0, y: 79.6, lx: 25.5, ly: 90.5, anchor: "middle" },
-  { x: 17.7, y: 41.5, lx: 11.0, ly: 39.0, anchor: "end"    }
+  { x: 50.0, y: 18.0, lx: 50.0, ly:  9.0, anchor: "middle" },
+  { x: 82.3, y: 41.5, lx: 93.0, ly: 43.5, anchor: "start"  },
+  { x: 70.0, y: 79.6, lx: 74.5, ly: 94.5, anchor: "middle" },
+  { x: 30.0, y: 79.6, lx: 25.5, ly: 94.5, anchor: "middle" },
+  { x: 17.7, y: 41.5, lx:  7.0, ly: 43.5, anchor: "end"    }
 ];
 function qsPentagonSVG(){
   const nomes = DOMS.map(d=>d.pt);
@@ -717,7 +738,10 @@ function qsPentagonSVG(){
   const rotulos = QS_PENTA.map((p,i)=>
     `<text x="${p.lx}" y="${p.ly}" font-size="6.6" text-anchor="${p.anchor}" fill="#3A3A40">${esc32(nomes[i])}</text>`
   ).join("");
-  return `<svg class="qs-mark qs-mark-penta" data-qs-mark="pentagon" viewBox="0 0 100 100" width="132" height="132" role="img" aria-labelledby="qs-penta-t qs-penta-d">`
+  /* PHASE 5.2 · REV B: o viewBox quadrado cortava os rótulos laterais
+     ("Pessoas" à direita, "Serviços" à esquerda) na renderização real do PDF.
+     A calha lateral entra no viewBox; a geometria dos nós não muda. */
+  return `<svg class="qs-mark qs-mark-penta" data-qs-mark="pentagon" viewBox="-25 2 150 96" width="190" height="122" role="img" aria-labelledby="qs-penta-t qs-penta-d">`
     + `<title id="qs-penta-t">Cinco domínios do Quickscan</title>`
     + `<desc id="qs-penta-d">Emblema de identidade: ${esc32(nomes.join(", "))}. Elemento gráfico fixo, não representa resultados.</desc>`
     + `<g aria-hidden="true"><polygon points="${linha}" fill="none" stroke="#C9C9CF" stroke-width="1.2"></polygon>${nos}</g>`
@@ -776,8 +800,13 @@ function qsStageRulerHTML(overall, suff){
     return `<span class="pr-rl-band" data-rl-band="${i}" style="width:${largura}%">`
       + `<span class="pr-rl-n">${i}</span><span class="pr-rl-s">${esc32(b.stage.pt)}</span></span>`;
   }).join("");
+  /* PHASE 5.2 · REV B (PDF-B §11.5): o marcador ganha rótulo explícito e cor de
+     MARCA — nunca cor de domínio. A posição continua derivada estritamente do
+     score canônico já arredondado para exibição; sem suficiência não há
+     marcador algum, e `n/d` jamais é desenhado como zero. */
   const marcador = determinado
     ? `<span class="pr-rl-mark" data-rl-mark style="left:${pct(overall)}%" aria-hidden="true"></span>`
+      + `<span class="pr-rl-here" data-rl-here style="left:${pct(overall)}%">Você está aqui</span>`
     : "";
   const leitura = determinado
     ? `<div class="pr-rl-read" data-rl-read><b>${overall.toFixed(1)} / 5</b> · ${esc32(stageOf(overall).pt)}</div>`
@@ -837,6 +866,15 @@ function qsCoverHTML(){
         <div><dt>${esc32(m.sessionDateLabel)}</dt><dd data-pr-meta="sessionDate">${esc32(m.sessionDateText)}</dd></div>
         <div><dt>Relatório gerado em</dt><dd data-pr-meta="generatedAt">${esc32(m.generatedAtText||"")}</dd></div>
         <div><dt>Versão da ferramenta</dt><dd data-pr-meta="tool">${esc32(m.toolVersion)}</dd></div>
+        <div><dt>Cobertura da evidência</dt><dd data-pr-meta="coverage">${(function(){
+          /* PHASE 5.2 · REV A (SUFF-REV-A §6.3): o relatório do CLIENTE leva
+             UMA LINHA compacta de cobertura, como metadado de rastreabilidade
+             — nunca o painel operacional de suficiência, nunca o diagnóstico
+             interno de gate como protagonista. A contagem vem do owner
+             canônico de respostas; nenhum limiar é declarado aqui. */
+          const conf = ans.filter(v => v !== null && v !== "NA").length;
+          return esc32(conf + " de " + QS.length + " respostas confirmadas");
+        })()}</dd></div>
       </dl>
       ${qsDomainLegendHTML()}
     </div></div>`;
@@ -947,6 +985,35 @@ function qsHowToReadHTML(){
     </ul></div>`;
 }
 
+/* ==========================================================================
+   ERRATA DA AUDITORIA EXTERNA SÊNIOR DE FRONTEND · B-01
+   (AUDITORIA_EXTERNA_SENIOR_FRONTEND_QUICKSCAN_PHASE_5_2.md,
+    SHA-256 f5a9f70e7a5ee658ef86775d8dab93ce2cb15974604a7ed7f1dcd99e13b58dae)
+
+   DECISÃO CANÔNICA DE PUBLICABILIDADE, NA ORIGEM DO DADO.
+
+   Defeito reproduzido em PDF real: a tabela de domínios e o radar do
+   relatório eram condicionados APENAS a `s.score === null`, nunca ao gate
+   canônico de suficiência. O KPI global e a régua, na MESMA página, já
+   respeitavam `suff` — e o documento entregue ao cliente declarava
+   "suficiência de dados não atingida" e imprimia, duas linhas abaixo, `5.0`
+   para um domínio com UMA resposta confirmada.
+
+   A correção NÃO é ocultar tinta por CSS: é não produzir o valor. Esta
+   função é a única fonte do que pode ser publicado por domínio; tabela,
+   radar e qualquer texto derivado consomem a MESMA decisão. Com o gate
+   fechado todo score de domínio vira `null` — que os renderers já sabem
+   apresentar como `n/d` e que o radar já sabe NÃO plotar (invariante
+   [UNSET-GEOM]: `n/d` nunca é desenhado como zero).
+
+   `null` (não avaliado) e `0` confirmado continuam distintos: com o gate
+   ABERTO, `0.0` é publicado como resultado medido legítimo.
+   ========================================================================== */
+function publishableStats(stats, suff){
+  if (suff) return stats;
+  return stats.map(s => Object.assign({}, s, { score: null }));
+}
+
 function buildPrintReport(){
   const ctxRes = V32.buildRecommendationContext();               /* recompute — nunca cache */
   const ctxs = ctxRes.contexts;
@@ -957,6 +1024,9 @@ function buildPrintReport(){
      legacySnapshot, computeTargetProfile e buildNarrativeSnapshot): arredondar ANTES
      de nomear o estagio, para que numero impresso e nome da faixa nunca divirjam. */
   const overall = suff && scored.length ? Math.round(scored.reduce((a,s)=>a+s.score,0)/scored.length*10)/10 : null;
+  /* ERRATA EXTERNA · B-01 · a decisão de publicabilidade é tomada UMA vez e
+     alimenta tabela e radar. Nada abaixo lê `stats` cru para publicar score. */
+  const pub = publishableStats(stats, suff);
   const {findings, validate} = computeFindings();
   const prios = [...businessPriority].map(qid=>findings.find(f=>f.id===qid)).filter(Boolean);
   /* RPT-01 · abertura executiva. A capa vem ANTES do cabeçalho corrente, que
@@ -964,25 +1034,36 @@ function buildPrintReport(){
      continua encontrando `.pr-head`). RPT-05 · a faixa dos cinco domínios
      acompanha a marca no cabeçalho. */
   let h = qsCoverHTML();
-  h += `<div class="pr-head"><div class="pr-brand">Fortinet · Quickscan SecOps · SOC-CMM</div>
+  /* PHASE 5.2 · REV B (PDF-B §11.2): a marca aparecia duas vezes seguidas no
+     topo da primeira página, na capa e neste cabeçalho. A identidade fica na
+     capa; aqui resta a faixa dos cinco domínios, que passa a ocupar a largura
+     útil e a integrar a abertura (§11.3). */
+  h += `<div class="pr-head" data-pr-band="wide">
     <div class="pr-headmark">${qsBandSVG()}</div>
-    <div class="pr-disc">Screening indicativo de alto nível — não substitui assessment formal.</div></div>`;
+    <div class="pr-disc">Screening indicativo de alto nível. Não substitui um assessment formal.</div></div>`;
+  /* REV B §11.1 · a orientação de leitura vem ANTES dos números. */
+  h += qsHowToReadHTML();
   /* B — resumo de maturidade */
   h += `<div class="pr-sec" id="pr-maturity"><h2>Resumo de maturidade</h2>
     <div class="pr-kpis">
       <div class="pr-kpi"><b>${overall!==null ? overall.toFixed(1)+" / 5" : "n/d"}</b><span>Score geral indicativo</span></div>
       ${(suff && overall!==null) ? `<div class="pr-kpi"><b>${esc32(stageOf(overall).pt)}</b><span>Estágio indicativo</span></div>` : `<div class="pr-kpi"><b>—</b><span>Estágio: suficiência de dados não atingida</span></div>`}
-      <div class="pr-kpi"><b>${suff ? "adequada" : "insuficiente"}</b><span>Suficiência da sessão</span></div>
+      ${/* REV B §9/§11.4 · a suficiência é diagnóstico interno de gate e deixa de
+           ser KPI do relatório do cliente. A rastreabilidade fica na linha
+           "Cobertura da evidência" dos metadados da capa. */""}
+      <div class="pr-kpi"><b>${ans.filter(v=>v!==null&&v!=="NA").length} de ${QS.length}</b><span>Respostas confirmadas</span></div>
       ${typeof arq==="number" && ARQ[arq] ? `<div class="pr-kpi"><b>${esc32(ARQ[arq].t)}</b><span>Arquétipo declarado</span></div>` : ""}
     </div>
     ${qsStageRulerHTML(overall, suff)}
     <table class="pr-doms"><tr>${stats.map((s,i)=>`<th><span class="pr-domsw" style="background:${PR_DOM_HEX[i]}"></span>${esc32(DOMS[i].pt)}</th>`).join("")}</tr>
-    <tr>${stats.map(s=>`<td>${s.score===null?"n/d":s.score.toFixed(1)}</td>`).join("")}</tr></table>
-    ${prRadarSVG(stats)}</div>`;
-  /* §4 do adendo: a caixa vem logo APÓS o resumo de maturidade. */
-  h += qsHowToReadHTML();
-  /* C — prioridades */
-  if (prios.length) h += `<div class="pr-sec" id="pr-prios"><h2>Prioridades declaradas pelo negócio</h2>
+    <tr>${pub.map(s=>`<td>${s.score===null?"n/d":s.score.toFixed(1)}</td>`).join("")}</tr></table>
+    ${prRadarSVG(pub)}
+    ${suff ? "" : `<div class="pr-mut pr-nopub" id="pr-nopub">Evidência insuficiente: nenhum score de maturidade por domínio é publicado até o gate canônico abrir. <b>n/d</b> significa não avaliado — nunca zero. ${ans.filter(v=>v!==null&&v!=="NA").length} de ${QS.length} respostas confirmadas; a regra canônica exige ao menos 10 confirmadas e ao menos 2 por domínio.</div>`}</div>`;
+  /* C — prioridades.
+     PHASE 5.2 · REV B (PDF-B §11.1/§11.6): o corpo analítico começa na página
+     2. A primeira página fica com abertura, metadados, faixa, "Como
+     interpretar", resumo e régua — sem um título de prioridades órfão no pé. */
+  if (prios.length) h += `<div class="pr-sec pr-pagebreak" id="pr-prios"><h2>Prioridades declaradas pelo negócio</h2>
     ${prios.map((f,i)=>`<div class="pr-card"><b>${i+1}. ${esc32(qLabel(f.id))}</b></div>`).join("")}</div>`;
   /* D — findings */
   if (findings.length) h += `<div class="pr-sec" id="pr-findings"><h2>Gaps de maturidade observados</h2>
@@ -997,7 +1078,30 @@ function buildPrintReport(){
         <div><i class="pr-lab">Evidência declarada:</i> ${esc32(opt.t)}${opt.d?` — <span class="pr-mut">${esc32(opt.d)}</span>`:""}</div>
         ${cap?`<div><i class="pr-lab">Capability a desenvolver:</i> ${esc32(cap)}</div>`:""}
         ${obs}${qsGapSupportHTML(f)}</div>`;}).join("")}</div>`;
-  if (ctxRes.legacyMode){ h += `<div class="pr-foot">Relatório V3.1.3 · contexto tecnológico não informado nesta sessão.</div>`; return { html:h, ctxRes }; }
+  /* ==========================================================================
+     ERRATA DA AUDITORIA EXTERNA · B-02 (e B-03 por construção)
+
+     Aqui existia um `return` que ENCERRAVA o relatório quando o contexto
+     tecnológico não fora informado. Combinado com o curto-circuito de
+     `preparePrint()`, o efeito era que a configuração mais provável em uso
+     real — contexto não informado, documentada como legítima e completa —
+     nunca recebia o relatório projetado.
+
+     O contexto continua ESTRITAMENTE OPCIONAL e continua sem qualquer efeito
+     sobre score, estágio, suficiência ou gaps. O que muda é só isto: a
+     ausência de contexto passa a suprimir apenas as seções que dependem
+     MATERIALMENTE do contexto (E–H: contexto declarado, plataformas e
+     licenciamento, requisitos específicos, interpretação do contexto, apoio
+     e leitura arquitetural) e passa a ser DECLARADA com honestidade, em vez
+     de descartar capa, metadados, régua, jornada e anexo — que não dependem
+     de contexto algum.
+     ========================================================================== */
+  if (ctxRes.legacyMode){
+    h += `<div class="pr-sec" id="pr-landscape"><h2>Contexto tecnológico</h2>
+      <div class="pr-card"><b>Não informado nesta sessão</b>
+      <span class="pr-state">não informado</span>
+      <div class="pr-mut">Nenhuma capability, contexto de arquitetura, plataforma, licenciamento ou requisito específico foi declarado nesta sessão. A ausência de contexto é um estado legítimo e completo do assessment: ela não altera score, estágio, suficiência nem gaps — apenas mantém a leitura de apoio em base geral, sem afirmar aderência a produto algum.</div></div></div>`;
+  } else {
   /* E — contexto declarado */
   const decl = Object.keys(V32.TECH_LANDSCAPE).filter(id=>V32.TECH_LANDSCAPE[id].presence!=="UNSET");
   h += `<div class="pr-sec" id="pr-landscape"><h2>Contexto tecnológico declarado</h2>
@@ -1048,6 +1152,11 @@ function buildPrintReport(){
     <div class="pr-card"><div class="pr-mut">${an.basis.coreGaps.length} gaps confirmados em capabilities core; ${an.basis.socPlatformNone?"ausência confirmada de plataforma SOC":"fragmentação declarada"}.</div>
     <div><b>Rota A</b> — ${esc32(an.optionA)}</div>
     ${an.optionB?`<div><b>Rota B</b> — ${esc32(an.optionB)}</div>`:""}</div></div>`;
+  }   /* fim das seções E–H, condicionais ao contexto declarado (ERRATA EXTERNA · B-02) */
+  /* ERRATA EXTERNA · B-02 · daqui para baixo NADA depende do contexto: a
+     jornada, o refinamento operacional, o cenário-alvo e o anexo de respostas
+     são derivados exclusivamente das respostas do assessment e passam a
+     existir também quando o contexto não é informado. */
   h += (typeof window!=="undefined" && window.__uxJourneyPrintHTML) ? window.__uxJourneyPrintHTML() : "";   /* [4.5-W] */
   h += (typeof window!=="undefined" && window.__uxRefinementPrintHTML) ? window.__uxRefinementPrintHTML() : "";   /* [4.4-O] */
   h += (typeof window!=="undefined" && window.__uxTargetPrintHTML) ? window.__uxTargetPrintHTML() : "";   /* [4.3.1-Q] */
@@ -1061,7 +1170,8 @@ function buildPrintReport(){
       const obs = (typeof notes!=="undefined" && notes[k] && String(notes[k]).trim())
         ? `<div class="pr-mut pr-obs"><i>Observações da sessão:</i> ${esc32(notes[k])}</div>` : "";   /* [3.3.2.1-B] */
       return `<div class="pr-card"><b>${k+1}. ${esc32(qq.q)}</b><div>${esc32(resp)}</div>${note}${obs}</div>`;}).join("")}</div>`;
-  h += `<div class="pr-foot">Quickscan SecOps · SOC-CMM · Fortinet — relatório contextual V3.2</div>`;
+  h += `<div class="pr-foot">Quickscan SecOps · SOC-CMM · Fortinet — relatório contextual V3.2${
+    ctxRes.legacyMode ? " · contexto tecnológico não informado nesta sessão" : ""}</div>`;
   return { html:h, ctxRes };
 }
 let __printPre = null;
@@ -1073,11 +1183,31 @@ function preparePrint(){
     return { blocked:true };
   }
   __printPre = fullStateJSON();
-  if (V32.isLegacyModeV32()){ el.innerHTML=""; document.body.classList.remove("v32-print-mode"); return { legacy:true }; }
+  /* ==========================================================================
+     ERRATA DA AUDITORIA EXTERNA · B-02/B-03 · CAMINHO ÚNICO DE IMPRESSÃO
+
+     Aqui existia:
+         if (V32.isLegacyModeV32()){ el.innerHTML=""; document.body...remove(
+           "v32-print-mode"); return { legacy:true }; }
+
+     O curto-circuito descartava o relatório ANTES de montá-lo e, ao não
+     aplicar `v32-print-mode`, deixava `.wrap` visível na impressão — de modo
+     que o documento entregue ao cliente era a SUPERFÍCIE DE APLICAÇÃO, sem
+     capa, metadados, legenda, régua nem marcador. Pior: a neutralização
+     honesta da superfície legada vive em `@media screen`, então no papel os
+     valores contraditórios ressuscitavam (`5.0 — Optimizing` em cinco
+     domínios sob um cabeçalho que dizia "cobertura insuficiente").
+
+     `buildPrintReport()` já sabia tratar o modo legado; o caminho é que era
+     descartado. Removido o curto-circuito, existe UM único caminho de
+     impressão: o relatório estruturado, nas duas condições de contexto. Com
+     `v32-print-mode` sempre aplicado, `.wrap` nunca chega ao papel e B-03
+     desaparece por construção — sem uma segunda correção de CSS.
+     ========================================================================== */
   const { html } = buildPrintReport();
   el.innerHTML = html;
   document.body.classList.add("v32-print-mode");
-  return { blocked:false, legacy:false };
+  return { blocked:false, legacy:V32.isLegacyModeV32() };
 }
 function finishPrint(){
   document.body.classList.remove("v32-print-mode","v32-print-blocked");
@@ -1113,7 +1243,7 @@ renderResults = function(app){
 };
 
 /* ---------------- API de teste (build DEV) ---------------- */
-window.__V32UI = { openEditor, esc32, iconFor, ARCH_FIELDS };   /* [4.8.0.2-3] contrato real de arquitetura */   /* [4.5.0.2-B] mesma função exposta; zero resolver paralelo */
+window.__V32UI = { openEditor, esc32, iconFor, ARCH_FIELDS, publishableStats };   /* ERRATA EXTERNA · B-01: a decisão canônica de publicabilidade é servida por ESTA ponte; nenhuma camada declara a sua. */   /* [4.8.0.2-3] contrato real de arquitetura */   /* [4.5.0.2-B] mesma função exposta; zero resolver paralelo */
 window.__DEV = {
   V32,
   PR_DOM_HEX, QS_GAP_SUPPORT,                   /* [5.1] superfícies de leitura para os gates */

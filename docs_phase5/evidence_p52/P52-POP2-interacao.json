@@ -1,0 +1,246 @@
+{
+  "1920": {
+    "0": {
+      "porPonto": {
+        "disco": true,
+        "rotulo": true,
+        "caixa": true
+      },
+      "foco": {
+        "focado": true,
+        "aberto": true
+      },
+      "esc": {
+        "fechou": true,
+        "foco": true,
+        "expandido": "false"
+      },
+      "alterna": {
+        "abriu": true,
+        "fechou": true
+      },
+      "tecla": {
+        "abriu": true,
+        "fechou": true
+      }
+    },
+    "1": {
+      "porPonto": {
+        "disco": true,
+        "rotulo": true,
+        "caixa": true
+      },
+      "foco": {
+        "focado": true,
+        "aberto": true
+      },
+      "esc": {
+        "fechou": true,
+        "foco": true,
+        "expandido": "false"
+      },
+      "alterna": {
+        "abriu": true,
+        "fechou": true
+      },
+      "tecla": {
+        "abriu": true,
+        "fechou": true
+      }
+    },
+    "2": {
+      "porPonto": {
+        "disco": true,
+        "rotulo": true,
+        "caixa": true
+      },
+      "foco": {
+        "focado": true,
+        "aberto": true
+      },
+      "esc": {
+        "fechou": true,
+        "foco": true,
+        "expandido": "false"
+      },
+      "alterna": {
+        "abriu": true,
+        "fechou": true
+      },
+      "tecla": {
+        "abriu": true,
+        "fechou": true
+      }
+    },
+    "3": {
+      "porPonto": {
+        "disco": true,
+        "rotulo": true,
+        "caixa": true
+      },
+      "foco": {
+        "focado": true,
+        "aberto": true
+      },
+      "esc": {
+        "fechou": true,
+        "foco": true,
+        "expandido": "false"
+      },
+      "alterna": {
+        "abriu": true,
+        "fechou": true
+      },
+      "tecla": {
+        "abriu": true,
+        "fechou": true
+      }
+    },
+    "4": {
+      "porPonto": {
+        "disco": true,
+        "rotulo": true,
+        "caixa": true
+      },
+      "foco": {
+        "focado": true,
+        "aberto": true
+      },
+      "esc": {
+        "fechou": true,
+        "foco": true,
+        "expandido": "false"
+      },
+      "alterna": {
+        "abriu": true,
+        "fechou": true
+      },
+      "tecla": {
+        "abriu": true,
+        "fechou": true
+      }
+    }
+  },
+  "3440": {
+    "0": {
+      "porPonto": {
+        "disco": true,
+        "rotulo": true,
+        "caixa": true
+      },
+      "foco": {
+        "focado": true,
+        "aberto": true
+      },
+      "esc": {
+        "fechou": true,
+        "foco": true,
+        "expandido": "false"
+      },
+      "alterna": {
+        "abriu": true,
+        "fechou": true
+      },
+      "tecla": {
+        "abriu": true,
+        "fechou": true
+      }
+    },
+    "1": {
+      "porPonto": {
+        "disco": true,
+        "rotulo": true,
+        "caixa": true
+      },
+      "foco": {
+        "focado": true,
+        "aberto": true
+      },
+      "esc": {
+        "fechou": true,
+        "foco": true,
+        "expandido": "false"
+      },
+      "alterna": {
+        "abriu": true,
+        "fechou": true
+      },
+      "tecla": {
+        "abriu": true,
+        "fechou": true
+      }
+    },
+    "2": {
+      "porPonto": {
+        "disco": true,
+        "rotulo": true,
+        "caixa": true
+      },
+      "foco": {
+        "focado": true,
+        "aberto": true
+      },
+      "esc": {
+        "fechou": true,
+        "foco": true,
+        "expandido": "false"
+      },
+      "alterna": {
+        "abriu": true,
+        "fechou": true
+      },
+      "tecla": {
+        "abriu": true,
+        "fechou": true
+      }
+    },
+    "3": {
+      "porPonto": {
+        "disco": true,
+        "rotulo": true,
+        "caixa": true
+      },
+      "foco": {
+        "focado": true,
+        "aberto": true
+      },
+      "esc": {
+        "fechou": true,
+        "foco": true,
+        "expandido": "false"
+      },
+      "alterna": {
+        "abriu": true,
+        "fechou": true
+      },
+      "tecla": {
+        "abriu": true,
+        "fechou": true
+      }
+    },
+    "4": {
+      "porPonto": {
+        "disco": true,
+        "rotulo": true,
+        "caixa": true
+      },
+      "foco": {
+        "focado": true,
+        "aberto": true
+      },
+      "esc": {
+        "fechou": true,
+        "foco": true,
+        "expandido": "false"
+      },
+      "alterna": {
+        "abriu": true,
+        "fechou": true
+      },
+      "tecla": {
+        "abriu": true,
+        "fechou": true
+      }
+    }
+  }
+}

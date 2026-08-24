@@ -10,7 +10,9 @@ function stageIndexOf(stage, list){ return stage? list.findIndex(s=>s.pt===stage
 const JOURNEY_NEXT_NOTE = "O próximo estágio representa a próxima faixa do modelo de maturidade. A transição depende da evolução consistente das práticas e das evidências correspondentes.";
 const JOURNEY_TGT_NOTE = "O cenário-alvo representa práticas explicitamente selecionadas nesta sessão e não constitui previsão de resultado.";
 const PRACTICE_PHRASES = {
-  mandate:"Formalizar mandato, responsabilidades e critérios de decisão.",
+  /* PHASE 5.2 · REV B (COPY-B §5.1): "mandato" sai da linguagem apresentada ao
+     usuário e ao cliente. O tema é o mesmo; muda a palavra. */
+  mandate:"Formalizar direcionamento, responsabilidades e critérios de decisão.",
   governance:"Estruturar governança e acompanhamento executivo da operação.",
   policies:"Consolidar políticas e padrões operacionais.",
   "team-capacity":"Dimensionar e sustentar a capacidade do time.",
@@ -55,7 +57,17 @@ function journeyModel(snap){
   const L=stagesView();
   const cur=snap.maturity.sufficient? stageIndexOf(snap.maturity.stage,L) : -1;
   const next=(cur>=0 && cur<L.length-1)? cur+1 : -1;
-  const tgtIdx=(snap.target.exists && snap.target.sufficient && snap.target.stage)? stageIndexOf(snap.target.stage,L) : -1;
+  /* ==========================================================================
+     ERRATA FINAL · ALTO-1 · o marcador `Cenário-alvo` da régua é PUBLICAÇÃO DE
+     ESTÁGIO DO ALVO, e a régua é a mesma comparação em outra superfície.
+     Respondia só a `snap.target.sufficient` (o gate do vetor efetivo do alvo),
+     enquanto `cur` já exigia `snap.maturity.sufficient`. Com o gate canônico
+     FECHADO e alvos declarados em quantidade suficiente, a régua imprimia o
+     losango verde sobre um estágio nomeado, na mesma página em que declara
+     "Posicionamento atual: n/d — não há evidência suficiente". Passa a exigir
+     a MESMA decisão do perfil atual, como todas as demais superfícies.
+     ========================================================================== */
+  const tgtIdx=(snap.maturity.sufficient && snap.target.exists && snap.target.sufficient && snap.target.stage)? stageIndexOf(snap.target.stage,L) : -1;
   return { stages:L, cur, next, tgt:tgtIdx, top:(cur===L.length-1) };
 }
 /* [G] temas de evolução — determinístico, máx 3, priority-first, sem produtos */

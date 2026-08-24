@@ -9,7 +9,7 @@
       "command": "/usr/bin/node tests_ui_m332.js",
       "exit": 0,
       "timedOut": false,
-      "ms": 36513,
+      "ms": 47852,
       "counts": {
         "pass": 23,
         "fail": 0,
@@ -34,7 +34,7 @@
       "command": "npx playwright test tests_visual/print.spec.js",
       "exit": 0,
       "timedOut": false,
-      "ms": 8787,
+      "ms": 11350,
       "counts": {
         "passed": 7,
         "failed": 0,
@@ -47,7 +47,7 @@
       "command": "/usr/bin/node tests_unset_ug.js",
       "exit": 0,
       "timedOut": false,
-      "ms": 35830,
+      "ms": 49659,
       "counts": {
         "pass": 13,
         "fail": 0,

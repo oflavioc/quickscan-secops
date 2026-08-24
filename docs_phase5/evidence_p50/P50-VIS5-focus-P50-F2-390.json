@@ -15,7 +15,7 @@
       "min": 5
     },
     {
-      "label": "atalho de evidência da Camada 5",
+      "label": "controle único de evidência (#notetgl)",
       "min": 1
     },
     {
@@ -32,75 +32,18 @@
     }
   ],
   "tabStops": [
-    "button[data-p50=\"prev\"].p50-btn",
-    "button[data-p50=\"next\"].p50-btn",
     "button[data-p50=\"sidebar-toggle\"].p50-btn",
     "button.opt[0]",
     "button.opt[1]",
     "button.opt[2]",
     "button.opt[3]",
     "button.opt[NA]",
-    "button[data-p50=\"evidence-open\"].p50-btn",
     "button#notetgl",
     "textarea#notetxt",
     "button#back",
     "button#next"
   ],
   "elements": [
-    {
-      "case": "P50-F2/assessment@390",
-      "sel": "button[data-p50=\"prev\"].p50-btn",
-      "focusVisible": true,
-      "indicator": {
-        "kind": "outline",
-        "width": 2,
-        "color": "rgb(245, 245, 244)",
-        "style": "solid"
-      },
-      "box": {
-        "l": 46,
-        "t": 206,
-        "w": 297,
-        "h": 44
-      },
-      "clippedBy": null,
-      "contrast": {
-        "indicatorColor": "rgb(245, 245, 244)",
-        "ownBackground": "rgb(28,28,31)",
-        "ratioOwn": 15.584,
-        "aroundBackground": "rgb(21,21,23)",
-        "ratioAround": 16.717,
-        "threshold": 3
-      },
-      "verdict": "PASS"
-    },
-    {
-      "case": "P50-F2/assessment@390",
-      "sel": "button[data-p50=\"next\"].p50-btn",
-      "focusVisible": true,
-      "indicator": {
-        "kind": "outline",
-        "width": 2,
-        "color": "rgb(245, 245, 244)",
-        "style": "solid"
-      },
-      "box": {
-        "l": 46,
-        "t": 258,
-        "w": 297,
-        "h": 44
-      },
-      "clippedBy": null,
-      "contrast": {
-        "indicatorColor": "rgb(245, 245, 244)",
-        "ownBackground": "rgb(28,28,31)",
-        "ratioOwn": 15.584,
-        "aroundBackground": "rgb(21,21,23)",
-        "ratioAround": 16.717,
-        "threshold": 3
-      },
-      "verdict": "PASS"
-    },
     {
       "case": "P50-F2/assessment@390",
       "sel": "button[data-p50=\"sidebar-toggle\"].p50-btn",
@@ -112,9 +55,9 @@
         "style": "solid"
       },
       "box": {
-        "l": 46,
-        "t": 310,
-        "w": 297,
+        "l": 51.8,
+        "t": 206,
+        "w": 285.4,
         "h": 44
       },
       "clippedBy": null,
@@ -139,9 +82,9 @@
         "style": "solid"
       },
       "box": {
-        "l": 43,
+        "l": 48.8,
         "t": 375.3,
-        "w": 329,
+        "w": 317.4,
         "h": 93.5
       },
       "clippedBy": null,
@@ -166,9 +109,9 @@
         "style": "solid"
       },
       "box": {
-        "l": 43,
+        "l": 48.8,
         "t": 478.8,
-        "w": 329,
+        "w": 317.4,
         "h": 93.5
       },
       "clippedBy": null,
@@ -193,9 +136,9 @@
         "style": "solid"
       },
       "box": {
-        "l": 43,
+        "l": 48.8,
         "t": 582.3,
-        "w": 329,
+        "w": 317.4,
         "h": 93.5
       },
       "clippedBy": null,
@@ -220,9 +163,9 @@
         "style": "solid"
       },
       "box": {
-        "l": 43,
+        "l": 48.8,
         "t": 685.8,
-        "w": 329,
+        "w": 317.4,
         "h": 111.5
       },
       "clippedBy": null,
@@ -247,9 +190,9 @@
         "style": "solid"
       },
       "box": {
-        "l": 43,
+        "l": 48.8,
         "t": 750.3,
-        "w": 329,
+        "w": 317.4,
         "h": 93.5
       },
       "clippedBy": null,
@@ -265,7 +208,7 @@
     },
     {
       "case": "P50-F2/assessment@390",
-      "sel": "button[data-p50=\"evidence-open\"].p50-btn",
+      "sel": "button#notetgl",
       "focusVisible": true,
       "indicator": {
         "kind": "outline",
@@ -274,45 +217,18 @@
         "style": "solid"
       },
       "box": {
-        "l": 43,
-        "t": 399.8,
-        "w": 276.4,
-        "h": 44
+        "l": 48.8,
+        "t": 398.8,
+        "w": 288.3,
+        "h": 46
       },
       "clippedBy": null,
       "contrast": {
         "indicatorColor": "rgb(245, 245, 244)",
-        "ownBackground": "rgb(28,28,31)",
-        "ratioOwn": 15.584,
+        "ownBackground": "rgb(21,21,23)",
+        "ratioOwn": 16.717,
         "aroundBackground": "rgb(11,11,12)",
         "ratioAround": 18.034,
-        "threshold": 3
-      },
-      "verdict": "PASS"
-    },
-    {
-      "case": "P50-F2/assessment@390",
-      "sel": "button#notetgl",
-      "focusVisible": true,
-      "indicator": {
-        "kind": "outline",
-        "width": 2,
-        "color": "rgb(218, 41, 28)",
-        "style": "solid"
-      },
-      "box": {
-        "l": 43,
-        "t": 503.8,
-        "w": 127.2,
-        "h": 27
-      },
-      "clippedBy": null,
-      "contrast": {
-        "indicatorColor": "rgb(218, 41, 28)",
-        "ownBackground": "rgb(11,11,12)",
-        "ratioOwn": 4.043,
-        "aroundBackground": "rgb(11,11,12)",
-        "ratioAround": 4.043,
         "threshold": 3
       },
       "verdict": "PASS"
@@ -328,9 +244,9 @@
         "style": "solid"
       },
       "box": {
-        "l": 43,
-        "t": 575.8,
-        "w": 329,
+        "l": 48.8,
+        "t": 547,
+        "w": 317.4,
         "h": 74
       },
       "clippedBy": null,
@@ -351,22 +267,22 @@
       "indicator": {
         "kind": "outline",
         "width": 2,
-        "color": "rgb(218, 41, 28)",
+        "color": "rgb(245, 245, 244)",
         "style": "solid"
       },
       "box": {
-        "l": 43,
-        "t": 713.8,
-        "w": 329,
+        "l": 48.8,
+        "t": 733.5,
+        "w": 317.4,
         "h": 48
       },
       "clippedBy": null,
       "contrast": {
-        "indicatorColor": "rgb(218, 41, 28)",
-        "ownBackground": "rgb(11,11,12)",
-        "ratioOwn": 4.043,
+        "indicatorColor": "rgb(245, 245, 244)",
+        "ownBackground": "rgb(218,41,28)",
+        "ratioOwn": 4.461,
         "aroundBackground": "rgb(11,11,12)",
-        "ratioAround": 4.043,
+        "ratioAround": 18.034,
         "threshold": 3
       },
       "verdict": "PASS"

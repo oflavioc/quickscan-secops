@@ -1,0 +1,101 @@
+{
+  "cobertura": {
+    "total": 104,
+    "comAjuda": 104,
+    "faltando": []
+  },
+  "contratoAmostra": [
+    {
+      "id": "p52-grphelp-g1",
+      "nome": 45,
+      "rotulo": "i",
+      "w": 22,
+      "h": 22,
+      "fs": "12px",
+      "radius": "50%",
+      "expanded": "false",
+      "temPop": true,
+      "popRole": "note",
+      "popTexto": 312,
+      "title": false
+    },
+    {
+      "id": "p52-caphelp-knowledge-management",
+      "nome": 56,
+      "rotulo": "i",
+      "w": 22,
+      "h": 22,
+      "fs": "12px",
+      "radius": "50%",
+      "expanded": "false",
+      "temPop": true,
+      "popRole": "note",
+      "popTexto": 283,
+      "title": false
+    },
+    {
+      "id": "p52-preshelp-knowledge-management",
+      "nome": 47,
+      "rotulo": "i",
+      "w": 22,
+      "h": 22,
+      "fs": "12px",
+      "radius": "50%",
+      "expanded": "false",
+      "temPop": true,
+      "popRole": "note",
+      "popTexto": 280,
+      "title": false
+    },
+    {
+      "id": "p52-caphelp-incident-management",
+      "nome": 64,
+      "rotulo": "i",
+      "w": 22,
+      "h": 22,
+      "fs": "12px",
+      "radius": "50%",
+      "expanded": "false",
+      "temPop": true,
+      "popRole": "note",
+      "popTexto": 254,
+      "title": false
+    },
+    {
+      "id": "p52-preshelp-incident-management",
+      "nome": 47,
+      "rotulo": "i",
+      "w": 22,
+      "h": 22,
+      "fs": "12px",
+      "radius": "50%",
+      "expanded": "false",
+      "temPop": true,
+      "popRole": "note",
+      "popTexto": 280,
+      "title": false
+    },
+    {
+      "id": "p52-caphelp-detection-engineering",
+      "nome": 56,
+      "rotulo": "i",
+      "w": 22,
+      "h": 22,
+      "fs": "12px",
+      "radius": "50%",
+      "expanded": "false",
+      "temPop": true,
+      "popRole": "note",
+      "popTexto": 227,
+      "title": false
+    }
+  ],
+  "comportamento": {
+    "hover": true,
+    "foco": true,
+    "clique": true,
+    "escape": true,
+    "toggle": true,
+    "dentro": true
+  }
+}

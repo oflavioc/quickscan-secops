@@ -54,7 +54,14 @@
      primeira dobra. Estado efêmero UX-derived (UI-010A): presentation-only,
      nunca serializado, ausente de captureCanonicalInputs(), controlado pelo
      botão existente e coberto por P50-UX9. */
-  var p50Collapsed = true;           /* UX-derived ephemeral state (UI-010A) */
+  /* UX-derived ephemeral state (UI-010A).
+     PHASE 5.2 · REV A (MAP-REV-A §9.2): em desktop o mapa do assessment começa
+     EXPANDIDO — ele é o contexto que a pergunta precisa. Abaixo de 1180px a
+     tela não comporta o trilho aberto e ele começa recolhido, como antes. O
+     critério é a largura real da viewport na carga, não uma media query
+     nomeada: o estado continua sendo APRESENTAÇÃO efêmera, nunca entra no
+     documento exportado e nunca toca input canônico. */
+  var p50Collapsed = !(typeof window !== "undefined" && window.innerWidth >= 1180);
   var p50Depth = 0, p50MaxDepth = 0;
   var p50ProbeReentry = false;
   var p50ForceFailure = false;
@@ -352,35 +359,30 @@
     orient.appendChild(el("p", { "class": "p50-completion", "data-p50": "completion" },
       "Conclusão: " + answered + " de " + QS.length + " respostas"));
 
-    /* ---- navegação: proxies dos controles congelados #back / #next ---- */
-    var nav = el("nav", { "class": "p50-nav", "aria-label": "Navegação entre perguntas" });
-    var back = document.getElementById("back");
-    var next = document.getElementById("next");
-    var bPrev = el("button", { type: "button", "class": "p50-btn", "data-p50": "prev" },
-      "← Pergunta anterior");
-    bPrev.disabled = !back;
-    bPrev.addEventListener("click", function () {
-      var b = document.getElementById("back");                    /* setter congelado */
-      if (b) b.click();
-    });
-    var bNext = el("button", { type: "button", "class": "p50-btn", "data-p50": "next" },
-      "Próxima pergunta →");
-    bNext.disabled = !next || next.disabled;
-    bNext.addEventListener("click", function () {
-      var n = document.getElementById("next");                    /* setter congelado */
-      if (n && !n.disabled) n.click();
-    });
+    /* ---- controle do mapa ----
+       PHASE 5.2 · REV A (MAP-REV-A §9.1): os proxies `← Pergunta anterior` e
+       `Próxima pergunta →` foram REMOVIDOS desta barra. Eles duplicavam, numa
+       terceira cópia, os controles congelados `#back`/`#next`, que a Camada
+       5.2 agora apresenta como botões claros na própria área da pergunta. A
+       sidebar fica com o que só existe nela: orientação, mapa e o controle de
+       recolher/expandir. Nenhum caminho de navegação foi perdido. */
+    var nav = el("nav", { "class": "p50-nav", "aria-label": "Mapa do assessment" });
     var bTgl = el("button", {
       type: "button", "class": "p50-btn p50-btn-ghost", "data-p50": "sidebar-toggle",
       "aria-controls": "p50-sidebar", "aria-expanded": p50Collapsed ? "false" : "true"
-    }, p50Collapsed ? "Mostrar mapa do assessment" : "Ocultar mapa do assessment");
+    }, p50Collapsed ? "Mostrar mapa do assessment" : "Recolher mapa do assessment");
     bTgl.addEventListener("click", function () {
       p50Collapsed = !p50Collapsed;                                /* apresentação apenas */
       p50BuildShell();
     });
-    nav.appendChild(bPrev); nav.appendChild(bNext); nav.appendChild(bTgl);
+    nav.appendChild(bTgl);
     orient.appendChild(nav);
-    orient.appendChild(p50BuildSessionStatus());      /* UI-011 · status honesto */
+    /* PHASE 5.2 · REV A (MAP-REV-A §9.1/§9.3): o status de sessão SAI do trilho
+       e passa a viver na área da pergunta, ao lado do controle de evidência.
+       Ele continua sendo montado por este módulo — owner único, UI-011 — mas
+       na `section.screen`, por `p50QuestionExtras()`. Manter o `#p50-shell`
+       livre dele também preserva a idempotência do shell: o trilho volta a ser
+       função pura do estado da pergunta. */
     shell.appendChild(orient);
 
     /* ---- sidebar: 5 domínios -> 3 perguntas, com os três estados ---- */
@@ -556,11 +558,11 @@
      relatório imprime — inclusive porque o gate congelado UI 3.3.2/P21 assere
      literalmente "Mandato e objetivos" no PDF. */
   var P51_Q_TITLE = {
-    "mandate": "Direcionamento, autoridade e objetivos"
+    "mandate": "Direcionamento e objetivos"
   };
   var P51_Q_SUPPORT = {
-    "mandate": "A operação possui missão, patrocínio, autoridade e objetivos formalmente definidos " +
-               "e ligados às prioridades do negócio? (mandato formal)"
+    "mandate": "A operação possui missão, patrocínio, responsabilidades e objetivos formalmente " +
+               "definidos e ligados às prioridades do negócio?"
   };
 
   /* UAT-04 · ajuda contextual ESPECÍFICA por pergunta.
@@ -571,63 +573,63 @@
      MSSP/SLA fica exclusivamente na cobertura de monitoramento. */
   var P51_Q_HELP = {
     "mandate": {
-      what: "Registre o charter da operação, quem patrocina, quais metas foram acordadas, em que fórum são revistas e quem responde por elas.",
-      ex: "Ex.: charter aprovado pelo CISO em 03/2025; sponsor é o Diretor de TI; metas revistas no comitê trimestral; responsável nomeado."
+      what: "documento de direcionamento, patrocinador, objetivos acordados, frequência de revisão e responsáveis.",
+      ex: "Ex.: direcionamento aprovado pelo CISO; patrocinador é o Diretor de TI; objetivos revistos trimestralmente; responsáveis definidos."
     },
     "governance": {
-      what: "Registre a cadência do comitê, que decisões ele toma, o RACI vigente, as métricas acompanhadas e como as aprovações são formalizadas.",
+      what: "a cadência do comitê, que decisões ele toma, o RACI vigente, as métricas acompanhadas e como as aprovações são formalizadas.",
       ex: "Ex.: comitê mensal com ata; RACI publicado; três métricas acompanhadas; exceções aprovadas pelo dono do risco."
     },
     "policies": {
-      what: "Registre quais políticas se aplicam à operação, a periodicidade de revisão, como exceções são tratadas, a retenção definida e o endereçamento de LGPD.",
+      what: "quais políticas se aplicam à operação, a periodicidade de revisão, como exceções são tratadas, a retenção definida e o endereçamento de LGPD.",
       ex: "Ex.: política de segurança revista anualmente; exceções com prazo e dono; retenção de logs por 12 meses; DPO consultado para dados pessoais."
     },
     "team-capacity": {
-      what: "Registre a cobertura de horário, as funções existentes, a escala de turnos, o número de FTEs e as dependências de terceiros.",
+      what: "a cobertura de horário, as funções existentes, a escala de turnos, o número de FTEs e as dependências de terceiros.",
       ex: "Ex.: quatro analistas das 8h às 18h em dias úteis, um líder técnico, plantão por sobreaviso; duas funções acumuladas pela mesma pessoa."
     },
     "training": {
-      what: "Registre o plano de capacitação, as trilhas por função, exercícios práticos realizados, certificações e a frequência com que tudo isso acontece.",
+      what: "o plano de capacitação, as trilhas por função, exercícios práticos realizados, certificações e a frequência com que tudo isso acontece.",
       ex: "Ex.: trilha de detecção para N1; tabletop semestral; duas certificações em andamento; sem orçamento formal de treinamento."
     },
     "knowledge": {
-      what: "Registre a existência de runbooks, como é feito o handover entre turnos, onde o conhecimento fica guardado e qual o bus factor da operação.",
+      what: "a existência de runbooks, como é feito o handover entre turnos, onde o conhecimento fica guardado e qual o bus factor da operação.",
       ex: "Ex.: runbooks em wiki interna, cobrindo 6 dos 12 cenários; handover verbal; um analista concentra o conhecimento de rede."
     },
     "incident-response": {
-      what: "Registre o plano de resposta, a matriz de severidades, os SLAs acordados, a rotina de acionamento e o que é feito após o incidente.",
+      what: "o plano de resposta, a matriz de severidades, os SLAs acordados, a rotina de acionamento e o que é feito após o incidente.",
       ex: "Ex.: plano aprovado com quatro severidades; acionamento por telefone e grupo; pós-incidente formal apenas para severidade 1."
     },
     "detection-lifecycle": {
-      what: "Registre o inventário de casos de uso, quem é dono de cada um, o ciclo de vida aplicado, o tuning periódico e a cobertura frente ao MITRE ATT&CK.",
+      what: "o inventário de casos de uso, quem é dono de cada um, o ciclo de vida aplicado, o tuning periódico e a cobertura frente ao MITRE ATT&CK.",
       ex: "Ex.: 40 regras ativas sem dono formal; revisão sob demanda; cobertura ATT&CK não medida; falsos positivos tratados caso a caso."
     },
     "automation": {
-      what: "Registre os playbooks existentes, as integrações em uso, onde há aprovação humana e se existe caminho de rollback.",
+      what: "os playbooks existentes, as integrações em uso, onde há aprovação humana e se existe caminho de rollback.",
       ex: "Ex.: dois playbooks de enriquecimento; integração com o service desk; bloqueio exige aprovação do líder; rollback manual."
     },
     "logs": {
-      what: "Registre as fontes coletadas, o tempo de retenção, se há parsing e normalização, que correlação existe e quais lacunas de cobertura são conhecidas.",
+      what: "as fontes coletadas, o tempo de retenção, se há parsing e normalização, que correlação existe e quais lacunas de cobertura são conhecidas.",
       ex: "Ex.: firewall, AD e endpoint coletados; 90 dias em linha; servidores de aplicação fora da coleta; correlação limitada a duas regras."
     },
     "endpoint": {
-      what: "Registre a cobertura do parque, quem gerencia a plataforma, se há EDR/XDR, a capacidade de isolamento e as exceções aplicadas.",
+      what: "a cobertura do parque, quem gerencia a plataforma, se há EDR/XDR, a capacidade de isolamento e as exceções aplicadas.",
       ex: "Ex.: antivírus em 95% das estações e EDR em 40%; servidores críticos com exceção; isolamento remoto ainda não habilitado."
     },
     "network-visibility": {
-      what: "Registre os segmentos monitorados, se há NDR, a visibilidade leste-oeste, o tratamento de tráfego criptografado e as lacunas conhecidas.",
+      what: "os segmentos monitorados, se há NDR, a visibilidade leste-oeste, o tratamento de tráfego criptografado e as lacunas conhecidas.",
       ex: "Ex.: visibilidade no perímetro; tráfego entre VLANs sem inspeção; TLS sem inspeção na saída; ambiente de fábrica fora do escopo."
     },
     "monitoring-coverage": {
-      what: "Registre o horário efetivo de monitoramento, a existência de plantão, os SLAs de atendimento e como funciona o escalonamento fora do horário.",
+      what: "o horário efetivo de monitoramento, a existência de plantão, os SLAs de atendimento e como funciona o escalonamento fora do horário.",
       ex: "Ex.: MSSP cobre 8×5; plantão interno fora do horário; SLA P1 de 30 min; escalonamento definido apenas para severidade alta."
     },
     "external-surface": {
-      what: "Registre como a superfície externa é descoberta e acompanhada (EASM/DRPS), o monitoramento de credenciais expostas, a frequência e o tratamento dado aos achados.",
+      what: "como a superfície externa é descoberta e acompanhada (EASM/DRPS), o monitoramento de credenciais expostas, a frequência e o tratamento dado aos achados.",
       ex: "Ex.: inventário externo mantido em planilha; varredura trimestral; credenciais vazadas checadas de forma reativa."
     },
     "vulnerability-management": {
-      what: "Registre o escopo coberto, a frequência de varredura, o critério de priorização, os SLAs de correção, o tratamento de exceções e a validação da correção.",
+      what: "o escopo coberto, a frequência de varredura, o critério de priorização, os SLAs de correção, o tratamento de exceções e a validação da correção.",
       ex: "Ex.: varredura mensal em servidores; estações fora do ciclo; priorização por CVSS; SLA de 30 dias para crítico; correção sem reteste."
     }
   };
@@ -678,11 +680,23 @@
     if (box.querySelector('[data-p50="evidence-help"]')) return;          /* idempotente */
     var h = P51_Q_HELP[qq.id];
     if (!h) return;
+    /* PHASE 5.2 · REV B (EVID-B §6): a ordem passa a ser
+         label -> "O que registrar:" -> textarea
+       e o EXEMPLO deixa de ser uma linha abaixo do campo: ele vira o
+       PLACEHOLDER do próprio textarea, some sozinho ao digitar e nunca é
+       gravado em `notes`. O exemplo continua específico da pergunta e
+       continua exposto em atributo estável para medição. */
     var wrap = el("div", { "class": "p51-help", "data-p50": "evidence-help", "data-qid": qq.id });
     wrap.appendChild(el("p", { "class": "p51-help-what", "data-p50": "evidence-help-what" },
       "O que registrar: " + h.what));
-    wrap.appendChild(el("p", { "class": "p51-help-ex", "data-p50": "evidence-help-example" }, h.ex));
-    box.appendChild(wrap);
+    var ta = box.querySelector("#notetxt");
+    if (ta) {
+      ta.setAttribute("placeholder", h.ex);
+      ta.setAttribute("data-p50-example", h.ex);
+      ta.parentNode.insertBefore(wrap, ta);
+    } else {
+      box.appendChild(wrap);
+    }
   }
 
   /* ============================================================
@@ -777,6 +791,10 @@
     /* Phase 5.1 · apresentação da pergunta e controle único de evidência. */
     p51DecorateQuestionTitle(scr, qq);
     p51DecorateEvidence(scr, qq, hasNote);
+
+    /* REV A · status de sessão na área da pergunta (owner único, UI-011).
+       A Camada 5.2 apenas o reposiciona dentro da faixa de utilidades. */
+    p50MountSessionStatus(scr, "append");
 
     p50BindNoteObserver();
   }

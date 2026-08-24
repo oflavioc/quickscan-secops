@@ -206,7 +206,13 @@ function readSuffSurface(page) {
         docScrollWidth: se.scrollWidth, viewportW: window.innerWidth, viewportH: window.innerHeight,
         clippedNodes: clipped,
         suffBottom: Math.round(rSuff.b), resTop: Math.round(rRes.t),
-        overlap: rSuff.b > rRes.t + 1,
+        /* PHASE 5.2 · REV B (SUFF-B §9): com o resultado LIBERADO a base de
+           evidência deixou de abrir a página e passou a viver na área interna
+           de "Relatório e sessão", depois do resultado. Medir "suficiência
+           acima do resultado" deixou de descrever o produto; o que este gate
+           sempre quis medir é SOBREPOSIÇÃO — que agora é medida como
+           interseção real das duas faixas, em qualquer ordem. */
+        overlap: !(rSuff.b <= rRes.t + 1 || rRes.b <= rSuff.t + 1),
         suffRight: Math.round(rSuff.r), resRight: Math.round(rRes.r)
       },
       resText: t(res),
@@ -681,14 +687,42 @@ async function sesux1b(page) {
 }
 
 /* ============================================================================
-   P50-PR1 — Legacy print surface preserved under insufficient gate
-   B-AUD-503-2 · a neutralização da superfície legada é decisão de TELA. O
-   print legado NÃO monta `#v32-print-report`: `preparePrint()` devolve
-   `{legacy:true}`, esvazia o contêiner e NÃO adiciona `v32-print-mode` — logo
-   `.wrap`/`#app` é a superfície impressa. Se `.p50-legacy-gone` /
-   `.p50-legacy-veiled` valessem no print, os cinco valores de domínio, os
-   cinco `.conf`, os cinco fills, o radar e a legenda sumiriam do papel e a
-   Phase 5 teria criado semântica de impressão que não lhe é autorizada.
+   P50-PR1 — Neutralização de TELA preservada; papel unificado no relatório
+
+   MIGRAÇÃO DE GATE · ERRATA DA AUDITORIA EXTERNA SÊNIOR DE FRONTEND · B-02/B-03
+   (parecer SHA-256 f5a9f70e7a5ee658ef86775d8dab93ce2cb15974604a7ed7f1dcd99e13b58dae)
+
+   O enunciado anterior era: "o print legado NÃO monta `#v32-print-report`:
+   `preparePrint()` devolve `{legacy:true}`, esvazia o contêiner e NÃO adiciona
+   `v32-print-mode` — logo `.wrap`/`#app` é a superfície impressa", e o gate
+   exigia no PAPEL os cinco valores de domínio, os cinco `.conf`, os cinco
+   fills, o radar e a legenda da superfície legada.
+
+   Esse enunciado era a formulação exata dos blockers B-02 e B-03. A
+   neutralização honesta vive em `@media screen`; ao imprimir `.wrap`, o papel
+   recebia justamente os valores NÃO neutralizados — `5.0 — Optimizing` em
+   cinco domínios sob um cabeçalho que declarava cobertura insuficiente — e
+   sem a nota que explica a supressão, ocultada em `@media print`.
+
+   A PREMISSA do gate continua íntegra e é a metade que ele realmente protege:
+   a Phase 5 não pode criar semântica de impressão própria, e a neutralização
+   de tela não pode ser apagada. O que mudou foi o DOCUMENTO: ele deixou de ser
+   `.wrap` e passou a ser o relatório estruturado, que a camada CONGELADA
+   (`buildPrintReport()`) já sabia montar sem contexto tecnológico.
+
+   Correspondência linha a linha das asserções de impressão:
+     ANTES                                          DEPOIS
+     printReportEmpty === true                  →   relatório montado (> 2000 chars)
+     printModeClass === false                   →   printModeClass === true
+     wrapVisible === true                       →   wrapVisible === false
+     appVisible === true                        →   appVisible === false
+     rows === 5 no papel                        →   nenhuma linha legada no papel
+     values/confs/fills/radar/legend visíveis   →   nenhum deles visível no papel
+     texto = score canônico da Camada 1         →   o score canônico da Camada 1
+                                                    NÃO chega ao papel com o gate
+                                                    FECHADO (é o próprio B-01)
+   Nenhuma asserção foi removida: cada uma tem substituta no mesmo ponto do
+   fluxo. As asserções de TELA (itens 4, 11 e 12) permanecem BYTE-IDÊNTICAS.
 
    Guard ADICIONAL e ESTREITO. NÃO encerra nem redefine P50-VIS10, que
    permanece sendo a regressão congelada integral prevista na REV B.
@@ -762,6 +796,9 @@ function pr1Measure(page) {
       wrapPresent: !!document.querySelector(".wrap"), wrapVisible: seen(document.querySelector(".wrap")),
       appPresent: !!document.getElementById("app"), appVisible: seen(document.getElementById("app")),
       printReportEmpty: !pr || (pr.innerHTML || "") === "",
+      /* ERRATA EXTERNA · o DOCUMENTO agora é o relatório: o gate precisa medi-lo */
+      reportChars: pr ? (pr.innerHTML || "").length : 0,
+      reportText: pr ? (pr.textContent || "").replace(/\s+/g, " ").trim() : "",
       printModeClass: /\bv32-print-mode\b/.test(document.body.className),
       printBlockedClass: /\bv32-print-blocked\b/.test(document.body.className),
       /* os cinco de cada coisa */
@@ -951,37 +988,43 @@ async function pr1(browser, pageErrors) {
     const prn = await pr1Measure(page);
     observed.print = prn;
 
-    /* 7 · `.wrap`/`#app` são a superfície impressa no modo legado. */
-    if (!prn.printReportEmpty) detail.push("print: #v32-print-report não está vazio no modo legado");
-    if (prn.printModeClass) detail.push("print: body recebeu v32-print-mode no modo legado");
+    /* 7 · o relatório estruturado é a superfície impressa, também sem contexto. */
+    if (prn.printReportEmpty) detail.push("print: #v32-print-report vazio — o relatório não foi montado sem contexto (B-02)");
+    if (!prn.printModeClass) detail.push("print: body NÃO recebeu v32-print-mode — a superfície de aplicação chega ao papel (B-02)");
     if (prn.printBlockedClass) detail.push("print: body recebeu v32-print-blocked");
-    if (!prn.wrapVisible) detail.push("print: .wrap não é a superfície impressa (não visível)");
-    if (!prn.appVisible) detail.push("print: #app não é a superfície impressa (não visível)");
+    if (prn.wrapVisible) detail.push("print: .wrap visível no papel — a aplicação virou documento (B-02)");
+    if (prn.appVisible) detail.push("print: #app visível no papel — a aplicação virou documento (B-02)");
+    if (!(prn.reportChars > 2000))
+      detail.push("print: relatório com " + prn.reportChars + " caracteres (esperado > 2000)");
 
-    /* 8 · cinco valores, cinco .conf, cinco fills, radar e legenda no papel. */
-    if (prn.rows !== 5) detail.push("print: " + prn.rows + " linhas de domínio (esperado 5)");
-    prn.valuesVisible.forEach((v, i) => { if (!v) detail.push("print: valor do domínio " + i + " ausente do papel"); });
-    prn.confsVisible.forEach((v, i) => { if (!v) detail.push("print: .conf do domínio " + i + " ausente do papel"); });
-    if (prn.fills !== 5) detail.push("print: " + prn.fills + " fills presentes (esperado 5)");
-    if (prn.fillsVisible !== 5) detail.push("print: " + prn.fillsVisible + "/5 fills visíveis no papel");
-    if (!prn.radarVisible) detail.push("print: radar ausente do papel");
-    if (!prn.legendVisible) detail.push("print: legenda ausente do papel");
-    /* nenhum espaço vazio/mutilado: o texto impresso é o do renderer congelado */
-    prn.values.forEach((v, i) => {
-      if (!v) detail.push("print: valor do domínio " + i + " vazio (espaço mutilado)");
-    });
-    /* (B) o texto impresso corresponde ao score canônico da Camada 1 */
+    /* 8 · NENHUM nó da superfície legada chega ao papel — é a correção de B-03.
+       Os nós continuam existindo no DOM (R-01 do parecer segue no backlog); o
+       que o gate exige é que nenhum deles seja PINTADO no documento. */
+    prn.valuesVisible.forEach((v, i) => { if (v) detail.push("print: valor legado do domínio " + i + " visível no papel (B-03)"); });
+    prn.confsVisible.forEach((v, i) => { if (v) detail.push("print: .conf legado do domínio " + i + " visível no papel (B-03)"); });
+    if (prn.fillsVisible !== 0) detail.push("print: " + prn.fillsVisible + " fill(s) legado(s) visível(is) no papel (B-03)");
+    if (prn.radarVisible) detail.push("print: radar legado visível no papel (B-03)");
+    if (prn.legendVisible) detail.push("print: legenda legada visível no papel (B-03)");
+    /* (B) o oráculo da Camada 1 invertido: com o gate FECHADO, o score canônico
+       por domínio NÃO pode aparecer no documento impresso. É B-01 medido no
+       papel, com o valor vindo do renderer congelado — não de string digitada. */
+    const impresso = prn.reportText || "";
     pre.snapshot.domains.forEach((dd, i) => {
       if (dd.score === null) return;
-      /* o renderer congelado imprime "<score> — <estágio>"; o oráculo exige o
-         score canônico da Camada 1 como PREFIXO, sem presumir o rótulo. */
-      const want = dd.score.toFixed(1);
-      const got = prn.values[i] || "";
-      if (got.indexOf(want) !== 0)
-        detail.push("print: domínio " + i + " imprime '" + got + "' sem o score canônico " + want);
+      const proibido = dd.score.toFixed(1);
+      if (new RegExp("(^|[^\\d.])" + proibido.replace(".", "\\.") + "([^\\d]|$)").test(impresso))
+        detail.push("print: relatório publica o score canônico " + proibido +
+          " do domínio " + i + " com o gate FECHADO (B-01)");
+    });
+    /* não-vacuidade: o documento tem de existir e nomear os cinco domínios */
+    ["Negócio", "Pessoas", "Processos", "Tecnologia", "Serviços"].forEach(nome => {
+      if (impresso.indexOf(nome) < 0)
+        detail.push("print: sensor cego — '" + nome + "' ausente do relatório impresso");
     });
 
-    /* 10 · o substituto P50 não fabrica semântica nova de impressão. */
+    /* 10 · a Camada 5 continua sem semântica própria de impressão: nada dela
+       chega ao papel. Preservado byte a byte — o documento é montado pela
+       camada CONGELADA, não por P50/P52. */
     if (prn.substitutesVisible !== 0)
       detail.push("print: " + prn.substitutesVisible + " substituto(s) P50 visível(is) — semântica nova de impressão");
     if (prn.p50ShellVisible) detail.push("print: #p50-shell visível");
@@ -1004,18 +1047,45 @@ async function pr1(browser, pageErrors) {
           const sa = JSON.stringify(a), sb = JSON.stringify(b);
           if (sa !== sb) detail.push("print difere do baseline de entrada em " + k + ": " + sa + " != " + sb);
         };
-        cmp("rows", prn.rows, bm.rows);
-        cmp("values", prn.values, bm.values);
-        cmp("valuesVisible", prn.valuesVisible, bm.valuesVisible);
-        cmp("confs", prn.confs, bm.confs);
-        cmp("confsVisible", prn.confsVisible, bm.confsVisible);
-        cmp("fills", prn.fills, bm.fills);
-        cmp("fillsVisible", prn.fillsVisible, bm.fillsVisible);
-        cmp("radarVisible", prn.radarVisible, bm.radarVisible);
-        cmp("legendVisible", prn.legendVisible, bm.legendVisible);
-        cmp("wrapVisible", prn.wrapVisible, bm.wrapVisible);
-        cmp("appVisible", prn.appVisible, bm.appVisible);
-        cmp("printReportEmpty", prn.printReportEmpty, bm.printReportEmpty);
+        /* MIGRAÇÃO · ERRATA DA AUDITORIA EXTERNA · B-02/B-03.
+           A comparação de IDENTIDADE com o baseline de entrada não pode
+           continuar valendo para o print: é exatamente a diferença que a
+           errata foi autorizada a produzir. Comparar identidade aqui seria
+           exigir a permanência do defeito.
+
+           O que resta é MAIS forte do que a identidade: o gate exige que a
+           diferença EXISTA e tenha o sinal certo. Se o baseline não imprimia a
+           tela — isto é, se a diferença declarada não é real — o gate FALHA, e
+           não passa em silêncio. A comparação de identidade de TELA continua
+           adiante, intocada, nos itens 11 e 12.
+
+           Estrutura preservada de cada `cmp()` anterior, agora como direção:
+             rows/values/confs/fills/radar/legend  → visíveis no baseline, invisíveis no candidato
+             wrapVisible / appVisible              → true no baseline, false no candidato
+             printReportEmpty                      → true no baseline, false no candidato */
+        const dif = (k, base, cand, esperadoBase, esperadoCand) => {
+          if (base !== esperadoBase)
+            detail.push("baseline de entrada não apresentava o defeito em " + k +
+              " (" + JSON.stringify(base) + ") — a diferença declarada não existe");
+          if (cand !== esperadoCand)
+            detail.push("candidato não corrigiu " + k + " (" + JSON.stringify(cand) + ")");
+        };
+        dif("printReportEmpty", bm.printReportEmpty, prn.printReportEmpty, true, false);
+        dif("printModeClass", bm.printModeClass, prn.printModeClass, false, true);
+        dif("wrapVisible", bm.wrapVisible, prn.wrapVisible, true, false);
+        dif("appVisible", bm.appVisible, prn.appVisible, true, false);
+        dif("radarVisible(legado)", bm.radarVisible, prn.radarVisible, true, false);
+        dif("legendVisible(legado)", bm.legendVisible, prn.legendVisible, true, false);
+        if (!bm.valuesVisible.some(Boolean))
+          detail.push("baseline de entrada não imprimia valores legados — a diferença declarada não existe");
+        if (bm.fillsVisible === 0)
+          detail.push("baseline de entrada não imprimia fills legados — a diferença declarada não existe");
+        if (bm.rows !== prn.rows)
+          detail.push("o DOM legado deixou de existir (rows " + bm.rows + " -> " + prn.rows +
+            ") — esta errata não estava autorizada a removê-lo");
+        if (JSON.stringify(bm.values) !== JSON.stringify(prn.values))
+          detail.push("o TEXTO do DOM legado mudou (" + JSON.stringify(bm.values) +
+            " -> " + JSON.stringify(prn.values) + ") — fora da autorização desta errata");
       } finally { await bp.close(); }
     }
 
@@ -1749,7 +1819,13 @@ const P50_SURFACE_ASSESSMENT = {
     { sel: '#p50-shell [data-p50="position"]', min: 1 },
     { sel: '#p50-shell [data-p50="domain-progress"]', min: 1 },
     { sel: '#p50-shell [data-p50="completion"]', min: 1 },
-    { sel: "#p50-shell .p50-nav .p50-btn", min: 3 },
+    /* PHASE 5.2 · REV A (MAP-REV-A §9.1): o trilho deixou de duplicar
+       `Pergunta anterior`/`Próxima pergunta`. Resta o controle do mapa; a
+       navegação real é medida em `#back`/`#next`, já presentes no inventário
+       crítico logo abaixo. */
+    { sel: "#p50-shell .p50-nav .p50-btn", min: 1 },
+    { sel: "#back", min: 1 },
+    { sel: "#next", min: 1 },
     { sel: '#p50-shell button[data-p50="sidebar-toggle"]', min: 1 },
     { sel: ".p50-ses", min: 1 },
     { sel: "#app .question", min: 1 },
@@ -3670,10 +3746,18 @@ async function p51pdf(browser, pageErrors) {
       smoke.viewports.push(m);
       const tag = vp.w + "×" + vp.h;
       if (!m.shellPresent) foldDetail.push(tag + ": #p50-shell ausente");
-      if (m.collapsed !== "true") foldDetail.push(tag + ": mapa não inicia recolhido");
-      if (m.sidebarVisible) foldDetail.push(tag + ": mapa visível no estado inicial");
-      if (!m.toggleVisible) foldDetail.push(tag + ": botão de mostrar mapa não visível");
-      if (!/Mostrar mapa do assessment/.test(m.toggleLabel || "")) foldDetail.push(tag + ": rótulo do botão = " + m.toggleLabel);
+      /* PHASE 5.2 · REV A (MAP-REV-A §9.2): o mapa do assessment passa a
+         iniciar EXPANDIDO em desktop (>=1180px) e recolhido abaixo disso. O
+         critério de aceite não é mais "sempre recolhido": é o estado CERTO
+         para a largura, com o rótulo correspondente. */
+      const wantCollapsed = vp.w >= 1180 ? "false" : "true";
+      const wantLabel = vp.w >= 1180 ? /Recolher mapa do assessment/ : /Mostrar mapa do assessment/;
+      if (m.collapsed !== wantCollapsed)
+        foldDetail.push(tag + ": mapa com data-p50-collapsed=" + m.collapsed + " (esperado " + wantCollapsed + ")");
+      if (m.sidebarVisible !== (wantCollapsed === "false"))
+        foldDetail.push(tag + ": visibilidade do mapa incoerente com o estado inicial");
+      if (!m.toggleVisible) foldDetail.push(tag + ": botão do mapa não visível");
+      if (!wantLabel.test(m.toggleLabel || "")) foldDetail.push(tag + ": rótulo do botão = " + m.toggleLabel);
       if (!(m.questionTop < m.viewport.h)) foldDetail.push(tag + ": pergunta fora da dobra (top=" + m.questionTop + ")");
       if (!(m.firstCardTop < m.viewport.h)) foldDetail.push(tag + ": 1º card fora da dobra (top=" + m.firstCardTop + ")");
       if (m.documentScrollWidth > m.viewport.w) foldDetail.push(tag + ": overflow horizontal");
@@ -3684,6 +3768,11 @@ async function p51pdf(browser, pageErrors) {
       /* mapa expandido: prova que o botão abre e nada foi removido (1440) */
       if (vp.w === 1440) {
         const exp = await pg.evaluate(() => {
+          /* REV A · em 1440 o mapa já inicia expandido: para provar que o
+             botão ABRE, é preciso fechá-lo antes. O que o gate mede continua
+             sendo o mesmo — o controle alterna e nada do mapa se perde. */
+          const t = document.querySelector("#p50-shell button[data-p50=\"sidebar-toggle\"]");
+          if (document.getElementById("p50-shell").getAttribute("data-p50-collapsed") === "false") t.click();
           document.querySelector("#p50-shell button[data-p50=\"sidebar-toggle\"]").click();
           const sb = document.querySelector("#p50-shell [data-p50=\"sidebar\"]");
           const st = Array.from(document.querySelectorAll("#p50-shell [data-p50=\"q\"]"))

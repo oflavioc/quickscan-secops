@@ -28,9 +28,20 @@
     }
   ],
   "tabStops": [
+    "a#p52-railto-exec",
+    "a#p52-railto-target",
+    "a#p52-railto-context",
+    "a#p52-railto-detail",
+    "a#p52-railto-priorities",
+    "a#p52-railto-gaps",
+    "a#p52-railto-support",
+    "a#p52-railto-actions",
+    "button#ux-tgt-open",
+    "button#v32cta",
+    "button#p50-tab-resumo",
+    "div#p50-panel-resumo",
     "button#ux-ref-open",
     "summary",
-    "button#v32cta",
     "button.cta",
     "button#editprio",
     "button#review",
@@ -38,9 +49,7 @@
     "button#ux-newsession",
     "button#ses-export",
     "button#ses-import",
-    "button#ux-tgt-open",
-    "button#p50-tab-resumo",
-    "div#p50-panel-resumo",
+    "summary.p52-evbase-sum",
     "button#p50-tab-dominios",
     "div#p50-panel-dominios",
     "button#p50-tab-heatmap",
@@ -52,60 +61,6 @@
   "elements": [
     {
       "case": "P50-F5/results@390",
-      "sel": "button#ses-export",
-      "focusVisible": true,
-      "indicator": {
-        "kind": "outline",
-        "width": 2,
-        "color": "rgb(218, 41, 28)",
-        "style": "solid"
-      },
-      "box": {
-        "l": 18,
-        "t": 626.4,
-        "w": 295.5,
-        "h": 44
-      },
-      "clippedBy": null,
-      "contrast": {
-        "indicatorColor": "rgb(218, 41, 28)",
-        "ownBackground": "rgb(11,11,12)",
-        "ratioOwn": 4.043,
-        "aroundBackground": "rgb(11,11,12)",
-        "ratioAround": 4.043,
-        "threshold": 3
-      },
-      "verdict": "PASS"
-    },
-    {
-      "case": "P50-F5/results@390",
-      "sel": "button#ses-import",
-      "focusVisible": true,
-      "indicator": {
-        "kind": "outline",
-        "width": 2,
-        "color": "rgb(218, 41, 28)",
-        "style": "solid"
-      },
-      "box": {
-        "l": 18,
-        "t": 680.4,
-        "w": 295.5,
-        "h": 44
-      },
-      "clippedBy": null,
-      "contrast": {
-        "indicatorColor": "rgb(218, 41, 28)",
-        "ownBackground": "rgb(11,11,12)",
-        "ratioOwn": 4.043,
-        "aroundBackground": "rgb(11,11,12)",
-        "ratioAround": 4.043,
-        "threshold": 3
-      },
-      "verdict": "PASS"
-    },
-    {
-      "case": "P50-F5/results@390",
       "sel": "button#p50-tab-resumo",
       "focusVisible": true,
       "indicator": {
@@ -115,8 +70,8 @@
         "style": "solid"
       },
       "box": {
-        "l": 34,
-        "t": 400,
+        "l": 39.8,
+        "t": 400.3,
         "w": 81.3,
         "h": 44
       },
@@ -142,10 +97,10 @@
         "style": "solid"
       },
       "box": {
-        "l": 34,
-        "t": 0,
-        "w": 321,
-        "h": 926.8
+        "l": 39.8,
+        "t": 0.3,
+        "w": 309.4,
+        "h": 1282.4
       },
       "clippedBy": null,
       "contrast": {
@@ -154,6 +109,60 @@
         "ratioOwn": 16.717,
         "aroundBackground": "rgb(21,21,23)",
         "ratioAround": 16.717,
+        "threshold": 3
+      },
+      "verdict": "PASS"
+    },
+    {
+      "case": "P50-F5/results@390",
+      "sel": "button#ses-export",
+      "focusVisible": true,
+      "indicator": {
+        "kind": "outline",
+        "width": 2,
+        "color": "rgb(218, 41, 28)",
+        "style": "solid"
+      },
+      "box": {
+        "l": 44.8,
+        "t": 274.8,
+        "w": 297.5,
+        "h": 49.1
+      },
+      "clippedBy": null,
+      "contrast": {
+        "indicatorColor": "rgb(218, 41, 28)",
+        "ownBackground": "rgb(21,21,23)",
+        "ratioOwn": 3.747,
+        "aroundBackground": "rgb(21,21,23)",
+        "ratioAround": 3.747,
+        "threshold": 3
+      },
+      "verdict": "PASS"
+    },
+    {
+      "case": "P50-F5/results@390",
+      "sel": "button#ses-import",
+      "focusVisible": true,
+      "indicator": {
+        "kind": "outline",
+        "width": 2,
+        "color": "rgb(218, 41, 28)",
+        "style": "solid"
+      },
+      "box": {
+        "l": 44.8,
+        "t": 335.9,
+        "w": 297.5,
+        "h": 49.1
+      },
+      "clippedBy": null,
+      "contrast": {
+        "indicatorColor": "rgb(218, 41, 28)",
+        "ownBackground": "rgb(21,21,23)",
+        "ratioOwn": 3.747,
+        "aroundBackground": "rgb(21,21,23)",
+        "ratioAround": 3.747,
         "threshold": 3
       },
       "verdict": "PASS"
@@ -169,8 +178,8 @@
         "style": "solid"
       },
       "box": {
-        "l": 118.4,
-        "t": 400,
+        "l": 124.2,
+        "t": 400.3,
         "w": 89.2,
         "h": 44
       },
@@ -196,9 +205,9 @@
         "style": "solid"
       },
       "box": {
-        "l": 34,
-        "t": 0,
-        "w": 321,
+        "l": 39.8,
+        "t": 0.3,
+        "w": 309.4,
         "h": 1336.9
       },
       "clippedBy": null,
@@ -223,8 +232,8 @@
         "style": "solid"
       },
       "box": {
-        "l": 209.3,
-        "t": 400,
+        "l": 215.1,
+        "t": 400.3,
         "w": 87.8,
         "h": 44
       },
@@ -250,10 +259,10 @@
         "style": "solid"
       },
       "box": {
-        "l": 34,
-        "t": 0,
-        "w": 321,
-        "h": 2526.7
+        "l": 39.8,
+        "t": 0.3,
+        "w": 309.4,
+        "h": 2543.9
       },
       "clippedBy": null,
       "contrast": {
@@ -277,9 +286,9 @@
         "style": "solid"
       },
       "box": {
-        "l": 34,
-        "t": 25.3,
-        "w": 321,
+        "l": 39.8,
+        "t": 24.8,
+        "w": 309.4,
         "h": 794.4
       },
       "clippedBy": null,
@@ -304,8 +313,8 @@
         "style": "solid"
       },
       "box": {
-        "l": 34,
-        "t": 400,
+        "l": 39.8,
+        "t": 400.3,
         "w": 76.3,
         "h": 44
       },
@@ -331,9 +340,9 @@
         "style": "solid"
       },
       "box": {
-        "l": 34,
-        "t": 374,
-        "w": 321,
+        "l": 39.8,
+        "t": 374.3,
+        "w": 309.4,
         "h": 470.2
       },
       "clippedBy": null,

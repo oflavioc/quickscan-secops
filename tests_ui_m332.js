@@ -14,10 +14,52 @@ const results=[];function T(id,l,fn){let ok=false,e="";try{ok=!!fn()}catch(x){e=
 const q=(d,s)=>d.querySelector(s),txt=el=>el?el.textContent:"";
 const rep=d=>q(d,"#v32-print-report");
 
-T("P1","legacyMode → print V3.1.3 sem report V3.2",()=>{
+/* ==========================================================================
+   MIGRAÇÃO DE GATE · ERRATA DA AUDITORIA EXTERNA SÊNIOR DE FRONTEND · B-02
+   (parecer SHA-256 f5a9f70e7a5ee658ef86775d8dab93ce2cb15974604a7ed7f1dcd99e13b58dae)
+
+   O P1 anterior era, LINHA A LINHA:
+
+     return r.legacy===true                                   (a)
+         && rep(d).innerHTML===""                             (b)
+         && !d.body.classList.contains("v32-print-mode");     (c)
+
+   (a) continua verdadeiro e continua sendo asserido: `preparePrint()` segue
+       informando que o contexto tecnológico não foi declarado.
+   (b) afirmava que o relatório NÃO era montado sem contexto. Era exatamente o
+       blocker B-02: o documento entregue ao cliente perdia capa, metadados,
+       legenda, régua, jornada e anexo.
+   (c) afirmava que `v32-print-mode` NÃO era aplicado. Era a causa material de
+       B-03: sem essa classe, `.wrap` continua visível em `@media print` e a
+       superfície de aplicação — cujos valores contraditórios só são
+       neutralizados em `@media screen` — chegava ao papel.
+
+   (b) e (c) foram INVERTIDOS, porque o comportamento que afirmavam foi
+   declarado defeituoso pela auditoria externa e corrigido por autorização
+   explícita da errata. Nenhuma asserção foi REMOVIDA: cada uma das três tem
+   substituta no mesmo ponto do fluxo, e o gate ficou mais forte — passa a
+   exigir a estrutura completa do relatório e a separação correta entre o que
+   depende e o que não depende de contexto.
+   ========================================================================== */
+T("P1","sem contexto declarado, o print é o relatório estruturado com o contexto marcado como não informado",()=>{
   const {w,d}=boot();answerAll(w,1);w.__DEV.showResults();
-  const r=w.__DEV.preparePrint();w.__DEV.finishPrint();
-  return r.legacy===true && rep(d).innerHTML==="" && !d.body.classList.contains("v32-print-mode");
+  const r=w.__DEV.preparePrint();
+  const R=rep(d);
+  const foot=R.querySelector(".pr-foot");
+  const ok =
+    r.legacy===true && r.blocked===false &&                       /* (a) preservado */
+    R.innerHTML.length>2000 &&                                    /* (b) invertido  */
+    d.body.classList.contains("v32-print-mode") &&                /* (c) invertido  */
+    /* estrutura que NÃO depende de contexto: presente nas duas condições */
+    !!q(d,"#pr-cover") && !!q(d,"#pr-howto") && !!q(d,"#pr-stage-ruler") &&
+    !!q(d,"#pr-maturity") && !!q(d,"#pr-journey") && !!q(d,"#pr-annex") &&
+    /* o contexto é DECLARADO como não informado, não simplesmente omitido */
+    !!q(d,"#pr-landscape") && /não informado/i.test(txt(q(d,"#pr-landscape"))) &&
+    !!foot && /contexto tecnológico não informado nesta sessão/i.test(txt(foot)) &&
+    /* seções realmente dependentes de contexto continuam suprimidas */
+    !q(d,"#pr-interp") && !q(d,"#pr-support") && !q(d,"#pr-arch");
+  w.__DEV.finishPrint();
+  return ok;
 });
 /* cenário V3.2 rico reutilizado em P2/P3/P4/P5/P7/P8/P10/P14 */
 function richScenario(){

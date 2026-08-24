@@ -85,8 +85,14 @@ reconstruir depois.
 - **exceção** — o que está fora da regra, com prazo e dono;
 - **pendência de validação** — o que ainda não foi verificado.
 
-> **Não registre segredos, credenciais ou dados pessoais desnecessários.** A ferramenta mostra esse
-> aviso junto ao campo de evidência.
+**Como registrar.** O campo é aberto pelo botão **“Adicionar evidência ou observação”**, na faixa
+logo abaixo das alternativas. É o único controle de evidência da tela: ele alterna entre
+`＋ Adicionar`, `✎ Editar` (quando já há conteúdo) e `− Fechar evidência ou observação`. À direita
+dessa mesma faixa fica o **status da sessão** — lembrete de que nada é salvo automaticamente.
+
+> **A evidência registrada não deve conter dados sensíveis** — segredos, credenciais, dados pessoais
+> ou qualquer informação que não precise viajar no relatório. Registre o fato, não o segredo. A
+> ferramenta mostra esse aviso junto ao campo de evidência.
 
 As observações entram no **anexo de respostas** do relatório e no drill-down por domínio, ajudando o
 leitor a interpretar a nota. **A nota não altera o score da resposta escolhida** — ela documenta.
@@ -111,6 +117,34 @@ condicionada ao contexto declarado.
 ## 6 · Contexto tecnológico — influência sobre o resultado
 
 Esta é a seção que mais evita mal-entendido.
+
+**Como o editor abre.** Ao entrar, apenas **SOC & Operations** vem aberto; as outras famílias ficam
+recolhidas para que a tela não vire uma parede de campos. Abrir ou fechar um grupo é decisão de
+tela: **nada do que já foi preenchido se perde**.
+
+**Ordem dentro de cada capability.** Primeiro o nome e a explicação, depois a **situação declarada**,
+depois as **tecnologias já declaradas** com o botão **“+ Adicionar tecnologia”** e, por último, o
+**Contexto complementar da capability · opcional**. Esse último campo é para motivação, exceção ou
+restrição que valha para a capability inteira; observação sobre um produto específico vai no campo
+**Notas** daquele item.
+
+**Ajuda em todo campo complexo.** Além das capabilities, têm explicação `i` os campos de
+arquitetura, as famílias de plataformas e requisitos e cada sinal de IA. Vale a pena distinguir dois
+deles: **Processamento local obrigatório** trata do *local e do modelo operacional* do processamento;
+**Residência/localidade de dados** trata da *jurisdição* em que os dados podem estar. Um serviço pode
+ser cloud e ainda cumprir residência local, e pode ser privado e estar em região não permitida.
+
+**Duas partes, propósitos diferentes.** O editor separa **Capabilities de segurança** (o que a
+operação já faz e com o quê) de **Ambiente e condicionantes** (arquitetura, licenciamento já
+existente e requisitos específicos). Cada capability tem um controle **`i`** ao lado do nome que
+explica, em duas ou três linhas, o que ela significa, o que declarar e **o que a declaração não
+prova**. Abre no clique, no foco por teclado ou ao passar o mouse; fecha com `Esc`.
+
+**O contexto tecnológico é opcional.** Na tela de resultados ele aparece como um card de ação com o
+selo **Opcional**: *“Refina e contextualiza recomendações; não altera perguntas, respostas ou
+pontuação.”* Um assessment sem contexto declarado é um assessment completo — apenas com recomendações
+menos ajustadas ao ambiente. Preencher o contexto **influencia somente a interpretação e as
+recomendações**.
 
 > **O contexto tecnológico tem influência zero sobre o score de maturidade, mas influência alta
 > sobre a interpretação, as recomendações e a utilidade prática do relatório.**
@@ -185,6 +219,49 @@ produz recomendação errada com aparência de precisão.
 
 ## 8 · Leitura dos resultados
 
+### 7.9 A tela de abertura
+
+A home traz, lado a lado, os dois caminhos de entrada: **Começar o quickscan** (vermelho) e
+**Adicionar contexto tecnológico · opcional** (azul). Logo abaixo fica **Importar sessão**, para
+retomar um JSON já exportado. O emblema dos cinco domínios, à direita, é **identidade gráfica**: ele
+não representa score nem estágio. Passe o mouse, use o teclado ou toque em cada domínio para ler uma
+explicação curta do que ele cobre; `Esc` fecha.
+
+### 8.0 Durante as perguntas: o mapa do assessment
+
+Em desktop, o **mapa do assessment** fica aberto à direita da pergunta: domínio corrente, posição,
+respostas confirmadas e a lista dos cinco domínios com as suas práticas. Use **“Recolher mapa do
+assessment”** para liberar a largura quando quiser focar só na pergunta; em telas estreitas ele já
+começa recolhido. Recolher ou expandir é decisão de tela: **não altera resposta alguma e não entra
+no arquivo exportado**.
+
+A navegação entre perguntas fica onde se espera — **← Voltar** e **Continuar →**, abaixo das
+alternativas —, e não é duplicada no mapa.
+
+### 8.1 Como navegar a tela de resultados
+
+Em tela de desktop, o resultado é um **workspace**: um trilho de navegação à esquerda e as seções à
+direita, todas na mesma página. O trilho não esconde nada — ele apenas leva o leitor até a seção, e
+marca a seção corrente com borda, peso e o texto *“seção atual”*. Em telas estreitas o trilho vira uma
+barra de seções rolável no topo.
+
+A ordem de leitura é sempre a mesma:
+
+1. **Visão executiva** — score, estágio, radar e síntese;
+2. **Cenário-alvo** — aparece antes do contexto tecnológico, de propósito;
+3. **Contexto tecnológico** — opcional;
+4. **Evidência e suficiência**;
+5. **Domínios e heat map** — o resultado detalhado;
+6. **Prioridades do negócio**;
+7. **Gaps observados** — separados em altos e moderados;
+8. **Formas de apoio** — recomendações e itens a validar;
+9. **Relatório e sessão** — imprimir/PDF, revisar, exportar e importar.
+
+O trilho também informa, sem permitir edição, quantas práticas têm alvo declarado, quantas
+capabilities de contexto foram informadas e se a evidência está suficiente ou pendente.
+
+### 8.2 O que cada número significa
+
 **Score 0–5.** O score **por domínio** é a média das respostas confirmadas daquele domínio,
 arredondada a uma casa. O score **geral** é a média dos **cinco scores de domínio** — não a média
 direta das respostas. Os dois números diferem quando os domínios têm quantidades distintas de
@@ -195,9 +272,21 @@ foram respondidas nele.
 `Gerenciado quantitativamente` · `Em otimização`. A régua 0–5 do relatório mostra a posição exata.
 
 **Score geral × por domínio.** O geral resume; o de domínio explica. Um geral confortável pode
-esconder um domínio crítico — leia sempre os dois.
+esconder um domínio crítico — leia sempre os dois. No tab **Resumo**, cada domínio traz uma barra
+0–5 na cor do domínio: domínio sem avaliação **não vira barra zerada** — fica `n/d`, e um zero
+confirmado aparece com marcador próprio na origem da escala. Havendo cenário-alvo declarado, ele
+aparece como marcador tracejado separado, nunca como preenchimento.
 
-**Suficiência.** Antes de emitir veredito executivo, a ferramenta exige evidência mínima. Enquanto
+**Suficiência de evidência.** Antes de emitir veredito executivo, a ferramenta exige evidência
+mínima. A apresentação muda conforme o estado, mas o critério nunca muda:
+
+- **evidência insuficiente** — o painel completo aparece logo depois da visão executiva, com a
+  contagem global, o que falta em cada domínio e o resultado explicitamente **BLOQUEADO**;
+- **evidência suficiente** — a tela mostra apenas a linha *“Qualidade da evidência · Suficiente”*, e
+  o detalhamento técnico fica atrás do disclosure **“Base de evidência”**, disponível a um clique.
+
+Isso é hierarquia, não omissão: insuficiência real nunca é escondida e nenhum resultado é liberado
+sem o critério canônico. Enquanto
 não houver, o resultado executivo aparece **BLOQUEADO**, o painel de suficiência lista exatamente o
 que falta e nenhum score de domínio é publicado — todos ficam `n/d`. Isso é intencional: é preferível
 não responder a responder mal.
@@ -214,8 +303,12 @@ cor, mais uma tabela equivalente para leitura acessível.
 **Jornada de maturidade.** Régua de seis nós numerados de 0 a 5, marcando **Perfil atual**,
 **Próximo estágio** e, quando houver, **Cenário-alvo**.
 
-**Gaps.** `Gap alto de maturidade` e `Gap moderado de maturidade`, derivados da resposta. Cada gap
-mostra a evidência declarada e a **capability a desenvolver**.
+**Gaps altos e gaps moderados.** A seção *Gaps observados* traz **dois grupos separados**, cada um
+com o seu título e a sua contagem: **Gaps altos de maturidade** e **Gaps moderados de maturidade**. A
+separação é estrutural — sobrevive em impressão em preto e branco e é anunciada por leitores de tela —
+porque as duas severidades pedem decisões diferentes. Ambas são derivadas da resposta, e não da média
+do domínio. Cada gap mostra a evidência declarada e a **capability a desenvolver**; a tag colorida ao
+lado do título indica o domínio e sempre traz o nome do domínio escrito.
 
 **Finding × recomendação × serviço de apoio:** o *finding* é o gap observado; a *recomendação* é a
 possibilidade de tecnologia condicionada ao contexto; o *serviço de apoio* é ajuda para operar.
@@ -298,14 +391,14 @@ cliente, com o mesmo cuidado de qualquer documento de assessment. **Eles não pe
 
 Estrutura, na ordem em que o documento realmente sai:
 
-1. **Capa e metadados** — título, subtítulo, disclaimer, emblema dos cinco domínios, sessão, data da
-   sessão, data de geração, versão da ferramenta e a **legenda dos domínios** (nomes completos,
-   numerados, na ordem canônica) — a legenda está na capa, não em seção própria;
-2. **Resumo de maturidade** — score geral, estágio, suficiência, arquétipo declarado e a **régua
-   0–5** com a posição do score entre os seis estágios — a régua está dentro do resumo, antes da
-   caixa interpretativa;
-3. **Como interpretar este relatório** — caixa curta com as regras de leitura;
-4. **Prioridades declaradas pelo negócio**;
+1. **Capa e metadados**: título, subtítulo, emblema dos cinco domínios, sessão, data da sessão,
+   data de geração, versão da ferramenta, **cobertura da evidência** e a **legenda dos domínios**
+   (nomes completos, numerados, na ordem canônica). A legenda está na capa, não em seção própria;
+2. **Como interpretar este relatório**: caixa curta com as regras de leitura, antes dos números;
+3. **Resumo de maturidade**: score geral, estágio, respostas confirmadas, arquétipo declarado e a
+   **régua 0–5** com a posição do score entre os seis estágios e o marcador **“Você está aqui”**.
+   A régua está dentro do resumo. A primeira página termina aqui;
+4. **Prioridades declaradas pelo negócio**, já na **página 2**;
 5. **Gaps de maturidade observados** — com evidência, capability e caminhos de apoio;
 6. **Contexto tecnológico declarado**;
 7. **Interpretação do contexto** e **Como a Fortinet pode apoiar**;
@@ -316,8 +409,40 @@ Estrutura, na ordem em que o documento realmente sai:
 As seções 4 a 9 são condicionais: cada uma só aparece quando a sessão tem o dado correspondente
 (prioridade declarada, gap observado, contexto tecnológico informado, alvo declarado).
 
+> **O relatório sai igual com e sem contexto tecnológico.** Capa, metadados, legenda, "Como
+> interpretar", resumo, régua, jornada, leitura executiva e anexo não dependem de contexto e saem
+> sempre. Quando o contexto **não** é informado, o documento diz isso com todas as letras — a seção
+> *Contexto tecnológico* aparece marcada como **não informado**, e o rodapé repete a condição —, e
+> só as seções que dependem materialmente do contexto (interpretação, apoio e leitura arquitetural)
+> ficam de fora. Um assessment sem contexto declarado continua sendo um assessment completo, e
+> agora o PDF dele também é.
+
+> **Com o gate de suficiência fechado, o relatório não publica score por domínio.** As cinco células
+> saem `n/d`, o radar não é desenhado, a comparação *Atual × Alvo* também sai `n/d` e o documento
+> explica por quê. É a mesma regra da tela: `n/d` significa **não avaliado**, nunca zero, e o papel
+> nunca afirma maturidade que o critério canônico proíbe afirmar.
+
 > O **emblema pentagonal** e a **faixa de cinco segmentos** são identidade visual estática. Não são
 > gráfico de score: não mudam com os dados da sessão.
+
+### 12.1 Preferências de impressão
+
+Gere o arquivo pelo próprio navegador, com estas preferências:
+
+| preferência | valor |
+|---|---|
+| destino | **Salvar como PDF** |
+| papel | **A4** |
+| escala | **100%** |
+| gráficos de fundo | **habilitados** |
+| cabeçalhos e rodapés do navegador | **desabilitados** |
+
+Margens padrão do navegador servem: a paginação do relatório é feita em CSS e não depende de
+ajuste manual. A **jornada de maturidade** é um bloco atômico — título, os seis estágios, o
+marcador do perfil atual, o próximo estágio e o texto explicativo saem sempre na **mesma página**;
+se não couber no espaço restante, o bloco inteiro desce para a página seguinte. As preferências
+acima existem para o arquivo sair com as cores e sem carimbo do navegador, não para consertar
+quebra de página.
 
 **Checklist pré-entrega:**
 
@@ -362,7 +487,7 @@ As seções 4 a 9 são condicionais: cada uma só aparece quando a sessão tem o
 | **prioridade** | item que o negócio elegeu como crítico; não altera score |
 | **contexto tecnológico** | o que existe de tecnologia, como está e o quanto cobre |
 | **Target** | cenário-alvo desejado, declarado por pergunta |
-| **mandato formal** | autorização, patrocínio, responsabilidade e autoridade concedidos à operação de segurança para executar sua missão, priorizar ações e responder perante o negócio |
+| **direcionamento formal** | autorização, patrocínio, responsabilidade e autoridade concedidos à operação de segurança para executar sua missão, priorizar ações e responder perante o negócio |
 | **recomendação direta** | apoio proposto diante de ausência confirmada de tecnologia |
 | **recomendação contextual** | apoio voltado a operacionalizar o que já existe |
 | **`n/d`** | não avaliado; **nunca** significa zero |

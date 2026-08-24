@@ -48,7 +48,7 @@
         "violations": [],
         "settle": {
           "runningAnimations": 0,
-          "waitedMs": 360
+          "waitedMs": 364
         }
       },
       {
@@ -62,12 +62,12 @@
           "name": "axe-core",
           "version": "4.13.0"
         },
-        "passCount": 17,
+        "passCount": 18,
         "incompleteCount": 0,
         "violations": [],
         "settle": {
           "runningAnimations": 0,
-          "waitedMs": 2
+          "waitedMs": 1
         }
       },
       {
@@ -81,7 +81,7 @@
           "name": "axe-core",
           "version": "4.13.0"
         },
-        "passCount": 17,
+        "passCount": 18,
         "incompleteCount": 0,
         "violations": [],
         "settle": {
@@ -100,7 +100,7 @@
           "name": "axe-core",
           "version": "4.13.0"
         },
-        "passCount": 19,
+        "passCount": 20,
         "incompleteCount": 2,
         "violations": [],
         "settle": {
@@ -119,7 +119,7 @@
           "name": "axe-core",
           "version": "4.13.0"
         },
-        "passCount": 17,
+        "passCount": 18,
         "incompleteCount": 0,
         "violations": [],
         "settle": {

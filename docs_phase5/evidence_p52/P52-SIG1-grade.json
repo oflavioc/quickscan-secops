@@ -1,0 +1,386 @@
+{
+  "390": [
+    {
+      "grupo": "(plat)",
+      "n": 14,
+      "colunas": "260px",
+      "colGap": "12px",
+      "rowGap": "12px",
+      "xUnicos": [
+        136
+      ],
+      "largUnicas": [
+        260
+      ],
+      "desalinhados": 0,
+      "desalinhoCaixa": 0,
+      "ordemPreservada": [
+        "FortiGuard IPSiPre",
+        "FortiGuard Antivir",
+        "FortiSandbox SaaS ",
+        "FortiGuard Applica",
+        "FortiGuard Inline ",
+        "FortiGuard DNS Fil",
+        "FortiGuard URL Fil",
+        "FortiGuard Video F",
+        "FortiGuard Anti-Bo",
+        "FortiGuard DLP Ser",
+        "FortiGuard Attack ",
+        "FortiGuard IoT Det",
+        "FortiGuard AI-base",
+        "FortiGuard OT Secu"
+      ]
+    },
+    {
+      "grupo": "Incidente / SOCiSituação e int",
+      "n": 6,
+      "colunas": "126.391px",
+      "colGap": "12px",
+      "rowGap": "12px",
+      "xUnicos": [
+        136
+      ],
+      "largUnicas": [
+        126
+      ],
+      "desalinhados": 0,
+      "desalinhoCaixa": 0,
+      "ordemPreservada": [
+        "Incidente ativoiHá",
+        "Suspeita de compro",
+        "Preocupação com ra",
+        "Prontidão de IRiIn",
+        "Interesse em SOC A",
+        "Desenvolvimento de"
+      ]
+    },
+    {
+      "grupo": "E-mail / DadosiPreocupações co",
+      "n": 5,
+      "colunas": "126.391px",
+      "colGap": "12px",
+      "rowGap": "12px",
+      "xUnicos": [
+        136
+      ],
+      "largUnicas": [
+        126
+      ],
+      "desalinhados": 0,
+      "desalinhoCaixa": 0,
+      "ordemPreservada": [
+        "Preocupação com BE",
+        "Segurança de e-mai",
+        "Vazamento de dados",
+        "Insider riskiPreoc",
+        "Compliance de prot"
+      ]
+    },
+    {
+      "grupo": "IAiUso e governança de intelig",
+      "n": 8,
+      "colunas": "126.391px",
+      "colGap": "12px",
+      "rowGap": "12px",
+      "xUnicos": [
+        136
+      ],
+      "largUnicas": [
+        126
+      ],
+      "desalinhados": 0,
+      "desalinhoCaixa": 0,
+      "ordemPreservada": [
+        "Shadow AIiUso de f",
+        "Risco e governança",
+        "Aplicações corpora",
+        "Uso de LLM privado",
+        "Agentes autônomos ",
+        "Segurança de runti",
+        "Prompt injectioniM",
+        "Vazamento de dados"
+      ]
+    },
+    {
+      "grupo": "Identidade / EndpointiRequisit",
+      "n": 3,
+      "colunas": "126.391px",
+      "colGap": "12px",
+      "rowGap": "12px",
+      "xUnicos": [
+        136
+      ],
+      "largUnicas": [
+        126
+      ],
+      "desalinhados": 0,
+      "desalinhoCaixa": 0,
+      "ordemPreservada": [
+        "Risco de identidad",
+        "Requisito de PAMiE",
+        "Necessidade especí"
+      ]
+    }
+  ],
+  "1440": [
+    {
+      "grupo": "(plat)",
+      "n": 14,
+      "colunas": "273.234px 273.25px 273.234px",
+      "colGap": "12px",
+      "rowGap": "12px",
+      "xUnicos": [
+        440,
+        726,
+        1011
+      ],
+      "largUnicas": [
+        273
+      ],
+      "desalinhados": 0,
+      "desalinhoCaixa": 0,
+      "ordemPreservada": [
+        "FortiGuard IPSiPre",
+        "FortiGuard Antivir",
+        "FortiSandbox SaaS ",
+        "FortiGuard Applica",
+        "FortiGuard Inline ",
+        "FortiGuard DNS Fil",
+        "FortiGuard URL Fil",
+        "FortiGuard Video F",
+        "FortiGuard Anti-Bo",
+        "FortiGuard DLP Ser",
+        "FortiGuard Attack ",
+        "FortiGuard IoT Det",
+        "FortiGuard AI-base",
+        "FortiGuard OT Secu"
+      ]
+    },
+    {
+      "grupo": "Incidente / SOCiSituação e int",
+      "n": 6,
+      "colunas": "274.234px 274.25px 274.234px",
+      "colGap": "12px",
+      "rowGap": "12px",
+      "xUnicos": [
+        440,
+        727,
+        1013
+      ],
+      "largUnicas": [
+        274
+      ],
+      "desalinhados": 0,
+      "desalinhoCaixa": 0,
+      "ordemPreservada": [
+        "Incidente ativoiHá",
+        "Suspeita de compro",
+        "Preocupação com ra",
+        "Prontidão de IRiIn",
+        "Interesse em SOC A",
+        "Desenvolvimento de"
+      ]
+    },
+    {
+      "grupo": "E-mail / DadosiPreocupações co",
+      "n": 5,
+      "colunas": "274.234px 274.25px 274.234px",
+      "colGap": "12px",
+      "rowGap": "12px",
+      "xUnicos": [
+        440,
+        727,
+        1013
+      ],
+      "largUnicas": [
+        274
+      ],
+      "desalinhados": 0,
+      "desalinhoCaixa": 0,
+      "ordemPreservada": [
+        "Preocupação com BE",
+        "Segurança de e-mai",
+        "Vazamento de dados",
+        "Insider riskiPreoc",
+        "Compliance de prot"
+      ]
+    },
+    {
+      "grupo": "IAiUso e governança de intelig",
+      "n": 8,
+      "colunas": "274.234px 274.25px 274.234px",
+      "colGap": "12px",
+      "rowGap": "12px",
+      "xUnicos": [
+        440,
+        727,
+        1013
+      ],
+      "largUnicas": [
+        274
+      ],
+      "desalinhados": 0,
+      "desalinhoCaixa": 0,
+      "ordemPreservada": [
+        "Shadow AIiUso de f",
+        "Risco e governança",
+        "Aplicações corpora",
+        "Uso de LLM privado",
+        "Agentes autônomos ",
+        "Segurança de runti",
+        "Prompt injectioniM",
+        "Vazamento de dados"
+      ]
+    },
+    {
+      "grupo": "Identidade / EndpointiRequisit",
+      "n": 3,
+      "colunas": "274.234px 274.25px 274.234px",
+      "colGap": "12px",
+      "rowGap": "12px",
+      "xUnicos": [
+        440,
+        727,
+        1013
+      ],
+      "largUnicas": [
+        274
+      ],
+      "desalinhados": 0,
+      "desalinhoCaixa": 0,
+      "ordemPreservada": [
+        "Risco de identidad",
+        "Requisito de PAMiE",
+        "Necessidade especí"
+      ]
+    }
+  ],
+  "1920": [
+    {
+      "grupo": "(plat)",
+      "n": 14,
+      "colunas": "280.078px 280.094px",
+      "colGap": "12px",
+      "rowGap": "12px",
+      "xUnicos": [
+        523,
+        815
+      ],
+      "largUnicas": [
+        280
+      ],
+      "desalinhados": 0,
+      "desalinhoCaixa": 0,
+      "ordemPreservada": [
+        "FortiGuard IPSiPre",
+        "FortiGuard Antivir",
+        "FortiSandbox SaaS ",
+        "FortiGuard Applica",
+        "FortiGuard Inline ",
+        "FortiGuard DNS Fil",
+        "FortiGuard URL Fil",
+        "FortiGuard Video F",
+        "FortiGuard Anti-Bo",
+        "FortiGuard DLP Ser",
+        "FortiGuard Attack ",
+        "FortiGuard IoT Det",
+        "FortiGuard AI-base",
+        "FortiGuard OT Secu"
+      ]
+    },
+    {
+      "grupo": "Incidente / SOCiSituação e int",
+      "n": 6,
+      "colunas": "281.594px 281.594px",
+      "colGap": "12px",
+      "rowGap": "12px",
+      "xUnicos": [
+        1176,
+        1469
+      ],
+      "largUnicas": [
+        282
+      ],
+      "desalinhados": 0,
+      "desalinhoCaixa": 0,
+      "ordemPreservada": [
+        "Incidente ativoiHá",
+        "Suspeita de compro",
+        "Preocupação com ra",
+        "Prontidão de IRiIn",
+        "Interesse em SOC A",
+        "Desenvolvimento de"
+      ]
+    },
+    {
+      "grupo": "E-mail / DadosiPreocupações co",
+      "n": 5,
+      "colunas": "281.578px 281.594px",
+      "colGap": "12px",
+      "rowGap": "12px",
+      "xUnicos": [
+        523,
+        817
+      ],
+      "largUnicas": [
+        282
+      ],
+      "desalinhados": 0,
+      "desalinhoCaixa": 0,
+      "ordemPreservada": [
+        "Preocupação com BE",
+        "Segurança de e-mai",
+        "Vazamento de dados",
+        "Insider riskiPreoc",
+        "Compliance de prot"
+      ]
+    },
+    {
+      "grupo": "IAiUso e governança de intelig",
+      "n": 8,
+      "colunas": "281.594px 281.594px",
+      "colGap": "12px",
+      "rowGap": "12px",
+      "xUnicos": [
+        1176,
+        1469
+      ],
+      "largUnicas": [
+        282
+      ],
+      "desalinhados": 0,
+      "desalinhoCaixa": 0,
+      "ordemPreservada": [
+        "Shadow AIiUso de f",
+        "Risco e governança",
+        "Aplicações corpora",
+        "Uso de LLM privado",
+        "Agentes autônomos ",
+        "Segurança de runti",
+        "Prompt injectioniM",
+        "Vazamento de dados"
+      ]
+    },
+    {
+      "grupo": "Identidade / EndpointiRequisit",
+      "n": 3,
+      "colunas": "281.578px 281.594px",
+      "colGap": "12px",
+      "rowGap": "12px",
+      "xUnicos": [
+        523,
+        817
+      ],
+      "largUnicas": [
+        282
+      ],
+      "desalinhados": 0,
+      "desalinhoCaixa": 0,
+      "ordemPreservada": [
+        "Risco de identidad",
+        "Requisito de PAMiE",
+        "Necessidade especí"
+      ]
+    }
+  ]
+}

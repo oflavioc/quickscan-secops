@@ -87,11 +87,94 @@ const PROTECTED = {
      alinhada aos outros quatro sítios do produto. Uma linha, dentro da autorização
      nominal da diretriz de 2026-08-22. Identidade anterior:
      6f1367d3f5806900eb409a8296d3a1c7d990309e824d28a7015adf3ced745159 */
-  "ui_v32.js": "61e71dcc191aabb2a74a7061173ede8a5d75fa5dda81bb03e7ad02360677d766",
+  /* PHASE 5.2 · a diretriz de 2026-08-22 (SHA d23abba4…7ec82e) autoriza
+     NOMINALMENTE a edição de `ui_v32.js` para hooks de apresentação (§4.3).
+     A edição desta rodada é de DUAS linhas em `hideLegacyRecommendation()`:
+     o escopo da varredura passa a ser a seção de apoio do workspace desktop
+     quando ela existe. A REGRA de ocultação e a lista `HIDE_EYEBROWS` são
+     byte-idênticas. Identidade anterior (Phase 5.1):
+     61e71dcc191aabb2a74a7061173ede8a5d75fa5dda81bb03e7ad02360677d766 */
+  /* PHASE 5.2 · REV A (ajuste de UAT visual, SHA 2545480c…e981dc4): a §6.3
+     manda o relatório do cliente levar UMA LINHA de cobertura da evidência.
+     A edição é de um único item de metadado na capa do relatório; regra de
+     score, suficiência e gate permanecem byte-idênticas. Identidade anterior
+     (Phase 5.2, primeira entrega):
+     990cda81725e31a2b6461a6cac4bb2c5db947600c95846a30272a6e2336632e5 */
+  /* PHASE 5.2 · REV B (ajuste de UAT visual, SHA 01e6e4a6…12612dad): links
+     oficiais nas ofertas e serviços, KPI de suficiência fora do relatório do
+     cliente, abertura única no topo do PDF, régua com "Você está aqui",
+     prioridades abrindo a página 2, rótulos de IA distinguíveis e a ordem
+     interna do editor de contexto. Regra de score, suficiência, gate e schema
+     permanecem byte-idênticas. */
+  /* PHASE 5.2 · REV B (correção de defeito material achado na prova de PDF
+     real): o emblema da capa ganhou calha lateral no viewBox — os rótulos
+     "Serviços" e "Pessoas" eram cortados no papel. Só geometria de desenho;
+     nenhuma regra muda. Identidade anterior desta revisão:
+     ca663c8b7527b1a07b640b50b48955ffe6024181820fad2aef0d83ac8f8160cc */
+  /* ERRATA DA AUDITORIA EXTERNA SÊNIOR DE FRONTEND (parecer SHA-256
+     f5a9f70e7a5ee658ef86775d8dab93ce2cb15974604a7ed7f1dcd99e13b58dae; prompt de
+     errata SHA-256 ca9358ff5d1c44adee5e4bcd99f9c7c406d4fd65d27b711ac1ebecada4bd46b2).
+     O prompt autoriza NOMINALMENTE corrigir os módulos-fonte do caminho de
+     relatório (§3.2, §4.1, §4.2). As edições desta rodada em `ui_v32.js` são:
+       1 · `publishableStats()` — decisão canônica de publicabilidade por
+           domínio, na ORIGEM do dado (B-01);
+       2 · tabela de domínios e radar de `#pr-maturity` passam a consumi-la,
+           mais a nota honesta `#pr-nopub` sob gate fechado;
+       3 · `buildPrintReport()` deixa de ENCERRAR o relatório em modo legado:
+           só as seções E–H (dependentes de contexto) ficam condicionais, e o
+           contexto passa a ser DECLARADO como não informado (B-02);
+       4 · `preparePrint()` perde o curto-circuito de modo legado (B-02/B-03);
+       5 · `window.__V32UI` passa a servir `publishableStats` — mesma ponte que
+           já servia `iconFor`.
+     Regra de score, de suficiência, schema de sessão e engine permanecem
+     byte-idênticos. Identidade anterior (Phase 5.2, REV B + erratas de UAT):
+     0fdf6f5bbffd3adb043817a30212be0cc3b6d564de4c8eaf4677955d93173677 */
+  "ui_v32.js": "0b30fe27ebc7fa0678b746ffe2fcd08fb1dcaf40a386ea774ffc3349f958e559",
   "ui_ux_v32.js": "a050401145a5ed7af597eae01a9a23826418119769c096db168b3b177a9d3938",
-  "ui_target_v32.js": "cfd85cbb3883c7410c8cd3c0eb4ae1712da8e73ff0a11ec6b436b0bcf94bb4a0",
+  /* ERRATA DA AUDITORIA EXTERNA · §4.1.1 ("qualquer texto derivado consome a
+     mesma decisão canônica de publicabilidade"). A comparação Atual × Alvo
+     publica SCORE POR DOMÍNIO — em tela e no papel — e o fazia sem consultar o
+     gate. Passa a consumir `publishableStats()` pela ponte `window.__V32UI`,
+     com nota honesta sob gate fechado. `computeTargetProfile()` continua PURO e
+     byte-idêntico: nenhum valor calculado mudou, só o que é PUBLICADO.
+     Identidade anterior (core, intocado desde a 4.3.1):
+     cfd85cbb3883c7410c8cd3c0eb4ae1712da8e73ff0a11ec6b436b0bcf94bb4a0 */
+  /* ERRATA FINAL · ALTO-1 (parecer independente SHA-256
+     70904c113096d9a95617a80daf9eb7df28d27c1a0e0837f510fbffaa53b04120, §10;
+     prompt de errata SHA-256
+     1882a6b3534c54bec12fc830a65b78edbd6d3bfa39752faa4df77c5f5ad3acd8, §5).
+     A instrução autoriza NOMINALMENTE fechar a publicação parcial da comparação
+     Atual × Alvo e determina a regra `comparisonPublishable = current.suff === true`,
+     com UMA decisão para todas as superfícies (§5.1/§5.4). As edições desta
+     rodada em `ui_target_v32.js` são:
+       1 · `tgtComparisonPublishable(cur)` — a decisão única, que CONSOME
+           `cur.suff` e não reimplementa contagem nem limiar;
+       2 · tela: tabela, KPI, nome de estágio, delta e seta passam a consumi-la;
+       3 · papel (`__uxTargetPrintHTML`): idem, incluindo os dois polígonos;
+       4 · overlay `.ux-target-shape` do radar de tela: não é criado sob gate
+           fechado — a proteção sai do CSS e vai para a origem da publicação;
+       5 · a nota de gate fechado passa a ser neutra e honesta.
+     `computeTargetProfile()` continua PURO e byte-idêntico; `setTarget()`,
+     `TARGET_PROFILE.overrides`, a regra de score, a de suficiência, o schema de
+     sessão e o engine permanecem byte-idênticos: nenhum valor calculado mudou,
+     só o que é PUBLICADO. Identidade anterior (errata da auditoria externa):
+     77b7b6991219e6d5fd26e71193e70a1f50d0f3a3cc18257d1b3e7cb90dad471a */
+  "ui_target_v32.js": "d672da97a8c9b17d33890eaa97dcdea3a9367a02a57c682662d32f56e4aa63f8",
   "ui_refinement_v32.js": "ade18a9afd265966feb40cb9f2926e20f5ffd2534dcfe7ec602e46cc6d01132c",
-  "ui_journey_v32.js": "4758148a94f4b6e788fc7bf7bef13ab00150f68c0a050308b694bacbf51ecade",
+  /* PHASE 5.2 · REV B (COPY-B §5.1): uma linha — o tema "mandate" da jornada
+     passou a dizer "direcionamento". Nenhuma regra, score ou estrutura muda. */
+  /* ERRATA FINAL · ALTO-1 · UMA LINHA em `journeyModel()`. A régua da jornada
+     marcava o estágio do CENÁRIO-ALVO respondendo só a `snap.target.sufficient`
+     — o gate do vetor efetivo do alvo — enquanto o marcador do perfil atual já
+     exigia `snap.maturity.sufficient`. Com o gate canônico FECHADO e alvos
+     declarados em quantidade suficiente, o papel imprimia o losango verde sobre
+     um estágio nomeado, na mesma página em que declara "Posicionamento atual:
+     n/d". A régua passa a exigir a MESMA decisão do perfil atual (§5.4 da
+     instrução: nome de estágio, relatório projetado e PDF usam uma decisão só).
+     Narrativa, temas, textos e a nota metodológica do alvo são byte-idênticos.
+     Identidade anterior (Phase 5.2 REV B):
+     a30db1ce94bf06b14a46ab1d41881f2fe2561c8c85a531862843eabe6bc2c15d */
+  "ui_journey_v32.js": "df0b00eb75f2ee2f8ae5542104bafd7f54580163e60432e7a48bb4bf8118aaf7",
   "ui_session_v32.js": "6fd849cdbdbb6838921a1519613e8a5194777c6eeb9e3e102c681a0ddc27164b",
   "ui_icons_v32.js": "32aabc3445571d447189edf4b486239c9256aa9bd0bc6bdab00635a65aa42151",
   "ui_v32.css": "acb0eba165ef25e6b97475430e9b042a9b39038be2b9882ec5b3c67a730faa6f",
@@ -107,7 +190,33 @@ const PROTECTED = {
      permanecem byte-idênticos, a contagem segue 13 e nenhuma asserção foi
      removida. P50-GOV1 continua fixando o arquivo BYTE A BYTE — apenas no valor
      autorizado. Identidade anterior: d2a3f804bb14e9156978407710a7a680f8dc4b71929546c28a719fbde1bae2e9 */
-  "tests_unset_ug.js": "af129900d1c5e2b8f02a9582f4fc8ab26fecc617cc595c9f2a7508000cabcb91",
+  /* MIGRAÇÃO DE GATE · ERRATA DA AUDITORIA EXTERNA · B-01. UG4, UG6 e UG9
+     afirmavam publicação de score POR DOMÍNIO com o gate canônico FECHADO — a
+     única condição em que um domínio pode ser `n/d`, porque `n = 0` fecha o
+     gate por definição. Eram o próprio B-01, medido pela geometria. Cada
+     asserção invertida está documentada linha a linha no arquivo, e cada uma
+     ganhou CONTROLE POSITIVO com o gate aberto: nenhuma foi removida, a
+     contagem segue 13, e UG1..UG3, UG5, UG7, UG8 e UG10..UG13 permanecem
+     byte-idênticos. Identidade anterior:
+     af129900d1c5e2b8f02a9582f4fc8ab26fecc617cc595c9f2a7508000cabcb91 */
+  /* MIGRAÇÃO DE GATE · ERRATA FINAL · ALTO-1. Duas mudanças, ambas exigidas
+     pela instrução (§6: "fortaleça o gate existente semanticamente mais
+     próximo, preferencialmente UG6"):
+       · `UG6` GANHOU o quadrante que faltava — o CASO B, com o vetor-alvo
+         DELIBERADAMENTE SUFICIENTE sobre um perfil atual insuficiente, com
+         guarda de não-vacuidade que exige `tgt.suff === true` antes de medir,
+         e com o controle positivo ampliado (setas e valores dos dois lados sob
+         gate aberto). Nenhuma asserção anterior de UG6 foi removida;
+       · `UG5` foi MIGRADO pelo mesmo fato estrutural de UG4/UG6/UG9: afirmava
+         quatro vértices do overlay de alvo com o gate FECHADO, que é a única
+         condição em que um domínio pode ser `n/d`. As asserções de ENCODING
+         (tracejado + `#3CB17E`) não foram removidas: passaram ao controle
+         positivo, no único estado em que o overlay pode existir.
+     UG1..UG4, UG7..UG13 permanecem byte-idênticos, a contagem segue 13 e a
+     migração está documentada linha a linha no próprio arquivo.
+     Identidade anterior (errata da auditoria externa):
+     81bb577c6489cee7c0a7a404e4163414acdaee6a60ae1bf4a0cb705977e43dff */
+  "tests_unset_ug.js": "0b22450956b75e760a9c9c79d7d48b6df51e7f55c5e1325876a9a4be26844d58",
   "MANIFEST.sha256": "80369148582fab2c82c9504185fac13534f22c723646379d57c040fc6eed417e"
 };
 
@@ -193,7 +302,14 @@ T("P50-UX1", "cards mapeiam 1:1 os valores canônicos; nada criado, removido ou 
       const t = c.getAttribute("data-p50-opt"), dsc = c.getAttribute("data-p50-optd");
       if (!t || !dsc) throw new Error("provenance t/d ausente em k=" + k + " i=" + i);
       const shownT = txt(c.querySelector(".t")), shownD = txt(c.querySelector(".d"));
-      if (t !== shownT) throw new Error("título dessincronizado k=" + k + " i=" + i);
+      /* PHASE 5.2 · REV B (COPY-B §5.1): a linguagem de negócio da alternativa
+         é reescrita na APRESENTAÇÃO por um mapa fechado e público da Camada
+         5.2. O oráculo aplica a MESMA transformação ao valor canônico antes de
+         comparar: nenhum outro texto passa, e a proveniência em
+         `data-p50-opt` continua sendo o canônico intocado. */
+      const esperadoT = w.__P52 && w.__P52.applyCopy ? w.__P52.applyCopy(t) : t;
+      if (esperadoT !== shownT) throw new Error("título dessincronizado k=" + k + " i=" + i +
+        " (esperado '" + esperadoT + "', exibido '" + shownT + "')");
       if (dsc !== shownD) throw new Error("descrição canônica dessincronizada k=" + k + " i=" + i);
     }
     /* os 4 pares t/d são distintos entre si (nenhuma opção duplicada/omitida) */
@@ -259,12 +375,21 @@ T("P50-UX6", "navegação da superfície nova é presentation-only (respostas, n
   const { w, d } = boot();
   FX.p50ApplyFixture(w, d, FX.P50_F2);
   const before = canonical(w);
-  const next = q(d, "#p50-shell button[data-p50=\"next\"]");
-  const prev = q(d, "#p50-shell button[data-p50=\"prev\"]");
-  if (!next || !prev) throw new Error("controles de navegação P50 ausentes");
+  /* PHASE 5.2 · REV A (MAP-REV-A §9.1): os proxies `[data-p50="prev"]` e
+     `[data-p50="next"]` foram removidos do trilho por decisão do proprietário
+     — eram uma terceira cópia dos controles congelados e a REV A os
+     substituiu por botões claros na própria área da pergunta. A PROPRIEDADE
+     medida por este gate não mudou (navegar é presentation-only); ela passa a
+     ser medida no caminho que o usuário realmente usa, `#next`/`#back`, que é
+     mais forte do que medi-la num proxy. */
+  const next = q(d, "#next");
+  const prev = q(d, "#back");
+  if (!next || !prev) throw new Error("controles de navegação congelados ausentes");
+  if (q(d, "#p50-shell [data-p50=\"prev\"], #p50-shell [data-p50=\"next\"]"))
+    throw new Error("o trilho voltou a duplicar a navegação da pergunta");
   next.click();                                        /* avança pelo #next congelado */
   const afterNext = canonical(w);
-  q(d, "#p50-shell button[data-p50=\"prev\"]").click(); /* volta pelo #back congelado */
+  q(d, "#back").click();                               /* volta pelo #back congelado */
   const afterPrev = canonical(w);
   if (before !== afterNext) throw new Error("avançar mutou estado canônico");
   if (before !== afterPrev) throw new Error("voltar mutou estado canônico");
@@ -319,17 +444,29 @@ T("P50-UX9", "presentation state isolation: colapso da sidebar e foco não alter
     return !!sb && sb.hasAttribute("hidden");
   };
 
-  /* (1) estado inicial RECOLHIDO */
-  if (state() !== "true") throw new Error("mapa não inicia recolhido: data-p50-collapsed=" + state());
-  if (!sidebarHidden()) throw new Error("mapa inicia visível apesar de data-p50-collapsed=true");
-  if (!/Mostrar mapa do assessment/.test(txt(tgl())))
+  /* (1) estado inicial DEPENDENTE DA VIEWPORT.
+     PHASE 5.2 · REV A (MAP-REV-A §9.2): em desktop (>=1180px) o mapa começa
+     EXPANDIDO; abaixo disso continua recolhido. jsdom reporta innerWidth de
+     1024px, ou seja, a faixa NÃO-desktop — é esse o caso medido aqui, e o
+     gate declara explicitamente qual dos dois estados espera em vez de fixar
+     "sempre recolhido". O caso desktop é medido em Chromium. */
+  const desktop = w.innerWidth >= 1180;
+  const wantCollapsed = desktop ? "false" : "true";
+  if (state() !== wantCollapsed)
+    throw new Error("estado inicial do mapa = " + state() + " para innerWidth=" + w.innerWidth +
+      " (esperado " + wantCollapsed + ")");
+  if (sidebarHidden() !== !desktop)
+    throw new Error("visibilidade inicial do mapa incoerente com data-p50-collapsed=" + state());
+  const rotuloInicial = desktop ? /Recolher mapa do assessment/ : /Mostrar mapa do assessment/;
+  if (!rotuloInicial.test(txt(tgl())))
     throw new Error("rótulo inicial do botão incorreto: " + txt(tgl()));
 
-  /* (2) abrir */
+  /* (2) alternar para expandido */
+  if (desktop) tgl().click();                          /* fecha, para reabrir logo abaixo */
   tgl().click();
   if (state() !== "false") throw new Error("clique não expandiu o mapa");
   if (sidebarHidden()) throw new Error("mapa expandido continua oculto");
-  if (!/Ocultar mapa do assessment/.test(txt(tgl())))
+  if (!/Recolher mapa do assessment/.test(txt(tgl())))
     throw new Error("rótulo do botão não acompanhou a expansão");
   if (qa(d, "#p50-shell [data-p50=\"domain\"]").length !== 5)
     throw new Error("mapa expandido não expõe os 5 domínios");
@@ -347,12 +484,14 @@ T("P50-UX9", "presentation state isolation: colapso da sidebar e foco não alter
   if (d.querySelectorAll("#p50-shell").length !== 1)
     throw new Error("shell duplicado após alternâncias");
 
-  /* (7) coerência após navegar anterior/próxima */
+  /* (7) coerência após navegar anterior/próxima.
+     REV A · a navegação passou a ser exclusivamente a dos controles
+     congelados; o estado do mapa continua tendo de sobreviver a ela. */
   tgl().click();                                        /* deixa expandido */
   if (state() !== "false") throw new Error("pré-condição: mapa deveria estar expandido");
-  q(d, "#p50-shell button[data-p50=\"next\"]").click();
+  q(d, "#next").click();
   if (state() !== "false") throw new Error("estado do mapa perdido ao avançar");
-  q(d, "#p50-shell button[data-p50=\"prev\"]").click();
+  q(d, "#back").click();
   if (state() !== "false") throw new Error("estado do mapa perdido ao voltar");
   if (qa(d, "#p50-shell [data-p50=\"domain\"]").length !== 5)
     throw new Error("mapa perdeu domínios após navegação");
@@ -2559,7 +2698,14 @@ T("P51-UX2", "ajuda contextual específica por pergunta, indexada pelo qid canô
     if (!ajuda) throw new Error("ajuda contextual ausente na pergunta " + k);
     const qid = ajuda.getAttribute("data-qid");
     const oq = txt(q(W.d, '#app [data-p50="evidence-help-what"]'));
-    const ex = txt(q(W.d, '#app [data-p50="evidence-help-example"]'));
+    /* REV B (EVID-B §6): o exemplo deixou de ser uma linha abaixo do campo e
+       passou a ser o PLACEHOLDER do textarea — some ao digitar e nunca é
+       gravado. A propriedade medida continua: exemplo específico por pergunta,
+       sem repetição, e MSSP só na cobertura de monitoramento. */
+    const ta = q(W.d, "#notetxt");
+    const ex = ta ? (ta.getAttribute("placeholder") || "") : "";
+    if (ta && q(W.d, '#app [data-p50="evidence-help-example"]'))
+      throw new Error(qid + ": exemplo duplicado abaixo do campo");
     if (!qid) throw new Error("ajuda sem data-qid na pergunta " + k);
     if (!oq || oq.length < 12) throw new Error(qid + ": orientação 'O que registrar' vazia/curta");
     if (!ex || ex.length < 12) throw new Error(qid + ": exemplo vazio/curto");
@@ -2582,11 +2728,16 @@ T("P51-UX3", "pergunta de mandato em linguagem de negócios, sem alterar o canô
   FX.p50GotoQuestion(R.w, R.d, FX.P50_F2.vec, 0);
   const d = R.d;
   const titulo = txt(q(d, "#app .qnum")) + " " + txt(q(d, '#app [data-p50="question-title"]'));
-  if (!/Direcionamento, autoridade e objetivos/.test(titulo))
+  /* PHASE 5.2 · REV B (COPY-B §5.1): "mandato" e "charter" saem da linguagem
+     apresentada ao usuário e ao cliente. O título de apresentação passa a ser
+     "Direcionamento e objetivos". O canônico segue intocado, conferido abaixo. */
+  if (!/Direcionamento e objetivos/.test(titulo))
     throw new Error("título de apresentação não atualizado: '" + titulo + "'");
   const apoio = txt(q(d, '#app [data-p50="question-support"]'));
-  if (!/miss[ãa]o|patroc[íi]nio|autoridade/i.test(apoio))
+  if (!/miss[ãa]o|patroc[íi]nio|responsabilidade/i.test(apoio))
     throw new Error("apoio curto ausente: '" + apoio + "'");
+  if (/mandato|charter/i.test(titulo + " " + apoio))
+    throw new Error("linguagem de jargão persiste na apresentação da pergunta");
   /* canônico intocado */
   const canon = R.w.eval("JSON.stringify({id:QS[0].id,n:QS[0].opts.length,t:QS[0].opts.map(o=>o.t)})");
   const esperado = R.w.eval("JSON.stringify({id:'mandate',n:4,t:QS[0].opts.map(o=>o.t)})");
@@ -3327,12 +3478,16 @@ T("P51-DOC6", "manual explica o cenário-alvo sem prometer resultado", () => {
   return true;
 });
 
-T("P51-DOC7", "glossário define mandato formal em linguagem de negócios", () => {
+T("P51-DOC7", "glossário define direcionamento formal em linguagem de negócios", () => {
+  /* PHASE 5.2 · REV B (COPY-B §5.1): o termo apresentado passou a ser
+     "direcionamento formal". O verbete continua obrigatório e continua tendo
+     de nomear os quatro elementos que o compõem. */
   const g = guidePlain();
-  if (g.indexOf("mandato formal") < 0) throw new Error("verbete 'mandato formal' ausente");
+  if (/mandato|charter/i.test(g)) throw new Error("o manual ainda usa 'mandato' ou 'charter'");
+  if (g.indexOf("direcionamento formal") < 0) throw new Error("verbete 'direcionamento formal' ausente");
   ["autorização", "patrocínio", "responsabilidade", "autoridade"].forEach(t => {
-    const re = new RegExp("mandato formal[^|]*\\|[^|]*" + t, "i");
-    if (!re.test(g)) throw new Error("definição de mandato formal sem o elemento: " + t);
+    const re = new RegExp("direcionamento formal[^|]*\\|[^|]*" + t, "i");
+    if (!re.test(g)) throw new Error("definição de direcionamento formal sem o elemento: " + t);
   });
   return true;
 });
@@ -3428,7 +3583,7 @@ T("P51-DOC11", "manual coincide LITERALMENTE com os rótulos finais da UI", () =
   return true;
 });
 
-T("P51-DOC12", "caixa 'Como interpretar este relatório' no PDF, curta e após o resumo", () => {
+T("P51-DOC12", "caixa 'Como interpretar este relatório' no PDF, curta e antes do resumo", () => {
   const R = boot();
   FX.p50ApplyVec(R.w, FX.P50_F5.vec);
   R.w.__DEV.showResults();
@@ -3442,7 +3597,11 @@ T("P51-DOC12", "caixa 'Como interpretar este relatório' no PDF, curta e após o
   const iMat = nodes.findIndex(n => n.id === "pr-maturity");
   const iBox = nodes.findIndex(n => n.id === "pr-howto");
   if (iMat < 0 || iBox < 0) throw new Error("resumo ou caixa fora do nível esperado do documento");
-  if (iBox !== iMat + 1) throw new Error("a caixa não vem imediatamente após o resumo de maturidade");
+  /* PHASE 5.2 · REV B (PDF-B §11.1): a primeira página passa a orientar ANTES
+     de apresentar os números — "Como interpretar" vem imediatamente antes do
+     resumo de maturidade. A propriedade medida continua sendo a adjacência
+     entre a orientação e o resumo, e a caixa continua curta. */
+  if (iBox !== iMat - 1) throw new Error("a caixa não vem imediatamente antes do resumo de maturidade");
   /* curta: não repete o manual */
   const itens = box.querySelectorAll("li").length;
   if (itens < 5 || itens > 8) throw new Error(itens + " itens na caixa (esperado entre 5 e 8)");
@@ -3518,10 +3677,14 @@ T("P51-DOC13", "manual descreve o score geral e a ordem do relatório como o pro
   R.w.__DEV.showResults();
   const host = p51Dom(R.w, p51Report(R.w));
   const ordemReal = Array.from(host.children).map(n => n.id).filter(Boolean);
+  /* PHASE 5.2 · REV B (PDF-B §11.1): a primeira página orienta antes de
+     apresentar números — "Como interpretar" precede o resumo de maturidade.
+     O gate continua exigindo que o MANUAL descreva exatamente a ordem que o
+     produto produz; só a ordem esperada acompanhou a decisão. */
   const ESPERADO = [
     { ids: ["pr-cover"], re: /capa e metadados/i },
-    { ids: ["pr-maturity"], re: /resumo de maturidade/i },
     { ids: ["pr-howto"], re: /como interpretar este relat[óo]rio/i },
+    { ids: ["pr-maturity"], re: /resumo de maturidade/i },
     { ids: ["pr-prios"], re: /prioridades declaradas pelo neg[óo]cio/i },
     { ids: ["pr-findings"], re: /gaps de maturidade observados/i },
     { ids: ["pr-landscape"], re: /contexto tecnol[óo]gico declarado/i },
@@ -3552,7 +3715,9 @@ T("P51-DOC13", "manual descreve o score geral e a ordem do relatório como o pro
   });
   /* o manual precisa dizer ONDE legenda e régua vivem, e não listá-las como seções */
   if (!/legenda dos dom[íi]nios/i.test(itens[0])) throw new Error("§12 não põe a legenda na capa");
-  if (!/r[ée]gua/i.test(itens[1])) throw new Error("§12 não põe a régua no resumo de maturidade");
+  /* REV B · o resumo de maturidade passou a ser o TERCEIRO item da lista, com
+     a orientação de leitura antes dele; a régua continua vivendo dentro dele. */
+  if (!/r[ée]gua/i.test(itens[2])) throw new Error("§12 não põe a régua no resumo de maturidade");
   if (itens.some((t, i) => i > 1 && /^\d+\.\s+\*?\*?(R[ée]gua|Legenda)/i.test(t)))
     throw new Error("§12 ainda lista régua ou legenda como seção própria");
   return true;

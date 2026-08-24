@@ -46,6 +46,46 @@ function revalidateTargets(){                                   /* [O] current r
   removed.forEach(l=>{ if(!tgtNotices.includes(l)) tgtNotices.push(l); });
   return removed;
 }
+/* ==========================================================================
+   ERRATA DA AUDITORIA EXTERNA · B-01 · ponte para a decisão canônica.
+   `ui_v32.js` é uma IIFE: `publishableStats()` é servida por `window.__V32UI`,
+   a mesma ponte que já serve `iconFor()` e `ARCH_FIELDS`. Este módulo NÃO
+   reimplementa a regra. Se a ponte não existir, ele FALHA — publicar sem gate
+   é pior do que não publicar.
+   ========================================================================== */
+function tgtPublishable(stats, suff){
+  const f = (typeof window!=="undefined" && window.__V32UI) ? window.__V32UI.publishableStats : null;
+  if (typeof f !== "function")
+    throw new Error("V3.2 TARGET: publishableStats indisponível — publicação por domínio bloqueada");
+  return f(stats, suff);
+}
+/* ==========================================================================
+   ERRATA FINAL · ALTO-1 · A COMPARAÇÃO É INDIVISÍVEL.
+
+   Reprovação do parecer independente 70904c113096d9a95617a80daf9eb7df28d27c1a0e0837f510fbffaa53b04120
+   (§8.2, §9.2, §10 ALTO-1): a coluna Alvo respondia ao SEU próprio gate
+   (`tgt.suff`, calculado por `computeTargetProfile()` sobre o vetor efetivo).
+   Bastava o facilitador declarar alvos suficientes para que a comparação
+   publicasse metade de si mesma sob gate canônico FECHADO — score por domínio,
+   agregado e NOME DE ESTÁGIO — em tela e no papel, com polígono materialmente
+   pintado no PDF, enquanto a nota da mesma página negava a publicação.
+
+   Regra normativa desta errata:
+
+       comparisonPublishable = current.suff === true
+
+   `target.suff` não abre a comparação sozinho. Esta função NÃO reimplementa a
+   regra de suficiência: consome `cur.suff`, produzido por `computeTargetProfile()`
+   sobre o vetor de respostas ATUAIS — a mesma aritmética canônica que governa
+   `#pr-maturity` e a Camada 5. É a decisão ÚNICA de todas as superfícies da
+   comparação: KPI, estágio, tabela por domínio, gaps, radar de tela, radar de
+   papel, árvore acessível e PDF.
+
+   O cálculo permanece intocado: `computeTargetProfile()` continua puro e
+   byte-idêntico, o cenário-alvo continua salvo em `TARGET_PROFILE.overrides`,
+   editável, e nada de current/suficiência/findings é modificado.
+   ========================================================================== */
+function tgtComparisonPublishable(cur){ return !!cur && cur.suff === true; }
 /* ---------------- UI ---------------- */
 function tgtSection(app){
   let sec=document.getElementById("ux-target");
@@ -63,12 +103,30 @@ function tgtSection(app){
   const cur=tgtCurrentProfile(), tgt=computeTargetProfile(tgtEffectiveVector());
   const nOv=Object.keys(TARGET_PROFILE.overrides).length;
   const fmt=v=>v===null?"n/d":v.toFixed(1);
-  const stg=p=>p.stage?esc32(p.stage.pt):"n/d";
-  const delta=(cur.overall!==null&&tgt.overall!==null)?` <span class="ux-tgt-delta">${tgt.overall>=cur.overall?"+":""}${(tgt.overall-cur.overall).toFixed(1)}</span>`:"";
+  /* ==========================================================================
+     ERRATA DA AUDITORIA EXTERNA · B-01 · publicabilidade também aqui.
+     A comparação Atual × Alvo publica SCORE POR DOMÍNIO. Ela consumia
+     `cur.stats`/`tgt.stats` crus e, com o gate canônico FECHADO, imprimia
+     números que a caixa de domínios da mesma tela recusa a publicar. Passa a
+     consumir `publishableStats()` — a mesma decisão do relatório e da tela.
+     O cálculo não muda: `computeTargetProfile()` continua puro e byte-idêntico,
+     e Target continua sem contaminar Current.
+     ========================================================================== */
+  /* ERRATA FINAL · ALTO-1 · uma decisão só, para as duas metades. */
+  const cmpPub=tgtComparisonPublishable(cur);
+  const curPub=tgtPublishable(cur.stats,cmpPub), tgtPub=tgtPublishable(tgt.stats,cmpPub&&tgt.suff);
   const rows=DOMS.map((dm,i)=>{
-    const c=cur.stats[i].score,t=tgt.stats[i].score;
+    const c=curPub[i].score,t=tgtPub[i].score;
     const d=(c!==null&&t!==null)?`${t>=c?"+":""}${(t-c).toFixed(1)}`:"n/d";
-    return `<tr data-dom="${i}"><td class="ux-tgt-dom">${esc32(dm.pt)}</td><td>${fmt(c)}</td><td>→</td><td>${fmt(t)}</td><td class="ux-tgt-delta">${d}</td></tr>`;}).join("");
+    /* sob gate fechado não há seta: seta é sinal de comparação, e não há comparação a publicar */
+    return `<tr data-dom="${i}"><td class="ux-tgt-dom">${esc32(dm.pt)}</td><td>${fmt(c)}</td><td>${cmpPub?"→":""}</td><td>${fmt(t)}</td><td class="ux-tgt-delta">${d}</td></tr>`;}).join("");
+  /* ERRATA FINAL · ALTO-1 · KPI, estágio e delta seguem a MESMA decisão da tabela:
+     nenhuma metade da comparação publica agregado ou nome de estágio com o gate
+     canônico do PERFIL ATUAL fechado. */
+  const pubO=v=>cmpPub?v:null, pubS=p=>(cmpPub&&p.stage)?esc32(p.stage.pt):"n/d";
+  const curO=pubO(cur.overall), tgtO=pubO(tgt.overall);
+  const delta=(curO!==null&&tgtO!==null)?` <span class="ux-tgt-delta">${tgtO>=curO?"+":""}${(tgtO-curO).toFixed(1)}</span>`:"";
+  const gateNote=cmpPub?"":`<div class="ux-mut ux-tgt-nopub" data-p52-nopub="target">O cenário-alvo está salvo. A comparação será apresentada quando o perfil atual tiver evidência suficiente. Evidência insuficiente: até o gate canônico abrir, nenhum score, estágio, valor por domínio ou delta é publicado nesta comparação, de nenhum dos dois lados. As práticas-alvo declaradas continuam listadas, uma a uma, abaixo.</div>`;
   const ovList=Object.keys(TARGET_PROFILE.overrides).map(qid=>{
     const k=tgtKOf(qid), cur0=ans[k], t=TARGET_PROFILE.overrides[qid];
     const base=(cur0===null||cur0==="NA")?`<span class="ux-mut">Baseline atual não validado — delta local n/d.</span>`
@@ -77,11 +135,12 @@ function tgtSection(app){
   sec.innerHTML = `<div class="section-title"><div class="eyebrow">Perfil atual × Cenário-alvo de maturidade</div></div>
     <div class="v32-block" id="ux-tgt-cmp">${notice}
       <div class="ux-tgt-kpis">
-        <div class="ux-tgt-kpi"><span>Atual</span><b>${fmt(cur.overall)}${cur.overall!==null?" / 5":""}</b><i>${stg(cur)}</i></div>
-        <div class="ux-tgt-kpi ux-tgt-kpi-t"><span>Cenário-alvo</span><b>${fmt(tgt.overall)}${tgt.overall!==null?" / 5":""}${delta}</b><i>${stg(tgt)}</i></div>
+        <div class="ux-tgt-kpi"><span>Atual</span><b>${fmt(curO)}${curO!==null?" / 5":""}</b><i>${pubS(cur)}</i></div>
+        <div class="ux-tgt-kpi ux-tgt-kpi-t"><span>Cenário-alvo</span><b>${fmt(tgtO)}${tgtO!==null?" / 5":""}${delta}</b><i>${pubS(tgt)}</i></div>
         <div class="ux-tgt-kpi"><span>Práticas-alvo alteradas</span><b>${nOv}</b><i>explícitas</i></div>
       </div>
       <div class="ux-tgt-legend">— Perfil atual&nbsp;&nbsp;&nbsp;- - Cenário-alvo</div>
+      ${gateNote}
       <table class="ux-tgt-table"><tbody>${rows}</tbody></table>
       <div class="ux-tgt-ovs"><div class="eyebrow">Práticas-alvo definidas</div><ul>${ovList}</ul></div>
       <div class="ux-tgt-disc">${esc32(TGT_DISCLAIMER)}</div>
@@ -112,6 +171,12 @@ function tgtRadarOverlay(app){                                  /* [I] geometria
   const old=svg.querySelector(".ux-target-shape"); if(old) old.remove();
   const lg=document.getElementById("ux-tgt-radarlegend"); if(lg) lg.remove();
   if(!tgtHasOverrides()){ svg.setAttribute("aria-label","Radar de maturidade — perfil atual"); return; }
+  /* ERRATA FINAL · ALTO-1 · o overlay é a mesma comparação, em outra superfície.
+     Sob gate canônico fechado ele não é criado. Não se apoia em CSS: hoje a
+     superfície legada de tela está oculta por `body.v32-print-mode .wrap`, e uma
+     proteção que dependesse disso deixaria a decisão fora da origem da publicação. */
+  const curOv=tgtCurrentProfile();
+  if(!tgtComparisonPublishable(curOv)){ svg.setAttribute("aria-label","Radar de maturidade — perfil atual"); return; }
   const axes=Array.from(svg.querySelectorAll("line.axis")); if(axes.length!==5) return;
   const tgt=computeTargetProfile(tgtEffectiveVector());
   /* [UNSET-GEOM] eixo sem alvo efetivo (current UNSET e sem override) não vira vértice zero:
@@ -182,23 +247,31 @@ window.__uxTargetPrintHTML = function(){
   /* [UNSET-GEOM] mesma regra no PDF, para os DOIS polígonos (atual e alvo): domínio sem score
      não recebe vértice. O tracejado verde continua sendo encoding exclusivo do cenário-alvo. */
   const poly=st=>st.map((s,i)=>s.score===null?null:P(i,Rp*(s.score/5))).filter(p=>p!==null).join(" ");
-  const ndT=DOMS.map((dm,i)=>(cur.stats[i].score===null||tgt.stats[i].score===null)?dm.pt:null).filter(Boolean);
-  const ndNote=ndT.length?`<div class="pr-mut pr-radar-nd">Sem ponto no radar por ausência de avaliação (n/d): ${esc32(ndT.join(" · "))}</div>`:"";
+  /* ERRATA DA AUDITORIA EXTERNA · B-01 · o papel usa a MESMA decisão da tela.
+     ERRATA FINAL · ALTO-1 · e essa decisão é a do PERFIL ATUAL, para as duas metades. */
+  const cmpPub=tgtComparisonPublishable(cur);
+  const curPub=tgtPublishable(cur.stats,cmpPub), tgtPub=tgtPublishable(tgt.stats,cmpPub&&tgt.suff);
+  const pubO=v=>cmpPub?v:null;
+  const curO=pubO(cur.overall), tgtO=pubO(tgt.overall);
+  const ndT=DOMS.map((dm,i)=>(curPub[i].score===null||tgtPub[i].score===null)?dm.pt:null).filter(Boolean);
+  const ndNote=!cmpPub
+    ? `<div class="pr-mut pr-radar-nd" data-pr-nopub="target">O cenário-alvo está salvo. A comparação será apresentada quando o perfil atual tiver evidência suficiente. Evidência insuficiente: até o gate canônico abrir, nenhum score, estágio, valor por domínio ou delta é publicado nesta comparação, de nenhum dos dois lados. As práticas-alvo declaradas continuam listadas uma a uma. n/d significa não avaliado, nunca zero.</div>`
+    : (ndT.length?`<div class="pr-mut pr-radar-nd">Sem ponto no radar por ausência de avaliação (n/d): ${esc32(ndT.join(" · "))}</div>`:"");
   const grid=[1,2,3,4,5].map(k=>`<polygon points="${DOMS.map((_,i)=>P(i,Rp*k/5)).join(" ")}" fill="none" stroke="#ccc" stroke-width="0.6"/>`).join("");
   const labels=DOMS.map((dm,i)=>{const [x,y]=P(i,Rp+12).split(",");
     return `<text x="${x}" y="${y}" font-size="8" text-anchor="middle" fill="#444">${esc32(dm.pt)}</text>`;}).join("");
-  const rows=DOMS.map((dm,i)=>{const c=cur.stats[i].score,t=tgt.stats[i].score;
+  const rows=DOMS.map((dm,i)=>{const c=curPub[i].score,t=tgtPub[i].score;
     const d=(c!==null&&t!==null)?`${t>=c?"+":""}${(t-c).toFixed(1)}`:"n/d";
-    return `<tr><td>${esc32(dm.pt)}</td><td>${fmt(c)}</td><td>→</td><td>${fmt(t)}</td><td>${d}</td></tr>`;}).join("");
+    return `<tr><td>${esc32(dm.pt)}</td><td>${fmt(c)}</td><td>${cmpPub?"→":""}</td><td>${fmt(t)}</td><td>${d}</td></tr>`;}).join("");
   const ovs=Object.keys(TARGET_PROFILE.overrides).map(qid=>{const k=tgtKOf(qid),c0=ans[k],t=TARGET_PROFILE.overrides[qid];
     return `<div class="pr-card"><b>${esc32(QS[k].lbl)}</b><div>${(c0!==null&&c0!=="NA")?esc32(QS[k].opts[c0].t)+" → ":"<i>Baseline atual não validado</i> → "}${esc32(QS[k].opts[t].t)}</div>${tgtEnablersHTML(qid)}</div>`;}).join("");
   return `<div class="pr-sec" id="pr-target"><h2>Perfil atual × Cenário-alvo de maturidade</h2>
-    <div class="pr-kpis"><div class="pr-kpi"><b>${fmt(cur.overall)}${cur.overall!==null?" / 5":""}</b><span>Atual · ${cur.stage?esc32(cur.stage.pt):"n/d"}</span></div>
-    <div class="pr-kpi"><b>${fmt(tgt.overall)}${tgt.overall!==null?" / 5":""}</b><span>Cenário-alvo · ${tgt.stage?esc32(tgt.stage.pt):"n/d"}</span></div>
+    <div class="pr-kpis"><div class="pr-kpi"><b>${fmt(curO)}${curO!==null?" / 5":""}</b><span>Atual · ${(cmpPub&&cur.stage)?esc32(cur.stage.pt):"n/d"}</span></div>
+    <div class="pr-kpi"><b>${fmt(tgtO)}${tgtO!==null?" / 5":""}</b><span>Cenário-alvo · ${(cmpPub&&tgt.stage)?esc32(tgt.stage.pt):"n/d"}</span></div>
     <div class="pr-kpi"><b>${Object.keys(TARGET_PROFILE.overrides).length}</b><span>práticas-alvo alteradas</span></div></div>
     <svg viewBox="0 0 270 225" class="pr-radar" role="img" aria-label="Radar comparativo atual e cenário-alvo">${grid}
-      <polygon points="${poly(cur.stats)}" fill="rgba(48,127,226,.14)" stroke="#307FE2" stroke-width="1.6"/>
-      <polygon points="${poly(tgt.stats)}" fill="none" stroke="#3CB17E" stroke-width="1.6" stroke-dasharray="5 4"/>${labels}</svg>
+      <polygon points="${poly(curPub)}" fill="rgba(48,127,226,.14)" stroke="#307FE2" stroke-width="1.6"/>
+      <polygon points="${poly(tgtPub)}" fill="none" stroke="#3CB17E" stroke-width="1.6" stroke-dasharray="5 4"/>${labels}</svg>
     <div class="pr-mut" style="text-align:center">— Perfil atual (azul) · - - Cenário-alvo (verde)</div>
     ${ndNote}
     <table class="pr-doms"><tbody>${rows}</tbody></table>${ovs}

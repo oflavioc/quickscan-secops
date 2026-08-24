@@ -323,7 +323,14 @@
           note: (typeof notes !== "undefined" && notes[k]) ? String(notes[k]) : ""
         });
       }
-      var domTarget = (domHasTarget && tgtStats) ? tgtStats[i].score : null;
+      /* ERRATA FINAL · ALTO-1 · o AGREGADO do alvo por domínio é a outra metade
+         da MESMA comparação indivisível: sob gate canônico fechado ele não é
+         publicado, exatamente como `current`. Sem isto a Camada 5 pintava o
+         marcador "alvo X.X" sobre a régua de um domínio cujo atual é `n/d`.
+         O alvo declarado POR PERGUNTA (eixo UI-015/UI-016a, `cells[].targetScore`)
+         continua listado: é declaração explícita do proprietário sobre uma
+         prática, não score de domínio publicado. */
+      var domTarget = (released && domHasTarget && tgtStats) ? tgtStats[i].score : null;
       out.domains.push({
         dom: i, name: DOMS[i].pt, released: released,
         deficit: d.missing, confirmed: d.confirmed, required: d.required,

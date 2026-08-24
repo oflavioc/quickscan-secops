@@ -15,27 +15,27 @@
       "dataset": "15 respostas confirmadas + nota longa nas 15 perguntas (dataset canônico máximo)",
       "selection": {
         "n": 12,
-        "min": 0.9,
-        "median": 1.1,
-        "max": 10.2
+        "min": 1.3,
+        "median": 1.7,
+        "max": 14.4
       },
       "navigation": {
-        "n": 24,
-        "min": 0.7,
-        "median": 0.9,
-        "max": 1.7
+        "n": 12,
+        "min": 1.4,
+        "median": 1.7,
+        "max": 2.4
       },
       "openResults": {
         "n": 1,
-        "min": 20.4,
-        "median": 20.4,
-        "max": 20.4
+        "min": 34.5,
+        "median": 34.5,
+        "max": 34.5
       },
       "tabSwitch": {
         "n": 6,
         "min": 0.5,
-        "median": 1.6,
-        "max": 3.1
+        "median": 1.9,
+        "max": 3
       },
       "heatmapCells": 15
     },

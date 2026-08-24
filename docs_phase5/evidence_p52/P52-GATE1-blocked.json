@@ -1,0 +1,66 @@
+[
+  {
+    "vp": 390,
+    "evTop": 3802,
+    "viewport": 844,
+    "ordem": "gate-blocked",
+    "jumpTop": 233,
+    "jumpText": "▾Ver o que falta para liberar o resultado"
+  },
+  {
+    "vp": 768,
+    "evTop": 2712,
+    "viewport": 1024,
+    "ordem": "gate-blocked",
+    "jumpTop": 233,
+    "jumpText": "▾Ver o que falta para liberar o resultado"
+  },
+  {
+    "vp": 1024,
+    "evTop": 2371,
+    "viewport": 768,
+    "ordem": "gate-blocked",
+    "jumpTop": 233,
+    "jumpText": "▾Ver o que falta para liberar o resultado"
+  },
+  {
+    "vp": 1280,
+    "evTop": 2469,
+    "viewport": 800,
+    "ordem": "gate-blocked",
+    "jumpTop": 174,
+    "jumpText": "▾Ver o que falta para liberar o resultado"
+  },
+  {
+    "vp": 1440,
+    "evTop": 2355,
+    "viewport": 900,
+    "ordem": "gate-blocked",
+    "jumpTop": 174,
+    "jumpText": "▾Ver o que falta para liberar o resultado"
+  },
+  {
+    "vp": 1920,
+    "evTop": 2109,
+    "viewport": 1080,
+    "ordem": "gate-blocked",
+    "jumpTop": 174,
+    "jumpText": "▾Ver o que falta para liberar o resultado"
+  },
+  {
+    "vp": 2560,
+    "evTop": 1913,
+    "viewport": 1440,
+    "ordem": "gate-blocked",
+    "jumpTop": 175,
+    "jumpText": "▾Ver o que falta para liberar o resultado"
+  },
+  {
+    "vp": 3440,
+    "evTop": 1912,
+    "viewport": 1440,
+    "ordem": "gate-blocked",
+    "jumpTop": 174,
+    "jumpText": "▾Ver o que falta para liberar o resultado"
+  }
+]

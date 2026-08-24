@@ -12,8 +12,26 @@
     "comfortReference": "44x44 (medido, não bloqueante)"
   },
   "scope": "#p50-shell, #p50-suff, #p50-results, #app .p50-chips, #app .p50-cueblock, .p50-ses",
-  "interactiveScope": "#p50-shell button, #p50-shell a[href], #app [data-p50=\"evidence-open\"], #p50-results button, #p50-results a[href], .p50-ses button",
+  "interactiveScope": "#p50-shell button, #p50-shell a[href], #notetgl, #p50-results button, #p50-results a[href], .p50-ses button",
   "contrastCombinations": [
+    {
+      "selector": "span[data-p50=\"q-state\"].p50-qstate",
+      "sample": "n/d",
+      "foreground": "rgb(132, 132, 140)",
+      "background": "rgb(28,28,31)",
+      "effectiveOpacity": 1,
+      "fontSize": 12,
+      "fontWeight": 400,
+      "large": false,
+      "ratio": 4.582,
+      "threshold": 4.5,
+      "verdict": "PASS",
+      "cases": [
+        "P50-F2/assessment@1440",
+        "P50-F2/assessment@390",
+        "P50-F6/assessment@1440"
+      ]
+    },
     {
       "selector": "p[data-p50=\"ses-dirty\"].p50-ses-note",
       "sample": "Há alterações ainda não exportadas.",
@@ -46,24 +64,6 @@
         "P50-F9/results@1440:dominios",
         "P50-F9/results@1440:heatmap",
         "P50-F9/results@1440:analise"
-      ]
-    },
-    {
-      "selector": "span[data-p50=\"q-state\"].p50-qstate",
-      "sample": "n/d",
-      "foreground": "rgb(132, 132, 140)",
-      "background": "rgb(28,28,31)",
-      "effectiveOpacity": 1,
-      "fontSize": 12,
-      "fontWeight": 400,
-      "large": false,
-      "ratio": 4.582,
-      "threshold": 4.5,
-      "verdict": "PASS",
-      "cases": [
-        "P50-F2/assessment@1440",
-        "P50-F2/assessment@390",
-        "P50-F6/assessment@1440"
       ]
     },
     {
@@ -653,7 +653,7 @@
     },
     {
       "selector": "span.p50-res-card-q",
-      "sample": "Mandato e objetivos",
+      "sample": "Direcionamento e objetivos",
       "foreground": "rgb(173, 173, 180)",
       "background": "rgb(28,28,31)",
       "effectiveOpacity": 1,
@@ -863,7 +863,7 @@
     },
     {
       "selector": "button[data-p50=\"sidebar-toggle\"].p50-btn",
-      "sample": "Ocultar mapa do assessment",
+      "sample": "Recolher mapa do assessment",
       "foreground": "rgb(173, 173, 180)",
       "background": "rgb(21,21,23)",
       "effectiveOpacity": 1,
@@ -930,6 +930,87 @@
         "P50-F2/assessment@1440",
         "P50-F2/assessment@390",
         "P50-F6/assessment@1440"
+      ]
+    },
+    {
+      "selector": "h3[data-p50=\"results-title\"].p50-res-title",
+      "sample": "Resultado executivo",
+      "foreground": "rgb(173, 173, 180)",
+      "background": "rgb(21,21,23)",
+      "effectiveOpacity": 1,
+      "fontSize": 13,
+      "fontWeight": 800,
+      "large": false,
+      "ratio": 8.175,
+      "threshold": 4.5,
+      "verdict": "PASS",
+      "cases": [
+        "P50-F5/results@1440:resumo",
+        "P50-F5/results@1440:dominios",
+        "P50-F5/results@1440:heatmap",
+        "P50-F5/results@1440:analise",
+        "P50-F5/results@390:resumo",
+        "P50-F5/results@390:dominios",
+        "P50-F5/results@390:heatmap",
+        "P50-F5/results@390:analise",
+        "P50-F7/results@1440:resumo",
+        "P50-F7/results@1440:dominios",
+        "P50-F7/results@1440:heatmap",
+        "P50-F7/results@1440:analise",
+        "P50-F9/results@1440:resumo",
+        "P50-F9/results@1440:dominios",
+        "P50-F9/results@1440:heatmap",
+        "P50-F9/results@1440:analise"
+      ]
+    },
+    {
+      "selector": "p[data-p50=\"results-lead\"].p50-res-lead",
+      "sample": "A evidência registrada atende ao requisito c",
+      "foreground": "rgb(173, 173, 180)",
+      "background": "rgb(21,21,23)",
+      "effectiveOpacity": 1,
+      "fontSize": 12.5,
+      "fontWeight": 400,
+      "large": false,
+      "ratio": 8.175,
+      "threshold": 4.5,
+      "verdict": "PASS",
+      "cases": [
+        "P50-F5/results@1440:resumo",
+        "P50-F5/results@1440:dominios",
+        "P50-F5/results@1440:heatmap",
+        "P50-F5/results@1440:analise",
+        "P50-F5/results@390:resumo",
+        "P50-F5/results@390:dominios",
+        "P50-F5/results@390:heatmap",
+        "P50-F5/results@390:analise",
+        "P50-F7/results@1440:resumo",
+        "P50-F7/results@1440:dominios",
+        "P50-F7/results@1440:heatmap",
+        "P50-F7/results@1440:analise",
+        "P50-F9/results@1440:resumo",
+        "P50-F9/results@1440:dominios",
+        "P50-F9/results@1440:heatmap",
+        "P50-F9/results@1440:analise"
+      ]
+    },
+    {
+      "selector": "span[data-p50=\"results-domain-label\"].p50-res-domain-label",
+      "sample": "maturidade indicativa do domínio",
+      "foreground": "rgb(173, 173, 180)",
+      "background": "rgb(21,21,23)",
+      "effectiveOpacity": 1,
+      "fontSize": 13,
+      "fontWeight": 400,
+      "large": false,
+      "ratio": 8.175,
+      "threshold": 4.5,
+      "verdict": "PASS",
+      "cases": [
+        "P50-F5/results@1440:resumo",
+        "P50-F5/results@390:resumo",
+        "P50-F7/results@1440:resumo",
+        "P50-F9/results@1440:resumo"
       ]
     },
     {
@@ -1119,87 +1200,6 @@
       ]
     },
     {
-      "selector": "h3[data-p50=\"results-title\"].p50-res-title",
-      "sample": "Resultado executivo",
-      "foreground": "rgb(173, 173, 180)",
-      "background": "rgb(21,21,23)",
-      "effectiveOpacity": 1,
-      "fontSize": 13,
-      "fontWeight": 800,
-      "large": false,
-      "ratio": 8.175,
-      "threshold": 4.5,
-      "verdict": "PASS",
-      "cases": [
-        "P50-F5/results@1440:resumo",
-        "P50-F5/results@1440:dominios",
-        "P50-F5/results@1440:heatmap",
-        "P50-F5/results@1440:analise",
-        "P50-F5/results@390:resumo",
-        "P50-F5/results@390:dominios",
-        "P50-F5/results@390:heatmap",
-        "P50-F5/results@390:analise",
-        "P50-F7/results@1440:resumo",
-        "P50-F7/results@1440:dominios",
-        "P50-F7/results@1440:heatmap",
-        "P50-F7/results@1440:analise",
-        "P50-F9/results@1440:resumo",
-        "P50-F9/results@1440:dominios",
-        "P50-F9/results@1440:heatmap",
-        "P50-F9/results@1440:analise"
-      ]
-    },
-    {
-      "selector": "p[data-p50=\"results-lead\"].p50-res-lead",
-      "sample": "A evidência registrada atende ao requisito c",
-      "foreground": "rgb(173, 173, 180)",
-      "background": "rgb(21,21,23)",
-      "effectiveOpacity": 1,
-      "fontSize": 12.5,
-      "fontWeight": 400,
-      "large": false,
-      "ratio": 8.175,
-      "threshold": 4.5,
-      "verdict": "PASS",
-      "cases": [
-        "P50-F5/results@1440:resumo",
-        "P50-F5/results@1440:dominios",
-        "P50-F5/results@1440:heatmap",
-        "P50-F5/results@1440:analise",
-        "P50-F5/results@390:resumo",
-        "P50-F5/results@390:dominios",
-        "P50-F5/results@390:heatmap",
-        "P50-F5/results@390:analise",
-        "P50-F7/results@1440:resumo",
-        "P50-F7/results@1440:dominios",
-        "P50-F7/results@1440:heatmap",
-        "P50-F7/results@1440:analise",
-        "P50-F9/results@1440:resumo",
-        "P50-F9/results@1440:dominios",
-        "P50-F9/results@1440:heatmap",
-        "P50-F9/results@1440:analise"
-      ]
-    },
-    {
-      "selector": "span[data-p50=\"results-domain-label\"].p50-res-domain-label",
-      "sample": "maturidade indicativa do domínio",
-      "foreground": "rgb(173, 173, 180)",
-      "background": "rgb(21,21,23)",
-      "effectiveOpacity": 1,
-      "fontSize": 12,
-      "fontWeight": 400,
-      "large": false,
-      "ratio": 8.175,
-      "threshold": 4.5,
-      "verdict": "PASS",
-      "cases": [
-        "P50-F5/results@1440:resumo",
-        "P50-F5/results@390:resumo",
-        "P50-F7/results@1440:resumo",
-        "P50-F9/results@1440:resumo"
-      ]
-    },
-    {
       "selector": "p[data-p50=\"drill-state\"].p50-drill-state",
       "sample": "3 respostas confirmadas · mínimo requerido: ",
       "foreground": "rgb(173, 173, 180)",
@@ -1327,6 +1327,22 @@
       "verdict": "PASS",
       "cases": [
         "P50-F7/results@1440:heatmap"
+      ]
+    },
+    {
+      "selector": "span.p52-dombar-tlabel",
+      "sample": "alvo 3.3",
+      "foreground": "rgb(173, 173, 180)",
+      "background": "rgb(21,21,23)",
+      "effectiveOpacity": 1,
+      "fontSize": 12,
+      "fontWeight": 400,
+      "large": false,
+      "ratio": 8.175,
+      "threshold": 4.5,
+      "verdict": "PASS",
+      "cases": [
+        "P50-F9/results@1440:resumo"
       ]
     },
     {
@@ -1587,76 +1603,6 @@
       ]
     },
     {
-      "selector": "button[data-p50=\"prev\"].p50-btn",
-      "sample": "← Pergunta anterior",
-      "foreground": "rgb(245, 245, 244)",
-      "background": "rgb(28,28,31)",
-      "effectiveOpacity": 1,
-      "fontSize": 13.5,
-      "fontWeight": 400,
-      "large": false,
-      "ratio": 15.584,
-      "threshold": 4.5,
-      "verdict": "PASS",
-      "cases": [
-        "P50-F2/assessment@1440",
-        "P50-F2/assessment@390",
-        "P50-F6/assessment@1440"
-      ]
-    },
-    {
-      "selector": "button[data-p50=\"next\"].p50-btn",
-      "sample": "Próxima pergunta →",
-      "foreground": "rgb(245, 245, 244)",
-      "background": "rgb(28,28,31)",
-      "effectiveOpacity": 1,
-      "fontSize": 13.5,
-      "fontWeight": 400,
-      "large": false,
-      "ratio": 15.584,
-      "threshold": 4.5,
-      "verdict": "PASS",
-      "cases": [
-        "P50-F2/assessment@1440",
-        "P50-F2/assessment@390",
-        "P50-F6/assessment@1440"
-      ]
-    },
-    {
-      "selector": "p[data-p50=\"ses-line1\"].p50-ses-l1",
-      "sample": "Sessão não salva automaticamente.",
-      "foreground": "rgb(245, 245, 244)",
-      "background": "rgb(28,28,31)",
-      "effectiveOpacity": 1,
-      "fontSize": 12.5,
-      "fontWeight": 700,
-      "large": false,
-      "ratio": 15.584,
-      "threshold": 4.5,
-      "verdict": "PASS",
-      "cases": [
-        "P50-F2/assessment@1440",
-        "P50-F2/assessment@390",
-        "P50-F6/assessment@1440",
-        "P50-F5/results@1440:resumo",
-        "P50-F5/results@1440:dominios",
-        "P50-F5/results@1440:heatmap",
-        "P50-F5/results@1440:analise",
-        "P50-F5/results@390:resumo",
-        "P50-F5/results@390:dominios",
-        "P50-F5/results@390:heatmap",
-        "P50-F5/results@390:analise",
-        "P50-F7/results@1440:resumo",
-        "P50-F7/results@1440:dominios",
-        "P50-F7/results@1440:heatmap",
-        "P50-F7/results@1440:analise",
-        "P50-F9/results@1440:resumo",
-        "P50-F9/results@1440:dominios",
-        "P50-F9/results@1440:heatmap",
-        "P50-F9/results@1440:analise"
-      ]
-    },
-    {
       "selector": "p[data-p50=\"domain-state\"].p50-domstate",
       "sample": "2 de 3 respostas confirmadas",
       "foreground": "rgb(245, 245, 244)",
@@ -1746,13 +1692,13 @@
       ]
     },
     {
-      "selector": "button[data-p50=\"evidence-open\"].p50-btn",
-      "sample": "Registrar evidência ou observação",
+      "selector": "p[data-p50=\"ses-line1\"].p50-ses-l1",
+      "sample": "Sessão não salva automaticamente.",
       "foreground": "rgb(245, 245, 244)",
       "background": "rgb(28,28,31)",
       "effectiveOpacity": 1,
-      "fontSize": 16,
-      "fontWeight": 400,
+      "fontSize": 12.5,
+      "fontWeight": 700,
       "large": false,
       "ratio": 15.584,
       "threshold": 4.5,
@@ -1760,7 +1706,23 @@
       "cases": [
         "P50-F2/assessment@1440",
         "P50-F2/assessment@390",
-        "P50-F6/assessment@1440"
+        "P50-F6/assessment@1440",
+        "P50-F5/results@1440:resumo",
+        "P50-F5/results@1440:dominios",
+        "P50-F5/results@1440:heatmap",
+        "P50-F5/results@1440:analise",
+        "P50-F5/results@390:resumo",
+        "P50-F5/results@390:dominios",
+        "P50-F5/results@390:heatmap",
+        "P50-F5/results@390:analise",
+        "P50-F7/results@1440:resumo",
+        "P50-F7/results@1440:dominios",
+        "P50-F7/results@1440:heatmap",
+        "P50-F7/results@1440:analise",
+        "P50-F9/results@1440:resumo",
+        "P50-F9/results@1440:dominios",
+        "P50-F9/results@1440:heatmap",
+        "P50-F9/results@1440:analise"
       ]
     },
     {
@@ -1784,7 +1746,7 @@
     },
     {
       "selector": "span.p50-res-card-cap",
-      "sample": "Direcionamento e mandato de segurança",
+      "sample": "Direcionamento e responsabilidades de segura",
       "foreground": "rgb(245, 245, 244)",
       "background": "rgb(28,28,31)",
       "effectiveOpacity": 1,
@@ -1871,37 +1833,6 @@
       ]
     },
     {
-      "selector": "p[data-p50=\"suff-global\"].p50-suff-global",
-      "sample": "15 respostas confirmadas no total · mínimo r",
-      "foreground": "rgb(245, 245, 244)",
-      "background": "rgb(21,21,23)",
-      "effectiveOpacity": 1,
-      "fontSize": 13.5,
-      "fontWeight": 700,
-      "large": false,
-      "ratio": 16.717,
-      "threshold": 4.5,
-      "verdict": "PASS",
-      "cases": [
-        "P50-F5/results@1440:resumo",
-        "P50-F5/results@1440:dominios",
-        "P50-F5/results@1440:heatmap",
-        "P50-F5/results@1440:analise",
-        "P50-F5/results@390:resumo",
-        "P50-F5/results@390:dominios",
-        "P50-F5/results@390:heatmap",
-        "P50-F5/results@390:analise",
-        "P50-F7/results@1440:resumo",
-        "P50-F7/results@1440:dominios",
-        "P50-F7/results@1440:heatmap",
-        "P50-F7/results@1440:analise",
-        "P50-F9/results@1440:resumo",
-        "P50-F9/results@1440:dominios",
-        "P50-F9/results@1440:heatmap",
-        "P50-F9/results@1440:analise"
-      ]
-    },
-    {
       "selector": "p[data-p50=\"results-verdict\"].p50-res-verdict",
       "sample": "Resultado executivo: liberado pelo veredito ",
       "foreground": "rgb(245, 245, 244)",
@@ -1976,8 +1907,8 @@
       "foreground": "rgb(245, 245, 244)",
       "background": "rgb(21,21,23)",
       "effectiveOpacity": 1,
-      "fontSize": 13.5,
-      "fontWeight": 400,
+      "fontSize": 17,
+      "fontWeight": 650,
       "large": false,
       "ratio": 16.717,
       "threshold": 4.5,
@@ -1987,6 +1918,37 @@
         "P50-F5/results@390:resumo",
         "P50-F7/results@1440:resumo",
         "P50-F9/results@1440:resumo"
+      ]
+    },
+    {
+      "selector": "p[data-p50=\"suff-global\"].p50-suff-global",
+      "sample": "15 respostas confirmadas no total · mínimo r",
+      "foreground": "rgb(245, 245, 244)",
+      "background": "rgb(21,21,23)",
+      "effectiveOpacity": 1,
+      "fontSize": 13.5,
+      "fontWeight": 700,
+      "large": false,
+      "ratio": 16.717,
+      "threshold": 4.5,
+      "verdict": "PASS",
+      "cases": [
+        "P50-F5/results@1440:resumo",
+        "P50-F5/results@1440:dominios",
+        "P50-F5/results@1440:heatmap",
+        "P50-F5/results@1440:analise",
+        "P50-F5/results@390:resumo",
+        "P50-F5/results@390:dominios",
+        "P50-F5/results@390:heatmap",
+        "P50-F5/results@390:analise",
+        "P50-F7/results@1440:resumo",
+        "P50-F7/results@1440:dominios",
+        "P50-F7/results@1440:heatmap",
+        "P50-F7/results@1440:analise",
+        "P50-F9/results@1440:resumo",
+        "P50-F9/results@1440:dominios",
+        "P50-F9/results@1440:heatmap",
+        "P50-F9/results@1440:analise"
       ]
     },
     {
@@ -2029,7 +1991,7 @@
     },
     {
       "selector": "span.p50-drill-q-label",
-      "sample": "Mandato e objetivos",
+      "sample": "Direcionamento e objetivos",
       "foreground": "rgb(245, 245, 244)",
       "background": "rgb(21,21,23)",
       "effectiveOpacity": 1,
@@ -2086,7 +2048,7 @@
     },
     {
       "selector": "span[data-p50=\"hm-q\"].p50-hm-q",
-      "sample": "Mandato e objetivos",
+      "sample": "Direcionamento e objetivos",
       "foreground": "rgb(245, 245, 244)",
       "background": "rgb(21,21,23)",
       "effectiveOpacity": 1,
@@ -2124,7 +2086,7 @@
     },
     {
       "selector": "td",
-      "sample": "Mandato e objetivos",
+      "sample": "Direcionamento e objetivos",
       "foreground": "rgb(245, 245, 244)",
       "background": "rgb(21,21,23)",
       "effectiveOpacity": 1,
@@ -2358,23 +2320,9 @@
       ]
     },
     {
-      "selector": "button[data-p50=\"prev\"].p50-btn",
-      "sample": "← Pergunta anterior",
-      "width": 151.6,
-      "height": 44,
-      "minimumAA": 24,
-      "comfortable": 44,
-      "verdict": "PASS",
-      "comfort": "confortável",
-      "cases": [
-        "P50-F2/assessment@1440",
-        "P50-F6/assessment@1440"
-      ]
-    },
-    {
-      "selector": "button[data-p50=\"next\"].p50-btn",
-      "sample": "Próxima pergunta →",
-      "width": 153.8,
+      "selector": "button[data-p50=\"sidebar-toggle\"].p50-btn",
+      "sample": "Recolher mapa do assessment",
+      "width": 216.1,
       "height": 44,
       "minimumAA": 24,
       "comfortable": 44,
@@ -2387,23 +2335,22 @@
     },
     {
       "selector": "button[data-p50=\"sidebar-toggle\"].p50-btn",
-      "sample": "Ocultar mapa do assessment",
-      "width": 205.6,
+      "sample": "Recolher mapa do assessment",
+      "width": 285.4,
       "height": 44,
       "minimumAA": 24,
       "comfortable": 44,
       "verdict": "PASS",
       "comfort": "confortável",
       "cases": [
-        "P50-F2/assessment@1440",
-        "P50-F6/assessment@1440"
+        "P50-F2/assessment@390"
       ]
     },
     {
-      "selector": "button[data-p50=\"evidence-open\"].p50-btn",
-      "sample": "Registrar evidência ou observação",
-      "width": 276.4,
-      "height": 44,
+      "selector": "button#notetgl",
+      "sample": "Fechar evidência ou observação",
+      "width": 288.3,
+      "height": 46,
       "minimumAA": 24,
       "comfortable": 44,
       "verdict": "PASS",
@@ -2412,45 +2359,6 @@
         "P50-F2/assessment@1440",
         "P50-F2/assessment@390",
         "P50-F6/assessment@1440"
-      ]
-    },
-    {
-      "selector": "button[data-p50=\"prev\"].p50-btn",
-      "sample": "← Pergunta anterior",
-      "width": 297,
-      "height": 44,
-      "minimumAA": 24,
-      "comfortable": 44,
-      "verdict": "PASS",
-      "comfort": "confortável",
-      "cases": [
-        "P50-F2/assessment@390"
-      ]
-    },
-    {
-      "selector": "button[data-p50=\"next\"].p50-btn",
-      "sample": "Próxima pergunta →",
-      "width": 297,
-      "height": 44,
-      "minimumAA": 24,
-      "comfortable": 44,
-      "verdict": "PASS",
-      "comfort": "confortável",
-      "cases": [
-        "P50-F2/assessment@390"
-      ]
-    },
-    {
-      "selector": "button[data-p50=\"sidebar-toggle\"].p50-btn",
-      "sample": "Ocultar mapa do assessment",
-      "width": 297,
-      "height": 44,
-      "minimumAA": 24,
-      "comfortable": 44,
-      "verdict": "PASS",
-      "comfort": "confortável",
-      "cases": [
-        "P50-F2/assessment@390"
       ]
     }
   ],

@@ -101,11 +101,15 @@ T("U5 (M28)","'Prioridades declaradas pelo negócio' lista na ordem declarada",(
   w.__DEV.setPriorities(["policies","mandate","monitoring-coverage"]);
   w.__DEV.showResults();
   const names = Array.from(d.querySelectorAll(".prio-decl h4")).map(h=>h.textContent.trim());
-  const t = names.join(" | ");
-  const iPol = t.indexOf("políticas")>=0 ? t.indexOf("políticas") : t.toLowerCase().indexOf("polít");
+  const t = names.join(" | ").toLowerCase();
+  /* PHASE 5.2 · REV B (COPY-B §5.1): "mandato" saiu da linguagem apresentada ao
+     usuário e ao cliente; a prioridade `mandate` é exibida como
+     "Direcionamento e objetivos". A ORDEM continua sendo o que este gate mede,
+     e ele passa a reprovar também se o jargão reaparecer. */
+  if (/mandato|charter/.test(t)) throw new Error("jargão de volta na lista de prioridades: " + t);
   return names.length===3 &&
-    t.toLowerCase().indexOf("polí") < t.toLowerCase().indexOf("mandato") &&
-    t.toLowerCase().indexOf("mandato") < t.toLowerCase().indexOf("monitoramento");
+    t.indexOf("polí") < t.indexOf("direcionamento") &&
+    t.indexOf("direcionamento") < t.indexOf("monitoramento");
 });
 
 /* U6 — UNSET ≠ NONE: default 'Não informado'; microcopy só quando NONE escolhido */

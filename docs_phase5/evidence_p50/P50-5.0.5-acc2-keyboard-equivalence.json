@@ -7,7 +7,7 @@
   "keyboardOnly": "nenhum window.__DEV.* e nenhum page.focus() no caminho de teclado",
   "observed": {
     "trace": [
-      "teclado: nota registrada em 10/14/13 tabulações",
+      "teclado: nota registrada em 7/11/10 tabulações",
       "teclado: telas após a última pergunta = refbranch -> results",
       "mouse: telas após a última pergunta = refbranch(#ref-skip-all) -> priority(#next) -> results"
     ],

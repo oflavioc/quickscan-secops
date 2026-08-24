@@ -17,8 +17,10 @@ SESJS = HERE / "ui_session_v32.js"
 P50SHELLJS = HERE / "ui_p50_shell_v32.js"
 P50SUFFJS = HERE / "ui_p50_suff_v32.js"
 P50RESULTSJS = HERE / "ui_p50_results_v32.js"
+P52WSJS = HERE / "ui_p52_workspace_v32.js"
 UXCSS = HERE / "ui_ux_v32.css"
 P50CSS = HERE / "ui_p50_v32.css"
+P52CSS = HERE / "ui_p52_workspace_v32.css"
 UICSS = HERE / "ui_v32.css"
 OUT = Path(sys.argv[1]) if len(sys.argv) > 1 else HERE / "quickscan_secops_soccmm_v3_2_dev.html"
 subprocess.run([sys.executable, str(HERE/"generate_icons_v32.py")], check=True, capture_output=True)
@@ -52,6 +54,7 @@ sesjs = open(SESJS, encoding="utf-8").read()
 p50shelljs = open(P50SHELLJS, encoding="utf-8").read()
 p50suffjs = open(P50SUFFJS, encoding="utf-8").read()
 p50resultsjs = open(P50RESULTSJS, encoding="utf-8").read()
+p52wsjs = open(P52WSJS, encoding="utf-8").read()
 # [4.8-E] metadata determinística: versão do package + SHA real do engine (nunca digitados à mão)
 import hashlib, json as _json
 _pkg = _json.load(open(HERE / "package.json", encoding="utf-8"))
@@ -62,12 +65,13 @@ build_meta = ("\n/* V32_BUILD_META_BEGIN */\nwindow.__QS_BUILD_META = " +
 uxcss = open(UXCSS, encoding="utf-8").read()
 inject = ("/* V32_ENGINE_BEGIN */\n" + engine + "\n/* V32_ENGINE_END */\n" + adapter +
           "\n/* V32_ICONS_BEGIN */\n" + iconsjs + "\n/* V32_ICONS_END */\n" +
-          "\n/* V32_UI_BEGIN */\n" + uijs + "\n/* V32_UI_END */\n" + "\n/* V32_UX_BEGIN */\n" + uxjs + "\n/* V32_UX_END */\n" + "\n/* V32_TARGET_BEGIN */\n" + tgtjs + "\n/* V32_TARGET_END */\n" + "\n/* V32_REF_BEGIN */\n" + refjs + "\n/* V32_REF_END */\n" + build_meta + "\n/* V32_JOURNEY_BEGIN */\n" + jnjs + "\n/* V32_JOURNEY_END */\n" + "\n/* V32_SESSION_BEGIN */\n" + sesjs + "\n/* V32_SESSION_END */\n" + "\n/* V32_P50_SHELL_BEGIN */\n" + p50shelljs + "\n/* V32_P50_SHELL_END */\n" + "\n/* V32_P50_SUFF_BEGIN */\n" + p50suffjs + "\n/* V32_P50_SUFF_END */\n" + "\n/* V32_P50_RESULTS_BEGIN */\n" + p50resultsjs + "\n/* V32_P50_RESULTS_END */\n" + "\n/* V32_UI_END */\n" + anchor)
+          "\n/* V32_UI_BEGIN */\n" + uijs + "\n/* V32_UI_END */\n" + "\n/* V32_UX_BEGIN */\n" + uxjs + "\n/* V32_UX_END */\n" + "\n/* V32_TARGET_BEGIN */\n" + tgtjs + "\n/* V32_TARGET_END */\n" + "\n/* V32_REF_BEGIN */\n" + refjs + "\n/* V32_REF_END */\n" + build_meta + "\n/* V32_JOURNEY_BEGIN */\n" + jnjs + "\n/* V32_JOURNEY_END */\n" + "\n/* V32_SESSION_BEGIN */\n" + sesjs + "\n/* V32_SESSION_END */\n" + "\n/* V32_P50_SHELL_BEGIN */\n" + p50shelljs + "\n/* V32_P50_SHELL_END */\n" + "\n/* V32_P50_SUFF_BEGIN */\n" + p50suffjs + "\n/* V32_P50_SUFF_END */\n" + "\n/* V32_P50_RESULTS_BEGIN */\n" + p50resultsjs + "\n/* V32_P50_RESULTS_END */\n" + "\n/* V32_P52_WORKSPACE_BEGIN */\n" + p52wsjs + "\n/* V32_P52_WORKSPACE_END */\n" + "\n/* V32_UI_END */\n" + anchor)
 html = html.replace(anchor, inject)
 uicss = open(UICSS, encoding="utf-8").read()
 assert html.count("</style>") == 1, "style tag não único"
 p50css = open(P50CSS, encoding="utf-8").read()
-html = html.replace("</style>", "\n/* V32_CSS_BEGIN */\n" + uicss + "\n/* V32_CSS_END */\n/* V32_UXCSS_BEGIN */\n" + uxcss + "\n/* V32_UXCSS_END */\n/* V32_P50CSS_BEGIN */\n" + p50css + "\n/* V32_P50CSS_END */\n</style>")
+p52css = open(P52CSS, encoding="utf-8").read()
+html = html.replace("</style>", "\n/* V32_CSS_BEGIN */\n" + uicss + "\n/* V32_CSS_END */\n/* V32_UXCSS_BEGIN */\n" + uxcss + "\n/* V32_UXCSS_END */\n/* V32_P50CSS_BEGIN */\n" + p50css + "\n/* V32_P50CSS_END */\n/* V32_P52CSS_BEGIN */\n" + p52css + "\n/* V32_P52CSS_END */\n</style>")
 html = html.replace("Quickscan SecOps · SOC-CMM · v3.1.3", "Quickscan SecOps · SOC-CMM · v3.2-dev (engine)")
 open(OUT, "w", encoding="utf-8").write(html)
 print("build ok →", OUT, "| sha256(engine):", hashlib.sha256(engine.encode()).hexdigest()[:16])

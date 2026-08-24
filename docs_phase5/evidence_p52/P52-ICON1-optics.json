@@ -1,0 +1,112 @@
+[
+  {
+    "alt": "Serviços FortiGuard",
+    "size": "lg",
+    "objectFit": "contain",
+    "tileSide": 54,
+    "imgSide": 45.4940185546875,
+    "inkW": 0.8984375,
+    "inkH": 0.890625,
+    "apparent": 0.7569172647264268,
+    "aspect": 1.0087719298245614
+  },
+  {
+    "alt": "(sem alt)",
+    "size": "sm",
+    "objectFit": "contain",
+    "tileSide": 40,
+    "imgSide": 33.6259765625,
+    "inkW": 0.8984375,
+    "inkH": 0.890625,
+    "apparent": 0.7552709579467773,
+    "aspect": 1.0087719298245614
+  },
+  {
+    "alt": "FortiGuard SOCaaS",
+    "size": "lg",
+    "objectFit": "contain",
+    "tileSide": 54,
+    "imgSide": 46.2760009765625,
+    "inkW": 0.6796875,
+    "inkH": 0.875,
+    "apparent": 0.749842608416522,
+    "aspect": 0.7767857142857143
+  },
+  {
+    "alt": "FortiGuard MDR",
+    "size": "lg",
+    "objectFit": "contain",
+    "tileSide": 54,
+    "imgSide": 48.43798828125,
+    "inkW": 0.8359375,
+    "inkH": 0.8359375,
+    "apparent": 0.7498357560899522,
+    "aspect": 1
+  },
+  {
+    "alt": "FortiSOAR",
+    "size": "lg",
+    "objectFit": "contain",
+    "tileSide": 54,
+    "imgSide": 46.2760009765625,
+    "inkW": 0.8671875,
+    "inkH": 0.875,
+    "apparent": 0.749842608416522,
+    "aspect": 0.9910714285714286
+  },
+  {
+    "alt": "FortiSIEM",
+    "size": "lg",
+    "objectFit": "contain",
+    "tileSide": 54,
+    "imgSide": 48.43798828125,
+    "inkW": 0.87890625,
+    "inkH": 0.8359375,
+    "apparent": 0.7883787155151367,
+    "aspect": 1.0514018691588785
+  },
+  {
+    "alt": "FortiAnalyzer",
+    "size": "lg",
+    "objectFit": "contain",
+    "tileSide": 54,
+    "imgSide": 47.1500244140625,
+    "inkW": 0.859375,
+    "inkH": 0.859375,
+    "apparent": 0.7503620783487955,
+    "aspect": 1
+  },
+  {
+    "alt": "FortiEndpoint",
+    "size": "lg",
+    "objectFit": "contain",
+    "tileSide": 54,
+    "imgSide": 46.2760009765625,
+    "inkW": 0.8828125,
+    "inkH": 0.875,
+    "apparent": 0.7565376317059552,
+    "aspect": 1.0089285714285714
+  },
+  {
+    "alt": "FortiNDR",
+    "size": "lg",
+    "objectFit": "contain",
+    "tileSide": 54,
+    "imgSide": 50.09375,
+    "inkW": 0.8828125,
+    "inkH": 0.80859375,
+    "apparent": 0.8189516420717593,
+    "aspect": 1.0917874396135265
+  },
+  {
+    "alt": "FortiRecon",
+    "size": "lg",
+    "objectFit": "contain",
+    "tileSide": 54,
+    "imgSide": 46.275390625,
+    "inkW": 0.875,
+    "inkH": 0.875,
+    "apparent": 0.7498327184606481,
+    "aspect": 1
+  }
+]

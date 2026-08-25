@@ -81,6 +81,13 @@ for name, h in MAP.items():
     ran += 1
     if r.returncode != 0:
         fails += 1
+    # recibos declarados: o harness legado grava seu registro em arquivo rastreado
+    # por design — restauramos após capturar (o registro vivo é a matriz)
+    for rec in h.get("receipts", []):
+        st = sh(["git", "status", "--porcelain", "--", rec]).stdout.strip()
+        if st:
+            sh(["git", "checkout", "--", rec])
+            print(f"       recibo restaurado (declarado em mutation_map): {rec}")
 
 after = sh(["git", "status", "--porcelain"]).stdout.strip()
 if after:

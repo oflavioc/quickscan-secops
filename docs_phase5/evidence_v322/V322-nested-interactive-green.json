@@ -1,0 +1,42 @@
+{
+  "home": {
+    "entrada": "home",
+    "sigAberto": false,
+    "violacoesGraves": [],
+    "nestedInteractiveNos": 0,
+    "detalhe": [],
+    "interativosDentroDeSummary": 0,
+    "estrutural": [],
+    "erros": []
+  },
+  "home-com-requisitos-aberto": {
+    "entrada": "home",
+    "sigAberto": true,
+    "violacoesGraves": [],
+    "nestedInteractiveNos": 0,
+    "detalhe": [],
+    "interativosDentroDeSummary": 0,
+    "estrutural": [],
+    "erros": []
+  },
+  "resultados": {
+    "entrada": "resultados",
+    "sigAberto": false,
+    "violacoesGraves": [],
+    "nestedInteractiveNos": 0,
+    "detalhe": [],
+    "interativosDentroDeSummary": 0,
+    "estrutural": [],
+    "erros": []
+  },
+  "resultados-com-requisitos-aberto": {
+    "entrada": "resultados",
+    "sigAberto": true,
+    "violacoesGraves": [],
+    "nestedInteractiveNos": 0,
+    "detalhe": [],
+    "interativosDentroDeSummary": 0,
+    "estrutural": [],
+    "erros": []
+  }
+}

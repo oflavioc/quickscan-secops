@@ -1,0 +1,123 @@
+baseline: html 913440adc157e850 · ui_p52_workspace_v32.js cad66aebb0fe · ui_p52_workspace_v32.css 862354a053bc · ui_target_v32.js d672da97a8c9 · ui_p50_shell_v32.js e28a21733564 · ui_v32.js 0b30fe27ebc7 · ui_journey_v32.js df0b00eb75f2 · ui_p50_results_v32.js 57fd78ca7084 · tests_p52_chromium.js 5c9f9cb61397
+
+DETECTADO      P52-M5 · remover o marcador de grupo ativo do editor de contexto
+              gate esperado: P52-CTX1v
+              FAIL  P52-CTX1v — card de contexto opcional proeminente e grupo ativo do editor distinguível por forma, peso e texto [marcador de estado idêntico entre aberto e fechado]
+
+DETECTADO      P52-ER5 · tirar a área sensível uniforme apenas de Processos
+              gate esperado: P52-POP2
+              FAIL  P52-POP2 — os cinco domínios respondem igual a ponteiro, teclado, clique, toque e Esc, com um popover aberto por vez [1920px: domínio 2 não abre ao apontar o caixa · 3440px: domínio 2 não abre ao apontar o caixa]
+
+DETECTADO      V322-M1 · aplicar as regiões de contexto apenas na tela de resultados (voltar ao defeito da v3.2.1)
+              gate esperado: V322-CTXPAR1
+              FAIL  V322-CTXPAR1 — o editor de contexto tecnológico é o MESMO compositor nas duas entradas: duas regiões de primeiro nível, seis grupos na mesma ordem, mesmas ajudas (i), os SEIS grupos recolhidos na primeira abertura 
+
+DETECTADO      V322-M2 · abrir todos os accordions por padrão (parede de campos na primeira abertura)
+              gate esperado: V322-CTXPAR1
+              FAIL  V322-CTXPAR1 — o editor de contexto tecnológico é o MESMO compositor nas duas entradas: duas regiões de primeiro nível, seis grupos na mesma ordem, mesmas ajudas (i), os SEIS grupos recolhidos na primeira abertura 
+
+DETECTADO      V322-M5 · remover a mensagem local junto ao botão de PDF
+              gate esperado: V322-PRINT1
+              FAIL  V322-PRINT1 — com contexto tecnológico não salvo o print é bloqueado e a pendência aparece NO PONTO DE AÇÃO: mensagem exata logo abaixo do grupo do botão de PDF com role=alert e aria-describedby, indicador nomeado 
+
+DETECTADO      V322-M6 · remover o indicador de pendência do menu lateral
+              gate esperado: V322-PRINT1
+              FAIL  V322-PRINT1 — com contexto tecnológico não salvo o print é bloqueado e a pendência aparece NO PONTO DE AÇÃO: mensagem exata logo abaixo do grupo do botão de PDF com role=alert e aria-describedby, indicador nomeado 
+
+DETECTADO      V322-M7 · deixar o indicador apenas cromático, sem nome acessível
+              gate esperado: V322-PRINT1
+              FAIL  V322-PRINT1 — com contexto tecnológico não salvo o print é bloqueado e a pendência aparece NO PONTO DE AÇÃO: mensagem exata logo abaixo do grupo do botão de PDF com role=alert e aria-describedby, indicador nomeado 
+
+DETECTADO      V322-M8 · não limpar o aria-describedby obsoleto depois de Salvar
+              gate esperado: V322-PRINT1
+              FAIL  V322-PRINT1 — com contexto tecnológico não salvo o print é bloqueado e a pendência aparece NO PONTO DE AÇÃO: mensagem exata logo abaixo do grupo do botão de PDF com role=alert e aria-describedby, indicador nomeado 
+
+DETECTADO      V322-M9 · não limpar a mensagem de PDF depois de Cancelar
+              gate esperado: V322-PRINT1
+              FAIL  V322-PRINT1 — com contexto tecnológico não salvo o print é bloqueado e a pendência aparece NO PONTO DE AÇÃO: mensagem exata logo abaixo do grupo do botão de PDF com role=alert e aria-describedby, indicador nomeado 
+
+DETECTADO      V322-M10 · duplicar a mensagem a cada clique repetido no botão de PDF
+              gate esperado: V322-PRINT1
+              FAIL  V322-PRINT1 — com contexto tecnológico não salvo o print é bloqueado e a pendência aparece NO PONTO DE AÇÃO: mensagem exata logo abaixo do grupo do botão de PDF com role=alert e aria-describedby, indicador nomeado 
+
+DETECTADO      V322-M11 · permitir window.print() com um draft de contexto aberto
+              gate esperado: V322-PRINT1
+              FAIL  V322-PRINT1 — com contexto tecnológico não salvo o print é bloqueado e a pendência aparece NO PONTO DE AÇÃO: mensagem exata logo abaixo do grupo do botão de PDF com role=alert e aria-describedby, indicador nomeado 
+
+DETECTADO      V322-M12 · perder um valor digitado ao reorganizar os nós entre as regiões (serializar em vez de mover)
+              gate esperado: V322-CTXPAR1
+              FAIL  V322-CTXPAR1 — o editor de contexto tecnológico é o MESMO compositor nas duas entradas: duas regiões de primeiro nível, seis grupos na mesma ordem, mesmas ajudas (i), os SEIS grupos recolhidos na primeira abertura 
+
+DETECTADO      V322-M15 · reinserir um controle focável dentro do <summary> das famílias (volta do nested-interactive)
+              gate esperado: V322-NI1
+              FAIL  V322-NI1 — o controle de ajuda (i) das famílias e dos subgrupos vive FORA do <summary>: zero nested-interactive e zero violação critical/serious do axe nas duas entradas do editor, com e sem o grupo de requisitos a
+
+DETECTADO      V322-M16 · reinserir o controle de ajuda (i) em cada rótulo 'Situação declarada'
+              gate esperado: V322-HELP3
+              FAIL  V322-HELP3 — zero ajuda (i) em 'Situação declarada' e zero ajuda por item na seção de plataformas e licenciamento [home: ajuda (i) redundante em 'Situação declarada' de v32-pres-knowledge-management]
+
+DETECTADO      V322-M18 · fazer SOC & Operations voltar a nascer aberto na primeira abertura do editor
+              gate esperado: V322-ACC4
+              FAIL  V322-ACC4 — os seis grupos principais nascem recolhidos nas duas entradas do editor, com estado coerente e sem pill [home: grupos abertos na primeira abertura = [g1] (esperado nenhum)]
+
+DETECTADO      V322-M22 · apagar a ajuda conceitual de uma capability (não vacuidade de V322-HELP4)
+              gate esperado: V322-HELP4
+              FAIL  V322-HELP4 — ajuda conceitual preservada: capability, campos de arquitetura, famílias, subgrupos e sinais [home: capabilities sem ajuda — knowledge-management]
+
+DETECTADO      V322-M23 · apontar aria-describedby para um ID inexistente (não vacuidade de V322-HELP5)
+              gate esperado: V322-HELP5
+              FAIL  V322-HELP5 — zero aria-describedby quebrado, zero popover órfão, zero ID duplicado e contrato idêntico em todo controle de ajuda [home: aria-describedby órfão — p52-grphelp-g1-orfao]
+
+DETECTADO      V322-M24 · recolher os grupos em TODA passagem do decorador (desfaz a decisão do usuário)
+              gate esperado: V322-ACC5
+              FAIL  V322-ACC5 — abertura manual persiste no repaint do editor e uma nova edição reinicia com tudo recolhido [o repaint FECHOU o grupo que o usuário abriu (passagem do decorador)]
+
+DETECTADO      V322C-M1 · retirar <button> da isenção do handler global de Enter (A-01: o botão volta a executar ação diferente da rotulada)
+              gate esperado: V322C-KEY1
+              FAIL  V322C-KEY1 — Enter tem a semântica que a interface anuncia em toda tela: o alvo que trata a própria ativação nunca é sequestrado pelo handler global, o atalho de início só existe na home real, e Enter ≡ clique por 
+
+DETECTADO      V322C-M2 · retirar <select> da isenção do handler global de Enter (B-01: o gatilho mais provável no uso real)
+              gate esperado: V322C-KEY1
+              FAIL  V322C-KEY1 — Enter tem a semântica que a interface anuncia em toda tela: o alvo que trata a própria ativação nunca é sequestrado pelo handler global, o atalho de início só existe na home real, e Enter ≡ clique por 
+
+DETECTADO      V322C-M3 · voltar a decidir a tela somente por step === -1 (B-01: o editor da home volta a ser lido como home)
+              gate esperado: V322C-KEY1
+              FAIL  V322C-KEY1 — Enter tem a semântica que a interface anuncia em toda tela: o alvo que trata a própria ativação nunca é sequestrado pelo handler global, o atalho de início só existe na home real, e Enter ≡ clique por 
+
+DETECTADO      V322C-M4 · fazer Enter em '← Voltar' cair no handler global (A-01: o botão avança em vez de voltar)
+              gate esperado: V322C-KEY1
+              FAIL  V322C-KEY1 — Enter tem a semântica que a interface anuncia em toda tela: o alvo que trata a própria ativação nunca é sequestrado pelo handler global, o atalho de início só existe na home real, e Enter ≡ clique por 
+
+DETECTADO      V322C-M5 · omitir a restauração de foco depois do reparentamento (A-02)
+              gate esperado: V322C-FOC1
+              FAIL  V322C-FOC1 — o foco sobrevive a toda repintura do editor de contexto (situação declarada, adicionar/remover tecnologia, trocar bundle), com posição de rolagem preservada, sem loop de observador e sem restaurar foco
+
+DETECTADO      V322C-M6 · restaurar deliberadamente o foco em <body> (A-02: maquiar activeElement não é preservar fluxo)
+              gate esperado: V322C-FOC1
+              FAIL  V322C-FOC1 — o foco sobrevive a toda repintura do editor de contexto (situação declarada, adicionar/remover tecnologia, trocar bundle), com posição de rolagem preservada, sem loop de observador e sem restaurar foco
+
+DETECTADO      V322C-M7 · deixar Salvar/Cancelar caírem no handler global (B-01: draft órfão depois de o editor sair da tela)
+              gate esperado: V322C-KEY1
+              FAIL  V322C-KEY1 — Enter tem a semântica que a interface anuncia em toda tela: o alvo que trata a própria ativação nunca é sequestrado pelo handler global, o atalho de início só existe na home real, e Enter ≡ clique por 
+
+DETECTADO      V322C-M8 · limpar visualmente a pendência sem que o draft real tenha morrido
+              gate esperado: V322C-PRN1
+              FAIL  V322C-PRN1 — nenhum draft órfão sobrevive a Salvar/Cancelar por teclado e o relatório/PDF continua acessível; o bloqueio legítimo permanece correto, visível e com caminho de recuperação [O3: mensagem de bloqueio in
+
+DETECTADO      V322C-M9 · devolver a regra móvel à especificidade insuficiente (M-01: a grade rígida de 260px volta a cortar o editor)
+              gate esperado: V322C-RFL1
+              FAIL  V322C-RFL1 — o editor de contexto não perde conteúdo em 320/360/384/390/430px: nenhuma caixa ultrapassa a largura do documento sem rolagem alcançável [320px: 14 caixa(s) do editor além de 320px sem ancestral roláve
+
+DETECTADO      V322C-M10 · não remover o #v32errors externo da entrada HOME (M-02: id duplicado volta)
+              gate esperado: V322C-ID1
+              FAIL  V322C-ID1 — as duas entradas do editor têm IDs únicos no documento e uma única região de erro, junto das ações Salvar/Cancelar [home: ids duplicados no documento — v32errors×2 · home: a região de erro resolvida por
+
+DETECTADO      V322C-M11 · devolver o azul de marca ao preenchimento com texto branco (M-05: 3,99:1)
+              gate esperado: V322C-CON1
+              FAIL  V322C-CON1 — os dois controles apontados pelo parecer atingem a razão de contraste exigida, recalculada pela fórmula do WCAG sobre as cores resolvidas [#ux-addctx (home): contraste 3.99:1 (mínimo 4.5:1) — rgb(255, 
+
+restauração: ui_p52_workspace_v32.js OK · ui_p52_workspace_v32.css OK · ui_target_v32.js OK · ui_p50_shell_v32.js OK · ui_v32.js OK · ui_journey_v32.js OK · ui_p50_results_v32.js OK · tests_p52_chromium.js OK · html OK
+acervo de evidência: 302 arquivo(s) byte-idênticos ao início
+
+MUTATION TESTING (Phase 5.2) [tests_p52_mutants.js] [PARCIAL]: 29/29 mutantes detectados pelo gate e motivo esperados
+MUT_EXIT=0

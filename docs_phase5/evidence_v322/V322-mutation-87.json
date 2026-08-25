@@ -1,0 +1,713 @@
+{
+  "baseline": {
+    "ui_p52_workspace_v32.js": "471386e0b5991d2501af7f55dba71c703bf144ff9e08da012ca2459227319fb6",
+    "ui_p52_workspace_v32.css": "7e235e1408784130763a1f5afbb3e437b3797c7b8162bc3d06072959c1f0f81d",
+    "ui_target_v32.js": "d672da97a8c9b17d33890eaa97dcdea3a9367a02a57c682662d32f56e4aa63f8",
+    "ui_p50_shell_v32.js": "e28a21733564e1a222cefa82fb848f569e3a50b6ddda8c447d2ad52b436a58a3",
+    "ui_v32.js": "0b30fe27ebc7fa0678b746ffe2fcd08fb1dcaf40a386ea774ffc3349f958e559",
+    "ui_journey_v32.js": "df0b00eb75f2ee2f8ae5542104bafd7f54580163e60432e7a48bb4bf8118aaf7",
+    "ui_p50_results_v32.js": "57fd78ca7084bfd513793e55094fef0429e58bc6012a4ba80f252b2f984a141a",
+    "tests_p52_chromium.js": "38f1e8b20424e69db28c4e801c82a606dd1fdcc4588af8f673cc95c8a3507732",
+    "html": "e7ddd965971ec8ee2747f547dfb671934a9dc3bdfe0e4eb9cbe79e2205f20422"
+  },
+  "detected": 87,
+  "total": 87,
+  "mutants": [
+    {
+      "id": "P52-M1",
+      "desc": "restaurar o teto de 980px da largura útil (voltar à faixa central estreita)",
+      "gate": "P52-LAY1",
+      "detected": true,
+      "note": "",
+      "line": "FAIL  P52-LAY1 — largura útil acompanha a viewport em todas as viewports obrigatórias, sem overflow [1280/question: largura útil 980px < 1180px · 1280/question: largura de conteúdo 944px < 1180px · 1280/results: largura "
+    },
+    {
+      "id": "P52-M2",
+      "desc": "retirar o grid-column:1/-1 do rodapé na tela de pergunta",
+      "gate": "P52-LAY2",
+      "detected": true,
+      "note": "",
+      "line": "FAIL  P52-LAY2 — tela de pergunta em duas colunas reais e rodapé ocupando a largura útil inferior [1280: rodapé com 320px de 1193px úteis · 1280: rodapé começa dentro da coluna lateral · 1440: rodapé com 331px de 1342px "
+    },
+    {
+      "id": "P52-M3",
+      "desc": "empilhar o cenário-alvo DEPOIS do contexto tecnológico",
+      "gate": "P52-TGT1",
+      "detected": true,
+      "note": "",
+      "line": "FAIL  P52-TGT1 — cenário-alvo vem antes do contexto tecnológico, com explicação estável e sem tocar no current [P52-F1: contexto (1) antes do alvo (2)]"
+    },
+    {
+      "id": "P52-M4",
+      "desc": "deixar dois controles de evidência na tela de pergunta",
+      "gate": "P52-Q1",
+      "detected": true,
+      "note": "",
+      "line": "FAIL  P52-Q1 — a evidência continua tendo um único controle, com rótulo canônico e estado publicado [2 controles de evidência: 'Adicionar evidência ou observação'#notetgl | 'Adicionar evidência ou observação'#p52-evid-du"
+    },
+    {
+      "id": "P52-M5",
+      "desc": "remover o marcador de grupo ativo do editor de contexto",
+      "gate": "P52-CTX1v",
+      "detected": true,
+      "note": "",
+      "line": "FAIL  P52-CTX1v — card de contexto opcional proeminente e grupo ativo do editor distinguível por forma, peso e texto [marcador de estado idêntico entre aberto e fechado]"
+    },
+    {
+      "id": "P52-M6",
+      "desc": "misturar gaps altos e moderados num único grupo",
+      "gate": "P52-GAP1",
+      "detected": true,
+      "note": "",
+      "line": "FAIL  P52-GAP1 — gaps altos e moderados vivem em grupos estruturais distintos, com contador e heading próprios [um dos grupos de severidade não existe]"
+    },
+    {
+      "id": "P52-M7",
+      "desc": "neutralizar a cor canônica das tags de domínio",
+      "gate": "P52-DOM1c",
+      "detected": true,
+      "note": "",
+      "line": "FAIL  P52-DOM1c — tags de domínio pintadas com a cor congelada do domínio, com texto contrastado e nome escrito [Negócio: amostra rgb(44, 44, 49) != canônica rgb(144, 99, 205) · Pessoas: amostra rgb(44, 44, 49) != canôni"
+    },
+    {
+      "id": "P52-M8",
+      "desc": "reduzir visualmente apenas o artwork do FortiGuard",
+      "gate": "P52-ICON1",
+      "detected": true,
+      "note": "",
+      "line": "FAIL  P52-ICON1 — peso óptico dos tiles normalizado por medida de PIXEL, com o FortiGuard dentro da tolerância [lg/Serviços FortiGuard: artwork aparente 49.4% do tile · lg/FortiGuard SOCaaS: artwork aparente 48.9% do til"
+    },
+    {
+      "id": "P52-M9",
+      "desc": "vazar o cromo do workspace para o papel (não aplicar v32-print-mode)",
+      "gate": "P52-PR1",
+      "detected": true,
+      "note": "",
+      "line": "FAIL  P52-PR1 — print isolado: workspace fora do papel, nenhuma seção perdida, fatos do anexo intactos e proibições da REV B respeitadas [modo de print V3.2 não ativo — comparação inválida · vazou para o PDF executivo: p"
+    },
+    {
+      "id": "P52-RA1",
+      "desc": "voltar a misturar ambiente/condicionantes entre as capabilities",
+      "gate": "P52-CTX2",
+      "detected": true,
+      "note": "",
+      "line": "FAIL  P52-CTX2 — editor separa capabilities de ambiente/condicionantes em duas regiões de primeiro nível [1 regiões de primeiro nível (esperadas 2)]"
+    },
+    {
+      "id": "P52-RA2",
+      "desc": "remover o verbete de Gestão de conhecimento",
+      "gate": "P52-HELP1",
+      "detected": true,
+      "note": "",
+      "line": "FAIL  P52-HELP1 — cada capability com verbete tem controle de ajuda acessível, associado e fechável [verbete de Gestão de conhecimento ausente]"
+    },
+    {
+      "id": "P52-RA3",
+      "desc": "tornar a ajuda por capability hover-only (sem teclado nem Esc)",
+      "gate": "P52-HELP1",
+      "detected": true,
+      "note": "",
+      "line": "FAIL  P52-HELP1 — ajuda por capability funciona a mouse, teclado, clique e Esc, com um popover por vez [foco por teclado não abriu a ajuda]"
+    },
+    {
+      "id": "P52-RA4",
+      "desc": "remover o emblema dos cinco domínios da home",
+      "gate": "P52-HOME1",
+      "detected": true,
+      "note": "",
+      "line": "FAIL  P52-HOME1 — home é um hero 7+5 com o emblema estático dos cinco domínios [emblema ausente]"
+    },
+    {
+      "id": "P52-RA5",
+      "desc": "reduzir o score ao tamanho anterior",
+      "gate": "P52-EXEC1",
+      "detected": true,
+      "note": "",
+      "line": "FAIL  P52-EXEC1 — score como âncora visual, radar na geometria congelada e escala tipográfica mínima [1280: score com 44px (esperado 80–112) · 1440: score com 44px (esperado 80–112) · 1920: score com 44px (esperado 80–11"
+    },
+    {
+      "id": "P52-RA6",
+      "desc": "tornar o Resumo texto-only: remover a barra de maturidade do domínio",
+      "gate": "P52-DOM2",
+      "detected": true,
+      "note": "",
+      "line": "FAIL  P52-DOM2 — resumo traz cinco barras canônicas, com UNSET, NA e zero confirmado corretos [domínio 0 sem barra]"
+    },
+    {
+      "id": "P52-RA7",
+      "desc": "representar UNSET com barra de largura zero (zero geométrico)",
+      "gate": "P52-DOM2",
+      "detected": true,
+      "note": "",
+      "line": "FAIL  P52-DOM2 — resumo traz cinco barras canônicas, com UNSET, NA e zero confirmado corretos [gate fechado: barra desenhada apesar de n/d]"
+    },
+    {
+      "id": "P52-RA8",
+      "desc": "reduzir SOCaaS e MDR abaixo do limite óptico",
+      "gate": "P52-ICON2",
+      "detected": true,
+      "note": "",
+      "line": "FAIL  P52-ICON2 — catálogo exibido com altura aparente normalizada e nenhum artwork encostando na borda [lg/FortiGuard MDR: altura aparente 34.9% do tile · lg/FortiGuard MDR: desvio de altura 53.7% da mediana]"
+    },
+    {
+      "id": "P52-RA9",
+      "desc": "recolocar Pergunta anterior/Próxima na sidebar",
+      "gate": "P52-MAP1",
+      "detected": true,
+      "note": "",
+      "line": "FAIL  P52-MAP1 — trilho da pergunta sem navegação duplicada e mapa recolhível [navegação duplicada de volta na sidebar]"
+    },
+    {
+      "id": "P52-RA10",
+      "desc": "duplicar o owner do status de sessão na área da pergunta",
+      "gate": "P52-Q2",
+      "detected": true,
+      "note": "",
+      "line": "FAIL  P52-Q2 — faixa de utilidades da pergunta: evidência à esquerda, sessão à direita, navegação em botões [segundo status de sessão criado]"
+    },
+    {
+      "id": "P52-RA11",
+      "desc": "esconder o painel completo de suficiência mesmo com o gate FECHADO",
+      "gate": "P52-SUFF1",
+      "detected": true,
+      "note": "",
+      "line": "FAIL  P52-SUFF1 — suficiência muda de hierarquia conforme o público, sem esconder insuficiência [bloqueado: painel técnico escondido atrás de disclosure]"
+    },
+    {
+      "id": "P52-RB1",
+      "desc": "reduzir novamente o emblema dos cinco domínios",
+      "gate": "P52-HOME1",
+      "detected": true,
+      "note": "",
+      "line": "FAIL  P52-HOME1 — home em hero 7+5, com emblema dos cinco domínios e ações secundárias abaixo [1280: emblema com 200px — pequeno demais para o hero · 1440: emblema com 200px — pequeno demais para o hero · 1920: emblema c"
+    },
+    {
+      "id": "P52-RB2",
+      "desc": "tornar a explicação do domínio hover-only (sem teclado)",
+      "gate": "P52-HOME2",
+      "detected": true,
+      "note": "",
+      "line": "FAIL  P52-HOME2 — emblema dos cinco domínios com explicação acessível por nó [nó 0 não é focável por teclado]"
+    },
+    {
+      "id": "P52-RB3",
+      "desc": "devolver o card intermediário de disclaimer ao hero",
+      "gate": "P52-HOME3",
+      "detected": true,
+      "note": "",
+      "line": "FAIL  P52-HOME3 — a natureza indicativa do Quickscan é dita uma única vez, no rodapé [card intermediário ainda no hero]"
+    },
+    {
+      "id": "P52-RB4",
+      "desc": "reabrir os três accordions de capability ao entrar no editor",
+      "gate": "P52-CTX4",
+      "detected": true,
+      "note": "",
+      "line": "FAIL  P52-CTX4 — editor abre apenas SOC & Operations e distingue o grupo ativo sem pill [grupos abertos ao entrar: g1,g2 (esperado só g1)]"
+    },
+    {
+      "id": "P52-RB5",
+      "desc": "voltar o rótulo ambíguo 'Aplicações/agentes de IA'",
+      "gate": "P52-AI1",
+      "detected": true,
+      "note": "",
+      "line": "FAIL  P52-AI1 — aplicações de IA e agentes autônomos são rótulos distinguíveis [rótulo de IA ausente: Aplicações corporativas de IA (copilots e chatbots)]"
+    },
+    {
+      "id": "P52-RB6",
+      "desc": "reintroduzir 'mandato' na linguagem apresentada",
+      "gate": "P52-COPY1",
+      "detected": true,
+      "note": "",
+      "line": "FAIL  P52-COPY1 — sem 'mandato' e sem 'charter' na tela e no relatório do cliente [P52-F1: jargão na tela — iderando as prioridades declaradas pelo negócio — Mandato e objetivos e Capacidade do time —, foram observa]"
+    },
+    {
+      "id": "P52-RB7",
+      "desc": "duplicar o exemplo abaixo do campo de evidência",
+      "gate": "P52-EVID1",
+      "detected": true,
+      "note": "",
+      "line": "FAIL  P52-EVID1 — 'O que registrar' vem antes do campo e o exemplo é placeholder, sem duplicação [linha de exemplo duplicada abaixo do campo]"
+    },
+    {
+      "id": "P52-RB8",
+      "desc": "remover o link oficial das ofertas de apoio",
+      "gate": "P52-SUP2",
+      "detected": true,
+      "note": "",
+      "line": "FAIL  P52-SUP2 — toda oferta e serviço com URL canônica mostra o link oficial [fortianalyzer: item com URL canônica e sem link oficial]"
+    },
+    {
+      "id": "P52-RB9",
+      "desc": "reintroduzir o KPI de suficiência adequada no relatório do cliente",
+      "gate": "P52-PDF2",
+      "detected": true,
+      "note": "",
+      "line": "FAIL  P52-PDF2 — abertura única, faixa de domínios distribuída e régua com 'Você está aqui' [P52-pdf-suficiente-3prioridades: KPI 'Suficiência da sessão' voltou ao resumo · P52-pdf-suficiente-sem-prioridade: KPI 'Suficiê"
+    },
+    {
+      "id": "P52-RB10",
+      "desc": "limitar o painel de domínios a menos de 80% do workspace",
+      "gate": "P52-DOM3",
+      "detected": true,
+      "note": "",
+      "line": "FAIL  P52-DOM3 — painel de domínios e heat map ocupam a largura útil da seção [1440: painel de domínios ocupa 77.2% do workspace (mínimo 80%) · 1920: painel de domínios ocupa 56.8% do workspace (mínimo 80%) · 2560: paine"
+    },
+    {
+      "id": "P52-RB11",
+      "desc": "permitir que as prioridades comecem na primeira página",
+      "gate": "P52-PDF1",
+      "detected": true,
+      "note": "",
+      "line": "FAIL  P52-PDF1 — página 1 com abertura, orientação, resumo e régua; prioridades abrindo a página 2 [P52-pdf-suficiente-3prioridades: prioridades sem quebra de página (break-before=auto) · P52-pdf-fronteira: prioridades s"
+    },
+    {
+      "id": "P52-RB12",
+      "desc": "esconder os ícones de solução no PDF",
+      "gate": "P52-PDF3",
+      "detected": true,
+      "note": "",
+      "line": "FAIL  P52-PDF3 — ícones de solução materialmente visíveis no PDF, sem distorção [P52-pdf-suficiente-3prioridades: 11 ícone(s) invisível(is) no papel · P52-pdf-suficiente-3prioridades: 11 ícone(s) com caixa menor que 24px"
+    },
+    {
+      "id": "P52-RB13",
+      "desc": "posicionar o marcador da régua com o valor não arredondado",
+      "gate": "P52-PDF2",
+      "detected": true,
+      "note": "",
+      "line": "FAIL  P52-PDF2 — abertura única, faixa de domínios distribuída e régua com 'Você está aqui' [P52-pdf-suficiente-3prioridades: marcador em 27.4% para score 1.0 / 5 (esperado 20%) · P52-pdf-suficiente-sem-prioridade: marca"
+    },
+    {
+      "id": "P52-RB14",
+      "desc": "desenhar marcador de posição mesmo com o resultado bloqueado",
+      "gate": "P52-PDF2",
+      "detected": true,
+      "note": "",
+      "line": "FAIL  P52-PDF2 — abertura única, faixa de domínios distribuída e régua com 'Você está aqui' [P52-pdf-bloqueado: bloqueado não pode ter marcador de posição · P52-pdf-bloqueado: bloqueado desenhou marcador (n/d nunca é zer"
+    },
+    {
+      "id": "P52-RB15",
+      "desc": "devolver o recorte da pista da régua (o rótulo existe e não chega ao papel)",
+      "gate": "P52-PDF2",
+      "detected": true,
+      "note": "",
+      "line": "FAIL  P52-PDF2 — abertura única, faixa de domínios distribuída e régua com 'Você está aqui' [P52-pdf-suficiente-3prioridades: rótulo do marcador recortado por ancestral (pr-rl-track) · P52-pdf-suficiente-sem-prioridade: "
+    },
+    {
+      "id": "P52-RB16",
+      "desc": "devolver o viewBox quadrado do emblema da capa (rótulos cortados no PDF)",
+      "gate": "P52-PDF2",
+      "detected": true,
+      "note": "",
+      "line": "FAIL  P52-PDF2 — abertura única, faixa de domínios distribuída e régua com 'Você está aqui' [P52-pdf-suficiente-3prioridades: rótulo(s) do emblema da capa ilegível(is): Pessoas (cortado), Serviços (cortado) · P52-pdf-suf"
+    },
+    {
+      "id": "P52-RB17",
+      "desc": "deixar a borda herdada pintar preto sobre a haste de marca",
+      "gate": "P52-PDF2",
+      "detected": true,
+      "note": "",
+      "line": "FAIL  P52-PDF2 — abertura única, faixa de domínios distribuída e régua com 'Você está aqui' [P52-pdf-suficiente-3prioridades: haste do marcador com borda 3px rgb(17, 17, 17) pintando sobre a cor de marca · P52-pdf-sufici"
+    },
+    {
+      "id": "P52-RB18",
+      "desc": "fazer a haste do marcador cruzar o nome do estágio dentro da faixa",
+      "gate": "P52-PDF2",
+      "detected": true,
+      "note": "",
+      "line": "FAIL  P52-PDF2 — abertura única, faixa de domínios distribuída e régua com 'Você está aqui' [P52-pdf-suficiente-3prioridades: haste do marcador sobre o texto da régua (1, Inicial) · P52-pdf-suficiente-sem-prioridade: has"
+    },
+    {
+      "id": "P52-ER1",
+      "desc": "desligar a ampliação ultrawide da home",
+      "gate": "P52-UW1",
+      "detected": true,
+      "note": "",
+      "line": "FAIL  P52-UW1 — home ganha escala e largura na faixa ultrawide, sem tocar 1920 e sem esticar a linha de leitura [home h1 escalou 1× (§2.2 pede ~1,20–1,25) · home h1 em 2560 escalou 1× · home lead escalou 1× (§2.2 pede ~1"
+    },
+    {
+      "id": "P52-ER2",
+      "desc": "desligar a ampliação ultrawide do questionário",
+      "gate": "P52-UW2",
+      "detected": true,
+      "note": "",
+      "line": "FAIL  P52-UW2 — questionário ganha escala na faixa ultrawide mantendo mapa, pergunta, opções, evidência e navegação visíveis [questionário pergunta escalou 1× (§2.3 pede ~1,08–1,12) · questionário hint escalou 1× (§2.3 p"
+    },
+    {
+      "id": "P52-ER3",
+      "desc": "soltar a linha de leitura do parágrafo da home na faixa ultrawide",
+      "gate": "P52-UW1",
+      "detected": true,
+      "note": "",
+      "line": "FAIL  P52-UW1 — home ganha escala e largura na faixa ultrawide, sem tocar 1920 e sem esticar a linha de leitura [linha de leitura da home com 115.2 caracteres]"
+    },
+    {
+      "id": "P52-ER4",
+      "desc": "trocar a largura fluida da home por largura fixa maior que a viewport",
+      "gate": "P52-UW1",
+      "detected": true,
+      "note": "",
+      "line": "FAIL  P52-UW1 — home ganha escala e largura na faixa ultrawide, sem tocar 1920 e sem esticar a linha de leitura [rolagem horizontal em 2560px: 140]"
+    },
+    {
+      "id": "P52-ER5",
+      "desc": "tirar a área sensível uniforme apenas de Processos",
+      "gate": "P52-POP2",
+      "detected": true,
+      "note": "",
+      "line": "FAIL  P52-POP2 — os cinco domínios respondem igual a ponteiro, teclado, clique, toque e Esc, com um popover aberto por vez [1920px: domínio 2 não abre ao apontar o caixa · 3440px: domínio 2 não abre ao apontar o caixa]"
+    },
+    {
+      "id": "P52-ER6",
+      "desc": "dar a Processos uma apresentação de popover diferente das outras quatro",
+      "gate": "P52-POP1",
+      "detected": true,
+      "note": "",
+      "line": "FAIL  P52-POP1 — os cinco popovers de domínio são o mesmo componente, na mesma geometria, sem recorte e sem cobrir nó algum [390px: 2 apresentações diferentes entre os cinco popovers · 390px: 'x' varia 21.2px entre os ci"
+    },
+    {
+      "id": "P52-ER7",
+      "desc": "devolver a jornada empilhada no papel (um estágio por linha)",
+      "gate": "P52-PDF4",
+      "detected": true,
+      "note": "",
+      "line": "FAIL  P52-PDF4 — jornada de maturidade atômica e horizontal no PDF real: título, seis estágios, marcadores e nota na mesma página [P52-pdf-suficiente-3prioridades: apenas 2 de 6 estágios numa mesma fileira — jornada empi"
+    },
+    {
+      "id": "P52-ER8",
+      "desc": "permitir título de seção órfão no pé da página",
+      "gate": "P52-PDF5",
+      "detected": true,
+      "note": "",
+      "line": "FAIL  P52-PDF5 — paginação sadia no PDF real: sem título órfão, sem página intermediária vazia e nada fora da área imprimível [P52-pdf-suficiente-3prioridades p1: título 'Resumo de maturidade' isolado no rodapé da página"
+    },
+    {
+      "id": "P52-ER9",
+      "desc": "reintroduzir a página final contendo somente o rodapé do relatório",
+      "gate": "P52-PDF6",
+      "detected": true,
+      "note": "",
+      "line": "FAIL  P52-PDF6 — toda página do PDF real tem conteúdo material — nenhuma página residual, inclusive a última [P52-pdf-suficiente-3prioridades p12 de 12: página FINAL residual — página sem qualquer conteúdo material [0 ca"
+    },
+    {
+      "id": "P52-M10",
+      "desc": "permitir alvo INFERIOR ao current confirmado (contrato funcional, fora da camada de layout)",
+      "gate": "TARGET 4.3.1",
+      "detected": true,
+      "note": "",
+      "line": "FAIL  T3 — target confirmado nunca inferior ao atual (select filtrado + guard)"
+    },
+    {
+      "id": "P52-EX1",
+      "desc": "B-01 · publicar score por domínio na tabela do relatório sob gate FECHADO",
+      "gate": "P52-PDF7",
+      "detected": true,
+      "note": "",
+      "line": "FAIL  P52-PDF7 — nenhum score por domínio é publicado — em tabela, radar ou papel — com o gate canônico de suficiência fechado [P52-pdf-bloqueado: tabela publica [2.5, 0.0, n/d, 5.0, n/d] e o oráculo autoriza [n/d, n/d, "
+    },
+    {
+      "id": "P52-EX2",
+      "desc": "B-01 · restaurar o radar numérico do relatório sob gate FECHADO",
+      "gate": "P52-PDF7",
+      "detected": true,
+      "note": "",
+      "line": "FAIL  P52-PDF7 — nenhum score por domínio é publicado — em tabela, radar ou papel — com o gate canônico de suficiência fechado [P52-pdf-bloqueado: radar rotulado com score sob gate fechado: Negócio 2.5 · Pessoas 0.0 · Te"
+    },
+    {
+      "id": "P52-EX3",
+      "desc": "B-02 · restaurar o curto-circuito de modo legado em preparePrint()",
+      "gate": "P52-PDF8",
+      "detected": true,
+      "note": "",
+      "line": "FAIL  P52-PDF8 — nas duas condições de contexto o PDF é o relatório estruturado, e a superfície de aplicação não chega ao papel [P52-pdf-suficiente-3prioridades-sem-contexto: `v32-print-mode` ausente durante o beforeprin"
+    },
+    {
+      "id": "P52-EX4",
+      "desc": "B-03 · imprimir a superfície de tela (não aplicar v32-print-mode)",
+      "gate": "P52-PDF8",
+      "detected": true,
+      "note": "",
+      "line": "FAIL  P52-PDF8 — nas duas condições de contexto o PDF é o relatório estruturado, e a superfície de aplicação não chega ao papel [P52-pdf-suficiente-3prioridades: `v32-print-mode` ausente durante o beforeprint (classes: '"
+    },
+    {
+      "id": "P52-EX5",
+      "desc": "§4.4 · recolocar a jornada VERTICAL no papel (voltar à regra de telefone)",
+      "gate": "P52-PDF4",
+      "detected": true,
+      "note": "",
+      "line": "FAIL  P52-PDF4 — jornada de maturidade atômica e horizontal no PDF real: título, seis estágios, marcadores e nota na mesma página [P52-pdf-suficiente-3prioridades: apenas 2 de 6 estágios numa mesma fileira — jornada empi"
+    },
+    {
+      "id": "P52-EX6",
+      "desc": "§4.4 · permitir página residual (retirar a guarda do último bloco do anexo)",
+      "gate": "P52-PDF6",
+      "detected": true,
+      "note": "",
+      "line": "FAIL  P52-PDF6 — toda página do PDF real tem conteúdo material — nenhuma página residual, inclusive a última [P52-pdf-suficiente-3prioridades p12 de 12: página FINAL residual — página sem qualquer conteúdo material [0 ca"
+    },
+    {
+      "id": "P52-EX7",
+      "desc": "A-01 · devolver o vermelho de marca ao texto pequeno (token acessível revertido)",
+      "gate": "P52-ACC3",
+      "detected": true,
+      "note": "",
+      "line": "FAIL  P52-ACC3 — todo texto de marca renderizado atinge 4,5:1 (3:1 para texto grande) sobre o fundo opaco efetivo [resultados: eyebrow 'Resultado indicativo' 12.5px → 4.043:1 (exigido 4.5:1) · resultados: stage-tag 'Init"
+    },
+    {
+      "id": "P52-EX8",
+      "desc": "§6.1 · remover a ajuda (i) de uma capability (detection-engineering)",
+      "gate": "P52-HELP2",
+      "detected": true,
+      "note": "",
+      "line": "FAIL  P52-HELP2 — ajuda (i) em toda capability, campo, família, subgrupo, requisito, bundle, subscription e legenda, com contrato idêntico [sem ajuda (i): capability · detection-engineering]"
+    },
+    {
+      "id": "P52-EX9",
+      "desc": "§6.2 · quebrar a grade de requisitos (gaps desiguais e coluna fixa)",
+      "gate": "P52-SIG1",
+      "detected": true,
+      "note": "",
+      "line": "FAIL  P52-SIG1 — requisitos específicos numa grade única: colunas coerentes, gaps iguais, cards alinhados pelo topo e uma coluna em viewport estreito [1440/(plat): gaps desiguais (26px × 10px) · 1440/Incidente / SOC: gap"
+    },
+    {
+      "id": "P52-EX10",
+      "desc": "§6.3 · reduzir novamente a tipografia de 'Para avançar'",
+      "gate": "P52-ADV1",
+      "detected": true,
+      "note": "",
+      "line": "FAIL  P52-ADV1 — 'Para avançar' com tipografia de achado, entrelinha confortável e marcador gráfico determinístico, sem virar card [1440: item 0 com 13.5px (piso 16,5px) · 1440: item 0 com entrelinha 1.40 (piso 1,55) · 1"
+    },
+    {
+      "id": "P52-EX11",
+      "desc": "§6.4 · devolver o cenário-alvo a um card estreito preso à esquerda",
+      "gate": "P52-TGT3",
+      "detected": true,
+      "note": "",
+      "line": "FAIL  P52-TGT3 — o painel do cenário-alvo ocupa a área de conteúdo nos dois estados, com legibilidade preservada [1440/editado: 'ux-tgt-table' com 219px num painel útil de 1023px (card estreito preso à esquerda) · 1440/e"
+    },
+    {
+      "id": "P52-EX12",
+      "desc": "§6.5 · reduzir um ícone específico do sistema V3.2 (FortiSIEM)",
+      "gate": "P52-ICON3",
+      "detected": true,
+      "note": "",
+      "line": "FAIL  P52-ICON3 — ocupação óptica uniforme do ícone V3.2 e ícones materialmente pintados em 'Pode fazer sentido' e 'Não priorizados' [v32-icon FortiSIEM: ocupação aparente 54.3% (faixa 84–92%)]"
+    },
+    {
+      "id": "P52-EX13",
+      "desc": "§6.6 · remover o ícone de 'Pode fazer sentido — após validação' e de 'Não priorizados'",
+      "gate": "P52-ICON3",
+      "detected": true,
+      "note": "",
+      "line": "FAIL  P52-ICON3 — ocupação óptica uniforme do ícone V3.2 e ícones materialmente pintados em 'Pode fazer sentido' e 'Não priorizados' [pode fazer sentido · FortiAI-Assist: sem tile de ícone · pode fazer sentido · FortiXDR"
+    },
+    {
+      "id": "P52-EX14",
+      "desc": "§6.6 · ícone presente no DOM mas NÃO pintado nas listas secundárias",
+      "gate": "P52-ICON3",
+      "detected": true,
+      "note": "",
+      "line": "FAIL  P52-ICON3 — ocupação óptica uniforme do ícone V3.2 e ícones materialmente pintados em 'Pode fazer sentido' e 'Não priorizados' [pode fazer sentido · FortiAI-Assist: tile presente no DOM mas não pintado · pode fazer"
+    },
+    {
+      "id": "P52-FT1",
+      "desc": "ALTO-1 · TELA: a coluna Alvo volta a responder apenas a `tgt.suff` (gate próprio do vetor-alvo)",
+      "gate": "P52-TGT4",
+      "detected": true,
+      "note": "",
+      "line": "FAIL  P52-TGT4 — Perfil atual × Cenário-alvo é indivisível: sob gate canônico fechado nenhuma metade publica score, estágio, valor por domínio, delta, seta, polígono ou tinta — em tela, acessibilidade, papel e PDF — e so"
+    },
+    {
+      "id": "P52-FT2",
+      "desc": "ALTO-1 · TELA: tabela protegida, mas KPI e NOME DE ESTÁGIO do alvo reaparecem",
+      "gate": "P52-TGT4",
+      "detected": true,
+      "note": "",
+      "line": "FAIL  P52-TGT4 — Perfil atual × Cenário-alvo é indivisível: sob gate canônico fechado nenhuma metade publica score, estágio, valor por domínio, delta, seta, polígono ou tinta — em tela, acessibilidade, papel e PDF — e so"
+    },
+    {
+      "id": "P52-FT3",
+      "desc": "ALTO-1 · PAPEL: texto protegido, mas o POLÍGONO do alvo volta a ser pintado no PDF",
+      "gate": "P52-TGT4",
+      "detected": true,
+      "note": "",
+      "line": "FAIL  P52-TGT4 — Perfil atual × Cenário-alvo é indivisível: sob gate canônico fechado nenhuma metade publica score, estágio, valor por domínio, delta, seta, polígono ou tinta — em tela, acessibilidade, papel e PDF — e so"
+    },
+    {
+      "id": "P52-FT4",
+      "desc": "ALTO-1 · tela protegida, mas o PAPEL volta a publicar a coluna Alvo",
+      "gate": "P52-TGT4",
+      "detected": true,
+      "note": "",
+      "line": "FAIL  P52-TGT4 — Perfil atual × Cenário-alvo é indivisível: sob gate canônico fechado nenhuma metade publica score, estágio, valor por domínio, delta, seta, polígono ou tinta — em tela, acessibilidade, papel e PDF — e so"
+    },
+    {
+      "id": "P52-FT5",
+      "desc": "ALTO-1 · a mensagem neutra é trocada por alegação contraditória (o alvo como resultado projetado)",
+      "gate": "P52-TGT4",
+      "detected": true,
+      "note": "",
+      "line": "FAIL  P52-TGT4 — Perfil atual × Cenário-alvo é indivisível: sob gate canônico fechado nenhuma metade publica score, estágio, valor por domínio, delta, seta, polígono ou tinta — em tela, acessibilidade, papel e PDF — e so"
+    },
+    {
+      "id": "P52-FT6",
+      "desc": "ALTO-1 · a RÉGUA DA JORNADA volta a marcar o estágio do cenário-alvo sob gate fechado",
+      "gate": "P52-TGT4",
+      "detected": true,
+      "note": "",
+      "line": "FAIL  P52-TGT4 — Perfil atual × Cenário-alvo é indivisível: sob gate canônico fechado nenhuma metade publica score, estágio, valor por domínio, delta, seta, polígono ou tinta — em tela, acessibilidade, papel e PDF — e so"
+    },
+    {
+      "id": "P52-FT7",
+      "desc": "ALTO-1 · a CAMADA 5 volta a pintar o marcador 'alvo X.X' por domínio sob gate fechado",
+      "gate": "P52-TGT4",
+      "detected": true,
+      "note": "",
+      "line": "FAIL  P52-TGT4 — Perfil atual × Cenário-alvo é indivisível: sob gate canônico fechado nenhuma metade publica score, estágio, valor por domínio, delta, seta, polígono ou tinta — em tela, acessibilidade, papel e PDF — e so"
+    },
+    {
+      "id": "P52-FC1",
+      "desc": "MÉDIO-2 · restaurar `#DA291C` diretamente em `.p52-sup-link`",
+      "gate": "P52-ACC3",
+      "detected": true,
+      "note": "",
+      "line": "FAIL  P52-ACC3 — todo texto de marca renderizado atinge 4,5:1 (3:1 para texto grande) sobre o fundo opaco efetivo [resultados-contexto: p52-sup-link 'Página oficial ↗' 13.5px → 3.747:1 (exigido 4.5:1) · resultados-contex"
+    },
+    {
+      "id": "P52-FC2",
+      "desc": "MÉDIO-2 · cor acessível SOMENTE no hover, deixando o estado normal reprovado",
+      "gate": "P52-ACC3",
+      "detected": true,
+      "note": "",
+      "line": "FAIL  P52-ACC3 — todo texto de marca renderizado atinge 4,5:1 (3:1 para texto grande) sobre o fundo opaco efetivo [resultados-contexto: p52-sup-link 'Página oficial ↗' 13.5px → 3.747:1 (exigido 4.5:1) · resultados-contex"
+    },
+    {
+      "id": "P52-FC3",
+      "desc": "MÉDIO-2 · remover a declaração de contexto do caso novo, tornando o gate VACUOSO para `.p52-sup-link`",
+      "gate": "P52-ACC3",
+      "detected": true,
+      "note": "",
+      "line": "FAIL  P52-ACC3 — todo texto de marca renderizado atinge 4,5:1 (3:1 para texto grande) sobre o fundo opaco efetivo [resultados-contexto: fixture não montou 'a.p52-sup-link' — gate vacuoso para este nó]"
+    },
+    {
+      "id": "V322-M1",
+      "desc": "aplicar as regiões de contexto apenas na tela de resultados (voltar ao defeito da v3.2.1)",
+      "gate": "V322-CTXPAR1",
+      "detected": true,
+      "note": "",
+      "line": "FAIL  V322-CTXPAR1 — o editor de contexto tecnológico é o MESMO compositor nas duas entradas: duas regiões de primeiro nível, seis grupos na mesma ordem, mesmas ajudas (i), SOC & Operations aberto na primeira abertura li"
+    },
+    {
+      "id": "V322-M2",
+      "desc": "abrir todos os accordions por padrão (parede de campos na primeira abertura)",
+      "gate": "V322-CTXPAR1",
+      "detected": true,
+      "note": "",
+      "line": "FAIL  V322-CTXPAR1 — o editor de contexto tecnológico é o MESMO compositor nas duas entradas: duas regiões de primeiro nível, seis grupos na mesma ordem, mesmas ajudas (i), SOC & Operations aberto na primeira abertura li"
+    },
+    {
+      "id": "V322-M3",
+      "desc": "reabrir SOC & Operations em todo rerender, anulando a decisão do usuário",
+      "gate": "V322-CTXPAR1",
+      "detected": true,
+      "note": "",
+      "line": "FAIL  V322-CTXPAR1 — o editor de contexto tecnológico é o MESMO compositor nas duas entradas: duas regiões de primeiro nível, seis grupos na mesma ordem, mesmas ajudas (i), SOC & Operations aberto na primeira abertura li"
+    },
+    {
+      "id": "V322-M4",
+      "desc": "restaurar o max-width estreito do disclaimer no rodapé",
+      "gate": "V322-FOOT1",
+      "detected": true,
+      "note": "",
+      "line": "FAIL  V322-FOOT1 — o rodapé da home usa a largura útil abaixo do divisor: bloco legal ocupa a faixa disponível sem max-width estreito, autoria à direita alinhada pela base e tipograficamente secundária, empilhamento está"
+    },
+    {
+      "id": "V322-M5",
+      "desc": "remover a mensagem local junto ao botão de PDF",
+      "gate": "V322-PRINT1",
+      "detected": true,
+      "note": "",
+      "line": "FAIL  V322-PRINT1 — com contexto tecnológico não salvo o print é bloqueado e a pendência aparece NO PONTO DE AÇÃO: mensagem exata logo abaixo do grupo do botão de PDF com role=alert e aria-describedby, indicador nomeado "
+    },
+    {
+      "id": "V322-M6",
+      "desc": "remover o indicador de pendência do menu lateral",
+      "gate": "V322-PRINT1",
+      "detected": true,
+      "note": "",
+      "line": "FAIL  V322-PRINT1 — com contexto tecnológico não salvo o print é bloqueado e a pendência aparece NO PONTO DE AÇÃO: mensagem exata logo abaixo do grupo do botão de PDF com role=alert e aria-describedby, indicador nomeado "
+    },
+    {
+      "id": "V322-M7",
+      "desc": "deixar o indicador apenas cromático, sem nome acessível",
+      "gate": "V322-PRINT1",
+      "detected": true,
+      "note": "",
+      "line": "FAIL  V322-PRINT1 — com contexto tecnológico não salvo o print é bloqueado e a pendência aparece NO PONTO DE AÇÃO: mensagem exata logo abaixo do grupo do botão de PDF com role=alert e aria-describedby, indicador nomeado "
+    },
+    {
+      "id": "V322-M8",
+      "desc": "não limpar o aria-describedby obsoleto depois de Salvar",
+      "gate": "V322-PRINT1",
+      "detected": true,
+      "note": "",
+      "line": "FAIL  V322-PRINT1 — com contexto tecnológico não salvo o print é bloqueado e a pendência aparece NO PONTO DE AÇÃO: mensagem exata logo abaixo do grupo do botão de PDF com role=alert e aria-describedby, indicador nomeado "
+    },
+    {
+      "id": "V322-M9",
+      "desc": "não limpar a mensagem de PDF depois de Cancelar",
+      "gate": "V322-PRINT1",
+      "detected": true,
+      "note": "",
+      "line": "FAIL  V322-PRINT1 — com contexto tecnológico não salvo o print é bloqueado e a pendência aparece NO PONTO DE AÇÃO: mensagem exata logo abaixo do grupo do botão de PDF com role=alert e aria-describedby, indicador nomeado "
+    },
+    {
+      "id": "V322-M10",
+      "desc": "duplicar a mensagem a cada clique repetido no botão de PDF",
+      "gate": "V322-PRINT1",
+      "detected": true,
+      "note": "",
+      "line": "FAIL  V322-PRINT1 — com contexto tecnológico não salvo o print é bloqueado e a pendência aparece NO PONTO DE AÇÃO: mensagem exata logo abaixo do grupo do botão de PDF com role=alert e aria-describedby, indicador nomeado "
+    },
+    {
+      "id": "V322-M11",
+      "desc": "permitir window.print() com um draft de contexto aberto",
+      "gate": "V322-PRINT1",
+      "detected": true,
+      "note": "",
+      "line": "FAIL  V322-PRINT1 — com contexto tecnológico não salvo o print é bloqueado e a pendência aparece NO PONTO DE AÇÃO: mensagem exata logo abaixo do grupo do botão de PDF com role=alert e aria-describedby, indicador nomeado "
+    },
+    {
+      "id": "V322-M12",
+      "desc": "perder um valor digitado ao reorganizar os nós entre as regiões (serializar em vez de mover)",
+      "gate": "V322-CTXPAR1",
+      "detected": true,
+      "note": "",
+      "line": "FAIL  V322-CTXPAR1 — o editor de contexto tecnológico é o MESMO compositor nas duas entradas: duas regiões de primeiro nível, seis grupos na mesma ordem, mesmas ajudas (i), SOC & Operations aberto na primeira abertura li"
+    },
+    {
+      "id": "V322-M13",
+      "desc": "trocar o commit imutável do baseline pelo da v3.2.1 (HEAD móvel) na resolução de P52-PR1/P52-ACC1",
+      "gate": "P52-PR1",
+      "detected": true,
+      "note": "",
+      "line": "FAIL  P52-PR1 — isolamento de print [baseline indisponível: baseline 07bc90b3fbf6f033a56c490f3bff1951c58316b7:quickscan_secops_soccmm_v3_2_dev.html com 963373 bytes; esperado 744179]"
+    },
+    {
+      "id": "V322-M14",
+      "desc": "alterar um dígito do SHA-256 esperado do baseline da entrada da Phase 5.2",
+      "gate": "P52-ACC1",
+      "detected": true,
+      "note": "",
+      "line": "FAIL  P52-ACC1 — acessibilidade automatizada das superfícies novas [baseline indisponível: identidade do baseline diverge em d3886812718e7ad9c5024880067133fbddf2fc4d:quickscan_secops_soccmm_v3_2_dev.html — observado 12bb"
+    },
+    {
+      "id": "V322-M15",
+      "desc": "reinserir um controle focável dentro do <summary> das famílias (volta do nested-interactive)",
+      "gate": "V322-NI1",
+      "detected": true,
+      "note": "",
+      "line": "FAIL  V322-NI1 — o controle de ajuda (i) das famílias e dos subgrupos vive FORA do <summary>: zero nested-interactive e zero violação critical/serious do axe nas duas entradas do editor, com e sem o grupo de requisitos a"
+    }
+  ]
+}

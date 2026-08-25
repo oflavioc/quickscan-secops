@@ -1,0 +1,381 @@
+{
+  "home": {
+    "regions": [
+      {
+        "key": "caps",
+        "title": "Capabilities de segurança",
+        "lead": "O que a operação já faz e com o quê. Declare a situação por capacidade — qualquer fabricante, qualquer produto.",
+        "labelledby": "p52-ctxreg-caps-h",
+        "gids": [
+          "g1",
+          "g2",
+          "g3"
+        ]
+      },
+      {
+        "key": "env",
+        "title": "Ambiente e condicionantes",
+        "lead": "O que cerca e limita a operação: arquitetura, licenciamento já existente e requisitos específicos da conversa.",
+        "labelledby": "p52-ctxreg-env-h",
+        "gids": [
+          "arch",
+          "plat",
+          "sig"
+        ]
+      }
+    ],
+    "regionCount": 2,
+    "topGids": [
+      "g1",
+      "g2",
+      "g3",
+      "arch",
+      "plat",
+      "sig"
+    ],
+    "topCount": 6,
+    "groups": [
+      {
+        "gid": "g1",
+        "open": false,
+        "label": "SOC & Operations",
+        "topLevel": true,
+        "helps": 9
+      },
+      {
+        "gid": "g2",
+        "open": false,
+        "label": "Detection & Telemetry",
+        "topLevel": true,
+        "helps": 8
+      },
+      {
+        "gid": "g3",
+        "open": false,
+        "label": "Advanced / Adjacent Controls",
+        "topLevel": true,
+        "helps": 5
+      },
+      {
+        "gid": "arch",
+        "open": false,
+        "label": "Restrições e preferências de arquitetura",
+        "topLevel": true,
+        "helps": 6
+      },
+      {
+        "gid": "plat",
+        "open": false,
+        "label": "Plataformas e licenciamento já existentes",
+        "topLevel": true,
+        "helps": 0
+      },
+      {
+        "gid": "sig",
+        "open": false,
+        "label": "Requisitos ou preocupações específicas",
+        "topLevel": true,
+        "helps": 26
+      },
+      {
+        "gid": "sig-0",
+        "open": false,
+        "label": "Incidente / SOC",
+        "topLevel": false,
+        "helps": 6
+      },
+      {
+        "gid": "sig-1",
+        "open": false,
+        "label": "E-mail / Dados",
+        "topLevel": false,
+        "helps": 5
+      },
+      {
+        "gid": "sig-2",
+        "open": false,
+        "label": "IA",
+        "topLevel": false,
+        "helps": 8
+      },
+      {
+        "gid": "sig-3",
+        "open": false,
+        "label": "Identidade / Endpoint",
+        "topLevel": false,
+        "helps": 3
+      }
+    ],
+    "looseGroups": 0,
+    "helps": 60,
+    "capHelps": 22,
+    "fields": 69,
+    "dupIds": [],
+    "dupHelp": [],
+    "screen": "ctxeditor"
+  },
+  "results": {
+    "regions": [
+      {
+        "key": "caps",
+        "title": "Capabilities de segurança",
+        "lead": "O que a operação já faz e com o quê. Declare a situação por capacidade — qualquer fabricante, qualquer produto.",
+        "labelledby": "p52-ctxreg-caps-h",
+        "gids": [
+          "g1",
+          "g2",
+          "g3"
+        ]
+      },
+      {
+        "key": "env",
+        "title": "Ambiente e condicionantes",
+        "lead": "O que cerca e limita a operação: arquitetura, licenciamento já existente e requisitos específicos da conversa.",
+        "labelledby": "p52-ctxreg-env-h",
+        "gids": [
+          "arch",
+          "plat",
+          "sig"
+        ]
+      }
+    ],
+    "regionCount": 2,
+    "topGids": [
+      "g1",
+      "g2",
+      "g3",
+      "arch",
+      "plat",
+      "sig"
+    ],
+    "topCount": 6,
+    "groups": [
+      {
+        "gid": "g1",
+        "open": false,
+        "label": "SOC & Operations",
+        "topLevel": true,
+        "helps": 9
+      },
+      {
+        "gid": "g2",
+        "open": false,
+        "label": "Detection & Telemetry",
+        "topLevel": true,
+        "helps": 8
+      },
+      {
+        "gid": "g3",
+        "open": false,
+        "label": "Advanced / Adjacent Controls",
+        "topLevel": true,
+        "helps": 5
+      },
+      {
+        "gid": "arch",
+        "open": false,
+        "label": "Restrições e preferências de arquitetura",
+        "topLevel": true,
+        "helps": 6
+      },
+      {
+        "gid": "plat",
+        "open": false,
+        "label": "Plataformas e licenciamento já existentes",
+        "topLevel": true,
+        "helps": 0
+      },
+      {
+        "gid": "sig",
+        "open": false,
+        "label": "Requisitos ou preocupações específicas",
+        "topLevel": true,
+        "helps": 26
+      },
+      {
+        "gid": "sig-0",
+        "open": false,
+        "label": "Incidente / SOC",
+        "topLevel": false,
+        "helps": 6
+      },
+      {
+        "gid": "sig-1",
+        "open": false,
+        "label": "E-mail / Dados",
+        "topLevel": false,
+        "helps": 5
+      },
+      {
+        "gid": "sig-2",
+        "open": false,
+        "label": "IA",
+        "topLevel": false,
+        "helps": 8
+      },
+      {
+        "gid": "sig-3",
+        "open": false,
+        "label": "Identidade / Endpoint",
+        "topLevel": false,
+        "helps": 3
+      }
+    ],
+    "looseGroups": 0,
+    "helps": 60,
+    "capHelps": 22,
+    "fields": 69,
+    "dupIds": [],
+    "dupHelp": [],
+    "screen": "results"
+  },
+  "reopen": {
+    "regions": [
+      {
+        "key": "caps",
+        "title": "Capabilities de segurança",
+        "lead": "O que a operação já faz e com o quê. Declare a situação por capacidade — qualquer fabricante, qualquer produto.",
+        "labelledby": "p52-ctxreg-caps-h",
+        "gids": [
+          "g1",
+          "g2",
+          "g3"
+        ]
+      },
+      {
+        "key": "env",
+        "title": "Ambiente e condicionantes",
+        "lead": "O que cerca e limita a operação: arquitetura, licenciamento já existente e requisitos específicos da conversa.",
+        "labelledby": "p52-ctxreg-env-h",
+        "gids": [
+          "arch",
+          "plat",
+          "sig"
+        ]
+      }
+    ],
+    "regionCount": 2,
+    "topGids": [
+      "g1",
+      "g2",
+      "g3",
+      "arch",
+      "plat",
+      "sig"
+    ],
+    "topCount": 6,
+    "groups": [
+      {
+        "gid": "g1",
+        "open": false,
+        "label": "SOC & Operations",
+        "topLevel": true,
+        "helps": 9
+      },
+      {
+        "gid": "g2",
+        "open": false,
+        "label": "Detection & Telemetry",
+        "topLevel": true,
+        "helps": 8
+      },
+      {
+        "gid": "g3",
+        "open": false,
+        "label": "Advanced / Adjacent Controls",
+        "topLevel": true,
+        "helps": 5
+      },
+      {
+        "gid": "arch",
+        "open": false,
+        "label": "Restrições e preferências de arquitetura",
+        "topLevel": true,
+        "helps": 6
+      },
+      {
+        "gid": "plat",
+        "open": false,
+        "label": "Plataformas e licenciamento já existentes",
+        "topLevel": true,
+        "helps": 0
+      },
+      {
+        "gid": "sig",
+        "open": false,
+        "label": "Requisitos ou preocupações específicas",
+        "topLevel": true,
+        "helps": 26
+      },
+      {
+        "gid": "sig-0",
+        "open": false,
+        "label": "Incidente / SOC",
+        "topLevel": false,
+        "helps": 6
+      },
+      {
+        "gid": "sig-1",
+        "open": false,
+        "label": "E-mail / Dados",
+        "topLevel": false,
+        "helps": 5
+      },
+      {
+        "gid": "sig-2",
+        "open": false,
+        "label": "IA",
+        "topLevel": false,
+        "helps": 8
+      },
+      {
+        "gid": "sig-3",
+        "open": false,
+        "label": "Identidade / Endpoint",
+        "topLevel": false,
+        "helps": 3
+      }
+    ],
+    "looseGroups": 0,
+    "helps": 60,
+    "capHelps": 22,
+    "fields": 69,
+    "dupIds": [],
+    "dupHelp": [],
+    "screen": "results"
+  },
+  "preserve": {
+    "presId": "v32-pres-knowledge-management",
+    "prodId": "v32-sol-knowledge-management-0-product",
+    "archId": "v32-arch-saasAllowed",
+    "sigId": "v32-sig-activeIncident",
+    "prodVal": "ACME Detector 9000",
+    "archVal": "no",
+    "sigVal": true,
+    "after": {
+      "prod": "ACME Detector 9000",
+      "arch": "no",
+      "sig": true
+    },
+    "sentinel": "SENTINELA-V322-4711",
+    "afterDecor": "SENTINELA-V322-4711"
+  },
+  "toggle": {
+    "afterMouseOpen": true,
+    "g1PartiuFechado": true,
+    "g1Opened": true,
+    "g1Closed": true,
+    "g3Open": true,
+    "g1StillClosed": true,
+    "g2StillOpen": true,
+    "focusKeeps": false
+  },
+  "rerender": {
+    "abriuNoClique": true,
+    "provocou": true,
+    "editorVivo": true,
+    "abertoAposRerender": true,
+    "vizinhoAindaRecolhido": true,
+    "regioes": 2
+  }
+}

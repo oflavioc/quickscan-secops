@@ -1,0 +1,40 @@
+{
+  "F1": {
+    "cap": "knowledge-management",
+    "esperado": "v32-pres-knowledge-management",
+    "antes": "v32-pres-knowledge-management",
+    "micro": "v32-pres-knowledge-management",
+    "depois": "v32-pres-knowledge-management",
+    "noEditor": true,
+    "editorVivo": true
+  },
+  "F2": {
+    "depois": "v32-sol-knowledge-management-0-vendor",
+    "noEditor": true,
+    "proximo": true,
+    "editorVivo": true
+  },
+  "F2b": {
+    "depois": "v32-add-knowledge-management",
+    "noEditor": true,
+    "editorVivo": true
+  },
+  "F3": {
+    "valor": "atp",
+    "yAntes": 1362,
+    "yDepois": 1362,
+    "depois": "v32-bundle",
+    "noEditor": true,
+    "bundle": true,
+    "editorVivo": true
+  },
+  "F4": {
+    "mutacoesEmRepouso": 0
+  },
+  "F5": {
+    "tela": "home",
+    "editorVivo": false,
+    "ativo": "BODY",
+    "ativoNoEditor": false
+  }
+}

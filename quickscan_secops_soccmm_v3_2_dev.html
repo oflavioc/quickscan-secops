@@ -1602,13 +1602,38 @@ body[data-uxscreen="refinement"] #ux-progress-mobile{ display:none !important; }
     padding-top: 18px;
     border-top: 1px solid var(--line);
   }
+  /* ==========================================================================
+     PATCH V3.2.2 · CORREÇÃO B — o rodapé usa a largura útil abaixo do divisor.
+
+     A faixa já era de largura total (`html body .wrap > footer{max-width:none}`
+     logo acima), mas o BLOCO LEGAL continuava preso a `max-width: 92ch`. Com o
+     texto do rodapé em 12px, 92ch resolve para ~665px — e a `.wrap` da home
+     entrega 1313px úteis em 1440px de viewport e 2176px em 2560/3440. Medido
+     na v3.2.1: o disclaimer ocupava 51% / 41% / 41% / 41% da largura útil em
+     1440 / 1920 / 2560 / 3440, deixando meio rodapé vazio entre ele e a
+     autoria. O defeito não era a faixa; era a coluna dentro dela.
+
+     A grade fluida da §5 substitui o `flex` com base de 520px: coluna legal
+     `minmax(0, 1fr)` — que cresce com a faixa e nunca estoura o contêiner — e
+     autoria `auto`, que pede exatamente a sua largura de conteúdo e permanece
+     colada à direita. `align-items: end` alinha os dois pela BASE, como a
+     camada anterior já fazia e como o P52-LAY2 mede.
+
+     O disclaimer NÃO é forçado a uma linha: ele quebra naturalmente dentro da
+     coluna. Nenhum byte de texto muda — a correção é de layout.
+     ========================================================================== */
   .wrap > footer[data-p52-footer="split"] {
-    display: flex; flex-wrap: wrap; align-items: flex-end;
-    justify-content: space-between; gap: 12px 32px;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: end;
+    gap: 12px 32px;
   }
-  .p52-foot-legal { flex: 1 1 520px; min-width: 0; max-width: 92ch; }
-  .p52-foot-contact { flex: 0 1 auto; text-align: right; color: var(--muted); }
-  @media (max-width: 767px) {
+  .p52-foot-legal { min-width: 0; }
+  .p52-foot-contact { min-width: 0; text-align: right; color: var(--muted); }
+  /* Abaixo de 1024px a autoria não cabe ao lado do texto legal sem espremer os
+     dois: as colunas empilham, a ordem de leitura do DOM (legal → autoria) é
+     preservada por construção e a autoria volta a alinhar à esquerda. */
+  @media (max-width: 1023px) {
     .wrap > footer[data-p52-footer="split"] { display: block; }
     .p52-foot-contact { text-align: left; margin-top: 10px; }
   }
@@ -1712,6 +1737,67 @@ body[data-uxscreen="refinement"] #ux-progress-mobile{ display:none !important; }
     padding-left: 10px;
   }
   .p52-rail-link[data-p52-active="true"] .p52-rail-mark { color: var(--text); }
+
+  /* ==========================================================================
+     PATCH V3.2.2 · CORREÇÃO C — PENDÊNCIA NO TRILHO E NO PONTO DE AÇÃO.
+
+     A paleta congelada tem `--red` como cor de atenção e não tem âmbar; o token
+     abaixo é LOCAL destas duas superfícies e não entra na paleta global.
+
+     Regra de acessibilidade desta correção: a cor NUNCA carrega a informação
+     sozinha. O ponto luminoso é `aria-hidden` e puramente decorativo; quem
+     nomeia o estado é o texto ao lado, e esse texto usa os mesmos tokens de
+     contraste já validados no trilho (`--muted` sobre `--surface2`: 4.5:1+).
+     Remover a cor — impressão em preto e branco, daltonismo, forced-colors —
+     não remove a informação.
+     ========================================================================== */
+  .p52-rail { --p52-attn: #E8A33D; }
+  .p52-rail-pending {
+    grid-column: 2;
+    display: flex; align-items: center; gap: 6px;
+    font-size: 11px; line-height: 1.3; color: var(--muted);
+  }
+  .p52-rail-pending-dot {
+    flex: 0 0 auto; width: 7px; height: 7px; border-radius: 50%;
+    background: var(--p52-attn);
+    box-shadow: 0 0 0 3px rgba(232, 163, 61, .18);
+  }
+  .p52-rail-pending-text { min-width: 0; }
+  /* pendente: informação. A borda muda de COR e de LARGURA — forma, não só cor. */
+  .p52-rail-link[data-p52-pending="pending"] {
+    border-left-color: var(--p52-attn); border-left-width: 5px; padding-left: 10px;
+  }
+  /* erro: a impressão JÁ foi bloqueada. O texto continua explicando a ação. */
+  .p52-rail-link[data-p52-pending="error"] {
+    border-left-color: var(--red); border-left-width: 5px; padding-left: 10px;
+  }
+  .p52-rail-link[data-p52-pending="error"] .p52-rail-pending-dot {
+    background: var(--red); box-shadow: 0 0 0 3px var(--red-soft);
+  }
+  .p52-rail-link[data-p52-pending="error"] .p52-rail-pending { color: var(--text); }
+  /* o indicador é a única informação do item que sobrevive ao trilho compacto:
+     `--meta` e `--here` somem abaixo de 1180px, a pendência NÃO. */
+  @media (max-width: 1179px) {
+    .p52-rail-pending { grid-column: 1 / -1; }
+  }
+
+  /* --- mensagem inline junto ao botão de PDF ------------------------------- */
+  .p52-print-pending {
+    display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px;
+    margin: 12px 0 0; padding: 12px 14px;
+    border: 1px solid var(--line); border-left: 4px solid var(--red);
+    border-radius: 8px; background: var(--red-soft);
+    font-size: 13.5px; line-height: 1.5; color: var(--text);
+  }
+  .p52-print-pending-msg { margin: 0; min-width: 0; flex: 1 1 320px; }
+  .p52-print-pending-go {
+    flex: 0 0 auto; min-height: 44px; padding: 10px 16px;
+    border: 1px solid var(--line); border-radius: 8px;
+    background: var(--surface); color: var(--text);
+    font-size: 13.5px; font-weight: 600;
+  }
+  .p52-print-pending-go:hover { background: var(--surface2); }
+  .p52-print-pending-go:focus-visible { outline: 2px solid var(--red); outline-offset: 2px; }
 
 
   /* desktop 1180+: trilho vira coluna lateral sticky */
@@ -2061,11 +2147,48 @@ body[data-uxscreen="refinement"] #ux-progress-mobile{ display:none !important; }
   }
 
   /* ==========================================================================
+     ERRATA V3.2.2 · §5 — O PISCAR SAI; O MOVIMENTO FICA SÓ ONDE HÁ NAVEGAÇÃO.
+
+     CAUSA MATERIAL, MEDIDA E NÃO SUPOSTA. `render()` reatribui
+     `#app.innerHTML` a CADA mudança de estado — inclusive ao apenas marcar
+     uma resposta, porque `b.onclick` faz `ans[k] = ...; render()`. A Camada 1
+     congelada declara `.screen{animation:fade .35s ease}` com
+     `from{opacity:0; transform:translateY(10px)}`. Cada `section.screen` NOVO
+     é um elemento novo, e um elemento novo REEXECUTA a animação inteira: a
+     tela cai a zero e sobe de novo. Medido nesta candidata, em Chromium
+     1440x900, ao trocar de resposta sem mudar de pergunta: `animation-name`
+     computado `fade`, duração 350ms, opacidade mínima amostrada 0 e
+     `matrix(1, 0, 0, 1, 0, 10)` — dez pixels de deslocamento VERTICAL. Isso
+     é o piscar, e ele não distingue "troquei a resposta" de "mudei de tela".
+
+     A Camada 1 é superfície congelada e NÃO é editada. Esta camada, que é a
+     última folha de estilo do documento, neutraliza a animação legada com
+     `section.screen` — (0,1,1) contra os (0,1,0) do seletor congelado, de
+     modo que a vitória não dependa da ordem de injeção — e reintroduz
+     movimento SOMENTE sob a marcação `[data-p52-nav]`, que o owner de layout
+     escreve apenas quando a pergunta corrente REALMENTE mudou.
+
+     O movimento é deslocamento HORIZONTAL, no sentido da navegação, de 150ms:
+     dentro da faixa 120–180ms exigida e sem tocar em `opacity` — não há como
+     "partir de opacidade zero" quando a propriedade sequer é animada.
+     ========================================================================== */
+  section.screen { animation: none; }
+  @keyframes p52-nav-fwd  { from { transform: translateX(18px); }  to { transform: none; } }
+  @keyframes p52-nav-back { from { transform: translateX(-18px); } to { transform: none; } }
+  .screen[data-p52-nav="fwd"]  { animation: p52-nav-fwd  150ms cubic-bezier(.22,.61,.36,1); }
+  .screen[data-p52-nav="back"] { animation: p52-nav-back 150ms cubic-bezier(.22,.61,.36,1); }
+
+  /* ==========================================================================
      P52-ACC3 · movimento respeita a preferência do sistema
+     ERRATA V3.2.2 · a regra passa a nomear TAMBÉM a transição nova, com
+     `!important`, para que a remoção do movimento seja explícita nesta camada
+     e verificável por gate — e não uma herança silenciosa do `*{animation:none}`
+     da Camada 1. Nenhuma funcionalidade depende do movimento: o atributo
+     `data-p52-nav` continua sendo escrito, e é só o CSS que decide animar.
      ========================================================================== */
   @media (prefers-reduced-motion: reduce) {
     html { scroll-behavior: auto; }
-    .screen { animation: none; }
+    section.screen, .screen[data-p52-nav] { animation: none !important; }
     .p52-rail-link, .p52-sec { transition: none; }
   }
 
@@ -2417,10 +2540,17 @@ body[data-uxscreen="refinement"] #ux-progress-mobile{ display:none !important; }
     font-size: 15px; font-weight: 600; line-height: 1.2; text-align: center;
   }
   .p52-cta-row > #start { background: var(--red); color: #fff; border: 1px solid var(--red); }
+  /* ERRATA FINAL V3.2.2 · M-05 · o azul de MARCA (`--ftnt-blue`, #307FE2) rende
+     3,99:1 com texto branco a 15px — abaixo do mínimo AA de 4,5:1. O token de
+     marca NÃO é alterado (ele continua identificando o domínio Tecnologia no
+     radar, no emblema e nas bordas de acento); o que muda é a variante de
+     PREENCHIMENTO com texto branco, escurecida 10% no mesmo matiz: #2B72CB
+     rende 4,80:1, recalculado pela fórmula do WCAG e verificado em runtime
+     pelo gate V322C-CON1. */
   .p52-cta-row > .p52-cta-ctx {
-    background: var(--ftnt-blue); color: #fff; border: 1px solid var(--ftnt-blue);
+    background: var(--p52-blue-strong); color: #fff; border: 1px solid var(--p52-blue-strong);
   }
-  .p52-cta-row > .p52-cta-ctx:hover { filter: brightness(1.07); border-color: var(--ftnt-blue); }
+  .p52-cta-row > .p52-cta-ctx:hover { filter: brightness(1.07); border-color: var(--p52-blue-strong); }
   .p52-cta-row > .cta:focus-visible, .p52-cta-row > .btn2:focus-visible {
     outline: 2px solid var(--text); outline-offset: -4px;
   }
@@ -2514,6 +2644,15 @@ body[data-uxscreen="refinement"] #ux-progress-mobile{ display:none !important; }
        mantém o contraste contra o preenchimento e nunca sai da caixa. */
     outline: 2px solid var(--text); outline-offset: -4px;
   }
+  /* ERRATA FINAL V3.2.2 · M-05 · `.nextlink` é TEXTO vermelho sobre o fundo da
+     aplicação: `--red` (#DA291C) rende 4,04:1, abaixo do mínimo AA. A tela de
+     pergunta já não usa esta forma (ali `#next` é preenchido, branco sobre
+     vermelho, 4,87:1); reprovavam a tela de PRIORIDADES e a de ponto de
+     partida. As duas passam a usar `--red-text` (#F54133), o token que esta
+     camada já mantém para vermelho pequeno: 5,33:1. A escolha é por TELA para
+     não colidir com a forma preenchida da pergunta. */
+  body[data-uxscreen="priority"] #app .navrow .nextlink,
+  body[data-uxscreen="arq"] #app .navrow .nextlink { color: var(--red-text); }
   .navrow.p52-qnav .kbd-tip { margin-left: auto; font-size: 12.5px; color: var(--faint); }
   @media (max-width: 767px) {
     .navrow.p52-qnav #back, .navrow.p52-qnav #next { flex: 1 1 100%; min-width: 0; }
@@ -2620,7 +2759,47 @@ body[data-uxscreen="refinement"] #ux-progress-mobile{ display:none !important; }
   /* §4.1 · o controle `i` também em campos de arquitetura, família e sinal */
   .p52-fieldhelp { position: relative; }
   .p52-fieldhelp > .p52-caphelp-btn { margin-left: 8px; vertical-align: middle; }
-  #v32editor details > summary > .p52-caphelp-btn { margin-left: 6px; }
+  /* ==========================================================================
+     FECHAMENTO PRÉ-AUDITORIA v3.2.2 · §5 — geometria do `(i)` do CABEÇALHO.
+
+     O controle deixou de ser filho do `<summary>` e passou a ser irmão dele,
+     dentro do `<details>`. Fora de fluxo, ele continua renderizado com o grupo
+     RECOLHIDO — que é o estado inicial de cinco das seis famílias — e fica
+     alinhado à linha do summary, cuja altura mínima é 44px.
+
+     `right`, e não deslocamento a partir do texto: os títulos têm larguras
+     muito diferentes e qualquer offset calculado a partir do texto quebraria
+     em 390px, em 200% de zoom ou com a tipografia do sistema. À direita da
+     MESMA linha, o controle continua inequivocamente do cabeçalho daquele
+     grupo — e o nome acessível (`aria-label`) cita o título da família.
+     ========================================================================== */
+  .p52-grphead { position: relative; }
+  /* o `<details>` conserva a sua margem própria; o wrapper é transparente */
+  .p52-grphead > details.v32-group,
+  .p52-grphead > details.v32-siggroup { margin: 10px 0; }
+  /* A CAIXA do controle é a MESMA de todos os outros `(i)` do editor — 22x22,
+     mesma borda, mesmo raio, mesma tipografia. O contrato visual único é
+     propriedade medida por `P52-HELP2`; só a POSIÇÃO muda, para acompanhar a
+     linha do summary (altura mínima 44px ⇒ 11px de folga em cima). */
+  #v32editor .p52-grphead > .p52-headhelp-btn {
+    position: absolute; top: 11px; right: 14px; z-index: 2; margin: 0;
+  }
+  /* o summary reserva a calha do controle para que título longo não passe por baixo */
+  #v32editor details.v32-group > summary,
+  #v32editor details.v32-siggroup > summary { padding-right: 48px; }
+  /* o popover do cabeçalho é ancorado ao `<details>` e precisa permanecer FORA
+     DE FLUXO mesmo em mobile: em fluxo normal, com o grupo recolhido, ele não
+     seria renderizado. */
+  #v32editor .p52-grphead > .p52-headhelp-pop {
+    position: absolute; top: 56px; right: 14px; left: auto;
+    width: min(420px, calc(100vw - 48px));
+  }
+  @media (max-width: 767px) {
+    #v32editor .p52-grphead > .p52-headhelp-pop {
+      position: absolute; width: min(420px, calc(100vw - 48px)); margin-top: 0;
+      box-shadow: 0 10px 28px rgba(0, 0, 0, .45);
+    }
+  }
 
   /* §3.6 · Salvar e Cancelar com a mesma geometria */
   #v32editor .v32-actions .cta,
@@ -2782,7 +2961,11 @@ body[data-uxscreen="refinement"] #ux-progress-mobile{ display:none !important; }
   .p52-ctxcard-explain,
   .p52-ctxsum,
   .p52-grp-state,
-  .p52-rail-here { display: none !important; }
+  .p52-rail-here,
+  /* PATCH V3.2.2 · a pendência é estado de TELA. `.actions` já sai do papel;
+     a mensagem inline vive FORA dela e precisa da sua própria supressão. */
+  .p52-print-pending,
+  .p52-rail-pending { display: none !important; }
   .p52-workspace, .p52-flow, .p52-sec, .p52-gapgrp, .p52-gapgrp-cards, .p52-grp-body {
     display: block !important;
     grid-template-columns: none !important;
@@ -3044,6 +3227,9 @@ body[data-uxscreen="refinement"] #ux-progress-mobile{ display:none !important; }
    P52-ACC3.
    -------------------------------------------------------------------------- */
 :root { --red-text: #F54133; }
+/* ERRATA FINAL V3.2.2 · M-05 · variante de preenchimento do azul de marca com
+   texto branco. Mesmo matiz, 10% mais escura: 4,80:1 contra #fff. */
+:root { --p52-blue-strong: #2B72CB; }
 @media print { :root { --red-text: #DA291C; } }
 
 @media screen {
@@ -3119,8 +3305,56 @@ body[data-uxscreen="refinement"] #ux-progress-mobile{ display:none !important; }
   #v32editor .v32-bundles > label > input[type="radio"] {
     grid-column: 1; grid-row: 1; width: 18px; height: 18px; margin: 0; align-self: start;
   }
+  /* ------------------------------------------------------------------------
+     ERRATA FINAL V3.2.2 · M-01 · REFLOW DO EDITOR ABAIXO DE ~430px CSS
+
+     Defeito medido pelo parecer externo em 320/360/390/430px e em 768x1024 a
+     200%: o `fieldset.v32-plat` mantinha 328px fixos dentro de um corpo de
+     grupo de 223px, a borda direita saía da tela e NÃO havia rolagem para
+     alcançar o excedente — perda de conteúdo, que é o que a WCAG 1.4.10
+     proíbe a 320px.
+
+     Duas causas somadas, e as duas são tratadas aqui:
+
+       1 · ESPECIFICIDADE ENTRE CAMADAS. O override móvel `#v32editor
+           .v32-signals` (1,1,0) não alcançava a regra base `#v32editor
+           .v32-subs .v32-signals` (1,2,0), que continuava computando
+           `grid-template-columns: 260px` — rígido — em 390px. O override passa
+           a repetir a MESMA especificidade da base.
+
+       2 · CAIXAS QUE NÃO ENCOLHEM. `fieldset` tem `min-inline-size:
+           min-content` na folha do agente de usuário, e item de grade/flex tem
+           `min-width: auto`: os 260px rígidos subiam pela árvore e fixavam o
+           `min-content` do `<fieldset>` em 328px. `min-inline-size: 0` nos
+           fieldsets do editor e `minmax(0, 1fr)`/`min-width: 0` nos itens
+           devolvem a capacidade de encolher. `select` e `input` ganham teto de
+           100% porque o `min-content` de um `<select>` é o da sua opção mais
+           longa.
+
+     Nada aqui redesenha o editor: a ordem de leitura, os grupos, os rótulos e
+     o comportamento em desktop permanecem idênticos.
+     ------------------------------------------------------------------------ */
+  #v32editor .p52-ctxregion,
+  #v32editor .p52-ctxregion-body,
+  #v32editor .p52-grphead,
+  #v32editor .p52-grp-body,
+  #v32editor details,
+  #v32editor .v32-cap,
+  #v32editor .v32-sols { min-width: 0; }
+  #v32editor fieldset { min-inline-size: 0; }
+  #v32editor .v32-arch > label,
+  #v32editor .v32-signals > label,
+  #v32editor .v32-bundles > label,
+  #v32editor .v32-solrow > label { min-width: 0; }
+  #v32editor select,
+  #v32editor input[type="text"] { max-width: 100%; min-width: 0; }
+
   @media (max-width: 719px) {
     #v32editor .v32-signals,
+    #v32editor .v32-subs .v32-signals,
+    #v32editor .v32-arch,
+    #v32editor .v32-solrow,
+    #v32editor .v32-cov-grid,
     #v32editor .v32-bundles { grid-template-columns: minmax(0, 1fr); }
   }
 
@@ -10027,13 +10261,72 @@ if (window.__DEV) Object.assign(window.__DEV, { openExportModal, openImportPicke
      `window.__uxDecor`, e por isso está uma transição atrasado quando esta
      camada é invocada pela cadeia de decoradores. */
   function p52Screen() {
+    /* PATCH V3.2.2 · CORREÇÃO A — `uxOpenHomeEditor()` monta a tela do editor
+       de contexto tecnológico SEM passar por `render()` e marca
+       `body[data-uxscreen="ctxeditor"]` na mão. `uxScreenOf()` deriva de
+       `step`, que continua em -1 (home), e por isso NUNCA devolve
+       "ctxeditor": a única fonte desse estado é o atributo. Sem esta
+       precedência a tela do editor era lida como HOME e o ramo `ctxeditor`
+       de `p52Decor()` era código morto. */
+    var attr = document.body ? document.body.getAttribute("data-uxscreen") : null;
+    if (attr === "ctxeditor") return attr;
     try { if (typeof uxScreenOf === "function") return uxScreenOf(); }
     catch (e) { /* fora do escopo do runtime: cai no atributo */ }
-    return document.body ? document.body.getAttribute("data-uxscreen") : null;
+    return attr;
   }
   function reducedMotion() {
     try { return window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches; }
     catch (e) { return false; }
+  }
+
+  /* ==========================================================================
+     ERRATA V3.2.2 · CORREÇÃO C — MOVIMENTO SÓ ONDE HOUVE NAVEGAÇÃO.
+
+     `render()` reconstrói `#app` a cada mudança de estado. Marcar uma resposta
+     chama `render()` exatamente como avançar de pergunta chama — e o
+     `section.screen` recém-criado reexecuta a animação congelada da Camada 1.
+     A UI não tinha como distinguir os dois casos porque nunca perguntou QUAL
+     pergunta estava na tela antes.
+
+     Esta camada guarda a última COORDENADA DE NAVEGAÇÃO observada — a tela
+     canônica (`uxScreenOf()`) e o `step` do runtime congelado — e compara com
+     a coordenada corrente. Só quando as duas passagens estão no FLUXO DE
+     PERGUNTAS e o `step` mudou é que a tela nova recebe `data-p52-nav`, com o
+     sentido do movimento. Trocar de resposta, abrir a observação ou repintar
+     a mesma pergunta mantêm o `step` — e portanto não recebem marcação alguma.
+
+     O DECIDIDOR NÃO É O NAVEGADOR. Nada aqui lê `userAgent`, `platform`,
+     resolução, `devicePixelRatio` ou qualquer impressão digital: a marcação é
+     função exclusiva do estado da aplicação, e a decisão de animar (ou não
+     animar, sob `prefers-reduced-motion`) é inteiramente do CSS.
+
+     REENTRÂNCIA. `p52Decor()` roda mais de uma vez por render — pela cadeia de
+     decoradores e pelo wrapper de `render`. A marcação é feita UMA vez por
+     `section.screen`, carimbada no próprio nó com `data-p52-nav-seen`: como
+     `render()` cria um nó novo a cada passagem, a segunda visita à MESMA tela
+     encontra o carimbo e não reexecuta transição alguma.
+     ========================================================================== */
+  var p52NavScreen = null;   /* tela canônica vista na última navegação */
+  var p52NavStep = null;     /* `step` do runtime congelado naquela passagem */
+  function p52QuestionFlow(scr) { return scr === "arq" || scr === "question"; }
+  function p52StepNow() {
+    try { return (typeof step === "number") ? step : null; }
+    catch (e) { return null; }
+  }
+  function p52ScreenMotion(host) {
+    var sec = host ? host.querySelector("section.screen") : null;
+    var scr = p52Screen();
+    var st = p52StepNow();
+    if (!sec) { p52NavScreen = scr; p52NavStep = st; return; }
+    if (sec.getAttribute("data-p52-nav-seen") === "1") return;
+    sec.setAttribute("data-p52-nav-seen", "1");
+    var dir = null;
+    if (p52QuestionFlow(scr) && p52QuestionFlow(p52NavScreen) &&
+        st !== null && p52NavStep !== null && st !== p52NavStep)
+      dir = st > p52NavStep ? "fwd" : "back";
+    p52NavScreen = scr; p52NavStep = st;
+    if (dir) sec.setAttribute("data-p52-nav", dir);
+    else if (sec.hasAttribute("data-p52-nav")) sec.removeAttribute("data-p52-nav");
   }
 
   /* ==========================================================================
@@ -10254,8 +10547,13 @@ if (window.__DEV) Object.assign(window.__DEV, { openExportModal, openImportPicke
     "arch": "Restrições e preferências que condicionam QUAIS caminhos são viáveis — não o que a " +
             "organização já tem. Nenhum campo aqui altera score, estágio, suficiência ou gaps; " +
             "todos entram apenas na leitura arquitetural e na priorização das recomendações.",
-    "plat": "Registre plataformas e licenciamento que a organização já possui. Serve para evitar " +
-            "recompra e orientar adoção. Entitlement declarado não prova implantação, cobertura nem maturidade.",
+    /* ERRATA V3.2.2 · §3.2 · esta passa a ser a ÚNICA ajuda da seção. Ela
+       explica a seção inteira de uma vez, em linguagem neutra de fabricante:
+       o que se registra aqui é BASE INSTALADA e DIREITO DE USO — não prova de
+       implantação, de cobertura nem de maturidade. */
+    "plat": "Registre a base instalada e os direitos de uso já existentes: o que está em produção e o " +
+            "que está licenciado ou contratado. Serve para evitar recompra e orientar adoção. Declarar " +
+            "não prova implantação, cobertura nem maturidade, e nada aqui altera score, estágio ou gaps.",
     "sig": "Registre requisitos, preocupações e gatilhos trazidos na conversa. São contexto de sessão: " +
            "marcar um sinal não cria gap, não altera score e não define solução."
   };
@@ -10274,56 +10572,29 @@ if (window.__DEV) Object.assign(window.__DEV, { openExportModal, openImportPicke
     "sig-3": "Requisitos ligados a quem acessa e a partir de quê: risco de identidade, necessidade de " +
              "gestão de acesso privilegiado e exigência específica de detecção e resposta em endpoint."
   };
-  /* Plataformas, bundles e subscriptions: o nome do serviço é do fabricante, a
-     explicação descreve a FUNÇÃO — sem afirmar aderência, cobertura, sizing ou
-     recomendação de compra. */
-  var P52_PLAT_HELP = {
-    /* As legendas são endereçadas por SELETOR, nunca pelo texto: o owner de
-       layout não pode embutir nome de fabricante (gate P52-REC1), e o texto da
-       legenda pertence ao owner congelado. */
-    "legend:.v32-plat": "Plataforma de firewall de rede declarada no ambiente. Marque apenas se já existe " +
-      "em produção. A existência do equipamento não implica que os serviços de segurança dele estejam " +
-      "licenciados ou ativos.",
-    "legend:.v32-bundles":
-      "Pacote comercial que já inclui um conjunto de serviços de segurança do firewall. Informe apenas se " +
-      "o pacote contratado for conhecido. Pacote declarado indica direito de uso, não implantação.",
-    "legend:.v32-subs":
-      "Serviços de segurança contratados individualmente para o firewall. Marque somente o que foi " +
-      "explicitamente declarado; não marcar não significa ausência, significa não informado.",
-    "plat:fgt": "Marque quando o firewall já estiver em produção no ambiente avaliado. " +
-      "É declaração de base instalada; não altera score, estágio nem gaps.",
-    "bundle:": "Nenhum pacote informado. Use quando o bundle não é conhecido na sessão — é diferente de " +
-      "afirmar que não existe bundle contratado.",
-    "bundle:atp": "Pacote de proteção avançada contra ameaças: inclui prevenção de intrusão, antivírus, " +
-      "sandbox como serviço, controle de aplicação e CASB inline. Direito de uso declarado, não implantação.",
-    "bundle:utp": "Pacote unificado: tudo do pacote avançado mais filtragem de DNS, de URL e de vídeo e " +
-      "bloqueio de botnet e canais de comando e controle.",
-    "bundle:ent": "Pacote empresarial: tudo do pacote unificado mais serviço de prevenção de perda de dados, " +
-      "segurança de superfície de ataque, prevenção de malware inline assistida por IA e correlação de " +
-      "vulnerabilidades de dispositivos IoT.",
-    "sub:fg-ips": "Prevenção de intrusão: inspeciona o tráfego em busca de exploração de vulnerabilidades conhecidas.",
-    "sub:fg-antivirus": "Inspeção antimalware do tráfego que atravessa o firewall, por assinatura e heurística.",
-    "sub:fg-sandbox-saas": "Detonação de arquivos suspeitos em ambiente isolado, entregue como serviço. " +
-      "Apoia parcialmente a análise de malware; não substitui uma capacidade de análise própria.",
-    "sub:fg-appcontrol": "Identificação e controle de aplicações no tráfego, independentemente de porta ou protocolo.",
-    "sub:fg-inline-casb": "Visibilidade e controle sobre o uso de aplicações em nuvem no caminho do tráfego.",
-    "sub:fg-dns-filtering": "Bloqueio e inspeção de resoluções de nome para domínios maliciosos ou indesejados.",
-    "sub:fg-url-filtering": "Classificação e controle de acesso a endereços web por categoria e reputação.",
-    "sub:fg-video-filtering": "Controle de acesso a plataformas de vídeo por canal ou categoria.",
-    "sub:fg-antibotnet-c2": "Detecção e bloqueio de comunicação com infraestrutura de comando e controle.",
-    "sub:fg-dlp-service": "Identificação de dado sensível em trânsito, com enforcement na rede. " +
-      "Cobre parcialmente a prevenção de perda de dados; não cobre endpoint nem repositórios.",
-    "sub:fg-attack-surface-security": "Verificação de configuração e exposição do próprio ambiente contra " +
-      "boas práticas. Apoia a leitura de exposição externa, sem substituí-la.",
-    "sub:fg-iot-detection-vuln-correlation": "Identificação de dispositivos IoT/OT e correlação com " +
-      "vulnerabilidades conhecidas. Apoia a gestão de vulnerabilidades nesses ativos.",
-    "sub:fg-inline-malware-prevention": "Bloqueio de malware no caminho do tráfego com apoio de modelos " +
-      "treinados, sem esperar por análise posterior.",
-    "sub:fg-ot-security": "Assinaturas e regras específicas para protocolos e ativos industriais.",
-    "presence": "Situação DECLARADA da capacidade nesta organização: não informado, ausência confirmada, " +
-      "parcialmente atendida ou atendida. É declaração de contexto, não avaliação: nenhuma opção aqui " +
-      "altera score, estágio, suficiência ou gaps. \"Não informado\" é diferente de \"ausência confirmada\"."
-  };
+  /* ==========================================================================
+     ERRATA V3.2.2 · §3.2 — O MAPA `P52_PLAT_HELP` FOI REMOVIDO.
+
+     Ele existia para dar um verbete a CADA item de "Plataformas e
+     licenciamento já existentes": a plataforma declarada, cada opção de
+     bundle, cada subscription e as três legendas internas — 22 controles
+     `(i)` numa seção de rótulos que já se explicam sozinhos, mais 22 na
+     "Situação declarada" de cada capability. Ajuda repetida deixa de ser
+     ajuda e vira ruído: o olho para de procurá-la justamente onde ela
+     importa.
+
+     O princípio adotado é o da §3: ajuda localizada SOMENTE onde existe
+     ambiguidade semântica real. O que a seção inteira tem de ambíguo — a
+     diferença entre POSSUIR um direito de uso e TER a capacidade implantada,
+     coberta e madura — é dito uma única vez, no cabeçalho do grupo, por
+     `P52_GROUP_HELP.plat`. Apagar o mapa (em vez de apenas parar de usá-lo)
+     é deliberado: sem texto não há como um decorador futuro voltar a pendurar
+     controles item a item por descuido.
+
+     Nada do owner congelado muda: os rótulos, as legendas, o aviso
+     "Marque apenas o que foi explicitamente declarado" e o rótulo
+     "Situação declarada" continuam exatamente onde estavam.
+     ========================================================================== */
   var P52_SIGNAL_HELP = {
     "shadowAIConcern": "Uso de ferramentas de IA fora do controle da organização, geralmente por " +
       "iniciativa individual. Informe se já foi observado. Suspeita não é evidência de vazamento.",
@@ -10941,6 +11212,65 @@ if (window.__DEV) Object.assign(window.__DEV, { openExportModal, openImportPicke
     return { btn: btn, pop: pop };
   }
 
+  /* ==========================================================================
+     FECHAMENTO PRÉ-AUDITORIA v3.2.2 · §5 — O CONTROLE `(i)` SAI DE DENTRO DO
+     `<summary>`.
+
+     `<summary>` É um controle interativo. Um `<button>` dentro dele produz
+     `nested-interactive` (axe, impacto `serious`): dois controles focáveis
+     aninhados, com semântica ambígua para tecnologia assistiva. A violação já
+     existia no editor aberto pelos RESULTADOS; a paridade da v3.2.2 a levou
+     também para a entrada da HOME, e por isso ela pertence ao risco material
+     desta mudança.
+
+     PADRÃO ESCOLHIDO, E POR QUE NÃO O LITERAL DA §5.2.
+
+     A §5.2 sugere o botão como IRMÃO DO `<summary>`, dentro do `<details>`.
+     Esse padrão foi implementado e MEDIDO primeiro — e reprovado por evidência,
+     não por preferência: com o grupo RECOLHIDO, o Chromium não renderiza o
+     filho não-`summary`, nem fora de fluxo. Medido nesta candidata, em
+     `checkVisibility({checkVisibilityCSS:true})`: `true` apenas no grupo
+     aberto (`g1`) e `false` em `g2`, `g3`, `arch`, `plat` e `sig` — cinco das
+     seis famílias, que são exatamente as que nascem recolhidas. O `(i)`
+     desapareceria no estado inicial do editor, violando a §5.2.2.
+
+     O padrão adotado preserva todas as propriedades da §5.2: um WRAPPER de
+     cabeçalho (`div.p52-grphead`) envolve o `<details>`, e o controle e o seu
+     popover são IRMÃOS DO `<details>` dentro desse wrapper — fora da árvore
+     interativa do `<summary>` e fora do accordion, portanto renderizados nos
+     dois estados. O wrapper também mantém o controle fora de `.p52-grp-body`,
+     que `p52DecorateContextGroups()` monta a partir dos irmãos do summary.
+
+     Efeito colateral desejável: como o botão deixa de estar dentro do
+     `<summary>`, clicar nele não pode mais alternar o accordion — a supressão
+     de propagação deixa de ser a única linha de defesa.
+
+     Nada aqui altera o TEXTO dos verbetes, a lista de grupos, os IDs dos
+     popovers (`p52-grphelp-*`, `p52-sggrphelp-*`) ou o contrato de
+     hover/foco/clique/`Esc`.
+     ========================================================================== */
+  function p52MountHeaderHelp(det, sum, popId, rotulo, texto, gid) {
+    if (!det || !sum || !det.parentNode) return false;
+    /* wrapper idempotente: reaproveitado se já existir */
+    var head = det.parentNode;
+    if (!has(head, "p52-grphead")) {
+      head = el("div", { "class": "p52-grphead", "data-p52": "grp-head" });
+      det.parentNode.insertBefore(head, det);
+      head.appendChild(det);
+    }
+    /* idempotência por FILHO DIRETO do wrapper: o controle da família é o
+       único `[data-p52="cap-help"]` nesse nível. Os controles das capabilities
+       vivem dentro do `<details>` e não podem satisfazer esta guarda. */
+    if (head.querySelector(':scope > [data-p52="cap-help"]')) return false;
+    var made = p52HelpControl(popId, rotulo, texto);
+    made.btn.setAttribute("data-p52-grouphelp", gid);
+    made.btn.classList.add("p52-headhelp-btn");
+    made.pop.classList.add("p52-headhelp-pop");
+    head.appendChild(made.btn);
+    head.appendChild(made.pop);
+    return true;
+  }
+
   /* REV B §4.1 · ajuda nos campos de arquitetura, nas famílias de ambiente e
      em cada sinal de IA — não só nas capabilities. */
   function p52FieldHelp(ed) {
@@ -10958,11 +11288,10 @@ if (window.__DEV) Object.assign(window.__DEV, { openExportModal, openImportPicke
     }
     for (k in P52_GROUP_HELP) {
       if (!Object.prototype.hasOwnProperty.call(P52_GROUP_HELP, k)) continue;
-      var grp = ed.querySelector('details[data-gid="' + k + '"] > summary');
-      if (!grp || grp.querySelector('[data-p52="cap-help"]')) continue;
-      made = p52HelpControl("p52-grphelp-" + k, txt(grp).slice(0, 60), P52_GROUP_HELP[k]);
-      grp.appendChild(made.btn);
-      grp.appendChild(made.pop);
+      var gdet = ed.querySelector('details[data-gid="' + k + '"]');
+      var grp = gdet ? gdet.querySelector(":scope > summary") : null;
+      if (!grp) continue;
+      p52MountHeaderHelp(gdet, grp, "p52-grphelp-" + k, txt(grp).slice(0, 60), P52_GROUP_HELP[k], k);
     }
     for (k in P52_SIGNAL_HELP) {
       if (!Object.prototype.hasOwnProperty.call(P52_SIGNAL_HELP, k)) continue;
@@ -10980,9 +11309,11 @@ if (window.__DEV) Object.assign(window.__DEV, { openExportModal, openImportPicke
        O controle `i` existia em capabilities, campos de arquitetura, dois
        grupos e nove sinais de IA. Faltava em todo o resto: as três famílias
        de capabilities, o grupo de arquitetura, os quatro subgrupos de
-       requisitos, catorze sinais, a situação declarada por capability e a
-       seção inteira de plataformas e licenciamento — bundles, subscriptions
-       e legendas. Tudo passa a usar O MESMO componente: mesmo ícone, mesma
+       requisitos e catorze sinais. (A mesma errata cobria também a situação
+       declarada por capability e cada item de plataformas e licenciamento;
+       a ERRATA V3.2.2 · §3.2 desfez essa parte por excesso de densidade —
+       ver o bloco que substituiu `P52_PLAT_HELP`.) Tudo o que restou usa O
+       MESMO componente: mesmo ícone, mesma
        caixa, mesma tipografia, hover + foco + clique/toque, `Esc` para
        fechar, nome acessível próprio e associação por `aria-describedby`.
        Nenhum `title` nativo é usado como solução.
@@ -10990,52 +11321,10 @@ if (window.__DEV) Object.assign(window.__DEV, { openExportModal, openImportPicke
     /* subgrupos de requisitos (`data-gid="sig-N"`) */
     for (k in P52_SIGGROUP_HELP) {
       if (!Object.prototype.hasOwnProperty.call(P52_SIGGROUP_HELP, k)) continue;
-      var sgrp = ed.querySelector('details.v32-siggroup[data-gid="' + k + '"] > summary');
-      if (!sgrp || sgrp.querySelector('[data-p52="cap-help"]')) continue;
-      made = p52HelpControl("p52-sggrphelp-" + k, txt(sgrp).slice(0, 60), P52_SIGGROUP_HELP[k]);
-      sgrp.appendChild(made.btn);
-      sgrp.appendChild(made.pop);
-    }
-    /* situação declarada, por capability — a opção mais ambígua do editor */
-    var press = ed.querySelectorAll('select[id^="v32-pres-"]');
-    for (var pi = 0; pi < press.length; pi++) {
-      var sel2 = press[pi];
-      var lab = sel2.closest ? sel2.closest("label") : null;
-      if (!lab || lab.querySelector('[data-p52="cap-help"]')) continue;
-      lab.classList.add("p52-fieldhelp");
-      made = p52HelpControl("p52-preshelp-" + sel2.id.replace(/^v32-pres-/, ""),
-        "Situação declarada", P52_PLAT_HELP["presence"]);
-      lab.insertBefore(made.btn, sel2);
-      lab.appendChild(made.pop);
-    }
-    /* plataformas e licenciamento: legendas, plataforma, pacotes e subscriptions */
-    [".v32-plat", ".v32-bundles", ".v32-subs"].forEach(function (sel, li) {
-      var leg = ed.querySelector(sel + " > legend");
-      var chave = "legend:" + sel;
-      if (!leg || !P52_PLAT_HELP[chave] || leg.querySelector('[data-p52="cap-help"]')) return;
-      var feito = p52HelpControl("p52-leghelp-" + li, txt(leg).trim().slice(0, 60), P52_PLAT_HELP[chave]);
-      leg.appendChild(feito.btn);
-      leg.appendChild(feito.pop);
-    });
-    var alvos = [];
-    var fgt = ed.querySelector("#v32-plat-fgt");
-    if (fgt) alvos.push({ el: fgt, id: "p52-plathelp-fgt", chave: "plat:fgt" });
-    var buns = ed.querySelectorAll('input[name="v32-bundle"]');
-    for (var bi = 0; bi < buns.length; bi++)
-      alvos.push({ el: buns[bi], id: "p52-bundlehelp-" + (buns[bi].value || "none"),
-                   chave: "bundle:" + buns[bi].value });
-    var subs = ed.querySelectorAll('input[id^="v32-sub-"]');
-    for (var si = 0; si < subs.length; si++)
-      alvos.push({ el: subs[si], id: "p52-subhelp-" + subs[si].id.replace(/^v32-sub-/, ""),
-                   chave: "sub:" + subs[si].id.replace(/^v32-sub-/, "") });
-    for (var ai = 0; ai < alvos.length; ai++) {
-      var alvo = alvos[ai];
-      var lb = alvo.el.closest ? alvo.el.closest("label") : null;
-      if (!lb || !P52_PLAT_HELP[alvo.chave] || lb.querySelector('[data-p52="cap-help"]')) continue;
-      lb.classList.add("p52-fieldhelp");
-      made = p52HelpControl(alvo.id, txt(lb).trim().slice(0, 60), P52_PLAT_HELP[alvo.chave]);
-      lb.appendChild(made.btn);
-      lb.appendChild(made.pop);
+      var sdet = ed.querySelector('details.v32-siggroup[data-gid="' + k + '"]');
+      var sgrp = sdet ? sdet.querySelector(":scope > summary") : null;
+      if (!sgrp) continue;
+      p52MountHeaderHelp(sdet, sgrp, "p52-sggrphelp-" + k, txt(sgrp).slice(0, 60), P52_SIGGROUP_HELP[k], k);
     }
     p52InstallHelpEscape();
   }
@@ -11108,6 +11397,455 @@ if (window.__DEV) Object.assign(window.__DEV, { openExportModal, openImportPicke
     }
     p52InstallHelpEscape();
   }
+  /* ==========================================================================
+     PATCH V3.2.2 · CORREÇÃO A — UM COMPOSITOR, DUAS ENTRADAS.
+
+     `#v32editor` é o MESMO nó, produzido pelo MESMO `openEditor()`/
+     `paintEditor()` do owner congelado, nas duas entradas: a da home (antes
+     do assessment) e a da seção Contexto tecnológico dos resultados. O que
+     mudava era só quem o decorava — a composição da Phase 5.2 só era aplicada
+     no caminho dos resultados, e a home ficava com os seis accordions numa
+     lista plana, sem as duas regiões e sem as ajudas `(i)`.
+
+     A decoração passa a seguir o NÓ, não a tela. As três funções abaixo já
+     eram idempotentes e convergentes (é o contrato que as fazia rodar sob
+     MutationObserver); aqui elas ganham um único ponto de chamada, usado por
+     `p52Decor()`, pelo observador e pelo listener delegado de clique.
+
+     Nada aqui duplica dado, handler ou HTML de capability: `p52ContextRegions`
+     MOVE os nós existentes para dentro das regiões e `p52CapHelp` guarda-se
+     por `[data-p52="cap-help"][data-cap]` antes de criar qualquer controle.
+     ========================================================================== */
+  /* ==========================================================================
+     ERRATA V3.2.2 · CORREÇÃO B — TODOS OS GRUPOS PRINCIPAIS NASCEM RECOLHIDOS.
+
+     O default `open:true` de `SOC & Operations` é do owner congelado
+     (`landscapeGroups()`), e `paintEditor()` só o consulta quando NÃO existe
+     estado anterior no DOM — em toda repintura ele reemite o que os
+     `<details>` vivos diziam. Ou seja: o estado inicial é decidido UMA vez,
+     no primeiro paint de cada edição, e daí em diante quem manda é o usuário.
+
+     Esta camada intervém exatamente nesse único instante, e em nenhum outro:
+     ABRIR UMA EDIÇÃO recolhe os seis grupos; qualquer outra coisa não toca em
+     `open`. Repintar por declarar situação, adicionar tecnologia ou trocar
+     bundle PRESERVA o que o usuário abriu ou fechou, porque `paintEditor()`
+     reemite exatamente o estado dos `<details>` vivos. Cancelar e reabrir
+     passa de novo por um CTA de abertura, e a nova edição recomeça recolhida.
+
+     Onde essa intervenção é enganchada — e por que não em `paintEditor()` —
+     está documentado em `p52NewEditSession()`, mais abaixo. Nada aqui edita
+     `ui_v32.js`: o default `open:true` do owner permanece byte-idêntico, e é
+     a apresentação que decide o estado inicial da SESSÃO DE EDIÇÃO.
+     ========================================================================== */
+  function p52CollapseGroups(ed) {
+    var det = ed.querySelectorAll("details[data-gid]");
+    for (var i = 0; i < det.length; i++) det[i].open = false;
+  }
+  function p52FocusEditorEntry() {
+    var ed = document.getElementById("v32editor");
+    if (!ed) return;
+    var su = ed.querySelector("summary");
+    if (!su || typeof su.focus !== "function") return;
+    try { su.focus({ preventScroll: true }); } catch (e) { su.focus(); }
+  }
+
+  /* ==========================================================================
+     ERRATA FINAL V3.2.2 · A-02 — O FOCO SOBREVIVE AO REPARENTAMENTO.
+
+     O owner congelado faz a coisa certa: `paintEditor(app)` e, logo depois,
+     `document.getElementById("v32-pres-"+capId).focus()`. Quem desfaz é ESTA
+     camada — `p52ContextRegions()` move os `<details>` para dentro de
+     `.p52-ctxregion-body`, `p52DecorateContextGroups()` move os irmãos do
+     `<summary>` para dentro de `.p52-grp-body` e `p52MountHeaderHelp()`
+     embrulha o `<details>` num `div.p52-grphead`. Mover um nó que CONTÉM o
+     `activeElement` derruba o foco para `<body>` no Chromium, e o custo
+     medido para voltar ao mesmo controle era de 19 tabulações.
+
+     A correção tem duas metades, porque há dois instantes distintos:
+
+       1 · o foco que o OWNER restaurou e a decoração derrubou. Basta capturar
+           a identidade estável (`id`) do `activeElement` ANTES da decoração e
+           devolvê-la DEPOIS do último reparentamento — que é `p52CapHelp()`,
+           não `p52ContextRegions()`;
+       2 · o foco que o owner NÃO restaura, porque repinta sem repor: "+
+           Adicionar tecnologia", "Remover" e a troca de bundle. Nesses
+           caminhos o `activeElement` já é `<body>` quando a decoração roda, e
+           não há o que capturar. A INTENÇÃO é registrada antes, na fase de
+           CAPTURA do evento — isto é, antes do handler do owner —, e resolve
+           para um controle previsível e próximo da ação: o campo da tecnologia
+           recém-criada, o botão de adicionar da mesma capability, ou o próprio
+           rádio de bundle.
+
+     Três disciplinas fecham o contrato:
+
+       · a restauração só ocorre quando o foco foi REALMENTE perdido
+         (`activeElement` fora do editor ou `<body>`). Sem isso, uma passagem
+         qualquer do observador roubaria o foco de quem tabulou para fora —
+         e o mouse ganharia saltos perceptíveis;
+       · nada é restaurado num editor ausente, escondido ou vazio: uma tela
+         legitimamente fechada por Salvar/Cancelar não recebe foco de volta;
+       · `focus({preventScroll:true})` e a reposição da rolagem só quando ela
+         mudou durante a decoração. O objetivo não é maquiar `activeElement`,
+         é manter o fluxo utilizável por teclado.
+     ========================================================================== */
+  var p52FocusIntent = null;
+  var p52FocusIntentInstalled = false;
+  var p52FocusRestores = 0;      /* diagnóstico */
+
+  function p52HasSelection(n) {
+    if (!n) return false;
+    if (n.tagName === "TEXTAREA") return true;
+    if (n.tagName !== "INPUT") return false;
+    return /^(text|search|url|tel|password)$/.test(String(n.type || "text"));
+  }
+
+  /* A intenção é registrada na fase de CAPTURA: o handler do owner
+     (`onclick`/`onchange` do próprio nó) roda depois, e é ele quem destrói o
+     nó ao repintar. Registrar aqui é a única forma de saber o que o usuário
+     estava fazendo quando o foco se perdeu. */
+  function p52NoteFocusIntent(ev) {
+    try {
+      var t = ev && ev.target;
+      if (!t || t.nodeType !== 1 || typeof t.closest !== "function") { p52FocusIntent = null; return; }
+      /* interação FORA do editor descarta a intenção: toda intenção existe para
+         um repaint disparado por um controle de dentro. Deixá-la viva
+         permitiria que uma passagem posterior do observador movesse o foco por
+         causa de um clique que já não é o corrente. */
+      if (!t.closest("#v32editor")) { p52FocusIntent = null; return; }
+      /* A ROLAGEM É LIDA AQUI, e não na decoração. `paintEditor()` troca o
+         `innerHTML` do editor: por um instante o documento encolhe, o
+         navegador PRENDE o `scrollTop` ao novo limite e a posição não volta
+         sozinha quando o conteúdo é reinserido. Quando a decoração roda, o
+         salto já aconteceu — medido em -90px ao trocar de bundle. O valor de
+         antes do repaint é o único que preserva a leitura. */
+      var y = { x: window.pageXOffset || 0, y: window.pageYOffset || 0 };
+      var cap;
+      if (has(t, "v32-add") && (cap = t.getAttribute("data-cap"))) { p52FocusIntent = { kind: "add", cap: cap, scroll: y }; return; }
+      if (has(t, "v32-rm") && (cap = t.getAttribute("data-cap"))) { p52FocusIntent = { kind: "rm", cap: cap, scroll: y }; return; }
+      if (t.tagName === "INPUT" && t.getAttribute("name") === "v32-bundle") {
+        p52FocusIntent = { kind: "bundle", value: String(t.value == null ? "" : t.value), scroll: y }; return;
+      }
+      p52FocusIntent = t.id ? { kind: "id", id: t.id, scroll: y } : null;
+    } catch (e) { p52FocusIntent = null; }
+  }
+  function p52InstallFocusIntent() {
+    if (p52FocusIntentInstalled) return;
+    document.addEventListener("click", p52NoteFocusIntent, true);
+    document.addEventListener("change", p52NoteFocusIntent, true);
+    p52FocusIntentInstalled = true;
+  }
+
+  function p52ResolveFocusIntent(ed, it) {
+    if (!it || !ed) return null;
+    if (it.kind === "id") return it.id ? document.getElementById(it.id) : null;
+    if (it.kind === "bundle") {
+      var rad = ed.querySelectorAll('input[name="v32-bundle"]'), i;
+      for (i = 0; i < rad.length; i++) if (String(rad[i].value == null ? "" : rad[i].value) === it.value) return rad[i];
+      return null;
+    }
+    if (it.kind === "add") {
+      /* o campo da tecnologia recém-criada é o alvo mais próximo da ação */
+      var sols = document.getElementById("v32-sols-" + it.cap);
+      var vend = sols ? sols.querySelectorAll('input[id^="v32-sol-"][id$="-vendor"]') : null;
+      if (vend && vend.length) return vend[vend.length - 1];
+    }
+    /* "Remover" apaga a linha inteira: o controle previsível que resta é o
+       botão de adicionar da MESMA capability. */
+    return document.getElementById("v32-add-" + it.cap);
+  }
+
+  function p52CaptureEditorFocus(ed) {
+    var a = null;
+    try { a = document.activeElement; } catch (e) { a = null; }
+    var dentro = !!(a && a.nodeType === 1 && a !== document.body && ed.contains(a));
+    var sel = dentro && p52HasSelection(a);
+    return {
+      dentro: dentro,
+      id: dentro && a.id ? a.id : "",
+      selStart: sel ? a.selectionStart : null,
+      selEnd: sel ? a.selectionEnd : null,
+      x: window.pageXOffset || 0,
+      y: window.pageYOffset || 0
+    };
+  }
+
+  function p52RestoreEditorFocus(keep) {
+    var it = p52FocusIntent;
+    p52FocusIntent = null;                      /* consumida: nunca sobrevive a uma passagem */
+    var ed = document.getElementById("v32editor");
+    /* tela legitimamente fechada (Salvar/Cancelar) não recebe foco de volta */
+    if (!ed || has(ed, "v32-hidden") || !ed.children.length) return;
+    var a = null;
+    try { a = document.activeElement; } catch (e) { a = null; }
+    var perdido = !(a && a.nodeType === 1 && a !== document.body && ed.contains(a));
+    if (!perdido) return;                       /* ninguém perdeu foco: nada a fazer */
+    if (!keep.dentro && !it) return;            /* o foco não era do editor: não roubar */
+    var alvo = p52ResolveFocusIntent(ed, it);
+    if (!alvo && keep.id) alvo = document.getElementById(keep.id);
+    if (!alvo || !ed.contains(alvo) || typeof alvo.focus !== "function") return;
+    try { alvo.focus({ preventScroll: true }); }
+    catch (e) { try { alvo.focus(); } catch (e2) { return; } }
+    if (keep.selStart != null && alvo.id === keep.id && p52HasSelection(alvo)) {
+      try { alvo.setSelectionRange(keep.selStart, keep.selEnd); } catch (e) { /* seleção é conforto, não contrato */ }
+    }
+    /* a posição de antes do repaint do owner tem precedência sobre a lida na
+       entrada da decoração: quando há intenção, o salto já ocorreu. */
+    var sx = (it && it.scroll) ? it.scroll.x : keep.x;
+    var sy = (it && it.scroll) ? it.scroll.y : keep.y;
+    if ((window.pageXOffset || 0) !== sx || (window.pageYOffset || 0) !== sy) {
+      try { window.scrollTo(sx, sy); } catch (e) { /* idem */ }
+    }
+    p52FocusRestores++;
+  }
+
+  /* ==========================================================================
+     ERRATA FINAL V3.2.2 · M-02 — UMA ÚNICA REGIÃO DE ERRO OPERACIONAL.
+
+     `uxOpenHomeEditor()` injeta um `<div id="v32errors">` FORA de `#v32editor`
+     e `paintEditor()` emite o seu, imediatamente antes de Salvar/Cancelar. Na
+     entrada pela HOME o documento ficava com DOIS nós de mesmo id, e
+     `getElementById` devolvia o externo — a mensagem de `save()` aparecia
+     acima do editor, longe do botão que a provocou, e a caixa interna ficava
+     permanentemente vazia.
+
+     `ui_ux_v32.js` é superfície de camada 4.1 e está fora da change boundary
+     desta errata; a correção é da APRESENTAÇÃO: o nó externo é removido na
+     PRIMEIRA passagem de decoração da sessão de edição, que acontece dentro do
+     mesmo clique — `uxOpenHomeEditor()` chama `window.__V32UI.openEditor()`,
+     que esta camada embrulha com `p52NewEditSession()`. Nenhum caminho do
+     owner escreve em `#v32errors` antes disso, de modo que não há mensagem a
+     preservar: a partir daí `getElementById("v32errors")` resolve para a caixa
+     do editor, junto das ações, que é onde a §5.2 a quer.
+     ========================================================================== */
+  function p52DedupeEditorErrors(ed) {
+    var interna = ed.querySelector(".v32-errors");
+    if (!interna || interna.id !== "v32errors") return;
+    var todas = document.querySelectorAll("#v32errors"), i, n;
+    for (i = 0; i < todas.length; i++) {
+      n = todas[i];
+      if (n === interna || ed.contains(n)) continue;
+      if (n.parentNode) n.parentNode.removeChild(n);
+    }
+  }
+
+  function p52ContextEditorDecor() {
+    var ed = document.getElementById("v32editor");
+    if (!ed) return;
+    var keep = p52CaptureEditorFocus(ed);
+    p52DedupeEditorErrors(ed);
+    p52ContextRegions(ed);
+    p52DecorateContextGroups(ed);
+    p52CapHelp(ed);
+    /* a restauração é a ÚLTIMA coisa da passagem: `p52CapHelp()` ainda
+       reparenteia o `<details>` ao montar o wrapper de cabeçalho. */
+    p52RestoreEditorFocus(keep);
+  }
+
+  /* ==========================================================================
+     PATCH V3.2.2 · CORREÇÃO C — A PENDÊNCIA APARECE ONDE O USUÁRIO AGE.
+
+     O bloqueio funcional da v3.2.1 está correto e não é tocado: `safePrint()`
+     continua sendo o único dono da decisão, e `window.print()` continua não
+     sendo invocado com draft aberto. O defeito era de LOCALIZAÇÃO. Medido na
+     v3.2.1 em 1440x900: a mensagem canônica ficava a 5.544px acima do botão
+     que acabara de falhar, o trilho não sinalizava nada e o usuário tinha de
+     descobrir sozinho onde salvar ou cancelar.
+
+     As três apresentações abaixo derivam do MESMO estado publicado pelo owner
+     (`window.__V32UI.hasDraft()`), por uma função IDEMPOTENTE, chamada tanto
+     pelas transições do owner quanto por toda passagem de decoração:
+
+       1 · mensagem inline logo abaixo do grupo de ações que contém
+           "Imprimir / salvar em PDF", com o texto EXATO da v3.2.1,
+           `role="alert"`, `aria-live="assertive"`, `aria-describedby` no botão
+           e uma ação "Ir para contexto tecnológico" que leva ao editor SEM
+           descartar o draft;
+       2 · indicador nomeado no item "Contexto tecnológico" do trilho lateral,
+           persistente enquanto o draft existir, com texto acessível — nunca só
+           cor — e que continua sendo o link de navegação da seção;
+       3 · a mensagem junto a Salvar/Cancelar, que já existia e permanece do
+           owner: esta camada só a LÊ, nunca a escreve.
+
+     Antes da tentativa de impressão o trilho diz "alterações pendentes"; a
+     ênfase de erro e a mensagem local só existem DEPOIS de a tentativa ter
+     sido bloqueada (§6.3). Nada aqui é serializado, entra no payload M41 ou
+     chega ao papel: os nós vivem só na superfície de tela.
+     ========================================================================== */
+  var P52_PENDING_MSG = "Salve ou cancele as alterações do contexto tecnológico antes de gerar o relatório.";
+  var P52_PENDING_ID = "p52-print-pending";
+  var P52_PENDING_RAIL_TEXT = "alterações pendentes";
+
+  function p52PrintButton() {
+    var b = document.querySelectorAll("button"), i;
+    for (i = 0; i < b.length; i++)
+      if (/Imprimir \/ salvar em PDF/.test(b[i].textContent || "")) return b[i];
+    return null;
+  }
+  /* ==========================================================================
+     LEITURA DO ESTADO — SEM UM SEGUNDO BOOLEANO DE VERDADE E SEM TOCAR NO OWNER.
+
+     O estado de pendência continua sendo, exclusivamente, o `draft` de
+     `ui_v32.js`. Esta camada NÃO o espelha: ela o LÊ, pela ponte que o próprio
+     owner publica. `window.__DEV._setDraft(fn)` é declarado como
+     `fn => { if (draft) fn(draft); }` — invocar a função só acontece quando
+     `draft` não é nulo, de modo que a sonda abaixo devolve literalmente
+     `draft !== null`, lido da variável do owner, sem cópia e sem cache.
+
+     `ui_v32.js` é superfície CONGELADA pela §29.4 da Phase 5.0 e fixada byte a
+     byte por `P50-GOV1`/`P50-IC4`. Publicar um acessor novo ali exigiria
+     reautorizar o pino desses gates, em arquivo fora da boundary desta rodada.
+     Como o owner JÁ publica uma leitura suficiente, tocar nele não é
+     materialmente necessário — e a §3 só autoriza a edição nessa condição.
+
+     Projeção de DOM como reserva: `#v32editor` visível e povoado equivale a
+     `draft !== null` em todos os caminhos do owner (`openEditor` revela e cria
+     o draft; Salvar e Cancelar anulam o draft e escondem, esvaziam ou
+     rerenderizam a tela). Serve apenas se a ponte não existir.
+     ========================================================================== */
+  function p52DraftPending() {
+    try {
+      if (window.__DEV && typeof window.__DEV._setDraft === "function") {
+        var vivo = false;
+        window.__DEV._setDraft(function () { vivo = true; });
+        return vivo;
+      }
+      var ed = document.getElementById("v32editor");
+      return !!(ed && !has(ed, "v32-hidden") && ed.children.length);
+    } catch (e) { return false; }
+  }
+  /* Memória de APRESENTAÇÃO de que a impressão já foi tentada e bloqueada. Não
+     é um segundo estado de pendência: é o que separa "há alterações pendentes"
+     (informação, desde o primeiro caractere) de "a sua impressão falhou por
+     isto" (erro, só depois da tentativa) — a distinção que a §6.3 exige. Morre
+     junto com o draft: ver a reposição em `p52SyncContextDraftUi()`. */
+  var p52PrintAttempted = false;
+  function p52DraftBlockedPrint() { return p52DraftPending() && p52PrintAttempted; }
+
+  /* A tentativa é detectada no BORBULHAMENTO, depois do handler do owner.
+     `wireSafePrint()` instala `safePrint` como `onclick` DO BOTÃO; um listener
+     delegado no documento roda em seguida, no mesmo evento. Se ainda existe
+     draft nesse instante, a impressão foi bloqueada por `safePrint()` — a
+     decisão continua sendo dele, esta camada apenas a observa. Salvar e
+     Cancelar não precisam de listener próprio: quando o draft morre, a
+     reposição em `p52SyncContextDraftUi()` limpa a memória da tentativa. */
+  var p52PrintWatchInstalled = false;
+  function p52InstallPrintWatch() {
+    if (p52PrintWatchInstalled) return;
+    document.addEventListener("click", function (ev) {
+      var t = ev && ev.target;
+      if (!t || typeof t.closest !== "function") return;
+      var b = t.closest("button");
+      if (!b || !/Imprimir \/ salvar em PDF/.test(b.textContent || "")) return;
+      try {
+        if (p52DraftPending()) p52PrintAttempted = true;
+        p52SyncContextDraftUi();
+      } catch (e) { p52Errors++; console.error("P52 print watch:", e.message); }
+    }, false);
+    p52PrintWatchInstalled = true;
+  }
+
+  /* Leva ao editor de contexto sem tocar no draft: rola até a seção, revela o
+     editor se ele estiver recolhido e põe o foco no primeiro campo real. Só
+     NAVEGA — nunca salva, nunca cancela, nunca repinta. */
+  function p52GotoContextEditor() {
+    var ed = document.getElementById("v32editor");
+    var sec = document.getElementById(secId("context"));
+    var target = sec || ed;
+    if (target) {
+      try { target.scrollIntoView({ behavior: reducedMotion() ? "auto" : "smooth", block: "start" }); }
+      catch (e) { target.scrollIntoView(); }
+    }
+    if (ed) {
+      var first = ed.querySelector("summary, select, input, button");
+      if (first && typeof first.focus === "function") first.focus({ preventScroll: true });
+    } else if (sec && typeof sec.focus === "function") sec.focus({ preventScroll: true });
+  }
+
+  function p52SyncContextDraftUi() {
+    try {
+      /* ÚNICO ponto de reposição da memória da tentativa. Salvar com sucesso,
+         Cancelar e fechar o editor de qualquer outro modo matam o draft — e o
+         erro de impressão deixa de existir junto com ele. Salvar que FALHA na
+         validação mantém o draft vivo e, corretamente, mantém a orientação. */
+      if (!p52DraftPending()) p52PrintAttempted = false;
+      p52SyncPrintPending();
+      p52SyncRailPending();
+    } catch (e) { p52Errors++; console.error("P52 ctx pending:", e.message); }
+  }
+
+  /* --- 1 · mensagem no ponto de ação do PDF -------------------------------- */
+  function p52SyncPrintPending() {
+    var btn = p52PrintButton();
+    var show = p52DraftBlockedPrint();
+    /* a limpeza é global por SELETOR, não por referência: se um rerender do
+       owner recriou o grupo de ações, o nó órfão sai junto e a contagem por
+       local continua sendo exatamente 1 (§7.3.12). */
+    var old = document.querySelectorAll('[data-p52="print-pending"]'), i;
+    if (!show || !btn) {
+      for (i = 0; i < old.length; i++) if (old[i].parentNode) old[i].parentNode.removeChild(old[i]);
+      var all = document.querySelectorAll("button"), k;
+      for (k = 0; k < all.length; k++)
+        if (all[k].getAttribute("aria-describedby") === P52_PENDING_ID) all[k].removeAttribute("aria-describedby");
+      return;
+    }
+    var group = btn.closest(".actions") || btn.parentNode;
+    /* CONVERGÊNCIA OBRIGATÓRIA. Esta função roda também sob MutationObserver:
+       inserir um nó É uma mutação, e uma passagem que SEMPRE cria um nó novo
+       agenda a passagem seguinte para sempre. O reaproveitamento abaixo não é
+       otimização — é a condição de parada. Se já existe uma mensagem no lugar
+       certo (imediatamente depois do grupo de ações corrente), ela é
+       REAPROVEITADA e o DOM não muda; qualquer outra, órfã de um rerender do
+       owner, é descartada. Assim a contagem por local é exatamente 1 (§7.3.12)
+       e a segunda passagem do observador não produz mutação alguma. */
+    var box = null;
+    for (i = 0; i < old.length; i++) {
+      if (!box && old[i].previousElementSibling === group) box = old[i];
+      else if (old[i].parentNode) old[i].parentNode.removeChild(old[i]);
+    }
+    if (!box) {
+      box = el("div", {
+        id: P52_PENDING_ID, "class": "p52-print-pending", "data-p52": "print-pending",
+        role: "alert", "aria-live": "assertive"
+      });
+      box.appendChild(el("p", { "class": "p52-print-pending-msg" }, P52_PENDING_MSG));
+      var go = el("button", {
+        type: "button", "class": "p52-print-pending-go", "data-p52": "goto-context"
+      }, "Ir para contexto tecnológico");
+      go.addEventListener("click", function (ev) { ev.preventDefault(); p52GotoContextEditor(); });
+      box.appendChild(go);
+      if (group && group.parentNode) group.parentNode.insertBefore(box, group.nextSibling);
+      else return;
+    }
+    btn.setAttribute("aria-describedby", P52_PENDING_ID);
+  }
+
+  /* --- 2 · indicador no trilho lateral ------------------------------------- */
+  function p52SyncRailPending() {
+    var link = document.getElementById("p52-railto-context");
+    if (!link) return;
+    var pending = p52DraftPending();
+    var mark = link.querySelector('[data-p52="rail-pending"]');
+    if (!pending) {
+      while (mark) { if (mark.parentNode) mark.parentNode.removeChild(mark); mark = link.querySelector('[data-p52="rail-pending"]'); }
+      link.removeAttribute("data-p52-pending");
+      return;
+    }
+    /* idempotência: um só indicador, criado uma vez e reaproveitado */
+    var extra = link.querySelectorAll('[data-p52="rail-pending"]'), i;
+    for (i = 1; i < extra.length; i++) if (extra[i].parentNode) extra[i].parentNode.removeChild(extra[i]);
+    if (!mark) {
+      mark = el("span", { "class": "p52-rail-pending", "data-p52": "rail-pending" });
+      /* o ponto luminoso é DECORATIVO; quem nomeia o estado é o texto ao lado.
+         A informação nunca depende só da cor. */
+      mark.appendChild(el("span", { "class": "p52-rail-pending-dot", "aria-hidden": "true" }));
+      mark.appendChild(el("span", { "class": "p52-rail-pending-text" }, P52_PENDING_RAIL_TEXT));
+      link.appendChild(mark);
+    }
+    /* "pending" enquanto for só informação; "error" depois de a impressão ter
+       sido bloqueada. O TEXTO não muda de sentido: continua explicando a ação. */
+    link.setAttribute("data-p52-pending", p52DraftBlockedPrint() ? "error" : "pending");
+  }
+
   var p52HelpKeyInstalled = false;
   function p52InstallHelpEscape() {
     if (p52HelpKeyInstalled) return;
@@ -11133,8 +11871,8 @@ if (window.__DEV) Object.assign(window.__DEV, { openExportModal, openImportPicke
       if (busy) return;
       busy = true;
       try {
-        var ed = document.getElementById("v32editor");
-        if (ed) { p52ContextRegions(ed); p52DecorateContextGroups(ed); p52CapHelp(ed); }
+        p52ContextEditorDecor();
+        p52SyncContextDraftUi();
         var panel = document.getElementById("v32panel");
         if (panel) p52DecorateContextCta(panel);
       } catch (e) { p52Errors++; console.error("P52 ctx observer:", e.message); }
@@ -11145,12 +11883,23 @@ if (window.__DEV) Object.assign(window.__DEV, { openExportModal, openImportPicke
        deixaria o estado dos grupos indecorado durante todo o clique. Um
        listener delegado na fase de BOLHA roda logo após o handler do owner —
        sem substituí-lo, sem cancelar o evento e sem tocar em valor algum. */
+    /* PATCH V3.2.2 · os dois CTAs da HOME entram no mesmo listener delegado.
+       `uxOpenHomeEditor()` troca o `innerHTML` de `#app` de forma SÍNCRONA no
+       handler do owner; o MutationObserver só entregaria no checkpoint de
+       microtarefas, deixando a lista plana visível durante todo o clique. */
     document.addEventListener("click", function (ev) {
       var t = ev && ev.target;
-      if (!t || typeof t.closest !== "function" || !t.closest("#v32cta, #v32editor summary")) return;
+      if (!t || typeof t.closest !== "function" ||
+          !t.closest("#v32cta, #v32editor summary, #ux-addctx, #ux-editctx")) return;
       try {
-        var ed = document.getElementById("v32editor");
-        if (ed) { p52ContextRegions(ed); p52DecorateContextGroups(ed); p52CapHelp(ed); }
+        /* ERRATA V3.2.2 · CORREÇÃO B · abrir o editor é um evento DIFERENTE de
+           decorá-lo. Só os CTAs de abertura iniciam uma edição — o clique num
+           `<summary>` é o usuário mexendo no accordion e não pode recolher
+           coisa alguma. `#v32cta` é o único caminho da entrada dos resultados
+           que esta camada alcança: `openEditor` vive dentro da IIFE do owner. */
+        if (t.closest("#v32cta, #ux-addctx, #ux-editctx")) p52NewEditSession();
+        p52ContextEditorDecor();
+        p52SyncContextDraftUi();
         var panel = document.getElementById("v32panel");
         if (panel) p52DecorateContextCta(panel);
       } catch (e) { p52Errors++; console.error("P52 ctx click:", e.message); }
@@ -11163,6 +11912,7 @@ if (window.__DEV) Object.assign(window.__DEV, { openExportModal, openImportPicke
       catch (e) { p52Errors++; console.error("P52 ctx toggle:", e.message); }
     }, true);
     obs.observe(document.body, { childList: true, subtree: true });
+    p52InstallPrintWatch();
     p52ObserverInstalled = true;
   }
 
@@ -11740,10 +12490,11 @@ if (window.__DEV) Object.assign(window.__DEV, { openExportModal, openImportPicke
     var ctx = document.getElementById("v32panel");
     if (ctx) {
       p52DecorateContextCta(ctx); p52ContextSummary(ctx);
-      p52ContextRegions(document.getElementById("v32editor"));
+      p52ContextEditorDecor();
       p52DecorateContextGroups(ctx); p52CapHelp(ctx);
     }
     p52InstallContextObserver();
+    p52SyncContextDraftUi();
     p52TagDomains(flow);
     p52WireRail(nav, flow);
   }
@@ -11867,6 +12618,11 @@ if (window.__DEV) Object.assign(window.__DEV, { openExportModal, openImportPicke
     var host = app || document.getElementById("app");
     if (!host) return;
     p52DecorateFooter();
+    /* ERRATA V3.2.2 · a marcação de navegação é a PRIMEIRA coisa da passagem:
+       ela tem de ver a coordenada da tela recém-criada antes que qualquer
+       decorador mova nó algum, e tem de rodar em TODA tela, inclusive nas que
+       retornam cedo mais abaixo. É idempotente por nó. */
+    p52ScreenMotion(host);
     p52Copy(host);                       /* COPY-B · linguagem de apresentação */
     var screen = p52Screen();
     p52Passes++; p52LastScreen = screen;
@@ -11874,16 +12630,21 @@ if (window.__DEV) Object.assign(window.__DEV, { openExportModal, openImportPicke
        qualquer retorno antecipado por tela. Ambos são idempotentes. */
     p52TItemIcons(host);
     p52Headings(host);
+    /* PATCH V3.2.2 · CORREÇÃO A — a composição do editor e o observador que a
+       mantém deixam de ser privilégio da tela de resultados. `p52Decor()` não
+       é reexecutado quando `uxOpenHomeEditor()` troca o `innerHTML` de `#app`
+       fora de `render()`; sem o observador instalado JÁ na home, nenhuma
+       passagem chegaria a ver o editor daquela entrada. As duas chamadas são
+       idempotentes e no-op quando `#v32editor` não existe. */
+    p52ContextEditorDecor();
+    p52InstallContextObserver();
+    p52SyncContextDraftUi();
     if (screen === "results") { p52BuildWorkspace(host); return; }
     var stale = document.getElementById("p52-workspace");
     if (stale && stale.parentNode) stale.parentNode.removeChild(stale);
     if (screen === "home") { p52Home(host); return; }
     if (screen === "question") { p52DecorateEvidence(); p52QuestionLayout(host); return; }
-    if (screen === "ctxeditor") {
-      var ed = document.getElementById("v32editor");
-      if (ed) { p52ContextRegions(ed); p52DecorateContextGroups(ed); p52CapHelp(ed); }
-      p52InstallContextObserver();
-    }
+    /* `ctxeditor` já foi integralmente atendida acima. */
   }
 
   function p52Safe(app) {
@@ -11894,6 +12655,61 @@ if (window.__DEV) Object.assign(window.__DEV, { openExportModal, openImportPicke
   if (window.__P50 && typeof window.__P50.registerDecor === "function") {
     window.__P50.registerDecor(p52Safe);
   }
+
+  /* ERRATA V3.2.2 · CORREÇÃO B — ONDE A INTERVENÇÃO É POSSÍVEL.
+
+     `ui_v32.js` inteiro vive dentro de uma IIFE. `openEditor` e `paintEditor`
+     NÃO são bindings alcançáveis por nome desta camada — medido: no runtime
+     construído, `window.openEditor` e `window.paintEditor` são `undefined`,
+     enquanto `window.render` (declarada na Camada 1) existe. Embrulhar
+     `paintEditor` seria código morto, e código morto que parece uma correção
+     é pior do que correção nenhuma.
+
+     Os ÚNICOS pontos públicos reais são dois, e a correção usa os dois:
+
+       1 · `window.__V32UI.openEditor` — a ponte que o owner publica. É por ela
+           que `uxOpenHomeEditor()` abre o editor na entrada da HOME;
+       2 · o evento de clique nos CTAs que abrem o editor (`#v32cta` nos
+           resultados, `#ux-addctx` e `#ux-editctx` na home). O listener
+           delegado desta camada já existe e roda na fase de BOLHA — ou seja,
+           DEPOIS de o handler do owner ter pintado o editor, e ainda DENTRO
+           do mesmo evento, antes de qualquer repintura de tela.
+
+     Os dois convergem para `p52NewEditSession()`, que é a única função
+     autorizada a recolher grupos. Ela roda uma vez por EDIÇÃO — nunca numa
+     repintura, nunca numa passagem do observador, nunca num toggle. É essa
+     restrição, e não uma flag global, que garante a §4: o estado aberto/
+     recolhido escolhido pelo usuário sobrevive a todo repaint, e só uma nova
+     edição volta ao estado inicial recolhido.
+
+     O foco é reposicionado no primeiro `<summary>` porque, com tudo
+     recolhido, ele é o primeiro controle que o usuário realmente alcança —
+     o `select` que o owner focara está dentro de um `<details>` fechado e não
+     é renderizado. Mesmo alvo que `p52GotoContextEditor()` já usava.
+     ========================================================================== */
+  function p52NewEditSession() {
+    var ed = document.getElementById("v32editor");
+    if (!ed) return;
+    p52CollapseGroups(ed);
+    p52ContextEditorDecor();
+    p52SyncContextDraftUi();
+    p52FocusEditorEntry();
+  }
+  if (window.__V32UI && typeof window.__V32UI.openEditor === "function") {
+    var p52PrevOpenEditor = window.__V32UI.openEditor;
+    window.__V32UI.openEditor = function () {
+      var r = p52PrevOpenEditor.apply(this, arguments);
+      try { p52NewEditSession(); }
+      catch (e) { p52Errors++; console.error("P52 open editor:", e.message); }
+      return r;
+    };
+  }
+
+  /* PATCH V3.2.2 · ponte registrada para o owner do draft (`ui_v32.js`).
+     O owner avisa nas quatro transições reais do estado — abrir editor,
+     bloquear print, Salvar e Cancelar — e a apresentação se reconstrói a
+     partir do estado publicado, nunca de um espelho próprio. */
+  window.__P52CtxDraftSync = p52SyncContextDraftUi;
 
   /* Segunda entrada, DEPOIS de `uxAfterRender()`.
      `window.__uxDecor` é invocado por `renderResults()` — ANTES de
@@ -11949,11 +12765,132 @@ if (window.__DEV) Object.assign(window.__DEV, { openExportModal, openImportPicke
     catch (e) { p52Errors++; console.error("P52 copy print:", e.message); }
   });
 
+  /* ==========================================================================
+     ERRATA FINAL V3.2.2 · B-01 + A-01 — SEMÂNTICA CORRETA DE `Enter`.
+
+     O DEFEITO. O handler global de teclado da camada congelada decide por
+     `tagName` e por classe:
+
+         if(e.target && (e.target.tagName==="TEXTAREA" || e.target.tagName==="INPUT")) return;
+         if((e.key==="Enter"||e.key===" ") && e.target?.classList?.contains("opt")) return;
+         if(step===-1 && e.key==="Enter"){ step=0; render(); return; }
+
+     `BUTTON`, `SELECT`, `SUMMARY` e `A[href]` não estão isentos. Como
+     `uxOpenHomeEditor()` monta a tela do editor SEM alterar `step` — que
+     continua em -1 —, qualquer `Enter` no editor aberto pela home caía no ramo
+     "home → iniciar questionário", chamava `render()` e substituía `#app`. O
+     `draft` vive fora do DOM, sobrevivia órfão, e `safePrint()` passava a
+     recusar (corretamente) imprimir, sem editor na tela para salvar ou
+     cancelar. Nas demais telas o mesmo sequestro fazia botões executarem ação
+     DIFERENTE da rotulada — "← Voltar" avançava.
+
+     ONDE A CORREÇÃO É POSSÍVEL. O handler vive no HTML congelado (camada 1) e
+     não é alcançável por nome: não há referência para removê-lo nem para
+     embrulhá-lo. `ui_ux_v32.js` (que monta a tela do editor sem mexer em
+     `step`) é superfície 4.1, fora da change boundary. O único ponto de
+     intervenção legítimo é a PROPAGAÇÃO do evento.
+
+     POR QUE `<html>`, NA BOLHA — E NÃO `document`, NEM CAPTURA. O caminho de
+     um `keydown` é `window → document → html → … → alvo → … → html →
+     document → window`. Um listener de CAPTURA em `document` rodaria antes do
+     alvo e barrar ali mataria os handlers do próprio controle. Um listener de
+     BOLHA em `document` rodaria DEPOIS do handler congelado, que foi
+     registrado primeiro. `document.documentElement`, na bolha, é o último nó
+     antes de `document`: o evento já passou pelo alvo e por todos os
+     ancestrais elementares — todos os handlers de elemento já rodaram — e a
+     AÇÃO PADRÃO (o clique nativo que o `<button>` dispara, a navegação do
+     `<a>`, o comportamento do `<select>`) é intocada, porque `stopPropagation`
+     não é `preventDefault`. O único ouvinte suprimido é o global congelado;
+     medido no artefato: os outros ouvintes de `keydown` em `document` são o de
+     `Escape` desta camada (só `Escape`) e o da camada de refinamento
+     (registrado em CAPTURA, portanto anterior a este).
+
+     QUANDO SUPRIMIR. Cinco condições, e o atalho global sobrevive a todas as
+     outras:
+
+       1 · composição de IME — `Enter` confirma o texto, não navega;
+       2 · `Enter` com Ctrl/Meta/Alt — não é o atalho que a interface anuncia;
+       3 · evento já consumido (`defaultPrevented`) por um handler mais
+           próximo, que é quem sabe o que a tecla significa ali;
+       4 · o alvo TRATA A PRÓPRIA ATIVAÇÃO (`button`, `select`, `input`,
+           `textarea`, `summary`, `a[href]`, `[contenteditable]`,
+           `[role=button]`, `[role=link]`) — a regra que o handler congelado
+           deveria ter e não tem;
+       5 · a tela corrente NÃO é a que o atalho controla. O ramo `step===-1`
+           promete "continuar a partir da home"; `p52RealHome()` exige a tela
+           da home DE FATO — sem editor de contexto vivo e com o `#start` que a
+           interface mostra — em vez de aceitar `step === -1` como prova, que
+           foi exatamente o que produziu o BLOCKER.
+
+     O QUE NÃO MUDA. `Enter` sobre um card `.opt` continua selecionando (o
+     handler congelado já o isentava, e a ativação nativa do `<button>` é a
+     mesma). `Enter` com o foco fora de um controle continua avançando o
+     questionário, a partida na home e as prioridades: nenhuma das cinco
+     condições se aplica, o evento chega intacto ao handler congelado e o
+     contrato de teclado documentado permanece.
+     ========================================================================== */
+  var P52_ENTER_SELF = 'button, select, input, textarea, summary, a[href], ' +
+    '[contenteditable]:not([contenteditable="false"]), [role="button"], [role="link"]';
+
+  function p52HandlesOwnEnter(t) {
+    if (!t || t.nodeType !== 1) return false;
+    if (t.isContentEditable) return true;
+    try { return !!(typeof t.matches === "function" && t.matches(P52_ENTER_SELF)); }
+    catch (e) { return false; }
+  }
+
+  /* A home DE FATO: a tela que o atalho `Enter → começar` controla. Não basta
+     `step === -1` — o editor de contexto aberto pela home mantém esse valor. */
+  function p52RealHome() {
+    if (p52Screen() !== "home") return false;
+    var ed = document.getElementById("v32editor");
+    if (ed && !has(ed, "v32-hidden") && ed.children.length) return false;
+    return !!document.getElementById("start");
+  }
+  function p52EnterOwnsScreen() {
+    var s = p52Screen();
+    if (s === "ctxeditor") return false;      /* tela do editor: o atalho não é dela */
+    if (s === "home") return p52RealHome();
+    return true;                              /* demais telas: contrato congelado intacto */
+  }
+
+  var p52EnterGuardInstalled = false;
+  var p52EnterShielded = 0;                   /* diagnóstico */
+  var p52EnterLastReason = null;              /* diagnóstico */
+  function p52InstallEnterGuard() {
+    if (p52EnterGuardInstalled) return;
+    var root = document.documentElement;
+    if (!root || typeof root.addEventListener !== "function") return;
+    root.addEventListener("keydown", function (ev) {
+      if (!ev || ev.key !== "Enter") return;
+      if (typeof ev.stopPropagation !== "function") return;
+      var motivo = null;
+      if (ev.isComposing === true || ev.keyCode === 229) motivo = "ime";
+      else if (ev.ctrlKey || ev.metaKey || ev.altKey) motivo = "modificador";
+      else if (ev.defaultPrevented) motivo = "ja-tratado";
+      else if (p52HandlesOwnEnter(ev.target)) motivo = "alvo-ativa-sozinho";
+      else if (!p52EnterOwnsScreen()) motivo = "tela-nao-e-do-atalho";
+      if (!motivo) return;
+      p52EnterShielded++;
+      p52EnterLastReason = motivo;
+      /* a AÇÃO PADRÃO segue: o `<button>` dispara o seu clique, o `<select>`
+         mantém o comportamento nativo. Só o ouvinte global de `document` fica
+         de fora. */
+      ev.stopPropagation();
+    }, false);
+    p52EnterGuardInstalled = true;
+  }
+
+  p52InstallEnterGuard();
+  p52InstallFocusIntent();
+
   window.__P52 = {
     __installed: true,
     sections: function () { return P52_SECTIONS.map(function (s) { return s.key; }); },
     diag: function () {
-      return { errors: p52Errors, observer: p52ObserverInstalled, passes: p52Passes, lastScreen: p52LastScreen };
+      return { errors: p52Errors, observer: p52ObserverInstalled, passes: p52Passes, lastScreen: p52LastScreen,
+        enterGuard: p52EnterGuardInstalled, enterShielded: p52EnterShielded, enterLastReason: p52EnterLastReason,
+        focusIntent: p52FocusIntentInstalled, focusRestores: p52FocusRestores };
     },
     targetOverrides: p52TargetOverrides,
     copy: p52Copy,

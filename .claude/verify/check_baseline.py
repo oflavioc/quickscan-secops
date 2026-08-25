@@ -25,8 +25,9 @@ except FileNotFoundError:
     sys.exit(1)
 
 pins = reg["files"]
-excl_prefixes = tuple(e[:-2] for e in reg["_meta"]["exclusoes"] if e.endswith("**"))
-excl_suffixes = tuple(e[1:] for e in reg["_meta"]["exclusoes"] if e.startswith("*."))
+_excl = [e.split(" (")[0] for e in reg["_meta"]["exclusoes"]]  # anotação entre parênteses é doc, não padrão
+excl_prefixes = tuple(e[:-2] for e in _excl if e.endswith("**"))
+excl_suffixes = tuple(e[1:] for e in _excl if e.startswith("*."))
 
 tracked = [f for f in subprocess.run(["git", "ls-files"], capture_output=True, text=True).stdout.splitlines() if f]
 

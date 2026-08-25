@@ -14,6 +14,10 @@ Exclusões (registradas no próprio registry):
   docs_phase5/**   relatórios e evidência de fase — alta rotatividade; os
                    manifestos históricos de fase seguem sendo a trilha deles
   *.zip            evidência binária (sai do git na migração da Onda 4/R11)
+  .claude/project-memory/**
+                   estado de processo — muda a cada fase por desenho; validação
+                   é do stage state, trilha é o git (piná-lo = baseline vermelho
+                   recorrente)
   pins.json        o registry não pina a si mesmo
 """
 import hashlib, json, subprocess, sys
@@ -22,7 +26,7 @@ from datetime import date
 if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
-EXCLUDE_PREFIXES = ("docs_phase5/",)
+EXCLUDE_PREFIXES = ("docs_phase5/", ".claude/project-memory/")
 EXCLUDE_SUFFIXES = (".zip",)
 SELF = ".claude/verify/pins.json"
 
@@ -52,7 +56,9 @@ def build():
                          "regenerar este registry no MESMO PR, com motivo no commit.",
             "gerado_de_head": head_sha(),
             "gerado_em": str(date.today()),
-            "exclusoes": ["docs_phase5/**", "*.zip", SELF],
+            "exclusoes": ["docs_phase5/**",
+                          ".claude/project-memory/** (estado de processo — muda por fase; validado pelo stage state, não por pin)",
+                          "*.zip", SELF],
         },
         "declared": {
             "m41_payload_sha256": "9794b267e4225d8fa14f0f0d84aed0e2979658bfa2565b459788ef3b3ed4365b",

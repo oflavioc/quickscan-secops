@@ -1,7 +1,7 @@
 {
   "_meta": {
     "descricao": "Registry único de pins — fonte de identidade dos artefatos (R8). Hashes = SHA-256 dos blobs de HEAD. Alterar arquivo pinado exige regenerar este registry no MESMO PR, com motivo no commit.",
-    "gerado_de_head": "7854891f6c81501ea91171a6be00bae9ff106261",
+    "gerado_de_head": "36d21705d927666081209487892a79f8e5ce6406",
     "gerado_em": "2026-08-25",
     "exclusoes": [
       "docs_phase5/**",
@@ -86,8 +86,9 @@
     "CLAUDE.md": "8685fb820ae4ecaec9896283dab209df0bf374f5075f0904e07fecd8206789c9",
     "CONTEXT.md": "ecfd06fa109a23d5f7f89464c6e2f56e87297bb1710c8ddf5d7b2a89f8c7fb6a",
     "ICON_ASSET_DECISIONS_V32.md": "f14494c78ae40af88f8a2adf49e30f314a6800736b11607d3382e0a31d5cce80",
+    "LICENSE": "1ddd9deeecd23a1cece8a3aee60c77f4168295535ea4d7cc0102c55d8e777c49",
     "MANIFEST.sha256": "defd52d1cfc57e6ca5a9ebcce8b620a080772b6ea62753f987c5a58f8ccf38c6",
-    "README.md": "bc671b5e58388f65c9951fc702ac315f50f0ab50ac91710b7548354c61a85d4e",
+    "README.md": "4f3534da0772170f779d8a36b62a769f11f1b8f3a64d558b5312f904c6281fbf",
     "SESSION_SCHEMA_V32.md": "9f74a849c3181c62f3d36d05a312987d8939e98bad8a0715f836da179e54a6f0",
     "USER_GUIDE.md": "6a38185877fb7fc7642f4887faf6bab1f5318378b28c6e779925d178da44392c",
     "build_v32_html.py": "b7724e247a43bb497e5ab08612b0b9e4974952acf2515b76f2cac8798221c84d",

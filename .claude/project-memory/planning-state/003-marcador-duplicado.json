@@ -1,6 +1,6 @@
 {
   "demanda": "003-marcador-duplicado",
-  "phase": "validate",
+  "phase": "done",
   "spec_dir": "specs/003-marcador-duplicado",
   "brief": "Corrigir o marcador V32_UI_END emitido 2x pelo builder e remover a exceção nominal KI-1",
   "branch": "feature/003-marcador-duplicado",
@@ -43,7 +43,9 @@
     ]
   },
   "validate": {
-    "status": "in_progress",
-    "conformance": "13/13 (100%) — 2a iteracao do spec-validate: gap do item 13 corrigido (b7a10f6 exclui project-memory do registry, 05f6bc3 repin de fechamento); pipeline completo 11 PASS / 0 FAIL no head 05f6bc3, M1 morto"
-  }
+    "status": "done",
+    "conformance": "13/13 (100%)",
+    "notes": "aceite de intenção do PO: não encontrei objeção; expansão b7a10f6 ratificada nominalmente pelo usuário no portão"
+  },
+  "pr_url": "https://github.com/oflavioc/quickscan-secops-v32-phase5-dev/pull/13"
 }

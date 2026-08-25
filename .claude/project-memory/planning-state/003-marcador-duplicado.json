@@ -44,6 +44,6 @@
   },
   "validate": {
     "status": "in_progress",
-    "conformance": "12/13 (92,3%) — gap unico, classe implementacao-divergente: stage baseline FAIL no head (commit 6bfbbb4 alterou arquivo pinado planning-state sem repin; G1-G5 todos verdes, M1 morto)"
+    "conformance": "13/13 (100%) — 2a iteracao do spec-validate: gap do item 13 corrigido (b7a10f6 exclui project-memory do registry, 05f6bc3 repin de fechamento); pipeline completo 11 PASS / 0 FAIL no head 05f6bc3, M1 morto"
   }
 }

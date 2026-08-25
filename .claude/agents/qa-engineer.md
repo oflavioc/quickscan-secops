@@ -3,7 +3,7 @@ name: qa-engineer
 description: "QA adversarial: escreve gates a partir dos critérios da spec, prova o RED antes da implementação, escreve o mutante que o gate mata, revalida green + regressão congelada. NUNCA implementa a correção. Use na Fase 4 (Red), na Fase 6 (conformidade) e para qualquer gate/mutante."
 tools: Read, Write, Edit, Glob, Grep, Bash
 model: fable
-effort: xhigh
+effort: max
 memory: project
 ---
 

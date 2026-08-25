@@ -1,7 +1,7 @@
 {
   "_meta": {
     "descricao": "Registry único de pins — fonte de identidade dos artefatos (R8). Hashes = SHA-256 dos blobs de HEAD. Alterar arquivo pinado exige regenerar este registry no MESMO PR, com motivo no commit.",
-    "gerado_de_head": "482196a173c9099804d68401905a2a0ea189598e",
+    "gerado_de_head": "b47c20bc27536dafb6fb5db3495f04ee91531928",
     "gerado_em": "2026-08-25",
     "exclusoes": [
       "docs_phase5/**",
@@ -83,7 +83,7 @@
     "icons_v32_source/FortiSOC.svg": "c395bf65ba4106ab17423a4afc7d71bd944fc4f4a2daa4e9e4d8f461cb7c20a2",
     "icons_v32_source/FortiSandbox.svg": "2a81a947724ca6310eee5e1e7b824856915f766482ce81a80322c4f2c6ea2b0f",
     "icons_v32_source/FortiXDR.svg": "224439945c540376e47f7bcb712a71ab5ce50d77241c8e9d3e851d68814edf39",
-    "package-lock.json": "abe535af33ccd636a022c014af038cb5aa20294a23328595722246b1ca24f75f",
+    "package-lock.json": "920d148fdfa9636df5128f44f38796a5e1d2fd74531c2ed3b1b24e564cdaaf1c",
     "package.json": "b0ee93a22172b9f8ceda5b10b3934aa52f039df415897020d352cac56351daef",
     "playwright.config.js": "9661deed970d595c62bc924708e1eb0b6d09c1c7db60176972819f1ea15b5dcf",
     "prototypes/.gitkeep": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",

@@ -1,10 +1,11 @@
 {
   "_meta": {
     "descricao": "Registry único de pins — fonte de identidade dos artefatos (R8). Hashes = SHA-256 dos blobs de HEAD. Alterar arquivo pinado exige regenerar este registry no MESMO PR, com motivo no commit.",
-    "gerado_de_head": "ea83d82555b15d6a509172e79742a938587a71af",
+    "gerado_de_head": "b7a10f6ba62e35bf585a6e70d4cbd2ada825a1ab",
     "gerado_em": "2026-08-25",
     "exclusoes": [
       "docs_phase5/**",
+      ".claude/project-memory/** (estado de processo — muda por fase; validado pelo stage state, não por pin)",
       "*.zip",
       ".claude/verify/pins.json"
     ]
@@ -28,7 +29,6 @@
     ".claude/hooks/lib/common.sh": "eaf980a5e0d08cf97c4fd5fb2d69f4433e990caa4ea2f96834e2b88a7c2f3f4e",
     ".claude/hooks/post-turn-verify.sh": "e46d2c17c4d7b0164154bd5220e2696011482da3dd49b28c41b90a844a89ea1a",
     ".claude/hooks/state-eval.sh": "a86541c83f6df86718de1d61a4465f1d1ce83cc376f5faa9b114fc9c2b58e0de",
-    ".claude/project-memory/planning-state/003-marcador-duplicado.json": "9a067da9a766c80ae01f31b2b81942212d7a0d4afd90a26e12a1e6e251673434",
     ".claude/rules/boundary.md": "327888a7af5719d2bb264058457d1c6782f62a6dcaa506fdf844336a55da47f4",
     ".claude/rules/design-decisions.md": "ec64b65d0d832a1edf1dc33187da37332940b97af70444aa08dacd9097bbd4d1",
     ".claude/rules/determinism.md": "90bab1c89c7b9a54c400b7124d60693a431face37f422e847e6d2e566cb5f76d",
@@ -57,7 +57,7 @@
     ".claude/templates/tasks.md": "08ce20d1d62483d632d79916c1a456a1e5fdd1cb25397561cd4a290fa21e1d15",
     ".claude/verify/boundary.json": "9207d20c0fb59203c65dba72a94abc2892fd1439cb54906f6e5a8e3600c47d39",
     ".claude/verify/bridges.json": "f9fcd09b61204708c2578335e46566bcd67b1ee38bf39ffcd8de380ec057c18d",
-    ".claude/verify/check_baseline.py": "66f986c405901f521c1dcf5af793783e37d1b96e6cf43b652d19f88099649cda",
+    ".claude/verify/check_baseline.py": "d9ea7fc9adbb1e18e2f96b6cc22cced6dd336404222e508d4a0aea43ecf4e1ce",
     ".claude/verify/check_boundary.py": "2441e32e6bd5477d4a9bec027345d74be26b7e260de245e49dfe5d6b0d853633",
     ".claude/verify/check_build.py": "65c8f33185cbaee3dcba03ce88d7935a982176814c9a2802540f2c49af51d924",
     ".claude/verify/check_lint_arch.py": "aac4e0f8be4cc25801dfe21dbf56374d1bce1a43a8fa4e1b67ab0cddfd20f9ee",
@@ -68,7 +68,7 @@
     ".claude/verify/compliance-audit.sh": "f680c419d389c642b34bc32e879e4506b0d1ceceb88c075b7128779c7770e344",
     ".claude/verify/env_doctor.py": "9664d0dc016f486eac028dc5f80e02bcb014562f9ea6754b43a4dde90d5aba47",
     ".claude/verify/expected_suites.json": "177132a671adefbd0e832b68caa047c59632913b32ce0da58a29f4e73085b173",
-    ".claude/verify/gen_pins.py": "f2cf62713fde156c7b556b7b9ede4f32335be685ca0c760ac6af3cd425e1a5d2",
+    ".claude/verify/gen_pins.py": "86c20d02492f895637c192c53589fd59aa59def9f988ba81c94ef8c7c996cce0",
     ".claude/verify/invariants.json": "b8571facafbe6098cc643886cd158f877dd702c0cba6ca5addff34fc3e10bee6",
     ".claude/verify/known_issues.json": "211861e14ebda31bc718227d70dee6ea03ad2a902957fcdab91bc13fcaaa4fd6",
     ".claude/verify/pipeline.yaml": "e1bb6adbdd636151e9eeccdf557def27cbaf33fd4306e6c0014968dd7be419e8",
@@ -129,6 +129,7 @@
     "screenshot_audit_43.md": "4bbdbb4b25f884347e4089205c0fe466f05a01cce7c0687844c5679426ef8aca",
     "session_roundtrip_report.md": "ffe0d30411cc086681a44fa8d69e1066a0bf26173f15dd8580286787056cf4f8",
     "specs/.gitkeep": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "specs/003-marcador-duplicado/matriz-gate-mutante.md": "8b9d894ba50bd8d4a0b37c505b0bc25254ae1d0aacf6dd36104b276648a99baa",
     "specs/003-marcador-duplicado/parecer-po-fase1.md": "16b43c85b0723a759cf90fc2440e7eb05f9c0a0eeebbd8b81a4d56a7feb475fb",
     "specs/003-marcador-duplicado/plan.md": "f3ed8cf001cfacfa5a141dda134a8dc286180a9212fe1a3406f23f9aa6872b30",
     "specs/003-marcador-duplicado/refinement.md": "217218cb884ed9d8c9b309cb3025dc24f211a52e9108afdb7eb5227490c87146",

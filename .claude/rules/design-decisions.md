@@ -12,6 +12,7 @@ confirmada como defeito gera ruído e desgasta a confiança nos achados reais.
 | **Suítes visuais fora do agregado local** | KI-3: exigem Chromium; execução canônica é o job `visual` do CI (em calibração) e o rito manual do proprietário. O `env-doctor` reporta a ausência — isso é o desenho, não uma lacuna. |
 | **Exceção UG8 no oráculo do p50_core** | Errata test-only autorizada pelo proprietário na microfase 5.0.4, registrada em comentário no próprio gate. |
 | **Fases 5.0–5.2 seladas sob o processo antigo** | Os registros históricos em `docs_phase5/` não são retro-ajustados pela estrutura nova; valem como foram selados. A estrutura governa DAQUI para frente. |
+| **planning-state/project-memory fora do registry de pins** | Estado de processo muda a cada fase por desenho: validado pelo stage `state`, trilha é o git — pinado nunca (commit `b7a10f6`; fix-finding anexo em `specs/003-marcador-duplicado/`). Fonte: ratificação nominal do usuário no portão da demanda 003, 2026-08-25. |
 
 ## Candidatas — observadas no exame, pendentes de confirmação do PO/proprietário
 

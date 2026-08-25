@@ -74,7 +74,7 @@ security operations: HTML único e autocontido, construído deterministicamente 
 `build_v32_html.py` (Camada 1 congelada V3.1.3 + engine V3.2 + módulos de UI por
 injeção). Sem rede, sem telemetria, sem persistência de navegador — por invariante.
 
-Linha do tempo: V3.2 Final Release imutável (`oflavioc/quickscan-secops-soc-cmm-v32`,
+Linha do tempo: V3.2 Final Release imutável (`oflavioc/quickscan-secops-soc-cmm-v32`, arquivado,
 tag v3.2.0) → Fase 5 (5.0 REV B, 5.1, 5.2 **seladas**; registros em `docs_phase5/`)
 → Estrutura Agêntica (documento acordado 2026-08-25; Ondas 0–1 entregues, esta é a 2).
 

@@ -14,8 +14,8 @@ contextuais e um relatório em PDF pronto para leitura executiva.
 
 | versão | o que é | onde está |
 |---|---|---|
-| **v3.2.2** | **produção publicada.** É a versão liberada e atualmente em uso. | [release `v3.2.2`](https://github.com/oflavioc/quickscan-secops-v32-phase5-dev/releases/tag/v3.2.2) |
-| **v3.2.1** | **versão anterior**, preservada e verificada como caminho de rollback. | [release `v3.2.1`](https://github.com/oflavioc/quickscan-secops-v32-phase5-dev/releases/tag/v3.2.1) |
+| **v3.2.2** | **produção publicada.** É a versão liberada e atualmente em uso. | [release `v3.2.2`](https://github.com/oflavioc/quickscan-secops/releases/tag/v3.2.2) |
+| **v3.2.1** | **versão anterior**, preservada e verificada como caminho de rollback. | [release `v3.2.1`](https://github.com/oflavioc/quickscan-secops/releases/tag/v3.2.1) |
 
 A v3.2.2 foi avaliada pelo proprietário e por revisão externa independente, promovida a produção e
 substituiu a v3.2.1. **A versão corrente do produto é a v3.2.2.** A v3.2.1 permanece preservada e

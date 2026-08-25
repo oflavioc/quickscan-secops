@@ -69,7 +69,9 @@ Verificado por leitura (não executei nada — fora do meu domínio):
   (V322-DOC3) valida que a imagem de abertura do README é um PNG local sob
   `docs_phase5/evidence_v322/`; `README.md:13` aponta para
   `docs_phase5/evidence_v322/V322-14-home-1920x1080.png`. Logo `evidence_v322`
-  **FICA** (43 arquivos, acervo da rodada v3.2.2 promovida a produção).
+  **FICA** (54 arquivos rastreados, acervo da rodada v3.2.2 promovida a produção —
+  contagem corrigida no parecer da Fase 1: a original, 43, era só o primeiro nível
+  do diretório e omitia o subdiretório `rev_c/`).
 - **Suítes ESCREVEM nos diretórios de evidência** como subproduto:
   `tools_p52_shots.js:16` (→ `evidence_p52`) e `:255` (→ `evidence_v322`, sob
   `V322_SHOTS=1`); `tests_p52_chromium.js:26,76–83` (→ `evidence_p52`, suprimido

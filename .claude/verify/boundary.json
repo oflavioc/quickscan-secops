@@ -1,7 +1,7 @@
 {
   "_meta": {
     "descricao": "Manifesto de boundary (R6 da Estrutura Agêntica). Classes de proteção com o rito que autoriza mudança. Consumido por guard-boundary.sh (bloqueio em tempo de edição), check_boundary.py (stage do pipeline) e compliance-audit.sh (deny coerente).",
-    "onda": 1
+    "onda": 4
   },
   "classes": {
     "frozen": {
@@ -21,7 +21,7 @@
       ]
     },
     "legacy": {
-      "rito": "Congelado como legado até a reconciliação da Onda 4. Não editar; a fonte de identidade é .claude/verify/pins.json.",
+      "rito": "Arquivado historicamente na Onda 4 (reconciliação): registro de proveniência congelado para sempre; a fonte de identidade é .claude/verify/pins.json. Nunca editar.",
       "paths": [
         "MANIFEST.sha256",
         "specs/PHASE_5_0_REV_A.md"

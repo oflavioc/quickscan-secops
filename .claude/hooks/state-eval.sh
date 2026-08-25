@@ -45,11 +45,25 @@ else
   echo "[verify] Nenhum pipeline completo verde registrado nesta máquina — rode: bash .claude/verify/run.sh"
 fi
 
-# (e) fase/demanda corrente (planning-state chega na Onda 2)
-if [ -d ".claude/project-memory/planning-state" ]; then
-  ls .claude/project-memory/planning-state/*.json >/dev/null 2>&1 && \
-    echo "[fase] planning-state presente — ver .claude/project-memory/planning-state/"
-else
-  echo "[fase] Sem planning-state (máquina SDD entra na Onda 2). Demandas seguem o documento 'Estrutura Agêntica QuickScan'."
-fi
+# (e) fase de PRODUTO (current_phase.json, Onda 4) + demandas em curso
+"$PYBIN" - <<'PY' 2>/dev/null || true
+import json
+from pathlib import Path
+try:
+    cp = json.load(open(".claude/verify/current_phase.json", encoding="utf-8"))
+    f = cp["fase_corrente"]
+    print(f"[produto] Fase {f['id']} {f['status']} · próxima: {cp['proxima_fase']['status']}")
+except Exception:
+    print("[produto] current_phase.json ausente/ilegível — estado de fase não verificável")
+DIR = Path(".claude/project-memory/planning-state")
+ativos = []
+for p in (sorted(DIR.glob("*.json")) if DIR.is_dir() else []):
+    try:
+        d = json.load(open(p, encoding="utf-8"))
+        if d.get("phase") != "done":
+            ativos.append(f"{d.get('demanda', p.stem)}:{d.get('phase')}")
+    except Exception:
+        pass
+print("[demanda] " + ("; ".join(ativos) if ativos else "nenhuma em curso — comportamento novo abre via skill new-demand"))
+PY
 exit 0

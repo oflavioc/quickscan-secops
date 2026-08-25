@@ -87,7 +87,9 @@ known = set()
 for issue in json.load(open(".claude/verify/known_issues.json", encoding="utf-8"))["issues"]:
     if issue.get("lint") == "suites-no-agregado":
         known |= set(issue["excecao"]["arquivos"])
-registered = {s["cmd"].split()[-1] for b in ("suites", "heavy") for s in reg[b].values()}
+registered = {s["cmd"].split()[-1] for b in ("suites", "heavy", "visual") if b in reg for s in reg[b].values()}
+mm = json.load(open(".claude/verify/mutation_map.json", encoding="utf-8"))["harnesses"]
+registered |= {h["cmd"].split()[-1] for h in mm.values()}
 falta = [str(f) for f in Path(".").glob("tests_*.js")
          if str(f) not in registered and str(f) not in known]
 print("\n".join(falta))

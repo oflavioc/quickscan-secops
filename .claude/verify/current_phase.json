@@ -1,0 +1,31 @@
+{
+  "_meta": {
+    "descricao": "Estado machine-readable da fase de PRODUTO (Onda 4, achado E1/E4: o estado vivia espalhado em prosa e drifteou). Fonte única consumida pelo state-eval a cada prompt. Atualizado exclusivamente no rito de abertura/selagem de fase (R4), nunca como efeito colateral.",
+    "onda": 4
+  },
+  "fase_corrente": {
+    "id": "5.2",
+    "status": "SELADA",
+    "registro": "docs_phase5/PHASE_5_2_ACCEPTANCE_AND_SEALING_RECORD.md",
+    "merge": "c1e3649 (PR #8, 2026-08-24)",
+    "tag": "v3.2.1"
+  },
+  "proxima_fase": {
+    "id": null,
+    "status": "NAO_ABERTA",
+    "gate_de_abertura": "specs/PHASE_X*.md commitada com hash registrado AQUI antes de qualquer implementação (R4)"
+  },
+  "specs_normativas": [
+    {
+      "escopo": "superfícies 5.0 congeladas",
+      "arquivo": "specs/PHASE_5_0_REV_B.md",
+      "sha256": "4f1583c733df62a9452aa7b218d962e40d781bb8d30dfc3179ad6e1ef004619b",
+      "promocao": "docs_phase5/REV_B_PROMOTION_RECORD.md"
+    }
+  ],
+  "notas": [
+    "Fases 5.1 e 5.2 foram seladas sem spec própria sob o processo antigo — valem como seladas (R13); registro retroativo da boundary real em docs_phase5/RECONCILIACAO_BOUNDARY_5_1_5_2.md",
+    "specs/PHASE_5_0_REV_A.md é histórica (REPROVADA); nunca normativa",
+    "Desenvolvimento corrente: Estrutura Agêntica (Ondas 0-4) e demandas via máquina SDD — estado em .claude/project-memory/planning-state/"
+  ]
+}

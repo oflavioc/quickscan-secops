@@ -25,6 +25,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # histórico completo: o stage tdd valida red.commit por sha e o
+                           # check_mutation usa merge-base — checkout raso quebra ambos
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
@@ -35,14 +38,21 @@ jobs:
         run: npm ci --engine-strict --no-audit --no-fund
       - name: Pipeline de verificação (completo)
         run: bash .claude/verify/run.sh
+        env:
+          MUTATION_DEFER_MISSING: "1"   # campanha chromium exigida é delegada ao job visual
       - name: Auditoria de conformidade da configuração agêntica
         run: bash .claude/verify/compliance-audit.sh
 
   visual:
-    if: github.event_name == 'workflow_dispatch' && inputs.visual
+    # Promovido na Onda 4 (calibração fechada na 6ª rodada: 67/37 + 27/27 + 44/44 +
+    # campanha p52 72/72 por trigger). Roda em PR/push; dispatch segue disponível.
+    if: github.event_name != 'workflow_dispatch' || inputs.visual
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # histórico completo: o stage tdd valida red.commit por sha e o
+                           # check_mutation usa merge-base — checkout raso quebra ambos
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
@@ -50,10 +60,21 @@ jobs:
         with:
           node-version: "24"
       - run: npm ci --engine-strict --no-audit --no-fund
-      - name: Instalar Chromium gerenciado do Playwright
-        run: npx playwright install --with-deps chromium
+      - name: Instalar Chromium gerenciado do Playwright + ferramentas de PDF
+        run: |
+          npx playwright install --with-deps chromium
+          sudo apt-get update -qq && sudo apt-get install -y -qq poppler-utils
+          # poppler (pdftoppm/pdftotext/pdfinfo): exigido pelo preflight canônico
+          # das suítes de print — 1ª calibração falhou exatamente nisso (3 gates)
       - name: Suítes visuais (playwright + chromium P50/P52)
         run: |
           npm run test:visual
           node tests_p50_chromium.js
           node tests_p52_chromium.js
+      - name: Restaurar árvore (suítes chromium legadas regravam evidência rastreada)
+        # Follow-up registrado: tests_p50_chromium reescreve docs_phase5/evidence_p50/*.json
+        # como efeito colateral (achado E9; a suíte é congelada — correção é demanda própria).
+        # No CI os bytes regravados são descartáveis: o repositório é a fonte.
+        run: git checkout -- docs_phase5/ 2>/dev/null || true
+      - name: Campanhas de mutação com Chromium (deferidas pelo job verify)
+        run: python .claude/verify/check_mutation.py

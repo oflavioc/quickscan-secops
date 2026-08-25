@@ -1,5 +1,7 @@
 # Quickscan SecOps · SOC-CMM
 
+<a href="https://github.com/oflavioc/quickscan-secops/actions/workflows/verify.yml"><img src="https://github.com/oflavioc/quickscan-secops/actions/workflows/verify.yml/badge.svg?branch=develop" alt="status do pipeline verify no CI"></a>
+
 Instrumento de **screening indicativo de alto nível** da maturidade de operações de segurança.
 Em 15 perguntas distribuídas por cinco domínios — Negócio, Pessoas, Processos, Tecnologia e
 Serviços — produz score de 0 a 5, estágio de maturidade, gaps, cenário-alvo, recomendações
@@ -175,6 +177,34 @@ riscos, mas não devem ser tratados como evidência autossuficiente do estado co
 A versão do runtime é publicada pela própria aplicação em `window.__QS_BUILD_META.toolVersion` e
 aparece no rodapé de metadados do relatório, junto da identidade do engine. Consulte sempre esses
 valores — em vez de anotá-los aqui, onde envelheceriam.
+
+## Desenvolvimento
+
+O produto é um HTML único gerado deterministicamente: `build_v32_html.py` injeta os módulos de UI
+sobre a Camada 1 congelada (V3.1.3) e o engine V3.2. O desenvolvimento é governado por uma estrutura
+de regras, agentes e verificação executável — o índice é o [`CLAUDE.md`](CLAUDE.md) e o resumo para
+agentes é o [`AGENTS.md`](AGENTS.md). Mudanças passam por gates com contagens canônicas, identidade
+por SHA-256 (`.claude/verify/pins.json`) e um pipeline reproduzido pelo CI Linux a cada push.
+
+```bash
+npm ci --no-audit              # node 22/24+
+python build_v32_html.py       # build determinístico do HTML
+bash .claude/verify/run.sh     # pipeline de verificação (--light para o corte rápido)
+```
+
+### Mapa do repositório
+
+| Caminho | O que é |
+|---|---|
+| `engine_v32.js` · `quickscan_secops_soccmm_v3_1_3.html` | núcleo congelado (engine V3.2 e Camada 1 V3.1.3) — mudança só por rito |
+| `ui_*.js` · `ui_*.css` | módulos de UI injetados pelo builder |
+| `quickscan_secops_soccmm_v3_2_dev.html` · `ui_icons_v32.js` | artefatos gerados — nunca editados à mão |
+| `build_v32_html.py` · `generate_icons_v32.py` | geradores determinísticos |
+| `tests_*.js` · `fixtures_*.js` · `tests_visual/` | suítes de verificação com contagens pinadas |
+| `specs/` | especificações normativas e de demandas |
+| `docs/` · `docs_phase5/` | documentação e registros históricos das fases |
+| `.claude/` | estrutura de desenvolvimento: regras, agentes, hooks e pipeline |
+| `USER_GUIDE.md` · `SESSION_SCHEMA_V32.md` | manual e contrato de sessão (lidos por suítes — vivem na raiz) |
 
 ## Dados de cliente
 

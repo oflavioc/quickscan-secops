@@ -97,3 +97,21 @@ _Evitar_: teste (genérico), checagem manual
 Ato do auditor humano que congela uma fase: release develop→main com tag anotada;
 a boundary da fase fecha para sempre.
 _Evitar_: entrega, conclusão de sprint
+
+**Acervo de evidência**:
+Conjunto congelado de artefatos (screenshots, PDFs, medidas JSON) que sustenta a
+selagem de uma fase ou rodada; imutável após a selagem, com identidade por
+manifesto de hashes.
+_Evitar_: pasta de prints, anexos, evidências soltas
+
+**Evidence store**:
+Destino externo ao clone onde acervos de evidência publicados vivem — pela
+decisão Q1 (2026-08-25), GitHub Releases, um release por fase com assets
+verificados por hash. O repositório versiona o manifesto, nunca os bytes.
+_Evitar_: backup, pasta externa, storage
+
+**Manifesto-ponte**:
+Arquivo versionado e pinável que liga cada artefato migrado ao evidence store:
+hash original (idêntico ao manifesto de fase), pacote e destino. É o que preserva
+a verificabilidade depois que os bytes saem do índice do git.
+_Evitar_: índice de links, lista de hashes, planilha

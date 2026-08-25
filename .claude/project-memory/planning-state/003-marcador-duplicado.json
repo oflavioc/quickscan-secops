@@ -1,6 +1,6 @@
 {
   "demanda": "003-marcador-duplicado",
-  "phase": "implement",
+  "phase": "validate",
   "spec_dir": "specs/003-marcador-duplicado",
   "brief": "Corrigir o marcador V32_UI_END emitido 2x pelo builder e remover a exceção nominal KI-1",
   "branch": "feature/003-marcador-duplicado",
@@ -32,14 +32,17 @@
     ]
   },
   "implement": {
-    "status": "in_progress",
+    "status": "done",
     "waves_done": [
-      1
+      1,
+      2,
+      3
     ],
     "pending": [
-      "W2",
-      "W3",
       "W4"
     ]
+  },
+  "validate": {
+    "status": "in_progress"
   }
 }

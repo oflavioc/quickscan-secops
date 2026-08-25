@@ -311,12 +311,16 @@ T("P52-CTX2", "editor separa capabilities de ambiente/condicionantes em duas reg
     if (!h) throw new Error(k + ": região sem título");
     if (r.getAttribute("aria-labelledby") !== h.id) throw new Error(k + ": região sem rotulagem acessível");
     if (!txt(r.querySelector(".p52-ctxregion-lead"))) throw new Error(k + ": região sem frase de orientação");
-    const gids = qa(r, ':scope > .p52-ctxregion-body > details[data-gid]').map(x => x.getAttribute("data-gid"));
+    /* FECHAMENTO PRÉ-AUDITORIA v3.2.2 · o `<details>` da família passou a ser
+       envolvido pelo wrapper de cabeçalho `.p52-grphead`, porque o controle
+       `(i)` saiu de dentro do `<summary>` (`nested-interactive`, `serious`).
+       A propriedade medida é a mesma: os grupos DESTA região, nesta ordem. */
+    const gids = qa(r, ':scope > .p52-ctxregion-body > details[data-gid], :scope > .p52-ctxregion-body > .p52-grphead > details[data-gid]').map(x => x.getAttribute("data-gid"));
     if (gids.join(",") !== esperado[k].join(","))
       throw new Error(k + ": grupos = " + gids.join(",") + " (esperado " + esperado[k].join(",") + ")");
   }
   /* nenhum grupo ficou solto fora das regiões */
-  const soltos = qa(d, '#v32editor > details[data-gid]');
+  const soltos = qa(d, '#v32editor > details[data-gid], #v32editor > .p52-grphead');
   if (soltos.length) throw new Error(soltos.length + " grupos fora das duas regiões");
   return true;
 });
@@ -343,7 +347,39 @@ T("P52-CTX3", "estado do grupo por caret, aria-expanded e forma — sem o pill t
       throw new Error(g.getAttribute("data-gid") + ": data-p52-grp incoerente");
     if (g.open) abertos++;
   }
-  if (!abertos) throw new Error("nenhum grupo aberto — não há estado ativo a distinguir");
+  /* MIGRAÇÃO · ERRATA V3.2.2 §4 e §6.
+     PROPRIEDADE PRESERVADA, LINHA A LINHA: o estado de cada grupo continua
+     expresso por `aria-expanded` no `<summary>` e por `data-p52-grp` no
+     `<details>`, coerentes entre si, e o pill textual ABERTO/FECHADO continua
+     proibido — as três asserções acima são idênticas às da versão anterior.
+     O QUE MUDOU: a versão anterior exigia "pelo menos um grupo aberto",
+     apoiada no default `open:true` de SOC & Operations. A §4 desta errata
+     tornou o estado inicial RECOLHIDO para os seis grupos, e uma asserção de
+     contagem no estado inicial passaria a medir o defeito, não a propriedade.
+     A propriedade real — "existe estado ativo distinguível" — é medida onde
+     ela de fato importa: DEPOIS de o usuário abrir um grupo. O gate não foi
+     enfraquecido; foi movido do default para a interação, e ganhou a
+     verificação do estado inicial recolhido, que antes não existia. */
+  if (abertos) throw new Error(abertos + " grupo(s) abertos na primeira abertura — o estado inicial é recolhido");
+  const alvo = q(d, '#v32editor details.v32-group[data-gid="g2"]');
+  if (!alvo) throw new Error("grupo de referência ausente — asserção vacuosa");
+  const sumAlvo = alvo.querySelector(":scope > summary");
+  sumAlvo.click();                      /* o usuário abre pelo caminho real */
+  /* jsdom alterna o `open` mas NÃO emite `toggle`; no navegador é o `toggle`
+     que leva o decorador a reescrever `aria-expanded`/`data-p52-grp`. O evento
+     é emitido aqui para reproduzir fielmente o caminho real — o gate mede o
+     decorador, não a completude do jsdom. */
+  if (!alvo.open) alvo.open = true;
+  alvo.dispatchEvent(new R.w.Event("toggle"));
+  const ativo = qa(d, "#v32editor details.v32-group").filter(g => g.open);
+  if (!ativo.length) throw new Error("abrir um grupo não produziu estado ativo");
+  for (const g of ativo) {
+    const sum = g.querySelector(":scope > summary");
+    if (sum.getAttribute("aria-expanded") !== "true")
+      throw new Error(g.getAttribute("data-gid") + ": aberto sem aria-expanded=true");
+    if (g.getAttribute("data-p52-grp") !== "open")
+      throw new Error(g.getAttribute("data-gid") + ": aberto sem data-p52-grp=open");
+  }
   return true;
 });
 
@@ -887,15 +923,27 @@ T("P52-FOOT1", "crédito pessoal em estilo marca d'água, sem competir com a atr
   return true;
 });
 
-T("P52-CTX4", "editor abre apenas SOC & Operations e distingue o grupo ativo sem pill", () => {
+/* MIGRAÇÃO · ERRATA V3.2.2 §4 e §6.
+   PROPRIEDADE PRESERVADA, LINHA A LINHA: (a) o editor tem grupos; (b) o
+   estado de abertura de cada grupo é coerente entre `data-p52-grp` e
+   `aria-expanded`; (c) o pill ABERTO/FECHADO continua banido; (d) o valor
+   declarado numa capability sobrevive a fechar e reabrir o grupo. As quatro
+   continuam aqui, sem afrouxamento.
+   O QUE MUDOU: a expectativa "abertos == [g1]" media o default `open:true`
+   do owner, que a §4 desta errata deixou de ser o estado inicial da SESSÃO DE
+   EDIÇÃO. A asserção passa a ser a EXIGIDA pela §4 — nenhum dos seis nasce
+   aberto — e é ESTRITAMENTE MAIS FORTE: antes cinco grupos podiam nascer
+   fechados por acidente e o gate só olhava para um. */
+T("P52-CTX4", "o editor abre com os seis grupos recolhidos e distingue o estado de cada um sem pill", () => {
   const R = resultsDom(FX52.P52_F1);
   q(R.d, "#v32cta").click();
   const d = R.d;
   const grupos = qa(d, "#v32editor details.v32-group[data-gid]");
   if (!grupos.length) throw new Error("editor sem grupos");
+  if (grupos.length !== 6) throw new Error(grupos.length + " grupos .v32-group de primeiro nível (esperado 6)");
   const abertos = grupos.filter(g => g.open).map(g => g.getAttribute("data-gid"));
-  if (abertos.join(",") !== "g1")
-    throw new Error("grupos abertos ao entrar: " + (abertos.join(",") || "(nenhum)") + " (esperado só g1)");
+  if (abertos.length)
+    throw new Error("grupos abertos ao entrar: " + abertos.join(",") + " (esperado nenhum)");
   grupos.forEach(g => {
     const want = g.open ? "open" : "closed";
     if (g.getAttribute("data-p52-grp") !== want) throw new Error(g.getAttribute("data-gid") + ": estado incoerente");
@@ -908,6 +956,8 @@ T("P52-CTX4", "editor abre apenas SOC & Operations e distingue o grupo ativo sem
   /* §3.1 · dados preenchidos sobrevivem a fechar e reabrir o grupo */
   const sel = q(d, "#v32-pres-knowledge-management");
   if (sel) {
+    const g1abre = q(d, '#v32editor details[data-gid="g1"]');
+    if (g1abre) g1abre.open = true;     /* o usuário abre a família antes de declarar */
     sel.value = "PRESENT";
     sel.dispatchEvent(new R.w.Event("change"));
     const g1 = q(d, '#v32editor details[data-gid="g1"]');
@@ -1160,6 +1210,613 @@ T("P52-DOC2", "o manual instrui as preferências de impressão e declara a jorna
     throw new Error("USER_GUIDE.md não declara a jornada como bloco atômico no papel");
   if (!/mesma p[áa]gina/i.test(ug))
     throw new Error("USER_GUIDE.md não afirma que a jornada sai na mesma página");
+  return true;
+});
+
+/* ==========================================================================
+   ERRATA V3.2.2 · AJUDAS, ACCORDION E TRANSIÇÃO — GATES DIRIGIDOS (jsdom)
+
+   Namespace `V322-*`, continuando a numeração desta candidata. Estes gates
+   NÃO substituem os antigos: `P52-HELP1`, `P52-HELP2`, `P52-CTX3` e
+   `P52-CTX4` permanecem e foram MIGRADOS da contagem indiscriminada para o
+   contrato semântico desta errata — a propriedade preservada de cada um está
+   documentada no próprio gate.
+
+   Oráculo: a lista de alvos é derivada do DOM do owner congelado (cada
+   `select[id^="v32-pres-"]`, cada `input[name="v32-bundle"]`, cada
+   `input[id^="v32-sub-"]`, cada `<legend>` da seção), nunca lida do módulo
+   sob teste. Toda asserção de AUSÊNCIA vem acompanhada da guarda de não
+   vacuidade correspondente: o alvo tem de existir para que "sem ajuda" queira
+   dizer alguma coisa.
+   ========================================================================== */
+
+/* Abre o editor de contexto tecnológico pelas DUAS entradas reais.
+   `home` passa por `uxOpenHomeEditor()`; `resultados` pelo `#v32cta` da tela
+   de resultados. Nenhuma das duas fabrica DOM: as duas clicam no que o
+   usuário clica. */
+function ctxEditorDom(entrada) {
+  if (entrada === "home") {
+    const R = boot();
+    const add = q(R.d, "#ux-addctx");
+    if (!add) throw new Error("home sem o CTA 'Adicionar contexto tecnológico'");
+    add.click();
+    return R;
+  }
+  const R = resultsDom(FX52.P52_F1);
+  const cta = q(R.d, "#v32cta");
+  if (!cta) throw new Error("resultados sem o CTA de contexto tecnológico");
+  cta.click();
+  return R;
+}
+const CTX_ENTRADAS = ["home", "resultados"];
+/* Os SEIS grupos principais do editor, na ordem do owner congelado. Os quatro
+   `sig-N` são SUBgrupos de `sig` e não entram nesta lista. */
+const V322_GRUPOS_PRINCIPAIS = ["g1", "g2", "g3", "arch", "plat", "sig"];
+const V322_ROTULO_GRUPO = {
+  g1: "SOC & Operations", g2: "Detection & Telemetry", g3: "Advanced / Adjacent Controls",
+  arch: "Restrições e preferências de arquitetura",
+  plat: "Plataformas e licenciamento já existentes",
+  sig: "Requisitos ou preocupações específicas"
+};
+function grupoPrincipal(d, gid) { return q(d, '#v32editor details[data-gid="' + gid + '"]'); }
+function cabecalhoDoGrupo(det) {
+  const p = det && det.parentElement;
+  return (p && p.classList && p.classList.contains("p52-grphead")) ? p : det;
+}
+
+/* ====================== V322-HELP3 · o que SAIU ====================== */
+
+T("V322-HELP3", "zero ajuda (i) em 'Situação declarada' e zero ajuda por item na seção de plataformas e licenciamento", () => {
+  for (const entrada of CTX_ENTRADAS) {
+    const R = ctxEditorDom(entrada);
+    const d = R.d, ed = q(d, "#v32editor");
+    if (!ed) throw new Error(entrada + ": editor ausente");
+
+    /* --- 'Situação declarada' -------------------------------------------- */
+    const press = qa(d, '#v32editor select[id^="v32-pres-"]');
+    if (press.length < 20)
+      throw new Error(entrada + ": apenas " + press.length + " seletores de situação declarada — asserção vacuosa");
+    for (const sel of press) {
+      const lab = sel.closest("label");
+      if (!lab) throw new Error(entrada + ": " + sel.id + " fora de <label>");
+      if (!/Situa[çc][ãa]o declarada/i.test(txt(lab)))
+        throw new Error(entrada + ": rótulo de " + sel.id + " deixou de ser 'Situação declarada': '" + txt(lab).slice(0, 40) + "'");
+      const ajuda = lab.querySelector('[data-p52="cap-help"]');
+      if (ajuda)
+        throw new Error(entrada + ": ajuda (i) redundante em 'Situação declarada' de " + sel.id);
+    }
+    if (qa(d, '#v32editor [id^="p52-preshelp-"]').length)
+      throw new Error(entrada + ": popovers p52-preshelp-* ainda existem");
+    for (const b of qa(d, '#v32editor [data-p52="cap-help"]')) {
+      if (/Situa[çc][ãa]o declarada/i.test(b.getAttribute("aria-label") || ""))
+        throw new Error(entrada + ": controle de ajuda nomeado 'Situação declarada' persiste");
+    }
+
+    /* --- plataformas, bundles, subscriptions e legendas ------------------- */
+    const plat = grupoPrincipal(d, "plat");
+    if (!plat) throw new Error(entrada + ": grupo de plataformas ausente");
+    /* não vacuidade: os itens da seção têm de continuar existindo */
+    const fgt = plat.querySelector("#v32-plat-fgt");
+    const bundles = qa(d, '#v32editor input[name="v32-bundle"]');
+    const subs = qa(d, '#v32editor input[id^="v32-sub-"]');
+    const legendas = Array.prototype.slice.call(plat.querySelectorAll("fieldset > legend"));
+    if (!fgt) throw new Error(entrada + ": checkbox de plataforma declarada sumiu — asserção vacuosa");
+    if (bundles.length < 4) throw new Error(entrada + ": " + bundles.length + " opções de bundle — asserção vacuosa");
+    if (subs.length < 10) throw new Error(entrada + ": " + subs.length + " subscriptions — asserção vacuosa");
+    if (legendas.length < 3) throw new Error(entrada + ": " + legendas.length + " legendas internas — asserção vacuosa");
+
+    const dentro = plat.querySelectorAll('[data-p52="cap-help"]');
+    if (dentro.length)
+      throw new Error(entrada + ": " + dentro.length + " ajuda(s) (i) dentro de 'Plataformas e licenciamento já existentes' " +
+        "(esperado zero; a única permitida vive no cabeçalho do grupo)");
+    for (const pref of ["p52-plathelp-", "p52-bundlehelp-", "p52-subhelp-", "p52-leghelp-"]) {
+      const n = qa(d, '#v32editor [id^="' + pref + '"]').length;
+      if (n) throw new Error(entrada + ": " + n + " popover(s) " + pref + "* ainda existem");
+    }
+
+    /* --- a ÚNICA ajuda da seção: o cabeçalho do grupo --------------------- */
+    const head = cabecalhoDoGrupo(plat);
+    const btn = head.querySelector(':scope > [data-p52="cap-help"]');
+    if (!btn) throw new Error(entrada + ": o cabeçalho de plataformas ficou SEM a ajuda única exigida");
+    const pop = d.getElementById(btn.getAttribute("aria-describedby") || "");
+    if (!pop) throw new Error(entrada + ": ajuda do cabeçalho de plataformas sem texto associado");
+    const t = txt(pop);
+    if (!/base instalada/i.test(t)) throw new Error(entrada + ": a ajuda do cabeçalho não fala em base instalada — '" + t.slice(0, 80) + "'");
+    if (!/direitos? de uso/i.test(t)) throw new Error(entrada + ": a ajuda do cabeçalho não fala em direitos de uso");
+    if (!/n[ãa]o prova/i.test(t) || !/implanta[çc][ãa]o/i.test(t) || !/cobertura/i.test(t) || !/maturidade/i.test(t))
+      throw new Error(entrada + ": a ajuda do cabeçalho não nega implantação, cobertura e maturidade");
+    if (/Forti[A-Z]|Fortinet|Palo Alto|Cisco|Microsoft|CrowdStrike/i.test(t))
+      throw new Error(entrada + ": a ajuda do cabeçalho cita fabricante — '" + t.slice(0, 80) + "'");
+  }
+  return true;
+});
+
+/* ====================== V322-HELP4 · o que FICOU ====================== */
+
+T("V322-HELP4", "ajuda conceitual preservada: capability, campos de arquitetura, famílias, subgrupos e sinais", () => {
+  for (const entrada of CTX_ENTRADAS) {
+    const R = ctxEditorDom(entrada);
+    const d = R.d;
+
+    /* capabilities: uma ajuda por capability com verbete, medida no DOM do owner */
+    const caps = qa(d, "#v32editor .v32-cap[id^='v32-cap-']");
+    if (caps.length < 20) throw new Error(entrada + ": " + caps.length + " capabilities — asserção vacuosa");
+    let semVerbete = [];
+    for (const cap of caps) {
+      const capId = cap.id.replace(/^v32-cap-/, "");
+      const btn = cap.querySelector('[data-p52="cap-help"][data-cap="' + capId + '"]');
+      if (!btn) { semVerbete.push(capId); continue; }
+      const pop = d.getElementById(btn.getAttribute("aria-describedby") || "");
+      if (!pop || txt(pop).length < 80) throw new Error(entrada + ": verbete de " + capId + " ausente ou curto");
+    }
+    if (semVerbete.length) throw new Error(entrada + ": capabilities sem ajuda — " + semVerbete.join(", "));
+
+    /* campos de arquitetura: um por <select id^="v32-arch-"> */
+    const archSel = qa(d, '#v32editor select[id^="v32-arch-"]');
+    if (archSel.length < 6) throw new Error(entrada + ": " + archSel.length + " campos de arquitetura — asserção vacuosa");
+    for (const s of archSel) {
+      const lab = s.closest("label");
+      if (!lab || !lab.querySelector('[data-p52="cap-help"]'))
+        throw new Error(entrada + ": campo de arquitetura sem ajuda — " + s.id);
+    }
+
+    /* famílias e subgrupos: controle no cabeçalho, fora do <summary> */
+    for (const gid of V322_GRUPOS_PRINCIPAIS) {
+      const det = grupoPrincipal(d, gid);
+      if (!det) throw new Error(entrada + ": família ausente — " + gid);
+      const head = cabecalhoDoGrupo(det);
+      const btn = head.querySelector(':scope > [data-p52="cap-help"]');
+      if (!btn) throw new Error(entrada + ": família sem ajuda de cabeçalho — " + gid);
+      if (det.querySelector(":scope > summary [data-p52=\"cap-help\"]"))
+        throw new Error(entrada + ": ajuda de " + gid + " voltou para dentro do <summary>");
+      const pop = d.getElementById(btn.getAttribute("aria-describedby") || "");
+      if (!pop || txt(pop).length < 60) throw new Error(entrada + ": verbete da família " + gid + " ausente ou curto");
+    }
+    const sub = qa(d, '#v32editor details.v32-siggroup[data-gid]');
+    if (sub.length < 4) throw new Error(entrada + ": " + sub.length + " subgrupos de requisitos — asserção vacuosa");
+    for (const s of sub) {
+      const head = cabecalhoDoGrupo(s);
+      if (!head.querySelector(':scope > [data-p52="cap-help"]'))
+        throw new Error(entrada + ": subgrupo sem ajuda — " + s.getAttribute("data-gid"));
+    }
+
+    /* sinais: um por checkbox de requisito, inclusive os de IA */
+    const sigs = qa(d, '#v32editor input[id^="v32-sig-"]');
+    if (sigs.length < 20) throw new Error(entrada + ": " + sigs.length + " sinais — asserção vacuosa");
+    const semAjuda = [];
+    for (const c of sigs) {
+      const lab = c.closest("label");
+      if (!lab || !lab.querySelector('[data-p52="cap-help"]')) semAjuda.push(c.id);
+    }
+    if (semAjuda.length) throw new Error(entrada + ": sinais sem ajuda — " + semAjuda.slice(0, 6).join(", "));
+    for (const k of ["organizationBuildsAIApps", "usesAgenticAI", "aiUsageRisk",
+                     "aiRuntimeSecurityConcern", "llmDataLeakageConcern"]) {
+      const p = d.getElementById("p52-sighelp-" + k);
+      if (!p || txt(p).length < 60) throw new Error(entrada + ": campo de IA sem ajuda — " + k);
+    }
+
+    /* contexto complementar da capability: a distinção nota-do-item × nota-da-capability */
+    const sel0 = q(d, "#v32-pres-knowledge-management");
+    if (sel0) {
+      sel0.value = "PRESENT";
+      sel0.dispatchEvent(new R.w.Event("change", { bubbles: true }));
+      /* o repaint do owner é síncrono; a decoração só volta na passagem
+         seguinte. Uma passagem REAL é provocada pelo caminho do usuário —
+         clicar no summary de um grupo —, e não chamando o módulo sob teste. */
+      const su = q(d, '#v32editor details[data-gid="plat"] > summary');
+      if (su) su.click();
+      const drv = q(d, "#v32-cap-knowledge-management .v32-driver-lab");
+      if (!drv) throw new Error(entrada + ": campo de contexto complementar não apareceu — asserção vacuosa");
+      if (!drv.querySelector('[data-p52="cap-help"]'))
+        throw new Error(entrada + ": contexto complementar da capability perdeu a ajuda");
+    }
+  }
+  return true;
+});
+
+/* ============ V322-HELP5 · integridade do que sobrou ============ */
+
+T("V322-HELP5", "zero aria-describedby quebrado, zero popover órfão, zero ID duplicado e contrato idêntico em todo controle de ajuda", () => {
+  for (const entrada of CTX_ENTRADAS) {
+    const R = ctxEditorDom(entrada);
+    const d = R.d, ed = q(d, "#v32editor");
+    /* abrir tudo: um controle escondido dentro de um grupo recolhido também conta */
+    qa(d, "#v32editor details[data-gid]").forEach(x => { x.open = true; });
+
+    const btns = qa(d, '#v32editor [data-p52="cap-help"]');
+    if (btns.length < 40) throw new Error(entrada + ": " + btns.length + " controles de ajuda — asserção vacuosa");
+    const referidos = {};
+    for (const b of btns) {
+      const popId = b.getAttribute("aria-describedby");
+      if (!popId) throw new Error(entrada + ": controle de ajuda sem aria-describedby");
+      const pop = d.getElementById(popId);
+      if (!pop) throw new Error(entrada + ": aria-describedby órfão — " + popId);
+      referidos[popId] = (referidos[popId] || 0) + 1;
+      if (b.tagName !== "BUTTON") throw new Error(entrada + ": ajuda " + popId + " não é <button>");
+      if (b.getAttribute("type") !== "button") throw new Error(entrada + ": ajuda " + popId + " sem type=button");
+      if (!(b.getAttribute("aria-label") || "").trim()) throw new Error(entrada + ": ajuda " + popId + " sem nome acessível");
+      if (b.getAttribute("aria-expanded") !== "false") throw new Error(entrada + ": ajuda " + popId + " não nasce fechada");
+      if (b.hasAttribute("title")) throw new Error(entrada + ": ajuda " + popId + " usa title nativo");
+      if ((b.textContent || "").trim() !== "i") throw new Error(entrada + ": ajuda " + popId + " com rótulo '" + (b.textContent || "").trim() + "'");
+      if (!pop.hidden) throw new Error(entrada + ": popover " + popId + " nasce aberto");
+      if (pop.getAttribute("role") !== "note") throw new Error(entrada + ": popover " + popId + " sem role=note");
+      if (txt(pop).length < 40) throw new Error(entrada + ": popover " + popId + " com texto curto (" + txt(pop).length + ")");
+    }
+    /* popover órfão: caixa de ajuda que nenhum controle referencia */
+    for (const pop of qa(d, '#v32editor [data-p52="cap-help-text"]')) {
+      if (!pop.id) throw new Error(entrada + ": popover sem id");
+      if (!referidos[pop.id]) throw new Error(entrada + ": popover órfão — " + pop.id);
+    }
+    for (const popId in referidos) {
+      if (referidos[popId] > 1) throw new Error(entrada + ": " + referidos[popId] + " controles apontam para " + popId);
+    }
+    /* IDs duplicados dentro do editor */
+    const vistos = {}, dup = [];
+    for (const n of qa(d, "#v32editor [id]")) {
+      if (vistos[n.id]) { if (dup.indexOf(n.id) < 0) dup.push(n.id); } else vistos[n.id] = 1;
+    }
+    if (dup.length) throw new Error(entrada + ": IDs duplicados — " + dup.slice(0, 6).join(", "));
+  }
+  return true;
+});
+
+/* ============ V322-ACC4 · os seis grupos nascem recolhidos ============ */
+
+T("V322-ACC4", "os seis grupos principais nascem recolhidos nas duas entradas do editor, com estado coerente e sem pill", () => {
+  for (const entrada of CTX_ENTRADAS) {
+    const R = ctxEditorDom(entrada);
+    const d = R.d;
+    const abertos = [];
+    for (const gid of V322_GRUPOS_PRINCIPAIS) {
+      const det = grupoPrincipal(d, gid);
+      if (!det) throw new Error(entrada + ": grupo ausente — " + gid);
+      const sum = det.querySelector(":scope > summary");
+      if (!sum) throw new Error(entrada + ": grupo sem summary — " + gid);
+      if (txt(sum).indexOf(V322_ROTULO_GRUPO[gid]) < 0)
+        throw new Error(entrada + ": rótulo de " + gid + " mudou — '" + txt(sum).slice(0, 48) + "'");
+      if (det.open) abertos.push(gid);
+      if (det.getAttribute("data-p52-grp") !== (det.open ? "open" : "closed"))
+        throw new Error(entrada + ": " + gid + " com data-p52-grp incoerente");
+      if (sum.getAttribute("aria-expanded") !== (det.open ? "true" : "false"))
+        throw new Error(entrada + ": " + gid + " com aria-expanded incoerente");
+    }
+    if (abertos.length)
+      throw new Error(entrada + ": grupos abertos na primeira abertura = [" + abertos.join(", ") + "] (esperado nenhum)");
+    /* os subgrupos de requisitos também nascem recolhidos */
+    for (const s of qa(d, '#v32editor details.v32-siggroup[data-gid]')) {
+      if (s.open) throw new Error(entrada + ": subgrupo " + s.getAttribute("data-gid") + " nasce aberto");
+    }
+    /* não vacuidade: os seis grupos existem, com conteúdo */
+    if (qa(d, "#v32editor .v32-cap[id^='v32-cap-']").length < 20)
+      throw new Error(entrada + ": editor sem capabilities — asserção vacuosa");
+    if (qa(d, '[data-p52="grp-state"], .p52-grp-state').length)
+      throw new Error(entrada + ": pill ABERTO/FECHADO reintroduzido");
+  }
+  return true;
+});
+
+/* ====== V322-ACC5 · a decisão do usuário sobrevive; nova edição reinicia ====== */
+
+T("V322-ACC5", "abertura manual persiste no repaint do editor e uma nova edição reinicia com tudo recolhido", () => {
+  const R = ctxEditorDom("resultados");
+  const d = R.d;
+  const g2 = grupoPrincipal(d, "g2");
+  const sum2 = g2.querySelector(":scope > summary");
+  if (g2.open) throw new Error("g2 já nasceu aberto — asserção vacuosa");
+  /* abertura manual pelo caminho real do usuário */
+  sum2.click();
+  if (!g2.open) g2.open = true;
+  g2.dispatchEvent(new R.w.Event("toggle"));   /* jsdom não emite o `toggle` nativo */
+  if (!grupoPrincipal(d, "g2").open) throw new Error("abrir o grupo manualmente não abriu");
+
+  /* repaint do OWNER (`paintEditor`) provocado pelo caminho canônico:
+     declarar PRESENT numa capability reemite o editor inteiro. */
+  const sel = q(d, "#v32-pres-knowledge-management");
+  if (!sel) throw new Error("capability de referência ausente — asserção vacuosa");
+  sel.value = "PRESENT";
+  sel.dispatchEvent(new R.w.Event("change", { bubbles: true }));
+  const g2Depois = grupoPrincipal(d, "g2");
+  if (!g2Depois) throw new Error("o grupo sumiu no repaint");
+  if (!g2Depois.open) throw new Error("o repaint FECHOU o grupo que o usuário abriu");
+  if (grupoPrincipal(d, "g1").open) throw new Error("o repaint ABRIU um grupo que o usuário não pediu");
+  /* o repaint do owner é só metade do caso. A outra metade é a PASSAGEM DO
+     DECORADOR que vem depois dele: um decorador que "garantisse" o estado
+     recolhido a cada passagem desfaria a decisão do usuário sem que o repaint
+     tivesse culpa. A passagem é provocada pelo caminho real — clicar num
+     `<summary>` —, nunca chamando o módulo sob teste. */
+  const suPlat = q(d, '#v32editor details[data-gid="plat"] > summary');
+  if (!suPlat) throw new Error("grupo de plataformas ausente — asserção vacuosa");
+  suPlat.click();
+  const g2Decor = grupoPrincipal(d, "g2");
+  if (!g2Decor || !g2Decor.open)
+    throw new Error("o repaint FECHOU o grupo que o usuário abriu (passagem do decorador)");
+  /* o valor declarado sobreviveu ao repaint */
+  const selDepois = q(d, "#v32-pres-knowledge-management");
+  if (!selDepois || selDepois.value !== "PRESENT") throw new Error("o valor declarado se perdeu no repaint");
+
+  /* nova edição: cancelar e reabrir reinicia recolhido */
+  const cancel = q(d, "#v32cancel");
+  if (!cancel) throw new Error("botão Cancelar ausente");
+  cancel.click();
+  const cta = q(d, "#v32cta");
+  if (!cta) throw new Error("CTA de contexto ausente após cancelar");
+  cta.click();
+  const reabertos = V322_GRUPOS_PRINCIPAIS.filter(gid => {
+    const det = grupoPrincipal(d, gid);
+    return det && det.open;
+  });
+  if (reabertos.length)
+    throw new Error("nova edição reabriu [" + reabertos.join(", ") + "] (esperado tudo recolhido)");
+  return true;
+});
+
+/* ====== V322-MOT1 · movimento só na navegação real entre perguntas ====== */
+
+T("V322-MOT1", "a marcação de transição só aparece na navegação real entre perguntas — nunca ao trocar de resposta, nem na home, resultados ou editor", () => {
+  const R = boot();
+  const d = R.d, w = R.w;
+  const secOf = () => q(d, "#app section.screen");
+  const navOf = () => { const s = secOf(); return s ? s.getAttribute("data-p52-nav") : "(sem screen)"; };
+
+  /* home: nenhuma marcação */
+  if (navOf() !== null) throw new Error("home marcada para transição: " + navOf());
+
+  w.eval("window.__DEV.setArq(0)");
+  FX50.P50_QIDS.forEach(id => w.eval("window.__DEV.setAnswerById(" + JSON.stringify(id) + ", 1)"));
+  w.eval("window.__DEV.gotoStep(3)");
+  if (w.eval("step") !== 3) throw new Error("a fixture não chegou à pergunta — asserção vacuosa");
+  if (navOf() !== null) throw new Error("chegada por salto marcada para transição: " + navOf());
+
+  /* 1 · trocar a resposta NA MESMA pergunta: nenhuma marcação */
+  const opts = qa(d, "#app .opt");
+  if (opts.length < 3) throw new Error("pergunta sem opções — asserção vacuosa");
+  const antes = w.eval("step");
+  opts[2].click();
+  if (w.eval("step") !== antes) throw new Error("selecionar a opção mudou de pergunta — fixture inválida");
+  if (!q(d, "#app .opt.sel")) throw new Error("a seleção não ficou visível");
+  if (navOf() !== null)
+    throw new Error("trocar de resposta na MESMA pergunta recebeu marcação de transição: " + navOf());
+  /* uma segunda troca também não pode animar */
+  qa(d, "#app .opt")[0].click();
+  if (navOf() !== null) throw new Error("segunda troca de resposta recebeu marcação: " + navOf());
+
+  /* 2 · abrir/fechar a observação é a MESMA pergunta */
+  const tgl = q(d, "#notetgl");
+  if (!tgl) throw new Error("controle de observação ausente — asserção vacuosa");
+  tgl.click();
+  if (navOf() !== null) throw new Error("abrir a observação recebeu marcação: " + navOf());
+  q(d, "#notetgl").click();
+
+  /* 3 · avançar: marcação para a frente */
+  q(d, "#next").click();
+  if (w.eval("step") !== antes + 1) throw new Error("Continuar não avançou");
+  if (navOf() !== "fwd") throw new Error("avançar não recebeu a transição para a frente: " + navOf());
+
+  /* 4 · voltar: marcação para trás */
+  q(d, "#back").click();
+  if (w.eval("step") !== antes) throw new Error("Voltar não voltou");
+  if (navOf() !== "back") throw new Error("voltar não recebeu a transição para trás: " + navOf());
+
+  /* 5 · a transição não é reexecutada por uma passagem extra do decorador */
+  const secAtual = secOf();
+  w.eval("window.__P52 && window.__P52.diag && window.__P52.diag()");
+  if (secOf() !== secAtual) throw new Error("a tela foi reconstruída fora de render()");
+
+  /* 6 · resultados e editor de contexto NÃO animam */
+  const RR = resultsDom(FX52.P52_F1);
+  const secR = q(RR.d, "#app section.screen");
+  if (secR && secR.getAttribute("data-p52-nav") !== null)
+    throw new Error("resultados marcados para transição: " + secR.getAttribute("data-p52-nav"));
+  const RH = boot();
+  q(RH.d, "#ux-addctx").click();
+  const secH = q(RH.d, "#app section.screen");
+  if (secH && secH.getAttribute("data-p52-nav") !== null)
+    throw new Error("editor de contexto marcado para transição: " + secH.getAttribute("data-p52-nav"));
+  return true;
+});
+
+/* ====== V322-MOT2 · o contrato de CSS que sustenta a transição ====== */
+
+T("V322-MOT2", "a animação legada de tela é neutralizada, a transição nova é curta e presa à marcação, e prefers-reduced-motion zera todo movimento", () => {
+  const css = readIf(P52_CSS);
+  if (!css) throw new Error("ui_p52_workspace_v32.css ausente");
+  const html = HTML;
+
+  /* a Camada 1 congelada continua declarando o fade — não é ela que muda */
+  if (!/\.screen\s*\{\s*animation\s*:\s*fade\s+\.35s\s+ease/.test(html))
+    throw new Error("a animação legada da Camada 1 sumiu do HTML — a premissa da correção mudou");
+
+  /* Neutralização INCONDICIONAL da animação legada. O seletor tem de ser
+     `section.screen`: (0,1,1) contra os (0,1,0) do congelado, para que a
+     vitória não dependa da ordem de injeção — e para que esta asserção não
+     seja satisfeita pelo `.screen{animation:none}` que já existia DENTRO do
+     bloco `prefers-reduced-motion` (seria uma prova vácua). */
+  const neutraliza = /section\.screen\s*\{[^}]*animation\s*:\s*none[^}]*\}/;
+  if (!neutraliza.test(css)) throw new Error("a Camada P52 não neutraliza `.screen{animation:fade}`");
+  if (!neutraliza.test(html)) throw new Error("a neutralização não chegou ao HTML autocontido");
+  const semReduce = css.replace(/@media\s*\(prefers-reduced-motion:\s*reduce\)\s*\{[\s\S]*?\n  \}/g, "");
+  if (!neutraliza.test(semReduce))
+    throw new Error("a neutralização só existe dentro de prefers-reduced-motion — o piscar continua no caso comum");
+
+  /* a transição nova existe, é presa a `[data-p52-nav]` e dura 120–180ms */
+  const regra = css.match(/\.screen\[data-p52-nav[^{]*\{[^}]*\}/g);
+  if (!regra || regra.length < 2)
+    throw new Error("as regras de transição por direção não existem em `[data-p52-nav]`");
+  const duracoes = (regra.join(" ").match(/(\d+)ms/g) || []).map(x => parseInt(x, 10));
+  if (!duracoes.length) throw new Error("a transição não declara duração em ms");
+  for (const ms of duracoes) {
+    if (ms < 120 || ms > 180) throw new Error("duração da transição fora de 120–180ms: " + ms + "ms");
+  }
+  if (!/@keyframes\s+p52-nav-fwd/.test(css) || !/@keyframes\s+p52-nav-back/.test(css))
+    throw new Error("os keyframes de navegação para a frente e para trás não existem");
+  /* deslocamento horizontal e SEM partir de opacidade zero */
+  const kf = (css.match(/@keyframes\s+p52-nav-(fwd|back)\s*\{[^@]*?\}\s*\}/g) || []).join(" ");
+  if (!/translateX\(/.test(kf)) throw new Error("os keyframes não usam deslocamento horizontal");
+  if (/opacity\s*:\s*0\b/.test(kf)) throw new Error("os keyframes partem de opacidade zero");
+
+  /* prefers-reduced-motion zera animação da tela E da transição nova */
+  const blocos = css.match(/@media\s*\(prefers-reduced-motion:\s*reduce\)\s*\{[\s\S]*?\n  \}/g) || [];
+  const alvo = blocos.filter(b => /\.screen/.test(b) && /data-p52-nav/.test(b));
+  if (!alvo.length)
+    throw new Error("nenhum bloco prefers-reduced-motion cobre `.screen[data-p52-nav]`");
+  if (!/animation\s*:\s*none\s*!important/.test(alvo.join(" ")))
+    throw new Error("prefers-reduced-motion não remove a animação com !important");
+
+  /* nenhuma decisão por user-agent, fingerprint ou resolução.
+     Os comentários são removidos antes da varredura: a proibição é sobre
+     CÓDIGO, e o bloco que documenta a proibição cita os próprios nomes. */
+  const js = fs.readFileSync(P52_JS, "utf8").replace(/\/\*[\s\S]*?\*\//g, " ");
+  for (const [re, nome] of [[/navigator\.userAgent/, "userAgent"], [/navigator\.platform/, "navigator.platform"],
+                            [/navigator\.vendor/, "navigator.vendor"], [/screen\.(width|height|availWidth)/, "screen.width/height"],
+                            [/devicePixelRatio/, "devicePixelRatio"]]) {
+    if (re.test(js)) throw new Error("a Camada P52 decide por " + nome + " — proibido");
+  }
+  return true;
+});
+
+/* ==========================================================================
+   ERRATA V3.2.2 · §8.1 — O README É REQUISITO DESTA RODADA, NÃO ENFEITE.
+
+   A instrução exige revisão material do README e uma distinção inequívoca
+   entre produção publicada e candidata em validação. Uma afirmação dessas no
+   relatório do implementador não vale nada sozinha: aqui ela vira gate.
+   O gate verifica o ARQUIVO, incluindo a existência real da imagem de
+   abertura e a validade do link relativo — um README com imagem quebrada
+   passaria em qualquer revisão por leitura.
+   ========================================================================== */
+
+T("V322-DOC3", "README: imagem de abertura real e válida, distinção inequívoca entre produção v3.2.1 e candidata v3.2.2, e disciplina de verificação do pacote externo", () => {
+  const rdPath = path.join(__dirname, "README.md");
+  const rd = readIf(rdPath);
+  if (!rd) throw new Error("README.md ausente");
+
+  /* --- imagem de abertura: existe, é relativa, aponta para arquivo real --- */
+  const imgs = Array.from(rd.matchAll(/!\[([^\]]*)\]\(([^)]+)\)/g));
+  if (!imgs.length) throw new Error("README sem imagem de abertura");
+  const [, alt, src] = imgs[0];
+  if (!alt.trim()) throw new Error("imagem de abertura sem texto alternativo");
+  if (/^https?:/i.test(src)) throw new Error("imagem de abertura é remota: " + src);
+  if (src.startsWith("/")) throw new Error("imagem de abertura com caminho absoluto: " + src);
+  const imgPath = path.join(__dirname, src);
+  if (!fs.existsSync(imgPath)) throw new Error("link relativo quebrado: " + src);
+  const bytes = fs.statSync(imgPath).size;
+  if (bytes < 20000) throw new Error("imagem de abertura com " + bytes + " bytes — não é uma captura real");
+  const head = fs.readFileSync(imgPath).slice(0, 8);
+  if (head.toString("hex") !== "89504e470d0a1a0a") throw new Error("imagem de abertura não é PNG");
+  /* a captura tem de vir do acervo NOMINAL desta rodada: um PNG de um acervo
+     anterior representaria estado visual superado. */
+  if (!/^docs_phase5\/evidence_v322\//.test(src))
+    throw new Error("a imagem de abertura não vem do acervo desta rodada: " + src);
+
+  /* --- distinção produção × candidata, sem ambiguidade -------------------- */
+  if (!/v3\.2\.1/.test(rd)) throw new Error("README não nomeia a v3.2.1");
+  if (!/v3\.2\.2/.test(rd)) throw new Error("README não nomeia a v3.2.2");
+  const prod = /v3\.2\.1[^\n]{0,120}produ[çc][ãa]o publicada|produ[çc][ãa]o publicada[^\n]{0,120}v3\.2\.1/i;
+  if (!prod.test(rd)) throw new Error("README não declara a v3.2.1 como produção publicada");
+  const cand = /v3\.2\.2[^\n]{0,160}candidata em valida[çc][ãa]o|candidata em valida[çc][ãa]o[^\n]{0,160}v3\.2\.2/i;
+  if (!cand.test(rd)) throw new Error("README não declara a v3.2.2 como candidata em validação");
+  if (!/n[ãa]o[^\n]{0,40}(foi )?promovida/i.test(rd))
+    throw new Error("README não afirma que a candidata NÃO foi promovida");
+  /* overclaim proibido: a candidata não pode aparecer como release ou tag */
+  if (/release\s+v3\.2\.2|tag\s+`?v3\.2\.2`?\s+(publicad|criad)/i.test(rd))
+    throw new Error("README anuncia release/tag inexistente da v3.2.2");
+
+  /* --- o que o contexto tecnológico influencia e o que NÃO influencia ----- */
+  if (!/contexto tecnol[óo]gico/i.test(rd)) throw new Error("README não fala do contexto tecnológico");
+  if (!/n[ãa]o[^\n]{0,60}(altera|muda)[^\n]{0,60}(pontua[çc][ãa]o|nota|score)/i.test(rd))
+    throw new Error("README não declara que o contexto tecnológico não altera a pontuação");
+  if (!/recomenda/i.test(rd)) throw new Error("README não declara o que o contexto influencia");
+
+  /* --- uso local, sessão e ausência de rede ------------------------------ */
+  for (const [re, nome] of [
+    [/USER_GUIDE\.md/, "ponteiro para o manual"],
+    [/autocontido/i, "HTML autocontido"],
+    [/importar/i, "importação de sessão"],
+    [/exportar/i, "exportação de sessão"],
+    [/n[ãa]o faz requisi[çc][ãa]o externa|nenhum dado sai da m[áa]quina/i, "ausência de envio externo"],
+    [/cen[áa]rio-alvo/i, "cenário-alvo"],
+    [/opcional/i, "caráter opcional do contexto"]
+  ]) if (!re.test(rd)) throw new Error("README sem: " + nome);
+
+  /* --- pacote externo: identidade antes da análise ------------------------ */
+  if (!/SHA-256/.test(rd)) throw new Error("README não exige verificação por SHA-256");
+  if (!/MANIFEST_SHA256\.txt|manifesto interno/i.test(rd))
+    throw new Error("README não exige o manifesto interno do pacote");
+  if (!/superad/i.test(rd))
+    throw new Error("README não avisa que um pacote anterior fica superado");
+
+  /* --- o que NÃO pode estar publicado ------------------------------------- */
+  for (const [re, nome] of [
+    [/[A-Za-z]:\\\\/, "caminho absoluto do Windows"],
+    [/\/mnt\/[a-z]\//i, "caminho do WSL"],
+    [/127\.0\.0\.1/, "URL de preview local"],
+    [/localhost:\d+/, "URL de localhost"],
+    [/tailscale/i, "referência a Tailscale"],
+    [/QuickscanData/i, "repositório de dados de cliente"],
+    [/QUICKSCAN_V3_2_2_INDEPENDENT_ANALYST_REVIEW_PACKAGE_2026-08-24/, "ZIP superado de 2026-08-24"]
+  ]) if (re.test(rd)) throw new Error("README publica " + nome);
+  return true;
+});
+
+T("V322-DOC4", "o manual acompanha a errata: seis grupos recolhidos, nova edição recomeça recolhida e a hierarquia de ajudas (i)", () => {
+  const ug = readIf(path.join(__dirname, "USER_GUIDE.md"));
+  if (!ug) throw new Error("USER_GUIDE.md ausente");
+  for (const [re, nome] of [
+    [/seis grupos v[êe]m recolhidos|seis grupos.{0,40}recolhid/i, "os seis grupos nascem recolhidos"],
+    [/SOC & Operations/, "SOC & Operations nomeado"],
+    [/nova[^\n]{0,40}recolhid|volta ao estado inicial recolhido/i, "nova edição recomeça recolhida"],
+    [/nome de cada capability|nome da capability/i, "ajuda no nome da capability"],
+    [/base instalada/i, "base instalada"],
+    [/direitos? de uso/i, "direitos de uso"],
+    [/n[ãa]o prova[^\n]{0,80}implanta[çc][ãa]o/i, "entitlement não prova implantação"]
+  ]) if (!re.test(ug)) throw new Error("USER_GUIDE.md sem: " + nome);
+  /* o manual não pode continuar afirmando o estado inicial antigo */
+  if (/apenas \*\*SOC & Operations\*\* vem aberto/i.test(ug))
+    throw new Error("USER_GUIDE.md ainda afirma que SOC & Operations abre expandido");
+  /* nem prometer ajuda onde ela foi deliberadamente removida */
+  if (/ajuda[^\n]{0,40}em cada[^\n]{0,40}(bundle|subscription)/i.test(ug))
+    throw new Error("USER_GUIDE.md promete ajuda por item em plataformas");
+  return true;
+});
+
+/* ==========================================================================
+   ERRATA FINAL V3.2.2 (REV C) · V322C-ID1 · M-02 — uma única região de erro.
+
+   `uxOpenHomeEditor()` injeta um `<div id="v32errors">` FORA do editor e
+   `paintEditor()` emite o seu, dentro. Na entrada pela HOME o documento
+   passava a ter DOIS nós com o mesmo id, e `getElementById` devolvia o
+   externo — a mensagem aparecia longe do botão que a provocou e a caixa do
+   editor ficava vazia. O gate varre o DOCUMENTO INTEIRO (não só `#v32editor`)
+   nas DUAS entradas e exige, além da unicidade, que a região que o runtime
+   realmente resolve seja a que vive junto de Salvar/Cancelar.
+   ========================================================================== */
+T("V322C-ID1", "as duas entradas do editor têm IDs únicos no documento e uma única região de erro, junto das ações Salvar/Cancelar", () => {
+  const falhas = [];
+  for (const entrada of CTX_ENTRADAS) {
+    const R = ctxEditorDom(entrada);
+    const d = R.d;
+    const vistos = new Map();
+    qa(d, "[id]").forEach(n => vistos.set(n.id, (vistos.get(n.id) || 0) + 1));
+    const dups = [...vistos.entries()].filter(([, n]) => n > 1).map(([id, n]) => id + "×" + n);
+    if (dups.length) falhas.push(entrada + ": ids duplicados no documento — " + dups.join(", "));
+
+    const ed = q(d, "#v32editor");
+    if (!ed) { falhas.push(entrada + ": editor ausente"); continue; }
+    const box = d.getElementById("v32errors");
+    if (!box) { falhas.push(entrada + ": nenhuma região de erro"); continue; }
+    if (!ed.contains(box))
+      falhas.push(entrada + ": a região de erro resolvida por getElementById vive FORA do editor");
+    const acoes = ed.querySelector(".v32-actions");
+    if (!acoes) { falhas.push(entrada + ": grupo de ações ausente"); continue; }
+    /* "próxima aos botões": mesma subárvore do editor e imediatamente antes
+       do grupo de ações — é onde `paintEditor()` a emite. */
+    if (box.nextElementSibling !== acoes)
+      falhas.push(entrada + ": a região de erro não é o irmão imediatamente anterior a Salvar/Cancelar");
+    /* não vacuidade: a caixa que o owner escreve tem de ser a que está no editor */
+    const save = d.getElementById("v32save");
+    if (!save) falhas.push(entrada + ": botão Salvar ausente");
+  }
+  if (falhas.length) throw new Error(falhas.join(" · "));
   return true;
 });
 

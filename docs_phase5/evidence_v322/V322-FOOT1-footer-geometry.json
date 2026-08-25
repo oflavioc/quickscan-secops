@@ -1,0 +1,248 @@
+{
+  "390": {
+    "mode": "split",
+    "innerW": 342.4,
+    "foot": {
+      "l": 23.8,
+      "r": 366.2,
+      "t": 1797.8,
+      "b": 2049,
+      "w": 342.4,
+      "h": 251.3
+    },
+    "legal": {
+      "l": 23.8,
+      "r": 366.2,
+      "t": 1816.8,
+      "b": 1998.8,
+      "w": 342.4,
+      "h": 182
+    },
+    "contact": {
+      "l": 23.8,
+      "r": 366.2,
+      "t": 2008.8,
+      "b": 2049,
+      "w": 342.4,
+      "h": 40.3
+    },
+    "order": "legal-first",
+    "legalMaxWidth": "none",
+    "legalFontPx": 13,
+    "contactFontPx": 11.5,
+    "contactAlign": "left",
+    "ratio": 1,
+    "overlap": false,
+    "stacked": true,
+    "overflowX": false,
+    "sw": 390,
+    "cw": 390,
+    "legalText": "Baseado no SOC-CMM 2.4 (Rob van Os · soc-cmm.com), licença CC BY-SA 4.0 — material adaptado. Este Quickscan é um screening indicativo de alto nível, conduzido ao vivo: não substitui um assessment de maturidade formal. Os resultados refletem a percepção declarada na sessão. As perguntas avaliam práticas operacionais — não produtos ou fabricantes utilizados. O SOC-CMM é um framework aberto e neutro de fabricante.",
+    "contactText": "Flávio Costa · Business Development Engineer — SecOps · fcosta@fortinet.com"
+  },
+  "768": {
+    "mode": "split",
+    "innerW": 705.3,
+    "foot": {
+      "l": 31.4,
+      "r": 736.6,
+      "t": 1598.2,
+      "b": 1738.3,
+      "w": 705.3,
+      "h": 140.1
+    },
+    "legal": {
+      "l": 31.4,
+      "r": 736.6,
+      "t": 1617.2,
+      "b": 1708.2,
+      "w": 705.3,
+      "h": 91
+    },
+    "contact": {
+      "l": 31.4,
+      "r": 736.6,
+      "t": 1718.2,
+      "b": 1738.3,
+      "w": 705.3,
+      "h": 20.1
+    },
+    "order": "legal-first",
+    "legalMaxWidth": "none",
+    "legalFontPx": 13,
+    "contactFontPx": 11.5,
+    "contactAlign": "left",
+    "ratio": 1,
+    "overlap": false,
+    "stacked": true,
+    "overflowX": false,
+    "sw": 768,
+    "cw": 768,
+    "legalText": "Baseado no SOC-CMM 2.4 (Rob van Os · soc-cmm.com), licença CC BY-SA 4.0 — material adaptado. Este Quickscan é um screening indicativo de alto nível, conduzido ao vivo: não substitui um assessment de maturidade formal. Os resultados refletem a percepção declarada na sessão. As perguntas avaliam práticas operacionais — não produtos ou fabricantes utilizados. O SOC-CMM é um framework aberto e neutro de fabricante.",
+    "contactText": "Flávio Costa · Business Development Engineer — SecOps · fcosta@fortinet.com"
+  },
+  "1440": {
+    "mode": "split",
+    "innerW": 1313.3,
+    "foot": {
+      "l": 63.4,
+      "r": 1376.6,
+      "t": 980.1,
+      "b": 1067.4,
+      "w": 1313.3,
+      "h": 87.3
+    },
+    "legal": {
+      "l": 63.4,
+      "r": 932.2,
+      "t": 999.1,
+      "b": 1067.4,
+      "w": 868.8,
+      "h": 68.3
+    },
+    "contact": {
+      "l": 964.2,
+      "r": 1376.6,
+      "t": 1047.3,
+      "b": 1067.4,
+      "w": 412.4,
+      "h": 20.1
+    },
+    "order": "legal-first",
+    "legalMaxWidth": "none",
+    "legalFontPx": 13,
+    "contactFontPx": 11.5,
+    "contactAlign": "right",
+    "ratio": 0.662,
+    "overlap": false,
+    "stacked": false,
+    "overflowX": false,
+    "sw": 1440,
+    "cw": 1440,
+    "legalText": "Baseado no SOC-CMM 2.4 (Rob van Os · soc-cmm.com), licença CC BY-SA 4.0 — material adaptado. Este Quickscan é um screening indicativo de alto nível, conduzido ao vivo: não substitui um assessment de maturidade formal. Os resultados refletem a percepção declarada na sessão. As perguntas avaliam práticas operacionais — não produtos ou fabricantes utilizados. O SOC-CMM é um framework aberto e neutro de fabricante.",
+    "contactText": "Flávio Costa · Business Development Engineer — SecOps · fcosta@fortinet.com"
+  },
+  "1920": {
+    "mode": "split",
+    "innerW": 1626.2,
+    "foot": {
+      "l": 146.9,
+      "r": 1773.1,
+      "t": 980.1,
+      "b": 1067.4,
+      "w": 1626.3,
+      "h": 87.3
+    },
+    "legal": {
+      "l": 146.9,
+      "r": 1328.7,
+      "t": 999.1,
+      "b": 1067.4,
+      "w": 1181.8,
+      "h": 68.3
+    },
+    "contact": {
+      "l": 1360.7,
+      "r": 1773.1,
+      "t": 1047.3,
+      "b": 1067.4,
+      "w": 412.4,
+      "h": 20.1
+    },
+    "order": "legal-first",
+    "legalMaxWidth": "none",
+    "legalFontPx": 13,
+    "contactFontPx": 11.5,
+    "contactAlign": "right",
+    "ratio": 0.727,
+    "overlap": false,
+    "stacked": false,
+    "overflowX": false,
+    "sw": 1920,
+    "cw": 1920,
+    "legalText": "Baseado no SOC-CMM 2.4 (Rob van Os · soc-cmm.com), licença CC BY-SA 4.0 — material adaptado. Este Quickscan é um screening indicativo de alto nível, conduzido ao vivo: não substitui um assessment de maturidade formal. Os resultados refletem a percepção declarada na sessão. As perguntas avaliam práticas operacionais — não produtos ou fabricantes utilizados. O SOC-CMM é um framework aberto e neutro de fabricante.",
+    "contactText": "Flávio Costa · Business Development Engineer — SecOps · fcosta@fortinet.com"
+  },
+  "2560": {
+    "mode": "split",
+    "innerW": 2176,
+    "foot": {
+      "l": 192,
+      "r": 2368,
+      "t": 1107.2,
+      "b": 1218.6,
+      "w": 2176,
+      "h": 111.3
+    },
+    "legal": {
+      "l": 192,
+      "r": 1923.6,
+      "t": 1126.2,
+      "b": 1218.6,
+      "w": 1731.6,
+      "h": 92.3
+    },
+    "contact": {
+      "l": 1955.6,
+      "r": 2368,
+      "t": 1198.4,
+      "b": 1218.6,
+      "w": 412.4,
+      "h": 20.1
+    },
+    "order": "legal-first",
+    "legalMaxWidth": "none",
+    "legalFontPx": 17.6,
+    "contactFontPx": 11.5,
+    "contactAlign": "right",
+    "ratio": 0.796,
+    "overlap": false,
+    "stacked": false,
+    "overflowX": false,
+    "sw": 2560,
+    "cw": 2560,
+    "legalText": "Baseado no SOC-CMM 2.4 (Rob van Os · soc-cmm.com), licença CC BY-SA 4.0 — material adaptado. Este Quickscan é um screening indicativo de alto nível, conduzido ao vivo: não substitui um assessment de maturidade formal. Os resultados refletem a percepção declarada na sessão. As perguntas avaliam práticas operacionais — não produtos ou fabricantes utilizados. O SOC-CMM é um framework aberto e neutro de fabricante.",
+    "contactText": "Flávio Costa · Business Development Engineer — SecOps · fcosta@fortinet.com"
+  },
+  "3440": {
+    "mode": "split",
+    "innerW": 2176,
+    "foot": {
+      "l": 632,
+      "r": 2808,
+      "t": 1107.2,
+      "b": 1218.6,
+      "w": 2176,
+      "h": 111.3
+    },
+    "legal": {
+      "l": 632,
+      "r": 2363.6,
+      "t": 1126.2,
+      "b": 1218.6,
+      "w": 1731.6,
+      "h": 92.3
+    },
+    "contact": {
+      "l": 2395.6,
+      "r": 2808,
+      "t": 1198.4,
+      "b": 1218.6,
+      "w": 412.4,
+      "h": 20.1
+    },
+    "order": "legal-first",
+    "legalMaxWidth": "none",
+    "legalFontPx": 17.6,
+    "contactFontPx": 11.5,
+    "contactAlign": "right",
+    "ratio": 0.796,
+    "overlap": false,
+    "stacked": false,
+    "overflowX": false,
+    "sw": 3440,
+    "cw": 3440,
+    "legalText": "Baseado no SOC-CMM 2.4 (Rob van Os · soc-cmm.com), licença CC BY-SA 4.0 — material adaptado. Este Quickscan é um screening indicativo de alto nível, conduzido ao vivo: não substitui um assessment de maturidade formal. Os resultados refletem a percepção declarada na sessão. As perguntas avaliam práticas operacionais — não produtos ou fabricantes utilizados. O SOC-CMM é um framework aberto e neutro de fabricante.",
+    "contactText": "Flávio Costa · Business Development Engineer — SecOps · fcosta@fortinet.com"
+  }
+}

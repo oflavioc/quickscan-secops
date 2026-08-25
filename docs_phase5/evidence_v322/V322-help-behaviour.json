@@ -1,0 +1,169 @@
+{
+  "home": {
+    "recolhidoVisivel": {
+      "grupoAberto": false,
+      "w": 22,
+      "h": 22,
+      "visivel": true,
+      "checkVisibility": true
+    },
+    "hover": {
+      "aberto": true,
+      "expanded": "true",
+      "caixa": 106.6
+    },
+    "foco": {
+      "aberto": true,
+      "focado": true
+    },
+    "esc": {
+      "aberto": false,
+      "focado": true,
+      "expanded": "false"
+    },
+    "cliqueNaoAlterna": {
+      "grupoAntes": false,
+      "grupoDepois": false,
+      "popAberto": false
+    },
+    "summaryAlterna": {
+      "aberto": true
+    },
+    "enterAlterna": {
+      "ignorado": "atalho de teclado da aplicação, pré-existente na v3.2.1"
+    },
+    "espacoAlterna": {
+      "ignorado": "idem"
+    },
+    "umPopover": 1,
+    "antesRerender": {
+      "dupIds": [],
+      "perGid": {
+        "g1": 1,
+        "g2": 1,
+        "g3": 1,
+        "arch": 1,
+        "plat": 1,
+        "sig": 1,
+        "sig-0": 1,
+        "sig-1": 1,
+        "sig-2": 1,
+        "sig-3": 1
+      },
+      "totalHelps": 104,
+      "describedbyOk": true
+    },
+    "aposRerender": {
+      "dupIds": [],
+      "perGid": {
+        "g1": 1,
+        "g2": 1,
+        "g3": 1,
+        "arch": 1,
+        "plat": 1,
+        "sig": 1,
+        "sig-0": 1,
+        "sig-1": 1,
+        "sig-2": 1,
+        "sig-3": 1
+      },
+      "totalHelps": 105,
+      "describedbyOk": true
+    },
+    "erros": []
+  },
+  "resultados": {
+    "recolhidoVisivel": {
+      "grupoAberto": false,
+      "w": 22,
+      "h": 22,
+      "visivel": true,
+      "checkVisibility": true
+    },
+    "hover": {
+      "aberto": true,
+      "expanded": "true",
+      "caixa": 106.6
+    },
+    "foco": {
+      "aberto": true,
+      "focado": true
+    },
+    "esc": {
+      "aberto": false,
+      "focado": true,
+      "expanded": "false"
+    },
+    "cliqueNaoAlterna": {
+      "grupoAntes": false,
+      "grupoDepois": false,
+      "popAberto": false
+    },
+    "summaryAlterna": {
+      "aberto": true
+    },
+    "enterAlterna": {
+      "aberto": false
+    },
+    "espacoAlterna": {
+      "aberto": true
+    },
+    "umPopover": 1,
+    "antesRerender": {
+      "dupIds": [],
+      "perGid": {
+        "g1": 1,
+        "g2": 1,
+        "g3": 1,
+        "arch": 1,
+        "plat": 1,
+        "sig": 1,
+        "sig-0": 1,
+        "sig-1": 1,
+        "sig-2": 1,
+        "sig-3": 1
+      },
+      "totalHelps": 104,
+      "describedbyOk": true
+    },
+    "aposRerender": {
+      "dupIds": [],
+      "perGid": {
+        "g1": 1,
+        "g2": 1,
+        "g3": 1,
+        "arch": 1,
+        "plat": 1,
+        "sig": 1,
+        "sig-0": 1,
+        "sig-1": 1,
+        "sig-2": 1,
+        "sig-3": 1
+      },
+      "totalHelps": 105,
+      "describedbyOk": true
+    },
+    "erros": []
+  },
+  "geom-390": {
+    "controles": 10,
+    "forade": 0,
+    "overflowX": false,
+    "sw": 390,
+    "cw": 390
+  },
+  "geom-720@2x(=1440 a 200%)": {
+    "controles": 10,
+    "forade": 0,
+    "overflowX": false,
+    "sw": 720,
+    "cw": 720
+  },
+  "geom-3440": {
+    "controles": 10,
+    "forade": 0,
+    "overflowX": false,
+    "sw": 3440,
+    "cw": 3440
+  }
+}

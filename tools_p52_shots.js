@@ -245,7 +245,435 @@ async function scrollToEvbase(pg) {
   await pg.waitForTimeout(240);
 }
 
+/* ============================================================================
+   PATCH V3.2.2 · ACERVO PRÓPRIO DA RODADA (§9)
+   Acionado por `V322_SHOTS=1` e escrito EXCLUSIVAMENTE em
+   `docs_phase5/evidence_v322/`. Sem a variável, este arquivo se comporta byte a
+   byte como antes e o acervo histórico da Phase 5.2 não é tocado.
+   As capturas acompanham medidas em JSON: screenshot nunca é o único oracle.
+   ========================================================================== */
+const OUT322 = path.join(HERE, "docs_phase5", "evidence_v322");
+
+const V322_MEASURE_FOOTER = function () {
+  var b = function (e) { if (!e) return null; var r = e.getBoundingClientRect();
+    return { l: +r.left.toFixed(1), r: +r.right.toFixed(1), t: +r.top.toFixed(1),
+             b: +r.bottom.toFixed(1), w: +r.width.toFixed(1), h: +r.height.toFixed(1) }; };
+  var foot = document.querySelector(".wrap > footer");
+  var legal = foot ? foot.querySelector(".p52-foot-legal") : null;
+  var contact = foot ? foot.querySelector(".p52-foot-contact") : null;
+  var wrap = document.querySelector(".wrap"), cs = getComputedStyle(wrap), wr = wrap.getBoundingClientRect();
+  var inner = wr.width - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight);
+  var lb = b(legal), cb = b(contact);
+  return {
+    mode: foot ? foot.getAttribute("data-p52-footer") : null,
+    larguraUtil: +inner.toFixed(1), rodape: b(foot), legal: lb, autoria: cb,
+    fracaoDaLarguraUtil: (lb && inner) ? +(lb.w / inner).toFixed(3) : null,
+    maxWidthLegal: legal ? getComputedStyle(legal).maxWidth : null,
+    fonteLegalPx: legal ? parseFloat(getComputedStyle(legal).fontSize) : null,
+    fonteAutoriaPx: contact ? parseFloat(getComputedStyle(contact).fontSize) : null,
+    sobreposicao: (lb && cb) ? !(lb.r <= cb.l + 0.5 || cb.r <= lb.l + 0.5 ||
+                                 lb.b <= cb.t + 0.5 || cb.b <= lb.t + 0.5) : null,
+    empilhado: (lb && cb) ? lb.b <= cb.t + 0.5 : null,
+    overflowHorizontal: document.documentElement.scrollWidth > document.documentElement.clientWidth,
+    scrollWidth: document.documentElement.scrollWidth, clientWidth: document.documentElement.clientWidth
+  };
+};
+
+const V322_MEASURE_EDITOR = function () {
+  var ed = document.getElementById("v32editor");
+  if (!ed) return { ausente: true };
+  var n = function (s) { return String(s == null ? "" : s).replace(/\s+/g, " ").trim(); };
+  var regs = Array.prototype.slice.call(ed.querySelectorAll(":scope > .p52-ctxregion"));
+  return {
+    tela: document.body.getAttribute("data-uxscreen"),
+    regioes: regs.map(function (r) {
+      var body = r.querySelector(":scope > .p52-ctxregion-body");
+      return { chave: r.getAttribute("data-p52-region"),
+        titulo: n((r.querySelector(".p52-ctxregion-name") || {}).textContent),
+        linhaDeOrientacao: n((r.querySelector(".p52-ctxregion-lead") || {}).textContent),
+        grupos: body ? Array.prototype.slice.call(body.querySelectorAll(":scope > details[data-gid]"))
+          .map(function (d) { return { gid: d.getAttribute("data-gid"), aberto: !!d.open }; }) : [] };
+    }),
+    gruposForaDeRegiao: ed.querySelectorAll(":scope > details[data-gid]").length,
+    ajudasTotais: ed.querySelectorAll('[data-p52="cap-help"]').length,
+    ajudasDeCapability: ed.querySelectorAll('[data-p52="cap-help"][data-cap]').length,
+    campos: ed.querySelectorAll("input, select, textarea").length
+  };
+};
+
+const V322_MEASURE_PENDING = function () {
+  var n = function (s) { return String(s == null ? "" : s).replace(/\s+/g, " ").trim(); };
+  var btn = null, bs = document.querySelectorAll("button"), i;
+  for (i = 0; i < bs.length; i++) if (/Imprimir \/ salvar em PDF/.test(bs[i].textContent || "")) { btn = bs[i]; break; }
+  var msg = document.querySelector('[data-p52="print-pending"]');
+  var rail = document.getElementById("p52-railto-context");
+  var railP = rail ? rail.querySelector('[data-p52="rail-pending"]') : null;
+  var edBox = document.querySelector('#v32editor .v32-errors:not(.v32-hidden)');
+  var grupo = btn ? btn.closest(".actions") : null;
+  var b = function (e) { if (!e) return null; var r = e.getBoundingClientRect();
+    return { t: +r.top.toFixed(1), b: +r.bottom.toFixed(1), l: +r.left.toFixed(1), w: +r.width.toFixed(1), h: +r.height.toFixed(1) }; };
+  var gb = b(grupo), mb = b(msg);
+  return {
+    mensagensJuntoAoPdf: document.querySelectorAll('[data-p52="print-pending"]').length,
+    textoJuntoAoPdf: msg ? n(msg.textContent) : null,
+    roleJuntoAoPdf: msg ? msg.getAttribute("role") : null,
+    ariaLiveJuntoAoPdf: msg ? msg.getAttribute("aria-live") : null,
+    distanciaDoGrupoDeAcoesPx: (gb && mb) ? Math.round(mb.t - gb.b) : null,
+    ariaDescribedbyDoBotao: btn ? btn.getAttribute("aria-describedby") : null,
+    atalhoIrParaContexto: document.querySelectorAll('[data-p52="goto-context"]').length,
+    indicadoresNoTrilho: rail ? rail.querySelectorAll('[data-p52="rail-pending"]').length : 0,
+    textoDoIndicador: railP ? n(railP.textContent) : null,
+    estadoDoItemDoTrilho: rail ? rail.getAttribute("data-p52-pending") : null,
+    textoAcessivelDoItem: rail ? n(rail.textContent) : null,
+    mensagensNoEditor: document.querySelectorAll('#v32editor .v32-errors:not(.v32-hidden)').length,
+    textoNoEditor: edBox ? n(edBox.textContent) : null,
+    pendenciaSegundoOOwner: (window.__V32UI && typeof window.__V32UI.hasDraft === "function") ? window.__V32UI.hasDraft() : null,
+    printChamado: window.__v322Print || 0
+  };
+};
+
+/* ERRATA V3.2.2 · censo de ajuda `(i)` do editor, por família de alvo. Não é
+   gate: é a medida que sustenta as capturas — quantos controles existem, onde
+   existem e, sobretudo, onde deliberadamente NÃO existem mais. */
+const V322_MEASURE_HELP = function () {
+  var ed = document.getElementById("v32editor");
+  if (!ed) return { ausente: true };
+  var lab = function (e) { return e && e.closest ? e.closest("label") : null; };
+  var temAjuda = function (e) { return !!(e && e.querySelector('[data-p52="cap-help"]')); };
+  var conta = function (lista, alvo) {
+    var com = 0, i;
+    for (i = 0; i < lista.length; i++) if (alvo(lista[i])) com++;
+    return { alvos: lista.length, comAjuda: com };
+  };
+  var A = function (sel) { return Array.prototype.slice.call(ed.querySelectorAll(sel)); };
+  var plat = ed.querySelector('details[data-gid="plat"]');
+  var platHead = plat && plat.parentElement && plat.parentElement.classList.contains("p52-grphead")
+    ? plat.parentElement : plat;
+  return {
+    tela: document.body.getAttribute("data-uxscreen"),
+    preservadas: {
+      capabilities: conta(A(".v32-cap[id^='v32-cap-']"), function (c) {
+        return !!c.querySelector('[data-p52="cap-help"][data-cap]'); }),
+      camposDeArquitetura: conta(A('select[id^="v32-arch-"]'), function (x) { return temAjuda(lab(x)); }),
+      familias: conta(A("details.v32-group[data-gid]"), function (d) {
+        var h = d.parentElement && d.parentElement.classList.contains("p52-grphead") ? d.parentElement : d;
+        return !!h.querySelector(':scope > [data-p52="cap-help"]'); }),
+      subgruposDeRequisitos: conta(A("details.v32-siggroup[data-gid]"), function (d) {
+        var h = d.parentElement && d.parentElement.classList.contains("p52-grphead") ? d.parentElement : d;
+        return !!h.querySelector(':scope > [data-p52="cap-help"]'); }),
+      sinais: conta(A('input[id^="v32-sig-"]'), function (x) { return temAjuda(lab(x)); })
+    },
+    removidas: {
+      situacaoDeclarada: conta(A('select[id^="v32-pres-"]'), function (x) { return temAjuda(lab(x)); }),
+      plataformaDeclarada: conta(A("#v32-plat-fgt"), function (x) { return temAjuda(lab(x)); }),
+      bundles: conta(A('input[name="v32-bundle"]'), function (x) { return temAjuda(lab(x)); }),
+      subscriptions: conta(A('input[id^="v32-sub-"]'), function (x) { return temAjuda(lab(x)); }),
+      legendasInternas: conta(plat ? Array.prototype.slice.call(plat.querySelectorAll("fieldset > legend")) : [],
+        function (x) { return temAjuda(x); })
+    },
+    ajudaUnicaDePlataformas: {
+      noCabecalho: !!(platHead && platHead.querySelector(':scope > [data-p52="cap-help"]')),
+      dentroDoGrupo: plat ? plat.querySelectorAll('[data-p52="cap-help"]').length : null,
+      texto: (function () {
+        var b = platHead && platHead.querySelector(':scope > [data-p52="cap-help"]');
+        var pop = b ? document.getElementById(b.getAttribute("aria-describedby") || "") : null;
+        return pop ? String(pop.textContent || "").replace(/\s+/g, " ").trim() : null;
+      })()
+    },
+    totais: {
+      ajudas: ed.querySelectorAll('[data-p52="cap-help"]').length,
+      popovers: ed.querySelectorAll('[data-p52="cap-help-text"]').length,
+      describedbyOrfaos: (function () {
+        var n = 0, bs = ed.querySelectorAll('[data-p52="cap-help"]'), i;
+        for (i = 0; i < bs.length; i++)
+          if (!document.getElementById(bs[i].getAttribute("aria-describedby") || "")) n++;
+        return n;
+      })()
+    },
+    gruposAbertos: Array.prototype.slice.call(ed.querySelectorAll("details.v32-group[data-gid]"))
+      .filter(function (d) { return d.open; }).map(function (d) { return d.getAttribute("data-gid"); })
+  };
+};
+
+/* ERRATA V3.2.2 · medição do movimento. Executada no navegador, sobre a tela de
+   pergunta real: troca de resposta na MESMA pergunta, avanço e retorno. Devolve
+   o `animation-name` computado e a amostragem quadro a quadro — a opacidade
+   mínima e os `transform` distintos observados em cada ação. */
+const V322_MEASURE_MOTION = async function () {
+  var sec = function () { return document.querySelector("#app section.screen"); };
+  var leia = function () {
+    var s = sec();
+    if (!s) return { ausente: true };
+    var cs = getComputedStyle(s);
+    return { marcacao: s.getAttribute("data-p52-nav"), animacao: cs.animationName,
+             duracao: cs.animationDuration, opacidade: parseFloat(cs.opacity), transform: cs.transform };
+  };
+  var amostrar = function (ms) {
+    return new Promise(function (resolve) {
+      var out = [], t0 = performance.now();
+      (function passo() {
+        var s = sec();
+        if (s) { var cs = getComputedStyle(s); out.push([+(+cs.opacity).toFixed(3), cs.transform]); }
+        if (performance.now() - t0 >= ms) {
+          resolve({ quadros: out.length,
+                    opacidadeMinima: out.length ? Math.min.apply(null, out.map(function (x) { return x[0]; })) : null,
+                    transformsObservados: Array.from(new Set(out.map(function (x) { return x[1]; }))) });
+          return;
+        }
+        requestAnimationFrame(passo);
+      })();
+    });
+  };
+  var R = { repouso: leia(), scrollAntes: window.scrollY };
+  document.querySelectorAll("#app .opt")[2].click();
+  R.trocaDeResposta = leia();
+  R.trocaDeRespostaAmostra = await amostrar(420);
+  R.scrollDepois = window.scrollY;
+  document.getElementById("next").click();
+  R.avanco = leia();
+  R.avancoAmostra = await amostrar(420);
+  document.getElementById("back").click();
+  R.retorno = leia();
+  R.retornoAmostra = await amostrar(420);
+  return R;
+};
+
+async function v322Shots() {
+  fs.mkdirSync(OUT322, { recursive: true });
+  const browser = await chromium.launch(Object.assign({ args: ["--no-sandbox", "--disable-dev-shm-usage"] }, resolveBrowser()));
+  const index = [], medidas = {};
+  const shot = async (pg, nome, full) => {
+    const f = "V322-" + nome + ".png";
+    await pg.screenshot({ path: path.join(OUT322, f), fullPage: full !== false });
+    return f;
+  };
+  try {
+    /* --- CORREÇÃO A · editor nas duas entradas, mesma geometria ------------- */
+    for (const entrada of ["home", "resultados"]) {
+      const pg = await browser.newPage({ viewport: { width: 1440, height: 900 } });
+      try {
+        await pg.goto(URL);
+        if (entrada === "home") { await pg.click("#ux-addctx"); }
+        else { await results(pg, FX52.P52_F1); await pg.click("#v32cta"); }
+        await pg.waitForTimeout(420);
+        const f = await shot(pg, "01-contexto-" + entrada);
+        medidas["editor-" + entrada] = await pg.evaluate(V322_MEASURE_EDITOR);
+        index.push({ cena: "01-contexto-" + entrada, vp: "1440x900", file: f,
+          desc: "Contexto tecnológico aberto pela entrada da " + entrada + " — duas regiões" });
+        medidas["ajuda-" + entrada] = await pg.evaluate(V322_MEASURE_HELP);
+        /* ERRATA V3.2.2 · primeira abertura limpa: os SEIS grupos recolhidos */
+        if (entrada === "home") {
+          await pg.evaluate(() => {
+            const r = document.querySelector('[data-p52="ctx-region"][data-p52-region="caps"]');
+            if (r) window.scrollTo(0, r.getBoundingClientRect().top + window.scrollY - 24);
+          });
+          await pg.waitForTimeout(220);
+          const f2 = await shot(pg, "02-primeira-abertura-seis-recolhidos", false);
+          index.push({ cena: "02-primeira-abertura-seis-recolhidos", vp: "1440x900", file: f2,
+            desc: "Primeira abertura limpa — os seis grupos principais recolhidos, inclusive SOC & Operations" });
+
+          /* uma capability aberta: a ajuda útil fica no NOME da capability, e
+             'Situação declarada' já não carrega controle algum */
+          await pg.click('#v32editor details[data-gid="g1"] > summary');
+          await pg.waitForTimeout(360);
+          await pg.evaluate(() => {
+            const c = document.getElementById("v32-cap-knowledge-management");
+            if (c) window.scrollTo(0, c.getBoundingClientRect().top + window.scrollY - 120);
+          });
+          await pg.waitForTimeout(200);
+          await pg.hover('[data-p52="cap-help"][data-cap="knowledge-management"]');
+          await pg.waitForTimeout(260);
+          index.push({ cena: "10-capability-ajuda-no-nome", vp: "1440x900",
+            file: await shot(pg, "10-capability-ajuda-no-nome", false),
+            desc: "Capability aberta — ajuda (i) só no nome da capability; 'Situação declarada' sem controle" });
+
+          /* plataformas e licenciamento: uma ajuda no cabeçalho, nenhuma por item */
+          await pg.evaluate(() => {
+            const s = document.querySelector('#v32editor details[data-gid="plat"] > summary');
+            if (s) s.click();
+          });
+          await pg.waitForTimeout(400);
+          await pg.evaluate(() => {
+            const d = document.querySelector('#v32editor details[data-gid="plat"]');
+            const h = d && d.parentElement;
+            if (h) window.scrollTo(0, h.getBoundingClientRect().top + window.scrollY - 40);
+          });
+          await pg.waitForTimeout(220);
+          index.push({ cena: "11-plataformas-sem-ajuda-por-item", vp: "1440x900",
+            file: await shot(pg, "11-plataformas-sem-ajuda-por-item", false),
+            desc: "Plataformas e licenciamento aberto — ajuda única no cabeçalho, zero controles por item" });
+          medidas["ajuda-plataformas-aberto"] = await pg.evaluate(V322_MEASURE_HELP);
+        }
+      } finally { await pg.close(); }
+    }
+
+    /* --- CORREÇÃO B · rodapé nas seis larguras ----------------------------- */
+    for (const w of [390, 768, 1440, 1920, 2560, 3440]) {
+      const pg = await browser.newPage({ viewport: { width: w, height: 900 } });
+      try {
+        await pg.goto(URL);
+        await pg.waitForTimeout(300);
+        await pg.evaluate(() => {
+          const f = document.querySelector(".wrap > footer");
+          if (f) f.scrollIntoView({ block: "end" });
+        });
+        await pg.waitForTimeout(220);
+        const f = await shot(pg, "03-rodape-" + w, false);
+        medidas["rodape-" + w] = await pg.evaluate(V322_MEASURE_FOOTER);
+        index.push({ cena: "03-rodape-" + w, vp: w + "x900", file: f,
+          desc: "Rodapé da home em " + w + "px — bloco legal na largura útil, autoria à direita" });
+      } finally { await pg.close(); }
+    }
+
+    /* --- CORREÇÃO C · pendência no ponto de ação --------------------------- */
+    const pg = await browser.newPage({ viewport: { width: 1440, height: 900 } });
+    try {
+      await pg.goto(URL);
+      await results(pg, FX52.P52_F1);
+      await pg.evaluate(() => { window.__v322Print = 0; window.print = function () { window.__v322Print++; }; });
+      await pg.click("#v32cta");
+      await pg.waitForTimeout(360);
+      await pg.evaluate(() => {
+        const s = document.querySelector("#v32editor select[id^='v32-arch-']");
+        if (s && s.options.length > 1) { s.value = s.options[s.options.length - 1].value; s.dispatchEvent(new Event("change", { bubbles: true })); }
+      });
+      await pg.waitForTimeout(280);
+      await pg.evaluate(() => { const a = document.getElementById("p52-railto-context"); if (a) a.scrollIntoView({ block: "center" }); });
+      await pg.waitForTimeout(220);
+      medidas["pendente-antes-da-tentativa"] = await pg.evaluate(V322_MEASURE_PENDING);
+      index.push({ cena: "04-trilho-alteracoes-pendentes", vp: "1440x900",
+        file: await shot(pg, "04-trilho-alteracoes-pendentes", false),
+        desc: "Trilho lateral com 'alterações pendentes' ANTES de qualquer tentativa de impressão" });
+
+      await pg.evaluate(() => {
+        const b = Array.prototype.slice.call(document.querySelectorAll("button"))
+          .filter(x => /Imprimir \/ salvar em PDF/.test(x.textContent || ""))[0];
+        if (b) b.click();
+      });
+      await pg.waitForTimeout(480);
+      await pg.evaluate(() => { const m = document.querySelector('[data-p52="print-pending"]'); if (m) m.scrollIntoView({ block: "center" }); });
+      await pg.waitForTimeout(240);
+      medidas["pendente-apos-bloqueio"] = await pg.evaluate(V322_MEASURE_PENDING);
+      index.push({ cena: "05-mensagem-abaixo-do-pdf", vp: "1440x900",
+        file: await shot(pg, "05-mensagem-abaixo-do-pdf", false),
+        desc: "Mensagem exata logo abaixo do grupo de ações que contém Imprimir / salvar em PDF" });
+      await pg.evaluate(() => { const a = document.querySelector("#v32editor .v32-actions"); if (a) a.scrollIntoView({ block: "center" }); });
+      await pg.waitForTimeout(240);
+      index.push({ cena: "06-mensagem-junto-a-salvar-cancelar", vp: "1440x900",
+        file: await shot(pg, "06-mensagem-junto-a-salvar-cancelar", false),
+        desc: "Mensagem preservada junto a Salvar contexto / Cancelar" });
+      await pg.evaluate(() => { const a = document.getElementById("p52-railto-context"); if (a) a.scrollIntoView({ block: "center" }); });
+      await pg.waitForTimeout(240);
+      index.push({ cena: "07-trilho-apos-bloqueio", vp: "1440x900",
+        file: await shot(pg, "07-trilho-apos-bloqueio", false),
+        desc: "Item Contexto tecnológico com ênfase de erro — o texto continua explicando a ação" });
+
+      await pg.evaluate(() => { const b = document.getElementById("v32save"); if (b) b.click(); });
+      await pg.waitForTimeout(560);
+      medidas["limpo-apos-salvar"] = await pg.evaluate(V322_MEASURE_PENDING);
+      index.push({ cena: "08-limpo-apos-salvar", vp: "1440x900",
+        file: await shot(pg, "08-limpo-apos-salvar"),
+        desc: "Estado limpo após Salvar contexto — nenhum dos três indicadores permanece" });
+
+      await pg.click("#v32cta");
+      await pg.waitForTimeout(360);
+      await pg.evaluate(() => {
+        const s = document.querySelector("#v32editor select[id^='v32-arch-']");
+        if (s && s.options.length > 1) { s.value = s.options[0].value; s.dispatchEvent(new Event("change", { bubbles: true })); }
+      });
+      await pg.waitForTimeout(220);
+      await pg.evaluate(() => {
+        const b = Array.prototype.slice.call(document.querySelectorAll("button"))
+          .filter(x => /Imprimir \/ salvar em PDF/.test(x.textContent || ""))[0];
+        if (b) b.click();
+      });
+      await pg.waitForTimeout(420);
+      await pg.evaluate(() => { const b = document.getElementById("v32cancel"); if (b) b.click(); });
+      await pg.waitForTimeout(560);
+      medidas["limpo-apos-cancelar"] = await pg.evaluate(V322_MEASURE_PENDING);
+      index.push({ cena: "09-limpo-apos-cancelar", vp: "1440x900",
+        file: await shot(pg, "09-limpo-apos-cancelar"),
+        desc: "Estado limpo após Cancelar — nenhum dos três indicadores permanece" });
+    } finally { await pg.close(); }
+
+    /* --- ERRATA V3.2.2 · movimento: a medição, e não só a foto -------------
+       Screenshot não fotografa ausência de animação. O que prova a correção é
+       a MEDIÇÃO: `animation-name` computado e a amostragem quadro a quadro da
+       opacidade e do `transform` logo depois de cada ação. As duas capturas
+       de navegação existem para o olho; os números existem para a auditoria. */
+    for (const reduzido of [false, true]) {
+      const chave = reduzido ? "movimento-reduced-motion" : "movimento-normal";
+      const ctx = await browser.newContext({
+        viewport: { width: 1440, height: 900 },
+        reducedMotion: reduzido ? "reduce" : "no-preference"
+      });
+      const mp = await ctx.newPage();
+      try {
+        await mp.goto(URL);
+        await question(mp, 3);
+        await mp.waitForTimeout(420);
+        medidas[chave] = await mp.evaluate(V322_MEASURE_MOTION);
+        if (!reduzido) {
+          index.push({ cena: "12-avanco-entre-perguntas", vp: "1440x900",
+            file: await shot(mp, "12-avanco-entre-perguntas", false),
+            desc: "Pergunta seguinte logo após avançar — transição horizontal curta em curso" });
+          await mp.evaluate(() => document.getElementById("back").click());
+          await mp.waitForTimeout(40);
+          index.push({ cena: "13-retorno-entre-perguntas", vp: "1440x900",
+            file: await shot(mp, "13-retorno-entre-perguntas", false),
+            desc: "Pergunta anterior logo após voltar — mesma transição, no sentido inverso" });
+        }
+      } finally { await mp.close().catch(() => { }); await ctx.close().catch(() => { }); }
+    }
+
+    /* --- capturas de referência a partir dos bytes FINAIS da candidata -----
+       A imagem de abertura do README e as capturas do pacote externo têm de
+       sair DESTA candidata, não de um acervo anterior: o rodapé da home mudou
+       na v3.2.2 e uma captura antiga mostraria estado visual superado. */
+    const cenasFinais = [
+      { nome: "14-home-1920x1080", desc: "Tela de abertura da candidata V3.2.2 — imagem usada pelo README",
+        ir: async () => { } },
+      { nome: "15-questionario-1920x1080", desc: "Pergunta com o mapa do assessment, na candidata V3.2.2",
+        ir: async (pg) => { await question(pg, 3); } },
+      { nome: "16-resultados-1920x1080", desc: "Workspace de resultados da candidata V3.2.2",
+        ir: async (pg) => { await results(pg, FX52.P52_F1); } }
+    ];
+    for (const cena of cenasFinais) {
+      const hp = await browser.newPage({ viewport: { width: 1920, height: 1080 } });
+      try {
+        await hp.goto(URL);
+        await hp.waitForTimeout(300);
+        await cena.ir(hp);
+        await hp.waitForTimeout(420);
+        /* espera ATIVA pelo repouso: nada de número mágico, e o PNG deixa de
+           depender do instante em que a transição de navegação terminou. */
+        await hp.evaluate(() => Promise.race([
+          Promise.all(document.getAnimations().map(a => a.finished.catch(() => null))),
+          new Promise(r => setTimeout(r, 1500))
+        ]));
+        const f = await shot(hp, cena.nome, true);
+        index.push({ cena: cena.nome, vp: "1920x1080", file: f, desc: cena.desc });
+      } finally { await hp.close(); }
+    }
+  } finally { await browser.close(); }
+
+  fs.writeFileSync(path.join(OUT322, "V322-medidas.json"), JSON.stringify(medidas, null, 2) + "\n", "utf8");
+  let md = "# Evidência visual · Patch V3.2.2 — contexto, rodapé e pendência de impressão\n\n" +
+    "Acervo gerado por `tools_p52_shots.js` com `V322_SHOTS=1` sobre a candidata local.\n" +
+    "Não é gate: não afirma PASS nem FAIL. As medidas que sustentam as asserções estão em\n" +
+    "`V322-medidas.json` — bounding boxes, largura útil, fração ocupada, sobreposição,\n" +
+    "overflow, estados `open`, contagem de mensagens por local e nomes acessíveis.\n" +
+    "Screenshot não é o único oracle: os gates `V322-*` medem geometria e DOM.\n\n" +
+    "| cena | viewport | arquivo | descrição |\n|---|---|---|---|\n";
+  index.forEach(i => { md += "| " + i.cena + " | " + i.vp + " | `" + i.file + "` | " + i.desc + " |\n"; });
+  md += "\n## Medidas\n\n| arquivo | conteúdo |\n|---|---|\n" +
+    "| `V322-medidas.json` | geometria do rodapé nas seis larguras; estrutura do editor nas duas entradas; as três apresentações da pendência em cada etapa do ciclo; o censo de ajuda `(i)` por família de alvo (preservadas × removidas); e a medição de movimento com e sem `prefers-reduced-motion` |\n";
+  fs.writeFileSync(path.join(OUT322, "INDEX.md"), md, "utf8");
+  console.log("evidência V3.2.2: " + index.length + " capturas em " + OUT322);
+}
+
 (async () => {
+  if (process.env.V322_SHOTS === "1") { await v322Shots(); return; }
   const browser = await chromium.launch(Object.assign({ args: ["--no-sandbox", "--disable-dev-shm-usage"] }, resolveBrowser()));
   const index = [];
   try {

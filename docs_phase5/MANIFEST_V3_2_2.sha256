@@ -1,0 +1,114 @@
+# MANIFESTO DA RODADA · CANDIDATA V3.2.2
+# (patch de UX + fechamento pré-auditoria + errata de ajudas/accordion/transição
+#  + ERRATA FINAL ORIENTADA A RISCO · REV C)
+#
+# Cobertura EXATA do delta v3.2.2 sobre a tag v3.2.1 (07bc90b3fbf6f033a56c490f3bff1951c58316b7).
+# Exclui a si próprio e exclui AGENTS.md (não rastreado, preexistente, fora do escopo).
+# Candidata local, NÃO comitada, na branch fix/v3.2.2-context-footer-print-ux.
+# Regenerado por ÚLTIMO, depois de toda a assurance e do pacote externo REV C.
+# Reemitido na integração de 2026-08-25 para incluir o parecer independente REV C
+# importado byte a byte e o registro de aceite e integração da v3.2.2.
+#
+# --- produção alterada ---
+cad66aebb0fefb4accbc55f4457153cc18383a1cbf59f6bfa71fb392b2c11a8a  ui_p52_workspace_v32.js
+862354a053bcc21e8dd0b5ba7c856c72e99104c9bad148a191bbc615a4f5442d  ui_p52_workspace_v32.css
+# --- artefato reconstruído pelo builder canônico ---
+913440adc157e850e100c98a706ad6e6793e3556981bb78a4736500cd1c02879  quickscan_secops_soccmm_v3_2_dev.html
+# --- gates, campanha mutante e gerador de evidência ---
+5c9f9cb613973f7331e2e1bfb0c6fc45d6dc32e5d417b87eeed806d1e536102d  tests_p52_chromium.js
+ac557f39b7f4fc4afdef5dbfe134cccf75dcf28138f07d0d9b213776d3767b43  tests_p52_layout.js
+f8db2d94dac5350165e4e191842c30f423b70925d61e708a6f6e14e828760885  tests_p52_mutants.js
+e287a7abd4f50085a47f8aeac485e9706a6de3f1e909bacefdf320d8d71741a9  tools_p52_shots.js
+# --- documentação ---
+11f4b4000bf12e1bd8d64fea44b0e19d09c203bfb5c899bd391e90194a8ab70b  README.md
+6a38185877fb7fc7642f4887faf6bab1f5318378b28c6e779925d178da44392c  USER_GUIDE.md
+94afd5f61160ea80ea2acb6a879169fd95124001bcf53840c9c22281ea983cf2  docs_phase5/PATCH_V3_2_2_CONTEXT_FOOTER_PRINT_UX_REPORT.md
+90ed539047eece4d7349cf35608f299428d26e3a73e068d3fa98d5017b86524f  docs_phase5/AUDITORIA_EXTERNA_INDEPENDENTE_QUICKSCAN_V3_2_2_REV_B.md
+# --- parecer independente REV C e registro de aceite (integração v3.2.2) ---
+8071a7acdca388609116740c46cb406552e667ee873da03d668711a5f76f1a4c  docs_phase5/PARECER_REAUDITORIA_INDEPENDENTE_V3_2_2_REV_C_2026-08-25.md
+9e05f371e30a5992d72e86354a8cc7ec53c4a2c6ac0c26b25ee604f03cd214c0  docs_phase5/V3_2_2_ACCEPTANCE_AND_INTEGRATION_RECORD.md
+# --- evidência nominal desta candidata ---
+3ba5399baad4ebc890b6b596729d64d5a83005ff026e59423999c8408d20468c  docs_phase5/evidence_v322/INDEX.md
+1418016123c892632c5821da88f565f6378bc58d817d89ad236047eba04019b8  docs_phase5/evidence_v322/V322-01-contexto-home.png
+e81f4cd85cd5112d3e0c5ea33ee4d64f496d77dc25f931837b5b7588e8d36be3  docs_phase5/evidence_v322/V322-01-contexto-resultados.png
+e7c2783948bb5c36be180f596384e91749d3ef6d6ca5e5ecd52920e847ee2232  docs_phase5/evidence_v322/V322-02-primeira-abertura-seis-recolhidos.png
+928fb4d280e9c8ca6e2c365d86ccb7fc93e4502c0eb2c038b85ff0053231a154  docs_phase5/evidence_v322/V322-03-rodape-1440.png
+af5e1fd53a2f9ef3d34b7722eb676aaf5bfe5cc888ab634baec41b15cf71f3f8  docs_phase5/evidence_v322/V322-03-rodape-1920.png
+ffd812826e65533ff4695097766a86077410ec7f3b5eff6711308b1b584a1277  docs_phase5/evidence_v322/V322-03-rodape-2560.png
+399ef07a3bf6b1f597105cf6f6113c3bc1997402edab50d2f1f6b1ab9b8d3678  docs_phase5/evidence_v322/V322-03-rodape-3440.png
+f29e87c5d5756be29c828eea8c390bcd8df4bea9f8779ca0fee1c57dc9d1407e  docs_phase5/evidence_v322/V322-03-rodape-390.png
+2895370cfd593d09850bce2c75a5612bb2f9512b17854e2b2a68f8c8b6997a17  docs_phase5/evidence_v322/V322-03-rodape-768.png
+1bcc80de5a6e7902f869dc3fc46d19ae3fcc5e514cbecebab77a6a30e9a79c55  docs_phase5/evidence_v322/V322-04-trilho-alteracoes-pendentes.png
+ec537b7faf3db618f2a93e0c6b4e144c74444db5abbd1ecc7f6aa2b8273f97c4  docs_phase5/evidence_v322/V322-05-mensagem-abaixo-do-pdf.png
+752ab324202b9d82f7cc2d826697d43d80fa19f6d59d33b999ba7bc228199263  docs_phase5/evidence_v322/V322-06-mensagem-junto-a-salvar-cancelar.png
+fe48dcd7a6c4fa992c1cc5ce01adc9f41d4dc5da4820611f262e0a473b541abe  docs_phase5/evidence_v322/V322-07-trilho-apos-bloqueio.png
+bf72263741f9328c042407d12284eb2ca134401047c7949bf51609a21916b64f  docs_phase5/evidence_v322/V322-08-limpo-apos-salvar.png
+1f296528ec68a9beafc613922d27439162efea810df2dd9aa23c1c0170d5a1e2  docs_phase5/evidence_v322/V322-09-limpo-apos-cancelar.png
+e5d355caca7b3755dd70d3f7d5bea16ca9cd6ef1676d4c57a6183c20a5f7b494  docs_phase5/evidence_v322/V322-10-capability-ajuda-no-nome.png
+dde616081ccf362134bad5181481ed25969c1859ae62e9802c29b1c916cfcb1b  docs_phase5/evidence_v322/V322-11-plataformas-sem-ajuda-por-item.png
+fc5070cb43a47d06bb6b702290a7e447313dd640fb763935bd495c5e267d6105  docs_phase5/evidence_v322/V322-12-avanco-entre-perguntas.png
+4097cec79b7e4de065a9f524af4adefec2bc4cf5f164df0dafe7522d27859214  docs_phase5/evidence_v322/V322-13-retorno-entre-perguntas.png
+fe6c0cceb060a09292bf4f083e649e895f104a38661060ba7e7aebc8b8b61197  docs_phase5/evidence_v322/V322-14-home-1920x1080.png
+975d236e584b345dad75b42321aede2bca4cb95735808e4067730a40e603ed5a  docs_phase5/evidence_v322/V322-15-questionario-1920x1080.png
+db90cd1d55d9b418ccc91ca51bd725895b736dd9e862357fe28170b87da4a88b  docs_phase5/evidence_v322/V322-16-resultados-1920x1080.png
+10c9d468e6e975ad7bec3bf71812b55184a773fd7d022d9e35aba0d78334f1b6  docs_phase5/evidence_v322/V322-CTXPAR1-editor-parity.json
+e593e849070583d4efcec8ef7af25cb5552a133b34fcd8b5cea3f8686e1f22aa  docs_phase5/evidence_v322/V322-FOOT1-footer-geometry.json
+c6c7bd98d1e9cd595b61c5da509fec08ea3a19eaf36c2df43e80f491eaf66cf9  docs_phase5/evidence_v322/V322-MOT3-motion.json
+9ac6b5f917c244edacbcda03384f461e3c89fabb6048efc406faf47f511b27ee  docs_phase5/evidence_v322/V322-NI1-nested-interactive.json
+8d390e34628df8092c78f84fdc8dddd4e04b26448101e985336d9efd4e94ca7c  docs_phase5/evidence_v322/V322-NOREG1-no-regression.json
+50e5f66b07493b47d7c9472a7e2d7def7a6c1525e08a1c9628f3877fd56add2f  docs_phase5/evidence_v322/V322-PRINT1-pending-state.json
+78e519324a0146c448caa8dddb3dd21a3719d1ceabcc8590705a23ff58b37964  docs_phase5/evidence_v322/V322-axe-vs-v321.json
+154c78f25a0ec2af9b8479454dae3dce84cc6b3a8ab190fb36a5815735f39ec9  docs_phase5/evidence_v322/V322-baseline-RED-GREEN.md
+09d5ba8c81475d4a4f5b274088ee6e692fe54717c862797bff6434b3b376f4d9  docs_phase5/evidence_v322/V322-help-behaviour.json
+fd951cbaf23bfbf08aed0b9f61782677fad6a44f79661dee71a40ae05429bca5  docs_phase5/evidence_v322/V322-medidas.json
+98ed7fe986f28c88b9df6dce86282fa73ec80cf5a05baafe58269edc6f0239c0  docs_phase5/evidence_v322/V322-mutation-87.json
+8448e8ebf6d8001d58fa04e5a3dcabefe16334714678f4c3430154416130a9f3  docs_phase5/evidence_v322/V322-mutation-96.json
+6253cd5e2e900d9443fb7e37977f4eb0aa0801c09bc7d9a775e96a7c6b67920f  docs_phase5/evidence_v322/V322-nested-interactive-RED.json
+8b0161934a216f062f28767ea4617e5b864072edd261e563a75e9d1c91b62d6c  docs_phase5/evidence_v322/V322-nested-interactive-green.json
+24c8c5f1057ef7be03d34a449f91b56bbb9f19c8dff35652358112b423ab4572  docs_phase5/evidence_v322/V322C-CON1-contraste.json
+773e22ca62eb21837fd1dff1391c73a90e0b6a1e9c5714a9eac681f807b45325  docs_phase5/evidence_v322/V322C-FOC1-foco.json
+93e85209cef25ae70bd0d7f95442de6c6d9bb69149ea06e9d192cc2bfa621922  docs_phase5/evidence_v322/V322C-KEY1-teclado.json
+567a339b2dfdaf7a4404813799c7c63348a5dff560f4aaac3cc68b14228519a3  docs_phase5/evidence_v322/V322C-PRN1-impressao.json
+c3c97681c47b76320fc70a916e0f2713ff4147ed08cd51ce0d6bb5b27fdcdf32  docs_phase5/evidence_v322/V322C-RFL1-reflow.json
+# --- evidência nominal da ERRATA FINAL (REV C) ---
+0727728aa91d721f658de52cc3613e61c4a025e7f1a103e860aa41d254d3b2e0  docs_phase5/evidence_v322/rev_c/GREEN_V322C.log
+31a6d8c5f029df733775eea217c3dfabdd0f984517ae380e10624c56dc2362b3  docs_phase5/evidence_v322/rev_c/RED_V322C.log
+9d69c38d34d6d9d71064b7a09408e58546926164ac07f9812db5113991a0d30e  docs_phase5/evidence_v322/rev_c/V322C-01-home-1920x1080.png
+0d2a70eba1d85b5cb18199728f084007413752540f1e9ecf8301de4b8943d4fe  docs_phase5/evidence_v322/rev_c/V322C-02-enter-no-select-editor-vivo.png
+c83b49166d56c41755113140a9377f62441e96412b15f146c976ea9a69c9e48a  docs_phase5/evidence_v322/rev_c/V322C-03-enter-em-salvar-volta-a-home.png
+cf11024e850c015cea7c8f936b174041f088cb9987a618882665f8f2bd5b1f97  docs_phase5/evidence_v322/rev_c/V322C-04-editor-390px-sem-corte.png
+960fbb1d33cd7170b1e0570a7f24fb3109a6838079803c47d3218969f2427ec6  docs_phase5/evidence_v322/rev_c/V322C-05-erro-unico-junto-das-acoes.png
+ddbd8fc2d7d06affb2f65e4852de422f84f99d7130c33d5c11edfe29d3de7c2e  docs_phase5/evidence_v322/rev_c/V322C-SMOKE-invariantes.json
+da47774029a6bdc4c7e483a982ed2d813c58018309eed1803abfce6f3a0f5e2a  docs_phase5/evidence_v322/rev_c/V322C-mutacao-dirigida.json
+925fd01d4d9d40c2870d4feda0821955ccc5f7294bfec5da75ef0ef4b9867ad8  docs_phase5/evidence_v322/rev_c/V322C-mutacao-dirigida.log
+f55064060352d7b57db02dee9eedbb784a7944522904b58c9196896a91b0edf1  docs_phase5/evidence_v322/rev_c/V322C-test-all.log
+2e1ceaf09eed0a5ed8d0825f6d5f8cfc14864ec0c2734b6faf707adc17c5e6a1  docs_phase5/evidence_v322/rev_c/V322C-test-visual.log
+#
+# --- pacote externo de revisão independente (fora do repositório) ---
+# 1c02aafc3cb5e6091c84c5b4d75d96918d5deecf96178de3a296cdfff7a1419e  QUICKSCAN_V3_2_2_INDEPENDENT_ANALYST_REVIEW_PACKAGE_2026-08-25_REV_C.zip
+#   1000634 bytes · 24 arquivos · MANIFEST_SHA256.txt com 23 entradas · sha256sum -c → 23 OK, 0 falhas
+# SUPERADO como candidata corrente, PRESERVADO como parecer:
+#   da6faffd25aeb493d06d905d16cfc534c7a73e5fad771ff35d8eb1dacff8c1bb  ..._2026-08-25_REV_B.zip (3263351 bytes)
+#   c82c7693ce8422166de88d003f8a05ca0f36c043caacdad93fe46443b24d4618  ..._2026-08-24.zip
+#
+# --- superfícies de produção NÃO alteradas (identidade byte-a-byte da v3.2.1) ---
+# 9a4a2e674389a115a56c0bce9785ad0f90651546e31d264a947998e2bb5d247a  engine_v32.js
+# 0b30fe27ebc7fa0678b746ffe2fcd08fb1dcaf40a386ea774ffc3349f958e559  ui_v32.js
+# a050401145a5ed7af597eae01a9a23826418119769c096db168b3b177a9d3938  ui_ux_v32.js
+# 6fd849cdbdbb6838921a1519613e8a5194777c6eeb9e3e102c681a0ddc27164b  ui_session_v32.js
+# d672da97a8c9b17d33890eaa97dcdea3a9367a02a57c682662d32f56e4aa63f8  ui_target_v32.js
+# df0b00eb75f2ee2f8ae5542104bafd7f54580163e60432e7a48bb4bf8118aaf7  ui_journey_v32.js
+# 32aabc3445571d447189edf4b486239c9256aa9bd0bc6bdab00635a65aa42151  ui_icons_v32.js
+# ade18a9afd265966feb40cb9f2926e20f5ffd2534dcfe7ec602e46cc6d01132c  ui_refinement_v32.js
+# e28a21733564e1a222cefa82fb848f569e3a50b6ddda8c447d2ad52b436a58a3  ui_p50_shell_v32.js
+# a9931330021949b581da29012be7669edf75529aaaaa9c2f13d0165494b86f5b  ui_p50_suff_v32.js
+# 57fd78ca7084bfd513793e55094fef0429e58bc6012a4ba80f252b2f984a141a  ui_p50_results_v32.js
+# acb0eba165ef25e6b97475430e9b042a9b39038be2b9882ec5b3c67a730faa6f  ui_v32.css
+# 84af670571c7d11bec828636899b94e4f264e376febaaeb8e9ade1a841483b44  ui_ux_v32.css
+# 749cbb989ddcb51feaef3af5dd8cbc6caf1cbc08eac70da60bde36cca239dc93  ui_p50_v32.css
+# bf98d496834c25365adff76f15689e1ba44f703c07bdb3db2eaeee0a8ade89ac  build_v32_html.py
+# b0ee93a22172b9f8ceda5b10b3934aa52f039df415897020d352cac56351daef  package.json
+# d329049147950a5b2a40b2735c3d4bd9a89177fed439efbcb58df01bdeb7ae82  quickscan_secops_soccmm_v3_1_3.html
+#
+# --- payload funcional M41 (derivado do runtime, não do DOM) ---
+# 9794b267e4225d8fa14f0f0d84aed0e2979658bfa2565b459788ef3b3ed4365b  M41 canônico · reexecutado e conferido

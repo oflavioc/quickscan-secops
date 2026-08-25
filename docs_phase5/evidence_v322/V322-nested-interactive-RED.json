@@ -1,0 +1,570 @@
+{
+  "home": {
+    "entrada": "home",
+    "sigAberto": false,
+    "violacoesGraves": [
+      {
+        "id": "nested-interactive",
+        "impacto": "serious",
+        "nos": 6
+      }
+    ],
+    "nestedInteractiveNos": 6,
+    "detalhe": [
+      {
+        "regra": "nested-interactive",
+        "impacto": "serious",
+        "seletor": [
+          "details[data-gid=\"g1\"] > summary"
+        ],
+        "html": "<summary aria-expanded=\"true\">"
+      },
+      {
+        "regra": "nested-interactive",
+        "impacto": "serious",
+        "seletor": [
+          "details[data-gid=\"g2\"] > summary"
+        ],
+        "html": "<summary aria-expanded=\"false\">"
+      },
+      {
+        "regra": "nested-interactive",
+        "impacto": "serious",
+        "seletor": [
+          "details[data-gid=\"g3\"] > summary"
+        ],
+        "html": "<summary aria-expanded=\"false\">"
+      },
+      {
+        "regra": "nested-interactive",
+        "impacto": "serious",
+        "seletor": [
+          "details[data-gid=\"arch\"] > summary"
+        ],
+        "html": "<summary aria-expanded=\"false\">"
+      },
+      {
+        "regra": "nested-interactive",
+        "impacto": "serious",
+        "seletor": [
+          "details[data-gid=\"plat\"] > summary"
+        ],
+        "html": "<summary aria-expanded=\"false\">"
+      },
+      {
+        "regra": "nested-interactive",
+        "impacto": "serious",
+        "seletor": [
+          "details[data-gid=\"sig\"] > summary"
+        ],
+        "html": "<summary aria-expanded=\"false\">"
+      }
+    ],
+    "interativosDentroDeSummary": 10,
+    "estrutural": [
+      {
+        "summary": "g1",
+        "tag": "button",
+        "p52": "cap-help",
+        "id": null
+      },
+      {
+        "summary": "g2",
+        "tag": "button",
+        "p52": "cap-help",
+        "id": null
+      },
+      {
+        "summary": "g3",
+        "tag": "button",
+        "p52": "cap-help",
+        "id": null
+      },
+      {
+        "summary": "arch",
+        "tag": "button",
+        "p52": "cap-help",
+        "id": null
+      },
+      {
+        "summary": "plat",
+        "tag": "button",
+        "p52": "cap-help",
+        "id": null
+      },
+      {
+        "summary": "sig",
+        "tag": "button",
+        "p52": "cap-help",
+        "id": null
+      },
+      {
+        "summary": "sig-0",
+        "tag": "button",
+        "p52": "cap-help",
+        "id": null
+      },
+      {
+        "summary": "sig-1",
+        "tag": "button",
+        "p52": "cap-help",
+        "id": null
+      },
+      {
+        "summary": "sig-2",
+        "tag": "button",
+        "p52": "cap-help",
+        "id": null
+      },
+      {
+        "summary": "sig-3",
+        "tag": "button",
+        "p52": "cap-help",
+        "id": null
+      }
+    ],
+    "erros": []
+  },
+  "home-com-requisitos-aberto": {
+    "entrada": "home",
+    "sigAberto": true,
+    "violacoesGraves": [
+      {
+        "id": "nested-interactive",
+        "impacto": "serious",
+        "nos": 10
+      }
+    ],
+    "nestedInteractiveNos": 10,
+    "detalhe": [
+      {
+        "regra": "nested-interactive",
+        "impacto": "serious",
+        "seletor": [
+          "details[data-gid=\"g1\"] > summary"
+        ],
+        "html": "<summary aria-expanded=\"true\">"
+      },
+      {
+        "regra": "nested-interactive",
+        "impacto": "serious",
+        "seletor": [
+          "details[data-gid=\"g2\"] > summary"
+        ],
+        "html": "<summary aria-expanded=\"false\">"
+      },
+      {
+        "regra": "nested-interactive",
+        "impacto": "serious",
+        "seletor": [
+          "details[data-gid=\"g3\"] > summary"
+        ],
+        "html": "<summary aria-expanded=\"false\">"
+      },
+      {
+        "regra": "nested-interactive",
+        "impacto": "serious",
+        "seletor": [
+          "details[data-gid=\"arch\"] > summary"
+        ],
+        "html": "<summary aria-expanded=\"false\">"
+      },
+      {
+        "regra": "nested-interactive",
+        "impacto": "serious",
+        "seletor": [
+          "details[data-gid=\"plat\"] > summary"
+        ],
+        "html": "<summary aria-expanded=\"false\">"
+      },
+      {
+        "regra": "nested-interactive",
+        "impacto": "serious",
+        "seletor": [
+          "details[data-gid=\"sig\"] > summary"
+        ],
+        "html": "<summary aria-expanded=\"true\">"
+      },
+      {
+        "regra": "nested-interactive",
+        "impacto": "serious",
+        "seletor": [
+          "details[data-gid=\"sig-0\"] > summary"
+        ],
+        "html": "<summary aria-expanded=\"false\">"
+      },
+      {
+        "regra": "nested-interactive",
+        "impacto": "serious",
+        "seletor": [
+          "details[data-gid=\"sig-1\"] > summary"
+        ],
+        "html": "<summary aria-expanded=\"false\">"
+      },
+      {
+        "regra": "nested-interactive",
+        "impacto": "serious",
+        "seletor": [
+          "details[data-gid=\"sig-2\"] > summary"
+        ],
+        "html": "<summary aria-expanded=\"false\">"
+      },
+      {
+        "regra": "nested-interactive",
+        "impacto": "serious",
+        "seletor": [
+          "details[data-gid=\"sig-3\"] > summary"
+        ],
+        "html": "<summary aria-expanded=\"false\">"
+      }
+    ],
+    "interativosDentroDeSummary": 10,
+    "estrutural": [
+      {
+        "summary": "g1",
+        "tag": "button",
+        "p52": "cap-help",
+        "id": null
+      },
+      {
+        "summary": "g2",
+        "tag": "button",
+        "p52": "cap-help",
+        "id": null
+      },
+      {
+        "summary": "g3",
+        "tag": "button",
+        "p52": "cap-help",
+        "id": null
+      },
+      {
+        "summary": "arch",
+        "tag": "button",
+        "p52": "cap-help",
+        "id": null
+      },
+      {
+        "summary": "plat",
+        "tag": "button",
+        "p52": "cap-help",
+        "id": null
+      },
+      {
+        "summary": "sig",
+        "tag": "button",
+        "p52": "cap-help",
+        "id": null
+      },
+      {
+        "summary": "sig-0",
+        "tag": "button",
+        "p52": "cap-help",
+        "id": null
+      },
+      {
+        "summary": "sig-1",
+        "tag": "button",
+        "p52": "cap-help",
+        "id": null
+      },
+      {
+        "summary": "sig-2",
+        "tag": "button",
+        "p52": "cap-help",
+        "id": null
+      },
+      {
+        "summary": "sig-3",
+        "tag": "button",
+        "p52": "cap-help",
+        "id": null
+      }
+    ],
+    "erros": []
+  },
+  "resultados": {
+    "entrada": "resultados",
+    "sigAberto": false,
+    "violacoesGraves": [
+      {
+        "id": "nested-interactive",
+        "impacto": "serious",
+        "nos": 6
+      }
+    ],
+    "nestedInteractiveNos": 6,
+    "detalhe": [
+      {
+        "regra": "nested-interactive",
+        "impacto": "serious",
+        "seletor": [
+          "details[data-gid=\"g1\"] > summary"
+        ],
+        "html": "<summary aria-expanded=\"true\">"
+      },
+      {
+        "regra": "nested-interactive",
+        "impacto": "serious",
+        "seletor": [
+          "details[data-gid=\"g2\"] > summary"
+        ],
+        "html": "<summary aria-expanded=\"false\">"
+      },
+      {
+        "regra": "nested-interactive",
+        "impacto": "serious",
+        "seletor": [
+          "details[data-gid=\"g3\"] > summary"
+        ],
+        "html": "<summary aria-expanded=\"false\">"
+      },
+      {
+        "regra": "nested-interactive",
+        "impacto": "serious",
+        "seletor": [
+          "details[data-gid=\"arch\"] > summary"
+        ],
+        "html": "<summary aria-expanded=\"false\">"
+      },
+      {
+        "regra": "nested-interactive",
+        "impacto": "serious",
+        "seletor": [
+          "details[data-gid=\"plat\"] > summary"
+        ],
+        "html": "<summary aria-expanded=\"false\">"
+      },
+      {
+        "regra": "nested-interactive",
+        "impacto": "serious",
+        "seletor": [
+          "details[data-gid=\"sig\"] > summary"
+        ],
+        "html": "<summary aria-expanded=\"false\">"
+      }
+    ],
+    "interativosDentroDeSummary": 10,
+    "estrutural": [
+      {
+        "summary": "g1",
+        "tag": "button",
+        "p52": "cap-help",
+        "id": null
+      },
+      {
+        "summary": "g2",
+        "tag": "button",
+        "p52": "cap-help",
+        "id": null
+      },
+      {
+        "summary": "g3",
+        "tag": "button",
+        "p52": "cap-help",
+        "id": null
+      },
+      {
+        "summary": "arch",
+        "tag": "button",
+        "p52": "cap-help",
+        "id": null
+      },
+      {
+        "summary": "plat",
+        "tag": "button",
+        "p52": "cap-help",
+        "id": null
+      },
+      {
+        "summary": "sig",
+        "tag": "button",
+        "p52": "cap-help",
+        "id": null
+      },
+      {
+        "summary": "sig-0",
+        "tag": "button",
+        "p52": "cap-help",
+        "id": null
+      },
+      {
+        "summary": "sig-1",
+        "tag": "button",
+        "p52": "cap-help",
+        "id": null
+      },
+      {
+        "summary": "sig-2",
+        "tag": "button",
+        "p52": "cap-help",
+        "id": null
+      },
+      {
+        "summary": "sig-3",
+        "tag": "button",
+        "p52": "cap-help",
+        "id": null
+      }
+    ],
+    "erros": []
+  },
+  "resultados-com-requisitos-aberto": {
+    "entrada": "resultados",
+    "sigAberto": true,
+    "violacoesGraves": [
+      {
+        "id": "nested-interactive",
+        "impacto": "serious",
+        "nos": 10
+      }
+    ],
+    "nestedInteractiveNos": 10,
+    "detalhe": [
+      {
+        "regra": "nested-interactive",
+        "impacto": "serious",
+        "seletor": [
+          "details[data-gid=\"g1\"] > summary"
+        ],
+        "html": "<summary aria-expanded=\"true\">"
+      },
+      {
+        "regra": "nested-interactive",
+        "impacto": "serious",
+        "seletor": [
+          "details[data-gid=\"g2\"] > summary"
+        ],
+        "html": "<summary aria-expanded=\"false\">"
+      },
+      {
+        "regra": "nested-interactive",
+        "impacto": "serious",
+        "seletor": [
+          "details[data-gid=\"g3\"] > summary"
+        ],
+        "html": "<summary aria-expanded=\"false\">"
+      },
+      {
+        "regra": "nested-interactive",
+        "impacto": "serious",
+        "seletor": [
+          "details[data-gid=\"arch\"] > summary"
+        ],
+        "html": "<summary aria-expanded=\"false\">"
+      },
+      {
+        "regra": "nested-interactive",
+        "impacto": "serious",
+        "seletor": [
+          "details[data-gid=\"plat\"] > summary"
+        ],
+        "html": "<summary aria-expanded=\"false\">"
+      },
+      {
+        "regra": "nested-interactive",
+        "impacto": "serious",
+        "seletor": [
+          "details[data-gid=\"sig\"] > summary"
+        ],
+        "html": "<summary aria-expanded=\"true\">"
+      },
+      {
+        "regra": "nested-interactive",
+        "impacto": "serious",
+        "seletor": [
+          "details[data-gid=\"sig-0\"] > summary"
+        ],
+        "html": "<summary aria-expanded=\"false\">"
+      },
+      {
+        "regra": "nested-interactive",
+        "impacto": "serious",
+        "seletor": [
+          "details[data-gid=\"sig-1\"] > summary"
+        ],
+        "html": "<summary aria-expanded=\"false\">"
+      },
+      {
+        "regra": "nested-interactive",
+        "impacto": "serious",
+        "seletor": [
+          "details[data-gid=\"sig-2\"] > summary"
+        ],
+        "html": "<summary aria-expanded=\"false\">"
+      },
+      {
+        "regra": "nested-interactive",
+        "impacto": "serious",
+        "seletor": [
+          "details[data-gid=\"sig-3\"] > summary"
+        ],
+        "html": "<summary aria-expanded=\"false\">"
+      }
+    ],
+    "interativosDentroDeSummary": 10,
+    "estrutural": [
+      {
+        "summary": "g1",
+        "tag": "button",
+        "p52": "cap-help",
+        "id": null
+      },
+      {
+        "summary": "g2",
+        "tag": "button",
+        "p52": "cap-help",
+        "id": null
+      },
+      {
+        "summary": "g3",
+        "tag": "button",
+        "p52": "cap-help",
+        "id": null
+      },
+      {
+        "summary": "arch",
+        "tag": "button",
+        "p52": "cap-help",
+        "id": null
+      },
+      {
+        "summary": "plat",
+        "tag": "button",
+        "p52": "cap-help",
+        "id": null
+      },
+      {
+        "summary": "sig",
+        "tag": "button",
+        "p52": "cap-help",
+        "id": null
+      },
+      {
+        "summary": "sig-0",
+        "tag": "button",
+        "p52": "cap-help",
+        "id": null
+      },
+      {
+        "summary": "sig-1",
+        "tag": "button",
+        "p52": "cap-help",
+        "id": null
+      },
+      {
+        "summary": "sig-2",
+        "tag": "button",
+        "p52": "cap-help",
+        "id": null
+      },
+      {
+        "summary": "sig-3",
+        "tag": "button",
+        "p52": "cap-help",
+        "id": null
+      }
+    ],
+    "erros": []
+  }
+}

@@ -43,18 +43,32 @@ let BASE_HTML_SHA = null;
 /* Guarda do acervo de evidência da fase: nenhum byte pode ser escrito ou
    alterado enquanto o produto estiver mutado. */
 const EVID = path.join(HERE, "docs_phase5", "evidence_p52");
+/* PATCH V3.2.2 · o acervo desta rodada vive num diretório novo e nominal e
+   entra sob a MESMA guarda: nenhum byte de evidência pode ser escrito ou
+   alterado enquanto o produto estiver deliberadamente defeituoso. */
+const EVID322 = path.join(HERE, "docs_phase5", "evidence_v322");
 /* o acervo passou a ter subdiretório (`pdf/`): a guarda cobre os ARQUIVOS de
    primeiro nível e a existência do subdiretório, sem tentar lê-lo como arquivo. */
-const evidenceList = () => (fs.existsSync(EVID)
-  ? fs.readdirSync(EVID).filter(n => fs.statSync(path.join(EVID, n)).isFile()).sort()
-  : []);
+const EVID_DIRS = [EVID, EVID322];
+/* chave = "<diretório>/<arquivo>", para que dois acervos nunca se confundam */
+const evidenceList = () => {
+  const out = [];
+  EVID_DIRS.forEach(dir => {
+    if (!fs.existsSync(dir)) return;
+    fs.readdirSync(dir)
+      .filter(n => fs.statSync(path.join(dir, n)).isFile())
+      .forEach(n => out.push(path.basename(dir) + "/" + n));
+  });
+  return out.sort();
+};
+const evidencePath = key => path.join(HERE, "docs_phase5", key);
 const GUARDED = evidenceList();
 const GUARD_BYTES = {};
-GUARDED.forEach(n => { GUARD_BYTES[n] = fs.readFileSync(path.join(EVID, n)); });
+GUARDED.forEach(n => { GUARD_BYTES[n] = fs.readFileSync(evidencePath(n)); });
 function checkEvidence(restore) {
   const bad = [];
   GUARDED.forEach(n => {
-    const f = path.join(EVID, n);
+    const f = evidencePath(n);
     if (!fs.existsSync(f)) { bad.push("REMOVIDO " + n); if (restore) fs.writeFileSync(f, GUARD_BYTES[n]); return; }
     const now = sha(f);
     const want = crypto.createHash("sha256").update(GUARD_BYTES[n]).digest("hex");
@@ -63,13 +77,13 @@ function checkEvidence(restore) {
   evidenceList().forEach(n => {
     if (GUARD_BYTES[n] !== undefined) return;
     bad.push("ADICIONADO " + n);
-    if (restore) fs.unlinkSync(path.join(EVID, n));
+    if (restore) fs.unlinkSync(evidencePath(n));
   });
   return bad;
 }
 
 function build() { execSync("python3 build_v32_html.py", { cwd: HERE, stdio: "pipe" }); }
-const SUPPRESS = { P52_NO_EVIDENCE: "1", P50_NO_EVIDENCE: "1" };
+const SUPPRESS = { P52_NO_EVIDENCE: "1", P50_NO_EVIDENCE: "1", V322_NO_EVIDENCE: "1" };
 function run(cmd, envOverride) {
   const env = Object.assign({}, process.env, SUPPRESS, envOverride || {});
   try { return { code: 0, out: execSync(cmd, { cwd: HERE, stdio: "pipe", env }).toString() }; }
@@ -338,9 +352,18 @@ const MUTANTS = [
   {
     id: "P52-RB4",
     desc: "reabrir os três accordions de capability ao entrar no editor",
-    file: UIJS,
-    find: `    { id:"g2", t:"Detection & Telemetry", open:false, caps: ids.filter(id => V32.CAPABILITIES[id].scope==="secops") },`,
-    repl: `    { id:"g2", t:"Detection & Telemetry", open:true, caps: ids.filter(id => V32.CAPABILITIES[id].scope==="secops") },`,
+    /* MIGRAÇÃO · ERRATA V3.2.2 §4 · o mutante ATACA A MESMA PROPRIEDADE — "as
+       famílias de capability não nascem abertas" —, mas o ponto onde ela é
+       decidida mudou. Antes o estado inicial vinha do default `open:` do owner
+       congelado, e mutar `ui_v32.js` bastava. Agora a apresentação recolhe os
+       grupos ao abrir cada edição, e o default do owner deixou de ser
+       observável: mutá-lo produziria um mutante INDETECTÁVEL POR CONSTRUÇÃO,
+       que não mede gate algum. A mutação passa a ser feita onde a propriedade
+       de fato vive. */
+    file: P52JS,
+    find: `    for (var i = 0; i < det.length; i++) det[i].open = false;`,
+    repl: `    for (var i = 0; i < det.length; i++)
+      if (["g1", "g2", "g3"].indexOf(det[i].getAttribute("data-gid")) < 0) det[i].open = false;`,
     gate: "P52-CTX4", cmd: "node tests_p52_layout.js", only: "P52-CTX4",
     reason: /grupos abertos ao entrar/
   },
@@ -855,6 +878,470 @@ const MUTANTS = [
     repl: `    { nome: "resultados-contexto", fx: FX52.P52_F5, tela: "results", contexto: false,`,
     gate: "P52-ACC3", cmd: "node tests_p52_chromium.js", only: "P52-ACC3",
     reason: /fixture não montou 'a\.p52-sup-link' — gate vacuoso/
+  },
+  /* ==========================================================================
+     PATCH V3.2.2 · os doze mutantes da §8. Cada um ataca UMA garantia das três
+     correções estreitas e deve cair pelo gate `V322-*` semanticamente
+     correspondente, por motivo acionável — nunca por erro de sintaxe, timeout
+     ou fixture quebrada.
+     ========================================================================== */
+  {
+    id: "V322-M1",
+    desc: "aplicar as regiões de contexto apenas na tela de resultados (voltar ao defeito da v3.2.1)",
+    file: P52JS,
+    find: `  function p52ContextEditorDecor() {
+    var ed = document.getElementById("v32editor");
+    if (!ed) return;`,
+    repl: `  function p52ContextEditorDecor() {
+    var ed = document.getElementById("v32editor");
+    if (!ed) return;
+    if (p52Screen() !== "results") return;`,
+    gate: "V322-CTXPAR1", cmd: "node tests_p52_chromium.js", only: "V322-CTXPAR1",
+    reason: /home: \d+ regiões de primeiro nível|composição divergente home × resultados/
+  },
+  {
+    id: "V322-M2",
+    desc: "abrir todos os accordions por padrão (parede de campos na primeira abertura)",
+    /* MIGRAÇÃO · ERRATA V3.2.2 §4 · mesma razão de `P52-RB4`: a propriedade é a
+       mesma, o lugar onde ela é decidida mudou. Ver a nota daquele mutante. */
+    file: P52JS,
+    find: `    var det = ed.querySelectorAll("details[data-gid]");`,
+    repl: `    var det = [];
+    ed.querySelectorAll("details[data-gid]").forEach(function (d) { d.open = true; });`,
+    gate: "V322-CTXPAR1", cmd: "node tests_p52_chromium.js", only: "V322-CTXPAR1",
+    reason: /abertura inicial = \[[^\]]*g2/
+  },
+  {
+    id: "V322-M3",
+    desc: "reabrir SOC & Operations em todo rerender, anulando a decisão do usuário",
+    file: P52JS,
+    find: `    p52ContextRegions(ed);
+    p52DecorateContextGroups(ed);
+    p52CapHelp(ed);
+  }`,
+    repl: `    p52ContextRegions(ed);
+    p52DecorateContextGroups(ed);
+    p52CapHelp(ed);
+    var g1m = ed.querySelector('details[data-gid="g1"]');
+    if (g1m) g1m.open = true;
+  }`,
+    /* MIGRAÇÃO · ERRATA V3.2.2 §4 · o defeito atacado é o mesmo: o decorador
+       reabre `g1` a cada passagem, anulando a decisão do usuário. O que mudou é
+       QUANDO o gate o pega. Com o estado inicial recolhido, a PRIMEIRA passagem
+       do decorador já reabre `g1`, e `V322-CTXPAR1` reprova logo na abertura
+       inicial em vez de esperar o rerender. As duas frases dizem a mesma coisa —
+       "o decorador reabriu SOC & Operations" — e ambas são aceitas. Detecção
+       incidental continua fora: nenhuma delas é contagem global, identidade de
+       arquivo ou manifesto. */
+    gate: "V322-CTXPAR1", cmd: "node tests_p52_chromium.js", only: "V322-CTXPAR1",
+    reason: /o decorador REABRIU (no rerender )?o grupo que o usuário fechou|abertura inicial = \[g1\]/
+  },
+  {
+    id: "V322-M4",
+    desc: "restaurar o max-width estreito do disclaimer no rodapé",
+    file: P52CSS,
+    find: `  .p52-foot-legal { min-width: 0; }`,
+    repl: `  .p52-foot-legal { min-width: 0; max-width: 92ch; }`,
+    gate: "V322-FOOT1", cmd: "node tests_p52_chromium.js", only: "V322-FOOT1",
+    reason: /max-width estreito ainda aplicado ao texto legal|bloco legal ocupa \d+% da largura útil/
+  },
+  {
+    id: "V322-M5",
+    desc: "remover a mensagem local junto ao botão de PDF",
+    file: P52JS,
+    find: `  function p52SyncPrintPending() {
+    var btn = p52PrintButton();`,
+    repl: `  function p52SyncPrintPending() {
+    if (true) return;
+    var btn = p52PrintButton();`,
+    gate: "V322-PRINT1", cmd: "node tests_p52_chromium.js", only: "V322-PRINT1",
+    reason: /mensagem junto ao PDF: 0 ocorrência/
+  },
+  {
+    id: "V322-M6",
+    desc: "remover o indicador de pendência do menu lateral",
+    file: P52JS,
+    find: `  function p52SyncRailPending() {
+    var link = document.getElementById("p52-railto-context");
+    if (!link) return;`,
+    repl: `  function p52SyncRailPending() {
+    var link = document.getElementById("p52-railto-context");
+    if (!link) return;
+    if (true) return;`,
+    gate: "V322-PRINT1", cmd: "node tests_p52_chromium.js", only: "V322-PRINT1",
+    reason: /trilho: 0 indicador\(es\)|antes da tentativa: 0 indicador\(es\) no trilho/
+  },
+  {
+    id: "V322-M7",
+    desc: "deixar o indicador apenas cromático, sem nome acessível",
+    file: P52JS,
+    find: `      mark.appendChild(el("span", { "class": "p52-rail-pending-dot", "aria-hidden": "true" }));
+      mark.appendChild(el("span", { "class": "p52-rail-pending-text" }, P52_PENDING_RAIL_TEXT));`,
+    repl: `      mark.appendChild(el("span", { "class": "p52-rail-pending-dot", "aria-hidden": "true" }));`,
+    gate: "V322-PRINT1", cmd: "node tests_p52_chromium.js", only: "V322-PRINT1",
+    reason: /indicador sem texto 'alterações pendentes'|trilho sem texto acessível de pendência/
+  },
+  {
+    id: "V322-M8",
+    desc: "não limpar o aria-describedby obsoleto depois de Salvar",
+    file: P52JS,
+    find: `      var all = document.querySelectorAll("button"), k;
+      for (k = 0; k < all.length; k++)
+        if (all[k].getAttribute("aria-describedby") === P52_PENDING_ID) all[k].removeAttribute("aria-describedby");
+      return;`,
+    repl: `      return;`,
+    gate: "V322-PRINT1", cmd: "node tests_p52_chromium.js", only: "V322-PRINT1",
+    reason: /após Salvar: aria-describedby obsoleto no botão de PDF/
+  },
+  {
+    id: "V322-M9",
+    desc: "não limpar a mensagem de PDF depois de Cancelar",
+    file: P52JS,
+    find: `    if (!show || !btn) {
+      for (i = 0; i < old.length; i++) if (old[i].parentNode) old[i].parentNode.removeChild(old[i]);`,
+    repl: `    if (!show || !btn) {
+      if (false) for (i = 0; i < old.length; i++) if (old[i].parentNode) old[i].parentNode.removeChild(old[i]);`,
+    gate: "V322-PRINT1", cmd: "node tests_p52_chromium.js", only: "V322-PRINT1",
+    reason: /após Cancelar: mensagem de PDF permanece/
+  },
+  {
+    id: "V322-M10",
+    desc: "duplicar a mensagem a cada clique repetido no botão de PDF",
+    file: P52JS,
+    find: `    var box = null;
+    for (i = 0; i < old.length; i++) {
+      if (!box && old[i].previousElementSibling === group) box = old[i];
+      else if (old[i].parentNode) old[i].parentNode.removeChild(old[i]);
+    }`,
+    repl: `    var box = null;`,
+    gate: "V322-PRINT1", cmd: "node tests_p52_chromium.js", only: "V322-PRINT1",
+    /* Sem a guarda de reaproveitamento a decoração deixa de convergir: cada
+       passagem do observador insere um nó novo, que agenda a passagem
+       seguinte. O gate registra isso pelo NOME — não como timeout do harness,
+       graças ao orçamento de convergência de `v322Eval()`. */
+    reason: /NÃO CONVERGIU|congelou|cliques repetidos: [2-9]\d* mensagens junto ao PDF|mensagem junto ao PDF: [2-9]\d* ocorrência/
+  },
+  {
+    id: "V322-M11",
+    desc: "permitir window.print() com um draft de contexto aberto",
+    file: UIJS,
+    find: `function safePrint(){
+  if (draft !== null){`,
+    repl: `function safePrint(){
+  if (false){`,
+    gate: "V322-PRINT1", cmd: "node tests_p52_chromium.js", only: "V322-PRINT1",
+    reason: /window\.print\(\) chamado [1-9]\d* vez\(es\) com draft aberto/
+  },
+  {
+    id: "V322-M12",
+    desc: "perder um valor digitado ao reorganizar os nós entre as regiões (serializar em vez de mover)",
+    file: P52JS,
+    find: `      var body = el("div", { "class": "p52-ctxregion-body" });
+      for (i = 0; i < found.length; i++) body.appendChild(found[i]);`,
+    repl: `      var body = el("div", { "class": "p52-ctxregion-body" });
+      for (i = 0; i < found.length; i++) {
+        body.insertAdjacentHTML("beforeend", found[i].outerHTML);
+        if (found[i].parentNode) found[i].parentNode.removeChild(found[i]);
+      }`,
+    gate: "V322-CTXPAR1", cmd: "node tests_p52_chromium.js", only: "V322-CTXPAR1",
+    reason: /valor perdido na passagem do decorador/
+  },
+  /* ==========================================================================
+     FECHAMENTO PRÉ-AUDITORIA v3.2.2 · §4.3 — NÃO VACUIDADE DO BASELINE.
+     Provam que a resolução do baseline REJEITA identidade errada ANTES de
+     comparar produto e baseline, e que o diagnóstico nomeia o observado E o
+     esperado. Sem estes, "P52-PR1/P52-ACC1 verdes" poderia significar apenas
+     que o oracle aceitou qualquer coisa.
+     ========================================================================== */
+  {
+    id: "V322-M13",
+    desc: "trocar o commit imutável do baseline pelo da v3.2.1 (HEAD móvel) na resolução de P52-PR1/P52-ACC1",
+    file: P52TESTS,
+    find: `const P52_BASELINE_COMMIT = "d3886812718e7ad9c5024880067133fbddf2fc4d";`,
+    repl: `const P52_BASELINE_COMMIT = "07bc90b3fbf6f033a56c490f3bff1951c58316b7";`,
+    gate: "P52-PR1", cmd: "node tests_p52_chromium.js", only: "P52-PR1,P52-ACC1",
+    reason: /baseline indisponível: baseline .* com 963373 bytes; esperado 744179/
+  },
+  {
+    id: "V322-M14",
+    desc: "alterar um dígito do SHA-256 esperado do baseline da entrada da Phase 5.2",
+    file: P52TESTS,
+    find: `const P52_BASELINE_SHA = "12bb950f58f203c56cf6621973663be1ac71b4e026d618a910ebb0f3eebbf9d9";`,
+    repl: `const P52_BASELINE_SHA = "12bb950f58f203c56cf6621973663be1ac71b4e026d618a910ebb0f3eebbf9d8";`,
+    gate: "P52-ACC1", cmd: "node tests_p52_chromium.js", only: "P52-PR1,P52-ACC1",
+    reason: /identidade do baseline diverge .* observado 12bb950f\S+, esperado 12bb950f\S+d8/
+  },
+  /* ==========================================================================
+     FECHAMENTO PRÉ-AUDITORIA v3.2.2 · §5.3 — NÃO VACUIDADE DO `nested-interactive`.
+     Reinsere um controle FOCÁVEL dentro do `<summary>`, que é exatamente o
+     defeito corrigido. `V322-NI1` tem de reprovar NOMEANDO a regra, e não por
+     erro incidental de sintaxe, de fixture ou de contagem.
+     ========================================================================== */
+  {
+    id: "V322-M15",
+    desc: "reinserir um controle focável dentro do <summary> das famílias (volta do nested-interactive)",
+    file: P52JS,
+    find: `    head.appendChild(made.btn);
+    head.appendChild(made.pop);
+    return true;`,
+    repl: `    head.appendChild(made.btn);
+    head.appendChild(made.pop);
+    sum.appendChild(el("button", { type: "button", "class": "p52-mut-nested" }, "?"));
+    return true;`,
+    gate: "V322-NI1", cmd: "node tests_p52_chromium.js", only: "V322-NI1",
+    reason: /n[óo]\(s\) nested-interactive|controle\(s\) interativo\(s\) dentro de <summary>/
+  },
+  /* ==========================================================================
+     ERRATA V3.2.2 · AJUDAS, ACCORDION E TRANSIÇÃO · §6 — OS SEIS MUTANTES
+     EXIGIDOS, MAIS TRÊS DE NÃO VACUIDADE.
+
+     Os seis primeiros reintroduzem, um a um, exatamente os defeitos que esta
+     errata corrigiu. Os três últimos atacam os gates que já nasceram VERDES —
+     `V322-HELP4`, `V322-HELP5` e a preservação da decisão do usuário —, porque
+     um gate que nunca reprovou não provou nada. Nenhum deles é detectado por
+     contagem global, identidade de arquivo ou manifesto: o motivo esperado é
+     sempre a frase semântica do próprio gate.
+     ========================================================================== */
+  {
+    id: "V322-M16",
+    desc: "reinserir o controle de ajuda (i) em cada rótulo 'Situação declarada'",
+    file: P52JS,
+    find: `    /* subgrupos de requisitos (\`data-gid="sig-N"\`) */`,
+    repl: `    var pressMut = ed.querySelectorAll('select[id^="v32-pres-"]');
+    for (var pmi = 0; pmi < pressMut.length; pmi++) {
+      var labMut = pressMut[pmi].closest("label");
+      if (!labMut || labMut.querySelector('[data-p52="cap-help"]')) continue;
+      labMut.classList.add("p52-fieldhelp");
+      var feitoMut = p52HelpControl("p52-preshelp-" + pressMut[pmi].id.replace(/^v32-pres-/, ""),
+        "Situação declarada",
+        "Situação DECLARADA da capacidade nesta organização: não informado, ausência confirmada, " +
+        "parcialmente atendida ou atendida. É declaração de contexto, não avaliação.");
+      labMut.insertBefore(feitoMut.btn, pressMut[pmi]);
+      labMut.appendChild(feitoMut.pop);
+    }
+    /* subgrupos de requisitos (\`data-gid="sig-N"\`) */`,
+    gate: "V322-HELP3", cmd: "node tests_p52_layout.js", only: "V322-HELP3",
+    reason: /ajuda \(i\) redundante em 'Situa[çc][ãa]o declarada' de v32-pres-/
+  },
+  {
+    id: "V322-M17",
+    desc: "reinserir o controle de ajuda (i) numa subscription FortiGuard individual",
+    file: P52JS,
+    find: `    p52InstallHelpEscape();
+  }
+
+  function p52CapHelp(ed) {`,
+    repl: `    var subMut = ed.querySelector("#v32-sub-fg-ips");
+    var labSubMut = subMut ? subMut.closest("label") : null;
+    if (labSubMut && !labSubMut.querySelector('[data-p52="cap-help"]')) {
+      labSubMut.classList.add("p52-fieldhelp");
+      var feitoSubMut = p52HelpControl("p52-subhelp-fg-ips", "Prevenção de intrusão",
+        "Prevenção de intrusão: inspeciona o tráfego em busca de exploração de vulnerabilidades conhecidas.");
+      labSubMut.appendChild(feitoSubMut.btn);
+      labSubMut.appendChild(feitoSubMut.pop);
+    }
+    p52InstallHelpEscape();
+  }
+
+  function p52CapHelp(ed) {`,
+    gate: "P52-HELP2", cmd: "node tests_p52_chromium.js", only: "P52-HELP2",
+    reason: /ajuda \(i\) redundante reintroduzida: subscription · v32-sub-fg-ips|ajuda\(s\) \(i\) dentro do grupo de plataformas/
+  },
+  {
+    id: "V322-M18",
+    desc: "fazer SOC & Operations voltar a nascer aberto na primeira abertura do editor",
+    file: P52JS,
+    find: `    for (var i = 0; i < det.length; i++) det[i].open = false;`,
+    repl: `    for (var i = 0; i < det.length; i++)
+      if (det[i].getAttribute("data-gid") !== "g1") det[i].open = false;`,
+    gate: "V322-ACC4", cmd: "node tests_p52_layout.js", only: "V322-ACC4",
+    reason: /grupos abertos na primeira abertura = \[g1\]/
+  },
+  {
+    id: "V322-M19",
+    desc: "retirar a neutralização da animação legada: o fade volta a cada render (o piscar)",
+    file: P52CSS,
+    find: `  section.screen { animation: none; }`,
+    repl: `  section.screen { animation-delay: 0s; }`,
+    gate: "V322-MOT3", cmd: "node tests_p52_chromium.js", only: "V322-MOT3",
+    reason: /trocar de resposta aplica anima[çc][ãa]o 'fade'|a tela caiu para opacidade 0 ao trocar de resposta/
+  },
+  {
+    id: "V322-M20",
+    desc: "suprimir a marcação de direção: a navegação real entre perguntas deixa de ter transição",
+    file: P52JS,
+    find: `      dir = st > p52NavStep ? "fwd" : "back";`,
+    repl: `      dir = null;`,
+    gate: "V322-MOT3", cmd: "node tests_p52_chromium.js", only: "V322-MOT3",
+    reason: /avan[çc]ar n[ãa]o marcou a transi[çc][ãa]o para a frente|sem deslocamento observ[áa]vel/
+  },
+  {
+    id: "V322-M21",
+    desc: "mover a transição para a Web Animations API, fora do alcance de prefers-reduced-motion",
+    file: P52JS,
+    find: `    if (dir) sec.setAttribute("data-p52-nav", dir);`,
+    repl: `    if (dir) {
+      sec.setAttribute("data-p52-nav", dir);
+      if (typeof sec.animate === "function")
+        sec.animate([{ transform: "translateX(" + (dir === "fwd" ? 18 : -18) + "px)" },
+                     { transform: "none" }], { duration: 150 });
+    }`,
+    gate: "V322-MOT3", cmd: "node tests_p52_chromium.js", only: "V322-MOT3",
+    reason: /sob prefers-reduced-motion/
+  },
+  {
+    id: "V322-M22",
+    desc: "apagar a ajuda conceitual de uma capability (não vacuidade de V322-HELP4)",
+    file: P52JS,
+    find: `      var text = P52_CAP_HELP[capId];
+      if (!text) continue;`,
+    repl: `      var text = P52_CAP_HELP[capId];
+      if (!text || capId === "knowledge-management") continue;`,
+    gate: "V322-HELP4", cmd: "node tests_p52_layout.js", only: "V322-HELP4",
+    reason: /capabilities sem ajuda — knowledge-management/
+  },
+  {
+    id: "V322-M23",
+    desc: "apontar aria-describedby para um ID inexistente (não vacuidade de V322-HELP5)",
+    file: P52JS,
+    find: `      "aria-expanded": "false", "aria-describedby": popId,`,
+    repl: `      "aria-expanded": "false", "aria-describedby": popId + "-orfao",`,
+    gate: "V322-HELP5", cmd: "node tests_p52_layout.js", only: "V322-HELP5",
+    reason: /aria-describedby [óo]rf[ãa]o —/
+  },
+  {
+    id: "V322-M24",
+    desc: "recolher os grupos em TODA passagem do decorador (desfaz a decisão do usuário)",
+    file: P52JS,
+    find: `    p52ContextRegions(ed);`,
+    repl: `    p52CollapseGroups(ed);
+    p52ContextRegions(ed);`,
+    gate: "V322-ACC5", cmd: "node tests_p52_layout.js", only: "V322-ACC5",
+    reason: /o repaint FECHOU o grupo que o usu[áa]rio abriu/
+  },
+
+  /* ========================================================================
+     ERRATA FINAL V3.2.2 (REV C) · mutantes estreitos das correções B-01,
+     A-01, A-02, M-01, M-02 e M-05. Cada um ataca UMA cláusula da correção e
+     tem de ser detectado pelo gate semanticamente correspondente, pelo motivo
+     esperado — detecção incidental não conta.
+     ======================================================================== */
+  {
+    id: "V322C-M1",
+    desc: "retirar <button> da isenção do handler global de Enter (A-01: o botão volta a executar ação diferente da rotulada)",
+    file: P52JS,
+    find: `  var P52_ENTER_SELF = 'button, select, input, textarea, summary, a[href], ' +`,
+    repl: `  var P52_ENTER_SELF = 'select, input, textarea, summary, a[href], ' +`,
+    gate: "V322C-KEY1", cmd: "node tests_p52_chromium.js", only: "V322C-KEY1",
+    reason: /K1 \(Enter\): tela final 'arq'/
+  },
+  {
+    id: "V322C-M2",
+    desc: "retirar <select> da isenção do handler global de Enter (B-01: o gatilho mais provável no uso real)",
+    file: P52JS,
+    find: `  var P52_ENTER_SELF = 'button, select, input, textarea, summary, a[href], ' +`,
+    repl: `  var P52_ENTER_SELF = 'button, input, textarea, summary, a[href], ' +`,
+    /* A primeira execução desta campanha mostrou que a matriz de EFEITO não
+       distingue esta mutação: na tela do editor a cláusula de identidade de
+       tela já bastaria, e o mutante era no-op. O gate passou a medir QUAL
+       cláusula está em vigor por classe de controle (T1–T12), que é a
+       exigência normativa da §4.1 — e é por ela que o mutante é detectado. */
+    gate: "V322C-KEY1", cmd: "node tests_p52_chromium.js", only: "V322C-KEY1",
+    reason: /T3 \(select\): a isen[çc][ãa]o por ALVO n[ãa]o est[áa] em vigor/
+  },
+  {
+    id: "V322C-M3",
+    desc: "voltar a decidir a tela somente por step === -1 (B-01: o editor da home volta a ser lido como home)",
+    file: P52JS,
+    find: `    if (s === "ctxeditor") return false;      /* tela do editor: o atalho não é dela */
+    if (s === "home") return p52RealHome();`,
+    repl: `    if (s === "ctxeditor") return true;
+    if (s === "home") return true;`,
+    gate: "V322C-KEY1", cmd: "node tests_p52_chromium.js", only: "V322C-KEY1",
+    reason: /K12 \(Enter\):/
+  },
+  {
+    id: "V322C-M4",
+    desc: "fazer Enter em '← Voltar' cair no handler global (A-01: o botão avança em vez de voltar)",
+    file: P52JS,
+    find: `    if (t.isContentEditable) return true;`,
+    repl: `    if (t.id === "back") return false;
+    if (t.isContentEditable) return true;`,
+    gate: "V322C-KEY1", cmd: "node tests_p52_chromium.js", only: "V322C-KEY1",
+    reason: /K6 \(Enter\): pergunta \d+ → \d+/
+  },
+  {
+    id: "V322C-M5",
+    desc: "omitir a restauração de foco depois do reparentamento (A-02)",
+    file: P52JS,
+    find: `    p52RestoreEditorFocus(keep);`,
+    repl: `    /* mutante: restauração omitida */`,
+    gate: "V322C-FOC1", cmd: "node tests_p52_chromium.js", only: "V322C-FOC1",
+    reason: /F1: o foco caiu para/
+  },
+  {
+    id: "V322C-M6",
+    desc: "restaurar deliberadamente o foco em <body> (A-02: maquiar activeElement não é preservar fluxo)",
+    file: P52JS,
+    find: `    var alvo = p52ResolveFocusIntent(ed, it);`,
+    repl: `    var alvo = document.body;`,
+    gate: "V322C-FOC1", cmd: "node tests_p52_chromium.js", only: "V322C-FOC1",
+    reason: /F1: o foco caiu para/
+  },
+  {
+    id: "V322C-M7",
+    desc: "deixar Salvar/Cancelar caírem no handler global (B-01: draft órfão depois de o editor sair da tela)",
+    file: P52JS,
+    find: `    if (t.isContentEditable) return true;`,
+    repl: `    if (t.id === "v32save" || t.id === "v32cancel") return false;
+    if (t.isContentEditable) return true;`,
+    /* Mesmo diagnóstico do `V322C-M2`: Salvar e Cancelar são `<button>` na tela
+       do editor, onde a cláusula de identidade de tela também cobre — o efeito
+       não muda e a mutação era no-op para a matriz de efeito. A detecção passa
+       a ser pela cláusula EM VIGOR nesses dois controles (T1/T2). O draft
+       órfão propriamente dito continua sendo medido, e por um mutante que
+       realmente o produz: `V322C-M3`, detectado por K12. */
+    gate: "V322C-KEY1", cmd: "node tests_p52_chromium.js", only: "V322C-KEY1",
+    reason: /T1 \(button\): a isen[çc][ãa]o por ALVO n[ãa]o est[áa] em vigor/
+  },
+  {
+    id: "V322C-M8",
+    desc: "limpar visualmente a pendência sem que o draft real tenha morrido",
+    file: P52JS,
+    find: `      if (window.__DEV && typeof window.__DEV._setDraft === "function") {
+        var vivo = false;`,
+    repl: `      if (window.__DEV && typeof window.__DEV._setDraft === "function") {
+        var vivo = false; return false;`,
+    gate: "V322C-PRN1", cmd: "node tests_p52_chromium.js", only: "V322C-PRN1",
+    reason: /mensagem de bloqueio invis[íi]vel/
+  },
+  {
+    id: "V322C-M9",
+    desc: "devolver a regra móvel à especificidade insuficiente (M-01: a grade rígida de 260px volta a cortar o editor)",
+    file: P52CSS,
+    find: `    #v32editor .v32-subs .v32-signals,
+    #v32editor .v32-arch,`,
+    repl: `    #v32editor .v32-arch,`,
+    gate: "V322C-RFL1", cmd: "node tests_p52_chromium.js", only: "V322C-RFL1",
+    reason: /caixa\(s\) do editor além de/
+  },
+  {
+    id: "V322C-M10",
+    desc: "não remover o #v32errors externo da entrada HOME (M-02: id duplicado volta)",
+    file: P52JS,
+    find: `    var interna = ed.querySelector(".v32-errors");`,
+    repl: `    var interna = null;`,
+    gate: "V322C-ID1", cmd: "node tests_p52_layout.js", only: "V322C-ID1",
+    reason: /ids duplicados no documento/
+  },
+  {
+    id: "V322C-M11",
+    desc: "devolver o azul de marca ao preenchimento com texto branco (M-05: 3,99:1)",
+    file: P52CSS,
+    find: `:root { --p52-blue-strong: #2B72CB; }`,
+    repl: `:root { --p52-blue-strong: #307FE2; }`,
+    gate: "V322C-CON1", cmd: "node tests_p52_chromium.js", only: "V322C-CON1",
+    reason: /#ux-addctx \(home\): contraste/
   }
 ];
 

@@ -1,0 +1,214 @@
+{
+  "movimento-normal": {
+    "repouso": {
+      "nav": null,
+      "animName": "none",
+      "animDur": "0s",
+      "opacity": 1,
+      "transform": "none",
+      "anims": []
+    },
+    "scrollAntes": 0,
+    "opcoes": 5,
+    "selecao": {
+      "nav": null,
+      "animName": "none",
+      "animDur": "0s",
+      "opacity": 1,
+      "transform": "none",
+      "anims": []
+    },
+    "selecaoAmostra": {
+      "minOpacidade": 1,
+      "transformes": [
+        "none"
+      ],
+      "quadros": 27
+    },
+    "scrollDepois": 0,
+    "selecionadoVisivel": true,
+    "avanco": {
+      "nav": "fwd",
+      "animName": "p52-nav-fwd",
+      "animDur": "0.15s",
+      "opacity": 1,
+      "transform": "matrix(1, 0, 0, 1, 18, 0)",
+      "anims": [
+        {
+          "nome": "p52-nav-fwd",
+          "dur": 150,
+          "estado": "running"
+        }
+      ]
+    },
+    "avancoAmostra": {
+      "minOpacidade": 1,
+      "transformes": [
+        "matrix(1, 0, 0, 1, 18, 0)",
+        "matrix(1, 0, 0, 1, 12.638, 0)",
+        "matrix(1, 0, 0, 1, 8.2041, 0)",
+        "matrix(1, 0, 0, 1, 5.10009, 0)",
+        "matrix(1, 0, 0, 1, 3.02435, 0)",
+        "matrix(1, 0, 0, 1, 1.69433, 0)",
+        "matrix(1, 0, 0, 1, 0.844836, 0)",
+        "matrix(1, 0, 0, 1, 0.339187, 0)",
+        "matrix(1, 0, 0, 1, 0.0770359, 0)",
+        "matrix(1, 0, 0, 1, 1.83523e-06, 0)",
+        "none"
+      ],
+      "quadros": 26
+    },
+    "retorno": {
+      "nav": "back",
+      "animName": "p52-nav-back",
+      "animDur": "0.15s",
+      "opacity": 1,
+      "transform": "matrix(1, 0, 0, 1, -18, 0)",
+      "anims": [
+        {
+          "nome": "p52-nav-back",
+          "dur": 150,
+          "estado": "running"
+        }
+      ]
+    },
+    "retornoAmostra": {
+      "minOpacidade": 1,
+      "transformes": [
+        "matrix(1, 0, 0, 1, -18, 0)",
+        "matrix(1, 0, 0, 1, -12.6126, 0)",
+        "matrix(1, 0, 0, 1, -8.20771, 0)",
+        "matrix(1, 0, 0, 1, -5.08735, 0)",
+        "matrix(1, 0, 0, 1, -3.03583, 0)",
+        "matrix(1, 0, 0, 1, -1.68898, 0)",
+        "matrix(1, 0, 0, 1, -0.845467, 0)",
+        "matrix(1, 0, 0, 1, -0.339545, 0)",
+        "matrix(1, 0, 0, 1, -0.0771904, 0)",
+        "matrix(1, 0, 0, 1, -2.53912e-10, 0)",
+        "none"
+      ],
+      "quadros": 26
+    },
+    "teclaResposta": {
+      "nav": null,
+      "animName": "none",
+      "animDur": "0s",
+      "opacity": 1,
+      "transform": "none",
+      "anims": []
+    },
+    "canonAntes": "{\"assessment\":{\"archetype\":0,\"answers\":{\"mandate\":1,\"governance\":1,\"policies\":1,\"team-capacity\":1,\"training\":1,\"knowledge\":1,\"incident-response\":1,\"detection-lifecycle\":1,\"automation\":1,\"logs\":1,\"endpoint\":1,\"network-visibility\":1,\"monitoring-coverage\":1,\"external-surface\":1,\"vulnerability-management\":1},\"notes\":{}},\"priorities\":[],\"technologyLandscape\":{\"capabilities\":{\"knowledge-management\":{\"presence\":\"UNSET\",\"solutions\":[],\"declaredDriver\":null},\"incident-management\":{\"presence\":\"UNSET\",\"solutions\":[],\"declaredDriver\":null},\"detection-engineering\":{\"presence\":\"UNSET\",\"solutions\":[],\"declaredDriver\":null},\"security-analytics\":{\"presence\":\"UNSET\",\"solutions\":[],\"declaredDriver\":null},\"security-automation\":{\"presence\":\"UNSET\",\"solutions\":[],\"declaredDriver\":null},\"continuous-monitoring\":{\"presence\":\"UNSET\",\"solutions\":[],\"declaredDriver\":null},\"soc-platform\":{\"presence\":\"UNSET\",\"solutions\":[],\"declaredDriver\":null},\"threat-intelligence\":{\"presence\":\"UNSET\",\"solutions\":[],\"declaredDriver\":null},\"soc-ai-assistance\":{\"presence\":\"UNSET\",\"solutions\":[],\"declaredDriver\":null},\"endpoint-detection\":{\"presence\":\"UNSET\",\"solutions\":[],\"declaredDriver\":null},\"network-detection\":{\"presence\":\"UNSET\",\"solutions\":[],\"declaredDriver\":null},\"external-exposure\":{\"presence\":\"UNSET\",\"solutions\":[],\"declaredDriver\":null},\"vulnerability-management\":{\"presence\":\"UNSET\",\"solutions\":[],\"declaredDriver\":null},\"deception\":{\"presence\":\"UNSET\",\"solutions\":[],\"declaredDriver\":null},\"malware-analysis\":{\"presence\":\"UNSET\",\"solutions\":[],\"declaredDriver\":null},\"email-threat-protection\":{\"presence\":\"UNSET\",\"solutions\":[],\"declaredDriver\":null},\"insider-risk\":{\"presence\":\"UNSET\",\"solutions\":[],\"declaredDriver\":null},\"data-loss-prevention\":{\"presence\":\"UNSET\",\"solutions\":[],\"declaredDriver\":null},\"identity-access\":{\"presence\":\"UNSET\",\"solutions\":[],\"declaredDriver\":null},\"privileged-access\":{\"presence\":\"UNSET\",\"solutions\":[],\"declaredDriver\":null},\"human-risk\":{\"presence\":\"UNSET\",\"solutions\":[],\"declaredDriver\":null},\"ai-runtime-security\":{\"presence\":\"UNSET\",\"solutions\":[],\"declaredDriver\":null}},\"architectureContext\":{\"saasAllowed\":\"unknown\",\"localProcessingRequired\":\"unknown\",\"otIsolated\":\"unknown\",\"unifiedPlatformPreference\":\"undefined\",\"environmentProfile\":\"uninformed\",\"dataResidency\":\"uninformed\"},\"declaredPlatforms\":[],\"signals\":{\"activeIncident\":\"unset\",\"suspectedCompromise\":\"unset\",\"ransomwareConcern\":\"unset\",\"wantsIRReadiness\":\"unset\",\"wantsSOCAssessment\":\"unset\",\"wantsSOCDevelopment\":\"unset\",\"becConcern\":\"unset\",\"emailSecurityConcern\":\"unset\",\"dataLeakageConcern\":\"unset\",\"insiderRiskConcern\":\"unset\",\"complianceDataProtection\":\"unset\",\"shadowAIConcern\":\"unset\",\"aiUsageRisk\":\"unset\",\"organizationBuildsAIApps\":\"unset\",\"usesPrivateLLMs\":\"unset\",\"usesAgenticAI\":\"unset\",\"aiRuntimeSecurityConcern\":\"unset\",\"promptInjectionConcern\":\"unset\",\"llmDataLeakageConcern\":\"unset\",\"identityRiskConcern\":\"unset\",\"pamRequirement\":\"unset\",\"edrSpecificNeed\":\"unset\"}},\"targetProfile\":{\"overrides\":{}},\"operationalRefinement\":{\"answers\":{\"ref-metrics\":null,\"ref-lessons\":null,\"ref-hunting\":null}}}",
+    "teclaAvanco": {
+      "nav": "fwd",
+      "animName": "p52-nav-fwd",
+      "animDur": "0.15s",
+      "opacity": 1,
+      "transform": "matrix(1, 0, 0, 1, 0.339053, 0)",
+      "anims": [
+        {
+          "nome": "p52-nav-fwd",
+          "dur": 150,
+          "estado": "running"
+        }
+      ]
+    },
+    "teclaRetorno": {
+      "nav": "back",
+      "animName": "p52-nav-back",
+      "animDur": "0.15s",
+      "opacity": 1,
+      "transform": "none",
+      "anims": []
+    },
+    "canonMeio": "{\"assessment\":{\"archetype\":0,\"answers\":{\"mandate\":1,\"governance\":1,\"policies\":1,\"team-capacity\":1,\"training\":1,\"knowledge\":1,\"incident-response\":1,\"detection-lifecycle\":1,\"automation\":1,\"logs\":1,\"endpoint\":1,\"network-visibility\":1,\"monitoring-coverage\":1,\"external-surface\":1,\"vulnerability-management\":1},\"notes\":{}},\"priorities\":[],\"technologyLandscape\":{\"capabilities\":{\"knowledge-management\":{\"presence\":\"UNSET\",\"solutions\":[],\"declaredDriver\":null},\"incident-management\":{\"presence\":\"UNSET\",\"solutions\":[],\"declaredDriver\":null},\"detection-engineering\":{\"presence\":\"UNSET\",\"solutions\":[],\"declaredDriver\":null},\"security-analytics\":{\"presence\":\"UNSET\",\"solutions\":[],\"declaredDriver\":null},\"security-automation\":{\"presence\":\"UNSET\",\"solutions\":[],\"declaredDriver\":null},\"continuous-monitoring\":{\"presence\":\"UNSET\",\"solutions\":[],\"declaredDriver\":null},\"soc-platform\":{\"presence\":\"UNSET\",\"solutions\":[],\"declaredDriver\":null},\"threat-intelligence\":{\"presence\":\"UNSET\",\"solutions\":[],\"declaredDriver\":null},\"soc-ai-assistance\":{\"presence\":\"UNSET\",\"solutions\":[],\"declaredDriver\":null},\"endpoint-detection\":{\"presence\":\"UNSET\",\"solutions\":[],\"declaredDriver\":null},\"network-detection\":{\"presence\":\"UNSET\",\"solutions\":[],\"declaredDriver\":null},\"external-exposure\":{\"presence\":\"UNSET\",\"solutions\":[],\"declaredDriver\":null},\"vulnerability-management\":{\"presence\":\"UNSET\",\"solutions\":[],\"declaredDriver\":null},\"deception\":{\"presence\":\"UNSET\",\"solutions\":[],\"declaredDriver\":null},\"malware-analysis\":{\"presence\":\"UNSET\",\"solutions\":[],\"declaredDriver\":null},\"email-threat-protection\":{\"presence\":\"UNSET\",\"solutions\":[],\"declaredDriver\":null},\"insider-risk\":{\"presence\":\"UNSET\",\"solutions\":[],\"declaredDriver\":null},\"data-loss-prevention\":{\"presence\":\"UNSET\",\"solutions\":[],\"declaredDriver\":null},\"identity-access\":{\"presence\":\"UNSET\",\"solutions\":[],\"declaredDriver\":null},\"privileged-access\":{\"presence\":\"UNSET\",\"solutions\":[],\"declaredDriver\":null},\"human-risk\":{\"presence\":\"UNSET\",\"solutions\":[],\"declaredDriver\":null},\"ai-runtime-security\":{\"presence\":\"UNSET\",\"solutions\":[],\"declaredDriver\":null}},\"architectureContext\":{\"saasAllowed\":\"unknown\",\"localProcessingRequired\":\"unknown\",\"otIsolated\":\"unknown\",\"unifiedPlatformPreference\":\"undefined\",\"environmentProfile\":\"uninformed\",\"dataResidency\":\"uninformed\"},\"declaredPlatforms\":[],\"signals\":{\"activeIncident\":\"unset\",\"suspectedCompromise\":\"unset\",\"ransomwareConcern\":\"unset\",\"wantsIRReadiness\":\"unset\",\"wantsSOCAssessment\":\"unset\",\"wantsSOCDevelopment\":\"unset\",\"becConcern\":\"unset\",\"emailSecurityConcern\":\"unset\",\"dataLeakageConcern\":\"unset\",\"insiderRiskConcern\":\"unset\",\"complianceDataProtection\":\"unset\",\"shadowAIConcern\":\"unset\",\"aiUsageRisk\":\"unset\",\"organizationBuildsAIApps\":\"unset\",\"usesPrivateLLMs\":\"unset\",\"usesAgenticAI\":\"unset\",\"aiRuntimeSecurityConcern\":\"unset\",\"promptInjectionConcern\":\"unset\",\"llmDataLeakageConcern\":\"unset\",\"identityRiskConcern\":\"unset\",\"pamRequirement\":\"unset\",\"edrSpecificNeed\":\"unset\"}},\"targetProfile\":{\"overrides\":{}},\"operationalRefinement\":{\"answers\":{\"ref-metrics\":null,\"ref-lessons\":null,\"ref-hunting\":null}}}",
+    "canonDepois": "{\"assessment\":{\"archetype\":0,\"answers\":{\"mandate\":1,\"governance\":1,\"policies\":1,\"team-capacity\":1,\"training\":1,\"knowledge\":1,\"incident-response\":1,\"detection-lifecycle\":1,\"automation\":1,\"logs\":1,\"endpoint\":1,\"network-visibility\":1,\"monitoring-coverage\":1,\"external-surface\":1,\"vulnerability-management\":1},\"notes\":{}},\"priorities\":[],\"technologyLandscape\":{\"capabilities\":{\"knowledge-management\":{\"presence\":\"UNSET\",\"solutions\":[],\"declaredDriver\":null},\"incident-management\":{\"presence\":\"UNSET\",\"solutions\":[],\"declaredDriver\":null},\"detection-engineering\":{\"presence\":\"UNSET\",\"solutions\":[],\"declaredDriver\":null},\"security-analytics\":{\"presence\":\"UNSET\",\"solutions\":[],\"declaredDriver\":null},\"security-automation\":{\"presence\":\"UNSET\",\"solutions\":[],\"declaredDriver\":null},\"continuous-monitoring\":{\"presence\":\"UNSET\",\"solutions\":[],\"declaredDriver\":null},\"soc-platform\":{\"presence\":\"UNSET\",\"solutions\":[],\"declaredDriver\":null},\"threat-intelligence\":{\"presence\":\"UNSET\",\"solutions\":[],\"declaredDriver\":null},\"soc-ai-assistance\":{\"presence\":\"UNSET\",\"solutions\":[],\"declaredDriver\":null},\"endpoint-detection\":{\"presence\":\"UNSET\",\"solutions\":[],\"declaredDriver\":null},\"network-detection\":{\"presence\":\"UNSET\",\"solutions\":[],\"declaredDriver\":null},\"external-exposure\":{\"presence\":\"UNSET\",\"solutions\":[],\"declaredDriver\":null},\"vulnerability-management\":{\"presence\":\"UNSET\",\"solutions\":[],\"declaredDriver\":null},\"deception\":{\"presence\":\"UNSET\",\"solutions\":[],\"declaredDriver\":null},\"malware-analysis\":{\"presence\":\"UNSET\",\"solutions\":[],\"declaredDriver\":null},\"email-threat-protection\":{\"presence\":\"UNSET\",\"solutions\":[],\"declaredDriver\":null},\"insider-risk\":{\"presence\":\"UNSET\",\"solutions\":[],\"declaredDriver\":null},\"data-loss-prevention\":{\"presence\":\"UNSET\",\"solutions\":[],\"declaredDriver\":null},\"identity-access\":{\"presence\":\"UNSET\",\"solutions\":[],\"declaredDriver\":null},\"privileged-access\":{\"presence\":\"UNSET\",\"solutions\":[],\"declaredDriver\":null},\"human-risk\":{\"presence\":\"UNSET\",\"solutions\":[],\"declaredDriver\":null},\"ai-runtime-security\":{\"presence\":\"UNSET\",\"solutions\":[],\"declaredDriver\":null}},\"architectureContext\":{\"saasAllowed\":\"unknown\",\"localProcessingRequired\":\"unknown\",\"otIsolated\":\"unknown\",\"unifiedPlatformPreference\":\"undefined\",\"environmentProfile\":\"uninformed\",\"dataResidency\":\"uninformed\"},\"declaredPlatforms\":[],\"signals\":{\"activeIncident\":\"unset\",\"suspectedCompromise\":\"unset\",\"ransomwareConcern\":\"unset\",\"wantsIRReadiness\":\"unset\",\"wantsSOCAssessment\":\"unset\",\"wantsSOCDevelopment\":\"unset\",\"becConcern\":\"unset\",\"emailSecurityConcern\":\"unset\",\"dataLeakageConcern\":\"unset\",\"insiderRiskConcern\":\"unset\",\"complianceDataProtection\":\"unset\",\"shadowAIConcern\":\"unset\",\"aiUsageRisk\":\"unset\",\"organizationBuildsAIApps\":\"unset\",\"usesPrivateLLMs\":\"unset\",\"usesAgenticAI\":\"unset\",\"aiRuntimeSecurityConcern\":\"unset\",\"promptInjectionConcern\":\"unset\",\"llmDataLeakageConcern\":\"unset\",\"identityRiskConcern\":\"unset\",\"pamRequirement\":\"unset\",\"edrSpecificNeed\":\"unset\"}},\"targetProfile\":{\"overrides\":{}},\"operationalRefinement\":{\"answers\":{\"ref-metrics\":null,\"ref-lessons\":null,\"ref-hunting\":null}}}",
+    "selecionadoAoVoltar": true
+  },
+  "reduced-motion": {
+    "repouso": {
+      "nav": null,
+      "animName": "none",
+      "animDur": "0s",
+      "opacity": 1,
+      "transform": "none",
+      "anims": []
+    },
+    "scrollAntes": 0,
+    "opcoes": 5,
+    "selecao": {
+      "nav": null,
+      "animName": "none",
+      "animDur": "0s",
+      "opacity": 1,
+      "transform": "none",
+      "anims": []
+    },
+    "selecaoAmostra": {
+      "minOpacidade": 1,
+      "transformes": [
+        "none"
+      ],
+      "quadros": 28
+    },
+    "scrollDepois": 0,
+    "selecionadoVisivel": true,
+    "avanco": {
+      "nav": "fwd",
+      "animName": "none",
+      "animDur": "0s",
+      "opacity": 1,
+      "transform": "none",
+      "anims": []
+    },
+    "avancoAmostra": {
+      "minOpacidade": 1,
+      "transformes": [
+        "none"
+      ],
+      "quadros": 26
+    },
+    "retorno": {
+      "nav": "back",
+      "animName": "none",
+      "animDur": "0s",
+      "opacity": 1,
+      "transform": "none",
+      "anims": []
+    },
+    "retornoAmostra": {
+      "minOpacidade": 1,
+      "transformes": [
+        "none"
+      ],
+      "quadros": 26
+    },
+    "teclaResposta": {
+      "nav": null,
+      "animName": "none",
+      "animDur": "0s",
+      "opacity": 1,
+      "transform": "none",
+      "anims": []
+    },
+    "canonAntes": "{\"assessment\":{\"archetype\":0,\"answers\":{\"mandate\":1,\"governance\":1,\"policies\":1,\"team-capacity\":1,\"training\":1,\"knowledge\":1,\"incident-response\":1,\"detection-lifecycle\":1,\"automation\":1,\"logs\":1,\"endpoint\":1,\"network-visibility\":1,\"monitoring-coverage\":1,\"external-surface\":1,\"vulnerability-management\":1},\"notes\":{}},\"priorities\":[],\"technologyLandscape\":{\"capabilities\":{\"knowledge-management\":{\"presence\":\"UNSET\",\"solutions\":[],\"declaredDriver\":null},\"incident-management\":{\"presence\":\"UNSET\",\"solutions\":[],\"declaredDriver\":null},\"detection-engineering\":{\"presence\":\"UNSET\",\"solutions\":[],\"declaredDriver\":null},\"security-analytics\":{\"presence\":\"UNSET\",\"solutions\":[],\"declaredDriver\":null},\"security-automation\":{\"presence\":\"UNSET\",\"solutions\":[],\"declaredDriver\":null},\"continuous-monitoring\":{\"presence\":\"UNSET\",\"solutions\":[],\"declaredDriver\":null},\"soc-platform\":{\"presence\":\"UNSET\",\"solutions\":[],\"declaredDriver\":null},\"threat-intelligence\":{\"presence\":\"UNSET\",\"solutions\":[],\"declaredDriver\":null},\"soc-ai-assistance\":{\"presence\":\"UNSET\",\"solutions\":[],\"declaredDriver\":null},\"endpoint-detection\":{\"presence\":\"UNSET\",\"solutions\":[],\"declaredDriver\":null},\"network-detection\":{\"presence\":\"UNSET\",\"solutions\":[],\"declaredDriver\":null},\"external-exposure\":{\"presence\":\"UNSET\",\"solutions\":[],\"declaredDriver\":null},\"vulnerability-management\":{\"presence\":\"UNSET\",\"solutions\":[],\"declaredDriver\":null},\"deception\":{\"presence\":\"UNSET\",\"solutions\":[],\"declaredDriver\":null},\"malware-analysis\":{\"presence\":\"UNSET\",\"solutions\":[],\"declaredDriver\":null},\"email-threat-protection\":{\"presence\":\"UNSET\",\"solutions\":[],\"declaredDriver\":null},\"insider-risk\":{\"presence\":\"UNSET\",\"solutions\":[],\"declaredDriver\":null},\"data-loss-prevention\":{\"presence\":\"UNSET\",\"solutions\":[],\"declaredDriver\":null},\"identity-access\":{\"presence\":\"UNSET\",\"solutions\":[],\"declaredDriver\":null},\"privileged-access\":{\"presence\":\"UNSET\",\"solutions\":[],\"declaredDriver\":null},\"human-risk\":{\"presence\":\"UNSET\",\"solutions\":[],\"declaredDriver\":null},\"ai-runtime-security\":{\"presence\":\"UNSET\",\"solutions\":[],\"declaredDriver\":null}},\"architectureContext\":{\"saasAllowed\":\"unknown\",\"localProcessingRequired\":\"unknown\",\"otIsolated\":\"unknown\",\"unifiedPlatformPreference\":\"undefined\",\"environmentProfile\":\"uninformed\",\"dataResidency\":\"uninformed\"},\"declaredPlatforms\":[],\"signals\":{\"activeIncident\":\"unset\",\"suspectedCompromise\":\"unset\",\"ransomwareConcern\":\"unset\",\"wantsIRReadiness\":\"unset\",\"wantsSOCAssessment\":\"unset\",\"wantsSOCDevelopment\":\"unset\",\"becConcern\":\"unset\",\"emailSecurityConcern\":\"unset\",\"dataLeakageConcern\":\"unset\",\"insiderRiskConcern\":\"unset\",\"complianceDataProtection\":\"unset\",\"shadowAIConcern\":\"unset\",\"aiUsageRisk\":\"unset\",\"organizationBuildsAIApps\":\"unset\",\"usesPrivateLLMs\":\"unset\",\"usesAgenticAI\":\"unset\",\"aiRuntimeSecurityConcern\":\"unset\",\"promptInjectionConcern\":\"unset\",\"llmDataLeakageConcern\":\"unset\",\"identityRiskConcern\":\"unset\",\"pamRequirement\":\"unset\",\"edrSpecificNeed\":\"unset\"}},\"targetProfile\":{\"overrides\":{}},\"operationalRefinement\":{\"answers\":{\"ref-metrics\":null,\"ref-lessons\":null,\"ref-hunting\":null}}}",
+    "teclaAvanco": {
+      "nav": "fwd",
+      "animName": "none",
+      "animDur": "0s",
+      "opacity": 1,
+      "transform": "none",
+      "anims": []
+    },
+    "teclaRetorno": {
+      "nav": "back",
+      "animName": "none",
+      "animDur": "0s",
+      "opacity": 1,
+      "transform": "none",
+      "anims": []
+    },
+    "canonMeio": "{\"assessment\":{\"archetype\":0,\"answers\":{\"mandate\":1,\"governance\":1,\"policies\":1,\"team-capacity\":1,\"training\":1,\"knowledge\":1,\"incident-response\":1,\"detection-lifecycle\":1,\"automation\":1,\"logs\":1,\"endpoint\":1,\"network-visibility\":1,\"monitoring-coverage\":1,\"external-surface\":1,\"vulnerability-management\":1},\"notes\":{}},\"priorities\":[],\"technologyLandscape\":{\"capabilities\":{\"knowledge-management\":{\"presence\":\"UNSET\",\"solutions\":[],\"declaredDriver\":null},\"incident-management\":{\"presence\":\"UNSET\",\"solutions\":[],\"declaredDriver\":null},\"detection-engineering\":{\"presence\":\"UNSET\",\"solutions\":[],\"declaredDriver\":null},\"security-analytics\":{\"presence\":\"UNSET\",\"solutions\":[],\"declaredDriver\":null},\"security-automation\":{\"presence\":\"UNSET\",\"solutions\":[],\"declaredDriver\":null},\"continuous-monitoring\":{\"presence\":\"UNSET\",\"solutions\":[],\"declaredDriver\":null},\"soc-platform\":{\"presence\":\"UNSET\",\"solutions\":[],\"declaredDriver\":null},\"threat-intelligence\":{\"presence\":\"UNSET\",\"solutions\":[],\"declaredDriver\":null},\"soc-ai-assistance\":{\"presence\":\"UNSET\",\"solutions\":[],\"declaredDriver\":null},\"endpoint-detection\":{\"presence\":\"UNSET\",\"solutions\":[],\"declaredDriver\":null},\"network-detection\":{\"presence\":\"UNSET\",\"solutions\":[],\"declaredDriver\":null},\"external-exposure\":{\"presence\":\"UNSET\",\"solutions\":[],\"declaredDriver\":null},\"vulnerability-management\":{\"presence\":\"UNSET\",\"solutions\":[],\"declaredDriver\":null},\"deception\":{\"presence\":\"UNSET\",\"solutions\":[],\"declaredDriver\":null},\"malware-analysis\":{\"presence\":\"UNSET\",\"solutions\":[],\"declaredDriver\":null},\"email-threat-protection\":{\"presence\":\"UNSET\",\"solutions\":[],\"declaredDriver\":null},\"insider-risk\":{\"presence\":\"UNSET\",\"solutions\":[],\"declaredDriver\":null},\"data-loss-prevention\":{\"presence\":\"UNSET\",\"solutions\":[],\"declaredDriver\":null},\"identity-access\":{\"presence\":\"UNSET\",\"solutions\":[],\"declaredDriver\":null},\"privileged-access\":{\"presence\":\"UNSET\",\"solutions\":[],\"declaredDriver\":null},\"human-risk\":{\"presence\":\"UNSET\",\"solutions\":[],\"declaredDriver\":null},\"ai-runtime-security\":{\"presence\":\"UNSET\",\"solutions\":[],\"declaredDriver\":null}},\"architectureContext\":{\"saasAllowed\":\"unknown\",\"localProcessingRequired\":\"unknown\",\"otIsolated\":\"unknown\",\"unifiedPlatformPreference\":\"undefined\",\"environmentProfile\":\"uninformed\",\"dataResidency\":\"uninformed\"},\"declaredPlatforms\":[],\"signals\":{\"activeIncident\":\"unset\",\"suspectedCompromise\":\"unset\",\"ransomwareConcern\":\"unset\",\"wantsIRReadiness\":\"unset\",\"wantsSOCAssessment\":\"unset\",\"wantsSOCDevelopment\":\"unset\",\"becConcern\":\"unset\",\"emailSecurityConcern\":\"unset\",\"dataLeakageConcern\":\"unset\",\"insiderRiskConcern\":\"unset\",\"complianceDataProtection\":\"unset\",\"shadowAIConcern\":\"unset\",\"aiUsageRisk\":\"unset\",\"organizationBuildsAIApps\":\"unset\",\"usesPrivateLLMs\":\"unset\",\"usesAgenticAI\":\"unset\",\"aiRuntimeSecurityConcern\":\"unset\",\"promptInjectionConcern\":\"unset\",\"llmDataLeakageConcern\":\"unset\",\"identityRiskConcern\":\"unset\",\"pamRequirement\":\"unset\",\"edrSpecificNeed\":\"unset\"}},\"targetProfile\":{\"overrides\":{}},\"operationalRefinement\":{\"answers\":{\"ref-metrics\":null,\"ref-lessons\":null,\"ref-hunting\":null}}}",
+    "canonDepois": "{\"assessment\":{\"archetype\":0,\"answers\":{\"mandate\":1,\"governance\":1,\"policies\":1,\"team-capacity\":1,\"training\":1,\"knowledge\":1,\"incident-response\":1,\"detection-lifecycle\":1,\"automation\":1,\"logs\":1,\"endpoint\":1,\"network-visibility\":1,\"monitoring-coverage\":1,\"external-surface\":1,\"vulnerability-management\":1},\"notes\":{}},\"priorities\":[],\"technologyLandscape\":{\"capabilities\":{\"knowledge-management\":{\"presence\":\"UNSET\",\"solutions\":[],\"declaredDriver\":null},\"incident-management\":{\"presence\":\"UNSET\",\"solutions\":[],\"declaredDriver\":null},\"detection-engineering\":{\"presence\":\"UNSET\",\"solutions\":[],\"declaredDriver\":null},\"security-analytics\":{\"presence\":\"UNSET\",\"solutions\":[],\"declaredDriver\":null},\"security-automation\":{\"presence\":\"UNSET\",\"solutions\":[],\"declaredDriver\":null},\"continuous-monitoring\":{\"presence\":\"UNSET\",\"solutions\":[],\"declaredDriver\":null},\"soc-platform\":{\"presence\":\"UNSET\",\"solutions\":[],\"declaredDriver\":null},\"threat-intelligence\":{\"presence\":\"UNSET\",\"solutions\":[],\"declaredDriver\":null},\"soc-ai-assistance\":{\"presence\":\"UNSET\",\"solutions\":[],\"declaredDriver\":null},\"endpoint-detection\":{\"presence\":\"UNSET\",\"solutions\":[],\"declaredDriver\":null},\"network-detection\":{\"presence\":\"UNSET\",\"solutions\":[],\"declaredDriver\":null},\"external-exposure\":{\"presence\":\"UNSET\",\"solutions\":[],\"declaredDriver\":null},\"vulnerability-management\":{\"presence\":\"UNSET\",\"solutions\":[],\"declaredDriver\":null},\"deception\":{\"presence\":\"UNSET\",\"solutions\":[],\"declaredDriver\":null},\"malware-analysis\":{\"presence\":\"UNSET\",\"solutions\":[],\"declaredDriver\":null},\"email-threat-protection\":{\"presence\":\"UNSET\",\"solutions\":[],\"declaredDriver\":null},\"insider-risk\":{\"presence\":\"UNSET\",\"solutions\":[],\"declaredDriver\":null},\"data-loss-prevention\":{\"presence\":\"UNSET\",\"solutions\":[],\"declaredDriver\":null},\"identity-access\":{\"presence\":\"UNSET\",\"solutions\":[],\"declaredDriver\":null},\"privileged-access\":{\"presence\":\"UNSET\",\"solutions\":[],\"declaredDriver\":null},\"human-risk\":{\"presence\":\"UNSET\",\"solutions\":[],\"declaredDriver\":null},\"ai-runtime-security\":{\"presence\":\"UNSET\",\"solutions\":[],\"declaredDriver\":null}},\"architectureContext\":{\"saasAllowed\":\"unknown\",\"localProcessingRequired\":\"unknown\",\"otIsolated\":\"unknown\",\"unifiedPlatformPreference\":\"undefined\",\"environmentProfile\":\"uninformed\",\"dataResidency\":\"uninformed\"},\"declaredPlatforms\":[],\"signals\":{\"activeIncident\":\"unset\",\"suspectedCompromise\":\"unset\",\"ransomwareConcern\":\"unset\",\"wantsIRReadiness\":\"unset\",\"wantsSOCAssessment\":\"unset\",\"wantsSOCDevelopment\":\"unset\",\"becConcern\":\"unset\",\"emailSecurityConcern\":\"unset\",\"dataLeakageConcern\":\"unset\",\"insiderRiskConcern\":\"unset\",\"complianceDataProtection\":\"unset\",\"shadowAIConcern\":\"unset\",\"aiUsageRisk\":\"unset\",\"organizationBuildsAIApps\":\"unset\",\"usesPrivateLLMs\":\"unset\",\"usesAgenticAI\":\"unset\",\"aiRuntimeSecurityConcern\":\"unset\",\"promptInjectionConcern\":\"unset\",\"llmDataLeakageConcern\":\"unset\",\"identityRiskConcern\":\"unset\",\"pamRequirement\":\"unset\",\"edrSpecificNeed\":\"unset\"}},\"targetProfile\":{\"overrides\":{}},\"operationalRefinement\":{\"answers\":{\"ref-metrics\":null,\"ref-lessons\":null,\"ref-hunting\":null}}}",
+    "selecionadoAoVoltar": true
+  }
+}

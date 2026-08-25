@@ -118,9 +118,35 @@ condicionada ao contexto declarado.
 
 Esta é a seção que mais evita mal-entendido.
 
-**Como o editor abre.** Ao entrar, apenas **SOC & Operations** vem aberto; as outras famílias ficam
-recolhidas para que a tela não vire uma parede de campos. Abrir ou fechar um grupo é decisão de
-tela: **nada do que já foi preenchido se perde**.
+**É o mesmo editor antes e depois do assessment.** Você pode declarar o contexto tecnológico na
+tela de abertura, antes de responder as perguntas, ou na seção *Contexto tecnológico* dos
+resultados. Os dois caminhos abrem **exatamente a mesma tela**: mesmos grupos, mesma ordem, mesmas
+explicações e as mesmas ajudas **(i)**. Não existe uma versão "curta" e uma "completa".
+
+**As duas partes do editor.** Os seis grupos vivem sob dois cabeçalhos:
+
+1. **Capabilities de segurança** — *o que a operação já faz e com o quê*: SOC & Operations,
+   Detection & Telemetry e Advanced / Adjacent Controls;
+2. **Ambiente e condicionantes** — *o que cerca e limita a operação*: restrições e preferências de
+   arquitetura, plataformas e licenciamento já existentes, e requisitos ou preocupações específicas.
+
+**Como o editor abre.** Ao entrar, **os seis grupos vêm recolhidos** — inclusive SOC & Operations.
+Abra apenas as famílias que a conversa exigir e a tela não vira uma parede de campos. Abrir ou fechar
+um grupo é decisão de tela: **nada do que já foi preenchido se perde**, e o que você abrir ou fechar
+continua como você deixou até terminar a edição. Ao cancelar e começar uma edição nova, o editor
+volta ao estado inicial recolhido.
+
+**Alterações ainda não salvas ficam sinalizadas.** Enquanto o editor estiver aberto com mudanças
+pendentes, o item **Contexto tecnológico** do menu lateral exibe **alterações pendentes**. É um
+lembrete, não um erro: basta **Salvar contexto** ou **Cancelar** para o aviso desaparecer.
+
+**Onde ficam as ajudas (i).** O controle **(i)** aparece onde o significado do campo pode ser
+ambíguo: no **nome de cada capability**, no **cabeçalho de cada família**, nos **campos de
+arquitetura**, nos **subgrupos de requisitos** e em **cada sinal declarado**. Rótulos que já se
+explicam sozinhos — como *Situação declarada* e cada item de *Plataformas e licenciamento já
+existentes* — não carregam controle de ajuda. Em **Plataformas e licenciamento já existentes** a
+explicação é única, no cabeçalho do grupo: a seção registra **base instalada e direitos de uso**, e
+declarar isso **não prova implantação, cobertura nem maturidade**.
 
 **Ordem dentro de cada capability.** Primeiro o nome e a explicação, depois a **situação declarada**,
 depois as **tecnologias já declaradas** com o botão **“+ Adicionar tecnologia”** e, por último, o
@@ -424,6 +450,29 @@ As seções 4 a 9 são condicionais: cada uma só aparece quando a sessão tem o
 
 > O **emblema pentagonal** e a **faixa de cinco segmentos** são identidade visual estática. Não são
 > gráfico de score: não mudam com os dados da sessão.
+
+### 12.0 A impressão fica bloqueada com contexto não salvo
+
+Se você clicar em **Imprimir / salvar em PDF** com o editor de contexto tecnológico aberto e
+alterações ainda não salvas, o relatório **não é gerado**. Isso é proposital: o PDF sairia com um
+contexto diferente do que está na tela, e o documento entregue ao cliente deixaria de corresponder
+à sessão.
+
+A pendência é sinalizada em três lugares, todos no ponto onde você precisa agir:
+
+- **logo abaixo do botão Imprimir / salvar em PDF**, com a mensagem
+  *"Salve ou cancele as alterações do contexto tecnológico antes de gerar o relatório"* e o atalho
+  **Ir para contexto tecnológico**, que leva ao editor **sem descartar o que você digitou**;
+- **no item Contexto tecnológico do menu lateral**, que passa a exibir *alterações pendentes*;
+- **junto aos botões Salvar contexto / Cancelar**, dentro do próprio editor.
+
+**Como resolver:** volte ao editor e escolha um dos dois caminhos — **Salvar contexto**, que grava
+as alterações, ou **Cancelar**, que as descarta. Nos dois casos os três avisos somem e a impressão
+volta a funcionar imediatamente.
+
+> Lembre-se: **contexto tecnológico não altera a pontuação de maturidade.** Ele existe para
+> contextualizar o resultado e evitar recomendação incompatível com o ambiente. Salvar ou cancelar
+> muda o texto do relatório, nunca o score, o estágio, o radar ou a suficiência.
 
 ### 12.1 Preferências de impressão
 

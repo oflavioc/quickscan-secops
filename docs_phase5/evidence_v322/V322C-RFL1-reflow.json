@@ -1,0 +1,47 @@
+[
+  {
+    "viewport": 320,
+    "m": {
+      "clientWidth": 320,
+      "docScroll": 320,
+      "fora": [],
+      "foraTotal": 0
+    }
+  },
+  {
+    "viewport": 360,
+    "m": {
+      "clientWidth": 360,
+      "docScroll": 360,
+      "fora": [],
+      "foraTotal": 0
+    }
+  },
+  {
+    "viewport": 390,
+    "m": {
+      "clientWidth": 390,
+      "docScroll": 390,
+      "fora": [],
+      "foraTotal": 0
+    }
+  },
+  {
+    "viewport": 430,
+    "m": {
+      "clientWidth": 430,
+      "docScroll": 430,
+      "fora": [],
+      "foraTotal": 0
+    }
+  },
+  {
+    "viewport": 384,
+    "m": {
+      "clientWidth": 384,
+      "docScroll": 384,
+      "fora": [],
+      "foraTotal": 0
+    }
+  }
+]

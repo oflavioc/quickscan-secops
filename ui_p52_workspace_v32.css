@@ -104,13 +104,38 @@
     padding-top: 18px;
     border-top: 1px solid var(--line);
   }
+  /* ==========================================================================
+     PATCH V3.2.2 · CORREÇÃO B — o rodapé usa a largura útil abaixo do divisor.
+
+     A faixa já era de largura total (`html body .wrap > footer{max-width:none}`
+     logo acima), mas o BLOCO LEGAL continuava preso a `max-width: 92ch`. Com o
+     texto do rodapé em 12px, 92ch resolve para ~665px — e a `.wrap` da home
+     entrega 1313px úteis em 1440px de viewport e 2176px em 2560/3440. Medido
+     na v3.2.1: o disclaimer ocupava 51% / 41% / 41% / 41% da largura útil em
+     1440 / 1920 / 2560 / 3440, deixando meio rodapé vazio entre ele e a
+     autoria. O defeito não era a faixa; era a coluna dentro dela.
+
+     A grade fluida da §5 substitui o `flex` com base de 520px: coluna legal
+     `minmax(0, 1fr)` — que cresce com a faixa e nunca estoura o contêiner — e
+     autoria `auto`, que pede exatamente a sua largura de conteúdo e permanece
+     colada à direita. `align-items: end` alinha os dois pela BASE, como a
+     camada anterior já fazia e como o P52-LAY2 mede.
+
+     O disclaimer NÃO é forçado a uma linha: ele quebra naturalmente dentro da
+     coluna. Nenhum byte de texto muda — a correção é de layout.
+     ========================================================================== */
   .wrap > footer[data-p52-footer="split"] {
-    display: flex; flex-wrap: wrap; align-items: flex-end;
-    justify-content: space-between; gap: 12px 32px;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: end;
+    gap: 12px 32px;
   }
-  .p52-foot-legal { flex: 1 1 520px; min-width: 0; max-width: 92ch; }
-  .p52-foot-contact { flex: 0 1 auto; text-align: right; color: var(--muted); }
-  @media (max-width: 767px) {
+  .p52-foot-legal { min-width: 0; }
+  .p52-foot-contact { min-width: 0; text-align: right; color: var(--muted); }
+  /* Abaixo de 1024px a autoria não cabe ao lado do texto legal sem espremer os
+     dois: as colunas empilham, a ordem de leitura do DOM (legal → autoria) é
+     preservada por construção e a autoria volta a alinhar à esquerda. */
+  @media (max-width: 1023px) {
     .wrap > footer[data-p52-footer="split"] { display: block; }
     .p52-foot-contact { text-align: left; margin-top: 10px; }
   }
@@ -214,6 +239,67 @@
     padding-left: 10px;
   }
   .p52-rail-link[data-p52-active="true"] .p52-rail-mark { color: var(--text); }
+
+  /* ==========================================================================
+     PATCH V3.2.2 · CORREÇÃO C — PENDÊNCIA NO TRILHO E NO PONTO DE AÇÃO.
+
+     A paleta congelada tem `--red` como cor de atenção e não tem âmbar; o token
+     abaixo é LOCAL destas duas superfícies e não entra na paleta global.
+
+     Regra de acessibilidade desta correção: a cor NUNCA carrega a informação
+     sozinha. O ponto luminoso é `aria-hidden` e puramente decorativo; quem
+     nomeia o estado é o texto ao lado, e esse texto usa os mesmos tokens de
+     contraste já validados no trilho (`--muted` sobre `--surface2`: 4.5:1+).
+     Remover a cor — impressão em preto e branco, daltonismo, forced-colors —
+     não remove a informação.
+     ========================================================================== */
+  .p52-rail { --p52-attn: #E8A33D; }
+  .p52-rail-pending {
+    grid-column: 2;
+    display: flex; align-items: center; gap: 6px;
+    font-size: 11px; line-height: 1.3; color: var(--muted);
+  }
+  .p52-rail-pending-dot {
+    flex: 0 0 auto; width: 7px; height: 7px; border-radius: 50%;
+    background: var(--p52-attn);
+    box-shadow: 0 0 0 3px rgba(232, 163, 61, .18);
+  }
+  .p52-rail-pending-text { min-width: 0; }
+  /* pendente: informação. A borda muda de COR e de LARGURA — forma, não só cor. */
+  .p52-rail-link[data-p52-pending="pending"] {
+    border-left-color: var(--p52-attn); border-left-width: 5px; padding-left: 10px;
+  }
+  /* erro: a impressão JÁ foi bloqueada. O texto continua explicando a ação. */
+  .p52-rail-link[data-p52-pending="error"] {
+    border-left-color: var(--red); border-left-width: 5px; padding-left: 10px;
+  }
+  .p52-rail-link[data-p52-pending="error"] .p52-rail-pending-dot {
+    background: var(--red); box-shadow: 0 0 0 3px var(--red-soft);
+  }
+  .p52-rail-link[data-p52-pending="error"] .p52-rail-pending { color: var(--text); }
+  /* o indicador é a única informação do item que sobrevive ao trilho compacto:
+     `--meta` e `--here` somem abaixo de 1180px, a pendência NÃO. */
+  @media (max-width: 1179px) {
+    .p52-rail-pending { grid-column: 1 / -1; }
+  }
+
+  /* --- mensagem inline junto ao botão de PDF ------------------------------- */
+  .p52-print-pending {
+    display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px;
+    margin: 12px 0 0; padding: 12px 14px;
+    border: 1px solid var(--line); border-left: 4px solid var(--red);
+    border-radius: 8px; background: var(--red-soft);
+    font-size: 13.5px; line-height: 1.5; color: var(--text);
+  }
+  .p52-print-pending-msg { margin: 0; min-width: 0; flex: 1 1 320px; }
+  .p52-print-pending-go {
+    flex: 0 0 auto; min-height: 44px; padding: 10px 16px;
+    border: 1px solid var(--line); border-radius: 8px;
+    background: var(--surface); color: var(--text);
+    font-size: 13.5px; font-weight: 600;
+  }
+  .p52-print-pending-go:hover { background: var(--surface2); }
+  .p52-print-pending-go:focus-visible { outline: 2px solid var(--red); outline-offset: 2px; }
 
 
   /* desktop 1180+: trilho vira coluna lateral sticky */
@@ -563,11 +649,48 @@
   }
 
   /* ==========================================================================
+     ERRATA V3.2.2 · §5 — O PISCAR SAI; O MOVIMENTO FICA SÓ ONDE HÁ NAVEGAÇÃO.
+
+     CAUSA MATERIAL, MEDIDA E NÃO SUPOSTA. `render()` reatribui
+     `#app.innerHTML` a CADA mudança de estado — inclusive ao apenas marcar
+     uma resposta, porque `b.onclick` faz `ans[k] = ...; render()`. A Camada 1
+     congelada declara `.screen{animation:fade .35s ease}` com
+     `from{opacity:0; transform:translateY(10px)}`. Cada `section.screen` NOVO
+     é um elemento novo, e um elemento novo REEXECUTA a animação inteira: a
+     tela cai a zero e sobe de novo. Medido nesta candidata, em Chromium
+     1440x900, ao trocar de resposta sem mudar de pergunta: `animation-name`
+     computado `fade`, duração 350ms, opacidade mínima amostrada 0 e
+     `matrix(1, 0, 0, 1, 0, 10)` — dez pixels de deslocamento VERTICAL. Isso
+     é o piscar, e ele não distingue "troquei a resposta" de "mudei de tela".
+
+     A Camada 1 é superfície congelada e NÃO é editada. Esta camada, que é a
+     última folha de estilo do documento, neutraliza a animação legada com
+     `section.screen` — (0,1,1) contra os (0,1,0) do seletor congelado, de
+     modo que a vitória não dependa da ordem de injeção — e reintroduz
+     movimento SOMENTE sob a marcação `[data-p52-nav]`, que o owner de layout
+     escreve apenas quando a pergunta corrente REALMENTE mudou.
+
+     O movimento é deslocamento HORIZONTAL, no sentido da navegação, de 150ms:
+     dentro da faixa 120–180ms exigida e sem tocar em `opacity` — não há como
+     "partir de opacidade zero" quando a propriedade sequer é animada.
+     ========================================================================== */
+  section.screen { animation: none; }
+  @keyframes p52-nav-fwd  { from { transform: translateX(18px); }  to { transform: none; } }
+  @keyframes p52-nav-back { from { transform: translateX(-18px); } to { transform: none; } }
+  .screen[data-p52-nav="fwd"]  { animation: p52-nav-fwd  150ms cubic-bezier(.22,.61,.36,1); }
+  .screen[data-p52-nav="back"] { animation: p52-nav-back 150ms cubic-bezier(.22,.61,.36,1); }
+
+  /* ==========================================================================
      P52-ACC3 · movimento respeita a preferência do sistema
+     ERRATA V3.2.2 · a regra passa a nomear TAMBÉM a transição nova, com
+     `!important`, para que a remoção do movimento seja explícita nesta camada
+     e verificável por gate — e não uma herança silenciosa do `*{animation:none}`
+     da Camada 1. Nenhuma funcionalidade depende do movimento: o atributo
+     `data-p52-nav` continua sendo escrito, e é só o CSS que decide animar.
      ========================================================================== */
   @media (prefers-reduced-motion: reduce) {
     html { scroll-behavior: auto; }
-    .screen { animation: none; }
+    section.screen, .screen[data-p52-nav] { animation: none !important; }
     .p52-rail-link, .p52-sec { transition: none; }
   }
 
@@ -919,10 +1042,17 @@
     font-size: 15px; font-weight: 600; line-height: 1.2; text-align: center;
   }
   .p52-cta-row > #start { background: var(--red); color: #fff; border: 1px solid var(--red); }
+  /* ERRATA FINAL V3.2.2 · M-05 · o azul de MARCA (`--ftnt-blue`, #307FE2) rende
+     3,99:1 com texto branco a 15px — abaixo do mínimo AA de 4,5:1. O token de
+     marca NÃO é alterado (ele continua identificando o domínio Tecnologia no
+     radar, no emblema e nas bordas de acento); o que muda é a variante de
+     PREENCHIMENTO com texto branco, escurecida 10% no mesmo matiz: #2B72CB
+     rende 4,80:1, recalculado pela fórmula do WCAG e verificado em runtime
+     pelo gate V322C-CON1. */
   .p52-cta-row > .p52-cta-ctx {
-    background: var(--ftnt-blue); color: #fff; border: 1px solid var(--ftnt-blue);
+    background: var(--p52-blue-strong); color: #fff; border: 1px solid var(--p52-blue-strong);
   }
-  .p52-cta-row > .p52-cta-ctx:hover { filter: brightness(1.07); border-color: var(--ftnt-blue); }
+  .p52-cta-row > .p52-cta-ctx:hover { filter: brightness(1.07); border-color: var(--p52-blue-strong); }
   .p52-cta-row > .cta:focus-visible, .p52-cta-row > .btn2:focus-visible {
     outline: 2px solid var(--text); outline-offset: -4px;
   }
@@ -1016,6 +1146,15 @@
        mantém o contraste contra o preenchimento e nunca sai da caixa. */
     outline: 2px solid var(--text); outline-offset: -4px;
   }
+  /* ERRATA FINAL V3.2.2 · M-05 · `.nextlink` é TEXTO vermelho sobre o fundo da
+     aplicação: `--red` (#DA291C) rende 4,04:1, abaixo do mínimo AA. A tela de
+     pergunta já não usa esta forma (ali `#next` é preenchido, branco sobre
+     vermelho, 4,87:1); reprovavam a tela de PRIORIDADES e a de ponto de
+     partida. As duas passam a usar `--red-text` (#F54133), o token que esta
+     camada já mantém para vermelho pequeno: 5,33:1. A escolha é por TELA para
+     não colidir com a forma preenchida da pergunta. */
+  body[data-uxscreen="priority"] #app .navrow .nextlink,
+  body[data-uxscreen="arq"] #app .navrow .nextlink { color: var(--red-text); }
   .navrow.p52-qnav .kbd-tip { margin-left: auto; font-size: 12.5px; color: var(--faint); }
   @media (max-width: 767px) {
     .navrow.p52-qnav #back, .navrow.p52-qnav #next { flex: 1 1 100%; min-width: 0; }
@@ -1122,7 +1261,47 @@
   /* §4.1 · o controle `i` também em campos de arquitetura, família e sinal */
   .p52-fieldhelp { position: relative; }
   .p52-fieldhelp > .p52-caphelp-btn { margin-left: 8px; vertical-align: middle; }
-  #v32editor details > summary > .p52-caphelp-btn { margin-left: 6px; }
+  /* ==========================================================================
+     FECHAMENTO PRÉ-AUDITORIA v3.2.2 · §5 — geometria do `(i)` do CABEÇALHO.
+
+     O controle deixou de ser filho do `<summary>` e passou a ser irmão dele,
+     dentro do `<details>`. Fora de fluxo, ele continua renderizado com o grupo
+     RECOLHIDO — que é o estado inicial de cinco das seis famílias — e fica
+     alinhado à linha do summary, cuja altura mínima é 44px.
+
+     `right`, e não deslocamento a partir do texto: os títulos têm larguras
+     muito diferentes e qualquer offset calculado a partir do texto quebraria
+     em 390px, em 200% de zoom ou com a tipografia do sistema. À direita da
+     MESMA linha, o controle continua inequivocamente do cabeçalho daquele
+     grupo — e o nome acessível (`aria-label`) cita o título da família.
+     ========================================================================== */
+  .p52-grphead { position: relative; }
+  /* o `<details>` conserva a sua margem própria; o wrapper é transparente */
+  .p52-grphead > details.v32-group,
+  .p52-grphead > details.v32-siggroup { margin: 10px 0; }
+  /* A CAIXA do controle é a MESMA de todos os outros `(i)` do editor — 22x22,
+     mesma borda, mesmo raio, mesma tipografia. O contrato visual único é
+     propriedade medida por `P52-HELP2`; só a POSIÇÃO muda, para acompanhar a
+     linha do summary (altura mínima 44px ⇒ 11px de folga em cima). */
+  #v32editor .p52-grphead > .p52-headhelp-btn {
+    position: absolute; top: 11px; right: 14px; z-index: 2; margin: 0;
+  }
+  /* o summary reserva a calha do controle para que título longo não passe por baixo */
+  #v32editor details.v32-group > summary,
+  #v32editor details.v32-siggroup > summary { padding-right: 48px; }
+  /* o popover do cabeçalho é ancorado ao `<details>` e precisa permanecer FORA
+     DE FLUXO mesmo em mobile: em fluxo normal, com o grupo recolhido, ele não
+     seria renderizado. */
+  #v32editor .p52-grphead > .p52-headhelp-pop {
+    position: absolute; top: 56px; right: 14px; left: auto;
+    width: min(420px, calc(100vw - 48px));
+  }
+  @media (max-width: 767px) {
+    #v32editor .p52-grphead > .p52-headhelp-pop {
+      position: absolute; width: min(420px, calc(100vw - 48px)); margin-top: 0;
+      box-shadow: 0 10px 28px rgba(0, 0, 0, .45);
+    }
+  }
 
   /* §3.6 · Salvar e Cancelar com a mesma geometria */
   #v32editor .v32-actions .cta,
@@ -1284,7 +1463,11 @@
   .p52-ctxcard-explain,
   .p52-ctxsum,
   .p52-grp-state,
-  .p52-rail-here { display: none !important; }
+  .p52-rail-here,
+  /* PATCH V3.2.2 · a pendência é estado de TELA. `.actions` já sai do papel;
+     a mensagem inline vive FORA dela e precisa da sua própria supressão. */
+  .p52-print-pending,
+  .p52-rail-pending { display: none !important; }
   .p52-workspace, .p52-flow, .p52-sec, .p52-gapgrp, .p52-gapgrp-cards, .p52-grp-body {
     display: block !important;
     grid-template-columns: none !important;
@@ -1546,6 +1729,9 @@
    P52-ACC3.
    -------------------------------------------------------------------------- */
 :root { --red-text: #F54133; }
+/* ERRATA FINAL V3.2.2 · M-05 · variante de preenchimento do azul de marca com
+   texto branco. Mesmo matiz, 10% mais escura: 4,80:1 contra #fff. */
+:root { --p52-blue-strong: #2B72CB; }
 @media print { :root { --red-text: #DA291C; } }
 
 @media screen {
@@ -1621,8 +1807,56 @@
   #v32editor .v32-bundles > label > input[type="radio"] {
     grid-column: 1; grid-row: 1; width: 18px; height: 18px; margin: 0; align-self: start;
   }
+  /* ------------------------------------------------------------------------
+     ERRATA FINAL V3.2.2 · M-01 · REFLOW DO EDITOR ABAIXO DE ~430px CSS
+
+     Defeito medido pelo parecer externo em 320/360/390/430px e em 768x1024 a
+     200%: o `fieldset.v32-plat` mantinha 328px fixos dentro de um corpo de
+     grupo de 223px, a borda direita saía da tela e NÃO havia rolagem para
+     alcançar o excedente — perda de conteúdo, que é o que a WCAG 1.4.10
+     proíbe a 320px.
+
+     Duas causas somadas, e as duas são tratadas aqui:
+
+       1 · ESPECIFICIDADE ENTRE CAMADAS. O override móvel `#v32editor
+           .v32-signals` (1,1,0) não alcançava a regra base `#v32editor
+           .v32-subs .v32-signals` (1,2,0), que continuava computando
+           `grid-template-columns: 260px` — rígido — em 390px. O override passa
+           a repetir a MESMA especificidade da base.
+
+       2 · CAIXAS QUE NÃO ENCOLHEM. `fieldset` tem `min-inline-size:
+           min-content` na folha do agente de usuário, e item de grade/flex tem
+           `min-width: auto`: os 260px rígidos subiam pela árvore e fixavam o
+           `min-content` do `<fieldset>` em 328px. `min-inline-size: 0` nos
+           fieldsets do editor e `minmax(0, 1fr)`/`min-width: 0` nos itens
+           devolvem a capacidade de encolher. `select` e `input` ganham teto de
+           100% porque o `min-content` de um `<select>` é o da sua opção mais
+           longa.
+
+     Nada aqui redesenha o editor: a ordem de leitura, os grupos, os rótulos e
+     o comportamento em desktop permanecem idênticos.
+     ------------------------------------------------------------------------ */
+  #v32editor .p52-ctxregion,
+  #v32editor .p52-ctxregion-body,
+  #v32editor .p52-grphead,
+  #v32editor .p52-grp-body,
+  #v32editor details,
+  #v32editor .v32-cap,
+  #v32editor .v32-sols { min-width: 0; }
+  #v32editor fieldset { min-inline-size: 0; }
+  #v32editor .v32-arch > label,
+  #v32editor .v32-signals > label,
+  #v32editor .v32-bundles > label,
+  #v32editor .v32-solrow > label { min-width: 0; }
+  #v32editor select,
+  #v32editor input[type="text"] { max-width: 100%; min-width: 0; }
+
   @media (max-width: 719px) {
     #v32editor .v32-signals,
+    #v32editor .v32-subs .v32-signals,
+    #v32editor .v32-arch,
+    #v32editor .v32-solrow,
+    #v32editor .v32-cov-grid,
     #v32editor .v32-bundles { grid-template-columns: minmax(0, 1fr); }
   }
 

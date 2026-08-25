@@ -4,6 +4,8 @@ de sincronização. O gate na suíte de testes compara o bloco extraído do HTML
 o arquivo-fonte byte a byte — qualquer divergência = FAIL."""
 import sys, hashlib, subprocess
 from pathlib import Path
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")   # [Onda-0] Windows cp1252 nunca corrompe stdout
 HERE = Path(__file__).resolve().parent
 BASE = HERE / "quickscan_secops_soccmm_v3_1_3.html"
 ENGINE = HERE / "engine_v32.js"
@@ -73,5 +75,5 @@ p50css = open(P50CSS, encoding="utf-8").read()
 p52css = open(P52CSS, encoding="utf-8").read()
 html = html.replace("</style>", "\n/* V32_CSS_BEGIN */\n" + uicss + "\n/* V32_CSS_END */\n/* V32_UXCSS_BEGIN */\n" + uxcss + "\n/* V32_UXCSS_END */\n/* V32_P50CSS_BEGIN */\n" + p50css + "\n/* V32_P50CSS_END */\n/* V32_P52CSS_BEGIN */\n" + p52css + "\n/* V32_P52CSS_END */\n</style>")
 html = html.replace("Quickscan SecOps · SOC-CMM · v3.1.3", "Quickscan SecOps · SOC-CMM · v3.2-dev (engine)")
-open(OUT, "w", encoding="utf-8").write(html)
+open(OUT, "w", encoding="utf-8", newline="\n").write(html)   # [Onda-0] LF por construção em qualquer SO
 print("build ok →", OUT, "| sha256(engine):", hashlib.sha256(engine.encode()).hexdigest()[:16])

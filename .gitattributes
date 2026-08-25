@@ -1,0 +1,14 @@
+# Onda 0 — determinismo por construção (E9 / R7 da Estrutura Agêntica).
+# Todo texto é LF no blob E no working tree, em qualquer plataforma.
+# Sem isto, checkout Windows converte CRLF: 56/74 hashes pinados falham e
+# o build aborta no primeiro SVG.
+* text=auto eol=lf
+
+# SVGs têm hash pinado byte a byte em icons_v32_manifest.json — NUNCA converter.
+# (icons_v32_source/FortiNDR.svg contém CRLF dentro do blob, pinado assim.)
+*.svg -text
+
+# Binários explícitos
+*.zip binary
+*.png binary
+*.pdf binary

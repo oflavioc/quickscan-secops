@@ -294,7 +294,11 @@ T("N46+K","mesmo resolver: markup de ícone idêntico entre card e enabler (ofic
 });
 T("N47","registry congelado no estado 4.6: hashes travados; delta autorizado = 3 assets oficiais (ICON_ASSET_DECISIONS_V32.md)",()=>{
   const crypto=require("crypto");
-  const H={"ui_icons_v32.js":"32aabc3445571d447189edf4b486239c9256aa9bd0bc6bdab00635a65aa42151","generate_icons_v32.py":"1acfe25c2f3ac3e4d76ce42eeb7ceec3108c1d3471c27e8f788e0168b8225bf7","icons_v32_manifest.json":"1ee9f7b8a47ada527d1a9096837f0a7cfb2190f755070d58df97b9872692b4ea"};
+  /* [Onda-0 · 2026-08-25] REPIN autorizado (Estrutura Agêntica, R8): generate_icons_v32.py
+     ganhou newline LF explícito (determinismo em qualquer SO), stdout UTF-8 e modo --check.
+     O output ui_icons_v32.js permanece byte-idêntico (32aabc34…).
+     Identidade anterior: 1acfe25c2f3ac3e4d76ce42eeb7ceec3108c1d3471c27e8f788e0168b8225bf7 */
+  const H={"ui_icons_v32.js":"32aabc3445571d447189edf4b486239c9256aa9bd0bc6bdab00635a65aa42151","generate_icons_v32.py":"e4fc59576cd3817c8c84c7c46dc5f8a6fe33d5786467cbefd0de3557c536cb0a","icons_v32_manifest.json":"1ee9f7b8a47ada527d1a9096837f0a7cfb2190f755070d58df97b9872692b4ea"};
   return Object.entries(H).every(([f,h])=>
     crypto.createHash("sha256").update(fs.readFileSync(path.join(__dirname,f))).digest("hex")===h) &&
     fs.readdirSync(path.join(__dirname,"icons_v32_source")).filter(f=>f.endsWith(".svg")).length===26;

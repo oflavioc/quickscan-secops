@@ -1708,18 +1708,21 @@ T("V322-DOC3", "README: imagem de abertura real e válida, distinção inequívo
   if (!/^docs_phase5\/evidence_v322\//.test(src))
     throw new Error("a imagem de abertura não vem do acervo desta rodada: " + src);
 
-  /* --- distinção produção × candidata, sem ambiguidade -------------------- */
+  /* --- distinção produção × rollback, sem ambiguidade ----------------------
+     [SYNC v3.2.2 · 2026-08-25] A v3.2.2 FOI PROMOVIDA a produção pelo
+     proprietário (PR #17: tag v3.2.2, GitHub Release publicada, cutover
+     2026-08-25). As asserções passam a proteger o estado PROMOVIDO — a versão
+     anterior deste bloco protegia o estado candidata e proibia anunciar a
+     promoção; asserir o fato expirado seria o gate errando por teimosia.
+     Direção decidida pela tabela do verify: o FATO mudou por ato do auditor. */
   if (!/v3\.2\.1/.test(rd)) throw new Error("README não nomeia a v3.2.1");
   if (!/v3\.2\.2/.test(rd)) throw new Error("README não nomeia a v3.2.2");
-  const prod = /v3\.2\.1[^\n]{0,120}produ[çc][ãa]o publicada|produ[çc][ãa]o publicada[^\n]{0,120}v3\.2\.1/i;
-  if (!prod.test(rd)) throw new Error("README não declara a v3.2.1 como produção publicada");
-  const cand = /v3\.2\.2[^\n]{0,160}candidata em valida[çc][ãa]o|candidata em valida[çc][ãa]o[^\n]{0,160}v3\.2\.2/i;
-  if (!cand.test(rd)) throw new Error("README não declara a v3.2.2 como candidata em validação");
-  if (!/n[ãa]o[^\n]{0,40}(foi )?promovida/i.test(rd))
-    throw new Error("README não afirma que a candidata NÃO foi promovida");
-  /* overclaim proibido: a candidata não pode aparecer como release ou tag */
-  if (/release\s+v3\.2\.2|tag\s+`?v3\.2\.2`?\s+(publicad|criad)/i.test(rd))
-    throw new Error("README anuncia release/tag inexistente da v3.2.2");
+  const prod = /v3\.2\.2[^\n]{0,120}produ[çc][ãa]o publicada|produ[çc][ãa]o publicada[^\n]{0,120}v3\.2\.2/i;
+  if (!prod.test(rd)) throw new Error("README não declara a v3.2.2 como produção publicada");
+  const roll = /v3\.2\.1[^\n]{0,160}rollback|rollback[^\n]{0,160}v3\.2\.1/i;
+  if (!roll.test(rd)) throw new Error("README não preserva a v3.2.1 como caminho de rollback");
+  if (!/vers[ãa]o corrente do produto [ée] a v3\.2\.2/i.test(rd))
+    throw new Error("README não afirma a v3.2.2 como versão corrente");
 
   /* --- o que o contexto tecnológico influencia e o que NÃO influencia ----- */
   if (!/contexto tecnol[óo]gico/i.test(rd)) throw new Error("README não fala do contexto tecnológico");

@@ -56,8 +56,12 @@ jobs:
         with:
           node-version: "24"
       - run: npm ci --engine-strict --no-audit --no-fund
-      - name: Instalar Chromium gerenciado do Playwright
-        run: npx playwright install --with-deps chromium
+      - name: Instalar Chromium gerenciado do Playwright + ferramentas de PDF
+        run: |
+          npx playwright install --with-deps chromium
+          sudo apt-get update -qq && sudo apt-get install -y -qq poppler-utils
+          # poppler (pdftoppm/pdftotext/pdfinfo): exigido pelo preflight canônico
+          # das suítes de print — 1ª calibração falhou exatamente nisso (3 gates)
       - name: Suítes visuais (playwright + chromium P50/P52)
         run: |
           npm run test:visual

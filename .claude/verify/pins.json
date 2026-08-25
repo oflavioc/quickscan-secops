@@ -1,7 +1,7 @@
 {
   "_meta": {
     "descricao": "Registry único de pins — fonte de identidade dos artefatos (R8). Hashes = SHA-256 dos blobs de HEAD. Alterar arquivo pinado exige regenerar este registry no MESMO PR, com motivo no commit.",
-    "gerado_de_head": "55ed6abe450a4701f14b22e35b4dc01033a73562",
+    "gerado_de_head": "3e6618157cc02ed0e36286028b9bc8ebfce9159b",
     "gerado_em": "2026-08-25",
     "exclusoes": [
       "docs_phase5/**",
@@ -64,7 +64,7 @@
     ".claude/verify/check_lint_arch.py": "aac4e0f8be4cc25801dfe21dbf56374d1bce1a43a8fa4e1b67ab0cddfd20f9ee",
     ".claude/verify/check_m41.py": "f5f59097ab1510d6bbd0a3e63272e00da95bb65c818c23a7fff2141e8f5d9b4f",
     ".claude/verify/check_markers.py": "5623d9cb3203cf16a307014a4255bc3d8ecf08e469eaf2f110927802a9b2fe7c",
-    ".claude/verify/check_mutation.py": "20cdfcc0763d726b6ceb670c85d817bb2d6e0f286262c503c7c69443f26979ab",
+    ".claude/verify/check_mutation.py": "ca76805a4273ae5a675e7293535dcff296f649dd0a10cf8d4bc21fa822359c87",
     ".claude/verify/check_state.py": "934999bd6e989bd09e17d322b65ac1c92fece5db85d409558b28de5b6b2fc212",
     ".claude/verify/check_suites.py": "5541ef93a81b806bdc6603689e816807930e981661d7202b884a4e4c531aa1c7",
     ".claude/verify/check_tdd.py": "1077e9025a9559f34e23658bba12a98ac6fb65c718d057a62687251671de2ce9",
@@ -76,7 +76,7 @@
     ".claude/verify/invariants.json": "b8571facafbe6098cc643886cd158f877dd702c0cba6ca5addff34fc3e10bee6",
     ".claude/verify/known_issues.json": "3e9a4eac067a43f4d042a848b62cc11ba31ff891fbabb00f53dd8b52fafddeeb",
     ".claude/verify/mutation-matrix.json": "f9bffc1967e7f5c216fd9ea1c40c22e77e1e39b1834185b4a91a6deded22284f",
-    ".claude/verify/mutation_map.json": "781dd2ed52348be80b675c04ce707ceffbf6cb09c00f1cec72fb729de137d663",
+    ".claude/verify/mutation_map.json": "74ebabbe5983d1d4b8f0be6e08329b73488cb120157817127f0a2638b403dce7",
     ".claude/verify/pipeline.yaml": "86d6d00147cebe8ed0fe3e79ff8ffd04a781949a8170d6dffd855e84cfe73a36",
     ".claude/verify/run.sh": "b137b7a1c1bf9233b06ed8f87b04fb03150b316b59ce0b56231c28ab4e048faa",
     ".gitattributes": "37bb36fb03aa6edbf1ce9fdc3bb9cb705e0317da970df37783777795bbcdcdb9",

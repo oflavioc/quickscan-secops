@@ -1,6 +1,6 @@
 {
   "demanda": "003-marcador-duplicado",
-  "phase": "plan",
+  "phase": "tasks",
   "spec_dir": "specs/003-marcador-duplicado",
   "brief": "Corrigir o marcador V32_UI_END emitido 2x pelo builder e remover a exceção nominal KI-1",
   "branch": "feature/003-marcador-duplicado",
@@ -15,7 +15,12 @@
     "notes": "aprovado pelo usuário no chat, com emenda G2 incorporada"
   },
   "plan": {
+    "status": "approved",
+    "approved_at": "2026-08-25",
+    "notes": "aprovado pelo usuário no chat"
+  },
+  "tasks": {
     "status": "awaiting_approval",
-    "notes": "waves red->doc->green(repin unico)->validacao; janela de baseline declarada"
+    "notes": "T001-T010 em 4 waves; W1 tipada chore (tarefa de gate, anti-circularidade R3)"
   }
 }

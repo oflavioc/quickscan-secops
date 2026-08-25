@@ -1,0 +1,59 @@
+# CI Linux — plataforma canônica do pipeline de verificação (Onda 1, Q2).
+#
+# O job `verify` roda o pipeline completo (incl. suítes node e session) em
+# ubuntu — resolve "determinismo comprovado apenas em Linux" sem WSL manual.
+# O job `visual` (Chromium/Playwright) fica em workflow_dispatch até ser
+# calibrado contra o baseline visual do proprietário (known_issues KI-3):
+# screenshots dependem do browser exato e um required check vermelho por
+# infra não calibrada bloquearia merges legítimos.
+name: verify
+
+on:
+  pull_request:
+    branches: [develop, main]
+  push:
+    branches: [develop, main]
+  workflow_dispatch:
+    inputs:
+      visual:
+        description: "Rodar também as suítes visuais (Chromium)"
+        type: boolean
+        default: false
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+      - name: Instalar dependências (engine-strict — CI é a plataforma canônica)
+        run: npm ci --engine-strict --no-audit --no-fund
+      - name: Pipeline de verificação (completo)
+        run: bash .claude/verify/run.sh
+      - name: Auditoria de conformidade da configuração agêntica
+        run: bash .claude/verify/compliance-audit.sh
+
+  visual:
+    if: github.event_name == 'workflow_dispatch' && inputs.visual
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+      - run: npm ci --engine-strict --no-audit --no-fund
+      - name: Instalar Chromium gerenciado do Playwright
+        run: npx playwright install --with-deps chromium
+      - name: Suítes visuais (playwright + chromium P50/P52)
+        run: |
+          npm run test:visual
+          node tests_p50_chromium.js
+          node tests_p52_chromium.js

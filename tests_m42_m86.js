@@ -651,7 +651,9 @@ T("P2.1-16","REPRODUTIBILIDADE: builder em temporário gera HTML idêntico ao pu
   const { execSync } = require("child_process");
   const os = require("os");
   const tmp = path.join(os.tmpdir(), "v32_rebuild_"+Date.now()+".html");
-  execSync("python3 "+path.join(__dirname,"build_v32_html.py")+" "+tmp);
+  /* [Onda-1 · 2026-08-25] fix-finding: caminhos SEM aspas quebravam o oráculo em
+     checkout cujo path contém espaço (achado registrado no PR #9). Só aspas; nada mais. */
+  execSync('python3 "'+path.join(__dirname,"build_v32_html.py")+'" "'+tmp+'"');
   const a = crypto.createHash("sha256").update(fs.readFileSync(tmp)).digest("hex");
   const b = crypto.createHash("sha256").update(fs.readFileSync(path.join(__dirname,"quickscan_secops_soccmm_v3_2_dev.html"))).digest("hex");
   fs.unlinkSync(tmp);

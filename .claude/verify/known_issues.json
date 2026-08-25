@@ -1,0 +1,29 @@
+{
+  "_meta": {
+    "descricao": "Exceções nominais dos lints — cada uma com remoção prevista. Padrão herdado da referência: scanner sem auto-exclusão nominal falha no próprio gate; exceção sem prazo vira permissão permanente. O compliance-audit lista todas e exige remocao_prevista.",
+    "onda": 1
+  },
+  "issues": [
+    {
+      "id": "KI-1",
+      "lint": "marker-lint",
+      "excecao": { "marcador": "V32_UI_END", "ocorrencias_permitidas": 2 },
+      "motivo": "Bug real do builder (achado E11 da varredura): a linha de injeção emite V32_UI_END duas vezes. Corrigir muda o HTML publicado — é mudança de produto, exige demanda própria com gate e repin, fora do escopo da onda de enforcement.",
+      "remocao_prevista": "Demanda 'corrigir marcador duplicado do builder' (candidata pós-Onda 2, via máquina SDD)"
+    },
+    {
+      "id": "KI-2",
+      "lint": "suites-no-agregado",
+      "excecao": { "arquivos": ["tests_p50_mutants.js", "tests_p51_mutants.js", "tests_p52_mutants.js"] },
+      "motivo": "Harnesses de mutação são one-shot por design herdado; a re-execução disparada por path e a matriz gate-mutante entram na Onda 3 (TDD pleno).",
+      "remocao_prevista": "Onda 3"
+    },
+    {
+      "id": "KI-3",
+      "lint": "suites-no-agregado",
+      "excecao": { "arquivos": ["tests_p50_chromium.js", "tests_p52_chromium.js", "tests_visual/"] },
+      "motivo": "Suítes visuais exigem Chromium; localmente o env-doctor reporta a ausência (WARN explícito, nunca SKIP silencioso). Execução canônica: job visual do CI (workflow_dispatch até calibração) e rito manual do proprietário.",
+      "remocao_prevista": "Calibração do job visual no CI (pendência registrada no PR da Onda 1)"
+    }
+  ]
+}

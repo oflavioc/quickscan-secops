@@ -1,0 +1,22 @@
+{
+  "_meta": {
+    "descricao": "Registro canônico de bridges globais window.__* (R9 §08.2). Bridge novo sem entrada aqui = FAIL no lint-arch. Um bridge por módulo para módulos NOVOS; os 14 legados abaixo são o estado herdado das fases 4.x-5.2 (consolidação é demanda futura, não desta onda).",
+    "onda": 1
+  },
+  "bridges": {
+    "__V32UI": { "owner": "ui_v32.js", "nota": "ponte da Camada 3 (publishableStats, iconFor, ARCH_FIELDS)" },
+    "__uxDecor": { "owner": "ui_ux_v32.js", "nota": "decorator legado da Camada 4" },
+    "__sesDecor": { "owner": "ui_session_v32.js", "nota": "decorator de sessão" },
+    "__uxTargetPrintHTML": { "owner": "ui_target_v32.js", "nota": "hook de PDF do target" },
+    "__uxRefinementPrintHTML": { "owner": "ui_refinement_v32.js", "nota": "hook de PDF do refinement" },
+    "__uxJourneyPrintHTML": { "owner": "ui_journey_v32.js", "nota": "hook de PDF da journey" },
+    "__QS_BUILD_META": { "owner": "build_v32_html.py", "nota": "metadata determinística injetada no build" },
+    "__QS_STAGE_RULER": { "owner": "ui_ux_v32.js", "nota": "régua de estágios" },
+    "__DEV": { "owner": "quickscan_secops_soccmm_v3_1_3.html", "nota": "superfície de teste da Camada 1 congelada" },
+    "__P50": { "owner": "ui_p50_shell_v32.js", "nota": "registro de decorators da Fase 5.0 (registerDecor)" },
+    "__P50SUFF": { "owner": "ui_p50_suff_v32.js", "nota": "contrato derivado de suficiência (UI-012A)" },
+    "__P50RESULTS": { "owner": "ui_p50_results_v32.js", "nota": "superfície de resultados 5.0" },
+    "__P51SESMETA": { "owner": "ui_session_v32.js", "nota": "metadata de sessão da Fase 5.1" },
+    "__P52": { "owner": "ui_p52_workspace_v32.js", "nota": "workspace desktop da Fase 5.2" }
+  }
+}

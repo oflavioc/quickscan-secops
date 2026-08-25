@@ -103,7 +103,9 @@ T("I11 (E)","todos os data URIs decodificam para SVG válido; gerador é reprodu
   const {execSync}=require("child_process");
   const crypto=require("crypto");
   const h1=crypto.createHash("sha256").update(fs.readFileSync(path.join(__dirname,"ui_icons_v32.js"))).digest("hex");
-  execSync("python3 "+path.join(__dirname,"generate_icons_v32.py"));
+  /* [Onda-1 · 2026-08-25] fix-finding: caminho SEM aspas quebrava o oráculo em
+     checkout cujo path contém espaço (achado registrado no PR #9). Só aspas; nada mais. */
+  execSync('python3 "'+path.join(__dirname,"generate_icons_v32.py")+'"');
   const h2=crypto.createHash("sha256").update(fs.readFileSync(path.join(__dirname,"ui_icons_v32.js"))).digest("hex");
   return allSvg && h1===h2;
 });

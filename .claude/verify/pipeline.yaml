@@ -1,33 +1,76 @@
-# Pipeline de verificação — fonte única dos stages (Onda 0 da Estrutura Agêntica).
+# Pipeline de verificação — fonte única dos stages (Onda 1 da Estrutura Agêntica).
 #
-# Consumido por run.sh. Checagem nova entra AQUI, nunca no prompt de um agente
-# (anti-drift herdado da referência). Campos por stage:
+# Consumido por run.sh, pelo hook Stop (post-turn-verify, com --light --no-mutate)
+# e pelo CI (.github/workflows/verify.yml). Checagem nova entra AQUI, nunca no
+# prompt de um agente. Campos por stage:
 #   desc     — o que o stage garante
 #   run      — comando, executado na raiz do repositório
-#   parallel — reservado (o runner da Onda 0 executa em sequência; Onda 1 paraleliza)
-#   mutates  — true: regenera arquivos (não roda no hook Stop, via --no-mutate)
+#   parallel — true: roda no grupo concorrente (stages independentes entre si)
+#   mutates  — true: regenera arquivos (pulado com --no-mutate)
+#   heavy    — true: caro (pulado com --light; o hook Stop usa --light)
 #
-# Ondas seguintes adicionam: boundary, marker-lint, suites, mutation, m41,
-# state, tdd, lint-arch (Seção 09 do documento acordado).
+# Fora do pipeline local (registrado em known_issues.json KI-3): suítes visuais
+# Chromium — job próprio no CI e rito manual do proprietário. Ondas seguintes
+# adicionam: state (planning-state, Onda 2), tdd e mutation-trigger (Onda 3).
 
 stages:
   env-doctor:
-    desc: "Toolchain presente e sã antes de qualquer verificação (aborta o pipeline se FAIL)"
+    desc: "Toolchain presente e sã antes de qualquer verificação (FAIL aborta o pipeline)"
     run: python .claude/verify/env_doctor.py
     parallel: false
     mutates: false
+    heavy: false
   baseline:
-    desc: "Registry de pins × blobs de HEAD — à prova de CRLF/plataforma; detecta arquivo novo sem pin"
+    desc: "Registry de pins × blobs de HEAD — à prova de CRLF/plataforma; arquivo novo sem pin = FAIL"
     run: python .claude/verify/check_baseline.py
     parallel: true
     mutates: false
+    heavy: false
+  boundary:
+    desc: "Manifesto de boundary coerente: protegidos existem, pinados, e divergência nomeia o rito violado"
+    run: python .claude/verify/check_boundary.py
+    parallel: true
+    mutates: false
+    heavy: false
+  marker-lint:
+    desc: "Cada marcador V32_* exatamente 1x no HTML (exceções nominais com remoção prevista em known_issues)"
+    run: python .claude/verify/check_markers.py
+    parallel: true
+    mutates: false
+    heavy: false
   icons-check:
     desc: "Gerador de ícones reproduz ui_icons_v32.js byte a byte (verificação sem escrita)"
     run: python generate_icons_v32.py --check
     parallel: true
     mutates: false
+    heavy: false
   build:
     desc: "Builder reproduz o HTML publicado byte a byte, em diretório efêmero, sem sujar a árvore"
     run: python .claude/verify/check_build.py
     parallel: true
     mutates: false
+    heavy: false
+  lint-arch:
+    desc: "Pureza do engine (zero DOM) · innerHTML= proibido em módulo 5.x · IIFE · bridges registrados"
+    run: python .claude/verify/check_lint_arch.py
+    parallel: true
+    mutates: false
+    heavy: false
+  m41:
+    desc: "Harness M41: payload funcional PASS contra o snapshot e SHA-256 == pin declarado (régua D2)"
+    run: python .claude/verify/check_m41.py
+    parallel: false
+    mutates: false
+    heavy: false
+  suites:
+    desc: "Todas as suítes node × contagens canônicas (expected_suites.json); suíte fora do registro = FAIL"
+    run: python .claude/verify/check_suites.py
+    parallel: false
+    mutates: false
+    heavy: true
+  suites-heavy:
+    desc: "Suíte de sessão (97 gates, heap 4608 MB) × contagem canônica"
+    run: python .claude/verify/check_suites.py --heavy
+    parallel: false
+    mutates: false
+    heavy: true

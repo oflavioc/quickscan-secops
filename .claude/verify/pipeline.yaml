@@ -56,6 +56,12 @@ stages:
     parallel: true
     mutates: false
     heavy: false
+  state:
+    desc: "planning-state de demandas em curso válido contra o schema; fases pós-red exigem red provado ou waiver"
+    run: python .claude/verify/check_state.py
+    parallel: true
+    mutates: false
+    heavy: false
   m41:
     desc: "Harness M41: payload funcional PASS contra o snapshot e SHA-256 == pin declarado (régua D2)"
     run: python .claude/verify/check_m41.py

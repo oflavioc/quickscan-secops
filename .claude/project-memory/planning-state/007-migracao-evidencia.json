@@ -1,6 +1,6 @@
 {
   "demanda": "007-migracao-evidencia",
-  "phase": "specify",
+  "phase": "plan",
   "spec_dir": "specs/007-migracao-evidencia",
   "brief": "Migrar a evidência binária de docs_phase5/evidence_* para GitHub Releases (decisão Q1 = Opção B) preservando a verificabilidade via manifesto-ponte e gate evidence-bridge; ZIPs da raiz (S64/S74/S113) ficam para demanda posterior",
   "branch": "feature/007-migracao-evidencia",
@@ -10,6 +10,11 @@
     "notes": "aprovado pelo usuário no chat ('Prossiga') após rodada de 5 decisões"
   },
   "specify": {
+    "status": "approved",
+    "approved_at": "2026-08-25",
+    "notes": "aprovado pelo usuário no chat ('Aprovado'), com emenda A2 aplicada e parecer do PO sem bloqueante"
+  },
+  "plan": {
     "status": "in_progress"
   }
 }

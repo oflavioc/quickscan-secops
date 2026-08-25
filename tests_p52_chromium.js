@@ -25,8 +25,16 @@ const HTML_FILE = path.join(HERE, "quickscan_secops_soccmm_v3_2_dev.html");
 const HTML_URL = "file://" + HTML_FILE;
 const EVID = path.join(HERE, "docs_phase5", "evidence_p52");
 
-/* Baseline de ENTRADA da Phase 5.2 (§1 da diretriz), lido do git. */
-const P52_BASELINE_SHA = "12bb950f58f203c56cf6621973663be1ac71b4e026d618a910ebb0f3eebbf9d9";
+/* Baseline do HTML publicado, lido do git e ancorado no REGISTRY.
+   [Onda-4 · 2026-08-25] fix-finding (R8/R10 §4-5): o pin inline da época da
+   selagem 5.2 apodreceu duas vezes (Onda 0: LF fb906462…; demanda 003:
+   0ed9acb7…) e deixou P52-PR1/P52-ACC1 permanentemente vermelhos — o gate
+   morto previsto pelo achado E6. A âncora agora é a fonte única de identidade
+   (.claude/verify/pins.json), que só muda pelo rito de repin.
+   Identidade anterior (pin inline): 12bb950f58f203c56cf6621973663be1ac71b4e026d618a910ebb0f3eebbf9d9 */
+const P52_BASELINE_SHA = JSON.parse(fs.readFileSync(
+  path.join(HERE, ".claude", "verify", "pins.json"), "utf8"
+)).files["quickscan_secops_soccmm_v3_2_dev.html"];
 
 const results = [];
 const ONLY = (process.env.P52_ONLY || "").split(",").map(x => x.trim()).filter(Boolean);

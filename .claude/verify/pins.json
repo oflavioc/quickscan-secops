@@ -1,7 +1,7 @@
 {
   "_meta": {
     "descricao": "Registry único de pins — fonte de identidade dos artefatos (R8). Hashes = SHA-256 dos blobs de HEAD. Alterar arquivo pinado exige regenerar este registry no MESMO PR, com motivo no commit.",
-    "gerado_de_head": "9fdb2b95a84b1c261451c360754d15300338f9c2",
+    "gerado_de_head": "a957f8b98fe43c8482a236db7b4062aa331c4cbe",
     "gerado_em": "2026-08-25",
     "exclusoes": [
       "docs_phase5/**",
@@ -57,7 +57,7 @@
     ".claude/templates/spec.md": "578a96c27273761ad2b8b79e395d9798a808961a50bf605330e4e872411383a4",
     ".claude/templates/tasks.md": "08ce20d1d62483d632d79916c1a456a1e5fdd1cb25397561cd4a290fa21e1d15",
     ".claude/verify/boundary.json": "559b2bd35a38e00d66cad7b447c38c423c42b0a5ae92a24a8643bedb391affe4",
-    ".claude/verify/bridges.json": "f9fcd09b61204708c2578335e46566bcd67b1ee38bf39ffcd8de380ec057c18d",
+    ".claude/verify/bridges.json": "c0a7b3441345575140dcab473b40936ecdc29a122d3ab17a17704622403c9099",
     ".claude/verify/check_baseline.py": "66e0c2c6f678a84ace076e38a474fb6c1a0d92f504c03da3145c2bf5d487c2f7",
     ".claude/verify/check_boundary.py": "2441e32e6bd5477d4a9bec027345d74be26b7e260de245e49dfe5d6b0d853633",
     ".claude/verify/check_build.py": "65c8f33185cbaee3dcba03ce88d7935a982176814c9a2802540f2c49af51d924",
@@ -71,7 +71,7 @@
     ".claude/verify/compliance-audit.sh": "4f919e02736bacbcab0b04b3991dd1832e4af803687891be4a0f70ad4633c4fc",
     ".claude/verify/current_phase.json": "235f00d041c4a026290affb3ae3fabfb6268f75baed83ffc5d21ac5579d30733",
     ".claude/verify/env_doctor.py": "9664d0dc016f486eac028dc5f80e02bcb014562f9ea6754b43a4dde90d5aba47",
-    ".claude/verify/expected_suites.json": "3cc2a371a0514596175fe07877cb74d2e328b96e923c724c16e2b379e7cd3f76",
+    ".claude/verify/expected_suites.json": "ab1b646596a35e2c3a285ce37ebfd55c9e39bddc6d5fa82d32e7ed6a7f3679aa",
     ".claude/verify/gen_pins.py": "86c20d02492f895637c192c53589fd59aa59def9f988ba81c94ef8c7c996cce0",
     ".claude/verify/invariants.json": "b8571facafbe6098cc643886cd158f877dd702c0cba6ca5addff34fc3e10bee6",
     ".claude/verify/known_issues.json": "7f5e0404fd12725778ac032a136604cddbe52d062a2f3a658a91f061a36bb820",
@@ -89,7 +89,7 @@
     "ICON_ASSET_DECISIONS_V32.md": "f14494c78ae40af88f8a2adf49e30f314a6800736b11607d3382e0a31d5cce80",
     "MANIFEST.sha256": "defd52d1cfc57e6ca5a9ebcce8b620a080772b6ea62753f987c5a58f8ccf38c6",
     "PHASE_5_KICKOFF.md": "c1a8d44b8e4a463465b12bf24cb8926be55fefbaa819b6db8cc22ee599ef3dda",
-    "README.md": "11f4b4000bf12e1bd8d64fea44b0e19d09c203bfb5c899bd391e90194a8ab70b",
+    "README.md": "a9a77fe5c3e07e7c90efeff2697a86bacbe64cde2ee3efdebffedf80e9e5832b",
     "SESSION_SCHEMA_V32.md": "9f74a849c3181c62f3d36d05a312987d8939e98bad8a0715f836da179e54a6f0",
     "USER_GUIDE.md": "6a38185877fb7fc7642f4887faf6bab1f5318378b28c6e779925d178da44392c",
     "VISUAL_GATES_V32.md": "bea9e7b91625121c91d4cff519c57ceb49703847bb67f7ec001a7f9c2951c45a",

@@ -1,7 +1,7 @@
 {
   "_meta": {
     "descricao": "Registry único de pins — fonte de identidade dos artefatos (R8). Hashes = SHA-256 dos blobs de HEAD. Alterar arquivo pinado exige regenerar este registry no MESMO PR, com motivo no commit.",
-    "gerado_de_head": "1826e7c1544588a815e9d20b0904ab8ff80217bb",
+    "gerado_de_head": "46db7f527ecc43fb1f576f64e8272f7413658d72",
     "gerado_em": "2026-08-25",
     "exclusoes": [
       "docs_phase5/**",
@@ -17,12 +17,12 @@
   "files": {
     ".claude/agent-memory/README.md": "2f868716c8785119c1d6a02a7715f7b5058ab968f55951410fc82fc45b960a93",
     ".claude/agents/build-engineer.md": "8859f79081656a1ec7d8d1b29f806f718a0762d21494d5b177c1501957b84d00",
-    ".claude/agents/core-engineer.md": "cab58fe8cc742a28b6b1a0c7e834f05561c7c29bcce730773b4709638940a40a",
-    ".claude/agents/data-engineer.md": "013113d9809ee619f539e4d9fcead70ec4fd04d43766712afb110a0ec30b9e45",
+    ".claude/agents/core-engineer.md": "cec44dda7d6818cb85dac39a76a196bb210cd3487e19e294783fad4cd6c9a3d5",
+    ".claude/agents/data-engineer.md": "6d4880ef8b9c430e1eba1274c4e3c164ecee81fea5f1df4a12c5bbe6d0013b37",
     ".claude/agents/doc-writer.md": "ba47ca701661968b2af914869ae336a7c9742ec9751a1699d37677feb1bc92ca",
-    ".claude/agents/product-owner.md": "780e513c192b583d4e6aa321135b04f6413ab2a86e313982e5fd0022a93e174e",
-    ".claude/agents/qa-engineer.md": "ec6c51800cd94d8c17baa742bd1a79d9015e15b7e67d7dd281be0005c0fee228",
-    ".claude/agents/tech-lead.md": "bfcbecaf5bab515cafe4b5d8b71bef1363316310e0244568a38e7123f600c980",
+    ".claude/agents/product-owner.md": "44474da15a631d0e9e651a7fe71ff9281b0121f8f512b9e063e8a05fbac430b4",
+    ".claude/agents/qa-engineer.md": "31ff97fa15351e5c7ddc9e74b2a778b6aa5321b7977d03a3461dca82fe69f4f1",
+    ".claude/agents/tech-lead.md": "6f1066563db68ae9776ccbea6541bdae68ef4e6f078c75f931e91cdb04779dee",
     ".claude/agents/ui-engineer.md": "695180ac8d71be7cd89a13fdb6e803d1f3f30ad44911aba7d306bf2a1a5a6708",
     ".claude/hooks/guard-boundary.sh": "2ffbed8b15e2dfdf61a5e49dc90e49f4fb47765bda5a8081dafe4103f63afdf4",
     ".claude/hooks/guard-data.sh": "1f5e71dfc002c4d3b48b814914aa757910fc3473b91ff627b071a8263e231b4b",

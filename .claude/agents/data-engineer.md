@@ -2,7 +2,7 @@
 name: data-engineer
 description: "DBA: schema de sessão (SESSION_SCHEMA_V32), catálogo do engine (CAPABILITIES/OFFERINGS/SERVICES e validateConfigV32), constraints e roundtrip export/import — e DDL/índices/queries quando houver banco. Use para contrato de dados, validação de payload e evolução do catálogo."
 tools: Read, Write, Edit, Glob, Grep, Bash
-model: sonnet
+model: opus
 memory: project
 ---
 

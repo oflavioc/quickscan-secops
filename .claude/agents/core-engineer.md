@@ -2,7 +2,7 @@
 name: core-engineer
 description: "Backend: lógica não-visual das camadas novas (suficiência, target, sessão, recomendação, adaptadores) e GUARDIÃO do engine congelado. Dono do estado canônico de dados novos. Use para regra de negócio em código e qualquer pergunta sobre o engine."
 tools: Read, Write, Edit, Glob, Grep, Bash
-model: sonnet
+model: opus
 memory: project
 ---
 

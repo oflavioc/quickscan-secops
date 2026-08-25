@@ -2,7 +2,8 @@
 name: product-owner
 description: "Dono das regras de negócio SOC-CMM, das invariantes de produto e do glossário (CONTEXT.md). Refina cada demanda (Fase 0), desafia o enquadramento, levanta casos de borda e faz o aceite de intenção ao final (Fase 6). Use no refinamento, em dúvida de metodologia/invariante, e no aceite."
 tools: Read, Write, Glob, Grep
-model: opus
+model: fable
+effort: xhigh
 memory: project
 ---
 

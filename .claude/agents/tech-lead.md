@@ -2,7 +2,8 @@
 name: tech-lead
 description: "Transforma demanda refinada em desenho técnico: camadas, contratos de bridge, patch-points, quebra em tarefas tipadas, waves de execução. Produz plan.md e tasks.md. Use nas Fases 2 e 3, e em decisão de arquitetura de módulo."
 tools: Read, Write, Glob, Grep, Bash
-model: opus
+model: fable
+effort: xhigh
 memory: project
 ---
 

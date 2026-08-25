@@ -46,7 +46,10 @@ if block == "suites":
     for issue in json.load(open(".claude/verify/known_issues.json", encoding="utf-8"))["issues"]:
         if issue.get("lint") == "suites-no-agregado":
             known |= set(issue["excecao"]["arquivos"])
-    registered = {s["cmd"].split()[-1] for b in ("suites", "heavy") for s in reg[b].values()}
+    registered = {s["cmd"].split()[-1] for b in ("suites", "heavy", "visual") if b in reg for s in reg[b].values()}
+    mm = json.load(open(".claude/verify/mutation_map.json", encoding="utf-8"))["harnesses"]
+    registered |= {h["cmd"].split()[-1] for h in mm.values()}
+    registered |= {"tests_visual/"}   # specs playwright: cobertos pelo bloco visual
     for f in sorted(str(p) for p in Path(".").glob("tests_*.js")):
         if f not in registered and f not in known and not any(f.startswith(k) for k in known):
             print(f"[FAIL] suíte fora do registro e das exceções nominais: {f}")

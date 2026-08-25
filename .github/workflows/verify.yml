@@ -44,7 +44,9 @@ jobs:
         run: bash .claude/verify/compliance-audit.sh
 
   visual:
-    if: github.event_name == 'workflow_dispatch' && inputs.visual
+    # Promovido na Onda 4 (calibração fechada na 6ª rodada: 67/37 + 27/27 + 44/44 +
+    # campanha p52 72/72 por trigger). Roda em PR/push; dispatch segue disponível.
+    if: github.event_name != 'workflow_dispatch' || inputs.visual
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4

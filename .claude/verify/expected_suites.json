@@ -1,25 +1,115 @@
 {
   "_meta": {
-    "descricao": "Registro canônico das contagens verdes (revogação 2: contagens saem da prosa do CLAUDE.md e viram dado conferido por máquina — 'qualquer desvio = parar e reportar', agora mecânico). check_suites.py roda cada suíte e compara: FAIL != 0 ou PASS fora do esperado = FAIL do stage. 'pass' aceita lista [min,max] quando um gate declara NÃO EXECUTADO dependente de ambiente (o próprio relatório da suíte o nomeia).",
+    "descricao": "Registro canônico das contagens verdes (revogação 2: contagens saem da prosa do CLAUDE.md e viram dado conferido por máquina — 'qualquer desvio = parar e reportar', agora mecânico). check_suites.py roda cada suíte e compara: FAIL != 0 ou PASS fora do esperado = FAIL do stage. 'pass' aceita lista [min,max] quando um gate declara NÃO EXECUTADO dependente de ambiente (o próprio relatório da suíte o nomeia). Bloco 'visual': suítes Chromium com contagens canônicas provadas na calibração do CI (Onda 4); executadas pelo job visual (requires chromium), não pelo stage local.",
     "onda": 1
   },
   "suites": {
-    "engine": { "cmd": "node tests_m42_m86.js", "pass": 105, "fail": 0 },
-    "ui31": { "cmd": "node tests_ui_m31.js", "pass": 19, "fail": 0 },
-    "ui32": { "cmd": "node tests_ui_m32.js", "pass": 25, "fail": 0 },
-    "ui33": { "cmd": "node tests_ui_m33.js", "pass": 11, "fail": 0 },
-    "ui332": { "cmd": "node tests_ui_m332.js", "pass": 23, "fail": 0 },
-    "ui333": { "cmd": "node tests_ui_m333.js", "pass": 26, "fail": 0 },
-    "ux41": { "cmd": "node tests_ux_m41.js", "pass": 56, "fail": 0 },
-    "target": { "cmd": "node tests_target_m431.js", "pass": 30, "fail": 0 },
-    "ref": { "cmd": "node tests_ref_m44.js", "pass": 28, "fail": 0 },
-    "journey": { "cmd": "node tests_journey_m45.js", "pass": 31, "fail": 0 },
-    "icons46": { "cmd": "node tests_icons_m46.js", "pass": 12, "fail": 0 },
-    "unset": { "cmd": "node tests_unset_ug.js", "pass": [12, 13], "fail": 0 },
-    "p50core": { "cmd": "node tests_p50_core.js", "pass": 64, "fail": 0 },
-    "p52layout": { "cmd": "node tests_p52_layout.js", "pass": 35, "fail": 0 }
+    "engine": {
+      "cmd": "node tests_m42_m86.js",
+      "pass": 105,
+      "fail": 0
+    },
+    "ui31": {
+      "cmd": "node tests_ui_m31.js",
+      "pass": 19,
+      "fail": 0
+    },
+    "ui32": {
+      "cmd": "node tests_ui_m32.js",
+      "pass": 25,
+      "fail": 0
+    },
+    "ui33": {
+      "cmd": "node tests_ui_m33.js",
+      "pass": 11,
+      "fail": 0
+    },
+    "ui332": {
+      "cmd": "node tests_ui_m332.js",
+      "pass": 23,
+      "fail": 0
+    },
+    "ui333": {
+      "cmd": "node tests_ui_m333.js",
+      "pass": 26,
+      "fail": 0
+    },
+    "ux41": {
+      "cmd": "node tests_ux_m41.js",
+      "pass": 56,
+      "fail": 0
+    },
+    "target": {
+      "cmd": "node tests_target_m431.js",
+      "pass": 30,
+      "fail": 0
+    },
+    "ref": {
+      "cmd": "node tests_ref_m44.js",
+      "pass": 28,
+      "fail": 0
+    },
+    "journey": {
+      "cmd": "node tests_journey_m45.js",
+      "pass": 31,
+      "fail": 0
+    },
+    "icons46": {
+      "cmd": "node tests_icons_m46.js",
+      "pass": 12,
+      "fail": 0
+    },
+    "unset": {
+      "cmd": "node tests_unset_ug.js",
+      "pass": [
+        12,
+        13
+      ],
+      "fail": 0
+    },
+    "p50core": {
+      "cmd": "node tests_p50_core.js",
+      "pass": 64,
+      "fail": 0
+    },
+    "p52layout": {
+      "cmd": "node tests_p52_layout.js",
+      "pass": 35,
+      "fail": 0
+    }
   },
   "heavy": {
-    "session": { "cmd": "node --max-old-space-size=4608 tests_session_m48.js", "pass": 97, "fail": 0 }
+    "session": {
+      "cmd": "node --max-old-space-size=4608 tests_session_m48.js",
+      "pass": 97,
+      "fail": 0
+    }
+  },
+  "visual": {
+    "playwright": {
+      "cmd": "npx playwright test",
+      "pass": 67,
+      "fail": 0,
+      "skip": 37,
+      "requires": [
+        "chromium"
+      ]
+    },
+    "p50chromium": {
+      "cmd": "node tests_p50_chromium.js",
+      "pass": 27,
+      "fail": 0,
+      "requires": [
+        "chromium"
+      ]
+    },
+    "p52chromium": {
+      "cmd": "node tests_p52_chromium.js",
+      "pass": 44,
+      "fail": 0,
+      "requires": [
+        "chromium"
+      ]
+    }
   }
 }

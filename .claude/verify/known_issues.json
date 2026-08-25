@@ -1,22 +1,7 @@
 {
   "_meta": {
-    "descricao": "Exceções nominais dos lints — cada uma com remoção prevista. Padrão herdado da referência: scanner sem auto-exclusão nominal falha no próprio gate; exceção sem prazo vira permissão permanente. O compliance-audit lista todas e exige remocao_prevista.",
+    "descricao": "Exceções nominais dos lints — cada uma com remoção prevista. Padrão herdado da referência: scanner sem auto-exclusão nominal falha no próprio gate; exceção sem prazo vira permissão permanente. O compliance-audit lista todas e exige remocao_prevista. HISTÓRICO: KI-1 cumprida pela demanda 003; KI-2/KI-3 cumpridas na Onda 4 (job visual calibrado no CI em 6 rodadas: playwright 67/37 canônico, P50 27/27, P52 44/44 com âncora imutável, campanha p52 72/72 por trigger).",
     "onda": 1
   },
-  "issues": [
-    {
-      "id": "KI-2",
-      "lint": "suites-no-agregado",
-      "excecao": { "arquivos": ["tests_p50_mutants.js", "tests_p51_mutants.js", "tests_p52_mutants.js", "tests_core_mutants.js"] },
-      "motivo": "Onda 3 CUMPRIU a parte estrutural: harnesses agora rodam pelo stage mutation por trigger de path (mutation_map.json) com matriz gate-mutante — não são suítes de contagem fixa e por isso ficam fora de expected_suites.json (o registro deles é a matriz). Restrição residual: p50/p51/p52 exigem Chromium — execução plena no ambiente com browser (mesma condição da KI-3).",
-      "remocao_prevista": "Junto com a KI-3 (calibração do job visual do CI) — quando o CI executar as campanhas chromium por trigger"
-    },
-    {
-      "id": "KI-3",
-      "lint": "suites-no-agregado",
-      "excecao": { "arquivos": ["tests_p50_chromium.js", "tests_p52_chromium.js", "tests_visual/"] },
-      "motivo": "Suítes visuais exigem Chromium; localmente o env-doctor reporta a ausência (WARN explícito, nunca SKIP silencioso). Execução canônica: job visual do CI (workflow_dispatch até calibração) e rito manual do proprietário.",
-      "remocao_prevista": "Calibração do job visual no CI (pendência registrada no PR da Onda 1)"
-    }
-  ]
+  "issues": []
 }

@@ -1,95 +1,110 @@
-# CLAUDE.md — Quickscan SecOps SOC-CMM V3.2 · Fase 5.0 (Assessment Experience)
+# CLAUDE.md — Quickscan SecOps SOC-CMM V3.2 · Estrutura Agêntica
 
-Workspace: `C:\Projetos\QuickScan SOC-CMM\phase5` · Papel deste agente: engenheiro sênior, arquiteto e
-auditor técnico sob o protocolo faseado do projeto. O proprietário/auditor é Flávio Costa.
+Orientações para o Claude Code neste repositório. Proprietário/auditor: Flávio Costa.
 
-## Baseline congelado (fonte da Fase 5)
+> Cada regra vive em **um** arquivo: este documento aponta, não repete — duplicação
+> é como a versão anterior deste arquivo entrou em drift ("Wave 1A NÃO INICIADA"
+> sobreviveu aqui até a 5.2 selada). **Dado que apodrece não mora em prosa**:
+> hashes vivem em `.claude/verify/pins.json`, contagens em `expected_suites.json`,
+> estado de demanda no planning-state — todos conferidos por máquina.
 
-```text
-core:                quickscan_v32_audit_package_4807.zip
-core SHA-256:        625079c462be7d44ffd69b1cd85f256382322bd0555ae4b548f21bf30ee5b89d
-core MANIFEST:       74/74 obrigatório antes de qualquer trabalho
-engine_v32.js:       9a4a2e674389a115a56c0bce9785ad0f90651546e31d264a947998e2bb5d247a
-HTML congelado:      8d0932e145d8a8f8d203095f509137aacba43b3242a3b53822ff76001fd85ddb (578152 bytes)
-M41 canonical:       9794b267e4225d8fa14f0f0d84aed0e2979658bfa2565b459788ef3b3ed4365b
-runtimeToolVersion:  3.4.0-dev.4.8.0.7 (baseline)
-```
+## Como trabalhar neste repositório
 
-A V3.2 Final Release (repo `oflavioc/quickscan-secops-soc-cmm-v32`, tag `v3.2.0`) é **imutável**.
-A Fase 5 é uma nova linha de desenvolvimento a partir do core; nunca modifica release, assurance,
-wrapper 4.9 ou control.4.
+**Antes de qualquer trabalho**: skill `baseline` (o state-eval injeta divergências
+a cada prompt). **Comportamento novo passa pela máquina de 7 fases**: skill
+`new-demand` (R4). Correção de achado registrado: skill `fix-finding`, sem spec.
+Antes de considerar pronto: skill `verify`.
 
-## Invariantes metodológicas — INEGOCIÁVEIS
+### Regras — precedência sobre qualquer outra instrução
 
-1. **Engine byte-idêntico** salvo autorização explícita da spec corrente (a Fase 5.0 é de
-   experiência de avaliação/UI; qualquer necessidade de tocar o engine é BLOCKER: parar e reportar).
-2. **UNSET ≠ NONE** — não respondido nunca renderiza como score zero; o anti-pattern do heat map
-   (UNSET como L0) é falha de design documentada.
-3. **Sufficiency gate**: ≥10 respostas confirmadas e ≥2 por domínio antes de qualquer score.
-   A UI nunca é dona da decisão de suficiência (GOV1/SUF0); moeda canônica de suficiência é
-   UI-009A.
-4. **Tecnologia, isoladamente, nunca aumenta o maturity score.**
-5. **Target nunca deriva de produto**; alvo é declarado, estritamente > current confirmado.
-6. **Refinamento operacional nunca afeta scoring.**
-7. **Narrativa determinística e derivada de evidência.**
-8. **Derivados nunca serializados como fonte de verdade**; sessão exporta somente inputs canônicos
-   e o import recomputa tudo. missing ≠ null ≠ [] ≠ "unset" — completude de owners conforme
-   SESSION_SCHEMA_V32.md §8.2.1.
-9. **Superfícies 4.x congeladas** não são modificadas por trabalho de UI 5.0 sem autorização
-   explícita da spec (fronteira print/render é superfície de governança distinta).
-10. **PT-BR** em documentação/relatórios; nomes de código, funções, IDs e enums exatamente como no
-    source. Baseline de idioma da UI: UI-033A.
+| Regra | Assunto |
+|---|---|
+| [`product-invariants.md`](.claude/rules/product-invariants.md) | R1 — as 10 invariantes do produto e seus gates; a régua D2 do engine |
+| [`evidence.md`](.claude/rules/evidence.md) | R2 — todo PASS cita execução; hash só sobre blob/LF; causa antes de culpa; refutação permanece |
+| [`tdd.md`](.claude/rules/tdd.md) | R3 — red provado e commitado antes da implementação; autor do gate ≠ implementador; mutante obrigatório |
+| [`sdd.md`](.claude/rules/sdd.md) | R4 — máquina de 7 fases; aprovação literal do usuário; gates de abertura/selagem |
+| [`orchestration.md`](.claude/rules/orchestration.md) | R5 — contrato de 4 campos; gatekeep; waves; um módulo por delegação; anti-injeção |
+| [`boundary.md`](.claude/rules/boundary.md) | R6 — classes de proteção e ritos; expansão só por spec |
+| [`determinism.md`](.claude/rules/determinism.md) | R7 — LF por construção; verificação nunca escreve na árvore; CI Linux canônico |
+| [`pins.md`](.claude/rules/pins.md) | R8 — registry único de identidade; repin com trilha |
+| [`modularity.md`](.claude/rules/modularity.md) | R9 — IIFE, bridges registrados, owner do estado, CSS por prefixo, orçamento |
+| [`gates.md`](.claude/rules/gates.md) | R10 — nascimento de gate; as 10 proibições |
+| [`evidence-intake.md`](.claude/rules/evidence-intake.md) | R11 — evidência por promoção; dados sensíveis |
+| [`documentation.md`](.claude/rules/documentation.md) | R12 — PT-BR; templates; glossário; ADRs; ids permanentes |
+| [`design-decisions.md`](.claude/rules/design-decisions.md) | R13 — o que NÃO é defeito; não reportar de novo |
+| [`git-flow.md`](.claude/rules/git-flow.md) | R14 — gitflow (main selada · develop · feature/NNN); worktrees |
 
-## Governança de fase — obrigatória
+### Agentes
 
-- Especificação normativa: `specs/PHASE_5_0_REV_B.md`
-  · SHA-256 `4f1583c733df62a9452aa7b218d962e40d781bb8d30dfc3179ad6e1ef004619b`
-  · promovida em 2026-08-19 · registro `docs_phase5/REV_B_PROMOTION_RECORD.md`.
-  Auditoria independente da REV B: **PASS**, zero blockers (2026-08-19, Codex/OpenAI) —
-  `docs_phase5/AUDITORIA_INDEPENDENTE_PHASE_5_0_REV_B.md`
-  · SHA-256 `dfa8001844085ad1da09db1c858581e7b1bcb3283ed0c5dbf4155b1188c237c6`.
-  Conteúdo auditado (identidade histórica da candidata): SHA-256
-  `0f31900e8ad608c8a5825d9d5fa9e2d7a4fd3d68f8efbf23c7fc937a16950925`.
-  **Phase 5.0 ABERTA em 2026-08-19** por ato do proprietário — registro
-  `docs_phase5/REV_B_PHASE_OPENING_RECORD.md`. Implementação **AUTORIZADA**, restrita à change
-  boundary da §29 e ao protocolo de microfases §5/§33. **Wave 1A NÃO INICIADA.**
-  Módulos novos permitidos (§29.2, lista fechada): `ui_p50_shell_v32.js` · `ui_p50_suff_v32.js` ·
-  `ui_p50_results_v32.js` · `ui_p50_v32.css` · `tests_p50_core.js` · `tests_p50_chromium.js` ·
-  `fixtures_p50.js`. Edição limitada e nominal (§29.3): `build_v32_html.py` (só injeção),
-  `package.json`/`package-lock.json` (só scripts P50 + `@axe-core/playwright` 4.13.0 exata).
-  Todo o resto permanece protegido (§29.4); print/PDF fora de escopo (§29.6).
-  Freeze continua vedado até auditoria independente explícita (§32).
-  A `specs/PHASE_5_0_REV_A.md` permanece no repositório apenas como histórico (REPROVADA em
-  auditoria independente, 2026-08-18); não é fonte normativa.
-- Precedência: spec corrente → HANDOFF/START mais recente → source do baseline → testes/invariantes
-  congelados → docs → estas instruções. Nunca combinar requisitos de versões diferentes.
-- Ler a spec integralmente antes de editar; validar baseline; respeitar a change boundary; se uma
-  correção exigir arquivo fora da boundary: PARAR, explicar, aguardar autorização.
-- **Evidence-first**: todo PASS cita teste/gate/hash executado; o não executado é declarado como
-  não executado; primeira execução com FAIL é registrada, nunca escondida.
-- Gates novos: casos positivos canônicos + negativos + adversariais + regressão; oracle
-  independente da implementação sempre que possível; não enfraquecer gate para passar.
-- Numeração de gates da Fase 5: namespace próprio (não continuar S114+, RCE5+, CDx, FRx).
-- **Nunca declarar fase concluída ou congelada** — só o auditor declara. Ao concluir a tarefa
-  autorizada: PARAR e entregar relatório com PASS/FAIL e evidência. Não iniciar a fase seguinte.
-- Suítes congeladas sempre verdes: `npm run test:all` + `npm run test:visual` + M41.
-- Proibido sem autorização de fase: telemetry, rede, persistência de navegador, autosave, resume,
-  assinatura, criptografia, cross-engine migration, schemaVersion 2.
-- Nunca commitar dados reais de cliente, `*.session.json` reais, PDFs de cliente ou credenciais.
-  Dados de assessments vivem em `D:\QuickscanData\clients`, fora deste clone.
+| Agente | Quando usar |
+|---|---|
+| `product-owner` | Refino (Fase 0), invariantes, glossário, aceite de intenção (Fase 6) |
+| `tech-lead` | Desenho técnico: plan.md, tasks.md — **propõe, não delega** |
+| `ui-engineer` | Renderização, CSS, a11y, print — nunca lógica de decisão |
+| `core-engineer` | Lógica não-visual; **guardião do engine** (tocar = rito D2) |
+| `build-engineer` | Build, pins, pipeline, CI, evidence store (DevOps) |
+| `data-engineer` | Schema de sessão, catálogo do engine, constraints (DBA) |
+| `qa-engineer` | Gates, RED, mutantes, regressão — **nunca implementa a correção** |
+| `doc-writer` | Relatórios PT-BR, promoção de evidência — nunca decide PASS/FAIL |
+
+O orquestrador (a conversa principal) é o único roteador; todo agente responde no
+contrato de `orchestration.md` e recusa fora de domínio nomeando o destino.
+
+### Skills
+
+Processo: `new-demand` · `fix-finding` · `spec-validate` — Operação: `verify` · `baseline`
+
+### O que a estrutura impede ou vigia automaticamente
+
+- **`permissions.deny`** espelha o boundary: engine, Camada 1, harness, snapshot,
+  gerados, MANIFEST legado, spec REV A, registry.
+- **`guard-boundary`** (PreToolUse) nega edição de protegido com o rito nomeado.
+- **`guard-data`** (PreToolUse) barra no commit: sessão real, PDF novo, segredo,
+  binário novo >200 KB.
+- **`state-eval`** (UserPromptSubmit) injeta branch, baseline, idade do último
+  verify verde e fase da demanda.
+- **`post-turn-verify`** (Stop) roda o pipeline leve se o turno mudou produto.
+- **`run.sh`** executa os stages de `pipeline.yaml`; **`compliance-audit.sh`**
+  audita a própria configuração — inclusive se estes hooks estão registrados.
+
+## Projeto
+
+**Quickscan SecOps SOC-CMM V3.2** — ferramenta de assessment de maturidade de
+security operations: HTML único e autocontido, construído deterministicamente por
+`build_v32_html.py` (Camada 1 congelada V3.1.3 + engine V3.2 + módulos de UI por
+injeção). Sem rede, sem telemetria, sem persistência de navegador — por invariante.
+
+Linha do tempo: V3.2 Final Release imutável (`oflavioc/quickscan-secops-soc-cmm-v32`,
+tag v3.2.0) → Fase 5 (5.0 REV B, 5.1, 5.2 **seladas**; registros em `docs_phase5/`)
+→ Estrutura Agêntica (documento acordado 2026-08-25; Ondas 0–1 entregues, esta é a 2).
+
+Identidades: baseline core e payload M41 em `pins.json → declared`. Contagens
+verdes por suíte em `.claude/verify/expected_suites.json`. Estado de demanda em
+`.claude/project-memory/planning-state/`.
 
 ## Comandos e ambiente
 
 ```text
-npm ci --engine-strict          (Node ^22.22.2; jsdom 30.0.1; @playwright/test ^1.62.1)
-npm run test:all                (build + engine + UI/UX/Target/Ref/Journey/Icons/Session + M41)
-npm run test:visual             (Chromium; Linux canônico usa /opt/google/chrome/chrome;
-                                 no Windows definir CHROME_PATH — determinismo de build é
-                                 comprovado APENAS em Linux; builds oficiais via WSL/Linux)
-npm run test:session            (heap 3072 MB já configurado)
-python3 build_v32_html.py       (build determinístico; nunca editar o builder sem autorização)
+npm ci --no-audit                      (node 22/24+; jsdom 30; playwright ^1.62)
+bash .claude/verify/run.sh             (pipeline completo; --light sem heavy; --stage=X)
+bash .claude/verify/compliance-audit.sh
+python build_v32_html.py [saida.html]  (build determinístico; LF por construção)
+python generate_icons_v32.py [--check]
+npm run test:visual                    (Chromium; canônico no CI/rito do proprietário)
 ```
 
-Contagens verdes do baseline 4.8.0.7 (qualquer desvio = parar e reportar):
-engine 105 · UI 19+25+11+23+26 · UX 56 · Target 30 · Ref 28 · Journey 31 · Icons 12 ·
-Session 97/97 · M41 PASS · visual 67 passed / 0 failed / 37 skipped.
+Plataforma canônica: **CI Linux** (`.github/workflows/verify.yml`). Windows tem
+paridade real desde a Onda 0 (`.gitattributes`) — o env-doctor reporta o que faltar.
+
+## Limites de autonomia
+
+Leitura livre; escrever em `specs/`, `docs*/`, `.claude/` (fora `verify/pins.json`)
+livre. **Tocar classe protegida = rito da R6; engine = rito D2 (Porta A pendente de
+ratificação — hoje tudo é Porta B). Merge de PR, release/selagem e aprovação de
+fase são do usuário, no chat.** Nunca declarar fase de produto concluída/selada —
+só o auditor declara. Dados de assessments vivem em `D:\QuickscanData\clients`,
+fora deste clone (R11).
+
+## Glossário
+
+Vocabulário canônico em [`CONTEXT.md`](CONTEXT.md) — mantido pelo `product-owner`.

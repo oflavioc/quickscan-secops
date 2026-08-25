@@ -1,7 +1,7 @@
 {
   "_meta": {
     "descricao": "Registry único de pins — fonte de identidade dos artefatos (R8). Hashes = SHA-256 dos blobs de HEAD. Alterar arquivo pinado exige regenerar este registry no MESMO PR, com motivo no commit.",
-    "gerado_de_head": "b7a10f6ba62e35bf585a6e70d4cbd2ada825a1ab",
+    "gerado_de_head": "273a1456d12948653458113c15e3787a5a795491",
     "gerado_em": "2026-08-25",
     "exclusoes": [
       "docs_phase5/**",
@@ -30,7 +30,7 @@
     ".claude/hooks/post-turn-verify.sh": "e46d2c17c4d7b0164154bd5220e2696011482da3dd49b28c41b90a844a89ea1a",
     ".claude/hooks/state-eval.sh": "a86541c83f6df86718de1d61a4465f1d1ce83cc376f5faa9b114fc9c2b58e0de",
     ".claude/rules/boundary.md": "327888a7af5719d2bb264058457d1c6782f62a6dcaa506fdf844336a55da47f4",
-    ".claude/rules/design-decisions.md": "ec64b65d0d832a1edf1dc33187da37332940b97af70444aa08dacd9097bbd4d1",
+    ".claude/rules/design-decisions.md": "6ff8623826306200cb444793a7ae57a4fbe18fd067d36a6d23f1fff878cfa7f3",
     ".claude/rules/determinism.md": "90bab1c89c7b9a54c400b7124d60693a431face37f422e847e6d2e566cb5f76d",
     ".claude/rules/documentation.md": "d34405cb28f4413cef8e5c7512a952ca05f162aac14310bec9b0b12d9d9ce574",
     ".claude/rules/evidence-intake.md": "7e7a571578b62804cce94b93d5046cc381bca403235dd9fa80ee0fe38c4670e2",
@@ -129,6 +129,7 @@
     "screenshot_audit_43.md": "4bbdbb4b25f884347e4089205c0fe466f05a01cce7c0687844c5679426ef8aca",
     "session_roundtrip_report.md": "ffe0d30411cc086681a44fa8d69e1066a0bf26173f15dd8580286787056cf4f8",
     "specs/.gitkeep": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "specs/003-marcador-duplicado/fix-finding-registry.md": "dce0be8376f543678b9b214fd2e03e0efbda9f45cd978b909d0cc5208fa456a2",
     "specs/003-marcador-duplicado/matriz-gate-mutante.md": "8b9d894ba50bd8d4a0b37c505b0bc25254ae1d0aacf6dd36104b276648a99baa",
     "specs/003-marcador-duplicado/parecer-po-fase1.md": "16b43c85b0723a759cf90fc2440e7eb05f9c0a0eeebbd8b81a4d56a7feb475fb",
     "specs/003-marcador-duplicado/plan.md": "f3ed8cf001cfacfa5a141dda134a8dc286180a9212fe1a3406f23f9aa6872b30",

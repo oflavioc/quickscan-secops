@@ -74,8 +74,9 @@
     },
     "p52layout": {
       "cmd": "node tests_p52_layout.js",
-      "pass": 35,
-      "fail": 0
+      "pass": 45,
+      "fail": 0,
+      "_trilha": "35->45 na integração da v3.2.2 (merge main->develop, 2026-08-25): +10 gates de layout da release do proprietário; medido por execução"
     }
   },
   "heavy": {

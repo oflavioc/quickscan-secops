@@ -8,7 +8,6 @@ confirmada como defeito gera ruído e desgasta a confiança nos achados reais.
 | Tema | Decisão |
 |---|---|
 | **MANIFEST.sha256 divergente** | Legado congelado (classe `legacy`), substituído por `pins.json` como fonte de identidade desde a Onda 0. As divergências são conhecidas e documentadas; reconciliação histórica é a Onda 4. Não é um baseline quebrado — é um artefato aposentado aguardando arquivamento formal. |
-| **Marcador `V32_UI_END` duplicado no HTML** | Bug conhecido do builder com exceção nominal KI-1 (remoção prevista: demanda própria via máquina SDD). Não reportar de novo; não corrigir fora da demanda. |
 | **Evidência binária (~103 MB) versionada** | Herança das fases 5.0–5.2, pinada pelos manifestos de fase. Permanece até a migração desenhada (Onda 4/R11). Evidência NOVA segue R11. |
 | **Suítes visuais fora do agregado local** | KI-3: exigem Chromium; execução canônica é o job `visual` do CI (em calibração) e o rito manual do proprietário. O `env-doctor` reporta a ausência — isso é o desenho, não uma lacuna. |
 | **Exceção UG8 no oráculo do p50_core** | Errata test-only autorizada pelo proprietário na microfase 5.0.4, registrada em comentário no próprio gate. |

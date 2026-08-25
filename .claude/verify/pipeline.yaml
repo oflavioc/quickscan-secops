@@ -1,0 +1,33 @@
+# Pipeline de verificação — fonte única dos stages (Onda 0 da Estrutura Agêntica).
+#
+# Consumido por run.sh. Checagem nova entra AQUI, nunca no prompt de um agente
+# (anti-drift herdado da referência). Campos por stage:
+#   desc     — o que o stage garante
+#   run      — comando, executado na raiz do repositório
+#   parallel — reservado (o runner da Onda 0 executa em sequência; Onda 1 paraleliza)
+#   mutates  — true: regenera arquivos (não roda no hook Stop, via --no-mutate)
+#
+# Ondas seguintes adicionam: boundary, marker-lint, suites, mutation, m41,
+# state, tdd, lint-arch (Seção 09 do documento acordado).
+
+stages:
+  env-doctor:
+    desc: "Toolchain presente e sã antes de qualquer verificação (aborta o pipeline se FAIL)"
+    run: python .claude/verify/env_doctor.py
+    parallel: false
+    mutates: false
+  baseline:
+    desc: "Registry de pins × blobs de HEAD — à prova de CRLF/plataforma; detecta arquivo novo sem pin"
+    run: python .claude/verify/check_baseline.py
+    parallel: true
+    mutates: false
+  icons-check:
+    desc: "Gerador de ícones reproduz ui_icons_v32.js byte a byte (verificação sem escrita)"
+    run: python generate_icons_v32.py --check
+    parallel: true
+    mutates: false
+  build:
+    desc: "Builder reproduz o HTML publicado byte a byte, em diretório efêmero, sem sujar a árvore"
+    run: python .claude/verify/check_build.py
+    parallel: true
+    mutates: false

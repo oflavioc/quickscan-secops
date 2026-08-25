@@ -106,11 +106,12 @@
     },
     "p52chromium": {
       "cmd": "node tests_p52_chromium.js",
-      "pass": 44,
+      "pass": 55,
       "fail": 0,
       "requires": [
         "chromium"
-      ]
+      ],
+      "_trilha": "44->55 na integração da v3.2.2: +11 gates chromium da release; medido pelo job visual do CI (run 32887668115, SUCCESS)"
     }
   }
 }

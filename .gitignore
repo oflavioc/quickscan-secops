@@ -5,3 +5,5 @@ print_evidence/
 *.log
 __pycache__/
 .claude/worktrees/
+.claude/verify/.last_green
+nul

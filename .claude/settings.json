@@ -1,0 +1,82 @@
+{
+  "permissions": {
+    "deny": [
+      "Edit(engine_v32.js)",
+      "Write(engine_v32.js)",
+      "Edit(quickscan_secops_soccmm_v3_1_3.html)",
+      "Write(quickscan_secops_soccmm_v3_1_3.html)",
+      "Edit(harness_m41_v313.js)",
+      "Write(harness_m41_v313.js)",
+      "Edit(v3_1_3_functional_snapshot.json)",
+      "Write(v3_1_3_functional_snapshot.json)",
+      "Edit(quickscan_secops_soccmm_v3_2_dev.html)",
+      "Write(quickscan_secops_soccmm_v3_2_dev.html)",
+      "Edit(ui_icons_v32.js)",
+      "Write(ui_icons_v32.js)",
+      "Edit(MANIFEST.sha256)",
+      "Write(MANIFEST.sha256)",
+      "Edit(specs/PHASE_5_0_REV_A.md)",
+      "Write(specs/PHASE_5_0_REV_A.md)",
+      "Edit(.claude/verify/pins.json)",
+      "Write(.claude/verify/pins.json)"
+    ],
+    "allow": [
+      "Bash(python .claude/verify/*)",
+      "Bash(python3 .claude/verify/*)",
+      "Bash(bash .claude/verify/run.sh*)",
+      "Bash(bash .claude/verify/compliance-audit.sh*)",
+      "Bash(python generate_icons_v32.py --check)",
+      "Bash(python3 generate_icons_v32.py --check)",
+      "Bash(git status*)",
+      "Bash(git diff*)",
+      "Bash(git log*)",
+      "Bash(git show*)",
+      "Bash(git ls-files*)",
+      "Bash(node tests_*)"
+    ]
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/guard-boundary.sh"
+          }
+        ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/guard-data.sh"
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/state-eval.sh"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/post-turn-verify.sh"
+          }
+        ]
+      }
+    ]
+  }
+}

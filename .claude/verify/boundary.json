@@ -1,0 +1,37 @@
+{
+  "_meta": {
+    "descricao": "Manifesto de boundary (R6 da Estrutura Agêntica). Classes de proteção com o rito que autoriza mudança. Consumido por guard-boundary.sh (bloqueio em tempo de edição), check_boundary.py (stage do pipeline) e compliance-audit.sh (deny coerente).",
+    "onda": 1
+  },
+  "classes": {
+    "frozen": {
+      "rito": "Mudança SÓ pelo rito D2: Porta A (payload M41 byte-idêntico + suítes verdes + QA + ok explícito do usuário) ou Porta B (spec + auditoria independente humana).",
+      "paths": [
+        "engine_v32.js",
+        "quickscan_secops_soccmm_v3_1_3.html",
+        "harness_m41_v313.js",
+        "v3_1_3_functional_snapshot.json"
+      ]
+    },
+    "generated": {
+      "rito": "Nunca editado à mão. Regenerado exclusivamente por build_v32_html.py / generate_icons_v32.py; o stage build prova identidade byte a byte.",
+      "paths": [
+        "quickscan_secops_soccmm_v3_2_dev.html",
+        "ui_icons_v32.js"
+      ]
+    },
+    "legacy": {
+      "rito": "Congelado como legado até a reconciliação da Onda 4. Não editar; a fonte de identidade é .claude/verify/pins.json.",
+      "paths": [
+        "MANIFEST.sha256",
+        "specs/PHASE_5_0_REV_A.md"
+      ]
+    },
+    "registry": {
+      "rito": "Regenerado exclusivamente por gen_pins.py, no mesmo PR que altera qualquer arquivo pinado, com motivo no commit.",
+      "paths": [
+        ".claude/verify/pins.json"
+      ]
+    }
+  }
+}

@@ -1,0 +1,58 @@
+{
+  "_meta": {
+    "descricao": "Invariantes de produto (R1) e os gates que as provam. O compliance-audit exige que TODA invariante tenha >=1 gate executável existente — invariante sem gate é prosa (o modo de falha documentado deste repositório).",
+    "onda": 1
+  },
+  "invariantes": [
+    {
+      "id": "INV-1",
+      "texto": "Engine byte-idêntico salvo rito D2 (Porta A: M41 idêntico; Porta B: spec + auditoria)",
+      "gates": [".claude/verify/check_baseline.py", ".claude/verify/check_build.py", "harness_m41_v313.js"]
+    },
+    {
+      "id": "INV-2",
+      "texto": "UNSET ≠ NONE — não respondido nunca renderiza como score zero",
+      "gates": ["tests_unset_ug.js", "tests_ux_m41.js", "tests_p50_core.js"]
+    },
+    {
+      "id": "INV-3",
+      "texto": "Sufficiency gate (>=10 confirmadas e >=2 por domínio) antes de qualquer score; a UI nunca é dona da decisão",
+      "gates": ["tests_p50_core.js", "tests_m42_m86.js"]
+    },
+    {
+      "id": "INV-4",
+      "texto": "Tecnologia, isoladamente, nunca aumenta o maturity score",
+      "gates": ["tests_m42_m86.js"]
+    },
+    {
+      "id": "INV-5",
+      "texto": "Target declarado, estritamente > current confirmado; nunca deriva de produto",
+      "gates": ["tests_target_m431.js"]
+    },
+    {
+      "id": "INV-6",
+      "texto": "Refinamento operacional nunca afeta scoring",
+      "gates": ["tests_ref_m44.js"]
+    },
+    {
+      "id": "INV-7",
+      "texto": "Narrativa determinística e derivada de evidência",
+      "gates": ["tests_ux_m41.js", "harness_m41_v313.js"]
+    },
+    {
+      "id": "INV-8",
+      "texto": "Derivados nunca serializados como fonte de verdade; sessão exporta só inputs canônicos e o import recomputa",
+      "gates": ["tests_session_m48.js"]
+    },
+    {
+      "id": "INV-9",
+      "texto": "Superfícies congeladas protegidas por boundary machine-readable",
+      "gates": [".claude/verify/check_boundary.py", ".claude/hooks/guard-boundary.sh"]
+    },
+    {
+      "id": "INV-10",
+      "texto": "PT-BR em documentação/relatórios; nomes de código exatamente como no source",
+      "gates": [".claude/verify/compliance-audit.sh"]
+    }
+  ]
+}

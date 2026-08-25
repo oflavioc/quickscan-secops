@@ -69,5 +69,10 @@ jobs:
           npm run test:visual
           node tests_p50_chromium.js
           node tests_p52_chromium.js
+      - name: Restaurar árvore (suítes chromium legadas regravam evidência rastreada)
+        # Follow-up registrado: tests_p50_chromium reescreve docs_phase5/evidence_p50/*.json
+        # como efeito colateral (achado E9; a suíte é congelada — correção é demanda própria).
+        # No CI os bytes regravados são descartáveis: o repositório é a fonte.
+        run: git checkout -- docs_phase5/ 2>/dev/null || true
       - name: Campanhas de mutação com Chromium (deferidas pelo job verify)
         run: python .claude/verify/check_mutation.py

@@ -1,8 +1,17 @@
 # Plano de migração da evidência binária (~103 MB) — desenho (Onda 4)
 
-> Status: **DESENHADO, não executado** — a execução depende da decisão Q1
-> (destino do acervo), que é do usuário/proprietário. Achado de origem: E10
-> (333 PNG/PDF/ZIP rastreados, pack de ~133 MiB crescendo a cada fase, com os
+> Status: **em execução (demanda 007)** — a decisão Q1 (destino do acervo,
+> Opção B/GitHub Releases) foi registrada pelo usuário/proprietário em
+> 2026-08-25 e a execução corre pela máquina SDD em
+> `specs/007-migracao-evidencia/` (spec aprovada na rodada 1). Artefatos já
+> commitados nesta demanda: manifesto-ponte `.claude/verify/evidence_bridge.json`
+> (406 arquivos, 4 pacotes, commit-âncora `62590b5927496a61ab31dd476d46b03624546560`)
+> e o red provado do gate `evidence-bridge` (EB-3/EB-6). Releases nominais
+> `evidence-p50`/`evidence-p51`/`evidence-p52`/`evidence-unset` estão em
+> publicação em paralelo (T007 do `tasks.md` da demanda). Este documento **não
+> afirma consumação** (publicação + desindexação + repin) — isso é registrado
+> no relatório final da demanda 007 (T014). Achado de origem: E10 (333
+> PNG/PDF/ZIP rastreados, pack de ~133 MiB crescendo a cada fase, com os
 > manifestos de fase pinando cada PNG — sair do git sem projeto quebraria a
 > verificabilidade).
 

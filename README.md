@@ -14,13 +14,14 @@ contextuais e um relatório em PDF pronto para leitura executiva.
 
 | versão | o que é | onde está |
 |---|---|---|
-| **v3.2.1** | **produção publicada.** É a versão liberada e em uso. | [release `v3.2.1`](https://github.com/oflavioc/quickscan-secops-v32-phase5-dev/releases/tag/v3.2.1) |
-| **v3.2.2** | **candidata em validação.** Ainda **não** foi promovida a produção, não tem tag, não tem release e não substituiu a v3.2.1. | branch de trabalho, sem commit de release |
+| **v3.2.2** | **produção publicada.** É a versão liberada e atualmente em uso. | [release `v3.2.2`](https://github.com/oflavioc/quickscan-secops-v32-phase5-dev/releases/tag/v3.2.2) |
+| **v3.2.1** | **versão anterior**, preservada e verificada como caminho de rollback. | [release `v3.2.1`](https://github.com/oflavioc/quickscan-secops-v32-phase5-dev/releases/tag/v3.2.1) |
 
-A v3.2.2 existe para ser avaliada — pelo proprietário e por revisão externa independente — antes de
-qualquer decisão de promoção. Enquanto essa decisão não for tomada e registrada, **a versão corrente
-do produto é a v3.2.1**. Um arquivo `*_dev.html` na árvore de trabalho é candidata, nunca release:
-antes de avaliar ou distribuir qualquer HTML, confira a identidade declarada no manifesto da rodada.
+A v3.2.2 foi avaliada pelo proprietário e por revisão externa independente, promovida a produção e
+substituiu a v3.2.1. **A versão corrente do produto é a v3.2.2.** A v3.2.1 permanece preservada e
+verificada, disponível para rollback imediato. Um arquivo `*_dev.html` na árvore de trabalho é
+candidata, nunca release: antes de avaliar ou distribuir qualquer HTML, confira a identidade
+declarada no manifesto da rodada.
 
 Produção, dados de cliente e infraestrutura de publicação **não fazem parte deste repositório**.
 Tags, releases e deployment são atos separados da implementação e da auditoria.

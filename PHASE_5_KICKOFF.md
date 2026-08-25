@@ -1,5 +1,13 @@
 # PHASE_5_KICKOFF.md — Quickscan SecOps V3.2 · Fase 5.0 (Assessment Experience)
 
+> **DOCUMENTO HISTÓRICO — ARQUIVADO NA ONDA 4 (2026-08-25).** Este kickoff
+> registra a abertura da Fase 5.0 com a spec **REV A, que foi REPROVADA** em
+> auditoria independente (2026-08-18) e substituída pela REV B (normativa das
+> superfícies 5.0; ver `.claude/verify/current_phase.json`). As instruções de
+> onboarding abaixo estão DEFASADAS: a fonte atual é `CLAUDE.md` e as regras
+> de `.claude/rules/`. Preservado sem edição por valor de trilha (R13).
+
+
 **Data do bootstrap:** 2026-08-18 · **Workspace:** `C:\Projetos\QuickScan SOC-CMM\phase5`
 **Uso:** primeiro documento a ler em qualquer sessão do Claude Code desta fase, junto com CLAUDE.md.
 

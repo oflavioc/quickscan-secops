@@ -1,3 +1,16 @@
+# ============================================================================
+# ARQUIVO HISTÓRICO — SELADO NA ONDA 4 DA ESTRUTURA AGÊNTICA (2026-08-25)
+#
+# Este manifesto é a FOTO do core 4.8.0.7 na abertura da Fase 5 (commit
+# e5ccd42, 74 entradas). NÃO é gate vivo: 16 arquivos evoluíram legitimamente
+# nas fases 5.0-5.2 e nas Ondas 0-3, e por isso 16 entradas divergem de HEAD
+# — divergência DOCUMENTADA, não defeito (R13/design-decisions).
+#
+# A fonte de identidade vigente é .claude/verify/pins.json (registry único,
+# R8), verificada pelo stage baseline a cada pipeline. Este arquivo permanece
+# congelado como registro de proveniência (classe legacy do boundary) e seu
+# próprio hash é pinado pelo gate P50-GOV1.
+# ============================================================================
 3e24ff9dc18ec3c8005a75820e2828f801a8013a0e3945396c215b26c36f87bb  quickscan_secops_soccmm_v3_1_3.html
 9a4a2e674389a115a56c0bce9785ad0f90651546e31d264a947998e2bb5d247a  engine_v32.js
 be47f50062b45a3b382f72be8cfe3d8c39f00568f2990ebf2f660cb132c4b426  ui_v32.js

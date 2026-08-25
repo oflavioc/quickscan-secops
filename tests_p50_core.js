@@ -220,7 +220,12 @@ const PROTECTED = {
      Identidade anterior (errata da auditoria externa):
      81bb577c6489cee7c0a7a404e4163414acdaee6a60ae1bf4a0cb705977e43dff */
   "tests_unset_ug.js": "0b22450956b75e760a9c9c79d7d48b6df51e7f55c5e1325876a9a4be26844d58",
-  "MANIFEST.sha256": "80369148582fab2c82c9504185fac13534f22c723646379d57c040fc6eed417e"
+  /* [Onda-4 · 2026-08-25] REPIN autorizado (reconciliação retroativa, rito da classe
+     legacy do boundary): MANIFEST.sha256 recebeu cabeçalho de ARQUIVAMENTO histórico
+     — as 74 entradas permanecem byte-idênticas como foto do core 4.8.0.7; a fonte de
+     identidade vigente é .claude/verify/pins.json (R8).
+     Identidade anterior: 80369148582fab2c82c9504185fac13534f22c723646379d57c040fc6eed417e */
+  "MANIFEST.sha256": "defd52d1cfc57e6ca5a9ebcce8b620a080772b6ea62753f987c5a58f8ccf38c6"
 };
 
 T("P50-GOV1", "nenhuma superfície protegida da §29.4 foi alterada (identidade byte-a-byte)", () => {

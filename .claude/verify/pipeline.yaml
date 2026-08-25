@@ -62,6 +62,18 @@ stages:
     parallel: true
     mutates: false
     heavy: false
+  tdd:
+    desc: "Regime red-first auditável: red.commit existe; done tem conformance; waivers listados; matriz gate-mutante íntegra"
+    run: python .claude/verify/check_tdd.py
+    parallel: true
+    mutates: false
+    heavy: false
+  mutation:
+    desc: "Campanhas de mutação por trigger de path (mutation_map.json); harness exigido sem ambiente = FAIL nomeado"
+    run: python .claude/verify/check_mutation.py
+    parallel: false
+    mutates: false
+    heavy: true
   m41:
     desc: "Harness M41: payload funcional PASS contra o snapshot e SHA-256 == pin declarado (régua D2)"
     run: python .claude/verify/check_m41.py

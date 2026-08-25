@@ -1,0 +1,28 @@
+{
+  "_meta": {
+    "descricao": "Mapa harness→alvos do trigger de mutação por path (Onda 3, E7). check_mutation.py compara os arquivos tocados (diff contra a base) com os alvos de cada harness e re-executa APENAS as campanhas cujos alvos mudaram — mata o padrão 'campanha one-shot stale'. requires declara o ambiente (harness sem o requisito é reportado por nome, nunca pulado em silêncio).",
+    "onda": 3
+  },
+  "harnesses": {
+    "core": {
+      "cmd": "node tests_core_mutants.js",
+      "targets": ["ui_session_v32.js", "ui_v32.js", "ui_refinement_v32.js", "tests_core_mutants.js"],
+      "requires": ["node", "python"]
+    },
+    "p50": {
+      "cmd": "node tests_p50_mutants.js",
+      "targets": ["ui_p50_shell_v32.js", "ui_p50_v32.css", "ui_p50_suff_v32.js", "ui_p50_results_v32.js", "tests_p50_mutants.js"],
+      "requires": ["node", "python", "chromium"]
+    },
+    "p51": {
+      "cmd": "node tests_p51_mutants.js",
+      "targets": ["ui_session_v32.js", "ui_v32.js", "tests_p51_mutants.js"],
+      "requires": ["node", "python", "chromium"]
+    },
+    "p52": {
+      "cmd": "node tests_p52_mutants.js",
+      "targets": ["ui_p52_workspace_v32.js", "ui_p52_workspace_v32.css", "ui_target_v32.js", "ui_p50_shell_v32.js", "ui_v32.js", "ui_journey_v32.js", "ui_p50_results_v32.js", "tests_p52_chromium.js", "tests_p52_mutants.js"],
+      "requires": ["node", "python", "chromium"]
+    }
+  }
+}

@@ -7,9 +7,9 @@
     {
       "id": "KI-2",
       "lint": "suites-no-agregado",
-      "excecao": { "arquivos": ["tests_p50_mutants.js", "tests_p51_mutants.js", "tests_p52_mutants.js"] },
-      "motivo": "Harnesses de mutação são one-shot por design herdado; a re-execução disparada por path e a matriz gate-mutante entram na Onda 3 (TDD pleno).",
-      "remocao_prevista": "Onda 3"
+      "excecao": { "arquivos": ["tests_p50_mutants.js", "tests_p51_mutants.js", "tests_p52_mutants.js", "tests_core_mutants.js"] },
+      "motivo": "Onda 3 CUMPRIU a parte estrutural: harnesses agora rodam pelo stage mutation por trigger de path (mutation_map.json) com matriz gate-mutante — não são suítes de contagem fixa e por isso ficam fora de expected_suites.json (o registro deles é a matriz). Restrição residual: p50/p51/p52 exigem Chromium — execução plena no ambiente com browser (mesma condição da KI-3).",
+      "remocao_prevista": "Junto com a KI-3 (calibração do job visual do CI) — quando o CI executar as campanhas chromium por trigger"
     },
     {
       "id": "KI-3",

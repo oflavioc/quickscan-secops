@@ -1,0 +1,51 @@
+{
+  "_meta": {
+    "descricao": "Matriz gate↔mutante (Onda 3, R3 §5 / R10). Mantida pelo qa-engineer: cada linha registra o par, a última prova de kill e onde ela vive. O stage tdd valida a estrutura; o stage mutation re-prova por trigger de path. Gate sem mutante na matriz é dívida declarada, nunca omissão silenciosa.",
+    "onda": 3
+  },
+  "pares": [
+    {
+      "mutante": "M1", "harness": "manual (worktree efêmera)",
+      "gate": "marker-lint (check_markers.py)",
+      "invariante": "estrutura do artefato publicado",
+      "ultima_prova": { "data": "2026-08-25", "resultado": "KILL", "registro": "specs/003-marcador-duplicado/matriz-gate-mutante.md" }
+    },
+    {
+      "mutante": "CM1", "harness": "core (tests_core_mutants.js)",
+      "gate": "SESSION 4.8 (tests_session_m48.js)",
+      "invariante": "INV-8 — derivado nunca é fonte",
+      "ultima_prova": { "data": "2026-08-25", "resultado": "KILL (96/97)", "registro": "campanha inicial da Onda 3, provada antes do commit" }
+    },
+    {
+      "mutante": "CM2", "harness": "core (tests_core_mutants.js)",
+      "gate": "UNSET GEOMETRY (tests_unset_ug.js)",
+      "invariante": "INV-2/INV-3 — publicação sob suficiência",
+      "ultima_prova": { "data": "2026-08-25", "resultado": "KILL (9/12; também mata P50 CORE 62/64)", "registro": "campanha inicial da Onda 3" }
+    },
+    {
+      "mutante": "CM3", "harness": "core (tests_core_mutants.js)",
+      "gate": "REF 4.4 (tests_ref_m44.js)",
+      "invariante": "INV-6 — refinamento nunca afeta scoring",
+      "ultima_prova": { "data": "2026-08-25", "resultado": "KILL (27/28)", "registro": "campanha inicial da Onda 3" }
+    },
+    {
+      "mutante": "campanhas P50 (múltiplos)", "harness": "p50 (tests_p50_mutants.js)",
+      "gate": "suítes P50", "invariante": "superfícies 5.0",
+      "ultima_prova": { "data": "histórica (fases 5.0.x)", "resultado": "KILL", "registro": "docs_phase5/evidence_p50/P50-5.0.5-mutation.json" }
+    },
+    {
+      "mutante": "campanhas P51 (múltiplos)", "harness": "p51 (tests_p51_mutants.js)",
+      "gate": "suítes P50/P51", "invariante": "superfícies 5.1",
+      "ultima_prova": { "data": "histórica (fase 5.1)", "resultado": "KILL", "registro": "docs_phase5/AUDITORIA_INDEPENDENTE_REAUDITORIA_PHASE_5_1_ERRATA.md" }
+    },
+    {
+      "mutante": "campanhas P52 (múltiplos)", "harness": "p52 (tests_p52_mutants.js)",
+      "gate": "suítes P52/Target/Journey", "invariante": "superfícies 5.2",
+      "ultima_prova": { "data": "histórica (fase 5.2)", "resultado": "KILL", "registro": "docs_phase5/evidence_p52/P52-mutation.json" }
+    }
+  ],
+  "dividas_declaradas": [
+    "tests_target_m431 e tests_journey_m45 têm mutantes só via harness p52 (requires chromium) — cobertura node-only é candidata a expansão da campanha core",
+    "tests_unset_ug (UG1-12) é oracle de CM2 mas não tem mutante próprio da geometria UNSET — candidata a expansão"
+  ]
+}

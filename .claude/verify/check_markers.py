@@ -4,8 +4,8 @@
 A ordem de injeção do builder é o grafo de dependências implícito dos módulos;
 marcador duplicado ou ímpar quebra a extração de blocos usada pelos gates de
 sync. Exceções nominais vivem em known_issues.json, cada uma com remoção
-prevista (KI-1: V32_UI_END emitido 2× por bug do builder — correção é mudança
-de produto, demanda própria).
+prevista. [Onda-3 · fix A3] A exceção histórica KI-1 (V32_UI_END 2×) foi
+CUMPRIDA e removida pela demanda 003 — o lint hoje roda sem exceção alguma.
 """
 import json, re, sys
 from collections import Counter

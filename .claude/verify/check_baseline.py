@@ -42,7 +42,13 @@ for path, want in pins.items():
         bad.append((path, want[:12], got[:12]))
 
 for f in tracked:
-    if f == SELF or f.startswith(excl_prefixes) or f.endswith(tuple(".zip",)) or f.endswith(excl_suffixes):
+    if f == SELF or f.startswith(excl_prefixes) or f.endswith(excl_suffixes):
+        # [Onda-3 · fix A1] o fragmento f.endswith(tuple(".zip",)) era tupla de
+        # CARACTERES ('.','z','i','p') — isentava silenciosamente da checagem
+        # "sem pin" qualquer arquivo terminado nesses caracteres. Achado do
+        # product-owner no aceite da demanda 003; red demonstrado por execução
+        # (arquivo dummy 'x.p' rastreado passava sem pin). O .zip correto já
+        # vem de excl_suffixes, derivado do _meta do registry.
         continue
     if f not in pins:
         unpinned.append(f)

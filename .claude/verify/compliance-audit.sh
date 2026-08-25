@@ -24,7 +24,7 @@ falha() { FAIL=$((FAIL+1)); echo "[FAIL] $1"; shift; printf '%s\n' "$@" | sed 's
 
 # ---------------------------------------------------------------- hooks
 if secao hooks; then
-  for h in guard-boundary guard-data state-eval post-turn-verify; do
+  for h in guard-boundary guard-tdd guard-data state-eval post-turn-verify; do
     F=".claude/hooks/$h.sh"
     if [ ! -f "$F" ]; then falha "hook ausente no disco: $F"; continue; fi
     if ! grep -q "$h.sh" .claude/settings.json 2>/dev/null; then

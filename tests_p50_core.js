@@ -179,7 +179,10 @@ const PROTECTED = {
   "ui_icons_v32.js": "32aabc3445571d447189edf4b486239c9256aa9bd0bc6bdab00635a65aa42151",
   "ui_v32.css": "acb0eba165ef25e6b97475430e9b042a9b39038be2b9882ec5b3c67a730faa6f",
   "ui_ux_v32.css": "84af670571c7d11bec828636899b94e4f264e376febaaeb8e9ade1a841483b44",
-  "generate_icons_v32.py": "1acfe25c2f3ac3e4d76ce42eeb7ceec3108c1d3471c27e8f788e0168b8225bf7",
+  /* [Onda-0 · 2026-08-25] REPIN autorizado (Estrutura Agêntica, R8): gerador determinístico
+     (newline LF explícito + stdout UTF-8 + modo --check); output byte-idêntico (32aabc34…).
+     Identidade anterior: 1acfe25c2f3ac3e4d76ce42eeb7ceec3108c1d3471c27e8f788e0168b8225bf7 */
+  "generate_icons_v32.py": "e4fc59576cd3817c8c84c7c46dc5f8a6fe33d5786467cbefd0de3557c536cb0a",
   "harness_m41_v313.js": "7ec750b293fa7421cd95acf1ff27e3cf7c8c492c6faf03e9f9160734149f14b0",
   "v3_1_3_functional_snapshot.json": "0abeaa7cc3a7e270fde015791a93bfbdb580803a915871e12811585c99555435",
   /* EXCEÇÃO NOMINAL DE BOUNDARY · ERRATA AUTORIZADA UG8 (microfase 5.0.4).

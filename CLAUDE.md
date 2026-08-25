@@ -78,6 +78,11 @@ Linha do tempo: V3.2 Final Release imutável (`oflavioc/quickscan-secops-soc-cmm
 tag v3.2.0) → Fase 5 (5.0 REV B, 5.1, 5.2 **seladas**; registros em `docs_phase5/`)
 → Estrutura Agêntica (documento acordado 2026-08-25; Ondas 0–1 entregues, esta é a 2).
 
+Spec normativa das superfícies 5.0 congeladas (imutável, exigida pelo gate P50-GOV2):
+`specs/PHASE_5_0_REV_B.md` · SHA-256
+`4f1583c733df62a9452aa7b218d962e40d781bb8d30dfc3179ad6e1ef004619b` · promoção
+registrada em `docs_phase5/REV_B_PROMOTION_RECORD.md`.
+
 Identidades: baseline core e payload M41 em `pins.json → declared`. Contagens
 verdes por suíte em `.claude/verify/expected_suites.json`. Estado de demanda em
 `.claude/project-memory/planning-state/`.

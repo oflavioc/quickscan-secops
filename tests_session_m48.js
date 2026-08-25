@@ -628,7 +628,10 @@ T("S63","nenhum render intermediário: commit não chama uxNewSession nem render
 T("S64","evidence claim parity: archive contém artefato para cada SE declarado",()=>{
   const zip=path.join(__dirname,"visual_print_evidence_48.zip");
   if(!fs.existsSync(zip)) return false;
-  const list=require("child_process").execSync(`unzip -Z1 ${zip}`).toString();
+/* [Onda-1 · 2026-08-25] fix-finding (mesma familia de P2.1-16/I11, PR #9): caminhos de
+   archive SEM aspas quebravam os oraculos S64/S74+S75/S113 em checkout cujo path contem
+   espaco. So aspas; nenhum comportamento de teste alterado. */
+  const list=require("child_process").execSync(`unzip -Z1 "${zip}"`).toString();
   const declared=["SE1","SE2","SE3","SE4","SE5"];
   const present=declared.filter(se=>new RegExp(se+"[-.]").test(list));
   const doc=fs.readFileSync(path.join(__dirname,"session_roundtrip_report.md"),"utf8");
@@ -759,8 +762,8 @@ T("S73","self-import expandido: FortiGate com bundle, FortiSOC sem bundle e com 
 T("S74+S75","evidence archive: artefatos SE1–SE5 existem, não vazios, e SE4 tem screenshot do modal aberto",()=>{
   const zip=path.join(__dirname,"visual_print_evidence_48.zip");
   if(!fs.existsSync(zip)) return false;
-  const list=require("child_process").execSync(`unzip -Z1 -v ${zip} 2>/dev/null || unzip -Z1 ${zip}`).toString();
-  const entries=require("child_process").execSync(`unzip -l ${zip}`).toString();
+  const list=require("child_process").execSync(`unzip -Z1 -v "${zip}" 2>/dev/null || unzip -Z1 "${zip}"`).toString();
+  const entries=require("child_process").execSync(`unzip -l "${zip}"`).toString();
   const sizeOf=(pat)=>{ const rows=entries.split("\n").filter(l=>new RegExp(pat).test(l));
     return rows.map(l=>parseInt(l.trim().split(/\s+/)[0],10)).filter(n=>!isNaN(n)); };
   const modal1366=sizeOf("SE4-oversize-modal-1366\\.png"), modal390=sizeOf("SE4-oversize-modal-390\\.png");
@@ -1333,7 +1336,7 @@ T("S111","disposição de unicidade: platform e subscriptions duplicadas não s�
 T("S113","evidence archive 4.8.0.7: artefatos SE6/SE7/SE8 existem, não vazios e cobrem os dois breakpoints",()=>{
   const zip=path.join(__dirname,"visual_print_evidence_487.zip");
   if(!fs.existsSync(zip)) throw new Error("arquivo de evidência da 4.8.0.7 ausente");
-  const entries=require("child_process").execSync(`unzip -l ${zip}`).toString();
+  const entries=require("child_process").execSync(`unzip -l "${zip}"`).toString();
   const sizeOf=pat=>entries.split("\n").filter(l=>new RegExp(pat).test(l))
     .map(l=>parseInt(l.trim().split(/\s+/)[0],10)).filter(n=>!isNaN(n));
   /* cada cenário novo precisa existir nos DOIS breakpoints reais e ter bytes > 0 */

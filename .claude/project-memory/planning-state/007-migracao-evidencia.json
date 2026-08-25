@@ -23,5 +23,18 @@
     "status": "approved",
     "approved_at": "2026-08-25",
     "notes": "aprovado pelo usuário no chat ('Aprovado.')"
+  },
+  "red": {
+    "status": "proven",
+    "commit": "9adf41d1ea4afa6c5b346d805edbec203abb8614",
+    "gates": [
+      "EB-1",
+      "EB-2",
+      "EB-3",
+      "EB-4",
+      "EB-5",
+      "EB-6"
+    ],
+    "notes": "red executado nos dois modos antes de qualquer release existir: CI (GITHUB_ACTIONS=1) → 16 FAIL, exit 1 (EB-3: 4 pacotes AUSENTES por 404 real; EB-6: 12 FAIL — 406 arquivos ainda no índice + .gitignore sem as 4 entradas); local sem rede (simulada) → parte online 0 FAIL + WARN nomeado listando os 4 pacotes (política EB-5), exit 1 só pelos FAIL offline de EB-6 (FAIL é FAIL em qualquer ambiente). EB-1 já verde: 406/406 blobs conferidos contra o commit-âncora 62590b5"
   }
 }

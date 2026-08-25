@@ -25,6 +25,8 @@
     "notes": "aprovado pelo usuário no chat"
   },
   "red": {
-    "status": "in_progress"
+    "status": "proven",
+    "commit": "214d3e44360861a350780d2cbadda27c91cdef3d",
+    "gates": ["G1"]
   }
 }

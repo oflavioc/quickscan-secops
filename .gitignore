@@ -3,3 +3,5 @@ test-results/
 visual_evidence/
 print_evidence/
 *.log
+__pycache__/
+.claude/worktrees/

@@ -1,7 +1,7 @@
 {
   "_meta": {
     "descricao": "Registry único de pins — fonte de identidade dos artefatos (R8). Hashes = SHA-256 dos blobs de HEAD. Alterar arquivo pinado exige regenerar este registry no MESMO PR, com motivo no commit.",
-    "gerado_de_head": "46db7f527ecc43fb1f576f64e8272f7413658d72",
+    "gerado_de_head": "b073b90d1e89ff83ce087d8ed2f203bd1e2111a3",
     "gerado_em": "2026-08-25",
     "exclusoes": [
       "docs_phase5/**",
@@ -21,7 +21,7 @@
     ".claude/agents/data-engineer.md": "6d4880ef8b9c430e1eba1274c4e3c164ecee81fea5f1df4a12c5bbe6d0013b37",
     ".claude/agents/doc-writer.md": "ba47ca701661968b2af914869ae336a7c9742ec9751a1699d37677feb1bc92ca",
     ".claude/agents/product-owner.md": "44474da15a631d0e9e651a7fe71ff9281b0121f8f512b9e063e8a05fbac430b4",
-    ".claude/agents/qa-engineer.md": "31ff97fa15351e5c7ddc9e74b2a778b6aa5321b7977d03a3461dca82fe69f4f1",
+    ".claude/agents/qa-engineer.md": "83859f5c61b24ba327da542f560cf1ecdd03113a3b3c2a78f677762658dacc81",
     ".claude/agents/tech-lead.md": "6f1066563db68ae9776ccbea6541bdae68ef4e6f078c75f931e91cdb04779dee",
     ".claude/agents/ui-engineer.md": "695180ac8d71be7cd89a13fdb6e803d1f3f30ad44911aba7d306bf2a1a5a6708",
     ".claude/hooks/guard-boundary.sh": "2ffbed8b15e2dfdf61a5e49dc90e49f4fb47765bda5a8081dafe4103f63afdf4",

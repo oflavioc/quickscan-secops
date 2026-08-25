@@ -27,7 +27,16 @@ demanda própria com red, NUNCA parte da migração mecânica.
 | B · GitHub Releases (um release `evidence-faseX` por fase, assets = zips do acervo) | verificável por URL+hash; CI acessa; sem custo | assets ficam fora do clone; limite 2 GB/asset (ok) |
 | C · Git LFS | transparente no clone | custo/quota; complexidade de setup p/ todos os clones |
 
-Recomendação técnica: **B** — o acervo é por natureza um artefato de release
+**DECISÃO Q1 REGISTRADA (2026-08-25, usuário/Thiago no portão): Opção B — GitHub
+Releases.** A execução segue pendente: abrir demanda via skill `new-demand`
+(a tentativa 006 foi aberta e ABORTADA sem efeito em 2026-08-25 — nada foi
+migrado; o próximo executor começa do zero pela máquina). Bordas já mapeadas
+para o refinamento: `evidence_v322` FICA (README + gate V322-DOC3 exigem o
+acervo da rodada); `evidence_unset` verificar referências; `tools_p52_shots.js`
+escreve em `evidence_p52` (tratar o destino da escrita); manifesto-ponte
+preferencialmente FORA de `docs_phase5/` para ser pinável pelo registry.
+
+Recomendação técnica original: **B** — o acervo é por natureza um artefato de release
 de fase (imutável após selagem), e a URL entra no manifesto.
 
 ## Mecânica (preserva a verificabilidade)

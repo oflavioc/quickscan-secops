@@ -92,3 +92,9 @@ stages:
     parallel: false
     mutates: false
     heavy: true
+  evidence-bridge:
+    desc: "Manifesto-ponte fiel ao commit-âncora, acervos migrados fora do índice, assets dos releases íntegros (sem rede: WARN nomeado local, FAIL no CI)"
+    run: python .claude/verify/check_evidence_bridge.py
+    parallel: false
+    mutates: false
+    heavy: true

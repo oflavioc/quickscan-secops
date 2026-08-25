@@ -25,16 +25,18 @@ const HTML_FILE = path.join(HERE, "quickscan_secops_soccmm_v3_2_dev.html");
 const HTML_URL = "file://" + HTML_FILE;
 const EVID = path.join(HERE, "docs_phase5", "evidence_p52");
 
-/* Baseline do HTML publicado, lido do git e ancorado no REGISTRY.
-   [Onda-4 · 2026-08-25] fix-finding (R8/R10 §4-5): o pin inline da época da
-   selagem 5.2 apodreceu duas vezes (Onda 0: LF fb906462…; demanda 003:
-   0ed9acb7…) e deixou P52-PR1/P52-ACC1 permanentemente vermelhos — o gate
-   morto previsto pelo achado E6. A âncora agora é a fonte única de identidade
-   (.claude/verify/pins.json), que só muda pelo rito de repin.
-   Identidade anterior (pin inline): 12bb950f58f203c56cf6621973663be1ac71b4e026d618a910ebb0f3eebbf9d9 */
-const P52_BASELINE_SHA = JSON.parse(fs.readFileSync(
-  path.join(HERE, ".claude", "verify", "pins.json"), "utf8"
-)).files["quickscan_secops_soccmm_v3_2_dev.html"];
+/* Baseline de ENTRADA da Phase 5.2 (§1 da diretriz) — o HTML PRÉ-P52 contra o
+   qual P52-PR1 assere as diferenças DECLARADAS da fase.
+   [Onda-4 · 2026-08-25] fix-finding (R10 §5: âncora em COMMIT IMUTÁVEL, nunca
+   HEAD): o gate lia `git show HEAD:` esperando este SHA histórico — morreu
+   permanentemente vermelho assim que HEAD avançou (E6, previsto na varredura;
+   confirmado na calibração real do job visual). O SHA é pin de ÉPOCA, correto
+   e imutável; o defeito era a rota HEAD. Âncora: merge da Phase 5.1
+   (d3886812718e7ad9c5024880067133fbddf2fc4d), cujo blob confere byte a byte.
+   1ª tentativa de correção (ancorar no registry/HTML atual) foi REVERTIDA:
+   invertia a semântica do gate — as diferenças declaradas deixavam de existir. */
+const P52_BASELINE_COMMIT = "d3886812718e7ad9c5024880067133fbddf2fc4d";
+const P52_BASELINE_SHA = "12bb950f58f203c56cf6621973663be1ac71b4e026d618a910ebb0f3eebbf9d9";
 
 const results = [];
 const ONLY = (process.env.P52_ONLY || "").split(",").map(x => x.trim()).filter(Boolean);
@@ -1179,10 +1181,10 @@ async function pr2(browser, errs) {
 function baselineFile() {
   try {
     const { execFileSync } = require("child_process");
-    const buf = execFileSync("git", ["show", "HEAD:quickscan_secops_soccmm_v3_2_dev.html"],
+    const buf = execFileSync("git", ["show", P52_BASELINE_COMMIT + ":quickscan_secops_soccmm_v3_2_dev.html"],
       { cwd: HERE, maxBuffer: 1 << 28 });
     const got = crypto.createHash("sha256").update(buf).digest("hex");
-    if (got !== P52_BASELINE_SHA) return { ok: false, why: "baseline em HEAD com SHA " + got.slice(0, 16) };
+    if (got !== P52_BASELINE_SHA) return { ok: false, why: "blob do commit-âncora com SHA " + got.slice(0, 16) };
     const f = path.join(require("os").tmpdir(), "p52-baseline-" + P52_BASELINE_SHA.slice(0, 12) + ".html");
     fs.writeFileSync(f, buf);
     return { ok: true, file: f };

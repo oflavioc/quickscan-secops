@@ -38,6 +38,8 @@ jobs:
         run: npm ci --engine-strict --no-audit --no-fund
       - name: Pipeline de verificação (completo)
         run: bash .claude/verify/run.sh
+        env:
+          MUTATION_DEFER_MISSING: "1"   # campanha chromium exigida é delegada ao job visual
       - name: Auditoria de conformidade da configuração agêntica
         run: bash .claude/verify/compliance-audit.sh
 
@@ -67,3 +69,5 @@ jobs:
           npm run test:visual
           node tests_p50_chromium.js
           node tests_p52_chromium.js
+      - name: Campanhas de mutação com Chromium (deferidas pelo job verify)
+        run: python .claude/verify/check_mutation.py

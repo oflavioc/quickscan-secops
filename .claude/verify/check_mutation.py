@@ -62,6 +62,13 @@ for name, h in MAP.items():
         continue
     missing = [r for r in h["requires"] if not have(r)]
     if missing:
+        # [Onda-4] MUTATION_DEFER_MISSING=1 (job verify do CI): a campanha exigida
+        # sem ambiente é DELEGADA por nome ao job visual, que roda check_mutation
+        # com Chromium presente. Sem a env (execução local): FAIL nomeado — o
+        # operador decide conscientemente onde rodar. Nunca silêncio (R10 §2).
+        if os.environ.get("MUTATION_DEFER_MISSING") == "1":
+            print(f"[DEFER] {name}: exigida (alvo mudou) — delegada ao job com {'/'.join(missing)} (job visual)")
+            continue
         print(f"[FAIL] {name}: campanha EXIGIDA (alvo mudou) mas ambiente sem {'/'.join(missing)} — "
               "execute onde o requisito exista (job visual do CI / rito do proprietário) e registre")
         fails += 1

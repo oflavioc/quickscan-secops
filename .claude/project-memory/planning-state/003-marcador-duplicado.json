@@ -1,11 +1,16 @@
 {
   "demanda": "003-marcador-duplicado",
-  "phase": "refinement",
+  "phase": "specify",
   "spec_dir": "specs/003-marcador-duplicado",
   "brief": "Corrigir o marcador V32_UI_END emitido 2x pelo builder e remover a exceção nominal KI-1",
   "branch": "feature/003-marcador-duplicado",
   "refinement": {
+    "status": "approved",
+    "approved_at": "2026-08-25",
+    "notes": "aprovado pelo usuário no chat"
+  },
+  "specify": {
     "status": "awaiting_approval",
-    "notes": "PO entregou; sem perguntas pendentes ao humano"
+    "notes": "spec do TL + emenda G2 (34 marcadores pinados) + cross-check do PO sem bloqueantes"
   }
 }

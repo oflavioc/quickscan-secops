@@ -43,6 +43,7 @@
     ]
   },
   "validate": {
-    "status": "in_progress"
+    "status": "in_progress",
+    "conformance": "12/13 (92,3%) — gap unico, classe implementacao-divergente: stage baseline FAIL no head (commit 6bfbbb4 alterou arquivo pinado planning-state sem repin; G1-G5 todos verdes, M1 morto)"
   }
 }

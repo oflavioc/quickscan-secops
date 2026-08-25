@@ -206,6 +206,12 @@ bash .claude/verify/run.sh     # pipeline de verificação (--light para o corte
 | `.claude/` | estrutura de desenvolvimento: regras, agentes, hooks e pipeline |
 | `USER_GUIDE.md` · `SESSION_SCHEMA_V32.md` | manual e contrato de sessão (lidos por suítes — vivem na raiz) |
 
+## Licença
+
+Repositório público para leitura e avaliação. **Todos os direitos reservados** — uso, cópia,
+modificação e distribuição dependem de autorização expressa do titular; os termos completos estão
+em [`LICENSE`](LICENSE).
+
 ## Dados de cliente
 
 Sessões (`*.session.json`), relatórios em PDF e qualquer evidência de assessment **não pertencem a

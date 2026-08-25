@@ -68,6 +68,18 @@ def build():
     }
 
 if __name__ == "__main__":
+    # [guarda 2026-08-25] gen_pins lê blobs de HEAD: rodar com mudanças pendentes
+    # em arquivos pináveis gera pins do estado ANTERIOR — erro cometido 2x (demanda
+    # 003 e sync v3.2.2, ambos pegos pelo stage baseline). Pré-condição mecânica:
+    dirty = subprocess.run(["git", "status", "--porcelain"], capture_output=True, text=True).stdout
+    pendentes = [l for l in dirty.splitlines()
+                 if l[3:].strip() and not l[3:].startswith((".claude/verify/pins.json",))]
+    if pendentes and "--force" not in sys.argv:
+        print("[FAIL] gen_pins exige árvore limpa (HEAD é a fonte dos blobs). Pendências:")
+        for l in pendentes[:5]:
+            print("   ", l)
+        print("Commite o conteúdo PRIMEIRO; pins vêm em commit próprio na sequência.")
+        sys.exit(1)
     reg = build()
     text = json.dumps(reg, ensure_ascii=False, indent=2, sort_keys=False) + "\n"
     if "--stdout" in sys.argv:

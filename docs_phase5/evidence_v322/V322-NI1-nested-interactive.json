@@ -1,0 +1,94 @@
+{
+  "home": {
+    "nestedInteractive": [],
+    "graves": [],
+    "dom": {
+      "interativosEmSummary": [],
+      "controlesDeCabecalho": 10,
+      "gids": [
+        "g1",
+        "g2",
+        "g3",
+        "arch",
+        "plat",
+        "sig-0",
+        "sig-1",
+        "sig-2",
+        "sig-3",
+        "sig"
+      ],
+      "recolhidosVisiveis": 6,
+      "recolhidosTotal": 6,
+      "popsOrfaos": 0
+    }
+  },
+  "home+requisitos": {
+    "nestedInteractive": [],
+    "graves": [],
+    "dom": {
+      "interativosEmSummary": [],
+      "controlesDeCabecalho": 10,
+      "gids": [
+        "g1",
+        "g2",
+        "g3",
+        "arch",
+        "plat",
+        "sig-0",
+        "sig-1",
+        "sig-2",
+        "sig-3",
+        "sig"
+      ],
+      "recolhidosVisiveis": 9,
+      "recolhidosTotal": 9,
+      "popsOrfaos": 0
+    }
+  },
+  "resultados": {
+    "nestedInteractive": [],
+    "graves": [],
+    "dom": {
+      "interativosEmSummary": [],
+      "controlesDeCabecalho": 10,
+      "gids": [
+        "g1",
+        "g2",
+        "g3",
+        "arch",
+        "plat",
+        "sig-0",
+        "sig-1",
+        "sig-2",
+        "sig-3",
+        "sig"
+      ],
+      "recolhidosVisiveis": 6,
+      "recolhidosTotal": 6,
+      "popsOrfaos": 0
+    }
+  },
+  "resultados+requisitos": {
+    "nestedInteractive": [],
+    "graves": [],
+    "dom": {
+      "interativosEmSummary": [],
+      "controlesDeCabecalho": 10,
+      "gids": [
+        "g1",
+        "g2",
+        "g3",
+        "arch",
+        "plat",
+        "sig-0",
+        "sig-1",
+        "sig-2",
+        "sig-3",
+        "sig"
+      ],
+      "recolhidosVisiveis": 9,
+      "recolhidosTotal": 9,
+      "popsOrfaos": 0
+    }
+  }
+}

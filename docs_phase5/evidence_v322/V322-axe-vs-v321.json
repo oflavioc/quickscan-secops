@@ -1,0 +1,92 @@
+{
+  "home": {
+    "v321": {
+      "nodes": 2,
+      "tipos": 2,
+      "print": {
+        "blocked": false,
+        "printMode": true,
+        "len": 14194
+      }
+    },
+    "v322": {
+      "nodes": 2,
+      "tipos": 2,
+      "print": {
+        "blocked": false,
+        "printMode": true,
+        "len": 14194
+      }
+    },
+    "violacoesNOVAS": [],
+    "violacoesRESOLVIDAS": []
+  },
+  "results": {
+    "v321": {
+      "nodes": 1,
+      "tipos": 1,
+      "print": {
+        "blocked": false,
+        "printMode": true,
+        "len": 29246
+      }
+    },
+    "v322": {
+      "nodes": 1,
+      "tipos": 1,
+      "print": {
+        "blocked": false,
+        "printMode": true,
+        "len": 29246
+      }
+    },
+    "violacoesNOVAS": [],
+    "violacoesRESOLVIDAS": []
+  },
+  "ctx": {
+    "v321": {
+      "nodes": 7,
+      "tipos": 2,
+      "print": {
+        "blocked": true,
+        "printMode": false,
+        "len": 112
+      }
+    },
+    "v322": {
+      "nodes": 1,
+      "tipos": 1,
+      "print": {
+        "blocked": true,
+        "printMode": false,
+        "len": 112
+      }
+    },
+    "violacoesNOVAS": [],
+    "violacoesRESOLVIDAS": [
+      "nested-interactive|serious|-"
+    ]
+  },
+  "ctxhome": {
+    "v321": {
+      "nodes": 0,
+      "tipos": 0,
+      "print": {
+        "blocked": true,
+        "printMode": false,
+        "len": 112
+      }
+    },
+    "v322": {
+      "nodes": 0,
+      "tipos": 0,
+      "print": {
+        "blocked": true,
+        "printMode": false,
+        "len": 112
+      }
+    },
+    "violacoesNOVAS": [],
+    "violacoesRESOLVIDAS": []
+  }
+}

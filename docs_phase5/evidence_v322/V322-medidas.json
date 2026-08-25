@@ -1,0 +1,636 @@
+{
+  "editor-home": {
+    "tela": "ctxeditor",
+    "regioes": [
+      {
+        "chave": "caps",
+        "titulo": "Capabilities de segurança",
+        "linhaDeOrientacao": "O que a operação já faz e com o quê. Declare a situação por capacidade — qualquer fabricante, qualquer produto.",
+        "grupos": []
+      },
+      {
+        "chave": "env",
+        "titulo": "Ambiente e condicionantes",
+        "linhaDeOrientacao": "O que cerca e limita a operação: arquitetura, licenciamento já existente e requisitos específicos da conversa.",
+        "grupos": []
+      }
+    ],
+    "gruposForaDeRegiao": 0,
+    "ajudasTotais": 60,
+    "ajudasDeCapability": 22,
+    "campos": 69
+  },
+  "ajuda-home": {
+    "tela": "ctxeditor",
+    "preservadas": {
+      "capabilities": {
+        "alvos": 22,
+        "comAjuda": 22
+      },
+      "camposDeArquitetura": {
+        "alvos": 6,
+        "comAjuda": 6
+      },
+      "familias": {
+        "alvos": 6,
+        "comAjuda": 6
+      },
+      "subgruposDeRequisitos": {
+        "alvos": 4,
+        "comAjuda": 4
+      },
+      "sinais": {
+        "alvos": 22,
+        "comAjuda": 22
+      }
+    },
+    "removidas": {
+      "situacaoDeclarada": {
+        "alvos": 22,
+        "comAjuda": 0
+      },
+      "plataformaDeclarada": {
+        "alvos": 1,
+        "comAjuda": 0
+      },
+      "bundles": {
+        "alvos": 4,
+        "comAjuda": 0
+      },
+      "subscriptions": {
+        "alvos": 14,
+        "comAjuda": 0
+      },
+      "legendasInternas": {
+        "alvos": 3,
+        "comAjuda": 0
+      }
+    },
+    "ajudaUnicaDePlataformas": {
+      "noCabecalho": true,
+      "dentroDoGrupo": 0,
+      "texto": "Registre a base instalada e os direitos de uso já existentes: o que está em produção e o que está licenciado ou contratado. Serve para evitar recompra e orientar adoção. Declarar não prova implantação, cobertura nem maturidade, e nada aqui altera score, estágio ou gaps."
+    },
+    "totais": {
+      "ajudas": 60,
+      "popovers": 60,
+      "describedbyOrfaos": 0
+    },
+    "gruposAbertos": []
+  },
+  "ajuda-plataformas-aberto": {
+    "tela": "ctxeditor",
+    "preservadas": {
+      "capabilities": {
+        "alvos": 22,
+        "comAjuda": 22
+      },
+      "camposDeArquitetura": {
+        "alvos": 6,
+        "comAjuda": 6
+      },
+      "familias": {
+        "alvos": 6,
+        "comAjuda": 6
+      },
+      "subgruposDeRequisitos": {
+        "alvos": 4,
+        "comAjuda": 4
+      },
+      "sinais": {
+        "alvos": 22,
+        "comAjuda": 22
+      }
+    },
+    "removidas": {
+      "situacaoDeclarada": {
+        "alvos": 22,
+        "comAjuda": 0
+      },
+      "plataformaDeclarada": {
+        "alvos": 1,
+        "comAjuda": 0
+      },
+      "bundles": {
+        "alvos": 4,
+        "comAjuda": 0
+      },
+      "subscriptions": {
+        "alvos": 14,
+        "comAjuda": 0
+      },
+      "legendasInternas": {
+        "alvos": 3,
+        "comAjuda": 0
+      }
+    },
+    "ajudaUnicaDePlataformas": {
+      "noCabecalho": true,
+      "dentroDoGrupo": 0,
+      "texto": "Registre a base instalada e os direitos de uso já existentes: o que está em produção e o que está licenciado ou contratado. Serve para evitar recompra e orientar adoção. Declarar não prova implantação, cobertura nem maturidade, e nada aqui altera score, estágio ou gaps."
+    },
+    "totais": {
+      "ajudas": 60,
+      "popovers": 60,
+      "describedbyOrfaos": 0
+    },
+    "gruposAbertos": [
+      "g1",
+      "plat"
+    ]
+  },
+  "editor-resultados": {
+    "tela": "results",
+    "regioes": [
+      {
+        "chave": "caps",
+        "titulo": "Capabilities de segurança",
+        "linhaDeOrientacao": "O que a operação já faz e com o quê. Declare a situação por capacidade — qualquer fabricante, qualquer produto.",
+        "grupos": []
+      },
+      {
+        "chave": "env",
+        "titulo": "Ambiente e condicionantes",
+        "linhaDeOrientacao": "O que cerca e limita a operação: arquitetura, licenciamento já existente e requisitos específicos da conversa.",
+        "grupos": []
+      }
+    ],
+    "gruposForaDeRegiao": 0,
+    "ajudasTotais": 60,
+    "ajudasDeCapability": 22,
+    "campos": 69
+  },
+  "ajuda-resultados": {
+    "tela": "results",
+    "preservadas": {
+      "capabilities": {
+        "alvos": 22,
+        "comAjuda": 22
+      },
+      "camposDeArquitetura": {
+        "alvos": 6,
+        "comAjuda": 6
+      },
+      "familias": {
+        "alvos": 6,
+        "comAjuda": 6
+      },
+      "subgruposDeRequisitos": {
+        "alvos": 4,
+        "comAjuda": 4
+      },
+      "sinais": {
+        "alvos": 22,
+        "comAjuda": 22
+      }
+    },
+    "removidas": {
+      "situacaoDeclarada": {
+        "alvos": 22,
+        "comAjuda": 0
+      },
+      "plataformaDeclarada": {
+        "alvos": 1,
+        "comAjuda": 0
+      },
+      "bundles": {
+        "alvos": 4,
+        "comAjuda": 0
+      },
+      "subscriptions": {
+        "alvos": 14,
+        "comAjuda": 0
+      },
+      "legendasInternas": {
+        "alvos": 3,
+        "comAjuda": 0
+      }
+    },
+    "ajudaUnicaDePlataformas": {
+      "noCabecalho": true,
+      "dentroDoGrupo": 0,
+      "texto": "Registre a base instalada e os direitos de uso já existentes: o que está em produção e o que está licenciado ou contratado. Serve para evitar recompra e orientar adoção. Declarar não prova implantação, cobertura nem maturidade, e nada aqui altera score, estágio ou gaps."
+    },
+    "totais": {
+      "ajudas": 60,
+      "popovers": 60,
+      "describedbyOrfaos": 0
+    },
+    "gruposAbertos": []
+  },
+  "rodape-390": {
+    "mode": "split",
+    "larguraUtil": 342.4,
+    "rodape": {
+      "l": 23.8,
+      "r": 366.2,
+      "t": 648.8,
+      "b": 900,
+      "w": 342.4,
+      "h": 251.3
+    },
+    "legal": {
+      "l": 23.8,
+      "r": 366.2,
+      "t": 667.8,
+      "b": 849.8,
+      "w": 342.4,
+      "h": 182
+    },
+    "autoria": {
+      "l": 23.8,
+      "r": 366.2,
+      "t": 859.8,
+      "b": 900,
+      "w": 342.4,
+      "h": 40.3
+    },
+    "fracaoDaLarguraUtil": 1,
+    "maxWidthLegal": "none",
+    "fonteLegalPx": 13,
+    "fonteAutoriaPx": 11.5,
+    "sobreposicao": false,
+    "empilhado": true,
+    "overflowHorizontal": false,
+    "scrollWidth": 390,
+    "clientWidth": 390
+  },
+  "rodape-768": {
+    "mode": "split",
+    "larguraUtil": 705.3,
+    "rodape": {
+      "l": 31.4,
+      "r": 736.6,
+      "t": 760.2,
+      "b": 900.3,
+      "w": 705.3,
+      "h": 140.1
+    },
+    "legal": {
+      "l": 31.4,
+      "r": 736.6,
+      "t": 779.2,
+      "b": 870.2,
+      "w": 705.3,
+      "h": 91
+    },
+    "autoria": {
+      "l": 31.4,
+      "r": 736.6,
+      "t": 880.2,
+      "b": 900.3,
+      "w": 705.3,
+      "h": 20.1
+    },
+    "fracaoDaLarguraUtil": 1,
+    "maxWidthLegal": "none",
+    "fonteLegalPx": 13,
+    "fonteAutoriaPx": 11.5,
+    "sobreposicao": false,
+    "empilhado": true,
+    "overflowHorizontal": false,
+    "scrollWidth": 768,
+    "clientWidth": 768
+  },
+  "rodape-1440": {
+    "mode": "split",
+    "larguraUtil": 1313.3,
+    "rodape": {
+      "l": 63.4,
+      "r": 1376.6,
+      "t": 813.1,
+      "b": 900.4,
+      "w": 1313.3,
+      "h": 87.3
+    },
+    "legal": {
+      "l": 63.4,
+      "r": 932.2,
+      "t": 832.1,
+      "b": 900.4,
+      "w": 868.8,
+      "h": 68.3
+    },
+    "autoria": {
+      "l": 964.2,
+      "r": 1376.6,
+      "t": 880.3,
+      "b": 900.4,
+      "w": 412.4,
+      "h": 20.1
+    },
+    "fracaoDaLarguraUtil": 0.662,
+    "maxWidthLegal": "none",
+    "fonteLegalPx": 13,
+    "fonteAutoriaPx": 11.5,
+    "sobreposicao": false,
+    "empilhado": false,
+    "overflowHorizontal": false,
+    "scrollWidth": 1440,
+    "clientWidth": 1440
+  },
+  "rodape-1920": {
+    "mode": "split",
+    "larguraUtil": 1626.2,
+    "rodape": {
+      "l": 146.9,
+      "r": 1773.1,
+      "t": 813.1,
+      "b": 900.4,
+      "w": 1626.3,
+      "h": 87.3
+    },
+    "legal": {
+      "l": 146.9,
+      "r": 1328.7,
+      "t": 832.1,
+      "b": 900.4,
+      "w": 1181.8,
+      "h": 68.3
+    },
+    "autoria": {
+      "l": 1360.7,
+      "r": 1773.1,
+      "t": 880.3,
+      "b": 900.4,
+      "w": 412.4,
+      "h": 20.1
+    },
+    "fracaoDaLarguraUtil": 0.727,
+    "maxWidthLegal": "none",
+    "fonteLegalPx": 13,
+    "fonteAutoriaPx": 11.5,
+    "sobreposicao": false,
+    "empilhado": false,
+    "overflowHorizontal": false,
+    "scrollWidth": 1920,
+    "clientWidth": 1920
+  },
+  "rodape-2560": {
+    "mode": "split",
+    "larguraUtil": 2176,
+    "rodape": {
+      "l": 192,
+      "r": 2368,
+      "t": 788.2,
+      "b": 899.6,
+      "w": 2176,
+      "h": 111.3
+    },
+    "legal": {
+      "l": 192,
+      "r": 1923.6,
+      "t": 807.2,
+      "b": 899.6,
+      "w": 1731.6,
+      "h": 92.3
+    },
+    "autoria": {
+      "l": 1955.6,
+      "r": 2368,
+      "t": 879.4,
+      "b": 899.6,
+      "w": 412.4,
+      "h": 20.1
+    },
+    "fracaoDaLarguraUtil": 0.796,
+    "maxWidthLegal": "none",
+    "fonteLegalPx": 17.6,
+    "fonteAutoriaPx": 11.5,
+    "sobreposicao": false,
+    "empilhado": false,
+    "overflowHorizontal": false,
+    "scrollWidth": 2560,
+    "clientWidth": 2560
+  },
+  "rodape-3440": {
+    "mode": "split",
+    "larguraUtil": 2176,
+    "rodape": {
+      "l": 632,
+      "r": 2808,
+      "t": 788.2,
+      "b": 899.6,
+      "w": 2176,
+      "h": 111.3
+    },
+    "legal": {
+      "l": 632,
+      "r": 2363.6,
+      "t": 807.2,
+      "b": 899.6,
+      "w": 1731.6,
+      "h": 92.3
+    },
+    "autoria": {
+      "l": 2395.6,
+      "r": 2808,
+      "t": 879.4,
+      "b": 899.6,
+      "w": 412.4,
+      "h": 20.1
+    },
+    "fracaoDaLarguraUtil": 0.796,
+    "maxWidthLegal": "none",
+    "fonteLegalPx": 17.6,
+    "fonteAutoriaPx": 11.5,
+    "sobreposicao": false,
+    "empilhado": false,
+    "overflowHorizontal": false,
+    "scrollWidth": 3440,
+    "clientWidth": 3440
+  },
+  "pendente-antes-da-tentativa": {
+    "mensagensJuntoAoPdf": 0,
+    "textoJuntoAoPdf": null,
+    "roleJuntoAoPdf": null,
+    "ariaLiveJuntoAoPdf": null,
+    "distanciaDoGrupoDeAcoesPx": null,
+    "ariaDescribedbyDoBotao": null,
+    "atalhoIrParaContexto": 0,
+    "indicadoresNoTrilho": 1,
+    "textoDoIndicador": "alterações pendentes",
+    "estadoDoItemDoTrilho": "pending",
+    "textoAcessivelDoItem": "▸Contexto tecnológicoopcionalalterações pendentes",
+    "mensagensNoEditor": 0,
+    "textoNoEditor": null,
+    "pendenciaSegundoOOwner": null,
+    "printChamado": 0
+  },
+  "pendente-apos-bloqueio": {
+    "mensagensJuntoAoPdf": 1,
+    "textoJuntoAoPdf": "Salve ou cancele as alterações do contexto tecnológico antes de gerar o relatório.Ir para contexto tecnológico",
+    "roleJuntoAoPdf": "alert",
+    "ariaLiveJuntoAoPdf": "assertive",
+    "distanciaDoGrupoDeAcoesPx": 30,
+    "ariaDescribedbyDoBotao": "p52-print-pending",
+    "atalhoIrParaContexto": 1,
+    "indicadoresNoTrilho": 1,
+    "textoDoIndicador": "alterações pendentes",
+    "estadoDoItemDoTrilho": "error",
+    "textoAcessivelDoItem": "▸Contexto tecnológicoopcionalalterações pendentes",
+    "mensagensNoEditor": 1,
+    "textoNoEditor": "Salve ou cancele as alterações do contexto tecnológico antes de gerar o relatório.",
+    "pendenciaSegundoOOwner": null,
+    "printChamado": 0
+  },
+  "limpo-apos-salvar": {
+    "mensagensJuntoAoPdf": 0,
+    "textoJuntoAoPdf": null,
+    "roleJuntoAoPdf": null,
+    "ariaLiveJuntoAoPdf": null,
+    "distanciaDoGrupoDeAcoesPx": null,
+    "ariaDescribedbyDoBotao": null,
+    "atalhoIrParaContexto": 0,
+    "indicadoresNoTrilho": 0,
+    "textoDoIndicador": null,
+    "estadoDoItemDoTrilho": null,
+    "textoAcessivelDoItem": "▸Contexto tecnológicoopcionalseção atual",
+    "mensagensNoEditor": 0,
+    "textoNoEditor": null,
+    "pendenciaSegundoOOwner": null,
+    "printChamado": 0
+  },
+  "limpo-apos-cancelar": {
+    "mensagensJuntoAoPdf": 0,
+    "textoJuntoAoPdf": null,
+    "roleJuntoAoPdf": null,
+    "ariaLiveJuntoAoPdf": null,
+    "distanciaDoGrupoDeAcoesPx": null,
+    "ariaDescribedbyDoBotao": null,
+    "atalhoIrParaContexto": 0,
+    "indicadoresNoTrilho": 0,
+    "textoDoIndicador": null,
+    "estadoDoItemDoTrilho": null,
+    "textoAcessivelDoItem": "▸Contexto tecnológicoopcionalseção atual",
+    "mensagensNoEditor": 0,
+    "textoNoEditor": null,
+    "pendenciaSegundoOOwner": null,
+    "printChamado": 0
+  },
+  "movimento-normal": {
+    "repouso": {
+      "marcacao": null,
+      "animacao": "none",
+      "duracao": "0s",
+      "opacidade": 1,
+      "transform": "none"
+    },
+    "scrollAntes": 0,
+    "trocaDeResposta": {
+      "marcacao": null,
+      "animacao": "none",
+      "duracao": "0s",
+      "opacidade": 1,
+      "transform": "none"
+    },
+    "trocaDeRespostaAmostra": {
+      "quadros": 28,
+      "opacidadeMinima": 1,
+      "transformsObservados": [
+        "none"
+      ]
+    },
+    "scrollDepois": 0,
+    "avanco": {
+      "marcacao": "fwd",
+      "animacao": "p52-nav-fwd",
+      "duracao": "0.15s",
+      "opacidade": 1,
+      "transform": "matrix(1, 0, 0, 1, 18, 0)"
+    },
+    "avancoAmostra": {
+      "quadros": 27,
+      "opacidadeMinima": 1,
+      "transformsObservados": [
+        "matrix(1, 0, 0, 1, 18, 0)",
+        "matrix(1, 0, 0, 1, 12.6232, 0)",
+        "matrix(1, 0, 0, 1, 8.19306, 0)",
+        "matrix(1, 0, 0, 1, 5.09266, 0)",
+        "matrix(1, 0, 0, 1, 3.0294, 0)",
+        "matrix(1, 0, 0, 1, 1.69758, 0)",
+        "matrix(1, 0, 0, 1, 0.846851, 0)",
+        "matrix(1, 0, 0, 1, 0.338093, 0)",
+        "matrix(1, 0, 0, 1, 0.0765639, 0)",
+        "matrix(1, 0, 0, 1, 3.29121e-07, 0)",
+        "none"
+      ]
+    },
+    "retorno": {
+      "marcacao": "back",
+      "animacao": "p52-nav-back",
+      "duracao": "0.15s",
+      "opacidade": 1,
+      "transform": "matrix(1, 0, 0, 1, -18, 0)"
+    },
+    "retornoAmostra": {
+      "quadros": 27,
+      "opacidadeMinima": 1,
+      "transformsObservados": [
+        "matrix(1, 0, 0, 1, -18, 0)",
+        "matrix(1, 0, 0, 1, -12.5978, 0)",
+        "matrix(1, 0, 0, 1, -8.19666, 0)",
+        "matrix(1, 0, 0, 1, -5.07994, 0)",
+        "matrix(1, 0, 0, 1, -3.03098, 0)",
+        "matrix(1, 0, 0, 1, -1.69223, 0)",
+        "matrix(1, 0, 0, 1, -0.843534, 0)",
+        "matrix(1, 0, 0, 1, -0.33845, 0)",
+        "matrix(1, 0, 0, 1, -0.0767178, 0)",
+        "none"
+      ]
+    }
+  },
+  "movimento-reduced-motion": {
+    "repouso": {
+      "marcacao": null,
+      "animacao": "none",
+      "duracao": "0s",
+      "opacidade": 1,
+      "transform": "none"
+    },
+    "scrollAntes": 0,
+    "trocaDeResposta": {
+      "marcacao": null,
+      "animacao": "none",
+      "duracao": "0s",
+      "opacidade": 1,
+      "transform": "none"
+    },
+    "trocaDeRespostaAmostra": {
+      "quadros": 28,
+      "opacidadeMinima": 1,
+      "transformsObservados": [
+        "none"
+      ]
+    },
+    "scrollDepois": 0,
+    "avanco": {
+      "marcacao": "fwd",
+      "animacao": "none",
+      "duracao": "0s",
+      "opacidade": 1,
+      "transform": "none"
+    },
+    "avancoAmostra": {
+      "quadros": 27,
+      "opacidadeMinima": 1,
+      "transformsObservados": [
+        "none"
+      ]
+    },
+    "retorno": {
+      "marcacao": "back",
+      "animacao": "none",
+      "duracao": "0s",
+      "opacidade": 1,
+      "transform": "none"
+    },
+    "retornoAmostra": {
+      "quadros": 27,
+      "opacidadeMinima": 1,
+      "transformsObservados": [
+        "none"
+      ]
+    }
+  }
+}

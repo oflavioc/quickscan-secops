@@ -1,0 +1,841 @@
+
+> quickscan-secops-v32-dev@3.4.0-dev.4.8.0.7 test:all
+> npm run build && npm run test:engine && npm run test:ui && npm run test:unset && npm run test:p50 && npm run test:p50vis && npm run test:p52 && npm run test:p52vis && npm run test:m41
+
+
+> quickscan-secops-v32-dev@3.4.0-dev.4.8.0.7 build
+> python3 build_v32_html.py
+
+build ok → /mnt/c/Projetos/QuickScan-SOC-CMM/phase5/quickscan_secops_soccmm_v3_2_dev.html | sha256(engine): 9a4a2e674389a115
+
+> quickscan-secops-v32-dev@3.4.0-dev.4.8.0.7 test:engine
+> node tests_m42_m86.js
+
+PASS  M42 — 2 soluções em produção reconhecidas; OPERATIONAL_GAP; sem substituição
+PASS  M43 — maturidade imune a edições do Landscape (proxy do engine; parte de UI pendente)
+PASS  M44 — NDR: gap + NONE + arquitetura unknown → família 'a definir', nenhuma variante
+PASS  M45 — validateConfig detecta erros semeados (órfãs, policy, enum, unified DIRECT)
+PASS  M46 — gap priorizado + PARTIAL/evaluation → avaliação em curso; aquisição suprimida
+PASS  M47 — FortiSOC PRESENT + gap automation → FortiSOAR standalone suprimido (M22)
+PASS  M48 — human-risk: FortiSAT PRESENT → registro; sem recomendação; maturidade not-assessed
+PASS  M49 — base FortiEDR VERBATIM; gap → OPERATIONAL_GAP; nova aquisição suprimida
+PASS  M50 — FortiEDR prod + gap → FortiXDR só como extensão contextual; nunca 'compre FortiEndpoint'
+PASS  M51 — WSS: componentes não confirmados não geram gap/inferência (engine)
+PASS  M52 — TI = NONE (+ external-surface madura) → UNASSESSED; nenhum estado via external-surface
+PASS  M53 — FortiEDR production verbatim; sem forçar FortiEndpoint (idem M49/M50)
+PASS  M54 — gap+NONE+on-prem/air-gap (saas=no, local=yes) → FortiEDR avaliável; FortiEndpoint excluído
+PASS  M55 — gap+NONE+cloud/unified (saas=yes) → FortiEndpoint candidato
+PASS  M56 — Sentinel production + segundo SIEM deploying → OPERATIONAL_GAP (nunca ADOPTION)
+PASS  M57 — 2 tecnologias em segmentos distintos → PARTIAL/COVERAGE mesmo PRESENT
+PASS  M58 — IM gap + activeIncident=false → readiness/plan/playbook/TTX sim; DFIR não
+PASS  M59 — activeIncident=true → DFIR avaliável
+PASS  M60 — suspectedCompromise=true → Compromise Assessment contextualizado
+PASS  M61 — ransomwareConcern=true sem incidente → RRA sim; DFIR não
+PASS  M62 — DLP Service licenciado (ENT) + concern → adoção/configuração; sem recompra
+PASS  M63 — FortiDLP PRESENT → Landscape registra; maturidade inalterada (not-assessed)
+PASS  M64 — DLP NONE sem sinal → nenhuma recomendação (inventário)
+PASS  M65 — DLP NONE + dataLeakageConcern → contextualização por sinal; nunca DIRECT
+PASS  M66 — FortiFlex/FortiPoints só APÓS recomendação técnica; nunca cria contexto
+PASS  M67 — elegibilidade FortiFlex não confirmada → não afirmada no candidato
+PASS  M68 — wantsSOCAssessment=true → SOC Assessment como next step; maturidade intacta
+PASS  M69 — FortiAI-Assist nunca é SKU de aquisição (policy landscape-only)
+PASS  M70 — shadowAIConcern → FortiDLP/Protect contextualizados; sem finding SOC-CMM
+PASS  M71 — usesPrivateLLMs + aiRuntimeSecurityConcern → FortiAIGate contextual
+PASS  M72 — FortiAIGate ausente + nenhum AI signal → nenhuma recomendação
+PASS  M73 — FortiAIGate PRESENT → registro; SOC maturity inalterada
+PASS  M74 — FortiDLP: 1 entrada, múltiplas solutionAreaRelations; sem duplicação de candidato
+PASS  M75 — FortiSOC PRESENT: supressão machine-readable + gap operacional explicável
+PASS  M76 — prioridades múltiplas convergem: capability consolida sem apagar fontes
+PASS  M77 — precedência maturityStateOf (high+moderate+mature) com fontes preservadas
+PASS  M78 — PRESENT sem status → TECH_STATUS_UNVERIFIED; sem candidatos; pedido de status
+PASS  M79 — gap + só evaluation → EVALUATION_IN_PROGRESS (não ADOPTION_GAP)
+PASS  M80 — maduro + contracted → TECH_TRANSITION (não MATURE_WITH_TECH)
+PASS  M81 — PLATFORM_CONTEXT deriva licensedContext (ENT → fg-dlp-service); sem bundle no Landscape
+PASS  M82 — validador: deliveryType composto · bundle inválido · labs-advisory nunca candidato · relations vazias
+PASS  M83 — stateSourceFindingIds ≠ allFindingIds (cf. M77) e distinção preservada no contexto
+PASS  M84 — FortiEDR on-prem/air-gapped → FortiGuard MDR NÃO elegível; razão explicável
+PASS  M84b — FortiEDR cloud → MDR elegível (contraprova)
+PASS  M85 — condição quádrupla: PLATFORM_CONTEXT declarado sai do legacy; default é legacy
+PASS  M86 — validador: family com serviceType · reactive sem sinais · exclude fora do enum · E13 no motor
+PASS  M3 — logs ruins + SIEM UNSET → CONTEXT_NOT_INFORMED (não whitespace)
+PASS  M4 — logs ruins + SIEM NONE (+evidência suficiente) → TECHNOLOGY_WHITESPACE
+PASS  M5 — logs ruins + Sentinel produção → OPERATIONAL_GAP; sem substituição
+PASS  M6 — logs ruins + FortiSIEM presente → gap operacional; sem recompra
+PASS  M7 — automação ruim + Cortex XSOAR → sem troca automática por FortiSOAR
+PASS  M8 — automação ruim + FortiSOAR contratado → ADOPTION_GAP
+PASS  M9 — NDR ruim + NONE + SaaS permitido → FortiNDR Cloud candidato
+PASS  M10 — NDR ruim + NONE + processamento local/OT → FortiNDR On-Premises candidato
+PASS  M12 — NDR madura + NONE → POSSIBLE_CONTEXT_DIVERGENCE; sem recomendação
+PASS  M14 — deception NONE sem sinal → sem FortiDeceptor (inventário)
+PASS  M15 — FortiDeceptor presente → registrado; score inalterado (not-assessed)
+PASS  M17 — FortiAuthenticator/FortiToken presentes → registro; SOC maturity inalterada
+PASS  M18 — SEG existente → sem inferência de necessidade de ICES
+PASS  M19 — ICES existente → sem inferência de necessidade de SEG
+PASS  M20 — gaps core + fragmentação + plataforma desejada → nota B com FortiSOC
+PASS  M21 — mesmo cenário + consolidação rejeitada → FortiSOC não é empurrado
+PASS  M23 — FortiSandbox ausente + necessidade não avaliada → sem recomendação
+PASS  M24 — vendor terceiro atende capability madura → sem substituição (MATURE_WITH_TECH)
+PASS  M25 — gap + tecnologia parcial → COVERAGE_GAP
+PASS  M26 — gap + tecnologia contratada → ADOPTION_GAP
+PASS  M30 — gap + UNKNOWN → NEEDS_VALIDATION (não whitespace)
+PASS  M31 — gap + UNSET → CONTEXT_NOT_INFORMED (não ausência)
+PASS  M32 — madura + produção → MATURE_WITH_TECH; sem substituto
+PASS  M33 — madura + Fortinet presente → nenhuma recomendação artificial
+PASS  M34 — madura + concorrente presente → reconhecer; sem substituição
+PASS  M35 — DLP NONE + priority genérica de privacy → sem FortiDLP sem evidência específica
+PASS  M36 — FortiSAT ausente → ausência não cria finding
+PASS  M37 — FortiAuthenticator ausente → sem finding SOC
+PASS  M38 — FortiPAM ausente → sem finding SOC
+PASS  M39 — SIEM+SOAR maduros e integrados → FortiSOC não recomendado por existir
+PASS  M40 — gaps core + Landscape core UNSET → sem nota; FortiSOC nunca whitespace
+PASS  P2.1-01 — endpoint gap+NONE + arquitetura unknown → SOMENTE endpoint-family 'a definir'
+PASS  P2.1-02 — endpoint cloud (saas=yes) → FortiEndpoint; sem placeholder
+PASS  P2.1-03 — endpoint local (saas=no, local=yes) → FortiEDR; sem FortiEndpoint
+PASS  P2.1-04 — FortiSIEM Cloud unresolved NÃO cria soc-platform-family espúria
+PASS  P2.1-05 — 2 gaps core + soc-platform NONE → Architecture Note com opção B
+PASS  P2.1-06 — gaps core + Landscape relevante todo UNSET → nota NÃO aparece
+PASS  P2.1-07 — preference=no → nota não aparece
+PASS  P2.1-08 — SaaS=no → nota pode existir, mas SEM opção B (só rota A)
+PASS  P2.1-09 — plataforma de TERCEIRO sem coveredCapabilities → NÃO suprime FortiSOAR
+PASS  P2.1-10 — terceiro com automation em coveredCapabilities → suprime/contextualiza
+PASS  P2.1-11 — gap + NONE + evidência INSUFICIENTE → NEEDS_VALIDATION sem candidato
+PASS  P2.1-12 — mesmo cenário com evidência suficiente → TECHNOLOGY_WHITESPACE
+PASS  P2.1-13 — GATE DE SYNC: engine_v32.js idêntico ao bloco V32 embutido no HTML
+PASS  M13 — DLP NONE não avaliada → não recomendar FortiDLP (id explícito; regra também coberta por M64)
+PASS  M16 — FortiSAT presente → Human Risk registrado; People score inalterado (id explícito; cf. M48)
+PASS  M22 — FortiSOC presente → point products duplicativos não recomendados (id explícito; cf. M47/M75)
+PASS  M27 — capability não avaliada + tecnologia presente → UNASSESSED; zero efeito no score (id explícito; cf. M63/M73)
+PASS  P2.1-14 — coveredCapabilities como string → erro de validação, sem exceção
+PASS  P2.1-15 — solutions não-array e declaredPlatforms não-array → erros, sem exceção
+PASS  P2.1-16 — REPRODUTIBILIDADE: builder em temporário gera HTML idêntico ao publicado
+PASS  P3.1-G — duas soluções production com a MESMA cobertura 'global' → OPERATIONAL (não COVERAGE_GAP)
+PASS  P3.2-B — gapTrigger: team-capacity gap → SOCaaS como managed-service contextual; MDR só com base elegível
+PASS  P3.2.3-A1 — team-capacity gap sem base EDR → SOCaaS sim, MDR não
+PASS  P3.2.3-A2 — team-capacity gap + FortiEDR cloud → SOCaaS + MDR
+PASS  P3.2.3-A3 — team-capacity gap + FortiEDR on-prem → SOCaaS sim, MDR não
+PASS  P3.2.3-A4 — monitoring-coverage gap + FortiEDR cloud → SOCaaS + MDR
+PASS  P3.2.3-A5 — monitoring-coverage gap sem base (ou on-prem) → MDR não
+PASS  P3.2.3-C — contextTrigger: CTX congeladas aparecem como contextual-support; supporting genérico NÃO
+
+MATRIZ (M1–M40 ENGINE + M42–M86 + P2.1): 105 PASS · 0 FAIL de 105 testes
+
+> quickscan-secops-v32-dev@3.4.0-dev.4.8.0.7 test:ui
+> npm run test:ui31 && npm run test:ui32 && npm run test:ui33 && npm run test:ui332 && npm run test:ui333 && npm run test:ux41 && npm run test:target && npm run test:ref && npm run test:journey && npm run test:icons46 && npm run test:session
+
+
+> quickscan-secops-v32-dev@3.4.0-dev.4.8.0.7 test:ui31
+> node tests_ui_m31.js
+
+PASS  U1 — legacy: CTA presente com textos exatos; blocos V3.2 ausentes; apoio legado visível; legacyMode true
+PASS  U2 (M43) — editar+salvar Landscape pela UI: snapshot legado idêntico; blocos V3.2 aparecem; legado de recomendação oculto + aviso
+PASS  U3 (M11) — interpretação exibe 'FortiNDR · modalidade a definir'
+PASS  U4 (M15) — FortiSAT declarado no Landscape aparece no bloco declarado sem alterar maturidade
+PASS  U5 (M28) — 'Prioridades declaradas pelo negócio' lista na ordem declarada
+PASS  U6 — presence inicia UNSET ('Não informado'); microcopy de NONE só após escolha deliberada
+PASS  U7 — 'Limpar contexto tecnológico' restaura legacyMode e o apoio legado visível
+PASS  U8 — 'Cobertura da plataforma' só para plataforma de TERCEIRO em soc-platform; sem pré-seleção
+PASS  U9 — tecnologia sem status → interpretação 'status a validar' (DECLARED_UNSPECIFIED preservado)
+PASS  U10 — grupo Advanced inicia recolhido; soc-staffing/soc-skills não aparecem no editor
+PASS  U11 (A) — injeção de atributo/handler via campo livre é neutralizada
+PASS  U12 (B) — PRESENT+tech → NONE limpa solutions; declarado nunca mostra 'não existe' + tecnologia
+PASS  U12b (B) — transições PRESENT→UNSET e PRESENT→UNKNOWN também limpam solutions
+PASS  U13 (C) — save transacional: erro faz rollback integral; Cancelar preserva o estado pré-Save
+PASS  U14 (D) — alterar resposta SOC-CMM muda o contexto sem reabrir o editor (sem cache stale)
+PASS  U15 (E) — fronteiras do hiding: ações, 'Próximo passo' e 'Capabilities a validar' seguem visíveis
+PASS  U16 (F) — accordions preservam open entre repaints; sem aria-expanded estático em summary
+PASS  U17 (H) — editor FortiGate não destrói subscriptions/notes não editadas
+PASS  U18 (H) — declaredDriver e sinais sem checkbox são preservados ao salvar
+
+UI M3.1: 19 PASS · 0 FAIL de 19
+
+> quickscan-secops-v32-dev@3.4.0-dev.4.8.0.7 test:ui32
+> node tests_ui_m32.js
+
+PASS  V1 — whitespace analytics → card DIRECT com FortiSIEM/FortiAnalyzer; FortiSOC ausente
+PASS  V2 — capability priorizada aparece na seção de prioridades, antes das demais
+PASS  V3 — gap de incidentes → serviços de Preparação com tag FortiPoints confirmada
+PASS  V4 — nota arquitetural: Rota B com SaaS ok; apenas Rota A com SaaS proibido
+PASS  V5 — FortiSOC declarado: card de automation sem FortiSOAR, com nota de plataforma
+PASS  V6 — camada comercial terminal: FortiFlex NÃO afirmado no card do FortiSIEM
+PASS  V7 — sinal declarado: FortiDLP como 'habilitado por sinal', nunca aquisição direta
+PASS  V8 — VALIDATE nunca some: evidência insuficiente → card em 'A validar', zero produto
+PASS  V9 — VALIDATE nunca some: tecnologia UNKNOWN → card visível em 'A validar'
+PASS  V10 — prioridade nunca desaparece: logs priorizado + analytics UNSET + FortiSAT PRESENT → Leitura base
+PASS  V11 — registry fix: Governança do SOC não aparece no editor de Landscape
+PASS  V12 — ofertas e serviços separados por subtítulos quando ambos existem
+PASS  V13 — enums/IDs internos localizados: sem 'confirmed'/'dataLeakageConcern' cru; PT presente
+PASS  V14 — 'Por que apareceu' determinístico: origem, prioridade, tecnologia e classificação
+PASS  V15 (A) — priority-first universal: Logs (priorizada, UNSET) antes de Automação (NONE)
+PASS  V16 (B) — Governança (sem Landscape): SOC Assessment renderizado; nunca pede contexto
+PASS  V17 (B) — Competências (sem Landscape): IR Training renderizado; sem pedido de Landscape
+PASS  V18 (B) — Staffing: SOCaaS como managed-service contextual; MDR ausente sem base
+PASS  V19 (C) — MDR com deployment não informado: 'Elegibilidade técnica: validar deployment' separada do FortiPoints
+PASS  V20 (C) — contraprova: FortiEDR on-prem → MDR ausente do card
+PASS  V21 (B) — knowledge gap-high priorizado + NONE → 1º bloco; whitespace; zero 'aquisição candidata'
+PASS  V22 (B/C) — contraprova detection-lifecycle: prioridade preservada; FortiSIEM/FortiAI-Assist só CTX
+PASS  V23 — knowledge gap + NONE sem prioridade → FortiSOAR SOMENTE em #v32contextual
+PASS  V24 — detection-lifecycle gap + NONE sem prioridade → FortiSIEM/FortiAI-Assist SOMENTE em #v32contextual
+PASS  V25 — contraprovas: endpoint NONE+cloud e analytics NONE permanecem em Apoio direto
+
+UI 3.2: 25 PASS · 0 FAIL de 25
+
+> quickscan-secops-v32-dev@3.4.0-dev.4.8.0.7 test:ui33
+> node tests_ui_m33.js
+
+PASS  I1 — mapping conhecido → asset esperado (FortiSIEM em analytics whitespace)
+PASS  I2 — item sem mapping → fallback tipográfico, sem broken image (endpoint-family)
+PASS  I3 — family unresolved não usa ícone de variante (nem FortiEndpoint nem FortiEDR)
+PASS  I4 — contextual-support recebe ícone real mantendo rótulo contextual (FortiSOAR/knowledge)
+PASS  I5 — offering × service no mesmo card: ícones e subtítulos distintos (incident-management)
+PASS  I6 — registry sem itemId órfão (todo id do ICON_MAP existe em OFFERINGS/SERVICES)
+   AUDITORIA ICONOGRAFIA: mapped=40 · fallback=5 · orphan=0 · missingIconKey=0 (universo=45)
+PASS  I7 — todo iconKey declarado existe em ICONS + auditoria mapped/fallback/orphan/missing
+PASS  I8 — payload do RECOMMENDATION_CONTEXT inalterado pela iconografia
+PASS  I9 (A) — SOCaaS usa o asset específico do baseline (data-icon='SOCaaS'), nunca FortiGuard genérico
+PASS  I10 (C) — allowlist de fallbacks: exatamente a lista declarada, nada além
+PASS  I11 (E) — todos os data URIs decodificam para SVG válido; gerador é reproduzível byte a byte
+
+UI 3.3.1: 11 PASS · 0 FAIL de 11
+
+> quickscan-secops-v32-dev@3.4.0-dev.4.8.0.7 test:ui332
+> node tests_ui_m332.js
+
+PASS  P1 — sem contexto declarado, o print é o relatório estruturado com o contexto marcado como não informado
+PASS  P2 — report V3.2 contém maturity+priorities+landscape+interpretação+support
+PASS  P3 — editor/CTA/actions/controles ausentes do conteúdo imprimível
+PASS  P4 — 'Por que apareceu' sempre visível no report (sem <details>)
+PASS  P5 — prioridades na ordem declarada (incident-response antes de logs)
+PASS  P6 — vendor/product/status/coverage/deployment/notes literais e ESCAPADOS
+PASS  P7 — DIRECT/CONTEXTUAL nas categorias corretas no report
+PASS  P8 — contextual-support nunca como aquisição no report
+PASS  P10 — ícone conhecido (FortiSIEM) e fallback (endpoint-family) sobrevivem no report
+PASS  P14 — opções comerciais existentes aparecem; programa FortiFlex nunca anunciado sem catálogo
+PASS  P12 — before/after print preservam estado byte-a-byte; details da tela intocados
+PASS  P9 — Architecture Note só quando engine mostra; Rota A/B corretas
+PASS  P11 — insuficiência: score n/d, sem estágio fabricado
+PASS  P13 — draft não salvo bloqueia print com mensagem; estado intacto
+PASS  P15 (A) — estágio real PT + cinco domínios nomeados; nenhum header vazio
+PASS  P16 (B) — anexo preserva notes[k] escapadas, coexistindo com a descrição da alternativa
+PASS  P17 (C) — v32-print-mode oculta a .wrap inteira via CSS; report não contém annex/footer legados
+PASS  P18 (D) — safePrint: com draft NÃO chama print nativo; sem draft chama uma vez
+PASS  P19 (E) — invariante cobre arq e notes: mutação entre prepare/finish é detectada
+PASS  P20 (A) — anexo: label humano de opts[1] + descrição; NA exato; null; sem índice cru
+PASS  P20b (A) — resposta index 1 imprime opts[1].t e opts[1].d reais do QS (mandate)
+PASS  P21 (B) — findings: gap alto e moderado com lbl, domínio, evidência (t+d), capability e nota
+PASS  P22 (C) — radar: 5 labels dentro da área com anchors laterais corretos
+
+UI 3.3.2 (PDF): 23 PASS · 0 FAIL de 23
+
+> quickscan-secops-v32-dev@3.4.0-dev.4.8.0.7 test:ui333
+> node tests_ui_m333.js
+
+PASS  C1 — subscriptions do registry renderizadas; badge de bundle informativo; badge nunca grava
+PASS  C2 — explícita ≠ badge: fg-ot-security marcado grava; incluídas do bundle não
+PASS  C3 — explícitas sobrevivem a mudança e remoção de bundle
+PASS  C4 — licensedContext consistente: ent + fg-dlp-service explícita → sem duplicidade; M62 mantém
+PASS  C5 — estado inicial: nenhuma subscription pré-marcada; unset não polui resultado
+PASS  C6 — SIGNAL_GROUPS cobre exatamente os 22 SIGNAL_IDS; 4 subgrupos; unchecked=unset
+PASS  C7 — becConcern → email-threat-protection contextual (FortiMail family, nunca DIRECT)
+PASS  C8 — identityRiskConcern → AD Security Assessment elegível; pamRequirement → FortiPAM contextual
+PASS  C9 — edrSpecificNeed habilita rota FortiEDR; maturidade byte-idêntica
+PASS  C10 — declaredDriver: campo só com presença; persiste; visível escapado em card e PDF
+PASS  C11 — presence=UNSET nunca mantém driver órfão (invisível ao legacy é proibido)
+PASS  C12 — bloco comercial: FortiPoints com terminologia oficial, separado da elegibilidade técnica
+PASS  C13 — FortiFlex só onde confirmado no catálogo; FortiMarketplace nunca vira card
+PASS  C14 — resumo de entitlements neutro no resultado (não prova implementação)
+PASS  C15 — PDF: seções de entitlements e sinais só quando declarados; bundle+explícitas com anotação
+PASS  C16 — PDF sem declarações: seções de entitlements/sinais ausentes (nada default ocupa espaço)
+PASS  C17 — sinais no PDF com labels PT (nunca IDs internos)
+PASS  C18 — engine byte-idêntico: bloco V32 do HTML == engine_v32.js congelado
+PASS  C19 — M43 integral após edição de entitlements/sinais/driver
+PASS  C20 — Limpar contexto zera plataformas, sinais e drivers (legacy total)
+PASS  C21 (A) — só FortiSOC declarado → checkbox FortiGate desmarcado; salvar não cria FortiGate e preserva FortiSOC
+PASS  C22 (A) — FortiSOC primeiro + FortiGate segundo → editor representa o FortiGate correto (bundle ENT + sub)
+PASS  C23 (A) — salvar atualiza só a entrada FortiGate; FortiSOC preservado byte-idêntico e primeiro
+PASS  C24 (A) — desmarcar FortiGate remove só o FortiGate; demais plataformas permanecem
+PASS  C25 (B) — FortiPoints: mecanismo E explicação exibidos separadamente + note do item
+PASS  C26 (B) — FortiFlex confirmado (catálogo real): mecanismo + explicação; sem options → sem bloco; ctx byte-idêntico
+
+UI 3.3.3: 26 PASS · 0 FAIL de 26
+
+> quickscan-secops-v32-dev@3.4.0-dev.4.8.0.7 test:ux41
+> node tests_ux_m41.js
+
+PASS  UX1 — home sem contexto: fluxo antigo em um clique; CTA secundário + microcopy presentes
+PASS  UX2 — home → adicionar contexto → salvar → resumo na home → iniciar normalmente
+PASS  UX3 — contexto antes × depois com os mesmos dados → mesmo RECOMMENDATION_CONTEXT
+PASS  UX4 — contexto prévio não altera answers/scores/findings/radar/sufficiency
+PASS  UX5 — nenhuma recommendation/produto durante arq e perguntas (mesmo com contexto prévio)
+PASS  UX6 — cancelar editor da home não altera contexto salvo
+PASS  UX7 — limpar contexto da home restaura defaults V3.2
+PASS  UX8 — findings agrupados nos DOMS corretos (5 grupos com gaps em todos)
+PASS  UX9 — cada finding aparece exatamente uma vez
+PASS  UX10 — ordem dentro dos grupos preserva a ordem global original
+PASS  UX11 — limite global de 3 mantido com grupos
+PASS  UX12 — prioridades em grupos diferentes: badges e resumo na ordem global de seleção
+PASS  UX13 — desmarcar Prioridade 1 renumera deterministicamente
+PASS  UX14 — atalho de teclado continua atingindo o finding global correto após regroup
+PASS  UX15 — agrupamento por si não modifica businessPriority
+PASS  UX16 — Revisar respostas preserva Technology Landscape
+PASS  UX17 — priority: .opts não fica presa em 820px — computa max-width none na tela cheia
+PASS  UX18 — question: .opts continua no layout de leitura legado (override é screen-specific)
+PASS  UX19 — Reiniciar avaliação limpa somente assessment/prioridades (com modal)
+PASS  UX20 — Reiniciar avaliação preserva Landscape/Architecture/Platform/Signals
+PASS  UX21 — Nova sessão limpa assessment + todo contexto V3.2 (com confirmação e microcopy)
+PASS  UX22 — cancelar Nova sessão não altera estado; Escape também cancela; foco restaurado
+PASS  UX23 — home após Reiniciar avaliação ainda mostra resumo de contexto
+PASS  UX24 — home após Nova sessão não mostra contexto declarado
+PASS  UX25 — progress desktop representa a etapa correta (07 / 16 no step 6)
+PASS  UX26 — progress mobile compacto: 'Etapa 7 de 16', com barra e aria-label, sem duplicar label longa
+PASS  UX27 — priority usa 'Etapa final' no progress mobile
+PASS  UX28 — keyboard/focus seguem funcionais após novo progress/navigation
+PASS  UX29 — mobile navigation esconde hint de teclado via regra específica
+PASS  UX30 — regras mobile de largura/anti-overflow presentes (grid nav, CTAs 100%, overflow-x hidden)
+PASS  UX31 — recommendation context byte-idêntico após renderizações puramente visuais
+PASS  UX32 — mapa único: cada DOM resolve para exatamente um token oficial
+PASS  UX33 — pergunta carrega o data-dom correto do seu QS[k].dom
+PASS  UX34 — priority group usa o mesmo domínio/cor da pergunta (data-dom coerente com dom-chip)
+PASS  UX35 — seleção mantém domain identity (grupo) + estado global vermelho (badge Prioridade N)
+PASS  UX36 — executive summary reproduz score/stage/confidence da Camada 1 (coerente com o renderer PDF)
+PASS  UX37 — insuficiente: screen não fabrica score/estágio
+PASS  UX38 — chips de prioridade no resultado preservam a ordem global
+PASS  UX39 — região DIRECT única com label textual APOIO DIRETO e accent red
+PASS  UX40 — região CONTEXTUAL única com APOIO CONTEXTUAL e linguagem contextual preservada
+PASS  UX41 — região VALIDATE única, neutra, sem linguagem de aquisição
+PASS  UX42 — offerings × services seguem distintos (subheads + accent teal só no serviço)
+PASS  UX43 — architectureNote com accent purple só quando show=true; sem espaço vazio quando false
+PASS  UX44 — não priorizados (legacy) permanecem no DOM dentro de details fechado
+PASS  UX45 — abrir/fechar details não altera nenhum estado
+PASS  UX46 — commercial details apenas onde commercialOptions existe
+PASS  UX47 — context summary compacto não apresenta UNSET/defaults
+PASS  UX48 — Editar contexto reutiliza o editor e retorna aos resultados
+PASS  UX49 — Recommendation Context renderizado é byte-idêntico ao recompute
+PASS  UX50 — nenhum ícone oficial recolorido para representar domínio (cor pertence ao container)
+PASS  UX51 — DIRECT/CONTEXTUAL/VALIDATE compreensíveis sem cor (labels textuais no DOM)
+PASS  UX52 — results mobile sem overflow (regras anti-overflow cobrem a tela de resultados)
+PASS  UX53 — progress: 15 perguntas em 5 blocos de 3 domínios + segmento final de Prioridade em red (17º visual)
+PASS  UX54 — decoração do progress não altera step/ans/state
+PASS  UX55 — radar: valores idênticos; container responsivo dimensiona o SVG (width:100%, sem teto legado)
+PASS  UX56 — Recommendation Context byte-idêntico após progress/radar decor
+
+UX 4.1: 56 PASS · 0 FAIL de 56
+
+> quickscan-secops-v32-dev@3.4.0-dev.4.8.0.7 test:target
+> node tests_target_m431.js
+
+PASS  T1 — nenhum target criado automaticamente ao abrir results
+PASS  T2 — TARGET_PROFILE armazena somente overrides explícitos (esparso)
+PASS  T3 — target confirmado nunca inferior ao atual (select filtrado + guard)
+PASS  T4 — ausência de override mantém a resposta atual (targetAnswer)
+PASS  T5 — effective==current → perfil idêntico ao atual (gate crítico do calculador puro)
+PASS  T6 — editar target nunca altera ans
+PASS  T7 — editar target nunca altera findings/priorities (snapshot integral)
+PASS  T8 — Recommendation Context byte-idêntico após target
+PASS  T9 — mesma regra de suficiência (>=10 confirmadas && n>=2 por domínio)
+PASS  T10 — target insuficiente → n/d, sem estágio fabricado
+PASS  T11 — current NA permite target explícito com 'Baseline atual não validado' e delta local n/d
+PASS  T12 — radar current mantém exatamente os pontos atuais após overlay
+PASS  T13 — target radar deriva somente dos effective answers (determinístico)
+PASS  T14 — current Blue sólido · target Green tracejado + legenda textual + aria
+PASS  T15 — cada override aparece exatamente uma vez no resumo
+PASS  T16 — habilitadores ⊆ itens já presentes no Recommendation Context
+PASS  T17 — target nunca cria candidate/service (contagem do ctx estável)
+PASS  T18 — target nunca muda DIRECT/CONTEXTUAL/VALIDATE
+PASS  T19 — limpar target não altera assessment/context/recommendations
+PASS  T20 — Reiniciar avaliação limpa target e preserva Technology Landscape
+PASS  T21 — Nova sessão limpa target
+PASS  T22 — current revisado ≥ target invalida só o override conflitante, com aviso
+PASS  T23 — PDF inclui comparação somente com target explícito
+PASS  T24 — PDF sem target permanece sem seção target
+PASS  T25 — disclaimer metodológico aparece no screen e no PDF
+PASS  T26 — details/select/focus no editor sem salvar não alteram estado fora do TARGET_PROFILE
+PASS  T27 — notice + Reiniciar avaliação → nova avaliação SEM .ux-tgt-notice
+PASS  T28 — notice + Nova sessão → nova avaliação SEM mensagem da sessão anterior
+PASS  T29 — Limpar cenário-alvo elimina override+notice sem tocar assessment/context/recommendations
+PASS  T30 — revisão na MESMA avaliação mantém notice até ação explícita (4.3.1 preservada)
+
+TARGET 4.3.1: 30 PASS · 0 FAIL de 30
+
+> quickscan-secops-v32-dev@3.4.0-dev.4.8.0.7 test:ref
+> node tests_ref_m44.js
+
+PASS  R1 — QS.length continua exatamente 15
+PASS  R2 — registry de refinement contém exatamente 3 perguntas (ids/domínios corretos)
+PASS  R3 — abrir refinement não cria respostas automaticamente
+PASS  R4 — answers aceitam somente 0..3|null
+PASS  R5 — refinement nunca escreve em ans
+PASS  R6-R12 — gate absoluto: maturity/domains/suff/stage/findings/ctx/TARGET/Current×Target byte-idênticos
+PASS  R13 — null não é interpretado como opção 0 (resumo e PDF distinguem)
+PASS  R14 — progress principal mantém o contrato atual (16/16 core; refinement fora dele)
+PASS  R15 — refinement progress próprio 1/3 → 2/3 → 3/3
+PASS  R16 — Continuar sem aprofundamento leva ao fluxo normal (priority)
+PASS  R17 — refinement parcial é permitido (Pular mantém null; avanço livre)
+PASS  R18 — resumo do resultado mostra somente respostas informadas + contagem
+PASS  R19 — Editar aprofundamento preserva respostas e retorna ao resultado
+PASS  R20 — Reiniciar avaliação limpa refinement e preserva Landscape
+PASS  R21 — Nova sessão limpa refinement
+PASS  R22 — Limpar cenário-alvo NÃO limpa refinement
+PASS  R23 — Limpar contexto tecnológico NÃO limpa refinement
+PASS  R24 — PDF inclui refinement somente quando informado (tema+resposta+interpretação)
+PASS  R25 — PDF sem refinement permanece sem seção vazia
+PASS  R26 — home: '~8–12 min · 15 perguntas' + supporting + microcopy do refinement
+PASS  R27+R28 — contexto: '~5–10 min · preencha apenas o que souber' + UNSET≠NONE explícito
+PASS  R29 — branch mostra '+3 perguntas · ~2–4 min' sem linguagem coercitiva
+PASS  R30 — nenhuma string chama refinement de score ou o incorpora à maturidade
+PASS  R31 — home: 15 core + 1 ponto de partida, sem ambiguidade 15 vs 16
+PASS  R32 — branch: sem PRIORIDADE DO NEGÓCIO; Priority não marcada ativa; label próprio
+PASS  R33 — refinement 1/3..3/3: apenas progress próprio (principal oculto por CSS; sem Etapa final)
+PASS  R34 — CTA de saída: 'Continuar para a etapa final →' no fluxo; 'Voltar ao resultado →' na edição
+PASS  R35 — rota preservada: saída do refinement → Priority → só depois Results
+
+REF 4.4: 28 PASS · 0 FAIL de 28
+
+> quickscan-secops-v32-dev@3.4.0-dev.4.8.0.7 test:journey
+> node tests_journey_m45.js
+
+PASS  N1-N2 — Journey usa os stages canônicos; marker ATUAL = stageOf(score)
+PASS  N3 — insufficient: sem current fabricado; Posicionamento n/d
+PASS  N4-N5 — next é imediatamente posterior; top stage não cria sexto nível
+PASS  N6-N7 — sem TARGET → sem marker; target suficiente → marker no stage exato
+PASS  N8-N9 — target no mesmo stage não vira avanço; target >1 stage independe de NEXT
+PASS  N10+N12+N35 — Journey+narrative não alteram state; ctx byte-idêntico
+PASS  N11 — narrativa determinística byte a byte
+PASS  N13-N14 — P1 usa só maturity/domínios; insufficient não afirma estágio
+PASS  N15-N16 — prioridades na ordem declarada; ausência não cria prioridade implícita
+PASS  N17-N18 — refinement null fora da narrativa; nunca tratado como score
+PASS  N19-N20 — Landscape UNSET não afirma ausência; operational só quando existente
+PASS  N21-N22 — target: linguagem condicional; mesmo stage explicitado
+PASS  N23-N24 — itens citados ⊆ Recommendation Context; nada criado
+PASS  N26-N28 — themes máx 3, priority-first, sem produto; Journey sem produto
+PASS  N29 — trace cobre as afirmações variáveis principais
+PASS  N30-N32 — screen e PDF com a MESMA narrativa; PDF insufficient não fabrica stage
+PASS  N33-N34 — mobile sem régua comprimida (coluna); distinção sem cor (shapes+labels)
+PASS  N36 — all-core=3 → 5.0/5 sem 'estrutura inicial'/'sem execução uniforme'
+PASS  N37 — zero findings → ausência declarada; nunca '0 gaps impactam'
+PASS  N38 — P1 segue rastreado só a maturity/domain data
+PASS  N39 — ordem DOM: grid2 → Journey → primeira seção de prioridades/gaps
+PASS  N40 — exatamente uma 'Leitura executiva' na tela; legado = 'Síntese do resultado'
+PASS  N41 — print: um único título Journey e um único Leitura executiva
+PASS  N42 — print CSS controla largura/quebra dos nodes (gate de pixels executado via WeasyPrint na rodada)
+PASS  N43 — refinement baixo só completa slots livres; nunca substitui priority/finding; alto não vira tema
+PASS  N44 — cards principais: todo candidate/service com exatamente uma representação de ícone
+PASS  N45 — todo habilitador do target com exatamente uma representação de ícone
+PASS  N46+K — mesmo resolver: markup de ícone idêntico entre card e enabler (oficial e fallback)
+PASS  N47 — registry congelado no estado 4.6: hashes travados; delta autorizado = 3 assets oficiais (ICON_ASSET_DECISIONS_V32.md)
+PASS  N48 — identidade semântica: id/name/mode/ordem iguais; ctx byte-idêntico
+PASS  N49 — responsivo/print: dimensionamento contextual + wrap + sem overflow (A4 validado na rodada)
+
+JOURNEY 4.5: 31 PASS · 0 FAIL de 31
+
+> quickscan-secops-v32-dev@3.4.0-dev.4.8.0.7 test:icons46
+> node tests_icons_m46.js
+
+PASS  A1+A2 — baseline de 8 fallbacks com decision explícita para cada um no decisions doc
+PASS  A3+A4+A5 — cada fallback removido tem asset oficial com provenance; source SHA confere
+PASS  A6+A7+A8+A29 — generator EXECUTADO 2x em temp: gen1==gen2==publicado; manifest↔registry sync
+PASS  A9+A27+A28 — fixture local 4.5.0.2: 23 imutáveis + delta autorizado exato = 26
+PASS  A10-A14 — famílias/abstrações seguem fallback: nenhum produto específico atribuído
+PASS  A15+A16 — novos mappings usam IDs existentes do registry; portfolio inalterado
+PASS  A17-A19 — ctx/target/journey/narrative byte-idênticos semanticamente
+PASS  A20+A21 — mesma entidade → mesmo output em qualquer superfície; fallback restante determinístico
+PASS  A22-A25 — zero fuzzy matching; runtime self-contained (nenhuma URL externa, nenhum SVG via rede)
+PASS  A26 — suíte self-contained: sem paths absolutos externos, sem dependência fora do package
+PASS  A30 — provenance semanticamente exata: content none nos 3; rename só no WSS; hashes conferem
+PASS  A31 — source archive trace: SHA-256 válido e consistente entre os 3 assets
+
+ICONS 4.6: 12 PASS · 0 FAIL de 12
+
+> quickscan-secops-v32-dev@3.4.0-dev.4.8.0.7 test:session
+> node --max-old-space-size=4608 tests_session_m48.js
+
+PASS  S1-S3 — schema root + toolVersion do build + engine SHA real
+PASS  S4-S5 — export só canônico; zero campo derivado
+PASS  S6 — roundtrip padrão: inputs e derivados idênticos
+PASS  S7 — roundtrip com landscape rico (solutions, arch, platform, signals)
+PASS  S8 — UNSET ≠ NONE sobrevive ao roundtrip
+PASS  S9 — insuficiente continua n/d após import, sem estágio fabricado
+PASS  S10 — target sparse: overrides transportados, Current×Target recalculado
+PASS  S11 — refinement 1/3 e 3/3 não alteram score no roundtrip
+PASS  S12 — top stage: sem sexto estágio após import
+PASS  S13 — Unicode e notas longas preservados
+PASS  S14 — payload XSS permanece inerte (texto, sem execução)
+PASS  S15-S16 — JSON malformado e arquivo acima do limite recusados
+PASS  S17-S18 — format errado e schemaVersion diferente recusados
+PASS  S19-S20 — engine diferente bloqueia; toolVersion diferente com mesmo engine aceita com aviso
+PASS  S21-S26 — validações de q id, answer, priority, enum, target e refinement
+PASS  S27 — injeção de campo derivado é recusada explicitamente
+PASS  S28 — prototype pollution recusada; Object.prototype intacto
+PASS  S29 — import atômico: falha tardia não altera estado algum
+PASS  S30 — sessão ativa exige confirmação de substituição
+PASS  S31-S32 — reset e nova sessão após import preservam semântica congelada
+PASS  S33 — nenhuma API de persistência é usada
+PASS  S34 — nenhuma URL externa no módulo de sessão
+PASS  S35 — filename sanitizado: sem path traversal, sem caracteres inválidos
+PASS  S36 — object URL revogado após export
+PASS  S37 — PDF após import mantém a semântica da sessão original
+PASS  S38 — controles de sessão ausentes do relatório de impressão
+PASS  S39 — modal e ações com semântica acessível
+PASS  S40 — determinismo do export (sem createdAt/label) e cópia imutável
+PASS  S41 — U2 real: landscape rico faz roundtrip com inputs, legacySnapshot e ctx equivalentes
+PASS  S42 — fidelidade de optional fields: ausente permanece ausente (nunca vira null)
+PASS  S43 — enums estritos: status, deployment e coverage inválidos são recusados
+PASS  S44 — coveredCapabilities aceita só IDs canônicos e formato correto
+PASS  S45 — architectureContext valida enums reais (string qualquer é recusada)
+PASS  S46 — signals: só true|'unset'; variantes falsas recusadas
+PASS  S47 — declaredPlatforms validado em profundidade (platform, bundle, subscriptions, null)
+PASS  S48 — target invariant: alvo inferior ao atual confirmado é recusado
+PASS  S49 — atomicidade real: declaredPlatforms:[null] morre na validação, sessão rica intacta
+PASS  S50 — normalização isolada não toca estado; candidato é completo antes do commit
+PASS  S51 — capability inventada não influencia Recommendation Context (recusada antes do recompute)
+PASS  S53 — architecture: roundtrip exaustivo de TODOS os valores que a UI pode produzir
+PASS  S54 — architecture: valores fora do contrato real (inclusive os antes aceitos indevidamente) recusados
+PASS  S55 — FortiSOC: estado canônico do runtime congelado faz roundtrip
+PASS  S56 — platform notes: optional field canônico preservado no roundtrip
+PASS  S57 — self-import property: todo fixture canônico exportado é aceito pelo mesmo build
+PASS  S58 — reachable shape: solution sem vendor E sem product é recusada
+PASS  S59 — presence × solutions: NONE/UNSET/UNKNOWN com soluções são estados impossíveis
+PASS  S60 — presence × declaredDriver: UNSET com driver é recusado (invariante do editor)
+PASS  S61 — target: igual ao current confirmado é recusado; superior é aceito; NA mantém semântica
+PASS  S62+S68 — rollback após ESCRITA PARCIAL: falha depois de owners já receberem valores do candidato
+PASS  S63 — nenhum render intermediário: commit não chama uxNewSession nem render
+PASS  S64 — evidence claim parity: archive contém artefato para cada SE declarado
+PASS  S65 — platform × bundle: compatibilidade derivada de BUNDLES[b].appliesTo (matriz table-driven)
+PASS  S66+S72 — self-containment: o mesmo documento sobre sessões anteriores diferentes produz estado idêntico
+PASS  S67 — architectureContext parcial ou ausente é recusado antes do commit
+PASS  S69 — snapshot/restore cobre todos os owners escritos pelo commit
+PASS  S70 — declaredPlatforms[].notes: tipo estrito e fidelidade opcional
+PASS  S71 — declaredDriver: shape estrito ({}/{note:null}/{note:{}}/extra recusados)
+PASS  S73 — self-import expandido: FortiGate com bundle, FortiSOC sem bundle e com notes, arquitetura completa, driver
+PASS  S74+S75 — evidence archive: artefatos SE1–SE5 existem, não vazios, e SE4 tem screenshot do modal aberto
+PASS  S76 — declaredDriver é propriedade obrigatória (missing ≠ null)
+PASS  S77 — documento sem declaredDriver não toca a sessão ativa (reject antes do commit)
+PASS  S78 — toda capability exportada inclui a propriedade declaredDriver
+PASS  S79 — exemplo inline do schema é um documento completo e válido
+PASS  S80 — documentação: invariante de target é 'estritamente superior' e aponta para S61
+PASS  S81 — documentação: escopo de atomicidade corresponde à implementação (recompute fora da transação)
+PASS  S82 — tabela de contratos do schema é estruturalmente consistente
+PASS  S83 — keys de capabilities derivam de TECH_LANDSCAPE; todos os IDs reais do owner são aceitos
+PASS  S84+S89 — IDs fora do owner recusados como entry de Landscape; sessão ativa intacta
+PASS  S85 — coveredCapabilities preserva o domínio CAPABILITIES (separação de domínio provada)
+PASS  S86 — assessment.answers exige objeto de mapa (array e primitivos recusados)
+PASS  S87 — assessment.notes exige objeto de mapa; {} e sparse permanecem válidos
+PASS  S88 — auditoria de containers de mapa: nenhum aceita array por acidente
+PASS  S90 — coveredCapabilities só existe em solution third-party de soc-platform
+PASS  S91 — coveredCapabilities exclui soc-platform (plataforma não cobre a si própria) e IDs inexistentes
+PASS  S92 — coveredCapabilities: array não vazio e sem duplicatas (checkboxes não produzem [] nem repetição)
+PASS  S93 — supressão derivada de plataforma de terceiro ocorre na posição semanticamente correta
+PASS  S94 — assessment.answers é owner COMPLETO: question ID ausente é recusado (missing ≠ null)
+PASS  S95 — technologyLandscape.capabilities é owner COMPLETO: capability ausente é recusada
+PASS  S96 — declaredPlatforms é propriedade obrigatória (ausente ≠ [])
+PASS  S97 — signals é owner COMPLETO: sinal ausente é recusado (missing ≠ 'unset')
+PASS  S98 — operationalRefinement.answers é owner COMPLETO: tema ausente é recusado
+PASS  S99 — owners realmente SPARSE continuam sparse (notes ausente, overrides {})
+PASS  S100 — paridade de strings com readDraftFromDom(): vendor/product/coverage/notes
+PASS  S101 — status: ausente ≠ vazio — '' sai do domínio do import
+PASS  S102 — declaredDriver.note: paridade de trim com drv.value.trim()
+PASS  S103 — regressão do falso positivo: a posição usada pelos antigos S41/S85 agora é recusada
+PASS  S104 — self-containment de owner completo: a normalization não fabrica default para ausência
+PASS  S105 — limite de 10.000 conta ESCALARES Unicode, não code units UTF-16
+PASS  S106 — preflight de export: estado de UI acima do limite não emite arquivo reimportável
+PASS  S107 — preflight de export: 1 MiB medido nos BYTES UTF-8 exatos da serialização emitida
+PASS  S108 — hardening genérico de strings importadas (raiz e blocos aninhados)
+PASS  S109 — coerência de versão entre package, build, exemplos publicados e documentos
+PASS  S110 — exemplo inline do schema é o arquivo publicado e a proveniência declarada é a real
+PASS  S111 — disposição de unicidade: platform e subscriptions duplicadas não são estado canônico
+PASS  S113 — evidence archive 4.8.0.7: artefatos SE6/SE7/SE8 existem, não vazios e cobrem os dois breakpoints
+PASS  S112 — propriedade forte de self-import: todo export emitido é reimportável pelo mesmo build
+P52 ctx observer: Cannot read properties of undefined (reading 'getElementById')
+P52 ctx observer: Cannot read properties of undefined (reading 'getElementById')
+P52 ctx observer: Cannot read properties of undefined (reading 'getElementById')
+P52 ctx observer: Cannot read properties of undefined (reading 'getElementById')
+P52 ctx observer: Cannot read properties of undefined (reading 'getElementById')
+P52 ctx observer: Cannot read properties of undefined (reading 'getElementById')
+P52 ctx observer: Cannot read properties of undefined (reading 'getElementById')
+P52 ctx observer: Cannot read properties of undefined (reading 'getElementById')
+P52 ctx observer: Cannot read properties of undefined (reading 'getElementById')
+P52 ctx observer: Cannot read properties of undefined (reading 'getElementById')
+P52 ctx observer: Cannot read properties of undefined (reading 'getElementById')
+P52 ctx observer: Cannot read properties of undefined (reading 'getElementById')
+Not implemented: navigation to another Document
+Not implemented: navigation to another Document
+Not implemented: navigation to another Document
+Not implemented: navigation to another Document
+PASS  S52 — object URL: createObjectURL=1 e revokeObjectURL=1 realmente observados
+
+SESSION 4.8: 97 PASS · 0 FAIL de 97
+
+> quickscan-secops-v32-dev@3.4.0-dev.4.8.0.7 test:unset
+> node tests_unset_ug.js
+
+PASS  UG1 — radar de tela: vértice do domínio UNSET é OMITIDO (não plotado em zero)
+PASS  UG2 — radar de tela: eixo UNSET pontilhado + marcador vazado, sem usar o encoding do alvo
+PASS  UG3 — régua de domínio: UNSET não gera .fill; gera .ruler.unset com marcador e nome acessível
+PASS  UG4 — radar do PDF sob gate fechado: nenhum vértice de score é fabricado; com o gate aberto o radar mantém 5 <text> (invariante P22 C)
+PASS  UG5 — overlay de alvo (tela): sob gate canônico fechado nenhum polígono do alvo é criado; com gate aberto existe com 5 vértices e encoding tracejado verde exclusivo
+PASS  UG6 — radar de alvo (PDF): sob gate fechado nenhum perfil publica score por domínio — INCLUSIVE com o vetor-alvo suficiente (caso B); com gate aberto a comparação volta completa
+PASS  UG7 — zero confirmado (nível 0 em todas as práticas) continua plotado: 5 vértices, score 0.0
+PASS  UG8 — sessão SUFICIENTE com 5 práticas UNSET: 5 vértices, nenhum score diluído por zero
+PASS  UG9 — rótulo canônico 'n/d' preservado byte a byte em tela, régua e PDF; sob gate fechado o papel não publica score por domínio
+PASS  UG10 — EQUIVALÊNCIA: sem UNSET, a geometria é byte-idêntica à fórmula legada
+PASS  UG11 — assessment em branco: nenhum vértice, 5 marcadores, nota textual, zero erro de console
+PASS  UG12 — nota textual nomeia exatamente os domínios não avaliados (sem depender de cor)
+PASS  UG13 — layout: nota de UNSET não sobrepõe rótulos do radar (bbox disjuntos, Chromium); sem UNSET, nota ausente
+
+UNSET GEOMETRY (UG): 13 PASS · 0 FAIL de 13
+
+> quickscan-secops-v32-dev@3.4.0-dev.4.8.0.7 test:p50
+> node tests_p50_core.js
+
+PASS  P50-GOV1 — nenhuma superfície protegida da §29.4 foi alterada (identidade byte-a-byte)
+PASS  P50-GOV2 — spec normativa, registro de promoção e CLAUDE.md referenciam o mesmo SHA-256
+PASS  P50-GOV3 — toda âncora simbólica usada por gate novo tem entrada VERIFICADA no mapa de reancoragem
+PASS  P50-UX1 — cards mapeiam 1:1 os valores canônicos; nada criado, removido ou reordenado
+PASS  P50-UX2 — seleção por teclado na superfície nova = mesmo estado canônico do clique, pelo setter congelado
+PASS  P50-UX6 — navegação da superfície nova é presentation-only (respostas, notas e prioridades intactas)
+PASS  P50-UX9 — presentation state isolation: colapso da sidebar e foco não alteram inputs canônicos
+PASS  P50-UX10 — três estados de resposta com DOM, rótulo visível e nome acessível distintos
+P50 decor: falha isolada proposital
+P50 decor: falha isolada proposital
+P50 decor: falha isolada proposital
+P50 shell: P50 shell failure (test hook)
+PASS  P50-UX13 — composição de __uxDecor e do wrapper de render: captura única, predecessor preservado, ordem, idempotência, reentrância, isolamento
+PASS  P50-SUF0 — nenhum renderer é dono de lógica de suficiência; limiar declarado uma única vez
+PASS  P50-DUP1 — nenhum módulo da Camada 5 contém bloco integralmente duplicado
+PASS  P50-SUF1 — estado insuficiente não expõe overall, estágio nem executive card na superfície nova
+PASS  P50-SUF2 — domínio sem resposta confirmada exibe n/d + 'Não avaliado', nunca 0.0
+PASS  P50-SUF3 — mensagem do gate provém campo a campo do contrato derivado
+PASS  P50-SUF4 — transição real insuficiente → suficiente desbloqueia sem conteúdo stale
+PASS  P50-SUF5 — transição real suficiente → insuficiente rebloqueia e limpa o executivo
+      P50-SUF6 · new print/PDF assertion: BLOCKED by normative boundary; not counted as PASS
+PASS  P50-SUF6 — UNSET, NA e NONE distintos em tela, texto e nome acessível na superfície nova
+PASS  P50-SUF7 — gate exaustivo do contrato derivado — 1024 vetores, campo a campo
+PASS  P50-SUF8 — equivalência tripla sobre o MESMO estado — 1024 vetores, sem leak
+PASS  P50-SESUX1A — lint: nenhum claim de persistência/autosave nos módulos novos nem na superfície nova
+PASS  P50-UX3 — cue corresponde à descrição canônica da opção selecionada; sem cue stale nem cue sem resposta
+PASS  P50-UX4 — evidência binda somente ao owner canônico notes[k] e sobrevive ao roundtrip
+PASS  P50-UX5 — todo chip tem provenance no runtime; nenhum chip fabricado
+PASS  P50-UX12 — renderização inerte de texto livre adversarial na superfície nova
+PASS  P50-SESUX2 — wording de export aparece somente após export bem-sucedido
+PASS  P50-SESUX3 — wording de import não implica persistência automática
+P50 session status: observador quebrado
+PASS  P50-SESUX4 — session roundtrip permanece canônico com a superfície nova ativa
+PASS  P50-SESUX5 — estado efêmero de UX nunca entra no documento exportado e é recusado no import
+PASS  P50-COR1 — lint de fonte única: zero hex de cor de domínio nos módulos novos
+PASS  P50-COR2 — cor do domínio na dimensão de dados; acento de marca ausente dos dados
+PASS  P50-UX11 — UNSET × NONE no eixo de presence: DOM, rótulo visível e nome acessível distintos
+PASS  P50-COR3 — UNSET nas superfícies novas: cor do próprio domínio esmaecida + pista não cromática
+PASS  P50-IC3 — fonte única de ícones: nenhum mapa/asset paralelo nos módulos novos
+PASS  P50-COR4 — regressão de autoridade: V4+V5 e superfícies congeladas de cor intactas
+PASS  P50-IC4 — regressão de ícones: ICONS 4.6 integral e superfícies congeladas intactas
+PASS  ACEITE-R2-5.0.5 — contagem e limiar de suficiência são grandezas declaradas separadamente
+PASS  ACEITE-R4-5.0.5 — nome acessível de presence sem redundância, com UNSET × NONE preservados
+PASS  ACEITE-UI048-5.0.5 — orientação sobre dado sensível junto ao campo de evidência
+PASS  P51-UX1 — uma única ação de evidência visível e focável, com um só nome acessível
+PASS  P51-UX2 — ajuda contextual específica por pergunta, indexada pelo qid canônico
+PASS  P51-UX3 — pergunta de mandato em linguagem de negócios, sem alterar o canônico
+PASS  P51-JN1 — jornada com seis nós numerados 0–5, nome e estados distinguíveis
+PASS  P51-RPT3 — régua de estágio derivada de stageOf(), incluindo bordas
+PASS  P51-RPT1 — capa executiva com título, subtítulo, disclaimer, emblema e metadados
+PASS  P51-RPT2 — metadados de sessão honestos e distintos da data de geração
+PASS  P51-RPT4 — legenda dos domínios na ordem de DOMS e nas cores de PR_DOM_HEX
+PASS  P51-RPT5 — emblema e faixa: SVG determinístico, neutro e acessível
+PASS  P51-RPT6 — estágio coerente entre KPI, régua, jornada, leitura executiva e tela nas fronteiras
+PASS  P51-REC1 — recomendações acionáveis junto do gap, sem overclaim nem duplicação
+PASS  P51-COR5 — tags de domínio das superfícies novas usam o mapa canônico
+PASS  P51-VIS3 — gap Current × Target com sinal correto em célula, rótulo acessível, tabela e domínio
+PASS  P51-DOC1 — manual e landing page existem e se referenciam
+PASS  P51-DOC2 — manual afirma explicitamente que contexto tecnológico não muda o score
+PASS  P51-DOC3 — tabela de influência do contexto está completa e coerente
+PASS  P51-DOC4 — manual distingue n/d de zero confirmado
+PASS  P51-DOC5 — manual distingue data da sessão da data de geração do relatório
+PASS  P51-DOC6 — manual explica o cenário-alvo sem prometer resultado
+PASS  P51-DOC7 — glossário define direcionamento formal em linguagem de negócios
+PASS  P51-DOC8 — limitações das recomendações Fortinet estão explícitas e sem overclaim
+PASS  P51-DOC9 — manual traz checklist pré-entrega acionável
+PASS  P51-DOC10 — manual e README não inventam pricing, SKU ou licenciamento
+PASS  P51-DOC11 — manual coincide LITERALMENTE com os rótulos finais da UI
+PASS  P51-DOC12 — caixa 'Como interpretar este relatório' no PDF, curta e antes do resumo
+PASS  P51-DOC13 — manual descreve o score geral e a ordem do relatório como o produto os produz
+
+P50 CORE + P51 (microfases 5.0.1..5.0.5 + Phase 5.1): 64 PASS · 0 FAIL de 64
+Not implemented: navigation to another Document
+Not implemented: navigation to another Document
+Not implemented: navigation to another Document
+
+> quickscan-secops-v32-dev@3.4.0-dev.4.8.0.7 test:p50vis
+> node tests_p50_chromium.js
+
+EVIDÊNCIA SUPRIMIDA (execução sob mutação): nenhum arquivo será gravado
+PASS  P50-ACC6 — estado programático da seleção coerente com o estado canônico
+PASS  P50-SESUX1B — status de sessão renderizado corresponde ao estado real (matriz normativa completa + pós-export)
+PASS  ACEITE-UX-5.0.1 (verificação de aceite, NÃO é gate P50-VIS) — mapa recolhido por padrão; pergunta e 1º card dentro da primeira dobra
+PASS  ACEITE-UX-5.0.3 (verificação de aceite, NÃO é gate P50-VIS/P50-ACC) — gate de suficiência, déficits, n/d e layout da superfície nova
+PASS  P50-PR1 — Legacy print surface preserved under insufficient gate (guard estreito; NÃO encerra P50-VIS10)
+PASS  P50-VIS7 — labels dos charts novos disjuntos, contidos e não clipados
+PASS  P50-VIS8 — encoding de UNSET e dos três estados nas superfícies novas
+PASS  P50-VIS9 — Current × Target somente pelo alvo canônico; current inalterado
+PASS  P50-ACC5 — alternativa acessível com os mesmos dados do heat map
+PASS  P50-VIS1 — layout utilizável em 1920×1080 (desktop wide): zero overflow horizontal, controles essenciais alcançáveis, nenhum texto funcional clipado
+PASS  P50-VIS2 — layout utilizável em 1440×900 (desktop/laptop): zero overflow horizontal, controles essenciais alcançáveis, nenhum texto funcional clipado
+PASS  P50-VIS3 — layout utilizável em 1366×768 (laptop): zero overflow horizontal, controles essenciais alcançáveis, nenhum texto funcional clipado
+PASS  P50-VIS4 — layout utilizável em 390×844 (narrow/mobile-width): zero overflow horizontal, controles essenciais alcançáveis, nenhum texto funcional clipado
+PASS  P50-VIS5 — foco visível e contrastado (>= 3:1) em todo o fluxo crítico, só por teclado
+PASS  P50-VIS6 — zoom de página 200% em 1366×768: zero overflow horizontal, zero clipping do fluxo crítico
+PASS  P50-ACC1 — axe-core 4.13.0 · zero violações critical/serious nos containers da Camada 5 (3 fixtures × 4 viewports)
+PASS  P50-ACC2 — fluxo canônico completo só por teclado, estado idêntico ao do mouse
+PASS  P50-ACC3 — ordem de foco coerente com a ordem visual/semântica; sem armadilha; tablist conforme ARIA
+PASS  P50-ACC4 — contraste (106 combinações) e target size (11 controles) dos componentes novos
+PASS  P50-IC1 — renderer de superfície nova devolve img.v32-icon com src idêntico ao asset congelado
+PASS  P50-IC2 — família e fortisat devolvem .v32-icon-fb; nenhum ícone de produto emprestado
+PASS  ACEITE-R1-5.0.5 (verificação de aceite, NÃO é gate P50) — zero confirmado tem marcador de origem; sem base atual não tem
+PASS  ACEITE-LOCALIDADE-LATENCIA-5.0.5 (verificação de aceite, NÃO é gate P50) — zero requisição externa/persistência de navegador; latências observadas registradas
+PASS  P51-VIS1 — composição: duas colunas reais em desktop, uma em telas estreitas, sem overflow
+PASS  P51-VIS2 — select do cenário-alvo legível: cor, fundo e color-scheme explícitos em select e options
+PASS  P51-PDF1 — PDF real em A4: capa, metadados, régua, legenda, emblema, anexo e ausência de controles
+PASS  P50-VIS10 — regressão de print INTEGRAL reexecutada nesta rodada (UI 3.3.2/P1–P11 · print.spec · UG4/UG6/UG9 · P50-PR1); nenhuma semântica nova de print
+
+P50 CHROMIUM + P51 (microfases 5.0.1..5.0.5 + Phase 5.1): 27 PASS · 0 FAIL de 27
+
+> quickscan-secops-v32-dev@3.4.0-dev.4.8.0.7 test:p52
+> node tests_p52_layout.js
+
+PASS  P52-GOV1 — os módulos novos da Phase 5.2 existem, estão injetados no HTML e são os únicos owners de layout
+PASS  P52-GOV2 — engine e payload M41 permanecem byte-idênticos ao baseline congelado
+PASS  P52-LAY3 — a tela de resultados é um workspace de seções na ordem canônica de leitura
+PASS  P52-LAY4 — reorganizar não perde nem duplica superfície: todo nó legado da tela sobrevive exatamente uma vez
+PASS  P52-LAY5 — o workspace é idempotente: renders sucessivos não acumulam invólucro nem perdem conteúdo
+PASS  P52-RES4 — a caixa “Próximo passo sugerido” não existe mais na tela interativa, e nada foi posto no lugar
+PASS  P52-TGT1 — cenário-alvo vem antes do contexto tecnológico, com explicação estável e sem tocar no current
+PASS  P52-TGT3 — o trilho anuncia o cenário-alvo como informação derivada, sem oferecer edição
+PASS  P52-CTX1 — contexto tecnológico é um card de ação opcional, com título, badge e limite declarado
+PASS  P52-CTX2 — editor separa capabilities de ambiente/condicionantes em duas regiões de primeiro nível
+PASS  P52-CTX3 — estado do grupo por caret, aria-expanded e forma — sem o pill textual ABERTO/FECHADO
+PASS  P52-HELP1 — cada capability com verbete tem controle de ajuda acessível, associado e fechável
+PASS  P52-DOM1 — toda tag de domínio carrega o índice canônico e mantém o nome escrito
+PASS  P52-GAP1 — gaps altos e moderados vivem em grupos estruturais distintos, com contador e heading próprios
+PASS  P52-REC1 — as formas de apoio continuam íntegras, separadas por função e dentro da própria seção
+PASS  P52-Q1 — a evidência continua tendo um único controle, com rótulo canônico e estado publicado
+PASS  P52-NAV0 — cada item do trilho aponta para uma seção real da mesma página, com identidade estável
+PASS  P52-GATE1 — com o gate fechado a ordem não simula liberação e a suficiência ganha destaque declarado
+PASS  P52-HOME1 — home é um hero 7+5 com o emblema estático dos cinco domínios
+PASS  P52-SUFF1 — suficiência muda de hierarquia conforme o público, sem esconder insuficiência
+PASS  P52-DOM2 — resumo traz cinco barras canônicas, com UNSET, NA e zero confirmado corretos
+PASS  P52-MAP1 — trilho da pergunta sem navegação duplicada e mapa recolhível
+PASS  P52-Q2 — faixa de utilidades da pergunta: evidência à esquerda, sessão à direita, navegação em botões
+PASS  P52-HOME2 — emblema dos cinco domínios com explicação acessível por nó
+PASS  P52-HOME3 — a natureza indicativa do Quickscan é dita uma única vez, no rodapé
+PASS  P52-FOOT1 — crédito pessoal em estilo marca d'água, sem competir com a atribuição
+PASS  P52-CTX4 — o editor abre com os seis grupos recolhidos e distingue o estado de cada um sem pill
+PASS  P52-CTX5 — dentro da capability: situação, tecnologias e só então o contexto complementar
+PASS  P52-HELP2 — glossário acessível também em arquitetura, plataformas, requisitos e IA
+PASS  P52-AI1 — aplicações de IA e agentes autônomos são rótulos distinguíveis
+PASS  P52-COPY1 — sem 'mandato' e sem 'charter' na tela e no relatório do cliente
+PASS  P52-EVID1 — 'O que registrar' vem antes do campo e o exemplo é placeholder, sem duplicação
+PASS  P52-SUP2 — toda oferta e serviço com URL canônica mostra o link oficial
+PASS  P52-DOC1 — o manual explica navegação, alvo, contexto opcional, suficiência, gaps e limites — sem prometer resultado
+PASS  P52-DOC2 — o manual instrui as preferências de impressão e declara a jornada como bloco atômico
+PASS  V322-HELP3 — zero ajuda (i) em 'Situação declarada' e zero ajuda por item na seção de plataformas e licenciamento
+PASS  V322-HELP4 — ajuda conceitual preservada: capability, campos de arquitetura, famílias, subgrupos e sinais
+PASS  V322-HELP5 — zero aria-describedby quebrado, zero popover órfão, zero ID duplicado e contrato idêntico em todo controle de ajuda
+PASS  V322-ACC4 — os seis grupos principais nascem recolhidos nas duas entradas do editor, com estado coerente e sem pill
+PASS  V322-ACC5 — abertura manual persiste no repaint do editor e uma nova edição reinicia com tudo recolhido
+PASS  V322-MOT1 — a marcação de transição só aparece na navegação real entre perguntas — nunca ao trocar de resposta, nem na home, resultados ou editor
+PASS  V322-MOT2 — a animação legada de tela é neutralizada, a transição nova é curta e presa à marcação, e prefers-reduced-motion zera todo movimento
+PASS  V322-DOC3 — README: imagem de abertura real e válida, distinção inequívoca entre produção v3.2.1 e candidata v3.2.2, e disciplina de verificação do pacote externo
+PASS  V322-DOC4 — o manual acompanha a errata: seis grupos recolhidos, nova edição recomeça recolhida e a hierarquia de ajudas (i)
+PASS  V322C-ID1 — as duas entradas do editor têm IDs únicos no documento e uma única região de erro, junto das ações Salvar/Cancelar
+
+P52 LAYOUT (Phase 5.2): 45 PASS · 0 FAIL de 45
+
+> quickscan-secops-v32-dev@3.4.0-dev.4.8.0.7 test:p52vis
+> node tests_p52_chromium.js
+
+PASS  P52-LAY1 — largura útil acompanha a viewport em todas as viewports obrigatórias, sem overflow
+PASS  P52-LAY2 — tela de pergunta em duas colunas reais e rodapé ocupando a largura útil inferior
+PASS  P52-LAY3 — workspace de resultados: grade, trilho e ordem visual idênticos à ordem canônica
+PASS  P52-GATE1v — gate fechado: suficiência no primeiro viewport, com acento próprio e ordem declarada
+PASS  P52-HOME1 — home em hero 7+5, com emblema dos cinco domínios e ações secundárias abaixo
+PASS  P52-REF1 — os dois CTAs do refinamento com geometria equivalente e hierarquia só de preenchimento
+PASS  P52-EXEC1 — score como âncora visual, radar na geometria congelada e escala tipográfica mínima
+PASS  P52-EXEC2 — jornada em faixa de 12 colunas e, abaixo, 'Para avançar' × 'Leitura executiva' em 6+6
+PASS  P52-HELP1 — ajuda por capability funciona a mouse, teclado, clique e Esc, com um popover por vez
+PASS  P52-ICON2 — catálogo exibido com altura aparente normalizada e nenhum artwork encostando na borda
+PASS  P52-PR2 — popovers, trilho, editores e cromo da REV A não alcançam o papel
+PASS  P52-DOM3 — painel de domínios e heat map ocupam a largura útil da seção
+PASS  P52-SUP3 — apoio nas prioridades e apoio contextual usam o mesmo sistema visual, distinguidos por badge
+PASS  P52-PDF1 — página 1 com abertura, orientação, resumo e régua; prioridades abrindo a página 2
+PASS  P52-PDF2 — abertura única, faixa de domínios distribuída e régua com 'Você está aqui'
+PASS  P52-PDF3 — ícones de solução materialmente visíveis no PDF, sem distorção
+PASS  P52-PDF7 — nenhum score por domínio é publicado — em tabela, radar ou papel — com o gate canônico de suficiência fechado
+PASS  P52-PDF8 — nas duas condições de contexto o PDF é o relatório estruturado, e a superfície de aplicação não chega ao papel
+PASS  P52-PDF9 — tela e papel publicam a mesma decisão de score por domínio e o mesmo agregado, nos quatro quadrantes
+PASS  P52-PDF4 — jornada de maturidade atômica e horizontal no PDF real: título, seis estágios, marcadores e nota na mesma página
+PASS  P52-PDF5 — paginação sadia no PDF real: sem título órfão, sem página intermediária vazia e nada fora da área imprimível
+PASS  P52-PDF6 — toda página do PDF real tem conteúdo material — nenhuma página residual, inclusive a última
+PASS  P52-NAV1 — trilho lateral navegável por teclado, com item ativo por forma/borda/peso/texto e sem mutar o assessment
+PASS  P52-ICON1 — peso óptico dos tiles normalizado por medida de PIXEL, com o FortiGuard dentro da tolerância
+PASS  P52-DOM1c — tags de domínio pintadas com a cor congelada do domínio, com texto contrastado e nome escrito
+PASS  P52-GAP1v — gaps altos e moderados separados também em geometria, e distinguíveis em escala de cinza
+PASS  P52-REC1g — formas de apoio em grade responsiva, com títulos de função em faixa própria
+PASS  P52-CTX1v — card de contexto opcional proeminente e grupo ativo do editor distinguível por forma, peso e texto
+PASS  P52-PR1 — print isolado: workspace fora do papel, nenhuma seção perdida, fatos do anexo intactos e proibições da REV B respeitadas
+PASS  P52-ACC1 — zero critical/serious de axe nas superfícies novas e zero NOVO problema de contraste na tela
+PASS  P52-ACC2 — zoom de 200% em 1440x900 sem clipping, sem controle fora da viewport e sem rolagem horizontal
+PASS  P52-UW1 — home ganha escala e largura na faixa ultrawide, sem tocar 1920 e sem esticar a linha de leitura
+PASS  P52-UW2 — questionário ganha escala na faixa ultrawide mantendo mapa, pergunta, opções, evidência e navegação visíveis
+PASS  P52-UW3 — mobile e zoom de 200% não são degradados pela faixa ultrawide
+PASS  P52-POP1 — os cinco popovers de domínio são o mesmo componente, na mesma geometria, sem recorte e sem cobrir nó algum
+PASS  P52-POP2 — os cinco domínios respondem igual a ponteiro, teclado, clique, toque e Esc, com um popover aberto por vez
+PASS  P52-ACC3 — todo texto de marca renderizado atinge 4,5:1 (3:1 para texto grande) sobre o fundo opaco efetivo
+PASS  P52-HELP2 — ajuda (i) presente em toda capability, campo de arquitetura, família, subgrupo e requisito — e AUSENTE em situação declarada, plataforma, bundles, subscriptions e legendas, com uma única ajuda no cabeçalho de plataformas e contrato idêntico em todos os controles
+PASS  P52-SIG1 — requisitos específicos numa grade única: colunas coerentes, gaps iguais, cards alinhados pelo topo e uma coluna em viewport estreito
+PASS  P52-ADV1 — 'Para avançar' com tipografia de achado, entrelinha confortável e marcador gráfico determinístico, sem virar card
+PASS  P52-TGT3 — o painel do cenário-alvo ocupa a área de conteúdo nos dois estados, com legibilidade preservada
+PASS  P52-TGT4 — Perfil atual × Cenário-alvo é indivisível: sob gate canônico fechado nenhuma metade publica score, estágio, valor por domínio, delta, seta, polígono ou tinta — em tela, acessibilidade, papel e PDF — e sob gate aberto a comparação volta completa e correta
+PASS  P52-ICON3 — ocupação óptica uniforme do ícone V3.2 e ícones materialmente pintados em 'Pode fazer sentido' e 'Não priorizados'
+PASS  V322-CTXPAR1 — o editor de contexto tecnológico é o MESMO compositor nas duas entradas: duas regiões de primeiro nível, seis grupos na mesma ordem, mesmas ajudas (i), os SEIS grupos recolhidos na primeira abertura e também ao reabrir, valores preservados no rerender e a decisão de abrir/fechar do usuário respeitada nos dois sentidos
+PASS  V322-FOOT1 — o rodapé da home usa a largura útil abaixo do divisor: bloco legal ocupa a faixa disponível sem max-width estreito, autoria à direita alinhada pela base e tipograficamente secundária, empilhamento estável em mobile/tablet, zero overflow e zero sobreposição em 390/768/1440/1920/2560/3440
+PASS  V322-PRINT1 — com contexto tecnológico não salvo o print é bloqueado e a pendência aparece NO PONTO DE AÇÃO: mensagem exata logo abaixo do grupo do botão de PDF com role=alert e aria-describedby, indicador nomeado no item Contexto tecnológico do trilho, mensagem junto a Salvar/Cancelar, atalho que leva ao editor sem descartar o draft, uma única mensagem por local em cliques repetidos e limpeza integral após Salvar e após Cancelar
+PASS  V322-NOREG1 — o patch não move estado: o ciclo pendência → bloqueio de print → Cancelar deixa fullStateJSON, legacySnapshot, contexto e o HTML do relatório byte-idênticos, e nenhum nó de pendência chega ao papel
+PASS  V322-NI1 — o controle de ajuda (i) das famílias e dos subgrupos vive FORA do <summary>: zero nested-interactive e zero violação critical/serious do axe nas duas entradas do editor, com e sem o grupo de requisitos aberto, mantendo os dez controles presentes, associados e visíveis com o grupo recolhido
+PASS  V322-MOT3 — trocar de resposta na mesma pergunta não produz animação, queda de opacidade, translação nem mudança de scroll; avançar e voltar entre perguntas recebem apenas a transição horizontal curta (120–180ms); prefers-reduced-motion zera todo movimento e nada disso move o estado canônico
+PASS  V322C-KEY1 — Enter tem a semântica que a interface anuncia em toda tela: o alvo que trata a própria ativação nunca é sequestrado pelo handler global, o atalho de início só existe na home real, e Enter ≡ clique por estado canônico
+PASS  V322C-FOC1 — o foco sobrevive a toda repintura do editor de contexto (situação declarada, adicionar/remover tecnologia, trocar bundle), com posição de rolagem preservada, sem loop de observador e sem restaurar foco em tela já fechada
+PASS  V322C-PRN1 — nenhum draft órfão sobrevive a Salvar/Cancelar por teclado e o relatório/PDF continua acessível; o bloqueio legítimo permanece correto, visível e com caminho de recuperação
+PASS  V322C-RFL1 — o editor de contexto não perde conteúdo em 320/360/384/390/430px: nenhuma caixa ultrapassa a largura do documento sem rolagem alcançável
+PASS  V322C-CON1 — os dois controles apontados pelo parecer atingem a razão de contraste exigida, recalculada pela fórmula do WCAG sobre as cores resolvidas
+PASS  P52-ERR0 — nenhum erro de página ou console durante a bateria
+
+P52 CHROMIUM (Phase 5.2): 55 PASS · 0 FAIL de 55
+
+> quickscan-secops-v32-dev@3.4.0-dev.4.8.0.7 test:m41
+> node harness_m41_v313.js quickscan_secops_soccmm_v3_2_dev.html --compare v3_1_3_functional_snapshot.json --out /dev/null
+
+PASS  H0: validateConfig sem erros
+PASS  HL: TODOS os cenários executam a rota legacy (item 6)
+PASS  H1: S1 suficiente, overall 3.3
+PASS  H2: S1 sem findings; t3 povoado
+PASS  H3: S2 só sev2; Tier 1 povoado
+PASS  H4: S4 sem overall/estágio
+PASS  H5: NA→validar; NA não alimenta Tier 2
+PASS  H6: t3 exclui produto com NA relacionado (FortiEndpoint)
+PASS  H6b: automation=NA ⇒ FortiSOAR e FortiXDR fora do t3 (item 4)
+PASS  H7: 3 prioridades preservadas
+PASS  H8: marcador de prioridade (sev1) no Tier 2
+PASS  H8b: marcador restrito a sev1
+PASS  H9: S6 sem Tier 1
+PASS  H10: S7 = 5.0 Optimizing
+PASS  H11: S8 confirmed === 10 (exato)
+PASS  H12: S8 todos os domínios com n >= 2
+PASS  H12b: S8 sufficiency === true (limite exato da regra)
+PASS  H12c: S8 com exatamente 5 NA
+PASS  H13: S9 confirmed=0, toValidate=15
+PASS  H14: S9 sem suficiência/overall/estágio
+PASS  H15: S9 sem findings; 15 em validar
+PASS  H16: S9 t1/t2/t3 vazios
+
+COMPARAÇÃO: PASS — payload funcional idêntico ao baseline (v3_1_3_functional_snapshot.json)
+
+SANIDADE: OK · snapshot: /dev/null · cenários: 9
+SHA-256 (payload funcional canonicalizado): 9794b267e4225d8fa14f0f0d84aed0e2979658bfa2565b459788ef3b3ed4365b
+TESTALL_EXIT=0

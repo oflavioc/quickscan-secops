@@ -25,8 +25,31 @@ const HTML_FILE = path.join(HERE, "quickscan_secops_soccmm_v3_2_dev.html");
 const HTML_URL = "file://" + HTML_FILE;
 const EVID = path.join(HERE, "docs_phase5", "evidence_p52");
 
-/* Baseline de ENTRADA da Phase 5.2 (§1 da diretriz), lido do git. */
+/* ==========================================================================
+   BASELINE DE ENTRADA DA PHASE 5.2 — OBJETO GIT IMUTÁVEL.
+
+   A resolução anterior lia `HEAD:<caminho>`. `HEAD` é MÓVEL: assim que a
+   v3.2.1 foi publicada e o merge avançou o branch, `HEAD` passou a carregar o
+   HTML da release (`fb906462…`) e não mais o da entrada da Phase 5.2
+   (`12bb950f…`). O resultado é que `P52-PR1` e `P52-ACC1` deixavam de
+   comparar o que quer que fosse e reprovavam por "baseline indisponível" —
+   inclusive na release publicada, num worktree limpo da própria tag.
+
+   O baseline normativo NÃO é o `HEAD` corrente nem o HTML da v3.2.1: é o
+   objeto imutável abaixo, endereçado pelo commit COMPLETO. A identidade é
+   verificada ANTES do uso, por SHA-256 e por tamanho, e a resolução falha
+   FECHADA — nunca degrada para aviso, SKIP ou baseline alternativo.
+   Nada aqui consulta rede, branch, tag móvel, working tree ou `HEAD`.
+   ========================================================================== */
+const P52_BASELINE_COMMIT = "d3886812718e7ad9c5024880067133fbddf2fc4d";
+const P52_BASELINE_PATH = "quickscan_secops_soccmm_v3_2_dev.html";
 const P52_BASELINE_SHA = "12bb950f58f203c56cf6621973663be1ac71b4e026d618a910ebb0f3eebbf9d9";
+const P52_BASELINE_BYTES = 744179;
+
+/* axe é carregado uma vez no módulo: `V322-NI1` e `P52-ACC1` usam o MESMO
+   `@axe-core/playwright` 4.13.0 pinado no package.json. */
+let AxeBuilderP52 = null;
+try { AxeBuilderP52 = require("@axe-core/playwright").default; } catch (e) { AxeBuilderP52 = null; }
 
 const results = [];
 const ONLY = (process.env.P52_ONLY || "").split(",").map(x => x.trim()).filter(Boolean);
@@ -699,9 +722,24 @@ async function ctx1v(browser, errs) {
       if (card.ctaH < 44) detail.push("botão de contexto com " + Math.round(card.ctaH) + "px de altura (mínimo 44)");
       if (!card.badgeVisible) detail.push("badge Opcional não visível");
     }
-    /* grupo aberto × fechado, no editor real */
+    /* grupo aberto × fechado, no editor real.
+       MIGRAÇÃO · ERRATA V3.2.2 §4 · a distinção visual entre aberto e fechado
+       é a propriedade deste gate, e ela continua sendo medida exatamente com
+       as mesmas grandezas (borda, fundo, peso, marcador, `aria-expanded`,
+       ausência de pill). O que mudou é a origem do estado "aberto": ele não
+       vem mais de um default do owner, vem do usuário. O gate abre uma família
+       pelo caminho real — clicar no `<summary>` — e só então compara. Isso é
+       mais forte, não mais fraco: agora ele prova que a distinção sobrevive à
+       INTERAÇÃO, e não apenas ao estado de fábrica. */
     await pg.click("#v32cta");
-    await pg.waitForTimeout(200);
+    await pg.waitForTimeout(260);
+    const nascemRecolhidos = await pg.evaluate(() =>
+      Array.from(document.querySelectorAll("#v32editor details.v32-group")).filter(e => e.open)
+        .map(e => e.getAttribute("data-gid")));
+    if (nascemRecolhidos.length)
+      detail.push("grupos abertos na primeira abertura: " + nascemRecolhidos.join(", ") + " (esperado nenhum)");
+    await pg.click('#v32editor details[data-gid="g1"] > summary');
+    await pg.waitForTimeout(320);
     const grp = await pg.evaluate(() => {
       const gs = Array.from(document.querySelectorAll("#v32editor details.v32-group"));
       const g = e => { const cs = getComputedStyle(e), su = getComputedStyle(e.querySelector("summary"));
@@ -960,9 +998,22 @@ async function help1(browser, errs) {
     await toResults(pg, FX52.P52_F1);
     await pg.click("#v32cta");
     await pg.waitForTimeout(250);
+    /* MIGRAÇÃO · ERRATA V3.2.2 §4 · os seis grupos passaram a nascer
+       RECOLHIDOS. A propriedade deste gate — o CONTRATO do controle de ajuda
+       a mouse, teclado, clique e `Esc` — não mudou em nada; o que mudou é que
+       agora é preciso abrir a família para chegar até ele, exatamente como o
+       usuário faz. Abrir aqui não afrouxa asserção alguma: o gate segue
+       exigindo que o controle exista, esteja associado e responda. */
+    await pg.click('#v32editor details[data-gid="g1"] > summary');
+    await pg.waitForTimeout(320);
     const sel = '[data-p52="cap-help"][data-cap="knowledge-management"]';
     const exists = await pg.$(sel);
     if (!exists) { T("P52-HELP1", "ajuda por capability", false, ["controle de ajuda ausente"]); return; }
+    const visivel = await pg.evaluate(s => {
+      const b = document.querySelector(s);
+      return !!(b && b.checkVisibility && b.checkVisibility({ checkVisibilityCSS: true }));
+    }, sel);
+    if (!visivel) detail.push("o controle de ajuda da capability não fica visível com a família aberta");
 
     /* (a) hover do mouse abre */
     await pg.hover(sel);
@@ -1168,17 +1219,42 @@ async function pr2(browser, errs) {
 /* ============================== P52-PR1 ============================== */
 /* Isolamento de print: nada do workspace pode alcançar o papel, e o relatório
    executivo V3.2 precisa continuar materialmente idêntico ao do baseline. */
+/* Fonte ÚNICA do baseline para `P52-PR1` e `P52-ACC1`. Duas resoluções
+   independentes poderiam divergir em silêncio; esta é compartilhada.
+   Diagnóstico acionável em toda falha: sempre nomeia o observado E o esperado.
+   O override existe SÓ para a prova de não vacuidade da §4.3 e é rejeitado
+   pela própria verificação de identidade quando aponta para outro objeto. */
+function p52BaselineRef() {
+  return {
+    commit: process.env.P52_BASELINE_COMMIT_OVERRIDE || P52_BASELINE_COMMIT,
+    pathInCommit: P52_BASELINE_PATH,
+    sha: process.env.P52_BASELINE_SHA_OVERRIDE || P52_BASELINE_SHA,
+    bytes: P52_BASELINE_BYTES
+  };
+}
 function baselineFile() {
+  const ref = p52BaselineRef();
+  const spec = ref.commit + ":" + ref.pathInCommit;
+  let buf;
   try {
     const { execFileSync } = require("child_process");
-    const buf = execFileSync("git", ["show", "HEAD:quickscan_secops_soccmm_v3_2_dev.html"],
-      { cwd: HERE, maxBuffer: 1 << 28 });
-    const got = crypto.createHash("sha256").update(buf).digest("hex");
-    if (got !== P52_BASELINE_SHA) return { ok: false, why: "baseline em HEAD com SHA " + got.slice(0, 16) };
-    const f = path.join(require("os").tmpdir(), "p52-baseline-" + P52_BASELINE_SHA.slice(0, 12) + ".html");
-    fs.writeFileSync(f, buf);
-    return { ok: true, file: f };
+    /* `git cat-file -e` primeiro: separa "commit ausente" de "caminho ausente",
+       para que o diagnóstico diga QUAL das duas coisas falhou. */
+    try { execFileSync("git", ["cat-file", "-e", ref.commit + "^{commit}"], { cwd: HERE, stdio: "pipe" }); }
+    catch (e) { return { ok: false, why: "commit do baseline ausente no repositório: " + ref.commit }; }
+    try { buf = execFileSync("git", ["show", spec], { cwd: HERE, maxBuffer: 1 << 28 }); }
+    catch (e) { return { ok: false, why: "caminho ausente no commit do baseline: " + spec }; }
   } catch (e) { return { ok: false, why: String(e.message).split("\n")[0] }; }
+  if (buf.length !== ref.bytes)
+    return { ok: false, why: "baseline " + spec + " com " + buf.length +
+      " bytes; esperado " + ref.bytes };
+  const got = crypto.createHash("sha256").update(buf).digest("hex");
+  if (got !== ref.sha)
+    return { ok: false, why: "identidade do baseline diverge em " + spec +
+      " — observado " + got + ", esperado " + ref.sha };
+  const f = path.join(require("os").tmpdir(), "p52-baseline-" + ref.sha.slice(0, 12) + ".html");
+  fs.writeFileSync(f, buf);
+  return { ok: true, file: f, sha: got, bytes: buf.length, spec: spec };
 }
 async function printReport(browser, url, fx, errs, tag) {
   const pg = await browser.newPage({ viewport: { width: 1440, height: 900 } });
@@ -3126,24 +3202,62 @@ async function help2(browser, errs) {
         grupos.push({ grupo: "capability", nome: c.id.replace(/^v32-cap-/, ""),
                       ok: !!(head && head.querySelector('[data-p52="cap-help"][data-cap]')) });
       });
-      ed.querySelectorAll('select[id^="v32-pres-"]').forEach(sl =>
-        reg("situação declarada", sl.id, lab(sl)));
       ed.querySelectorAll(".v32-arch label").forEach(l =>
         reg("arquitetura", (l.childNodes[0].textContent || "").trim().slice(0, 40), l));
+      /* FECHAMENTO PRÉ-AUDITORIA v3.2.2 · o controle das famílias e dos
+         subgrupos saiu de dentro do `<summary>` (era `nested-interactive`,
+         impacto `serious`) e passou a viver no wrapper de cabeçalho, como
+         IRMÃO do `<details>`. A propriedade medida continua sendo a mesma —
+         "esta família tem ajuda (i)" —, apenas no host correto.
+         A checagem é por FILHO DIRETO do wrapper: sem isso, um controle de
+         capability lá dentro satisfaria a asserção e ela viraria vácua. */
+      const cabecalho = sm => {
+        const d = sm.closest("details");
+        const h = d && d.parentElement;
+        return (h && h.classList && h.classList.contains("p52-grphead")) ? h : d;
+      };
+      const temCabecalho = h => !!(h && h.querySelector(':scope > [data-p52="cap-help"]'));
       ed.querySelectorAll("details.v32-group > summary").forEach(sm =>
-        reg("família", (sm.textContent || "").trim().slice(0, 40), sm));
+        grupos.push({ grupo: "família", nome: (sm.textContent || "").trim().slice(0, 40),
+                      ok: temCabecalho(cabecalho(sm)) }));
       ed.querySelectorAll("details.v32-siggroup > summary").forEach(sm =>
-        reg("subgrupo de requisitos", (sm.textContent || "").trim().slice(0, 40), sm));
+        grupos.push({ grupo: "subgrupo de requisitos", nome: (sm.textContent || "").trim().slice(0, 40),
+                      ok: temCabecalho(cabecalho(sm)) }));
       ed.querySelectorAll('input[id^="v32-sig-"]').forEach(c =>
         reg("requisito", c.id, lab(c)));
+      /* MIGRAÇÃO · ERRATA V3.2.2 §3.2 — DE COBERTURA PARA CONTRATO.
+         A lista de alvos deste gate passa a ter DOIS lados. O lado de cima
+         (capabilities, arquitetura, famílias, subgrupos, requisitos) continua
+         exigindo ajuda, byte por byte como antes. O lado de baixo passa a
+         exigir a AUSÊNCIA dela onde a errata a declarou redundante — situação
+         declarada, plataforma, bundles, subscriptions e legendas — com a
+         guarda de não vacuidade correspondente: o alvo TEM de existir, senão
+         "sem ajuda" não prova nada. O contrato do componente (caixa, rótulo,
+         tipografia, `aria-describedby`, `role=note`, `Esc`) continua medido em
+         TODOS os controles que restaram, sem afrouxamento algum. */
+      const proibidos = [];
+      const proib = (grupo, nome, host) =>
+        proibidos.push({ grupo: grupo, nome: nome, existe: !!host,
+                         ajuda: !!(host && host.querySelector('[data-p52="cap-help"]')) });
+      ed.querySelectorAll('select[id^="v32-pres-"]').forEach(sl =>
+        proib("situação declarada", sl.id, lab(sl)));
       ed.querySelectorAll('input[id^="v32-sub-"]').forEach(c =>
-        reg("subscription", c.id, lab(c)));
+        proib("subscription", c.id, lab(c)));
       ed.querySelectorAll('input[name="v32-bundle"]').forEach(c =>
-        reg("bundle", c.value || "(nenhum)", lab(c)));
+        proib("bundle", c.value || "(nenhum)", lab(c)));
       const fgt = ed.querySelector("#v32-plat-fgt");
-      if (fgt) reg("plataforma", "v32-plat-fgt", lab(fgt));
-      ed.querySelectorAll("fieldset > legend").forEach(l =>
-        reg("legenda", (l.textContent || "").trim().slice(0, 40), l));
+      proib("plataforma", "v32-plat-fgt", fgt ? lab(fgt) : null);
+      const platDet = ed.querySelector('details[data-gid="plat"]');
+      (platDet ? platDet.querySelectorAll("fieldset > legend") : []).forEach(l =>
+        proib("legenda", (l.textContent || "").trim().slice(0, 40), l));
+      /* a ajuda ÚNICA da seção continua obrigatória, no cabeçalho do grupo */
+      const platHead = platDet && platDet.parentElement &&
+        platDet.parentElement.classList.contains("p52-grphead") ? platDet.parentElement : platDet;
+      const platUnica = {
+        existe: !!platHead,
+        ajuda: !!(platHead && platHead.querySelector(':scope > [data-p52="cap-help"]')),
+        dentro: platDet ? platDet.querySelectorAll('[data-p52="cap-help"]').length : -1
+      };
       /* contrato do componente, medido em TODOS os controles */
       const btns = Array.from(ed.querySelectorAll('[data-p52="cap-help"]'));
       const contrato = btns.map(b => {
@@ -3162,13 +3276,29 @@ async function help2(browser, errs) {
           title: b.hasAttribute("title")
         };
       });
-      return { grupos: grupos, contrato: contrato, total: btns.length };
+      return { grupos: grupos, proibidos: proibidos, platUnica: platUnica,
+               contrato: contrato, total: btns.length };
     });
     const faltando = m.grupos.filter(g => !g.ok);
     observed.cobertura = { total: m.grupos.length, comAjuda: m.grupos.length - faltando.length, faltando: faltando };
+    observed.proibidos = { total: m.proibidos.length,
+                           comAjuda: m.proibidos.filter(x => x.ajuda).map(x => x.grupo + " · " + x.nome),
+                           inexistentes: m.proibidos.filter(x => !x.existe).map(x => x.grupo + " · " + x.nome) };
+    observed.platUnica = m.platUnica;
     observed.contratoAmostra = m.contrato.slice(0, 6);
     if (!m.grupos.length) detail.push("sensor cego: nenhum campo do editor foi encontrado");
     faltando.forEach(f => detail.push("sem ajuda (i): " + f.grupo + " · " + f.nome));
+    /* §3.2 · onde a ajuda foi declarada redundante ela não pode voltar */
+    if (m.proibidos.length < 40)
+      detail.push("apenas " + m.proibidos.length + " alvos sem ajuda inspecionados — asserção vacuosa");
+    m.proibidos.forEach(x => {
+      if (!x.existe) detail.push("alvo inexistente (asserção vacuosa): " + x.grupo + " · " + x.nome);
+      else if (x.ajuda) detail.push("ajuda (i) redundante reintroduzida: " + x.grupo + " · " + x.nome);
+    });
+    if (!m.platUnica.existe) detail.push("cabeçalho de plataformas ausente — asserção vacuosa");
+    if (!m.platUnica.ajuda) detail.push("a ajuda única do cabeçalho de plataformas desapareceu");
+    if (m.platUnica.dentro > 0)
+      detail.push(m.platUnica.dentro + " ajuda(s) (i) dentro do grupo de plataformas (esperado zero)");
     /* contrato idêntico: mesmo rótulo, mesma caixa, mesma tipografia */
     const caixas = Array.from(new Set(m.contrato.map(c => c.w + "x" + c.h)));
     if (caixas.length > 1) detail.push("controles de ajuda com caixas diferentes: " + caixas.join(", "));
@@ -3218,7 +3348,7 @@ async function help2(browser, errs) {
     }
   } finally { await pg.close(); }
   evidence("P52-HELP2-cobertura.json", observed);
-  T("P52-HELP2", "ajuda (i) em toda capability, campo, família, subgrupo, requisito, bundle, subscription e legenda, com contrato idêntico", !detail.length, detail);
+  T("P52-HELP2", "ajuda (i) presente em toda capability, campo de arquitetura, família, subgrupo e requisito — e AUSENTE em situação declarada, plataforma, bundles, subscriptions e legendas, com uma única ajuda no cabeçalho de plataformas e contrato idêntico em todos os controles", !detail.length, detail);
 }
 
 /* ============================== P52-SIG1 ============================== */
@@ -3977,6 +4107,1963 @@ async function tgt4(browser, errs) {
     !detail.length, detail);
 }
 
+
+/* ############################################################################
+   PATCH V3.2.2 — GATES DIRIGIDOS (namespace próprio `V322-*`)
+
+   Três correções estreitas de UX sobre a v3.2.1 publicada:
+     A · paridade do editor de contexto tecnológico entre a entrada da HOME e
+         a entrada dos RESULTADOS (um compositor, duas entradas);
+     B · rodapé da home ocupando a largura útil abaixo do divisor;
+     C · pendência de contexto não salvo apresentada NO PONTO DE AÇÃO
+         (abaixo do botão de PDF, no trilho lateral e junto a Salvar/Cancelar).
+
+   Todas as medidas vêm de `getBoundingClientRect()` / `getComputedStyle()` /
+   contagem de nós reais. Nenhuma asserção lê classe declarada como prova de
+   geometria, e nenhuma usa screenshot como oracle.
+   ############################################################################ */
+
+const EVID322 = path.join(HERE, "docs_phase5", "evidence_v322");
+/* Interruptor PRÓPRIO. `P52_NO_EVIDENCE` existe para proteger o acervo
+   HISTÓRICO da Phase 5.2 enquanto os gates rodam; o acervo desta rodada é
+   outro diretório e precisa ser escrito exatamente nessas execuções. Amarrar
+   os dois obrigava a escolher entre gerar a evidência da v3.2.2 e preservar a
+   da 5.2 — e foi assim que `evidence_p52/P52-ACC1-axe.json` acabou reescrito.
+   A campanha de mutação suprime OS DOIS (ver `SUPPRESS` em
+   `tests_p52_mutants.js`): produto deliberadamente defeituoso não escreve
+   evidência em acervo nenhum. */
+const NO_EVIDENCE_322 = process.env.V322_NO_EVIDENCE === "1";
+function evidence322(name, data) {
+  if (NO_EVIDENCE_322) return;
+  try {
+    if (!fs.existsSync(EVID322)) fs.mkdirSync(EVID322, { recursive: true });
+    fs.writeFileSync(path.join(EVID322, name), typeof data === "string" ? data : JSON.stringify(data, null, 2));
+  } catch (e) { /* evidência é subproduto: nunca derruba o gate */ }
+}
+
+/* Snapshot ESTRUTURAL do editor, idêntico nas duas entradas por construção:
+   só lê o que a §4.1 declara equivalente. Os grupos de primeiro nível são os
+   filhos DIRETOS do corpo da região — `sig-0..sig-3` são subgrupos de `sig` e
+   não contam como grupo de primeiro nível. */
+const V322_EDITOR_SNAP = function () {
+  var ed = document.getElementById("v32editor");
+  if (!ed) return { missing: true };
+  var norm = function (s) { return String(s == null ? "" : s).replace(/\s+/g, " ").trim(); };
+  var regions = Array.prototype.slice.call(ed.querySelectorAll(':scope > .p52-ctxregion')).map(function (r) {
+    var body = r.querySelector(":scope > .p52-ctxregion-body");
+    return {
+      key: r.getAttribute("data-p52-region"),
+      title: norm((r.querySelector(".p52-ctxregion-name") || {}).textContent),
+      lead: norm((r.querySelector(".p52-ctxregion-lead") || {}).textContent),
+      labelledby: r.getAttribute("aria-labelledby"),
+      /* o `<details>` de cada família passou a viver dentro do wrapper de
+         cabeçalho `.p52-grphead` (o controle `(i)` saiu de dentro do
+         `<summary>`); a asserção continua sendo "os grupos DESTA região, nesta
+         ordem", medida um nível abaixo. */
+      gids: body ? Array.prototype.slice.call(body.querySelectorAll(
+        ":scope > details[data-gid], :scope > .p52-grphead > details[data-gid]"))
+        .map(function (d) { return d.getAttribute("data-gid"); }) : []
+    };
+  });
+  var top = [];
+  for (var r0 = 0; r0 < regions.length; r0++) top = top.concat(regions[r0].gids);
+  var groups = Array.prototype.slice.call(ed.querySelectorAll("details[data-gid]")).map(function (d) {
+    var su = d.querySelector(":scope > summary");
+    /* o rótulo do grupo é o texto do summary SEM o controle de ajuda e sem o
+       popover: os dois vivem dentro do próprio summary. */
+    var label = "";
+    if (su) {
+      var cl = su.cloneNode(true), junk = cl.querySelectorAll('[data-p52="cap-help"], [data-p52="cap-help-text"]'), z;
+      for (z = 0; z < junk.length; z++) if (junk[z].parentNode) junk[z].parentNode.removeChild(junk[z]);
+      label = norm(cl.textContent);
+    }
+    return {
+      gid: d.getAttribute("data-gid"), open: !!d.open, label: label,
+      topLevel: top.indexOf(d.getAttribute("data-gid")) >= 0,
+      helps: d.querySelectorAll('[data-p52="cap-help"]').length
+    };
+  });
+  var ids = {}, dupIds = [], all = ed.querySelectorAll("[id]"), i;
+  for (i = 0; i < all.length; i++) {
+    var idv = all[i].id;
+    if (ids[idv]) { if (dupIds.indexOf(idv) < 0) dupIds.push(idv); } else ids[idv] = 1;
+  }
+  /* handler duplicado de ajuda: mais de um controle `i` para a MESMA
+     capability é a assinatura de um decorador aplicado duas vezes. */
+  var perCap = {}, dupHelp = [], caps = ed.querySelectorAll('[data-p52="cap-help"][data-cap]');
+  for (i = 0; i < caps.length; i++) {
+    var c = caps[i].getAttribute("data-cap");
+    perCap[c] = (perCap[c] || 0) + 1;
+    if (perCap[c] > 1 && dupHelp.indexOf(c) < 0) dupHelp.push(c);
+  }
+  return {
+    regions: regions,
+    regionCount: regions.length,
+    topGids: top,
+    topCount: top.length,
+    groups: groups,
+    looseGroups: ed.querySelectorAll(":scope > details[data-gid]").length,
+    helps: ed.querySelectorAll('[data-p52="cap-help"]').length,
+    capHelps: ed.querySelectorAll('[data-p52="cap-help"][data-cap]').length,
+    fields: ed.querySelectorAll("input, select, textarea").length,
+    dupIds: dupIds,
+    dupHelp: dupHelp,
+    screen: document.body.getAttribute("data-uxscreen")
+  };
+};
+
+/* ============================== V322-CTXPAR1 ============================== */
+async function v322CtxPar(browser, errs) {
+  const detail = [], observed = {};
+  /* ---- entrada HOME ---- */
+  const home = await pageAt(browser, { w: 1440, h: 900 }, errs, "V322-CTXPAR1/home");
+  let snapHome = null, homeToggle = null, homeKeep = null;
+  try {
+    await home.click("#ux-addctx");
+    await home.waitForTimeout(400);
+    snapHome = await home.evaluate(V322_EDITOR_SNAP);
+
+    /* §7.1.7 · três campos em grupos diferentes, rerender forçado, valores preservados */
+    homeKeep = await home.evaluate(async () => {
+      const ed = document.getElementById("v32editor");
+      const openG = gid => { const d = ed.querySelector('details[data-gid="' + gid + '"]'); if (d && !d.open) d.open = true; return d; };
+      /* 1 · capability em g1: PRESENT libera a lista de soluções, mas o owner
+         nasce com a lista VAZIA — a linha só existe depois do "+". Sem este
+         segundo passo o campo de produto nunca é criado e a asserção de
+         preservação ficaria VACUOSA (defeito de fixture observado na primeira
+         execução desta bateria). */
+      const g1 = openG("g1");
+      const pres = g1.querySelector("select[id^='v32-pres-']");
+      const presId = pres.id;
+      const capId = pres.getAttribute("data-cap");
+      pres.value = "PRESENT";
+      pres.dispatchEvent(new Event("change", { bubbles: true }));
+      await new Promise(r => setTimeout(r, 260));
+      const add = document.querySelector('#v32editor .v32-add[data-cap="' + capId + '"]');
+      if (add) add.click();
+      await new Promise(r => setTimeout(r, 260));
+      const ed2 = document.getElementById("v32editor");
+      const prod = ed2.querySelector('input[id^="v32-sol-' + capId + '-"][id$="-product"]');
+      const prodId = prod ? prod.id : null;
+      if (prod) { prod.value = "ACME Detector 9000"; prod.dispatchEvent(new Event("input", { bubbles: true })); }
+      /* 2 · arquitetura em `arch` */
+      openG("arch");
+      const arch = ed2.querySelector("select[id^='v32-arch-']");
+      const archId = arch ? arch.id : null;
+      if (arch && arch.options.length > 1) { arch.value = arch.options[arch.options.length - 1].value; arch.dispatchEvent(new Event("change", { bubbles: true })); }
+      /* 3 · sinal em `sig` */
+      openG("sig"); openG("sig-0");
+      const sig = ed2.querySelector('#v32editor input[id^="v32-sig-"]');
+      const sigId = sig ? sig.id : null;
+      if (sig) { sig.checked = true; sig.dispatchEvent(new Event("change", { bubbles: true })); }
+      return { presId, prodId, archId, sigId,
+        prodVal: prod ? prod.value : null, archVal: arch ? arch.value : null, sigVal: sig ? sig.checked : null };
+    });
+    /* rerender forçado pelo caminho do owner: adicionar uma solução repinta o editor */
+    await home.evaluate(() => {
+      const b = document.querySelector("#v32editor .v32-add");
+      if (b) b.click();
+    });
+    await home.waitForTimeout(320);
+    homeKeep.after = await home.evaluate(k => {
+      const g = id => id ? document.getElementById(id) : null;
+      const prod = g(k.prodId), arch = g(k.archId), sig = g(k.sigId);
+      return { prod: prod ? prod.value : null, arch: arch ? arch.value : null, sig: sig ? sig.checked : null };
+    }, homeKeep);
+
+    /* §4.3 · "não perder valores digitados ao mover os nós entre regiões".
+       O caso acima passa pelo repaint do OWNER, que reemite os valores como
+       ATRIBUTO a partir do draft. O caso perigoso é o outro: um valor que
+       existe apenas como PROPRIEDADE viva do nó, atravessando uma passagem do
+       DECORADOR sem repaint. Um decorador que reconstruísse a região por
+       serialização (`outerHTML`) devolveria o campo vazio — e o rerender do
+       owner nunca revelaria a perda. */
+    homeKeep.sentinel = "SENTINELA-V322-" + 4711;
+    await home.evaluate(k => {
+      const prod = k.prodId ? document.getElementById(k.prodId) : null;
+      if (prod) prod.value = k.sentinel;                 /* propriedade viva, sem atributo */
+    }, homeKeep);
+    await home.evaluate(() => {
+      const su = document.querySelector('#v32editor details[data-gid="plat"] > summary');
+      if (su) su.click();                                /* passagem pura do decorador */
+    });
+    await home.waitForTimeout(360);
+    homeKeep.afterDecor = await home.evaluate(k => {
+      const prod = k.prodId ? document.getElementById(k.prodId) : null;
+      return prod ? prod.value : null;
+    }, homeKeep);
+
+    /* §7.1.8 · abrir/fechar por mouse e por teclado; o decorador não reverte */
+    homeToggle = await home.evaluate(async () => {
+      const ed = document.getElementById("v32editor");
+      const g2 = ed.querySelector('details[data-gid="g2"] > summary');
+      const g1 = ed.querySelector('details[data-gid="g1"] > summary');
+      g2.click();                                   /* mouse: abre g2 */
+      await new Promise(r => setTimeout(r, 260));
+      const afterMouseOpen = ed.querySelector('details[data-gid="g2"]').open;
+      /* MIGRAÇÃO · ERRATA V3.2.2 §4 · SOC & Operations nasce RECOLHIDO. A
+         propriedade preservada é a mesma — "o decorador não desfaz a decisão
+         do usuário" — mas agora ela é medida nos DOIS sentidos: o usuário abre
+         e o decorador não pode fechar; o usuário fecha e o decorador não pode
+         reabrir. Antes só o segundo sentido era testado. */
+      /* a bateria de preservação de valores (§7.1.7), que roda antes desta,
+         abre g1/arch/sig para poder digitar. O ponto de partida é normalizado
+         aqui, e a normalização é ela própria verificada. */
+      if (ed.querySelector('details[data-gid="g1"]').open) {
+        g1.click();
+        await new Promise(r => setTimeout(r, 260));
+      }
+      const g1PartiuFechado = !ed.querySelector('details[data-gid="g1"]').open;
+      g1.click();                                   /* mouse: ABRE g1 */
+      await new Promise(r => setTimeout(r, 260));
+      const g1Opened = ed.querySelector('details[data-gid="g1"]').open;
+      g1.click();                                   /* mouse: fecha de novo */
+      await new Promise(r => setTimeout(r, 260));
+      const g1Closed = !ed.querySelector('details[data-gid="g1"]').open;
+      /* teclado: Enter no summary de g3 */
+      const g3 = ed.querySelector('details[data-gid="g3"] > summary');
+      g3.focus();
+      g3.dispatchEvent(new KeyboardEvent("keydown", { key: "Enter", bubbles: true }));
+      g3.click();                                   /* o comportamento nativo do <summary> */
+      await new Promise(r => setTimeout(r, 260));
+      const g3Open = ed.querySelector('details[data-gid="g3"]').open;
+      /* uma última passagem do decorador não pode ressuscitar g1 */
+      await new Promise(r => setTimeout(r, 320));
+      const g1StillClosed = !ed.querySelector('details[data-gid="g1"]').open;
+      /* §4.2 · "não force a abertura a cada MutationObserver/rerender". O caso
+         duro não é o clique: é o RERENDER que vem depois dele. `paintEditor()`
+         reemite os grupos soltos, o decorador remonta as regiões e é AÍ que um
+         decorador que "garante" a abertura da primeira família desfaria a
+         decisão que o usuário acabou de tomar. */
+      const g2StillOpen = ed.querySelector('details[data-gid="g2"]').open;
+      return { afterMouseOpen, g1PartiuFechado, g1Opened, g1Closed, g3Open, g1StillClosed, g2StillOpen,
+        focusKeeps: document.activeElement === g3 || ed.contains(document.activeElement) };
+    });
+  } finally { await home.close(); }
+
+  /* ---- §4.2 · o rerender não pode desfazer a decisão do usuário -------------
+     Página NOVA e sequência mínima: o caso duro é o REPAINT do owner logo
+     depois de o usuário fechar a primeira família. `paintEditor()` reemite os
+     grupos soltos e o decorador remonta as regiões; um decorador que
+     "garantisse" a abertura de SOC & Operations desfaria ali a decisão que o
+     facilitador acabou de tomar. Isolado porque a bateria de toggle acima
+     termina com o editor já fora da tela. */
+  const rer = await pageAt(browser, { w: 1440, h: 900 }, errs, "V322-CTXPAR1/rerender");
+  let rerender = null;
+  try {
+    await rer.click("#ux-addctx");
+    await rer.waitForTimeout(400);
+    rerender = await rer.evaluate(async () => {
+      const ed = document.getElementById("v32editor");
+      const su = ed.querySelector('details[data-gid="g1"] > summary');
+      /* MIGRAÇÃO · ERRATA V3.2.2 §4 · o caso DURO inverteu de sinal. Com o
+         estado inicial recolhido, o risco não é mais "o decorador reabre o que
+         o usuário fechou": é "o decorador recolhe de novo o que o usuário
+         acabou de abrir", a cada repaint. É esse o caso medido aqui. */
+      su.click();                                        /* o usuário ABRE g1 */
+      await new Promise(r => setTimeout(r, 300));
+      const abriuNoClique = !!document.querySelector('#v32editor details[data-gid="g1"]').open;
+      /* repaint do owner: declarar PRESENT numa capability de g1 */
+      const pres = document.querySelector("#v32editor select[id^='v32-pres-']");
+      const provocou = !!pres;
+      if (pres) { pres.value = "PRESENT"; pres.dispatchEvent(new Event("change", { bubbles: true })); }
+      await new Promise(r => setTimeout(r, 500));
+      const g1 = document.querySelector('#v32editor details[data-gid="g1"]');
+      const g2 = document.querySelector('#v32editor details[data-gid="g2"]');
+      return { abriuNoClique, provocou, editorVivo: !!g1,
+        abertoAposRerender: g1 ? !!g1.open : null,
+        vizinhoAindaRecolhido: g2 ? !g2.open : null,
+        regioes: document.querySelectorAll('#v32editor > .p52-ctxregion').length };
+    });
+  } finally { await rer.close(); }
+
+  /* ---- entrada RESULTADOS ---- */
+  const res = await pageAt(browser, { w: 1440, h: 900 }, errs, "V322-CTXPAR1/results");
+  let snapRes = null, snapReopen = null, snapImport = null;
+  try {
+    await toResults(res, FX52.P52_F1);
+    await res.click("#v32cta");
+    await res.waitForTimeout(400);
+    snapRes = await res.evaluate(V322_EDITOR_SNAP);
+    /* §4.1 · após rerender e ao reeditar contexto já salvo */
+    await res.evaluate(() => { const b = document.getElementById("v32cancel"); if (b) b.click(); });
+    await res.waitForTimeout(300);
+    await res.click("#v32cta");
+    await res.waitForTimeout(400);
+    snapReopen = await res.evaluate(V322_EDITOR_SNAP);
+  } finally { await res.close(); }
+
+  /* ---- asserções ---- */
+  const eq = (a, b) => JSON.stringify(a) === JSON.stringify(b);
+  if (!snapHome || snapHome.missing) detail.push("editor ausente na entrada da home");
+  if (!snapRes || snapRes.missing) detail.push("editor ausente na entrada dos resultados");
+  if (snapHome && snapRes && !snapHome.missing && !snapRes.missing) {
+    /* §7.1.5 · exatamente duas regiões e seis grupos de primeiro nível, nas DUAS entradas */
+    for (const [tag, s] of [["home", snapHome], ["resultados", snapRes], ["reabertura", snapReopen]]) {
+      if (!s || s.missing) continue;
+      if (s.regionCount !== 2) detail.push(tag + ": " + s.regionCount + " regiões de primeiro nível (esperado 2)");
+      if (s.topCount !== 6) detail.push(tag + ": " + s.topCount + " grupos de primeiro nível (esperado 6)");
+      if (s.looseGroups) detail.push(tag + ": " + s.looseGroups + " grupo(s) fora de região");
+      if (s.dupIds.length) detail.push(tag + ": IDs duplicados [" + s.dupIds.slice(0, 4).join(", ") + "]");
+      if (s.dupHelp.length) detail.push(tag + ": ajuda duplicada em [" + s.dupHelp.slice(0, 4).join(", ") + "]");
+      if (!s.capHelps) detail.push(tag + ": nenhuma ajuda (i) de capability");
+    }
+    /* §4.1 · equivalência estrutural e semântica */
+    const shapeOf = s => s.regions.map(r => ({ key: r.key, title: r.title, lead: r.lead, gids: r.gids }));
+    if (!eq(shapeOf(snapHome), shapeOf(snapRes)))
+      detail.push("composição divergente home × resultados: " +
+        JSON.stringify(shapeOf(snapHome)) + " vs " + JSON.stringify(shapeOf(snapRes)));
+    const labelsOf = s => s.groups.filter(g => g.topLevel).map(g => g.gid + "=" + g.label);
+    if (!eq(labelsOf(snapHome), labelsOf(snapRes)))
+      detail.push("rótulos/ordem de grupo divergentes home × resultados");
+    if (snapHome.capHelps !== snapRes.capHelps)
+      detail.push("ajudas (i) de capability: home=" + snapHome.capHelps + " resultados=" + snapRes.capHelps);
+    if (snapHome.helps !== snapRes.helps)
+      detail.push("ajudas (i) totais: home=" + snapHome.helps + " resultados=" + snapRes.helps);
+    if (snapHome.fields !== snapRes.fields)
+      detail.push("campos do editor: home=" + snapHome.fields + " resultados=" + snapRes.fields);
+    /* §4 da ERRATA V3.2.2 · primeira abertura limpa: NENHUM grupo aberto.
+       A asserção anterior — `[g1]` — media o default do owner; esta mede a
+       exigência da errata e cobre os SEIS grupos, não apenas um. A terceira
+       entrada, `reabertura`, prova que uma NOVA edição reinicia recolhida. */
+    const openTop = s => s.groups.filter(g => g.topLevel && g.open).map(g => g.gid);
+    for (const [tag, s] of [["home", snapHome], ["resultados", snapRes], ["reabertura", snapReopen]]) {
+      if (!s || s.missing) continue;
+      const o = openTop(s);
+      if (o.length) detail.push(tag + ": abertura inicial = [" + o.join(", ") + "] (esperado nenhum grupo aberto)");
+      if (s.topCount !== 6) detail.push(tag + ": " + s.topCount + " grupos de primeiro nível — asserção vacuosa");
+    }
+  }
+  /* §7.1.7 · valores preservados através do rerender */
+  if (homeKeep) {
+    /* não vacuidade: os três campos TÊM de existir, senão a prova é vazia */
+    for (const [nome, id] of [["produto", homeKeep.prodId], ["arquitetura", homeKeep.archId], ["sinal", homeKeep.sigId]])
+      if (!id) detail.push("campo de " + nome + " não foi criado — asserção de preservação vacuosa");
+    if (!homeKeep.after || homeKeep.after.prod !== homeKeep.prodVal)
+      detail.push("produto perdido no rerender: '" + (homeKeep.after || {}).prod + "' != '" + homeKeep.prodVal + "'");
+    if (!homeKeep.after || homeKeep.after.arch !== homeKeep.archVal)
+      detail.push("arquitetura perdida no rerender: '" + (homeKeep.after || {}).arch + "' != '" + homeKeep.archVal + "'");
+    if (!homeKeep.after || homeKeep.after.sig !== homeKeep.sigVal)
+      detail.push("sinal perdido no rerender: " + (homeKeep.after || {}).sig + " != " + homeKeep.sigVal);
+    if (homeKeep.afterDecor !== homeKeep.sentinel)
+      detail.push("valor perdido na passagem do decorador: '" + homeKeep.afterDecor + "' != '" + homeKeep.sentinel + "'");
+  }
+  /* §7.1.8 · decisão do usuário respeitada */
+  if (homeToggle) {
+    if (!homeToggle.afterMouseOpen) detail.push("abrir grupo por mouse não abriu");
+    if (!homeToggle.g1PartiuFechado) detail.push("normalização falhou: SOC & Operations não pôde ser fechado — asserção vacuosa");
+    if (!homeToggle.g1Opened) detail.push("abrir SOC & Operations por mouse não abriu");
+    if (!homeToggle.g1Closed) detail.push("fechar SOC & Operations por mouse não fechou");
+    if (!homeToggle.g3Open) detail.push("abrir grupo por teclado não abriu");
+    if (!homeToggle.g1StillClosed) detail.push("o decorador REABRIU o grupo que o usuário fechou");
+    if (!homeToggle.g2StillOpen) detail.push("o decorador RECOLHEU o grupo que o usuário abriu");
+  }
+  if (rerender) {
+    if (!rerender.abriuNoClique) detail.push("rerender: abrir SOC & Operations por clique não abriu");
+    else if (!rerender.provocou || !rerender.editorVivo)
+      detail.push("rerender: o repaint do owner não pôde ser provocado — asserção vacuosa");
+    else {
+      if (rerender.regioes !== 2) detail.push("rerender: " + rerender.regioes + " regiões após o repaint (esperado 2)");
+      if (!rerender.abertoAposRerender)
+        detail.push("o decorador RECOLHEU no rerender o grupo que o usuário acabara de abrir");
+      if (rerender.vizinhoAindaRecolhido === false)
+        detail.push("o rerender ABRIU um grupo que o usuário não pediu");
+    }
+
+  }
+  observed.home = snapHome; observed.results = snapRes; observed.reopen = snapReopen;
+  observed.preserve = homeKeep; observed.toggle = homeToggle; observed.rerender = rerender;
+  evidence322("V322-CTXPAR1-editor-parity.json", observed);
+  T("V322-CTXPAR1",
+    "o editor de contexto tecnológico é o MESMO compositor nas duas entradas: duas regiões de primeiro nível, seis grupos na mesma ordem, mesmas ajudas (i), os SEIS grupos recolhidos na primeira abertura e também ao reabrir, valores preservados no rerender e a decisão de abrir/fechar do usuário respeitada nos dois sentidos",
+    !detail.length, detail);
+}
+
+/* ============================== V322-FOOT1 ============================== */
+const V322_FOOT_VPS = [390, 768, 1440, 1920, 2560, 3440];
+const V322_FOOT_DESKTOP_MIN_RATIO = 0.62;   /* medido na v3.2.1: 0.41–0.51 */
+
+async function v322Foot(browser, errs) {
+  const detail = [], observed = {};
+  for (const w of V322_FOOT_VPS) {
+    const pg = await browser.newPage({ viewport: { width: w, height: 900 } });
+    pg.on("pageerror", e => errs.push("V322-FOOT1@" + w + ": " + String(e.message)));
+    pg.on("console", m => { if (m.type() === "error") errs.push("V322-FOOT1@" + w + " console: " + m.text()); });
+    try {
+      await pg.goto(HTML_URL);
+      await pg.waitForTimeout(300);
+      const m = await pg.evaluate(() => {
+        const box = e => { if (!e) return null; const r = e.getBoundingClientRect();
+          return { l: +r.left.toFixed(1), r: +r.right.toFixed(1), t: +r.top.toFixed(1),
+                   b: +r.bottom.toFixed(1), w: +r.width.toFixed(1), h: +r.height.toFixed(1) }; };
+        const foot = document.querySelector(".wrap > footer");
+        const legal = foot ? foot.querySelector(".p52-foot-legal") : null;
+        const contact = foot ? foot.querySelector(".p52-foot-contact") : null;
+        const wrap = document.querySelector(".wrap");
+        const cs = getComputedStyle(wrap), wr = wrap.getBoundingClientRect();
+        const inner = wr.width - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight);
+        const lb = box(legal), cb = box(contact), fb = box(foot);
+        const lcs = legal ? getComputedStyle(legal) : null;
+        const ccs = contact ? getComputedStyle(contact) : null;
+        /* ordem de leitura = ordem no DOM, não ordem visual */
+        let order = null;
+        if (foot && legal && contact) {
+          const kids = Array.prototype.slice.call(foot.children);
+          order = kids.indexOf(legal) < kids.indexOf(contact) ? "legal-first" : "contact-first";
+        }
+        return {
+          mode: foot ? foot.getAttribute("data-p52-footer") : null,
+          innerW: +inner.toFixed(1), foot: fb, legal: lb, contact: cb, order,
+          legalMaxWidth: lcs ? lcs.maxWidth : null,
+          legalFontPx: lcs ? parseFloat(lcs.fontSize) : null,
+          contactFontPx: ccs ? parseFloat(ccs.fontSize) : null,
+          contactAlign: ccs ? ccs.textAlign : null,
+          ratio: (lb && inner) ? +(lb.w / inner).toFixed(3) : null,
+          overlap: (lb && cb) ? !(lb.r <= cb.l + 0.5 || cb.r <= lb.l + 0.5 ||
+                                  lb.b <= cb.t + 0.5 || cb.b <= lb.t + 0.5) : null,
+          stacked: (lb && cb) ? lb.b <= cb.t + 0.5 : null,
+          overflowX: document.documentElement.scrollWidth > document.documentElement.clientWidth,
+          sw: document.documentElement.scrollWidth, cw: document.documentElement.clientWidth,
+          legalText: legal ? (legal.textContent || "").replace(/\s+/g, " ").trim() : null,
+          contactText: contact ? (contact.textContent || "").replace(/\s+/g, " ").trim() : null
+        };
+      });
+      observed[w] = m;
+      if (!m.foot) { detail.push(w + ": rodapé ausente"); continue; }
+      if (m.mode !== "split") { detail.push(w + ": rodapé não dividido (data-p52-footer=" + m.mode + ")"); continue; }
+      if (m.overflowX) detail.push(w + ": overflow horizontal (" + m.sw + " > " + m.cw + ")");
+      if (m.overlap) detail.push(w + ": legal e autoria se sobrepõem");
+      if (m.order !== "legal-first") detail.push(w + ": ordem de leitura invertida (" + m.order + ")");
+      if (m.contactFontPx >= m.legalFontPx) detail.push(w + ": autoria não é tipograficamente secundária (" + m.contactFontPx + "px >= " + m.legalFontPx + "px)");
+      if (w >= 1440) {
+        /* faixa disponível ocupada e cap estreito removido */
+        if (m.ratio === null || m.ratio < V322_FOOT_DESKTOP_MIN_RATIO)
+          detail.push(w + ": bloco legal ocupa " + Math.round((m.ratio || 0) * 100) + "% da largura útil (mínimo " +
+            Math.round(V322_FOOT_DESKTOP_MIN_RATIO * 100) + "%) — largura " + (m.legal || {}).w + " de " + m.innerW);
+        const cap = parseFloat(m.legalMaxWidth);
+        if (!isNaN(cap) && cap < m.innerW - 1)
+          detail.push(w + ": max-width estreito ainda aplicado ao texto legal (" + m.legalMaxWidth + " < " + m.innerW + "px)");
+        /* autoria à direita, colada na borda direita do rodapé */
+        if (m.contact && m.foot && (m.foot.r - m.contact.r) > 2)
+          detail.push(w + ": autoria não alinhada à direita (folga de " + Math.round(m.foot.r - m.contact.r) + "px)");
+        /* alinhamento pela base */
+        if (m.legal && m.contact && Math.abs(m.legal.b - m.contact.b) > 2)
+          detail.push(w + ": legal e autoria não alinhados pela base (" + Math.round(Math.abs(m.legal.b - m.contact.b)) + "px)");
+      } else {
+        if (!m.stacked) detail.push(w + ": legal e autoria não empilhados");
+      }
+    } finally { await pg.close(); }
+  }
+  evidence322("V322-FOOT1-footer-geometry.json", observed);
+  T("V322-FOOT1",
+    "o rodapé da home usa a largura útil abaixo do divisor: bloco legal ocupa a faixa disponível sem max-width estreito, autoria à direita alinhada pela base e tipograficamente secundária, empilhamento estável em mobile/tablet, zero overflow e zero sobreposição em 390/768/1440/1920/2560/3440",
+    !detail.length, detail);
+}
+
+/* ============================== V322-PRINT1 ============================== */
+const V322_PENDING_MSG = "Salve ou cancele as alterações do contexto tecnológico antes de gerar o relatório.";
+
+/* Estado das TRÊS apresentações de pendência, sempre medido no DOM real. */
+const V322_PENDING_SNAP = function () {
+  var norm = function (s) { return String(s == null ? "" : s).replace(/\s+/g, " ").trim(); };
+  var btn = null, btns = document.querySelectorAll("button"), i;
+  for (i = 0; i < btns.length; i++) if (/Imprimir \/ salvar em PDF/.test(btns[i].textContent || "")) { btn = btns[i]; break; }
+  var near = document.querySelectorAll('[data-p52="print-pending"]');
+  var n0 = near.length ? near[0] : null;
+  var rail = document.getElementById("p52-railto-context");
+  var railPend = rail ? rail.querySelector('[data-p52="rail-pending"]') : null;
+  var edBox = document.querySelector('#v32editor .v32-errors:not(.v32-hidden)');
+  var acts = document.querySelector("#v32editor .v32-actions");
+  var box = function (e) { if (!e) return null; var r = e.getBoundingClientRect();
+    return { t: +r.top.toFixed(1), b: +r.bottom.toFixed(1), l: +r.left.toFixed(1), w: +r.width.toFixed(1), h: +r.height.toFixed(1) }; };
+  var bb = box(btn), nb = box(n0);
+  var group = btn ? btn.closest(".actions") : null;
+  var gb = box(group);
+  return {
+    printCalls: window.__v322PrintCalls || 0,
+    /* --- mensagem junto ao botão de PDF --- */
+    nearCount: near.length,
+    nearText: n0 ? norm(n0.textContent) : null,
+    nearHasExact: n0 ? norm(n0.textContent).indexOf(V322_PENDING_MSG_IN) >= 0 : false,
+    nearRole: n0 ? n0.getAttribute("role") : null,
+    nearLive: n0 ? n0.getAttribute("aria-live") : null,
+    nearVisible: nb ? nb.h > 0 : false,
+    nearGapFromButton: (bb && nb) ? Math.round(nb.t - bb.b) : null,
+    nearGapFromGroup: (gb && nb) ? Math.round(nb.t - gb.b) : null,
+    nearAfterGroup: !!(group && n0 && group.compareDocumentPosition(n0) & Node.DOCUMENT_POSITION_FOLLOWING),
+    btnDescribedBy: btn ? btn.getAttribute("aria-describedby") : null,
+    nearId: n0 ? n0.id : null,
+    gotoCount: document.querySelectorAll('[data-p52="goto-context"]').length,
+    /* --- indicador no trilho lateral --- */
+    railPresent: !!rail,
+    railPendingCount: rail ? rail.querySelectorAll('[data-p52="rail-pending"]').length : 0,
+    railPendingText: railPend ? norm(railPend.textContent) : null,
+    railState: rail ? rail.getAttribute("data-p52-pending") : null,
+    railAria: rail ? norm(rail.getAttribute("aria-label")) : null,
+    railTextAll: rail ? norm(rail.textContent) : null,
+    /* --- mensagem no editor --- */
+    editorMsgCount: document.querySelectorAll('#v32editor .v32-errors:not(.v32-hidden)').length,
+    editorMsgText: edBox ? norm(edBox.textContent) : null,
+    editorMsgNearActions: !!(edBox && acts && Math.abs(box(acts).t - box(edBox).b) < 120),
+    /* --- foco --- */
+    focus: document.activeElement ? (document.activeElement.id || document.activeElement.tagName) : null,
+    focusInEditor: !!(document.getElementById("v32editor") && document.getElementById("v32editor").contains(document.activeElement)),
+    focusInNear: !!(n0 && (n0 === document.activeElement || n0.contains(document.activeElement))),
+    /* mesma leitura que o produto usa: a ponte do OWNER do draft, nunca um
+       espelho da camada de apresentação */
+    draftPending: (function () {
+      if (!(window.__DEV && typeof window.__DEV._setDraft === "function")) return null;
+      var vivo = false; window.__DEV._setDraft(function () { vivo = true; }); return vivo;
+    })()
+  };
+};
+
+/* ==========================================================================
+   ORÇAMENTO DE CONVERGÊNCIA.
+
+   Um decorador não convergente não devolve FAIL: ele CONGELA a página. O gate
+   morreria por timeout do harness — exatamente a "falha incidental" que a
+   campanha de mutação não pode contar como detecção. A corrida abaixo
+   transforma o congelamento em ASSERÇÃO: se a página não responde dentro do
+   orçamento, o motivo registrado é a NÃO CONVERGÊNCIA, com nome próprio.
+   ========================================================================== */
+const V322_TIMEOUT = "__V322_NAO_CONVERGIU__";
+async function v322Eval(pg, fn, arg, ms) {
+  let timer;
+  const budget = new Promise(res => { timer = setTimeout(() => res(V322_TIMEOUT), ms || 9000); });
+  const work = (arg === undefined ? pg.evaluate(fn) : pg.evaluate(fn, arg))
+    .catch(e => ({ __erro: String(e && e.message || e).split("\n")[0] }));
+  try { return await Promise.race([work, budget]); }
+  finally { clearTimeout(timer); }
+}
+async function v322Act(pg, fn, ms) {
+  const r = await v322Eval(pg, fn, undefined, ms || 9000);
+  return r === V322_TIMEOUT;
+}
+/* Fechar uma página cujo renderer está em laço também bloqueia: o protocolo
+   espera uma resposta que não vem. A página é ABANDONADA depois do orçamento —
+   `browser.close()`, no fim da bateria, encerra o processo de qualquer modo. */
+async function v322Close(pg) {
+  let timer;
+  const budget = new Promise(res => { timer = setTimeout(res, 5000); });
+  try { await Promise.race([pg.close().catch(() => { }), budget]); }
+  finally { clearTimeout(timer); }
+}
+
+async function v322Print(browser, errs) {
+  const detail = [], observed = {};
+  const pg = await pageAt(browser, { w: 1440, h: 900 }, errs, "V322-PRINT1");
+  try {
+    await toResults(pg, FX52.P52_F1);
+    /* espião de print instalado ANTES de qualquer clique */
+    await pg.evaluate(() => {
+      window.__v322PrintCalls = 0;
+      const orig = window.print;
+      window.print = function () { window.__v322PrintCalls++; /* nunca chama o nativo na bateria */ };
+      window.__v322RestorePrint = () => { window.print = orig; };
+    });
+    /* A mensagem canônica é publicada UMA vez, enquanto a página ainda
+       responde. Republicá-la a cada etapa era uma chamada NÃO orçada — e, sob
+       uma decoração não convergente, era ELA que travava o gate antes de a não
+       convergência poder ser reportada como FAIL nomeado. */
+    await pg.evaluate(m => { window.V322_PENDING_MSG_IN = m; }, V322_PENDING_MSG);
+
+    /* estado LIMPO: nenhuma das três apresentações existe */
+    observed.clean = await pg.evaluate(V322_PENDING_SNAP);
+
+    /* 1 · abrir contexto e criar alteração material */
+    await pg.click("#v32cta");
+    await pg.waitForTimeout(350);
+    await pg.evaluate(() => {
+      const s = document.querySelector("#v32editor select[id^='v32-arch-']");
+      if (s && s.options.length > 1) { s.value = s.options[s.options.length - 1].value; s.dispatchEvent(new Event("change", { bubbles: true })); }
+    });
+    await pg.waitForTimeout(250);
+    /* §6.3 · ANTES da tentativa: pendência sinalizada, sem ênfase de erro */
+    observed.beforeAttempt = await pg.evaluate(V322_PENDING_SNAP);
+
+    /* 2 · navegar até Relatório e sessão sem salvar */
+    await pg.evaluate(() => {
+      const a = document.getElementById("p52-railto-actions");
+      if (a) a.click();
+    });
+    await pg.waitForTimeout(400);
+
+    /* 3 · clicar em Imprimir / salvar em PDF.
+       Este clique também é ORÇADO. Os callbacks de MutationObserver são
+       MICROTAREFAS: um decorador que muta o DOM dentro do próprio callback
+       nunca deixa o checkpoint de microtarefas drenar, e a TAREFA corrente —
+       a própria avaliação que disparou o clique — jamais termina. Sem
+       orçamento aqui, a não convergência travava o gate no passo 3, antes de
+       chegar à leitura que a reportaria. */
+    observed.congelouNoClique = await v322Act(pg, () => {
+      const b = Array.prototype.slice.call(document.querySelectorAll("button"))
+        .filter(x => /Imprimir \/ salvar em PDF/.test(x.textContent || ""))[0];
+      if (b) b.click();
+    });
+    await pg.waitForTimeout(450);
+    observed.blocked = observed.congelouNoClique
+      ? V322_TIMEOUT : await v322Eval(pg, V322_PENDING_SNAP);
+    /* Se a superfície não convergiu, o resto do roteiro é inalcançável: a
+       página não responde e cada passo seguinte só gastaria o orçamento de
+       novo. O gate ABANDONA o cenário aqui e reporta a não convergência — que
+       é um FAIL nomeado, não um timeout do harness. */
+    const congelou = observed.blocked === V322_TIMEOUT;
+
+    if (!congelou) {
+    /* 12 · cliques repetidos ⇒ UMA mensagem em cada lugar */
+    for (let i = 0; i < 4; i++) {
+      if (await v322Act(pg, () => {
+        const b = Array.prototype.slice.call(document.querySelectorAll("button"))
+          .filter(x => /Imprimir \/ salvar em PDF/.test(x.textContent || ""))[0];
+        if (b) b.click();
+      })) { observed.congelou = "clique repetido " + (i + 1); break; }
+      await pg.waitForTimeout(160);
+    }
+    observed.repeated = await v322Eval(pg, V322_PENDING_SNAP);
+
+    /* 9 · o atalho leva ao editor SEM descartar o draft */
+    observed.goto = await pg.evaluate(() => {
+      const probe = () => { let v = false; window.__DEV._setDraft(() => { v = true; }); return v; };
+      const before = probe();
+      const arch = document.querySelector("#v32editor select[id^='v32-arch-']");
+      const val = arch ? arch.value : null;
+      const g = document.querySelector('[data-p52="goto-context"]');
+      if (g) g.click();
+      return { before, val, clicked: !!g };
+    });
+    await pg.waitForTimeout(450);
+    observed.afterGoto = await pg.evaluate(() => {
+      const ed = document.getElementById("v32editor");
+      const arch = ed ? ed.querySelector("select[id^='v32-arch-']") : null;
+      const sec = document.getElementById("p52-sec-context");
+      return {
+        draftPending: (function () { let v = false; window.__DEV._setDraft(() => { v = true; }); return v; })(),
+        archVal: arch ? arch.value : null,
+        editorVisible: !!(ed && ed.getBoundingClientRect().height > 0),
+        focusInContext: !!(sec && sec.contains(document.activeElement))
+      };
+    });
+
+    /* 10 · Salvar limpa os três indicadores e libera o print */
+    await pg.evaluate(() => { const b = document.getElementById("v32save"); if (b) b.click(); });
+    await pg.waitForTimeout(500);
+    observed.afterSave = await v322Eval(pg, V322_PENDING_SNAP);
+    await pg.evaluate(() => {
+      const b = Array.prototype.slice.call(document.querySelectorAll("button"))
+        .filter(x => /Imprimir \/ salvar em PDF/.test(x.textContent || ""))[0];
+      if (b) b.click();
+    });
+    await pg.waitForTimeout(350);
+    observed.printAfterSave = await pg.evaluate(() => window.__v322PrintCalls);
+
+    /* 11 · repetir com Cancelar */
+    await pg.evaluate(() => { window.__v322PrintCalls = 0; });
+    await pg.click("#v32cta");
+    await pg.waitForTimeout(350);
+    await pg.evaluate(() => {
+      const s = document.querySelector("#v32editor select[id^='v32-arch-']");
+      if (s && s.options.length > 1) { s.value = s.options[0].value; s.dispatchEvent(new Event("change", { bubbles: true })); }
+    });
+    await pg.waitForTimeout(200);
+    await pg.evaluate(() => {
+      const b = Array.prototype.slice.call(document.querySelectorAll("button"))
+        .filter(x => /Imprimir \/ salvar em PDF/.test(x.textContent || ""))[0];
+      if (b) b.click();
+    });
+    await pg.waitForTimeout(400);
+    observed.blocked2 = await v322Eval(pg, V322_PENDING_SNAP);
+    await pg.evaluate(() => { const b = document.getElementById("v32cancel"); if (b) b.click(); });
+    await pg.waitForTimeout(500);
+    observed.afterCancel = await v322Eval(pg, V322_PENDING_SNAP);
+    await pg.evaluate(() => {
+      const b = Array.prototype.slice.call(document.querySelectorAll("button"))
+        .filter(x => /Imprimir \/ salvar em PDF/.test(x.textContent || ""))[0];
+      if (b) b.click();
+    });
+    await pg.waitForTimeout(350);
+    observed.printAfterCancel = await pg.evaluate(() => window.__v322PrintCalls);
+    }
+  } finally { await v322Close(pg); }
+
+  /* ---- asserções ---- */
+  if (observed.congelouNoClique)
+    detail.push("a página deixou de responder JÁ no clique de impressão — decoração não convergente " +
+      "(callback de MutationObserver que muta o DOM a cada passagem)");
+  for (const [etapa, snap] of Object.entries(observed))
+    if (snap === V322_TIMEOUT)
+      detail.push("a superfície de pendência NÃO CONVERGIU em '" + etapa +
+        "': a página deixou de responder — laço de decoração que recria o nó a cada passagem");
+  if (observed.congelou)
+    detail.push("a página congelou no " + observed.congelou + " — decoração não convergente");
+  const isSnap = v => v && typeof v === "object" && v !== V322_TIMEOUT && !v.__erro;
+  const c = observed.clean, ba = observed.beforeAttempt, bl = observed.blocked,
+        rp = observed.repeated, sv = observed.afterSave, cx = observed.afterCancel, b2 = observed.blocked2;
+  /* estado limpo */
+  if (isSnap(c)) {
+    if (c.nearCount) detail.push("estado limpo: mensagem de PDF já presente");
+    if (c.railPendingCount) detail.push("estado limpo: indicador de pendência já no trilho");
+    if (c.btnDescribedBy) detail.push("estado limpo: aria-describedby residual no botão de PDF");
+  }
+  /* §6.3 · antes da tentativa: pendência sinalizada, sem erro */
+  if (isSnap(ba)) {
+    if (ba.railPendingCount !== 1) detail.push("antes da tentativa: " + ba.railPendingCount + " indicador(es) no trilho (esperado 1)");
+    if (!/alterações pendentes/i.test(ba.railPendingText || "")) detail.push("antes da tentativa: indicador sem texto 'alterações pendentes' (texto='" + ba.railPendingText + "')");
+    if (ba.railState === "error") detail.push("antes da tentativa: seção marcada como ERRO sem o usuário ter tentado imprimir");
+    if (ba.nearCount) detail.push("antes da tentativa: mensagem de PDF apresentada sem tentativa");
+  }
+  /* §7.3.4–8 · tentativa bloqueada */
+  if (isSnap(bl)) {
+    if (bl.printCalls !== 0) detail.push("window.print() chamado " + bl.printCalls + " vez(es) com draft aberto");
+    if (bl.nearCount !== 1) detail.push("mensagem junto ao PDF: " + bl.nearCount + " ocorrência(s) (esperado 1)");
+    if (!bl.nearHasExact) detail.push("mensagem junto ao PDF sem o texto exato (texto='" + bl.nearText + "')");
+    if (!bl.nearVisible) detail.push("mensagem junto ao PDF não visível");
+    if (bl.nearRole !== "alert") detail.push("mensagem junto ao PDF sem role=alert (role=" + bl.nearRole + ")");
+    if (bl.nearLive !== "assertive") detail.push("mensagem junto ao PDF sem aria-live=assertive (aria-live=" + bl.nearLive + ")");
+    if (!bl.nearAfterGroup) detail.push("mensagem de PDF não está DEPOIS do grupo de ações que contém o botão");
+    if (bl.nearGapFromGroup === null || bl.nearGapFromGroup > 160)
+      detail.push("mensagem de PDF distante do grupo de ações (" + bl.nearGapFromGroup + "px)");
+    if (!bl.btnDescribedBy || !bl.nearId || bl.btnDescribedBy.indexOf(bl.nearId) < 0)
+      detail.push("botão de PDF sem aria-describedby para o erro (describedby=" + bl.btnDescribedBy + " id=" + bl.nearId + ")");
+    if (bl.editorMsgCount !== 1) detail.push("mensagem no editor: " + bl.editorMsgCount + " ocorrência(s) (esperado 1)");
+    if ((bl.editorMsgText || "").indexOf(V322_PENDING_MSG) < 0)
+      detail.push("mensagem do editor sem o texto exato (texto='" + bl.editorMsgText + "')");
+    if (bl.railPendingCount !== 1) detail.push("trilho: " + bl.railPendingCount + " indicador(es) após bloqueio (esperado 1)");
+    if (!/pendente/i.test(bl.railTextAll || "")) detail.push("trilho sem texto acessível de pendência (texto='" + bl.railTextAll + "')");
+    if (!bl.gotoCount) detail.push("ação 'Ir para contexto tecnológico' ausente");
+    if (bl.focus === null) detail.push("foco não determinado após bloqueio");
+  }
+  /* §7.3.12 · idempotência */
+  if (isSnap(rp)) {
+    if (rp.nearCount !== 1) detail.push("cliques repetidos: " + rp.nearCount + " mensagens junto ao PDF");
+    if (rp.editorMsgCount !== 1) detail.push("cliques repetidos: " + rp.editorMsgCount + " mensagens no editor");
+    if (rp.railPendingCount !== 1) detail.push("cliques repetidos: " + rp.railPendingCount + " indicadores no trilho");
+    if (rp.printCalls !== 0) detail.push("cliques repetidos: window.print() chamado " + rp.printCalls + " vez(es)");
+  }
+  /* §7.3.9 · atalho preserva o draft */
+  if (observed.blocked !== V322_TIMEOUT && observed.goto && observed.afterGoto) {
+    if (!observed.goto.clicked) detail.push("atalho 'Ir para contexto tecnológico' não encontrado para clique");
+    if (observed.afterGoto.draftPending !== true) detail.push("o atalho DESCARTOU o draft");
+    if (observed.afterGoto.archVal !== observed.goto.val)
+      detail.push("o atalho perdeu o valor do draft ('" + observed.afterGoto.archVal + "' != '" + observed.goto.val + "')");
+    if (!observed.afterGoto.editorVisible) detail.push("o atalho não levou ao editor visível");
+  }
+  /* §6.5 · limpeza após Salvar */
+  if (isSnap(sv)) {
+    if (sv.nearCount) detail.push("após Salvar: mensagem de PDF permanece");
+    if (sv.editorMsgCount) detail.push("após Salvar: mensagem do editor permanece");
+    if (sv.railPendingCount) detail.push("após Salvar: indicador do trilho permanece");
+    if (sv.btnDescribedBy) detail.push("após Salvar: aria-describedby obsoleto no botão de PDF");
+  }
+  if (observed.blocked !== V322_TIMEOUT && observed.printAfterSave !== 1)
+    detail.push("após Salvar: window.print() chamado " + observed.printAfterSave + " vez(es) (esperado 1)");
+  /* §6.5 · limpeza após Cancelar */
+  if (isSnap(b2) && b2.nearCount !== 1) detail.push("segunda tentativa: " + b2.nearCount + " mensagens junto ao PDF");
+  if (isSnap(cx)) {
+    if (cx.nearCount) detail.push("após Cancelar: mensagem de PDF permanece");
+    if (cx.editorMsgCount) detail.push("após Cancelar: mensagem do editor permanece");
+    if (cx.railPendingCount) detail.push("após Cancelar: indicador do trilho permanece");
+    if (cx.btnDescribedBy) detail.push("após Cancelar: aria-describedby obsoleto no botão de PDF");
+  }
+  if (observed.blocked !== V322_TIMEOUT && observed.printAfterCancel !== 1)
+    detail.push("após Cancelar: window.print() chamado " + observed.printAfterCancel + " vez(es) (esperado 1)");
+
+  evidence322("V322-PRINT1-pending-state.json", observed);
+  T("V322-PRINT1",
+    "com contexto tecnológico não salvo o print é bloqueado e a pendência aparece NO PONTO DE AÇÃO: mensagem exata logo abaixo do grupo do botão de PDF com role=alert e aria-describedby, indicador nomeado no item Contexto tecnológico do trilho, mensagem junto a Salvar/Cancelar, atalho que leva ao editor sem descartar o draft, uma única mensagem por local em cliques repetidos e limpeza integral após Salvar e após Cancelar",
+    !detail.length, detail);
+}
+
+/* ============================== V322-NOREG1 ============================== */
+async function v322NoReg(browser, errs) {
+  const detail = [], observed = {};
+  const pg = await pageAt(browser, { w: 1440, h: 900 }, errs, "V322-NOREG1");
+  try {
+    await toResults(pg, FX52.P52_F1);
+    await pg.evaluate(() => {
+      window.__v322PrintCalls = 0;
+      const orig = window.print;
+      window.print = function () { window.__v322PrintCalls++; };
+    });
+    /* `generatedAt` é o relógio de parede do instante da geração: é METADADO do
+       ato de imprimir, não estado do assessment. Comparar o HTML sem
+       neutralizá-lo mediria o relógio, não o produto — defeito de oracle
+       observado na primeira execução RED desta bateria. Tudo o mais do
+       relatório entra na comparação byte a byte. */
+    const cap = () => pg.evaluate(() => ({
+      state: window.__DEV.fullStateJSON(),
+      legacy: window.__DEV.legacySnapshot(),
+      ctxState: window.__DEV._stateJSON(),
+      report: window.__DEV.buildPrintReport().html
+        .replace(/(data-pr-meta="generatedAt">)[^<]*/, "$1<GENERATED_AT>")
+    }));
+    const before = await cap();
+    /* ciclo completo de pendência + CANCELAR não pode mover nada */
+    await pg.click("#v32cta");
+    await pg.waitForTimeout(350);
+    await pg.evaluate(() => {
+      const s = document.querySelector("#v32editor select[id^='v32-arch-']");
+      if (s && s.options.length > 1) { s.value = s.options[s.options.length - 1].value; s.dispatchEvent(new Event("change", { bubbles: true })); }
+    });
+    await pg.waitForTimeout(200);
+    await pg.evaluate(() => {
+      const b = Array.prototype.slice.call(document.querySelectorAll("button"))
+        .filter(x => /Imprimir \/ salvar em PDF/.test(x.textContent || ""))[0];
+      if (b) b.click();
+    });
+    await pg.waitForTimeout(400);
+    await pg.evaluate(() => { const b = document.getElementById("v32cancel"); if (b) b.click(); });
+    await pg.waitForTimeout(450);
+    const after = await cap();
+    for (const k of ["state", "legacy", "ctxState", "report"]) {
+      if (before[k] !== after[k]) detail.push("o ciclo pendência→bloqueio→Cancelar alterou `" + k + "`");
+    }
+    observed.identical = { state: before.state === after.state, legacy: before.legacy === after.legacy,
+      ctxState: before.ctxState === after.ctxState, report: before.report === after.report };
+    observed.reportLen = before.report.length;
+    /* a mensagem de pendência NUNCA entra no relatório com estado limpo */
+    if (before.report.indexOf(V322_PENDING_MSG) >= 0) detail.push("a mensagem de pendência vazou para o relatório com estado limpo");
+    if (after.report.indexOf(V322_PENDING_MSG) >= 0) detail.push("a mensagem de pendência permaneceu no relatório após Cancelar");
+    /* nenhum nó do patch sobrevive no papel */
+    observed.paper = await pg.evaluate(() => {
+      const r = window.__DEV.buildPrintReport().html;
+      return { pending: (r.match(/print-pending/g) || []).length,
+               rail: (r.match(/rail-pending/g) || []).length,
+               region: (r.match(/p52-ctxregion/g) || []).length };
+    });
+    if (observed.paper.pending || observed.paper.rail)
+      detail.push("nós de pendência presentes no relatório impresso");
+  } finally { await pg.close(); }
+  evidence322("V322-NOREG1-no-regression.json", observed);
+  T("V322-NOREG1",
+    "o patch não move estado: o ciclo pendência → bloqueio de print → Cancelar deixa fullStateJSON, legacySnapshot, contexto e o HTML do relatório byte-idênticos, e nenhum nó de pendência chega ao papel",
+    !detail.length, detail);
+}
+
+
+/* ============================== V322-NI1 ==============================
+   FECHAMENTO PRÉ-AUDITORIA v3.2.2 · §5 — ZERO CONTROLE INTERATIVO DENTRO DE
+   `<summary>`, NAS DUAS ENTRADAS DO EDITOR.
+
+   `<summary>` É um controle. Um `<button>` dentro dele produz
+   `nested-interactive` (axe, `serious`): dois focáveis aninhados, semântica
+   ambígua para tecnologia assistiva. O gate mede a propriedade por DOIS
+   caminhos independentes — o axe e a estrutura do DOM — porque um oracle só
+   poderia calar por configuração.
+
+   Guardas de não vacuidade: exige que os DEZ controles de cabeçalho existam e
+   que o controle continue VISÍVEL com o grupo RECOLHIDO. Sem elas, apagar a
+   ajuda das famílias faria o gate passar trivialmente.
+   ========================================================================== */
+async function v322NestedInteractive(browser, errs) {
+  const detail = [], observed = {};
+  const INTERATIVOS = 'button, a[href], [role="button"], [tabindex]:not([tabindex="-1"]), input, select, textarea';
+  for (const entrada of ["home", "resultados"]) {
+    for (const sigAberto of [false, true]) {
+      const chave = entrada + (sigAberto ? "+requisitos" : "");
+      const ctx = await browser.newContext({ viewport: { width: 1440, height: 900 } });
+      const pg = await ctx.newPage();
+      pg.on("pageerror", e => errs.push("V322-NI1/" + chave + ": " + String(e.message)));
+      pg.on("console", m => { if (m.type() === "error") errs.push("V322-NI1/" + chave + " console: " + m.text()); });
+      try {
+        await pg.goto(HTML_URL);
+        if (entrada === "resultados") { await toResults(pg, FX52.P52_F1); await pg.click("#v32cta"); }
+        else { await pg.click("#ux-addctx"); }
+        await pg.waitForTimeout(450);
+        if (sigAberto) {
+          await pg.evaluate(() => {
+            const d = document.querySelector('#v32editor details[data-gid="sig"]');
+            if (d && !d.open) { const s = d.querySelector(":scope > summary"); if (s) s.click(); }
+          });
+          await pg.waitForTimeout(400);
+        }
+        const axe = await new AxeBuilderP52({ page: pg }).include("#app").analyze();
+        const ni = [], graves = [];
+        for (const v of axe.violations) {
+          if (v.impact === "critical" || v.impact === "serious")
+            graves.push(v.id + "[" + v.impact + "]x" + v.nodes.length);
+          if (v.id === "nested-interactive")
+            for (const n of v.nodes) ni.push({ seletor: n.target, html: String(n.html).replace(/\s+/g, " ").slice(0, 120) });
+        }
+        const dom = await pg.evaluate(sel => {
+          const dentro = [];
+          document.querySelectorAll("#v32editor summary").forEach(su => {
+            su.querySelectorAll(sel).forEach(x => dentro.push({
+              gid: (su.parentElement && su.parentElement.getAttribute("data-gid")) || "?",
+              tag: x.tagName.toLowerCase(), p52: x.getAttribute("data-p52") || null
+            }));
+          });
+          const cab = Array.prototype.slice.call(document.querySelectorAll("#v32editor [data-p52-grouphelp]"));
+          return {
+            interativosEmSummary: dentro,
+            controlesDeCabecalho: cab.length,
+            gids: cab.map(b => b.getAttribute("data-p52-grouphelp")),
+            /* O controle tem de existir E continuar VISÍVEL com o grupo
+               RECOLHIDO — foi por falhar exatamente aqui que o padrão literal
+               da §5.2 (irmão do `<summary>`, dentro do `<details>`) foi
+               descartado. A exigência vale onde o CABEÇALHO está renderizado:
+               os quatro subgrupos `sig-N` vivem DENTRO da família `sig`, e
+               quando ela está recolhida o cabeçalho inteiro deles não é
+               exibido — o que é o comportamento correto do accordion, não um
+               controle perdido. */
+            recolhidosVisiveis: cab.filter(b => {
+              const h = b.closest(".p52-grphead");
+              const d = h && h.querySelector("details[data-gid]");
+              return d && !d.open && d.checkVisibility({ checkVisibilityCSS: true }) &&
+                b.checkVisibility({ checkVisibilityCSS: true });
+            }).length,
+            recolhidosTotal: cab.filter(b => {
+              const h = b.closest(".p52-grphead");
+              const d = h && h.querySelector("details[data-gid]");
+              return d && !d.open && d.checkVisibility({ checkVisibilityCSS: true });
+            }).length,
+            popsOrfaos: cab.filter(b => !document.getElementById(b.getAttribute("aria-describedby") || "")).length
+          };
+        }, INTERATIVOS);
+        observed[chave] = { nestedInteractive: ni, graves: graves, dom: dom };
+        if (ni.length)
+          detail.push(chave + ": " + ni.length + " nó(s) nested-interactive — ex.: " + JSON.stringify(ni[0].seletor));
+        if (graves.length)
+          detail.push(chave + ": violações critical/serious do axe [" + graves.join(" · ") + "]");
+        if (dom.interativosEmSummary.length)
+          detail.push(chave + ": " + dom.interativosEmSummary.length + " controle(s) interativo(s) dentro de <summary> — ex.: " +
+            JSON.stringify(dom.interativosEmSummary[0]));
+        /* não vacuidade */
+        if (dom.controlesDeCabecalho !== 10)
+          detail.push(chave + ": " + dom.controlesDeCabecalho + " controles (i) de cabeçalho (esperado 10) — asserção vacuosa");
+        if (dom.popsOrfaos)
+          detail.push(chave + ": " + dom.popsOrfaos + " controle(s) com aria-describedby órfão");
+        if (dom.recolhidosTotal && dom.recolhidosVisiveis !== dom.recolhidosTotal)
+          detail.push(chave + ": " + (dom.recolhidosTotal - dom.recolhidosVisiveis) +
+            " controle(s) (i) invisível(is) com o grupo recolhido");
+      } finally { await pg.close().catch(() => { }); await ctx.close().catch(() => { }); }
+    }
+  }
+  evidence322("V322-NI1-nested-interactive.json", observed);
+  T("V322-NI1",
+    "o controle de ajuda (i) das famílias e dos subgrupos vive FORA do <summary>: zero nested-interactive e zero violação critical/serious do axe nas duas entradas do editor, com e sem o grupo de requisitos aberto, mantendo os dez controles presentes, associados e visíveis com o grupo recolhido",
+    !detail.length, detail);
+}
+
+/* ============================== V322-MOT3 ==============================
+   ERRATA V3.2.2 · §5 — O PISCAR MEDIDO EM PIXEL, NÃO EM OPINIÃO.
+
+   Causa material: `render()` reatribui `#app.innerHTML` a CADA mudança de
+   estado — inclusive ao apenas marcar uma resposta —, e a Camada 1 congelada
+   declara `.screen{animation:fade .35s ease}`, cujo `from` é
+   `opacity:0; transform:translateY(10px)`. Um `section.screen` NOVO reexecuta
+   a animação inteira: a tela cai a zero e sobe de novo. Isso é o "piscar".
+
+   O gate mede TRÊS coisas independentes, no navegador real:
+     1 · `animation-name` computado do `section.screen` em cada transição;
+     2 · a AMOSTRAGEM quadro a quadro da opacidade e do `transform` logo
+         depois da ação — o oracle que não depende de nome de animação;
+     3 · o estado canônico e o scroll, que não podem mudar por causa de UI.
+
+   Sob `prefers-reduced-motion: reduce` as três medidas têm de mostrar
+   ausência total de movimento, em qualquer uma das ações.
+   ========================================================================== */
+const V322_MOT_PROBE = `
+  (async function () {
+    const sec = () => document.querySelector("#app section.screen");
+    const leia = () => {
+      const s = sec();
+      if (!s) return { falta: true };
+      const cs = getComputedStyle(s);
+      const anims = (typeof document.getAnimations === "function" ? document.getAnimations() : [])
+        .filter(a => a.effect && a.effect.target === s)
+        .map(a => ({ nome: a.animationName || null,
+                     dur: Math.round(a.effect.getComputedTiming().duration || 0),
+                     estado: a.playState }));
+      return { nav: s.getAttribute("data-p52-nav"), animName: cs.animationName,
+               animDur: cs.animationDuration, opacity: parseFloat(cs.opacity),
+               transform: cs.transform, anims: anims };
+    };
+    /* amostragem quadro a quadro: o oracle independente de nome */
+    const amostrar = async (ms) => {
+      const out = [];
+      const t0 = performance.now();
+      while (performance.now() - t0 < ms) {
+        const s = sec();
+        if (s) { const cs = getComputedStyle(s); out.push([+(+cs.opacity).toFixed(3), cs.transform]); }
+        await new Promise(r => requestAnimationFrame(r));
+      }
+      return { minOpacidade: out.length ? Math.min.apply(null, out.map(x => x[0])) : null,
+               transformes: Array.from(new Set(out.map(x => x[1]))),
+               quadros: out.length };
+    };
+    const canon = () => JSON.stringify(window.__DEV.captureCanonicalInputs());
+    const tecla = k => document.dispatchEvent(new KeyboardEvent("keydown", { key: k, bubbles: true }));
+    const R = {};
+    R.repouso = leia();
+    R.scrollAntes = window.scrollY;
+
+    /* 1 · trocar a resposta NA MESMA pergunta */
+    const opts = document.querySelectorAll("#app .opt");
+    R.opcoes = opts.length;
+    opts[2].click();
+    R.selecao = leia();
+    R.selecaoAmostra = await amostrar(420);
+    R.scrollDepois = window.scrollY;
+    R.selecionadoVisivel = !!document.querySelector("#app .opt.sel");
+
+    /* 2 · avançar para a pergunta seguinte */
+    document.getElementById("next").click();
+    R.avanco = leia();
+    R.avancoAmostra = await amostrar(420);
+
+    /* 3 · voltar */
+    document.getElementById("back").click();
+    R.retorno = leia();
+    R.retornoAmostra = await amostrar(420);
+
+    /* 4 · o teclado percorre EXATAMENTE os mesmos caminhos: dígito troca a
+       resposta na mesma pergunta, Enter avança, ArrowLeft volta. */
+    tecla("2");
+    await new Promise(r => setTimeout(r, 120));
+    R.teclaResposta = leia();
+    /* a partir DAQUI o estado canônico está estabilizado: a comparação isola
+       a navegação, não a resposta que o dígito acabou de gravar. */
+    R.canonAntes = canon();
+    tecla("Enter");
+    await new Promise(r => setTimeout(r, 120));
+    R.teclaAvanco = leia();
+    tecla("ArrowLeft");
+    await new Promise(r => setTimeout(r, 260));
+    R.teclaRetorno = leia();
+
+    /* 5 · o estado canônico não pode mudar por ida e volta entre perguntas */
+    R.canonMeio = canon();
+    document.getElementById("next").click();
+    await new Promise(r => setTimeout(r, 260));
+    document.getElementById("back").click();
+    await new Promise(r => setTimeout(r, 260));
+    R.canonDepois = canon();
+    R.selecionadoAoVoltar = !!document.querySelector("#app .opt.sel");
+    return R;
+  })()
+`;
+
+async function v322Motion(browser, errs) {
+  const detail = [], observed = {};
+  for (const reduzido of [false, true]) {
+    const chave = reduzido ? "reduced-motion" : "movimento-normal";
+    const ctx = await browser.newContext({
+      viewport: { width: 1440, height: 900 },
+      reducedMotion: reduzido ? "reduce" : "no-preference"
+    });
+    const pg = await ctx.newPage();
+    pg.on("pageerror", e => errs.push("V322-MOT3/" + chave + ": " + String(e.message)));
+    pg.on("console", m => { if (m.type() === "error") errs.push("V322-MOT3/" + chave + " console: " + m.text()); });
+    try {
+      await pg.goto(HTML_URL);
+      await toQuestion(pg, 3);
+      await pg.waitForTimeout(500);
+      const R = await pg.evaluate(V322_MOT_PROBE);
+      observed[chave] = R;
+
+      /* não vacuidade: a fixture chegou mesmo a uma pergunta com opções */
+      if (R.repouso.falta) { detail.push(chave + ": nenhuma section.screen — asserção vacuosa"); continue; }
+      if (!R.opcoes || R.opcoes < 3) { detail.push(chave + ": " + R.opcoes + " opções na pergunta — asserção vacuosa"); continue; }
+      if (!R.selecionadoVisivel) detail.push(chave + ": a seleção não ficou visível imediatamente");
+
+      /* --- 1 · trocar resposta na MESMA pergunta: zero movimento ---------- */
+      if (R.selecao.nav !== null)
+        detail.push(chave + ": trocar de resposta marcou transição (" + R.selecao.nav + ")");
+      if (R.selecao.animName !== "none")
+        detail.push(chave + ": trocar de resposta aplica animação '" + R.selecao.animName + "' (" + R.selecao.animDur + ")");
+      if (R.selecao.anims.length)
+        detail.push(chave + ": " + R.selecao.anims.length + " animação(ões) ativa(s) ao trocar de resposta — " +
+          JSON.stringify(R.selecao.anims));
+      if (R.selecaoAmostra.minOpacidade !== null && R.selecaoAmostra.minOpacidade < 0.999)
+        detail.push(chave + ": a tela caiu para opacidade " + R.selecaoAmostra.minOpacidade + " ao trocar de resposta (o piscar)");
+      const tSel = R.selecaoAmostra.transformes.filter(t => t && t !== "none");
+      if (tSel.length)
+        detail.push(chave + ": houve translação ao trocar de resposta — " + tSel.slice(0, 2).join(" / "));
+      if (R.scrollDepois !== R.scrollAntes)
+        detail.push(chave + ": o scroll mudou ao trocar de resposta (" + R.scrollAntes + " → " + R.scrollDepois + ")");
+      if (!R.selecaoAmostra.quadros) detail.push(chave + ": amostragem sem quadros — asserção vacuosa");
+
+      /* --- 2 e 3 · navegação real ---------------------------------------- */
+      if (reduzido) {
+        for (const [nome, a] of [["avanço", R.avanco], ["retorno", R.retorno]]) {
+          if (a.animName !== "none")
+            detail.push(chave + ": " + nome + " ainda anima sob prefers-reduced-motion ('" + a.animName + "')");
+          if (a.anims.length)
+            detail.push(chave + ": " + nome + " com animação ativa sob prefers-reduced-motion — " + JSON.stringify(a.anims));
+        }
+        for (const [nome, s] of [["avanço", R.avancoAmostra], ["retorno", R.retornoAmostra]]) {
+          if (s.minOpacidade !== null && s.minOpacidade < 0.999)
+            detail.push(chave + ": " + nome + " caiu a opacidade " + s.minOpacidade + " sob prefers-reduced-motion");
+          const tt = s.transformes.filter(t => t && t !== "none");
+          if (tt.length) detail.push(chave + ": " + nome + " transladou sob prefers-reduced-motion — " + tt.slice(0, 2).join(" / "));
+        }
+      } else {
+        if (R.avanco.nav !== "fwd") detail.push(chave + ": avançar não marcou a transição para a frente (" + R.avanco.nav + ")");
+        if (R.retorno.nav !== "back") detail.push(chave + ": voltar não marcou a transição para trás (" + R.retorno.nav + ")");
+        for (const [nome, a, kf] of [["avanço", R.avanco, "p52-nav-fwd"], ["retorno", R.retorno, "p52-nav-back"]]) {
+          if (a.animName !== kf)
+            detail.push(chave + ": " + nome + " com animação '" + a.animName + "' (esperado '" + kf + "')");
+          if (!a.anims.length)
+            detail.push(chave + ": " + nome + " sem animação ativa — a transição não foi aplicada");
+          a.anims.forEach(x => {
+            if (x.dur < 120 || x.dur > 180)
+              detail.push(chave + ": " + nome + " com duração " + x.dur + "ms (esperado 120–180ms)");
+          });
+        }
+        /* movimento discreto: horizontal, sem partir de opacidade zero */
+        for (const [nome, s] of [["avanço", R.avancoAmostra], ["retorno", R.retornoAmostra]]) {
+          if (s.minOpacidade !== null && s.minOpacidade < 0.999)
+            detail.push(chave + ": " + nome + " partiu de opacidade " + s.minOpacidade + " (a transição não pode piscar)");
+          const houve = s.transformes.filter(t => t && t !== "none");
+          if (!houve.length) detail.push(chave + ": " + nome + " sem deslocamento observável — transição inexistente");
+          for (const t of houve) {
+            const m = /matrix\\(([^)]+)\\)/.exec(t);
+            if (!m) continue;
+            const p = m[1].split(",").map(x => parseFloat(x.trim()));
+            if (Math.abs(p[5]) > 0.5)
+              detail.push(chave + ": " + nome + " deslocou na VERTICAL (" + p[5] + "px) — a transição é horizontal");
+            if (Math.abs(p[4]) > 40)
+              detail.push(chave + ": " + nome + " deslocou " + p[4] + "px na horizontal — deslocamento não é discreto");
+          }
+        }
+      }
+
+      /* --- 4 · teclado: mesmos caminhos, mesmo contrato de movimento ------ */
+      if (R.teclaResposta.nav !== null)
+        detail.push(chave + ": trocar de resposta pelo TECLADO marcou transição (" + R.teclaResposta.nav + ")");
+      if (R.teclaResposta.animName !== "none")
+        detail.push(chave + ": trocar de resposta pelo TECLADO anima ('" + R.teclaResposta.animName + "')");
+      if (reduzido) {
+        for (const [nome, a] of [["Enter", R.teclaAvanco], ["ArrowLeft", R.teclaRetorno]])
+          if (a.animName !== "none")
+            detail.push(chave + ": " + nome + " ainda anima sob prefers-reduced-motion ('" + a.animName + "')");
+      } else {
+        if (R.teclaAvanco.nav !== "fwd") detail.push(chave + ": Enter não avançou com transição (" + R.teclaAvanco.nav + ")");
+        if (R.teclaRetorno.nav !== "back") detail.push(chave + ": ArrowLeft não voltou com transição (" + R.teclaRetorno.nav + ")");
+      }
+
+      /* --- 5 · nada de estado se move por causa de UI --------------------- */
+      if (R.canonAntes !== R.canonMeio)
+        detail.push(chave + ": os inputs canônicos mudaram durante a navegação por teclado");
+      if (R.canonMeio !== R.canonDepois)
+        detail.push(chave + ": os inputs canônicos mudaram com ida e volta entre perguntas");
+      if (!R.selecionadoAoVoltar) detail.push(chave + ": a resposta selecionada sumiu ao voltar");
+    } finally { await pg.close().catch(() => { }); await ctx.close().catch(() => { }); }
+  }
+  evidence322("V322-MOT3-motion.json", observed);
+  T("V322-MOT3",
+    "trocar de resposta na mesma pergunta não produz animação, queda de opacidade, translação nem mudança de scroll; avançar e voltar entre perguntas recebem apenas a transição horizontal curta (120–180ms); prefers-reduced-motion zera todo movimento e nada disso move o estado canônico",
+    !detail.length, detail);
+}
+
+/* ==========================================================================
+   ERRATA FINAL V3.2.2 (REV C) · GATES DIRIGIDOS B-01 / A-01 / A-02 / M-01 /
+   M-02 / M-05.
+
+   Namespace próprio `V322C-*`: não continua P52-*, V322-* nem nenhuma
+   numeração anterior. Todos medem ESTADO e COMPORTAMENTO — nunca presença de
+   texto, de classe ou de nó como prova de ação.
+
+   Oráculo de `Enter ≡ clique`: cada caso é executado DUAS vezes, em páginas
+   independentes e a partir do mesmo preparo — uma com `element.click()` real
+   de mouse, outra com `Enter` sobre o mesmo controle focado. O veredito
+   compara o SNAPSHOT CANÔNICO resultante (inputs canônicos, estado V3.2,
+   tela, número da pergunta, editor vivo, draft) e não o DOM renderizado. Um
+   `Enter` que produza tela ou estado diferentes do clique reprova, mesmo que
+   a tela pareça correta.
+   ========================================================================== */
+const V322C_SNAP = function () {
+  var ed = document.getElementById("v32editor");
+  var qn = document.querySelector("#app .qnum");
+  var m = qn ? String(qn.textContent || "").match(/Pergunta\s+(\d+)\s+de/) : null;
+  var draft = false;
+  try { if (window.__DEV && window.__DEV._setDraft) window.__DEV._setDraft(function () { draft = true; }); }
+  catch (e) { draft = false; }
+  var a = null;
+  try { a = document.activeElement; } catch (e) { a = null; }
+  var inputs = "";
+  try { inputs = JSON.stringify(window.__DEV.captureCanonicalInputs()); } catch (e) { inputs = "ERRO:" + e.message; }
+  var ctx = "";
+  try { ctx = window.__DEV._stateJSON(); } catch (e) { ctx = "ERRO:" + e.message; }
+  return {
+    tela: document.body.getAttribute("data-uxscreen"),
+    pergunta: m ? Number(m[1]) : null,
+    editorVivo: !!(ed && !ed.classList.contains("v32-hidden") && ed.children.length),
+    draft: draft,
+    inputs: inputs,
+    ctx: ctx,
+    seletorArquivo: document.querySelectorAll('input[type="file"][aria-label="Selecionar arquivo de sessão"]').length,
+    aberturasDoSeletor: (typeof window.__v322cFilePicks === "number") ? window.__v322cFilePicks : -1,
+    evidenciaAberta: !!document.getElementById("notetxt"),
+    ativo: a && a.nodeType === 1 ? (a.id || a.tagName) : null,
+    ativoNoEditor: !!(a && ed && ed.contains(a))
+  };
+};
+/* campos canônicos comparados na equivalência `Enter ≡ clique`. `ativo` fica
+   FORA: o clique de mouse foca o próprio botão, o `Enter` mantém o foco onde
+   já estava, e essa diferença é do meio de entrada, não do efeito. */
+const V322C_CANON = ["tela", "pergunta", "editorVivo", "draft", "inputs", "ctx",
+  "aberturasDoSeletor", "evidenciaAberta"];
+
+/* Instrumentação do seletor de arquivo. `openImportPicker()` cria um
+   `<input type=file>` oculto e o clica; o diálogo do SISTEMA não é o objeto
+   de medida — e deixá-lo abrir tornaria o oráculo dependente de como o
+   Playwright o descarta (o `onchange` do descarte remove o nó antes da
+   leitura, e foi assim que a primeira execução produziu um falso negativo no
+   ramo do CLIQUE). A abertura é contada na origem, suprimindo apenas a
+   chamada nativa. Instalada IDENTICAMENTE nos dois modos. */
+const V322C_FILEPICK_PROBE = function () {
+  window.__v322cFilePicks = 0;
+  var orig = HTMLInputElement.prototype.click;
+  HTMLInputElement.prototype.click = function () {
+    if (this.type === "file") { window.__v322cFilePicks++; return; }
+    return orig.apply(this, arguments);
+  };
+};
+
+async function v322cOpenHomeEditor(pg) {
+  await pg.click("#ux-addctx");
+  await pg.waitForTimeout(360);
+}
+async function v322cOpenGroup(pg, gid) {
+  await pg.evaluate(g => {
+    var d = document.querySelector('#v32editor details[data-gid="' + g + '"]');
+    if (d && !d.open) { var s = d.querySelector(":scope > summary"); if (s) s.click(); else d.open = true; }
+  }, gid);
+  await pg.waitForTimeout(280);
+}
+/* declara uma capability como NONE pelo caminho do owner: gera draft sujo sem
+   exigir fabricante/produto (que a validação passaria a cobrar em PRESENT). */
+async function v322cDeclare(pg) {
+  await v322cOpenGroup(pg, "g1");
+  return await pg.evaluate(async () => {
+    var sel = document.querySelector('#v32editor select[id^="v32-pres-"]');
+    if (!sel) return null;
+    sel.value = "NONE";
+    sel.dispatchEvent(new Event("change", { bubbles: true }));
+    await new Promise(r => setTimeout(r, 280));
+    return sel.getAttribute("data-cap");
+  });
+}
+
+const V322C_KEY_CASES = [
+  {
+    id: "K1", tela: "home", sel: "#ux-addctx", compara: true,
+    label: "Enter em 'Adicionar contexto tecnológico' abre o editor e não inicia o scan",
+    prepara: async () => { },
+    exige: (a) => {
+      var e = [];
+      if (a.tela !== "ctxeditor") e.push("tela final '" + a.tela + "' (esperada ctxeditor)");
+      if (!a.editorVivo) e.push("editor não ficou vivo");
+      if (a.pergunta !== null) e.push("o questionário foi iniciado (pergunta " + a.pergunta + ")");
+      return e;
+    }
+  },
+  {
+    id: "K2", tela: "ctxeditor", sel: '#v32editor select[id^="v32-pres-"]', compara: false,
+    label: "Enter no select 'Situação declarada' não destrói o editor nem muda de tela",
+    prepara: async pg => { await v322cOpenHomeEditor(pg); await v322cOpenGroup(pg, "g1"); },
+    exige: (a, b) => {
+      var e = [];
+      if (a.tela !== "ctxeditor") e.push("tela final '" + a.tela + "' (esperada ctxeditor)");
+      if (!a.editorVivo) e.push("o editor foi destruído");
+      if (a.pergunta !== null) e.push("o questionário foi iniciado (pergunta " + a.pergunta + ")");
+      if (a.inputs !== b.inputs) e.push("inputs canônicos mudaram ao teclar Enter num select");
+      if (a.ctx !== b.ctx) e.push("contexto tecnológico mudou ao teclar Enter num select");
+      return e;
+    }
+  },
+  {
+    id: "K3", tela: "ctxeditor", sel: "#v32save", compara: true,
+    label: "Enter em 'Salvar contexto' salva pela entrada HOME, limpa o draft e volta à home",
+    prepara: async pg => { await v322cOpenHomeEditor(pg); await v322cDeclare(pg); },
+    exige: (a, b) => {
+      var e = [];
+      if (a.draft) e.push("draft continuou vivo depois de salvar");
+      if (a.tela !== "home") e.push("tela final '" + a.tela + "' (esperada home)");
+      if (a.ctx === b.ctx) e.push("nada foi gravado: o contexto tecnológico ficou idêntico ao de antes");
+      if (/"presence":"NONE"/.test(b.ctx)) e.push("fixture inválida: o estado já continha NONE antes de salvar");
+      if (!/"presence":"NONE"/.test(a.ctx)) e.push("a capability declarada não chegou ao estado canônico");
+      return e;
+    }
+  },
+  {
+    id: "K4", tela: "ctxeditor", sel: "#v32cancel", compara: true,
+    label: "Enter em 'Cancelar' limpa o draft e preserva o estado canônico salvo",
+    prepara: async pg => { await v322cOpenHomeEditor(pg); await v322cDeclare(pg); },
+    exige: (a, b) => {
+      var e = [];
+      if (a.draft) e.push("draft continuou vivo depois de cancelar");
+      if (a.tela !== "home") e.push("tela final '" + a.tela + "' (esperada home)");
+      if (a.ctx !== b.ctx) e.push("cancelar ALTEROU o estado canônico salvo");
+      if (a.inputs !== b.inputs) e.push("cancelar alterou os inputs canônicos");
+      return e;
+    }
+  },
+  {
+    id: "K5", tela: "home", sel: "#ses-import-home", compara: true,
+    label: "Enter em 'Importar sessão' executa a ação do botão e não inicia o questionário",
+    prepara: async () => { },
+    exige: (a, b) => {
+      var e = [];
+      if (a.tela !== "home") e.push("tela final '" + a.tela + "' (esperada home)");
+      if (b.aberturasDoSeletor !== 0) e.push("fixture inválida: o seletor já havia sido aberto antes da ação");
+      if (a.aberturasDoSeletor !== 1) e.push("o seletor de sessão foi aberto " + a.aberturasDoSeletor + " vez(es) (esperada 1)");
+      if (a.pergunta !== null) e.push("o questionário foi iniciado (pergunta " + a.pergunta + ")");
+      return e;
+    }
+  },
+  {
+    id: "K6", tela: "question", sel: "#back", compara: true,
+    label: "Enter em '← Voltar' volta exatamente uma pergunta e nunca avança",
+    prepara: async pg => { await toQuestion(pg, 3); },
+    exige: (a, b) => {
+      var e = [];
+      if (b.pergunta === null) e.push("fixture inválida: a tela de origem não é uma pergunta");
+      else if (a.pergunta !== b.pergunta - 1)
+        e.push("pergunta " + b.pergunta + " → " + a.pergunta + " (esperada " + (b.pergunta - 1) + ")");
+      if (a.tela !== "question" && a.tela !== "arq") e.push("tela final '" + a.tela + "'");
+      return e;
+    }
+  },
+  {
+    id: "K7", tela: "question", sel: "#notetgl", compara: true,
+    label: "Enter em 'Adicionar evidência ou observação' abre a caixa e não muda de pergunta",
+    prepara: async pg => { await toQuestion(pg, 3); },
+    exige: (a, b) => {
+      var e = [];
+      if (a.pergunta !== b.pergunta) e.push("mudou de pergunta (" + b.pergunta + " → " + a.pergunta + ")");
+      if (b.evidenciaAberta) e.push("fixture inválida: a evidência já estava aberta");
+      if (!a.evidenciaAberta) e.push("a caixa de evidência não abriu");
+      return e;
+    }
+  },
+  {
+    id: "K8", tela: "results", sel: "#v32save", compara: true,
+    label: "Enter em 'Salvar contexto' pela entrada RESULTADOS mantém a paridade com a home",
+    prepara: async pg => {
+      await toResults(pg, FX52.P52_F1);
+      await pg.evaluate(() => { var c = document.getElementById("v32cta"); if (c) c.click(); });
+      await pg.waitForTimeout(360);
+      await v322cDeclare(pg);
+    },
+    exige: (a, b) => {
+      var e = [];
+      if (a.draft) e.push("draft continuou vivo depois de salvar");
+      if (a.tela !== "results") e.push("tela final '" + a.tela + "' (esperada results)");
+      if (a.ctx === b.ctx) e.push("nada foi gravado pela entrada dos resultados");
+      return e;
+    }
+  },
+  {
+    id: "K9", tela: "question", sel: '#app .opts button.opt[data-i="2"]', compara: true,
+    label: "Enter num card de resposta continua selecionando conforme o contrato existente",
+    prepara: async pg => { await toQuestion(pg, 3); },
+    exige: (a, b) => {
+      var e = [];
+      if (a.pergunta !== b.pergunta) e.push("selecionar avançou de pergunta (" + b.pergunta + " → " + a.pergunta + ")");
+      if (a.inputs === b.inputs) e.push("a resposta não foi registrada");
+      return e;
+    }
+  },
+  {
+    id: "K10", tela: "question", sel: null, compara: false,
+    label: "o atalho global Enter continua avançando quando o foco NÃO está num controle",
+    prepara: async pg => {
+      await toQuestion(pg, 3);
+      await pg.evaluate(() => { if (document.activeElement && document.activeElement.blur) document.activeElement.blur(); });
+    },
+    exige: (a, b) => {
+      var e = [];
+      if (b.pergunta === null) e.push("fixture inválida: a tela de origem não é uma pergunta");
+      else if (a.pergunta !== b.pergunta + 1)
+        e.push("pergunta " + b.pergunta + " → " + a.pergunta + " (esperada " + (b.pergunta + 1) + ")");
+      return e;
+    }
+  },
+  {
+    id: "K12", tela: "ctxeditor", sel: null, compara: false,
+    label: "no editor aberto pela home, Enter fora de qualquer controle não inicia o scan nem deixa draft órfão",
+    prepara: async pg => {
+      await v322cOpenHomeEditor(pg);
+      await v322cDeclare(pg);
+      await pg.evaluate(() => { if (document.activeElement && document.activeElement.blur) document.activeElement.blur(); });
+    },
+    exige: (a, b) => {
+      var e = [];
+      if (!b.draft) e.push("fixture inválida: não havia draft antes da tecla");
+      if (a.tela !== "ctxeditor") e.push("tela final '" + a.tela + "' (esperada ctxeditor)");
+      if (!a.editorVivo) e.push("o editor foi destruído com o foco fora de qualquer controle");
+      if (a.pergunta !== null) e.push("o questionário foi iniciado (pergunta " + a.pergunta + ")");
+      if (a.draft && !a.editorVivo) e.push("draft órfão: existe draft sem editor na tela");
+      return e;
+    }
+  },
+  {
+    id: "K11", tela: "priority", sel: "#back", compara: true,
+    label: "Enter em '← Voltar' na tela de prioridades volta ao questionário e nunca publica resultados",
+    prepara: async pg => {
+      await toResults(pg, FX52.P52_F1);
+      await pg.evaluate(() => window.__DEV.showPriority());
+      await pg.waitForTimeout(240);
+    },
+    exige: (a) => {
+      var e = [];
+      if (a.tela === "results") e.push("'Voltar' levou aos RESULTADOS");
+      if (a.tela !== "question") e.push("tela final '" + a.tela + "' (esperada question)");
+      return e;
+    }
+  }
+];
+
+async function v322cRunKeyCase(browser, errs, c, modo) {
+  const pg = await pageAt(browser, { w: 1440, h: 900 }, errs, "V322C-KEY1/" + c.id + "/" + modo);
+  pg.on("filechooser", fc => { try { fc.setFiles([]); } catch (e) { /* rede de segurança: o gate mede na origem */ } });
+  try {
+    await pg.evaluate(V322C_FILEPICK_PROBE);
+    await c.prepara(pg);
+    await pg.waitForTimeout(220);
+    if (c.sel) {
+      const focou = await pg.evaluate(sel => {
+        var el = document.querySelector(sel);
+        if (!el) return "ausente";
+        if (typeof el.focus !== "function") return "não focável";
+        el.focus();
+        return document.activeElement === el ? "" : "foco não assumido";
+      }, c.sel);
+      if (focou) return { erro: c.sel + ": " + focou };
+    }
+    const antes = await pg.evaluate(V322C_SNAP);
+    if (modo === "click") {
+      if (!c.sel) return { pulado: true };
+      await pg.click(c.sel, { timeout: 5000 });
+    } else {
+      await pg.keyboard.press("Enter");
+    }
+    await pg.waitForTimeout(420);
+    return { antes, depois: await pg.evaluate(V322C_SNAP) };
+  } catch (x) {
+    return { erro: String(x && x.message || x).split("\n")[0] };
+  } finally { await pg.close().catch(() => { }); }
+}
+
+/* ==========================================================================
+   REGRA POR ALVO EM VIGOR — §4.1 da instrução.
+
+   A §4.1 é normativa e independente de tela: "o handler global de teclado não
+   pode capturar `Enter` quando o alvo é um controle interativo que trata sua
+   própria ativação". A matriz K1–K12 mede o EFEITO, e o efeito é o mesmo
+   quando duas cláusulas do escudo se sobrepõem — na tela do editor, a cláusula
+   de identidade de tela já bastaria. Sem esta medição, a isenção por ALVO
+   ficaria inobservável justamente onde o parecer a exigiu, e um mutante que a
+   removesse seria no-op (foi o que a primeira campanha desta errata mostrou:
+   `V322C-M2` e `V322C-M7` não foram detectados por isso).
+
+   Aqui a asserção é sobre QUAL cláusula está em vigor: para cada classe de
+   controle da lista da §4.1, o escudo tem de disparar exatamente uma vez e
+   pelo motivo `alvo-ativa-sozinho`. O contador e o motivo são publicados por
+   `window.__P52.diag()`; a ordem de avaliação do escudo põe a cláusula de
+   alvo ANTES da de tela, de modo que o motivo distingue as duas sem ambiguidade.
+   ========================================================================== */
+const V322C_TARGET_RULE = [
+  { id: "T1", classe: "button", alvo: "Salvar contexto (#v32save)", sel: "#v32save",
+    prepara: async pg => { await v322cOpenHomeEditor(pg); } },
+  { id: "T2", classe: "button", alvo: "Cancelar (#v32cancel)", sel: "#v32cancel",
+    prepara: async pg => { await v322cOpenHomeEditor(pg); } },
+  { id: "T3", classe: "select", alvo: "Situação declarada", sel: '#v32editor select[id^="v32-pres-"]',
+    prepara: async pg => { await v322cOpenHomeEditor(pg); await v322cOpenGroup(pg, "g1"); } },
+  { id: "T4", classe: "summary", alvo: "cabeçalho de grupo do editor", sel: "#v32editor summary",
+    prepara: async pg => { await v322cOpenHomeEditor(pg); } },
+  { id: "T5", classe: "input", alvo: "contexto complementar da capability", sel: '#v32editor input[id^="v32-driver-"]',
+    prepara: async pg => { await v322cOpenHomeEditor(pg); await v322cDeclare(pg); } },
+  { id: "T6", classe: "button", alvo: "← Voltar da pergunta (#back)", sel: "#back",
+    prepara: async pg => { await toQuestion(pg, 3); } },
+  { id: "T7", classe: "button", alvo: "evidência (#notetgl)", sel: "#notetgl",
+    prepara: async pg => { await toQuestion(pg, 3); } },
+  { id: "T8", classe: "textarea", alvo: "campo de evidência (#notetxt)", sel: "#notetxt",
+    prepara: async pg => {
+      await toQuestion(pg, 3);
+      await pg.evaluate(() => document.getElementById("notetgl").click());
+      await pg.waitForTimeout(260);
+    } },
+  { id: "T9", classe: "button", alvo: "CTA de contexto da home (#ux-addctx)", sel: "#ux-addctx",
+    prepara: async () => { } },
+  { id: "T10", classe: "button", alvo: "Importar sessão (#ses-import-home)", sel: "#ses-import-home",
+    prepara: async () => { } },
+  { id: "T11", classe: "a[href]", alvo: "item do trilho de resultados", sel: "#p52-railto-context",
+    prepara: async pg => { await toResults(pg, FX52.P52_F1); } },
+  /* O nó do emblema TRATA a própria tecla no seu próprio ouvinte, e chama
+     `preventDefault()` ali. Esse ouvinte é de ELEMENTO: roda antes do escudo,
+     e por isso a cláusula em vigor é a 3 (`evento já consumido por um handler
+     mais próximo`), não a 4. As duas dizem a mesma coisa — o alvo trata a
+     própria ativação —, mas o motivo tem de ser o correto e não "qualquer um":
+     se o ouvinte do emblema deixasse de consumir a tecla, o motivo exigido
+     passaria a ser `alvo-ativa-sozinho`, e este caso reprovaria. */
+  { id: "T12", classe: '[role="button"]', alvo: "nó do emblema dos cinco domínios", sel: '.p52-emblem-node[role="button"]',
+    motivoEsperado: "ja-tratado", prepara: async () => { } }
+];
+
+async function v322cTargetRule(browser, errs, observed) {
+  const detail = [];
+  for (const c of V322C_TARGET_RULE) {
+    const pg = await pageAt(browser, { w: 1440, h: 900 }, errs, "V322C-KEY1/" + c.id);
+    pg.on("filechooser", fc => { try { fc.setFiles([]); } catch (e) { /* medido na origem */ } });
+    try {
+      await pg.evaluate(V322C_FILEPICK_PROBE);
+      await c.prepara(pg);
+      await pg.waitForTimeout(240);
+      const r = await pg.evaluate(async sel => {
+        var el = document.querySelector(sel);
+        if (!el) return { erro: "controle ausente" };
+        if (typeof el.focus !== "function") return { erro: "controle não focável" };
+        el.focus();
+        if (document.activeElement !== el) return { erro: "foco não assumido" };
+        var d0 = window.__P52.diag();
+        return { antes: d0.enterShielded, ok: true };
+      }, c.sel);
+      if (r.erro) { detail.push(c.id + " (" + c.classe + "): " + r.erro + " — " + c.sel); continue; }
+      await pg.keyboard.press("Enter");
+      await pg.waitForTimeout(260);
+      const d = await pg.evaluate(() => window.__P52.diag());
+      observed.push({ caso: c.id, classe: c.classe, alvo: c.alvo, sel: c.sel,
+        antes: r.antes, depois: d.enterShielded, motivo: d.enterLastReason,
+        motivoEsperado: c.motivoEsperado || "alvo-ativa-sozinho" });
+      if (d.enterShielded !== r.antes + 1)
+        detail.push(c.id + " (" + c.classe + "): o escudo disparou " + (d.enterShielded - r.antes) +
+          " vez(es) em " + c.alvo + " (esperada 1)");
+      else if (d.enterLastReason !== (c.motivoEsperado || "alvo-ativa-sozinho"))
+        detail.push(c.id + " (" + c.classe + "): a isenção por ALVO não está em vigor em " + c.alvo +
+          " — o escudo disparou por '" + d.enterLastReason + "' (esperado '" +
+          (c.motivoEsperado || "alvo-ativa-sozinho") + "')");
+    } catch (x) {
+      detail.push(c.id + " (" + c.classe + "): " + String(x && x.message || x).split("\n")[0]);
+    } finally { await pg.close().catch(() => { }); }
+  }
+  return detail;
+}
+
+async function v322cKey(browser, errs) {
+  const detail = [], observed = [];
+  for (const c of V322C_KEY_CASES) {
+    const enter = await v322cRunKeyCase(browser, errs, c, "enter");
+    if (enter.erro) { detail.push(c.id + ": " + enter.erro); observed.push({ caso: c.id, erro: enter.erro }); continue; }
+    const falhas = c.exige(enter.depois, enter.antes) || [];
+    falhas.forEach(f => detail.push(c.id + " (Enter): " + f));
+    let clique = null, divergentes = [];
+    if (c.compara) {
+      clique = await v322cRunKeyCase(browser, errs, c, "click");
+      if (clique.erro) detail.push(c.id + " (clique): " + clique.erro);
+      else {
+        const fc = c.exige(clique.depois, clique.antes) || [];
+        fc.forEach(f => detail.push(c.id + " (clique): " + f));
+        divergentes = V322C_CANON.filter(k => JSON.stringify(enter.depois[k]) !== JSON.stringify(clique.depois[k]));
+        divergentes.forEach(k => detail.push(c.id + ": Enter ≠ clique em '" + k + "' (" +
+          JSON.stringify(enter.depois[k]) + " vs " + JSON.stringify(clique.depois[k]) + ")"));
+      }
+    }
+    observed.push({
+      caso: c.id, controle: c.sel, label: c.label,
+      enterAntes: enter.antes, enterDepois: enter.depois,
+      cliqueDepois: clique && clique.depois ? clique.depois : null,
+      divergentes
+    });
+  }
+  const regra = [];
+  (await v322cTargetRule(browser, errs, regra)).forEach(f => detail.push(f));
+  evidence322("V322C-KEY1-teclado.json", { casos: observed, regraPorAlvo: regra });
+  T("V322C-KEY1",
+    "Enter tem a semântica que a interface anuncia em toda tela: o alvo que trata a própria ativação nunca é sequestrado pelo handler global, o atalho de início só existe na home real, e Enter ≡ clique por estado canônico",
+    !detail.length, detail);
+}
+
+/* ==========================================================================
+   V322C-FOC1 · A-02 — o foco sobrevive ao reparentamento pós-render.
+   Cada caso é medido DEPOIS do checkpoint de microtarefas (é lá que o
+   decorador reparenteia), nunca no instante síncrono do handler do owner.
+   O último bloco procura LOOP: um observador instalado na própria página
+   conta mutações num intervalo de repouso — restauração de foco que provoque
+   nova decoração seria vista aqui.
+   ========================================================================== */
+async function v322cFocus(browser, errs) {
+  const detail = [], observed = {};
+  const pg = await pageAt(browser, { w: 1440, h: 900 }, errs, "V322C-FOC1");
+  try {
+    await v322cOpenHomeEditor(pg);
+    await v322cOpenGroup(pg, "g1");
+
+    /* --- F1 · alterar "Situação declarada" ---------------------------------- */
+    observed.F1 = await pg.evaluate(async () => {
+      var ed = document.getElementById("v32editor");
+      var sel = ed.querySelector('select[id^="v32-pres-"]');
+      var id = sel.id, cap = sel.getAttribute("data-cap");
+      sel.focus();
+      var antes = document.activeElement ? document.activeElement.id || document.activeElement.tagName : null;
+      sel.value = "PRESENT";
+      sel.dispatchEvent(new Event("change", { bubbles: true }));
+      await new Promise(r => setTimeout(r, 40));
+      var micro = document.activeElement ? document.activeElement.id || document.activeElement.tagName : null;
+      await new Promise(r => setTimeout(r, 320));
+      var a = document.activeElement;
+      var ed2 = document.getElementById("v32editor");
+      return {
+        cap: cap, esperado: id, antes: antes, micro: micro,
+        depois: a ? (a.id || a.tagName) : null,
+        noEditor: !!(a && ed2 && ed2.contains(a)),
+        editorVivo: !!(ed2 && !ed2.classList.contains("v32-hidden") && ed2.children.length)
+      };
+    });
+
+    /* --- F2 · adicionar tecnologia ------------------------------------------ */
+    observed.F2 = await pg.evaluate(async cap => {
+      var add = document.querySelector('#v32editor .v32-add[data-cap="' + cap + '"]');
+      if (!add) return { erro: "botão '+ Adicionar tecnologia' ausente" };
+      add.focus();
+      add.click();
+      await new Promise(r => setTimeout(r, 360));
+      var a = document.activeElement;
+      var ed2 = document.getElementById("v32editor");
+      return {
+        depois: a ? (a.id || a.tagName) : null,
+        noEditor: !!(a && ed2 && ed2.contains(a)),
+        proximo: !!(a && a.id && (a.id.indexOf("v32-sol-" + cap + "-") === 0 || a.id === "v32-add-" + cap)),
+        editorVivo: !!(ed2 && !ed2.classList.contains("v32-hidden") && ed2.children.length)
+      };
+    }, observed.F1.cap);
+
+    /* --- F2b · remover tecnologia ------------------------------------------- */
+    observed.F2b = await pg.evaluate(async cap => {
+      var rm = document.querySelector('#v32editor .v32-rm[data-cap="' + cap + '"]');
+      if (!rm) return { erro: "botão 'Remover' ausente" };
+      rm.focus();
+      rm.click();
+      await new Promise(r => setTimeout(r, 360));
+      var a = document.activeElement;
+      var ed2 = document.getElementById("v32editor");
+      return {
+        depois: a ? (a.id || a.tagName) : null,
+        noEditor: !!(a && ed2 && ed2.contains(a)),
+        editorVivo: !!(ed2 && !ed2.classList.contains("v32-hidden") && ed2.children.length)
+      };
+    }, observed.F1.cap);
+
+    /* --- F3 · trocar bundle: foco E posição de rolagem ---------------------- */
+    await v322cOpenGroup(pg, "plat");
+    observed.F3 = await pg.evaluate(async () => {
+      var ed = document.getElementById("v32editor");
+      var fgt = document.getElementById("v32-plat-fgt");
+      if (fgt && !fgt.checked) { fgt.checked = true; fgt.dispatchEvent(new Event("change", { bubbles: true })); }
+      await new Promise(r => setTimeout(r, 200));
+      var radios = document.querySelectorAll('#v32editor input[name="v32-bundle"]');
+      if (radios.length < 2) return { erro: "grupo de bundles ausente" };
+      var alvo = radios[1];
+      alvo.scrollIntoView({ block: "center" });
+      await new Promise(r => setTimeout(r, 120));
+      var yAntes = Math.round(window.pageYOffset);
+      alvo.focus();
+      alvo.checked = true;
+      alvo.dispatchEvent(new Event("change", { bubbles: true }));
+      await new Promise(r => setTimeout(r, 380));
+      var a = document.activeElement;
+      var ed2 = document.getElementById("v32editor");
+      return {
+        valor: alvo.value, yAntes: yAntes, yDepois: Math.round(window.pageYOffset),
+        depois: a ? (a.id || a.getAttribute("name") || a.tagName) : null,
+        noEditor: !!(a && ed2 && ed2.contains(a)),
+        bundle: !!(a && a.getAttribute && a.getAttribute("name") === "v32-bundle"),
+        editorVivo: !!(ed2 && !ed2.classList.contains("v32-hidden") && ed2.children.length)
+      };
+    });
+
+    /* --- F4 · nenhum loop de observador/render/foco -------------------------- */
+    observed.F4 = await pg.evaluate(async () => {
+      await new Promise(r => setTimeout(r, 400));         /* repouso */
+      var n = 0;
+      var obs = new MutationObserver(function (recs) { n += recs.length; });
+      obs.observe(document.body, { childList: true, subtree: true, attributes: true });
+      await new Promise(r => setTimeout(r, 700));
+      obs.disconnect();
+      return { mutacoesEmRepouso: n };
+    });
+
+    /* --- F5 · tela legitimamente fechada não recebe foco restaurado ---------- */
+    observed.F5 = await pg.evaluate(async () => {
+      var c = document.getElementById("v32cancel");
+      if (!c) return { erro: "botão Cancelar ausente" };
+      c.click();
+      await new Promise(r => setTimeout(r, 420));
+      var ed2 = document.getElementById("v32editor");
+      var a = document.activeElement;
+      return {
+        tela: document.body.getAttribute("data-uxscreen"),
+        editorVivo: !!(ed2 && !ed2.classList.contains("v32-hidden") && ed2.children.length),
+        ativo: a ? (a.id || a.tagName) : null,
+        ativoNoEditor: !!(a && ed2 && ed2.contains(a))
+      };
+    });
+  } finally { await pg.close().catch(() => { }); }
+
+  const F1 = observed.F1 || {}, F2 = observed.F2 || {}, F2b = observed.F2b || {},
+    F3 = observed.F3 || {}, F4 = observed.F4 || {}, F5 = observed.F5 || {};
+  if (F1.antes !== F1.esperado) detail.push("F1: fixture inválida — o select não recebeu foco antes da mudança");
+  if (!F1.editorVivo) detail.push("F1: o editor morreu ao declarar a situação");
+  if (F1.depois === "BODY") detail.push("F1: o foco caiu para <body> após as microtarefas");
+  if (F1.depois !== F1.esperado) detail.push("F1: foco em '" + F1.depois + "' (esperado '" + F1.esperado + "')");
+  if (F2.erro) detail.push("F2: " + F2.erro);
+  else {
+    if (!F2.editorVivo) detail.push("F2: o editor morreu ao adicionar tecnologia");
+    if (F2.depois === "BODY") detail.push("F2: o foco caiu para <body> após adicionar tecnologia");
+    if (!F2.noEditor) detail.push("F2: o foco saiu do editor ('" + F2.depois + "')");
+    if (!F2.proximo) detail.push("F2: foco em '" + F2.depois + "' não é previsível nem próximo da ação");
+  }
+  if (F2b.erro) detail.push("F2b: " + F2b.erro);
+  else {
+    if (F2b.depois === "BODY") detail.push("F2b: o foco caiu para <body> após remover tecnologia");
+    if (!F2b.noEditor) detail.push("F2b: o foco saiu do editor ('" + F2b.depois + "')");
+  }
+  if (F3.erro) detail.push("F3: " + F3.erro);
+  else {
+    if (F3.depois === "BODY") detail.push("F3: o foco caiu para <body> ao trocar bundle");
+    if (!F3.bundle) detail.push("F3: foco em '" + F3.depois + "' (esperado um rádio de bundle)");
+    if (Math.abs(F3.yDepois - F3.yAntes) > 8)
+      detail.push("F3: a rolagem saltou " + (F3.yDepois - F3.yAntes) + "px ao trocar bundle");
+  }
+  if (F4.mutacoesEmRepouso > 0)
+    detail.push("F4: " + F4.mutacoesEmRepouso + " mutações em repouso — loop de observador/render/foco");
+  if (F5.erro) detail.push("F5: " + F5.erro);
+  else {
+    if (F5.editorVivo) detail.push("F5: o editor continuou vivo depois de Cancelar");
+    if (F5.ativoNoEditor) detail.push("F5: o foco foi restaurado numa tela já fechada ('" + F5.ativo + "')");
+  }
+  evidence322("V322C-FOC1-foco.json", observed);
+  T("V322C-FOC1",
+    "o foco sobrevive a toda repintura do editor de contexto (situação declarada, adicionar/remover tecnologia, trocar bundle), com posição de rolagem preservada, sem loop de observador e sem restaurar foco em tela já fechada",
+    !detail.length, detail);
+}
+
+/* ==========================================================================
+   V322C-PRN1 · nenhum draft órfão bloqueia o relatório.
+   O caminho é o REAL, de ponta a ponta: home → contexto → teclado → salvar /
+   cancelar → questionário → resultados → PDF. `window.print` é instrumentado:
+   o veredito é quantas vezes ele foi efetivamente chamado.
+   ========================================================================== */
+async function v322cPrint(browser, errs) {
+  const detail = [], observed = {};
+
+  async function fluxo(nome, tecla) {
+    const pg = await pageAt(browser, { w: 1440, h: 900 }, errs, "V322C-PRN1/" + nome);
+    try {
+      await pg.evaluate(() => { window.__printCalls = 0; var p = window.print; window.print = function () { window.__printCalls++; }; });
+      await v322cOpenHomeEditor(pg);
+      await v322cDeclare(pg);
+      await pg.evaluate(sel => { var b = document.querySelector(sel); if (b) b.focus(); }, tecla.sel);
+      await pg.keyboard.press("Enter");
+      await pg.waitForTimeout(420);
+      const meio = await pg.evaluate(V322C_SNAP);
+      await pg.evaluate(qids => {
+        window.__DEV.setArq(0);
+        qids.forEach(id => window.__DEV.setAnswerById(id, 1));
+        window.__DEV.showResults();
+      }, FX50.P50_QIDS);
+      await pg.waitForTimeout(360);
+      const r = await pg.evaluate(() => {
+        var b = null, all = document.querySelectorAll("button"), i;
+        for (i = 0; i < all.length; i++) if (/Imprimir \/ salvar em PDF/.test(all[i].textContent || "")) b = all[i];
+        if (!b) return { erro: "botão de impressão ausente" };
+        b.click();
+        return {
+          chamadas: window.__printCalls,
+          bloqueio: !!document.getElementById("p52-print-pending"),
+          trilho: !!document.querySelector('[data-p52="rail-pending"]'),
+          editorNoDom: !!document.getElementById("v32editor")
+        };
+      });
+      return { meio, resultado: r };
+    } finally { await pg.close().catch(() => { }); }
+  }
+
+  observed.O1 = await fluxo("salvar", { sel: "#v32save" });
+  observed.O2 = await fluxo("cancelar", { sel: "#v32cancel" });
+
+  /* O3 · o bloqueio legítimo continua correto e com caminho de recuperação */
+  const pg3 = await pageAt(browser, { w: 1440, h: 900 }, errs, "V322C-PRN1/bloqueio");
+  try {
+    await pg3.evaluate(() => { window.__printCalls = 0; window.print = function () { window.__printCalls++; }; });
+    await toResults(pg3, FX52.P52_F1);
+    await pg3.evaluate(() => { var c = document.getElementById("v32cta"); if (c) c.click(); });
+    await pg3.waitForTimeout(360);
+    observed.O3 = await pg3.evaluate(async () => {
+      var b = null, all = document.querySelectorAll("button"), i;
+      for (i = 0; i < all.length; i++) if (/Imprimir \/ salvar em PDF/.test(all[i].textContent || "")) b = all[i];
+      if (!b) return { erro: "botão de impressão ausente" };
+      b.click();
+      await new Promise(r => setTimeout(r, 260));
+      var bloqueado = window.__printCalls;
+      var msg = document.getElementById("p52-print-pending");
+      var visivel = !!(msg && msg.getBoundingClientRect().width > 0);
+      var ir = document.querySelector('[data-p52="goto-context"]');
+      if (ir) ir.click();
+      await new Promise(r => setTimeout(r, 300));
+      var ed = document.getElementById("v32editor");
+      var alcancavel = !!(ed && !ed.classList.contains("v32-hidden") && ed.getBoundingClientRect().width > 0);
+      var cancel = document.getElementById("v32cancel");
+      if (cancel) cancel.click();
+      await new Promise(r => setTimeout(r, 320));
+      b = null; all = document.querySelectorAll("button");
+      for (i = 0; i < all.length; i++) if (/Imprimir \/ salvar em PDF/.test(all[i].textContent || "")) b = all[i];
+      if (b) b.click();
+      await new Promise(r => setTimeout(r, 240));
+      return {
+        chamadasBloqueado: bloqueado, mensagemVisivel: visivel, editorAlcancavel: alcancavel,
+        chamadasDepois: window.__printCalls,
+        bloqueioResidual: !!document.getElementById("p52-print-pending"),
+        trilhoResidual: !!document.querySelector('[data-p52="rail-pending"]')
+      };
+    });
+  } finally { await pg3.close().catch(() => { }); }
+
+  const O1 = observed.O1 || {}, O2 = observed.O2 || {}, O3 = observed.O3 || {};
+  [["O1", O1, "salvar"], ["O2", O2, "cancelar"]].forEach(([k, o, acao]) => {
+    if (!o.meio || !o.resultado) { detail.push(k + ": fluxo não completou"); return; }
+    if (o.resultado.erro) { detail.push(k + ": " + o.resultado.erro); return; }
+    if (o.meio.draft) detail.push(k + ": Enter em '" + acao + "' deixou o draft ÓRFÃO");
+    if (o.resultado.chamadas !== 1)
+      detail.push(k + ": window.print chamado " + o.resultado.chamadas + " vez(es) após " + acao + " (esperado 1)");
+    if (o.resultado.bloqueio) detail.push(k + ": bloqueio de impressão órfão na tela de resultados");
+    if (o.resultado.trilho) detail.push(k + ": indicador de pendência órfão no trilho");
+  });
+  if (O3.erro) detail.push("O3: " + O3.erro);
+  else {
+    if (O3.chamadasBloqueado !== 0) detail.push("O3: a impressão NÃO foi bloqueada com draft aberto");
+    if (!O3.mensagemVisivel) detail.push("O3: mensagem de bloqueio invisível");
+    if (!O3.editorAlcancavel) detail.push("O3: 'Ir para contexto tecnológico' não tornou o editor alcançável");
+    if (O3.chamadasDepois !== 1) detail.push("O3: a impressão não voltou a funcionar após cancelar (" + O3.chamadasDepois + ")");
+    if (O3.bloqueioResidual) detail.push("O3: mensagem de bloqueio residual após cancelar");
+    if (O3.trilhoResidual) detail.push("O3: indicador de pendência residual após cancelar");
+  }
+  evidence322("V322C-PRN1-impressao.json", observed);
+  T("V322C-PRN1",
+    "nenhum draft órfão sobrevive a Salvar/Cancelar por teclado e o relatório/PDF continua acessível; o bloqueio legítimo permanece correto, visível e com caminho de recuperação",
+    !detail.length, detail);
+}
+
+/* ==========================================================================
+   V322C-RFL1 · M-01 — reflow do editor abaixo de 430px.
+   Oráculo GEOMÉTRICO, independente do CSS: varre os descendentes do editor e
+   reprova qualquer caixa que ultrapasse a largura do documento sem ancestral
+   rolável. Nenhuma regra de folha de estilo é inspecionada.
+   ========================================================================== */
+const V322C_LARGURAS = [320, 360, 390, 430, 384];
+async function v322cReflow(browser, errs) {
+  const detail = [], observed = [];
+  for (const w of V322C_LARGURAS) {
+    const pg = await pageAt(browser, { w: w, h: 800 }, errs, "V322C-RFL1/" + w);
+    try {
+      await v322cOpenHomeEditor(pg);
+      for (const gid of ["g1", "plat", "sig"]) await v322cOpenGroup(pg, gid);
+      const m = await pg.evaluate(() => {
+        var ed = document.getElementById("v32editor");
+        var cw = document.documentElement.clientWidth;
+        var fora = [];
+        var nodes = ed.querySelectorAll("*"), i, n, r, p, cs, rolavel;
+        for (i = 0; i < nodes.length; i++) {
+          n = nodes[i];
+          r = n.getBoundingClientRect();
+          if (!r.width && !r.height) continue;
+          if (r.right <= cw + 1) continue;
+          rolavel = false;
+          for (p = n.parentElement; p; p = p.parentElement) {
+            cs = getComputedStyle(p);
+            if (/(auto|scroll)/.test(cs.overflowX)) { rolavel = true; break; }
+          }
+          if (!rolavel) fora.push({
+            tag: n.tagName + (n.className && typeof n.className === "string" ? "." + n.className.split(/\s+/)[0] : ""),
+            right: Math.round(r.right), width: Math.round(r.width)
+          });
+        }
+        return {
+          clientWidth: cw,
+          docScroll: document.documentElement.scrollWidth,
+          fora: fora.slice(0, 6),
+          foraTotal: fora.length
+        };
+      });
+      observed.push({ viewport: w, m });
+      if (m.foraTotal)
+        detail.push(w + "px: " + m.foraTotal + " caixa(s) do editor além de " + m.clientWidth +
+          "px sem ancestral rolável — " + m.fora.map(f => f.tag + "@" + f.right).join(", "));
+      if (m.docScroll > m.clientWidth + 1)
+        detail.push(w + "px: rolagem horizontal do documento (" + m.docScroll + " > " + m.clientWidth + ")");
+    } finally { await pg.close().catch(() => { }); }
+  }
+  evidence322("V322C-RFL1-reflow.json", observed);
+  T("V322C-RFL1",
+    "o editor de contexto não perde conteúdo em 320/360/384/390/430px: nenhuma caixa ultrapassa a largura do documento sem rolagem alcançável",
+    !detail.length, detail);
+}
+
+/* ==========================================================================
+   V322C-CON1 · M-05 — contraste computado dos dois controles reprovados.
+   A razão é RECALCULADA pela fórmula do WCAG a partir das cores resolvidas
+   por `getComputedStyle`, com o fundo efetivo descoberto subindo a árvore.
+   Aparência não conta: só o número.
+   ========================================================================== */
+const V322C_CONTRASTE = function (sel) {
+  function rgb(s) {
+    var m = String(s).match(/rgba?\(([^)]+)\)/);
+    if (!m) return null;
+    var p = m[1].split(",").map(function (x) { return parseFloat(x); });
+    return { r: p[0], g: p[1], b: p[2], a: p.length > 3 ? p[3] : 1 };
+  }
+  function lum(c) {
+    var v = [c.r, c.g, c.b].map(function (x) {
+      x = x / 255;
+      return x <= 0.03928 ? x / 12.92 : Math.pow((x + 0.055) / 1.055, 2.4);
+    });
+    return 0.2126 * v[0] + 0.7152 * v[1] + 0.0722 * v[2];
+  }
+  var el = document.querySelector(sel);
+  if (!el) return { erro: "controle ausente: " + sel };
+  var cs = getComputedStyle(el);
+  var fg = rgb(cs.color);
+  var bg = null, p;
+  for (p = el; p; p = p.parentElement) {
+    var c = rgb(getComputedStyle(p).backgroundColor);
+    if (c && c.a > 0.95) { bg = c; break; }
+  }
+  if (!bg) bg = rgb(getComputedStyle(document.body).backgroundColor) || { r: 255, g: 255, b: 255, a: 1 };
+  var l1 = lum(fg), l2 = lum(bg);
+  var ratio = (Math.max(l1, l2) + 0.05) / (Math.min(l1, l2) + 0.05);
+  var fs = parseFloat(cs.fontSize), fw = parseInt(cs.fontWeight, 10) || 400;
+  var grande = fs >= 24 || (fs >= 18.66 && fw >= 700);
+  return {
+    sel: sel, color: cs.color, background: cs.backgroundColor, fundoEfetivo: bg,
+    fontSize: fs, fontWeight: fw, grande: grande,
+    ratio: Math.round(ratio * 100) / 100, minimo: grande ? 3 : 4.5
+  };
+};
+async function v322cContrast(browser, errs) {
+  const detail = [], observed = {};
+  const pg = await pageAt(browser, { w: 1440, h: 900 }, errs, "V322C-CON1");
+  try {
+    observed.addctx = await pg.evaluate(V322C_CONTRASTE, "#ux-addctx");
+    await toResults(pg, FX52.P52_F1);
+    await pg.evaluate(() => window.__DEV.showPriority());
+    await pg.waitForTimeout(280);
+    observed.next = await pg.evaluate(V322C_CONTRASTE, ".navrow #next");
+  } finally { await pg.close().catch(() => { }); }
+  [["#ux-addctx (home)", observed.addctx], ["#next (prioridades)", observed.next]].forEach(([nome, m]) => {
+    if (!m || m.erro) { detail.push(nome + ": " + ((m && m.erro) || "não medido")); return; }
+    if (m.ratio < m.minimo)
+      detail.push(nome + ": contraste " + m.ratio.toFixed(2) + ":1 (mínimo " + m.minimo + ":1) — " +
+        m.color + " sobre rgb(" + m.fundoEfetivo.r + "," + m.fundoEfetivo.g + "," + m.fundoEfetivo.b + ")");
+  });
+  evidence322("V322C-CON1-contraste.json", observed);
+  T("V322C-CON1",
+    "os dois controles apontados pelo parecer atingem a razão de contraste exigida, recalculada pela fórmula do WCAG sobre as cores resolvidas",
+    !detail.length, detail);
+}
+
 /* ============================== execução ============================== */
 (async () => {
   const errs = [];
@@ -4021,6 +6108,20 @@ async function tgt4(browser, errs) {
     /* gate novo da ERRATA FINAL · ALTO-1 */
     if (shouldRun("P52-TGT4")) await tgt4(browser, errs);
     if (shouldRun("P52-ICON3")) await icon3(browser, errs);
+    /* PATCH V3.2.2 · gates dirigidos das três correções estreitas de UX */
+    if (shouldRun("V322-CTXPAR1")) await v322CtxPar(browser, errs);
+    if (shouldRun("V322-FOOT1")) await v322Foot(browser, errs);
+    if (shouldRun("V322-PRINT1")) await v322Print(browser, errs);
+    if (shouldRun("V322-NOREG1")) await v322NoReg(browser, errs);
+    if (shouldRun("V322-NI1")) await v322NestedInteractive(browser, errs);
+    /* ERRATA V3.2.2 · ajudas, accordion e transição */
+    if (shouldRun("V322-MOT3")) await v322Motion(browser, errs);
+    /* ERRATA FINAL V3.2.2 (REV C) · gates dirigidos B-01/A-01/A-02/M-01/M-05 */
+    if (shouldRun("V322C-KEY1")) await v322cKey(browser, errs);
+    if (shouldRun("V322C-FOC1")) await v322cFocus(browser, errs);
+    if (shouldRun("V322C-PRN1")) await v322cPrint(browser, errs);
+    if (shouldRun("V322C-RFL1")) await v322cReflow(browser, errs);
+    if (shouldRun("V322C-CON1")) await v322cContrast(browser, errs);
   } finally {
     await browser.close();
     try { fs.rmSync(PDF_TMP, { recursive: true, force: true }); } catch (e) { /* temporário */ }

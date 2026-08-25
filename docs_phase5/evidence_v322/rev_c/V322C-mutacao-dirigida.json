@@ -1,0 +1,15 @@
+{
+  "rodada": "ERRATA FINAL V3.2.2 · REV C",
+  "campanha": "dirigida (§8): 11 mutantes novos + 18 existentes que atingem os caminhos modificados",
+  "resultado": "29/29 detectados pelo gate e pelo motivo esperados",
+  "campanha_integral_96": "NÃO EXECUTADA — declarada como não executada, conforme a §8 e a §9",
+  "primeira_execucao": {
+    "resultado": "27/29",
+    "nao_detectados": [
+      "V322C-M2",
+      "V322C-M7"
+    ],
+    "diagnostico": "mutações NO-OP: na tela do editor a cláusula de identidade de tela já cobre o caso, e remover o alvo da cláusula 4 não muda efeito observável algum. A §8 veda contar mutação no-op. Nenhum gate foi enfraquecido: o gate passou a medir QUAL cláusula está em vigor por classe de controle (T1–T12), que é a exigência normativa da §4.1, e os dois mutantes passaram a ser detectados pelo motivo semanticamente correto.",
+    "achado_lateral": "o nó do emblema ([role=button]) é blindado pela cláusula 3 (evento já consumido), porque o seu próprio ouvinte chama preventDefault(). O gate registra o motivo esperado POR CASO em vez de aceitar qualquer um."
+  }
+}

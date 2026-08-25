@@ -1,7 +1,7 @@
 {
   "_meta": {
     "descricao": "Registry único de pins — fonte de identidade dos artefatos (R8). Hashes = SHA-256 dos blobs de HEAD. Alterar arquivo pinado exige regenerar este registry no MESMO PR, com motivo no commit.",
-    "gerado_de_head": "e24a76410119b2a571d536127e0cedc08c954e39",
+    "gerado_de_head": "78ee8f69d0a90fdd55d604b6397e44afc92de11f",
     "gerado_em": "2026-08-25",
     "exclusoes": [
       "docs_phase5/**",
@@ -64,7 +64,7 @@
     ".claude/verify/check_lint_arch.py": "aac4e0f8be4cc25801dfe21dbf56374d1bce1a43a8fa4e1b67ab0cddfd20f9ee",
     ".claude/verify/check_m41.py": "f5f59097ab1510d6bbd0a3e63272e00da95bb65c818c23a7fff2141e8f5d9b4f",
     ".claude/verify/check_markers.py": "5623d9cb3203cf16a307014a4255bc3d8ecf08e469eaf2f110927802a9b2fe7c",
-    ".claude/verify/check_mutation.py": "42bfabd2f7702e7db7a350290810343a3c2912361eb20995e6e3ce7e2123db28",
+    ".claude/verify/check_mutation.py": "20cdfcc0763d726b6ceb670c85d817bb2d6e0f286262c503c7c69443f26979ab",
     ".claude/verify/check_state.py": "934999bd6e989bd09e17d322b65ac1c92fece5db85d409558b28de5b6b2fc212",
     ".claude/verify/check_suites.py": "5541ef93a81b806bdc6603689e816807930e981661d7202b884a4e4c531aa1c7",
     ".claude/verify/check_tdd.py": "1077e9025a9559f34e23658bba12a98ac6fb65c718d057a62687251671de2ce9",
@@ -80,7 +80,7 @@
     ".claude/verify/pipeline.yaml": "86d6d00147cebe8ed0fe3e79ff8ffd04a781949a8170d6dffd855e84cfe73a36",
     ".claude/verify/run.sh": "b137b7a1c1bf9233b06ed8f87b04fb03150b316b59ce0b56231c28ab4e048faa",
     ".gitattributes": "37bb36fb03aa6edbf1ce9fdc3bb9cb705e0317da970df37783777795bbcdcdb9",
-    ".github/workflows/verify.yml": "0f5ad11a721d659987c7b93fea92a7ac6d0f4d092a06aae8891d70e80b4ddfc7",
+    ".github/workflows/verify.yml": "3fb851accd50ae8d416afbec77736b2d876f67722d089ab75e6137ff305fc6ff",
     ".gitignore": "200b6486b495762edfbff068908c5557877a38b2bf08bb2d53a76d04d08b1b2a",
     "AGENTS.md": "267c0b98ae9f6fa4289be88e95b72393be936951625be2917ae08fe0cb3e9671",
     "CHANGELOG_v32.md": "07179356cc66f5ae53a5058da0988590074e84be882f53cf523d8936ea4eef5f",
@@ -155,7 +155,7 @@
     "tests_p50_core.js": "81531ef0559ccc13a0aad980aeb530fb28d74bc563aec3b604f47b44907e16ec",
     "tests_p50_mutants.js": "28f2e876d4f614baf83b02d0c23bbbf19a983d4b0a943e1b42d1f8c8c067ddf5",
     "tests_p51_mutants.js": "3e3a66ab048ef7c1bb7d77d0f2e7c50ee83a90dc33269763f0f78b17eede7839",
-    "tests_p52_chromium.js": "82b26b3fe4fce1a58d311239e589fb96ab3e1239b4b58b05ff935f4a8a6340c6",
+    "tests_p52_chromium.js": "7490a7d08c94c1b19d23d607e26cae10a8a5c67b273f0cef3a79615ada7d7311",
     "tests_p52_layout.js": "a231c4ddc6da273860e3d0ea64f1be742236ec9548ef1d1f390ba3a4386c09de",
     "tests_p52_mutants.js": "8335b96109588d53e46fb2f0a54e813bfa53e8f7c900ffa5ec90908f0aa9d528",
     "tests_ref_m44.js": "5fe2e3336b20a018a5981371523306b771907ce7f5688002076066ab9ad1325c",

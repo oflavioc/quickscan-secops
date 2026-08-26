@@ -1,7 +1,7 @@
 {
   "_meta": {
     "descricao": "Registry único de pins — fonte de identidade dos artefatos (R8). Hashes = SHA-256 dos blobs de HEAD. Alterar arquivo pinado exige regenerar este registry no MESMO PR, com motivo no commit.",
-    "gerado_de_head": "2eaab826c4fdd151d71383851f04e706ce062662",
+    "gerado_de_head": "8c31ce7d62003f7d247e43e5ad3dd86afaacdfc6",
     "gerado_em": "2026-08-25",
     "exclusoes": [
       "docs_phase5/**",
@@ -151,6 +151,7 @@
     "specs/007-migracao-evidencia/parecer-po-fase1.md": "09681d685253dd8b83f80b4cb2b2c07f1ab52c6aafe9ee0f3a1a6b5ef7706921",
     "specs/007-migracao-evidencia/plan.md": "939eb390ac96af0f45f093c455349f0e4d931e682e417069fc9eae39ffec6b99",
     "specs/007-migracao-evidencia/refinement.md": "3bb81281533966765cb301dcb66fadcaf4d664774c34dfa2c35d0dbd8a1e818d",
+    "specs/007-migracao-evidencia/relatorio-final.md": "46a993c7d8ce2f327ce90ad822ce48a7c4eced64564b77e081f0cf9633e65574",
     "specs/007-migracao-evidencia/spec-validate.md": "553b233844fd0d9b3ae1ad1b6348b186eb2c8c2bd9e81f922af1abd5b202329d",
     "specs/007-migracao-evidencia/spec.md": "2802746ff17112628a2917a6b19179c0eea0990ae0e615bcd5d1ee569e4ce90c",
     "specs/007-migracao-evidencia/tasks.md": "3c821c497b129ae2f72b4aab6e167750ae3d6437e3568c026df8f162f27515dd",

@@ -7,3 +7,11 @@ __pycache__/
 .claude/worktrees/
 .claude/verify/.last_green
 nul
+
+# Demanda 007 — acervos migrados para Releases nominais em oflavioc/quickscan-secops
+# (evidence-p50/p51/p52/unset). Bytes permanecem no working tree; identidade vive
+# em .claude/verify/evidence_bridge.json (gate evidence-bridge, EB-1/EB-6).
+docs_phase5/evidence_p50/
+docs_phase5/evidence_p51/
+docs_phase5/evidence_p52/
+docs_phase5/evidence_unset/

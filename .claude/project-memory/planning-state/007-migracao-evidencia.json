@@ -1,0 +1,58 @@
+{
+  "demanda": "007-migracao-evidencia",
+  "phase": "done",
+  "spec_dir": "specs/007-migracao-evidencia",
+  "brief": "Migrar a evidência binária de docs_phase5/evidence_* para GitHub Releases (decisão Q1 = Opção B) preservando a verificabilidade via manifesto-ponte e gate evidence-bridge; ZIPs da raiz (S64/S74/S113) ficam para demanda posterior",
+  "branch": "feature/007-migracao-evidencia",
+  "refinement": {
+    "status": "approved",
+    "approved_at": "2026-08-25",
+    "notes": "aprovado pelo usuário no chat ('Prossiga') após rodada de 5 decisões"
+  },
+  "specify": {
+    "status": "approved",
+    "approved_at": "2026-08-25",
+    "notes": "aprovado pelo usuário no chat ('Aprovado'), com emenda A2 aplicada e parecer do PO sem bloqueante"
+  },
+  "plan": {
+    "status": "approved",
+    "approved_at": "2026-08-25",
+    "notes": "aprovado pelo usuário no chat ('Aprovado.')"
+  },
+  "tasks": {
+    "status": "approved",
+    "approved_at": "2026-08-25",
+    "notes": "aprovado pelo usuário no chat ('Aprovado.')"
+  },
+  "red": {
+    "status": "proven",
+    "commit": "9adf41d1ea4afa6c5b346d805edbec203abb8614",
+    "gates": [
+      "EB-1",
+      "EB-2",
+      "EB-3",
+      "EB-4",
+      "EB-5",
+      "EB-6"
+    ],
+    "notes": "red executado nos dois modos antes de qualquer release existir: CI (GITHUB_ACTIONS=1) → 16 FAIL, exit 1 (EB-3: 4 pacotes AUSENTES por 404 real; EB-6: 12 FAIL — 406 arquivos ainda no índice + .gitignore sem as 4 entradas); local sem rede (simulada) → parte online 0 FAIL + WARN nomeado listando os 4 pacotes (política EB-5), exit 1 só pelos FAIL offline de EB-6 (FAIL é FAIL em qualquer ambiente). EB-1 já verde: 406/406 blobs conferidos contra o commit-âncora 62590b5"
+  },
+  "implement": {
+    "status": "done",
+    "waves_done": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6
+    ],
+    "pending": []
+  },
+  "validate": {
+    "status": "done",
+    "conformance": "24/24 (100%)",
+    "notes": "T015 · aceite de intenção · product-owner · 2026-08-25 · 'não encontrei objeção' — necessidade do refinement cumprida (verificabilidade por manifesto-ponte pinado + gate evidence-bridge; 406 arquivos fora do índice com contraprova v322/ZIPs; 5/5 decisões da rodada 1 conferidas; 2/2 avisos obrigatórios no relatório final). Pendência nomeada que segue para o PR: EB-7 no CI de clone limpo. O PO não aprova nem declara fase concluída — portão é do usuário."
+  },
+  "pr_url": "https://github.com/oflavioc/quickscan-secops/pull/20"
+}

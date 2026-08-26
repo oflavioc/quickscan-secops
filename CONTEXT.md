@@ -115,3 +115,16 @@ Arquivo versionado e pinável que liga cada artefato migrado ao evidence store:
 hash original (idêntico ao manifesto de fase), pacote e destino. É o que preserva
 a verificabilidade depois que os bytes saem do índice do git.
 _Evitar_: índice de links, lista de hashes, planilha
+
+**Commit-âncora**:
+SHA imutável (40 hex) de um commit em que o acervo migrado ainda está no índice —
+é dele que oráculos leem listas e blobs (`git ls-tree`/`git show`), nunca de
+`HEAD:` ou branch (R10 §5). Registrado no manifesto-ponte, exige histórico
+completo no clone (`fetch-depth: 0`).
+_Evitar_: último commit, HEAD, commit de referência
+
+**Pacote de auditoria**:
+ZIP único e congelado que empacota a evidência visual/print de uma rodada da era
+V3.2 (`visual_print_evidence_47/48/487.zip`), publicado na raiz do repo e lido
+por oráculo de sessão como prova de paridade entre claims e artefatos.
+_Evitar_: zip de prints, backup, anexo

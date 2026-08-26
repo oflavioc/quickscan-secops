@@ -1,0 +1,16 @@
+{
+  "demanda": "008-migracao-zips",
+  "phase": "specify",
+  "spec_dir": "specs/008-migracao-zips",
+  "brief": "Migrar os 3 ZIPs de evidência da raiz (visual_print_evidence_47/48/487.zip, ~45 MB) para GitHub Releases, refatorando os oráculos S64/S74/S113 para lerem via manifesto-ponte — continuação da 007, encerramento pleno do E10",
+  "branch": "feature/008-migracao-zips",
+  "refinement": {
+    "status": "approved",
+    "approved_at": "2026-08-25",
+    "notes": "aprovado pelo usuário no chat ('Aprovado') após rodada 1 — 5 recomendações aceitas ('Aceito todas as recomendações')"
+  },
+  "specify": {
+    "status": "in_progress",
+    "notes": "Fase 1 aberta em 2026-08-25; spec delegada ao tech-lead, parecer do product-owner na sequência"
+  }
+}

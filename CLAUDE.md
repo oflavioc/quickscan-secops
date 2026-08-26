@@ -76,7 +76,8 @@ injeção). Sem rede, sem telemetria, sem persistência de navegador — por inv
 
 Linha do tempo: V3.2 Final Release imutável (`oflavioc/quickscan-secops-soc-cmm-v32`, arquivado,
 tag v3.2.0) → Fase 5 (5.0 REV B, 5.1, 5.2 **seladas**; registros em `docs_phase5/`)
-→ Estrutura Agêntica (documento acordado 2026-08-25; Ondas 0–1 entregues, esta é a 2).
+→ Estrutura Agêntica (documento acordado 2026-08-25; estado corrente da fase e da
+onda em `.claude/verify/current_phase.json` — nunca nesta prosa).
 
 Spec normativa das superfícies 5.0 congeladas (imutável, exigida pelo gate P50-GOV2):
 `specs/PHASE_5_0_REV_B.md` · SHA-256

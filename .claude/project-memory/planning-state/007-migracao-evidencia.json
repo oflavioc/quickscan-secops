@@ -1,6 +1,6 @@
 {
   "demanda": "007-migracao-evidencia",
-  "phase": "validate",
+  "phase": "done",
   "spec_dir": "specs/007-migracao-evidencia",
   "brief": "Migrar a evidência binária de docs_phase5/evidence_* para GitHub Releases (decisão Q1 = Opção B) preservando a verificabilidade via manifesto-ponte e gate evidence-bridge; ZIPs da raiz (S64/S74/S113) ficam para demanda posterior",
   "branch": "feature/007-migracao-evidencia",
@@ -53,5 +53,6 @@
     "status": "done",
     "conformance": "24/24 (100%)",
     "notes": "T015 · aceite de intenção · product-owner · 2026-08-25 · 'não encontrei objeção' — necessidade do refinement cumprida (verificabilidade por manifesto-ponte pinado + gate evidence-bridge; 406 arquivos fora do índice com contraprova v322/ZIPs; 5/5 decisões da rodada 1 conferidas; 2/2 avisos obrigatórios no relatório final). Pendência nomeada que segue para o PR: EB-7 no CI de clone limpo. O PO não aprova nem declara fase concluída — portão é do usuário."
-  }
+  },
+  "pr_url": "https://github.com/oflavioc/quickscan-secops/pull/20"
 }

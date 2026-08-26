@@ -128,3 +128,11 @@ ZIP único e congelado que empacota a evidência visual/print de uma rodada da e
 V3.2 (`visual_print_evidence_47/48/487.zip`), publicado na raiz do repo e lido
 por oráculo de sessão como prova de paridade entre claims e artefatos.
 _Evitar_: zip de prints, backup, anexo
+
+**Acervo-arquivo**:
+Acervo de evidência cujo conteúdo é um único arquivo rastreado (ex.: pacote de
+auditoria da raiz). No manifesto-ponte, entrada com `tipo: "arquivo"`, `path`
+explícito, exatamente 1 item em `arquivos` e `sha256_pacote` igual ao hash do
+próprio blob; contrasta com o acervo-diretório (default `tipo: "diretorio"`,
+regime da 007).
+_Evitar_: zip avulso, acervo unitário, arquivo solto

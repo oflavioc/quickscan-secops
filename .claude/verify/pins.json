@@ -1,7 +1,7 @@
 {
   "_meta": {
     "descricao": "Registry único de pins — fonte de identidade dos artefatos (R8). Hashes = SHA-256 dos blobs de HEAD. Alterar arquivo pinado exige regenerar este registry no MESMO PR, com motivo no commit.",
-    "gerado_de_head": "f256bb0849d3694a151320b75d8f114fbc1ddf81",
+    "gerado_de_head": "feef28ca9ddf8d5c659371ff346f01e09d0e0033",
     "gerado_em": "2026-08-27",
     "exclusoes": [
       "docs_phase5/**",
@@ -21,7 +21,7 @@
     ".claude/agent-memory/product-owner/project_duas_doutrinas_recomendacao.md": "932a43cc9147ec0b3e8455f09558e9f9eece68092149709fe359ec4465961b41",
     ".claude/agent-memory/product-owner/project_gates_ancora_normativa.md": "dc58a30f0ca5090b1d2e30344341c0d091d7d939851f8e02ee6698ad2164006c",
     ".claude/agent-memory/tech-lead/MEMORY.md": "02177cb86d6913544f08362f7de43af6df0db6ac4ca05df0e9c476a5aab56bf6",
-    ".claude/agent-memory/tech-lead/project_009_parada_secao8.md": "11aa8e76c8ccc1f88e925400019ce2e638051e56fb36d0c5b74f8bc76ce20954",
+    ".claude/agent-memory/tech-lead/project_009_parada_secao8.md": "916f766869783031f8cc4cb1c29c70ff19c050bf9db78f7397b68b4a48386a99",
     ".claude/agents/build-engineer.md": "8859f79081656a1ec7d8d1b29f806f718a0762d21494d5b177c1501957b84d00",
     ".claude/agents/core-engineer.md": "cec44dda7d6818cb85dac39a76a196bb210cd3487e19e294783fad4cd6c9a3d5",
     ".claude/agents/data-engineer.md": "6d4880ef8b9c430e1eba1274c4e3c164ecee81fea5f1df4a12c5bbe6d0013b37",
@@ -161,6 +161,7 @@
     "specs/007-migracao-evidencia/spec-validate.md": "553b233844fd0d9b3ae1ad1b6348b186eb2c8c2bd9e81f922af1abd5b202329d",
     "specs/007-migracao-evidencia/spec.md": "2802746ff17112628a2917a6b19179c0eea0990ae0e615bcd5d1ee569e4ce90c",
     "specs/007-migracao-evidencia/tasks.md": "3c821c497b129ae2f72b4aab6e167750ae3d6437e3568c026df8f162f27515dd",
+    "specs/009-leitura-do-relatorio/plan.md": "f956ff9455fb93b4faf982c7a3fa305896e6e735b14ae524d9b7c417d59c41a0",
     "specs/009-leitura-do-relatorio/refinement.md": "6762564abc8c005dd3022fb071a9b0ba40e8e016810b894a2c9ec6b6067fe194",
     "specs/009-leitura-do-relatorio/spec.md": "0b4782fde24d4cc804acab5c3e270bd3b42106ccc040ec6b98bf74ee906f2a9f",
     "specs/PHASE_5_0_REV_A.md": "22e729174c6a3c5dd620da5330b03eb96d9eb6fc6e64eba097c2bde55eb0a510",

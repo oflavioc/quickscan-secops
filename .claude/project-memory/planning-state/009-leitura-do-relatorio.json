@@ -1,6 +1,6 @@
 {
   "demanda": "009-leitura-do-relatorio",
-  "phase": "plan",
+  "phase": "tasks",
   "spec_dir": "specs/009-leitura-do-relatorio",
   "brief": "Legibilidade da entrega ao cliente na tela de resultados: quebra da nota da jornada, redundancia entre narrativa e bullets, glossario do contexto tecnologico na secao de resultados, ordem canonica das 9 secoes, posicao da base de evidencia, regra de bloco de ausencia e o defeito de mensagem unica em ui_target_v32.js:166. Itens 4/6/8 saem para a 010 e o item 1 para a 011 (divisao aprovada em P1).",
   "branch": "feature/009-leitura-do-relatorio",
@@ -15,7 +15,12 @@
     "approved_at": "2026-08-27"
   },
   "plan": {
+    "status": "approved",
+    "notes": "aprovado pelo usuario no chat ('Aprovo'). plan.md do tech-lead (243 linhas): 9 waves por dependencia real (0-ambiente npm ci / 1-fixtures / 2-gates+red / 3-implementacao 5 modulos [P] / 4-consumidor+docs / 5-rebuild / 6-verde+campanha / 7-repin unico / 8-validacao). 6 modulos, dono unico por arquivo, todos ui-engineer exceto os tests_* que sao do qa-engineer. NENHUM bridge novo (__P52 ja registrado ganha so um metodo); registro de patch-points vazio; boundary mais alta e generated+registry, nenhum protegido tocado; sem PARADA. Mutantes renomeados D009-M1..M19 por colisao de nome com M1 global da demanda 003; tests_009_mutants.js carrega 18 (o M3 da spec segue sendo P52-M3 no harness p52). Verificado pelo orquestrador no source: (a) P52-HOME1 usa js.split('P52_CAP_HELP')[0] como prefixo de varredura — capHelpLine tem de ficar DEPOIS do literal ou o gate enfraquece silenciosamente; (b) o buraco na numeracao visivel e PRE-EXISTENTE (data-p52-order = i+1 sobre a ordem completa, secao ausente nao renderiza) — a ordem nova so o move de 4 para 8; (c) #ux-target renderiza SEMPRE (ui_target_v32.js:96-101), logo a prosa de B4 na spec esta errada, mas nenhum gate D009-* a exercita e a spec aprovada nao foi alterada. RISCO DE AMBIENTE: Chromium ausente nesta maquina e known_issues.json sem excecoes nominais — as campanhas de mutacao p51/p52 so executam no CI (wave 8).",
+    "approved_at": "2026-08-27"
+  },
+  "tasks": {
     "status": "in_progress",
-    "notes": "delegado ao tech-lead apos o portao da Fase 1"
+    "notes": "delegado ao tech-lead apos o portao da Fase 2"
   }
 }

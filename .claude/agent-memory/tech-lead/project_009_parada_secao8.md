@@ -32,3 +32,9 @@ Achados adjacentes levantados na mesma spec e ainda **não** decididos pelo
 índice na ordem completa, não a posição entre as renderizadas) e a conflação
 entre "contexto informado e nada se aplica" (S3) e "landscape não se aplica" (S4)
 no card de prática-alvo.
+
+Sobre o buraco na numeração: verificado no plano da Fase 2 que ele é
+**pré-existente** — a ordem nova apenas o move de posição. Portanto não é dívida
+desta demanda e não deve ser absorvido "de passagem" (R13); corrigi-lo exige
+refinamento próprio. Vale como precedente: antes de aceitar um achado adjacente
+como consequência do próprio desenho, confirmar no código se ele já existia.

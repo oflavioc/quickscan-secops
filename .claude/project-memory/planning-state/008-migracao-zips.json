@@ -1,6 +1,6 @@
 {
   "demanda": "008-migracao-zips",
-  "phase": "red",
+  "phase": "implement",
   "spec_dir": "specs/008-migracao-zips",
   "brief": "Migrar os 3 ZIPs de evidência da raiz (visual_print_evidence_47/48/487.zip, ~45 MB) para GitHub Releases, refatorando os oráculos S64/S74/S113 para lerem via manifesto-ponte — continuação da 007, encerramento pleno do E10",
   "branch": "feature/008-migracao-zips",
@@ -23,6 +23,11 @@
     "status": "approved",
     "approved_at": "2026-08-27",
     "notes": "aprovado pelo usuário no chat ('Aprovado'); 15 tarefas T001–T015 em 6 waves; O3 nomeada (core-engineer implementa ZB-5, qa-engineer prova red/mutantes). Datas dos portões 0–2 corrigidas de 2026-08-25 para 2026-08-26 (erro de registro do orquestrador, não do conteúdo)"
+  },
+  "implement": {
+    "status": "in_progress",
+    "waves_done": [1, 2, 3],
+    "pending": ["T006 (release evidence-v32 — aguarda confirmação operacional do proprietário)", "T007", "T008", "T009", "T010", "T011"]
   },
   "red": {
     "status": "proven",

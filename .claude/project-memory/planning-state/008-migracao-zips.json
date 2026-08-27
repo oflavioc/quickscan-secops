@@ -25,7 +25,9 @@
     "notes": "aprovado pelo usuário no chat ('Aprovado'); 15 tarefas T001–T015 em 6 waves; O3 nomeada (core-engineer implementa ZB-5, qa-engineer prova red/mutantes). Datas dos portões 0–2 corrigidas de 2026-08-25 para 2026-08-26 (erro de registro do orquestrador, não do conteúdo)"
   },
   "red": {
-    "status": "in_progress",
-    "notes": "Fase 4 aberta em 2026-08-27; waves 1–2 (T001 ferramenta, T002 manifesto) precedem o red da wave 3, conforme plan.md"
+    "status": "proven",
+    "commit": "5bafacd7f23bcec069a3ec6fdde67cd2c0539c11",
+    "gates": ["ZB-3", "ZB-4", "M-ZB5", "M-ZB6"],
+    "notes": "Fase 4: red triplo executado e commitado em 2026-08-27 (T004, carrega T003 — gate generalizado: shape 7 acervos e EB-1 409/409 verdes, veredito ZB-1/ZB-2 sobre o manifesto de T002). Contagens do red: gate evidence-bridge 12 FAIL (ZB-3 pacote AUSENTE ×3, HTTP 404 real; ZB-4/EB-6 ×9: índice + .gitignore + check-ignore por ZIP); M-ZB5 em worktree efêmera sem os ZIPs: 94 PASS · 3 FAIL de 97 (S64 false, S74+S75 false, S113 throw) — árvore do PR nunca vermelha na suíte de sessão (plan.md W3b); M-ZB6: grep unzip em env_doctor.py = 0 e execução sem linha nomeando unzip"
   }
 }

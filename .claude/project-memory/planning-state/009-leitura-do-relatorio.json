@@ -1,0 +1,12 @@
+{
+  "demanda": "009-leitura-do-relatorio",
+  "phase": "refinement",
+  "spec_dir": "specs/009-leitura-do-relatorio",
+  "brief": "Legibilidade da entrega ao cliente na tela de resultados: quebra da nota da jornada, redundancia entre narrativa e bullets, glossario do contexto tecnologico na secao de resultados, ordem canonica das 9 secoes, posicao da base de evidencia, regra de bloco de ausencia e o defeito de mensagem unica em ui_target_v32.js:166. Itens 4/6/8 saem para a 010 e o item 1 para a 011 (divisao aprovada em P1).",
+  "branch": "feature/009-leitura-do-relatorio",
+  "refinement": {
+    "status": "approved",
+    "approved_at": "2026-08-27",
+    "notes": "aprovado pelo usuario no chat ('Sigo as recomendacoes') apos rodada 1 do product-owner; adota P1-P15 pelas recomendacoes. P1: divisao em 3 demandas (009 = itens 2,3,5,7,9 + regra de bloco de ausencia + defeito ui_target_v32.js:166; 010 = itens 4,6,8; 011 = item 1). P2: rota R1+R4, Porta B no engine RECUSADA. P5: FortiNAC/FortiSIEM fora de escopo. P7 sub-pergunta: NAO suprimir o .why congelado — Camada 1 permanece apenas lida. P14: ordem do PDF em demanda propria. P15: sessao real de 2026-08-27 nao localizada (QuickscanData/clients vazio, D: inacessivel) — vao entre camadas fundamentado no source, nao reproduzido; pendencia declarada da 010. Desvio de trilha: product-owner pinado em model:fable executado em Opus por indisponibilidade de creditos."
+  }
+}

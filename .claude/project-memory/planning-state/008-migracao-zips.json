@@ -27,7 +27,8 @@
   "implement": {
     "status": "in_progress",
     "waves_done": [1, 2, 3],
-    "pending": ["T006 (release evidence-v32 — aguarda confirmação operacional do proprietário)", "T007", "T008", "T009", "T010", "T011"]
+    "pending": ["T006 (release evidence-v32 — BLOQUEADA: aguarda confirmação operacional do proprietário no chat)", "T010 (depende de T006)", "T011"],
+    "notes": "Wave 4 concluída exceto T006: T007 commit 7cd3182 (oráculos na âncora; 97/0 na árvore normal E em worktree sem os ZIPs — green do red 5bafacd-b), T008 commit (unzip no env-doctor), T009 commit 1eefdb6 (R11/R13). Achado do core-engineer para a matriz de mutantes (T013): M-ZB5 como redigido na spec não é construtível — os 3 ZIPs entram no commit raiz e5ccd42, logo todo commit alcançável os contém; a forma realizável é SHA 40-hex inalcançável (mata 94/3) ou campo âncora adulterado (throw de validação)"
   },
   "red": {
     "status": "proven",

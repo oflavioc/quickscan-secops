@@ -1,6 +1,6 @@
 {
   "demanda": "009-leitura-do-relatorio",
-  "phase": "tasks",
+  "phase": "red",
   "spec_dir": "specs/009-leitura-do-relatorio",
   "brief": "Legibilidade da entrega ao cliente na tela de resultados: quebra da nota da jornada, redundancia entre narrativa e bullets, glossario do contexto tecnologico na secao de resultados, ordem canonica das 9 secoes, posicao da base de evidencia, regra de bloco de ausencia e o defeito de mensagem unica em ui_target_v32.js:166. Itens 4/6/8 saem para a 010 e o item 1 para a 011 (divisao aprovada em P1).",
   "branch": "feature/009-leitura-do-relatorio",
@@ -20,7 +20,12 @@
     "approved_at": "2026-08-27"
   },
   "tasks": {
-    "status": "in_progress",
-    "notes": "delegado ao tech-lead apos o portao da Fase 2"
+    "status": "approved",
+    "notes": "aprovado pelo usuario no chat ('Aprovo'). tasks.md do tech-lead (166 linhas): 23 tarefas T001-T023 em 9 waves — 10 qa-engineer, 6 ui-engineer, 4 build-engineer, 2 doc-writer, 1 product-owner. Wave 0 = npm ci (tarefa, nao pressuposto); wave 2 = red commitado ('test(009): red — <gate>'). Serializacoes nomeadas: ui_v32.js sai da wave 3 e vira T013 sozinho na wave 4 (depende de T008 publicar capHelpLine e e o modulo que dispara mais campanhas — diff isolado torna o resultado atribuivel); T008 e T009 viraram tarefa unica cada por R5 §3; expected_suites.json aparece em T003 e T017 e nunca [P]. Tipagem contra o obvio, auditavel: T004-T006 refactor (reancoram oraculos existentes, 45/0 e 55/0 provam que nada nasce ou morre) e T018 chore (campanha de mutacao e instrumento; a prova e o KILL de T019, nao um red). Nenhum tdd_waiver previsto. ESCALADA DECLARADA E NAO AMPLIADA: .v32-decl-row e estilizada (ui_v32.css:8, display:flex + flex-wrap), e ui_v32.css NAO consta da lista de Contratos da spec aprovada (0 mencoes). A frase de glossario de C8 entrara como item de flex, quebrando para baixo. Passa em todos os gates D009-* (jsdom, nenhum mede geometria). O tech-lead NAO criou tarefa para ui_v32.css — seria 7o arquivo de produto no PR sem spec. Verificado pelo orquestrador no source. Se o rito visual da Fase 6 recusar a colocacao, volta como ampliacao com ratificacao do proprietario.",
+    "approved_at": "2026-08-27"
+  },
+  "red": {
+    "status": "pending",
+    "notes": "wave 0 (ambiente) e wave 1 (fixtures) precedem; red da wave 2 e do qa-engineer"
   }
 }

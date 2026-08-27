@@ -1,6 +1,6 @@
 # Plano — 008-migracao-zips
 
-> Fase 2 · dono: tech-lead · consome a spec aprovada (portão de 2026-08-25,
+> Fase 2 · dono: tech-lead · consome a spec aprovada (portão de 2026-08-26,
 > commit `9f05d03`). Referencia [spec.md](spec.md) (gates ZB-1…ZB-7, decisões
 > T1–T6) e [refinement.md](refinement.md). As 4 observações do parecer do PO da
 > Fase 1 (**O1–O4**) são incorporadas aqui, nomeadas onde decidem algo.

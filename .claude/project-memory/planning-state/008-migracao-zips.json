@@ -1,26 +1,31 @@
 {
   "demanda": "008-migracao-zips",
-  "phase": "tasks",
+  "phase": "red",
   "spec_dir": "specs/008-migracao-zips",
   "brief": "Migrar os 3 ZIPs de evidência da raiz (visual_print_evidence_47/48/487.zip, ~45 MB) para GitHub Releases, refatorando os oráculos S64/S74/S113 para lerem via manifesto-ponte — continuação da 007, encerramento pleno do E10",
   "branch": "feature/008-migracao-zips",
   "refinement": {
     "status": "approved",
-    "approved_at": "2026-08-25",
+    "approved_at": "2026-08-26",
     "notes": "aprovado pelo usuário no chat ('Aprovado') após rodada 1 — 5 recomendações aceitas ('Aceito todas as recomendações')"
   },
   "specify": {
     "status": "approved",
-    "approved_at": "2026-08-25",
+    "approved_at": "2026-08-26",
     "notes": "aprovado pelo usuário no chat ('APROVADO'); spec com gates ZB-1…ZB-7 e decisões T1–T6; parecer do PO sem bloqueantes, observações O1–O4 endereçadas ao plan/tasks"
   },
   "plan": {
     "status": "approved",
-    "approved_at": "2026-08-25",
+    "approved_at": "2026-08-26",
     "notes": "aprovado pelo usuário no chat ('Aprovado'); 7 waves (W3 = red, W5a/b/c paralelas, W6 = green com repin único, W7 = validação); O1–O4 incorporadas; boundary sem protegido"
   },
   "tasks": {
+    "status": "approved",
+    "approved_at": "2026-08-27",
+    "notes": "aprovado pelo usuário no chat ('Aprovado'); 15 tarefas T001–T015 em 6 waves; O3 nomeada (core-engineer implementa ZB-5, qa-engineer prova red/mutantes). Datas dos portões 0–2 corrigidas de 2026-08-25 para 2026-08-26 (erro de registro do orquestrador, não do conteúdo)"
+  },
+  "red": {
     "status": "in_progress",
-    "notes": "Fase 3 aberta em 2026-08-25; tasks.md delegado ao tech-lead (nomeação final da separação O3 incluída)"
+    "notes": "Fase 4 aberta em 2026-08-27; waves 1–2 (T001 ferramenta, T002 manifesto) precedem o red da wave 3, conforme plan.md"
   }
 }

@@ -1,7 +1,7 @@
 {
   "_meta": {
     "descricao": "Registry único de pins — fonte de identidade dos artefatos (R8). Hashes = SHA-256 dos blobs de HEAD. Alterar arquivo pinado exige regenerar este registry no MESMO PR, com motivo no commit.",
-    "gerado_de_head": "ebceb7006f2ecde8c434d25e04759efb82c6e589",
+    "gerado_de_head": "fab164fb0b9b8dacdc9a39f2eef00c27fe36ce40",
     "gerado_em": "2026-08-28",
     "exclusoes": [
       "docs_phase5/**",
@@ -15,7 +15,7 @@
     "baseline_core_zip_sha256": "625079c462be7d44ffd69b1cd85f256382322bd0555ae4b548f21bf30ee5b89d"
   },
   "files": {
-    ".claude/BACKLOG.md": "47f4fe990b7b005ec786da76fa898fb7cedb239607fc327d9101c2425572c945",
+    ".claude/BACKLOG.md": "f135165f3088accd91532c4fcb916c2932c2145ce48754fb42f95916fb3ad211",
     ".claude/agent-memory/README.md": "2f868716c8785119c1d6a02a7715f7b5058ab968f55951410fc82fc45b960a93",
     ".claude/agents/build-engineer.md": "8859f79081656a1ec7d8d1b29f806f718a0762d21494d5b177c1501957b84d00",
     ".claude/agents/core-engineer.md": "cec44dda7d6818cb85dac39a76a196bb210cd3487e19e294783fad4cd6c9a3d5",
@@ -163,8 +163,11 @@
     "specs/008-migracao-zips/spec-validate.md": "96d82c595b147f07ac23865ae6cd5f5bfe0a5825dde340a8e5b80f4222d69ecc",
     "specs/008-migracao-zips/spec.md": "794280838787ffe8df2e4a0089fd0c303461cff39ce61e59dab8c18e1c1b83f7",
     "specs/008-migracao-zips/tasks.md": "d94ee2f41c47c6997378d079e202e256911134aac52aedcafdfe9878b45f5ef6",
+    "specs/012-status-backlog/matriz-gate-mutante.md": "a9062efbc5f2dfa185d71fe7fe8e84dd8eedefc7273b3987ea6d297d7c158947",
     "specs/012-status-backlog/plan.md": "c47539aec862ba8bcfdfb78a375ef2c92b57db0ab9c02c7d67a4341f8a265904",
     "specs/012-status-backlog/refinement.md": "1ac9926904a617dc706e7d313ece85fc15c7d7ffd3a802cb5fbb1b4bbb042d49",
+    "specs/012-status-backlog/relatorio-final.md": "125c346de0ab0cbe82e089ad307f3e62da8a11faf59d96ec23c02c6df6a7ebb4",
+    "specs/012-status-backlog/spec-validate.md": "38f90d265a5c9350db39a42b82108b2a7b3f461311233dd4a5933c4bfbe698ca",
     "specs/012-status-backlog/spec.md": "9c1f07f8f3d6fa7a97539a155db8c0c397bca4b9978a080eaee878e930166d0e",
     "specs/012-status-backlog/tasks.md": "350d1a623a4b890468dfc1fc1293a2284a164f183c4f6ba2df27f9a8e0c831aa",
     "specs/PHASE_5_0_REV_A.md": "22e729174c6a3c5dd620da5330b03eb96d9eb6fc6e64eba097c2bde55eb0a510",

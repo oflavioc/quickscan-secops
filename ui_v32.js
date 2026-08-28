@@ -193,6 +193,43 @@ function hideLegacyRecommendation(app, hide){
     else { if (hiding && !allowed) hiding = false; node.classList.remove("v32-hidden"); }
   });
 }
+/* ----------------------------------------------------------------------------
+   [009 · C8/C9] Explicação de UMA frase por capability declarada, nas duas
+   superfícies (tela e papel).
+
+   O texto NÃO nasce aqui e não é recortado aqui: a frase é a transformação
+   DECLARADA e PÚBLICA do glossário `P52_CAP_HELP`, publicada pela 5.2 em
+   `__P52.capHelpLine()` — mesma natureza do `copyMap()` já consumido pelos
+   oráculos de texto. Este módulo é o consumidor: não guarda cópia do verbete,
+   não reimplementa o "primeiro período" e não decide o que é explicável.
+
+   Guarda `typeof` no precedente vivo de `window.__uxJourneyPrintHTML` e
+   irmãos (adiante, no relatório impresso): a ponte é de RUNTIME, a ordem de
+   injeção do builder não é contrato, e a ausência do módulo 5.2 não pode
+   quebrar a renderização do contexto declarado.
+
+   Duas omissões, ambas por construção e não por CSS:
+   · capability SEM verbete → `capHelpLine()` devolve "" → NENHUM nó nasce
+     (nada é inventado, e a linha não vira um vazio que o leitor mede);
+   · capability UNSET nunca chega aqui — as duas superfícies derivam a lista
+     de `V32.TECH_LANDSCAPE` filtrando `presence !== "UNSET"`, nunca do DOM.
+
+   O nó é ADITIVO dentro da linha/card que já existe: a CONTAGEM de
+   `.v32-decl-row` (consumida por `p52ContextSummary`) e a de `.pr-card` em
+   `#pr-landscape` ficam intactas.
+
+   `tag` existe porque as duas superfícies têm fluxo diferente e NENHUM arquivo
+   `.css` entra nesta tarefa: na tela a linha já é um contêiner de itens e o nó
+   entra como `span`, irmão do estado; no papel o card empilha blocos (`.pr-tech`)
+   e um `span` colaria no rótulo de presença — o `div` quebra a linha pelo fluxo
+   normal do documento, sem regra de estilo nova.
+   -------------------------------------------------------------------------- */
+function capHelpHTML(capId, tag){
+  const line = (typeof window!=="undefined" && window.__P52 &&
+    typeof window.__P52.capHelpLine === "function") ? window.__P52.capHelpLine(capId) : "";
+  const t = tag || "span";
+  return line ? `<${t} class="v32-caphelp">${esc32(line)}</${t}>` : "";
+}
 function renderBlocks(app){
   const p = ensurePanel(app);
   const legacy = V32.isLegacyModeV32();
@@ -216,7 +253,8 @@ function renderBlocks(app){
             (s.status ? " · " + esc(STATUS_LABELS[s.status]||s.status) : "")).join("; ");
         return `<div class="v32-decl-row"><strong>${esc(V32.CAPABILITIES[id].name)}</strong>
           <span class="v32-state v32-state-${L.presence.toLowerCase()}">${PRESENCE_LABELS[L.presence]}</span>
-          ${techs ? `<span class="v32-techs">${techs}</span>` : ""}</div>`;
+          ${techs ? `<span class="v32-techs">${techs}</span>` : ""}
+          ${capHelpHTML(id)}</div>`;
       }).join("");
     const interp = Object.keys(ctxs).filter(id => {
         const c = ctxs[id];
@@ -1109,7 +1147,7 @@ function buildPrintReport(){
       const rows=(L.solutions||[]).map(s=>`<div class="pr-tech">${["vendor","product","status","coverage","deployment","notes"]
         .filter(f=>s[f]).map(f=>`<span class="pr-kv"><i>${f==="status"?"status":f}</i> ${esc32(f==="status"?(STATUS_LABELS[s[f]]||s[f]):s[f])}</span>`).join(" · ")}</div>`).join("");
       return `<div class="pr-card"><b>${esc32(V32.CAPABILITIES[id].name)}</b>
-        <span class="pr-state">${PRESENCE_LABELS[L.presence]}</span>${rows}</div>`;}).join("") : `<div class="pr-mut">Nenhuma capability declarada.</div>`}</div>`;
+        <span class="pr-state">${PRESENCE_LABELS[L.presence]}</span>${capHelpHTML(id,"div")}${rows}</div>`;}).join("") : `<div class="pr-mut">Nenhuma capability declarada.</div>`}</div>`;
   /* [3.3.3-9] plataformas/licenciamento + sinais — nada default/unset ocupa espaço */
   const fgt = (V32.PLATFORM_CONTEXT.declaredPlatforms||[]).find(x=>x&&x.platform==="fortigate");
   if (fgt) h += `<div class="pr-sec" id="pr-entitlements"><h2>Plataformas e licenciamento declarados</h2>

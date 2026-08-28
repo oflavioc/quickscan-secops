@@ -1,6 +1,6 @@
 {
   "demanda": "012-status-backlog",
-  "phase": "specify",
+  "phase": "plan",
   "spec_dir": "specs/012-status-backlog",
   "brief": "Status legível por máquina no .claude/BACKLOG.md, para o compliance-audit listar achados abertos como já faz com os tdd_waivers — hoje o status é prosa ('**Status: aberto.**') e nenhuma máquina o lê",
   "branch": "feature/012-status-backlog",
@@ -10,7 +10,12 @@
     "notes": "aprovado pelo usuário no chat ('Prossiga') após rodada 1 — 4 recomendações aceitas ('Aceito as 4 recomendações'): Markdown canônico com gramática fechada; 4 estados (aberto/resolvido/refutado/transferido); audit lista abertos com ok e reprova só violação de forma; pacote completo com migração do EA-1"
   },
   "specify": {
+    "status": "approved",
+    "approved_at": "2026-08-28",
+    "notes": "aprovado pelo usuário no chat ('Aprovadi' — typo evidente de 'aprovado', intenção inequívoca no contexto do portão; registrado verbatim por ser trilha de auditoria). Gates BS-1…BS-5, gramática T1, parse T3-T5. Parecer do PO sem bloqueantes; 4 não-bloqueantes de cobertura (estados resolvido/transferido não provados como aceitos; ramo 'nenhum aberto' não asserido; cenário de posição violada ausente; mensagem de FAIL deve citar o prefixo reservado) endereçados ao plan/tasks/Fase 4"
+  },
+  "plan": {
     "status": "in_progress",
-    "notes": "Fase 1 aberta em 2026-08-28; spec delegada ao tech-lead (gramática exata da linha de status e posição no achado), parecer do PO na sequência"
+    "notes": "Fase 2 aberta em 2026-08-28; plan.md delegado ao tech-lead com os 4 não-bloqueantes do PO"
   }
 }

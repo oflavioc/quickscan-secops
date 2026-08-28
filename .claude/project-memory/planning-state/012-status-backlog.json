@@ -1,6 +1,6 @@
 {
   "demanda": "012-status-backlog",
-  "phase": "tasks",
+  "phase": "red",
   "spec_dir": "specs/012-status-backlog",
   "brief": "Status legível por máquina no .claude/BACKLOG.md, para o compliance-audit listar achados abertos como já faz com os tdd_waivers — hoje o status é prosa ('**Status: aberto.**') e nenhuma máquina o lê",
   "branch": "feature/012-status-backlog",
@@ -20,7 +20,12 @@
     "notes": "aprovado pelo usuário no chat ('Aprovado'); 4 waves sequenciais (W1 red, W2 green, W3 mutantes, W4 validação); os 4 não-bloqueantes do PO viraram cenários nomeados PO-1…PO-4b; política de repin-por-commit com tabela nominal R1–R5 (aprendizado da 008, que previu 1 repin e teve 3); boundary confirmado limpo, sem PARADA R6"
   },
   "tasks": {
-    "status": "in_progress",
-    "notes": "Fase 3 aberta em 2026-08-28; tasks.md delegado ao tech-lead"
+    "status": "approved",
+    "approved_at": "2026-08-28",
+    "notes": "aprovado pelo usuário no chat ('aprovado'); 10 tarefas T001-T010 em 5 waves; repins R2-R5 como tarefas próprias do build-engineer; PO-1…PO-4b nomeados dentro de T002/T006; nenhuma tarefa [P] (dependências lineares, justificado); tipagem defendida (T002 feature = gate novo com red real; T004 doc = green de gate já red-provado)"
+  },
+  "red": {
+    "status": "pending",
+    "notes": "Fase 4 aberta em 2026-08-28; wave 0 (repin R2) precede; o red da wave 1 é a T002 do qa-engineer, com a mecânica T8 (CI vermelho do commit red É o red)"
   }
 }

@@ -24,3 +24,9 @@ arquivo, rodar `python build_v32_html.py` ali e executar as suítes com
 do caminho de scratch). Isso dá "HEAD + o meu diff, mais nada" — e é o número que
 vai no campo EVIDÊNCIA. A contagem in loco entra só como observação, com a
 contaminação nomeada. Ver [[project-trilha-roda-em-opus]].
+
+**Confirmado na wave 3 (T009) — e uma armadilha a mais:** `git worktree add --detach HEAD`
+NÃO serve de linha de base, porque o `quickscan_secops_soccmm_v3_2_dev.html` **commitado**
+fica stale de propósito (o rebuild é uma tarefa de wave 5). Medi `P52-LAY3` vermelho no
+worktree cru e verde depois de rodar `build_v32_html.py` na mesma fonte: a diferença era só
+o HTML velho. Toda medição isolada precisa do rebuild; sem ele o número é de outro commit.

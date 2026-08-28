@@ -227,3 +227,10 @@ body[data-uxscreen="refinement"] #ux-progress-mobile{ display:none !important; }
 .ses-meta code{ font-size:11.5px; }
 @media print{ .ses-actions, #ses-import-home, .ux-modal{ display:none !important; } }
 @media (max-width:720px){ .ses-actions .btn2{ width:100%; min-height:44px; } }
+
+/* ===== [5.9] leitura executiva: nome de domínio na narrativa (spec 009 · C4) =====
+   Consome o mapa único [data-dom] -> --dom-accent de [4.3-B] (68-72), que NÃO é
+   alterado aqui. `font-weight` é o canal NÃO-CROMÁTICO obrigatório: narrativeHTML
+   serve tela e papel pela mesma função, e no papel a cor é dispensável — o peso
+   sozinho tem de preservar o significado (D009-DOM1 / mutante D009-M5). */
+.jn-dom{ color:var(--dom-accent); font-weight:700; }

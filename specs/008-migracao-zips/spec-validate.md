@@ -3,9 +3,10 @@
 > Fase 6 (T012) · executor: qa-engineer · somente leitura (validação ≠ correção).
 > Método: cada exigência verificável da spec conferida na implementação REAL
 > (source + execução de gate), nunca no relatório de quem implementou (R2).
-> Data: 2026-08-28 · HEAD `9b7c6dd` (branch `feature/008-migracao-zips`).
+> Iteração 1: 2026-08-28 · HEAD `9b7c6dd` · Iteração 2 (final): 2026-08-28 ·
+> HEAD `5db4639` (branch `feature/008-migracao-zips`).
 
-## Evidência de execução usada (canônica)
+## Evidência de execução usada (canônica — iteração 1, HEAD `9b7c6dd`)
 
 - Pipeline completo local (`run.sh`): **14 PASS · 0 FAIL** (env-doctor, baseline,
   boundary, marker-lint, icons-check, build, lint-arch, state, tdd, mutation,
@@ -23,6 +24,12 @@
   `feature/*` não dispara `on: push`, restrito a develop/main): **success** —
   `verify: 14 PASS · 0 FAIL` em ubuntu, checkout sem os ZIPs, `fetch-depth: 0`,
   modo CI (parte online obrigatória) + compliance-audit verde.
+
+Re-execução na iteração 2 (HEAD `5db4639`, pós G1/G2 + T014 + segundo repin):
+pipeline completo **14 PASS · 0 FAIL**; `baseline` **194/194 pins · 0
+divergentes · 0 ausentes · 0 sem pin**. Os itens 1–18 e 21–24 não são afetados
+pelos commits da iteração 2 (docs + pins); as contagens canônicas dos gates
+permanecem as da iteração 1, reconfirmadas pelo pipeline verde do head.
 
 ## Score item a item
 
@@ -46,32 +53,33 @@
 | 16 | Não-mudam: `expected_suites.json`, `pins.json→declared`, `boundary.json`, `verify.yml`, `MANIFEST.sha256`, `VISUAL_GATES_V32.md`, `CHANGELOG_v32.md`, `session_roundtrip_report.md` | `git diff develop..HEAD` = 0 linhas em todos; `declared` com as 2 chaves originais | ✅ conforme |
 | 17 | Red R3 provado e commitado ANTES da implementação | `5bafacd` (ZB-3 404 ×3 + ZB-4 + M-ZB5 red 94/3 + M-ZB6 silêncio); planning-state `red.status: proven` | ✅ conforme |
 | 18 | `pipeline.yaml` desc do stage menciona os 7 acervos (decisão do plano) | linha da desc conferida | ✅ conforme |
-| 19 | `design-decisions.md`: linha "Evidência binária versionada" — "os 3 ZIPs **deixam de ser** 'migração de escopo posterior' — **migrados** pela 008; trilha preservada" | a linha atual diz "**estão em migração**" e afirma, sob "Estado nesta escrita (2026-08-27, wave 4)", que o release **não foi publicado**, os ZIPs **não foram desindexados** e os oráculos **ainda leem o arquivo local** — as três afirmações são **falsas no HEAD atual** (T006/T007/T010/T011 aterrissaram depois da escrita) | ❌ **implementação-divergente** |
-| 20 | `evidence-intake.md`: abertura — "os ZIPs **saíram do índice**; gates S64/S74/S113 **leem da âncora**" | mesma prosa de wave 4 ("ainda não foi publicado… ainda leem o arquivo local") — desatualizada em relação ao próprio HEAD | ❌ **implementação-divergente** |
+| 19 | `design-decisions.md`: linha "Evidência binária versionada" — "os 3 ZIPs **deixam de ser** 'migração de escopo posterior' — **migrados** pela 008; trilha preservada" | **fechado na iteração 2** (`1c26861`): a linha diz "**foram migrados pela demanda 008**", nomeia release publicado+conferido, desindexação com contraprova (`4bd22c1`), oráculos na âncora (`7cd3182`) e repin (`1465258`); prosa de estado pendente removida; trilha da decisão original preservada | ✅ conforme |
+| 20 | `evidence-intake.md`: abertura — "os ZIPs **saíram do índice**; gates S64/S74/S113 **leem da âncora**" | **fechado na iteração 2** (`1c26861`): abertura diz literalmente "os 3 ZIPs **saíram do índice** com contraprova" e "os gates **S64/S74+S75/S113 leem da âncora** (`git show <âncora>:<path>` → tmp → `unzip`, asserções intactas)"; aviso do pack preservado | ✅ conforme |
 | 21 | Sequência de commits auditável do tasks.md | `314f466→fcbe5e5→5bafacd→7cd3182∥dbe5b18∥1eefdb6→4bd22c1→1465258`; head verde | ✅ conforme |
 | 22 | Matriz de mutantes: M-ZB1…M-ZB6 + re-execução M1–M6 + linha de transferência O1 | `matriz-gate-mutante.md` desta demanda — 17/17 execuções mortas, 3 blocos, linha O1 registrada | ✅ conforme |
 | 23 | M-ZB5 conforme redigido ("SHA de commit sem os ZIPs") | **não construtível** — ZIPs no commit raiz `e5ccd42`; veredito do QA registrado na matriz: forma canônica = SHA 40-hex inalcançável (morto 94/3) | ⚠️ **spec-errada (formulação)** — resolvida por veredito registrado, sem gate enfraquecido; ciência do PO/usuário no portão T015 |
 | 24 | Fora-de-escopo respeitado (histórico não emagrece; releases 007 intactos; nenhuma âncora nova; nenhum stage novo) | pack intacto (blobs seguem no histórico — é o que sustenta ZB-1/ZB-5); releases 007 conferem online; 1 âncora; `pipeline.yaml` sem stage novo | ✅ conforme |
 
-## Score
+## Score final
 
-**22/24 conformes → 91,7%** (2 gaps classe **implementação-divergente**, mesmo
-tipo e causa raiz — prosa de estado escrita na wave 4 e tornada obsoleta pelas
-waves 5–6; 1 item ⚠️ spec-errada já resolvido por veredito registrado, não conta
-como gap de implementação).
+**24/24 conformes → 100%** (fechado na iteração 2; 1 item ⚠️ spec-errada de
+formulação — M-ZB5, item 23 — resolvido por veredito registrado na matriz, não
+conta como gap de implementação; ciência do PO no portão T15).
 
-## Gaps — classificação e rota (iteração 1 de 2)
+## Trilha das iterações (máx. 2 — R do skill)
 
-- **G1** (`design-decisions.md`, item 19) e **G2** (`evidence-intake.md`, item
-  20): **implementação-divergente** — divergência pesa mais que ausência: o
-  leitor das rules é informado de que a migração está pendente quando o HEAD já
-  a consumou. A própria linha prometia registro da consumação ao fechar a
-  demanda; o fechamento é agora. Correção: atualizar as duas prosas para o
-  estado consumado (release publicado + conferido, ZIPs desindexados, oráculos
-  lendo da âncora, repin feito), com trilha. **Dono: `doc-writer`** (arquivos
-  da W5c/R11) — ambos pinados ⇒ **repin no mesmo PR** (`gen_pins.py`,
-  `build-engineer` ou rito equivalente), idealmente junto do commit de T014.
-  Nenhum gate é tocado; nenhuma asserção muda.
-
-Após a correção: re-executar `baseline` (repin) e re-conferir os itens 19–20
-(iteração 2, se necessária). Demais 22 itens não são afetados pela correção.
+- **Iteração 1** (2026-08-28, HEAD `9b7c6dd`): **22/24 = 91,7%**. Gaps G1
+  (`design-decisions.md`, item 19) e G2 (`evidence-intake.md`, item 20), ambos
+  classe **implementação-divergente**, mesma causa raiz: prosa de estado escrita
+  na wave 4 ("Estado nesta escrita: release não publicado, ZIPs não
+  desindexados, oráculos no arquivo local") tornada obsoleta pelas waves 5–6 —
+  divergência pesa mais que ausência (o leitor das rules era informado de
+  migração pendente quando o HEAD já a consumara). Rota: `doc-writer` +
+  repin no mesmo PR. Nenhum gate tocado; nenhuma asserção mudou.
+- **Iteração 2** (2026-08-28, HEAD `5db4639`): `doc-writer` fechou G1/G2 em
+  `1c26861` (padrão de acréscimo do follow-up da 007, trilha preservada);
+  relatório final T014 em `33ce56e`; segundo repin em `5db4639`. Reconferência
+  por execução: prosas conferidas contra o texto exigido pela spec (itens
+  19–20 acima); `baseline` **194/194 pins · 0 divergentes · 0 sem pin** (os 3
+  docs da wave 6 pinados); pipeline completo re-executado no head — contagens
+  na seção de evidência. **Score fecha em 24/24.**

@@ -21,6 +21,15 @@ Exemplares encontrados (conferir se ainda existem antes de citar):
   layout** (`/Forti[A-Z]/` no módulo P52). Determina ONDE uma feature de
   recomendação pode ser implementada.
 
+**Corolário descoberto na 009 (wave 3): existem DUAS listas de proteção, e a
+legível por máquina é a MENOR.** `.claude/verify/boundary.json` (R6/INV-9) cobre
+engine, Camada 1, harness M41 e snapshot. A **§29.4** de
+`specs/PHASE_5_0_REV_B.md` é normativa, imutável, exigida por `P50-GOV2`, e cobre
+tudo aquilo **mais** `ui_v32.js`, `ui_ux_v32.js`, `ui_target_v32.js`,
+`ui_journey_v32.js`, `ui_v32.css`, `ui_ux_v32.css`. Um cross-check feito só
+contra `boundary.json` devolve **falso negativo** — foi o que aconteceu na spec da
+009, e quem acusou foi o gate vivo `P50-GOV1`, já na implementação.
+
 **Why:** descobri isso refinando a demanda 009 (2026-08-27). A triagem inicial
 tratava "UI-only" como sinônimo de "barato"; não é. O custo estava no processo,
 não no diff — e teria virado errata na Fase 4/5.

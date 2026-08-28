@@ -122,19 +122,22 @@ altera score, estágio ou gaps.
 
 ## Tela de resultados
 
-Em desktop, o resultado é um workspace com trilho de navegação lateral e nove seções na mesma página,
-nesta ordem: **visão executiva · cenário-alvo · contexto tecnológico (opcional) · evidência e
-suficiência · domínios e heat map · prioridades do negócio · gaps observados · formas de apoio ·
-relatório e sessão**. Nada fica escondido atrás do trilho: ele é um sumário, não um menu de abas.
+Em desktop, o resultado é um workspace com trilho de navegação lateral e oito seções na mesma página,
+nesta ordem: **visão executiva · prioridades do negócio · domínios e heat map · gaps observados ·
+cenário-alvo · contexto tecnológico (opcional) · formas de apoio · relatório e sessão**. A sequência
+é narrativa — o quadro geral, o que o negócio pediu, o que foi medido, o que falta e só então para
+onde ir e com o quê. Nada fica escondido atrás do trilho: ele é um sumário, não um menu de abas.
 
-Quando a evidência é **suficiente**, a tela mostra só a linha *“Qualidade da evidência · Suficiente”*
-e guarda o painel técnico no disclosure **“Base de evidência”**; quando é **insuficiente**, o painel
-completo sobe para logo depois da visão executiva e o resultado aparece **bloqueado**.
+Quando a evidência é **insuficiente**, existe uma nona seção: **evidência e suficiência** entra na
+**segunda** posição, logo depois da visão executiva, com o painel completo do que falta e o resultado
+**bloqueado** — e o cenário-alvo passa a ser o sexto, ainda imediatamente antes do contexto
+tecnológico. Quando a evidência é **suficiente**, essa seção não existe: o painel técnico fica dentro
+de **relatório e sessão**, atrás do disclosure **“Base de evidência da sessão”**.
 
-O **cenário-alvo** vem antes do contexto tecnológico porque é decisão de negócio, não de produto:
-ele projeta a comparação Current × Target e **não altera as respostas nem o score atual**. Os gaps
-aparecem em dois grupos separados — **altos** e **moderados**. Em telas estreitas, o trilho vira uma
-barra de seções e o conteúdo passa a uma coluna.
+O **cenário-alvo** vem imediatamente antes do contexto tecnológico porque é decisão de negócio, não
+de produto: ele projeta a comparação Current × Target e **não altera as respostas nem o score
+atual**. Os gaps aparecem em dois grupos separados — **altos** e **moderados**. Em telas estreitas,
+o trilho vira uma barra de seções e o conteúdo passa a uma coluna.
 
 A aplicação **não salva automaticamente**. Exportar o JSON é o que preserva o trabalho — e é o passo
 obrigatório antes de trocar de cliente.

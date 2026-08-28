@@ -283,7 +283,7 @@ A ordem de leitura é sempre a mesma, e o trilho anuncia exatamente a mesma sequ
 8. **Relatório e sessão** — imprimir/PDF, revisar, exportar e importar.
 
 A sequência é narrativa: primeiro o quadro geral, depois o que o negócio pediu, o que foi medido e o
-que falta — e só então para onde ir e com o que. Seção sem conteúdo não é renderizada; as que sobram
+que falta — e só então para onde ir e com o quê. Seção sem conteúdo não é renderizada; as que sobram
 mantêm essa mesma ordem relativa.
 
 **Uma exceção, quando a evidência ainda é insuficiente.** Com o resultado bloqueado, a leitura não

@@ -6,6 +6,65 @@ const ENG_SHA=crypto.createHash("sha256").update(fs.readFileSync(path.join(__dir
 const IDS=["mandate","governance","policies","team-capacity","training","knowledge","incident-response","detection-lifecycle","automation","logs","endpoint","network-visibility","monitoring-coverage","external-surface","vulnerability-management"];
 function boot(){const dom=new JSDOM(HTML,{runScripts:"dangerously",pretendToBeVisual:true,url:"https://l.test/"});return{w:dom.window,d:dom.window.document};}
 function answerAll(w,v,o){IDS.forEach(id=>w.__DEV.setAnswerById(id,(o&&id in o)?o[id]:v));w.__DEV.setArq(0);}
+
+/* ===== ARCHIVES DE EVIDENCIA — FONTE DOS BYTES: BLOB DO COMMIT-ANCORA =====
+   [008 · 2026-08-27] refactor T007 (spec 008 gate ZB-5 · plan §Tecnica O4 · decisao T5).
+   Os archives visual_print_evidence_{48,487}.zip saem do indice git (demanda 008) e passam a
+   viver como assets do release evidence-v32; a verificabilidade fica no manifesto-ponte pinado.
+   Regua INV-8/R10 §1: muda a FONTE dos bytes (arquivo na raiz -> blob do commit-ancora), NUNCA a
+   assercao — S64/S74+S75/S113 conservam as mesmas comparacoes sobre a mesma listagem.
+   - Ancora lida de .claude/verify/evidence_bridge.json -> _meta.commit_ancora e validada 40-hex
+     (T5: registro canonico unico e pinado; nunca SHA hardcodeado, nunca HEAD/branch — R10 §§4-5).
+   - Bytes por spawnSync com args em ARRAY (sem shell: imune a espaco no path), stdout como BUFFER
+     (binario-seguro por construcao) e maxBuffer explicito de 64 MB.
+   - Escrita em tmp do SO (mkdtempSync), nunca na arvore (R7 §3, R10 §8); remocao em finally.
+   - Ancora/blob inacessivel ou git/unzip falhando => FAIL nomeando a causa, NUNCA skip (R10 §2).
+   - Uma extracao por ZIP por execucao (memoizacao das listagens).
+   [Onda-1 · 2026-08-25] fix-finding preservado (mesma familia de P2.1-16/I11, PR #9): caminhos de
+   archive SEM aspas quebravam os oraculos S64/S74+S75/S113 em checkout cujo path contem espaco.
+   As aspas continuam aqui, agora sobre o caminho do tmp. */
+const {execSync,spawnSync}=require("child_process"),os=require("os");
+const ZIP_BRIDGE=path.join(__dirname,".claude","verify","evidence_bridge.json");
+let __zipAncora=null;
+function zipAncora(){
+  if(__zipAncora) return __zipAncora;
+  let a;
+  try{ a=JSON.parse(fs.readFileSync(ZIP_BRIDGE,"utf8"))._meta.commit_ancora; }
+  catch(x){ throw new Error("manifesto-ponte ilegivel (.claude/verify/evidence_bridge.json): "+x.message); }
+  if(typeof a!=="string"||!/^[0-9a-f]{40}$/.test(a))
+    throw new Error("commit-ancora invalido no manifesto-ponte (_meta.commit_ancora): "+String(a));
+  return (__zipAncora=a);
+}
+/* presenca + tamanho do blob na ancora, sem extrair — equivalente de existsSync + statSync().size */
+function zipBlobSize(name){
+  const spec=zipAncora()+":"+name;
+  const r=spawnSync("git",["cat-file","-s",spec],{cwd:__dirname,encoding:"utf8"});
+  if(r.status!==0) throw new Error("blob do archive ausente no commit-ancora: "+spec+
+    (r.stderr?" ["+String(r.stderr).trim()+"]":""));
+  const n=parseInt(String(r.stdout).trim(),10);
+  if(isNaN(n)) throw new Error("tamanho do blob ilegivel no commit-ancora: "+spec);
+  return n;
+}
+const __zipCache=new Map();
+function zipArchive(name){
+  if(__zipCache.has(name)) return __zipCache.get(name);
+  const spec=zipAncora()+":"+name;
+  const r=spawnSync("git",["show",spec],{cwd:__dirname,maxBuffer:64*1024*1024});
+  if(r.status!==0||!r.stdout||!r.stdout.length)
+    throw new Error("blob do archive inacessivel no commit-ancora: "+spec+
+      (r.stderr&&r.stderr.length?" ["+String(r.stderr).toString().trim()+"]":""));
+  const dir=fs.mkdtempSync(path.join(os.tmpdir(),"qs008-"));
+  try{
+    const zip=path.join(dir,name),qp=zip.split(path.sep).join("/");
+    fs.writeFileSync(zip,r.stdout);
+    const out={ size:r.stdout.length,
+      z1:  execSync(`unzip -Z1 "${qp}"`).toString(),
+      z1v: execSync(`unzip -Z1 -v "${qp}" 2>/dev/null || unzip -Z1 "${qp}"`).toString(),
+      l:   execSync(`unzip -l "${qp}"`).toString() };
+    __zipCache.set(name,out);
+    return out;
+  } finally { fs.rmSync(dir,{recursive:true,force:true}); }
+}
 const results=[];const pending=[];
 function T(id,l,fn){let ok=false,e="";try{const r=fn();
   if(r&&typeof r.then==="function"){ const rec={id,ok:false,l};results.push(rec);
@@ -626,12 +685,8 @@ T("S63","nenhum render intermediário: commit não chama uxNewSession nem render
   return noUi && res.ok===true && d.body.dataset.uxscreen===screenBefore;
 });
 T("S64","evidence claim parity: archive contém artefato para cada SE declarado",()=>{
-  const zip=path.join(__dirname,"visual_print_evidence_48.zip");
-  if(!fs.existsSync(zip)) return false;
-/* [Onda-1 · 2026-08-25] fix-finding (mesma familia de P2.1-16/I11, PR #9): caminhos de
-   archive SEM aspas quebravam os oraculos S64/S74+S75/S113 em checkout cujo path contem
-   espaco. So aspas; nenhum comportamento de teste alterado. */
-  const list=require("child_process").execSync(`unzip -Z1 "${zip}"`).toString();
+  /* fonte: blob do commit-ancora (helper zipArchive) — assercao inalterada (ZB-5) */
+  const list=zipArchive("visual_print_evidence_48.zip").z1;
   const declared=["SE1","SE2","SE3","SE4","SE5"];
   const present=declared.filter(se=>new RegExp(se+"[-.]").test(list));
   const doc=fs.readFileSync(path.join(__dirname,"session_roundtrip_report.md"),"utf8");
@@ -760,10 +815,10 @@ T("S73","self-import expandido: FortiGate com bundle, FortiSOC sem bundle e com 
   });
 });
 T("S74+S75","evidence archive: artefatos SE1–SE5 existem, não vazios, e SE4 tem screenshot do modal aberto",()=>{
-  const zip=path.join(__dirname,"visual_print_evidence_48.zip");
-  if(!fs.existsSync(zip)) return false;
-  const list=require("child_process").execSync(`unzip -Z1 -v "${zip}" 2>/dev/null || unzip -Z1 "${zip}"`).toString();
-  const entries=require("child_process").execSync(`unzip -l "${zip}"`).toString();
+  /* fonte: blob do commit-ancora (mesma extracao memoizada de S64) — assercoes inalteradas (ZB-5) */
+  const A=zipArchive("visual_print_evidence_48.zip");
+  const list=A.z1v;
+  const entries=A.l;
   const sizeOf=(pat)=>{ const rows=entries.split("\n").filter(l=>new RegExp(pat).test(l));
     return rows.map(l=>parseInt(l.trim().split(/\s+/)[0],10)).filter(n=>!isNaN(n)); };
   const modal1366=sizeOf("SE4-oversize-modal-1366\\.png"), modal390=sizeOf("SE4-oversize-modal-390\\.png");
@@ -1334,9 +1389,9 @@ T("S111","disposição de unicidade: platform e subscriptions duplicadas não s�
   return subsUnique && oneFortigate && setDedupe && dupSub && dupPlat && dupPlatSoc && okDistinct;
 });
 T("S113","evidence archive 4.8.0.7: artefatos SE6/SE7/SE8 existem, não vazios e cobrem os dois breakpoints",()=>{
-  const zip=path.join(__dirname,"visual_print_evidence_487.zip");
-  if(!fs.existsSync(zip)) throw new Error("arquivo de evidência da 4.8.0.7 ausente");
-  const entries=require("child_process").execSync(`unzip -l "${zip}"`).toString();
+  /* fonte: blob do commit-ancora (helper zipArchive) — assercoes inalteradas (ZB-5) */
+  const A=zipArchive("visual_print_evidence_487.zip");
+  const entries=A.l;
   const sizeOf=pat=>entries.split("\n").filter(l=>new RegExp(pat).test(l))
     .map(l=>parseInt(l.trim().split(/\s+/)[0],10)).filter(n=>!isNaN(n));
   /* cada cenário novo precisa existir nos DOIS breakpoints reais e ter bytes > 0 */
@@ -1348,9 +1403,9 @@ T("S113","evidence archive 4.8.0.7: artefatos SE6/SE7/SE8 existem, não vazios e
     if(!sz.length) throw new Error("artefato ausente no arquivo de evidência: "+pat);
     if(!sz.some(n=>n>0)) throw new Error("artefato vazio no arquivo de evidência: "+pat);
     return true; });
-  /* o arquivo de evidência anterior (4.8) permanece publicado e íntegro */
-  const prev=path.join(__dirname,"visual_print_evidence_48.zip");
-  return all && fs.existsSync(prev) && fs.statSync(prev).size>0 && fs.statSync(zip).size>0;
+  /* o arquivo de evidência anterior (4.8) permanece publicado e íntegro — presença + não-vazio do
+     blob na âncora (antes: existsSync + statSync na árvore); sem segunda extração (plan §O4) */
+  return all && zipBlobSize("visual_print_evidence_48.zip")>0 && A.size>0;
 });
 T("S112","propriedade forte de self-import: todo export emitido é reimportável pelo mesmo build",()=>{
   /* cada cenário é construído, exportado, reimportado e ENCERRADO antes do próximo: a suíte não retém

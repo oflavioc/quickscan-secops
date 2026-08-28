@@ -15,3 +15,10 @@ docs_phase5/evidence_p50/
 docs_phase5/evidence_p51/
 docs_phase5/evidence_p52/
 docs_phase5/evidence_unset/
+
+# Demanda 008 — ZIPs de auditoria da raiz migrados para o release evidence-v32
+# (evidence-47/48/487). Bytes permanecem no working tree; identidade vive em
+# .claude/verify/evidence_bridge.json (gate evidence-bridge, EB-1/EB-6).
+visual_print_evidence_47.zip
+visual_print_evidence_48.zip
+visual_print_evidence_487.zip

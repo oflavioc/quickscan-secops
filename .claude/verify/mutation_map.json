@@ -4,6 +4,25 @@
     "onda": 3
   },
   "harnesses": {
+    "d009": {
+      "cmd": "node tests_009_mutants.js",
+      "targets": [
+        "ui_p52_workspace_v32.js",
+        "ui_p52_workspace_v32.css",
+        "ui_journey_v32.js",
+        "ui_target_v32.js",
+        "ui_v32.js",
+        "ui_ux_v32.css",
+        "tests_009_mutants.js",
+        "tests_009_leitura.js",
+        "fixtures_009_leitura.js"
+      ],
+      "requires": [
+        "node",
+        "python"
+      ],
+      "_trilha": "demanda 009-leitura-do-relatorio · T018 (wave 6), registrada no MESMO commit da criação de tests_009_mutants.js. 18 mutantes: D009-M1, D009-M2, D009-M4..D009-M19 — o M3 da spec NÃO é mutante desta campanha, permanece P52-M3 no harness p52 (mutação e oráculo são da 5.2; a 009 só reescreveu o registro dele). Nenhum requires chromium: nenhum gate de tests_009_leitura.js mede geometria. ALVOS ALÉM DOS 6 MÓDULOS DE PRODUTO + HARNESS que tasks.md T018 lista: tests_009_leitura.js e fixtures_009_leitura.js entram porque são o ORÁCULO e a fixture da campanha — mexer neles muda o que a campanha prova. Precedente: o harness p52 já lista tests_p52_chromium.js entre os alvos. Desvio declarado que ENDURECE o trigger (mais re-execução, nunca menos)."
+    },
     "core": {
       "cmd": "node tests_core_mutants.js",
       "targets": [

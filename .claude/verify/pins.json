@@ -1,7 +1,7 @@
 {
   "_meta": {
     "descricao": "Registry único de pins — fonte de identidade dos artefatos (R8). Hashes = SHA-256 dos blobs de HEAD. Alterar arquivo pinado exige regenerar este registry no MESMO PR, com motivo no commit.",
-    "gerado_de_head": "f61f77263e0711ff7390a3ad09fddc2cca9925af",
+    "gerado_de_head": "1c066440fe200fbd2e06f2bc756d8299fdc827ab",
     "gerado_em": "2026-08-28",
     "exclusoes": [
       "docs_phase5/**",
@@ -88,7 +88,7 @@
     ".gitignore": "f12379e20604234d2c80ed8486cefa9c6fc22034e89c1fa79c239e6ae0665079",
     "AGENTS.md": "267c0b98ae9f6fa4289be88e95b72393be936951625be2917ae08fe0cb3e9671",
     "CLAUDE.md": "46bc87e937d6ac560e0445f30626257d2347b6001408300230d0955bdfee9b1d",
-    "CONTEXT.md": "bd6c85951a28d9173a2e6a4602d0ea034a5b5e96c52fa23600c8e3e1edcf4114",
+    "CONTEXT.md": "51757d579b0b0da0b55b5a0b0f949daa7e6ce8940238fe241e463abaa737e1d4",
     "ICON_ASSET_DECISIONS_V32.md": "f14494c78ae40af88f8a2adf49e30f314a6800736b11607d3382e0a31d5cce80",
     "LICENSE": "1ddd9deeecd23a1cece8a3aee60c77f4168295535ea4d7cc0102c55d8e777c49",
     "MANIFEST.sha256": "defd52d1cfc57e6ca5a9ebcce8b620a080772b6ea62753f987c5a58f8ccf38c6",
@@ -163,6 +163,8 @@
     "specs/008-migracao-zips/spec-validate.md": "96d82c595b147f07ac23865ae6cd5f5bfe0a5825dde340a8e5b80f4222d69ecc",
     "specs/008-migracao-zips/spec.md": "794280838787ffe8df2e4a0089fd0c303461cff39ce61e59dab8c18e1c1b83f7",
     "specs/008-migracao-zips/tasks.md": "d94ee2f41c47c6997378d079e202e256911134aac52aedcafdfe9878b45f5ef6",
+    "specs/012-status-backlog/refinement.md": "1ac9926904a617dc706e7d313ece85fc15c7d7ffd3a802cb5fbb1b4bbb042d49",
+    "specs/012-status-backlog/spec.md": "9c1f07f8f3d6fa7a97539a155db8c0c397bca4b9978a080eaee878e930166d0e",
     "specs/PHASE_5_0_REV_A.md": "22e729174c6a3c5dd620da5330b03eb96d9eb6fc6e64eba097c2bde55eb0a510",
     "specs/PHASE_5_0_REV_B.md": "4f1583c733df62a9452aa7b218d962e40d781bb8d30dfc3179ad6e1ef004619b",
     "synthetic_session_examples/exemplo-completo.json": "8970e68ca0ce6a6885b62a911532a0598c9c5bca1bb783089fb085ba858a314d",

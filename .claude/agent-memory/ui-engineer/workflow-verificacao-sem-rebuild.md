@@ -20,3 +20,12 @@ pelo source atual do módulo — é exatamente o que o builder faz, só que em m
 e sem escrever no repo. O corpo dos gates roda **sem modificação**. A execução
 autoritativa continua sendo a de depois do rebuild, e isso vai declarado na
 EVIDÊNCIA. Ver [[pins-duplos-bloqueiam-modulos-de-produto]].
+
+**Variante com prova de fidelidade embutida** (usada na Fase 6 da 009): em vez de
+casar marcador, procurar no HTML o texto de `git show HEAD:<mod>` e substituí-lo
+pelo working tree. O builder inlina o módulo **verbatim**, então o `indexOf` só
+acha se o HTML gerado estiver em dia com HEAD — achou, o splice é byte-exato;
+não achou, o wrapper aborta em vez de medir um HTML velho. Marcadores do módulo
+de alvo: `V32_TARGET_BEGIN`/`_END`. Cuidado com dois detalhes de ambiente: rodar
+o wrapper de fora do repo exige `NODE_PATH=<repo>/node_modules` (senão `jsdom`
+não resolve) e `process.chdir(<repo>)`.

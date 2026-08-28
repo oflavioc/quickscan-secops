@@ -7018,15 +7018,42 @@ function tgtEnablerState(qid, nItems){
    da lista (B5). Declara que o contexto não foi informado, QUANTAS e QUAIS
    práticas ficaram sem refino. Na TELA acompanha o caminho para o editor de
    contexto; no PAPEL é a MESMA frase, sem controle. */
+/* [D009 · rodada 2 · ESCOPO DA ABERTURA] A frase tinha um só ramo e abria sempre
+   em escopo de SESSÃO ("não foi informado nesta sessão"). Isso é verdade quando
+   NADA foi declarado e FALSO no caso parcial — lá o contexto foi informado, só
+   não para as práticas nomeadas, e o próprio relatório desmente a frase duas
+   seções abaixo, onde `#v32decl` lista as capabilities declaradas. É o mesmo
+   defeito que esta demanda corrige em `:166`, um degrau acima: afirmar mais do
+   que a sessão sustenta.
+   O predicado do ramo é o MESMO de `#v32decl` (`ui_v32.js:246`): há declaração
+   quando alguma capability sai de UNSET. Estado canônico do engine, lido — não
+   recalculado nem redefinido aqui. Os dois ramos continuam declarando
+   não-informação (a regra que `D009-UNS1` mede); o que muda é o ALCANCE. */
+function tgtCtxDeclaradoNaSessao(){
+  const L=V32.TECH_LANDSCAPE||{};
+  return Object.keys(L).some(id=>L[id] && L[id].presence!=="UNSET");
+}
 function tgtAbsenceHTML(qids, isScreen){
   if (!qids || !qids.length) return "";
   const nomes=qids.map(qid=>tgtKOf(qid)).filter(k=>k>=0).map(k=>esc32(QS[k].lbl));
   if (!nomes.length) return "";
-  const n=nomes.length;
-  const frase=`O contexto tecnológico não foi informado nesta sessão. Por isso ${n} ${n===1?"prática-alvo ficou":"práticas-alvo ficaram"} sem refino por habilitadores já identificados: ${nomes.join("; ")}.`;
-  return isScreen
-    ? `<div class="ux-mut" data-ux-absence="target-enablers"><span>${frase}</span> <button class="btn2" id="ux-tgt-absctx" type="button">Editar contexto tecnológico</button></div>`
-    : `<div class="pr-mut" data-ux-absence="target-enablers">${frase}</div>`;
+  const n=nomes.length, uma=n===1;
+  const frase=tgtCtxDeclaradoNaSessao()
+    ? `O contexto tecnológico não foi informado para ${n} ${uma?"prática-alvo":"práticas-alvo"}. Por isso ${uma?"ela ficou":"elas ficaram"} sem refino por habilitadores já identificados: ${nomes.join("; ")}.`
+    : `O contexto tecnológico não foi informado nesta sessão. Por isso ${n} ${uma?"prática-alvo ficou":"práticas-alvo ficaram"} sem refino por habilitadores já identificados: ${nomes.join("; ")}.`;
+  if (!isScreen) return `<div class="pr-mut" data-ux-absence="target-enablers">${frase}</div>`;
+  /* [D009 · rodada 2 · RÓTULO DERIVADO] o caminho da TELA já delegava o CLIQUE ao
+     controle canônico (`#v32cta`, de `ui_v32.js`); o RÓTULO estava fixo em
+     "Editar…". Numa sessão limpa o aviso mandava "Editar" logo acima de um botão
+     que dizia "Adicionar" (`ui_v32.js:240` × `:294`) — atrito na exata rota de
+     conversão que o aviso existe para abrir. Agora o rótulo vem do mesmo nó a
+     que o clique é delegado; o dono do rótulo continua sendo `ui_v32.js`.
+     Sob guarda: sem controle (ou sem rótulo) NÃO nasce botão e o aviso permanece
+     informativo — nunca inventa caminho nem rótulo próprio. */
+  const cta=(typeof document!=="undefined") ? document.getElementById("v32cta") : null;
+  const rotulo=cta ? String(cta.textContent||"").replace(/\s+/g," ").trim() : "";
+  const caminho=rotulo ? ` <button class="btn2" id="ux-tgt-absctx" type="button">${esc32(rotulo)}</button>` : "";
+  return `<div class="ux-mut" data-ux-absence="target-enablers"><span>${frase}</span>${caminho}</div>`;
 }
 function tgtEnablersHTML(qid, semCtx){                          /* [L] SOMENTE itens já existentes no ctx atual */
   const caps=Object.keys(V32.CAPABILITIES).filter(id=>(V32.CAPABILITIES[id].questionIds||[]).includes(qid));

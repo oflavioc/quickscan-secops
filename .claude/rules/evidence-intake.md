@@ -12,7 +12,7 @@ manifesto-ponte pinado (`.claude/verify/evidence_bridge.json`) e pelo gate
 versionado: `evidence_v322` (gate V322-DOC3, decisão distinta). Os 3 ZIPs da
 raiz (gates S64/S74/S113) — que a 007 registrou como "migração de escopo
 posterior, fora desta demanda" — **foram migrados pela demanda 008**
-(`specs/008-migracao-zips/`): o manifesto-ponte foi estendido para
+(PR #21, mesclado 2026-08-28) (`specs/008-migracao-zips/`): o manifesto-ponte foi estendido para
 acervo-arquivo (`evidence-47`/`evidence-48`/`evidence-487`, mesma âncora
 `62590b5927496a61ab31dd476d46b03624546560`, commits `314f466`/`fcbe5e5`) e o
 gate `evidence-bridge` generalizado; o release **`evidence-v32`** foi
@@ -21,7 +21,10 @@ diretos, conferido pós-download ×3 + digest da API do GitHub
 (https://github.com/oflavioc/quickscan-secops/releases/tag/evidence-v32); os
 3 ZIPs **saíram do índice** com contraprova (`4bd22c1`); os gates
 **S64/S74+S75/S113 leem da âncora** (`git show <âncora>:<path>` → tmp →
-`unzip`, asserções intactas — `7cd3182`); repin único fechou o PR (`1465258`).
+`unzip`, asserções intactas — `7cd3182`); três execuções de `gen_pins.py`
+fecharam o PR — `1465258` (T011, o previsto), `5db4639` (wave 6: matriz de
+mutantes, spec-validate e relatório final nasceram depois do repin) e
+`f8b59e1` (iteração 2 do spec-validate) — o `tasks.md` previa uma só.
 O histórico git não emagrece com isso — emagrecimento é rewrite, decisão
 separada do proprietário. A consumação da 007 está registrada no relatório
 final da demanda 007 (`specs/007-migracao-evidencia/relatorio-final.md`); a

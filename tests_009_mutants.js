@@ -18,7 +18,10 @@
    Este harness NÃO escreve recibo em arquivo versionado (R7 §3): o registro
    canônico vivo do par gate↔mutante é `.claude/verify/mutation-matrix.json`.
 
-   SÃO 18 MUTANTES: `D009-M1`, `D009-M2` e `D009-M4`..`D009-M19`. O `M3` da spec
+   SÃO 18 MUTANTES EXECUTÁVEIS: `D009-M1`, `D009-M2` e `D009-M4`..`D009-M19`.
+   O 19º — `D009-M20`, par de `D009-UNS3` endurecido — está ESPECIFICADO ao pé
+   deste array, com ancoragem pendente da correção; leia o bloco antes de
+   supor que a campanha cobre a cláusula da frase de abertura. O `M3` da spec
    NÃO é mutante desta campanha — ele permanece `P52-M3` no harness `p52`
    (`tests_p52_mutants.js`), porque a mutação e o oráculo (`P52-TGT1`) são os da
    Phase 5.2; o que a demanda 009 fez lá foi reescrever o registro do mutante,
@@ -282,6 +285,41 @@ const MUTANTS = [
     gate: "D009-EVB1",
     reason: /#p52-evbase pendurado em p52-sec-exec/
   }
+
+  /* ==========================================================================
+     D009-M20 · ESPECIFICADO, ANCORAGEM PENDENTE — NÃO EXECUTA (e não finge que sim)
+
+     Par: `D009-M20` ↔ `D009-UNS3` (cláusula da frase de abertura, endurecida na
+     rodada 2 em 2026-08-28). Mutação: **devolver a frase de ausência GLOBAL ao
+     caso parcial** — isto é, fazer `tgtAbsenceHTML` voltar a abrir com "O
+     contexto tecnológico não foi informado nesta sessão." quando há capability
+     declarada e apenas parte das práticas ficou sem contexto.
+
+     POR QUE NÃO ESTÁ NO ARRAY ACIMA: o `find` deste harness é textual e casa
+     byte a byte. A mutação precisa ancorar no RAMO que a correção vai criar em
+     `ui_target_v32.js` — e essa correção ainda não existe (é do `ui-engineer`,
+     entra depois deste red). Inventar um `find` agora produziria âncora que casa
+     0x, e este harness trata isso como FALHA DO HARNESS, não como "não
+     aplicável": a campanha inteira ficaria vermelha por um mutante que não pode
+     existir ainda. Declarar é honesto; fingir âncora, não.
+
+     JÁ DETERMINADO (não depende da correção):
+       gate ....... "D009-UNS3"
+       reason ..... /declara ausência de contexto em ESCOPO DE SESSÃO/
+       file ....... ui_target_v32.js
+       desc ....... "devolver a frase de ausência global ao caso parcial: o aviso
+                     volta a afirmar não-informação em escopo de sessão enquanto
+                     o relatório lista capabilities declaradas"
+
+     REGRA DE ANCORAGEM, para quem o escrever quando a correção existir: o `find`
+     deve casar o RAMO que escolhe a abertura restrita, e o `repl` deve forçar a
+     abertura global nos DOIS casos. Se a correção não criar ramo — por exemplo,
+     se adotar uma frase restrita única, verdadeira nos dois estados —, então o
+     mutante é `repl` da frase única de volta à forma com "nesta sessão.".
+
+     Registrado como dívida declarada em `.claude/verify/mutation-matrix.json`
+     (R3 §5: gate sem mutante na matriz é dívida declarada, nunca omissão).
+     ========================================================================== */
 ];
 
 /* ========================================================================== */

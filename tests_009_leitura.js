@@ -647,9 +647,10 @@ T("D009-UNS2", "capability informada e sem candidato/serviço: a frase substanti
 });
 
 /* ============================================================================
-   D009-UNS3 · C12 — contexto parcial (B9): o aviso nomeia exatamente quem ficou de fora
+   D009-UNS3 · C12 — contexto parcial (B9): o aviso nomeia exatamente quem ficou
+   de fora E NÃO DECLARA AUSÊNCIA GLOBAL DE CONTEXTO
    ========================================================================== */
-T("D009-UNS3", "com uma capability informada e outra UNSET, o aviso lista só a prática da UNSET e a informada mantém sua linha", () => {
+T("D009-UNS3", "com uma capability informada e outra UNSET, o aviso lista só a prática da UNSET, não declara ausência global de contexto, e a informada mantém sua linha", () => {
   const R = results009(FX9.D009_F2);
   const copy = copyOf(R.w);
   FX9.d009AssertFixtureStates(R.w, FX9.D009_F2);
@@ -674,6 +675,58 @@ T("D009-UNS3", "com uma capability informada e outra UNSET, o aviso lista só a 
     if (en.length !== 1 || txt(en[0]) !== copy(FRASE_NONE))
       throw new Error(qid + " (S3) perdeu a linha substantiva no ramo parcial");
   });
+
+  /* ------------------------------------------------------------------------
+     [rodada 2 · 2026-08-28] A LISTA estava certa; a ABERTURA, não.
+
+     Achado do `product-owner`: `tgtAbsenceHTML` (`ui_target_v32.js:217`) monta a
+     frase SEM RAMO e abre com "O contexto tecnológico não foi informado nesta
+     sessão". No caso PARCIAL isso é FALSO — o contexto FOI informado, apenas não
+     para as práticas nomeadas — e o próprio relatório desmente a frase duas
+     seções abaixo, onde `#v32decl` lista as capabilities declaradas. É o mesmo
+     defeito que esta demanda corrige em `ui_target_v32.js:166`, um degrau acima:
+     afirmar mais do que a sessão sustenta.
+
+     Por que passou até aqui: este gate afirmava só a LISTA, e `D009-UNS1` usa
+     `/não foi informad/i`, que casa igual nos dois escopos. Verde e impreciso ao
+     mesmo tempo.
+
+     O gate afirma o PAR, nunca a redação da correção:
+       (+) o aviso CONTINUA declarando não-informação — a mesma regra que
+           `D009-UNS1` mede. Sem esta cláusula, APAGAR a frase faria a asserção
+           negativa passar vacuosamente, que é pior que gate ausente;
+       (−) e NÃO a declara em ESCOPO DE SESSÃO, que é o escopo falso aqui.
+     Duas correções plausíveis passam — "…não foi informado para estas
+     práticas-alvo." e "…não foi informado nesta sessão para estas
+     práticas-alvo." —, e a frase de hoje reprova. Escolher a redação é do
+     `ui-engineer`; o gate só recusa a proposição falsa.
+
+     A cláusula vive AQUI, e não em `D009-UNS1`, de propósito: sob landscape 100%
+     UNSET a frase global é VERDADEIRA, e é exatamente esse caso que `D009-UNS1`
+     mede. `D009-UNS1` NÃO é alterado.
+
+     Oráculo independente da prosa: `V32.TECH_LANDSCAPE` prova que existe ao
+     menos uma capability declarada NESTA sessão — é esse fato do modelo, não a
+     leitura do texto, que torna a afirmação de escopo global uma contradição.
+     ---------------------------------------------------------------------- */
+  const V = R.w.__DEV.V32;
+  const declaradas = Object.keys(V.TECH_LANDSCAPE).filter(id => V.TECH_LANDSCAPE[id].presence !== "UNSET");
+  if (!declaradas.length)
+    throw new Error("D009-F2 deixou de ter capability declarada: o caso PARCIAL não existiria e a cláusula seria vacuosa");
+  if (!/n[ãa]o foi informad/i.test(t))
+    throw new Error("o aviso deixou de declarar não-informação (mesma regra de D009-UNS1): " + JSON.stringify(t.slice(0, 140)));
+  /* Proposições de ausência GLOBAL: a afirmação FECHA (terminador) sem restringir
+     o alcance. Lista explícita e extensível — paráfrase nova que escape daqui e
+     ainda seja falsa é lacuna a fechar por edição declarada, nunca em silêncio. */
+  const AUSENCIA_GLOBAL = [
+    /n[ãa]o (?:foi|foram) informad\w*\s+(?:nesta|desta|na)\s+sess[ãa]o\s*[.;]/i,
+    /nenhum contexto tecnol[óo]gico foi informado/i
+  ];
+  const global = AUSENCIA_GLOBAL.map(re => t.match(re)).find(Boolean);
+  if (global)
+    throw new Error("no caso PARCIAL o aviso declara ausência de contexto em ESCOPO DE SESSÃO — " +
+      declaradas.length + " capability(ies) foram declaradas nesta sessão (" + declaradas.join(", ") +
+      ") e o relatório as lista em #v32decl: " + JSON.stringify(global[0]));
   return true;
 });
 

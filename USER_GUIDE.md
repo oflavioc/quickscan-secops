@@ -271,17 +271,32 @@ direita, todas na mesma página. O trilho não esconde nada — ele apenas leva 
 marca a seção corrente com borda, peso e o texto *“seção atual”*. Em telas estreitas o trilho vira uma
 barra de seções rolável no topo.
 
-A ordem de leitura é sempre a mesma:
+A ordem de leitura é sempre a mesma, e o trilho anuncia exatamente a mesma sequência:
 
 1. **Visão executiva** — score, estágio, radar e síntese;
-2. **Cenário-alvo** — aparece antes do contexto tecnológico, de propósito;
-3. **Contexto tecnológico** — opcional;
-4. **Evidência e suficiência**;
-5. **Domínios e heat map** — o resultado detalhado;
-6. **Prioridades do negócio**;
-7. **Gaps observados** — separados em altos e moderados;
-8. **Formas de apoio** — recomendações e itens a validar;
-9. **Relatório e sessão** — imprimir/PDF, revisar, exportar e importar.
+2. **Prioridades do negócio** — o que o negócio declarou como prioritário;
+3. **Domínios e heat map** — o resultado detalhado;
+4. **Gaps observados** — separados em altos e moderados;
+5. **Cenário-alvo** — aparece imediatamente antes do contexto tecnológico, de propósito;
+6. **Contexto tecnológico** — opcional;
+7. **Formas de apoio** — recomendações e itens a validar;
+8. **Relatório e sessão** — imprimir/PDF, revisar, exportar e importar.
+
+A sequência é narrativa: primeiro o quadro geral, depois o que o negócio pediu, o que foi medido e o
+que falta — e só então para onde ir e com o que. Seção sem conteúdo não é renderizada; as que sobram
+mantêm essa mesma ordem relativa.
+
+**Uma exceção, quando a evidência ainda é insuficiente.** Com o resultado bloqueado, a leitura não
+pode parecer liberada: **Evidência e suficiência** ocupa a **segunda** posição, logo depois da visão
+executiva, e as demais descem um lugar — o cenário-alvo passa a ser o sexto, ainda imediatamente
+antes do contexto tecnológico:
+
+> 1. Visão executiva · 2. **Evidência e suficiência** · 3. Prioridades do negócio ·
+> 4. Domínios e heat map · 5. Gaps observados · 6. Cenário-alvo · 7. Contexto tecnológico ·
+> 8. Formas de apoio · 9. Relatório e sessão
+
+Com a evidência suficiente, a suficiência deixa de ser seção da leitura e o detalhamento passa a
+viver dentro de **Relatório e sessão** — ver §8.2.
 
 O trilho também informa, sem permitir edição, quantas práticas têm alvo declarado, quantas
 capabilities de contexto foram informadas e se a evidência está suficiente ou pendente.
@@ -306,10 +321,12 @@ aparece como marcador tracejado separado, nunca como preenchimento.
 **Suficiência de evidência.** Antes de emitir veredito executivo, a ferramenta exige evidência
 mínima. A apresentação muda conforme o estado, mas o critério nunca muda:
 
-- **evidência insuficiente** — o painel completo aparece logo depois da visão executiva, com a
-  contagem global, o que falta em cada domínio e o resultado explicitamente **BLOQUEADO**;
-- **evidência suficiente** — a tela mostra apenas a linha *“Qualidade da evidência · Suficiente”*, e
-  o detalhamento técnico fica atrás do disclosure **“Base de evidência”**, disponível a um clique.
+- **evidência insuficiente** — o painel completo aparece logo depois da visão executiva, na segunda
+  seção, com a contagem global, o que falta em cada domínio e o resultado explicitamente
+  **BLOQUEADO**;
+- **evidência suficiente** — a suficiência deixa de ocupar seção própria: o detalhamento técnico fica
+  dentro de **Relatório e sessão**, atrás do disclosure **“Base de evidência da sessão”**, que traz a
+  contagem de respostas confirmadas e abre a um clique.
 
 Isso é hierarquia, não omissão: insuficiência real nunca é escondida e nenhum resultado é liberado
 sem o critério canônico. Enquanto

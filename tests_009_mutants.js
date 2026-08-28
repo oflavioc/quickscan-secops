@@ -247,10 +247,23 @@ const MUTANTS = [
   /* ------------------------------------------------------------------ C14 */
   {
     id: "D009-M16",
-    desc: "emitir o aviso SEM a lista: declara a contagem e não nomeia quem ficou de fora",
+    desc: "emitir o aviso SEM a lista: declara a contagem e nao nomeia quem ficou de fora",
     file: TARGET,
-    find: '  const frase=`O contexto tecnológico não foi informado nesta sessão. Por isso ${n} ${n===1?"prática-alvo ficou":"práticas-alvo ficaram"} sem refino por habilitadores já identificados: ${nomes.join("; ")}.`;',
-    repl: '  const frase=`O contexto tecnológico não foi informado nesta sessão. Por isso ${n} ${n===1?"prática-alvo ficou":"práticas-alvo ficaram"} sem refino por habilitadores já identificados.`;   /* MUTANTE D009-M16 */',
+    /* [rodada 2] ÂNCORA REESCRITA. A âncora original casava a frase de UM ramo
+       só, e a correção `e77b7b5` transformou a frase em ternário de DOIS ramos:
+       o `find` passou a casar 0x e o mutante ESCAPOU na campanha de 2026-08-28,
+       reportado como FALHA DO HARNESS — que é o desenho funcionando, não uma
+       regressão de produto. `D009-ABS1` esteve verde o tempo todo; o que se
+       perdeu, entre `e77b7b5` e este commit, foi a PROVA do par.
+       A âncora agora cobre o ternário INTEIRO e o `repl` remove a lista dos
+       DOIS ramos, mantendo a contagem — o gate exige contagem E lista, então
+       tirar só a lista é exatamente o defeito que ele tem de pegar. */
+    find: '  const frase=tgtCtxDeclaradoNaSessao()' + "\n" +
+      '    ? `O contexto tecnológico não foi informado para ${n} ${uma?"prática-alvo":"práticas-alvo"}. Por isso ${uma?"ela ficou":"elas ficaram"} sem refino por habilitadores já identificados: ${nomes.join("; ")}.`' + "\n" +
+      '    : `O contexto tecnológico não foi informado nesta sessão. Por isso ${n} ${uma?"prática-alvo ficou":"práticas-alvo ficaram"} sem refino por habilitadores já identificados: ${nomes.join("; ")}.`;',
+    repl: '  const frase=tgtCtxDeclaradoNaSessao()' + "\n" +
+      '    ? `O contexto tecnológico não foi informado para ${n} ${uma?"prática-alvo":"práticas-alvo"}. Por isso ${uma?"ela ficou":"elas ficaram"} sem refino por habilitadores já identificados.`' + "\n" +
+      '    : `O contexto tecnológico não foi informado nesta sessão. Por isso ${n} ${uma?"prática-alvo ficou":"práticas-alvo ficaram"} sem refino por habilitadores já identificados.`;',
     gate: "D009-ABS1",
     reason: /o aviso não nomeia a prática /
   },

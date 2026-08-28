@@ -172,6 +172,27 @@ coerente e escalou, que é o rito.
 | **Por que não é gate vacuoso escondido** | Vacuidade escondida é o ramo que passa sem ninguém saber. Aqui o ramo é vazio **por invariante declarada**, e a própria invariante é medida: é o oposto de esconder |
 | **Classe** | Critério sem caso possível — declarado, não removido |
 
+## Comportamento aceito sem critério — registro (2026-08-28)
+
+**Trilha de auditoria.** A iteração da Fase 6 entregou **duas** frentes; só uma
+tem critério.
+
+| Campo | Registro |
+|---|---|
+| **O quê** | O rótulo do botão do aviso de ausência passou a ser **derivado** de `#v32cta` em vez do literal `"Editar contexto tecnológico"` (`ui_target_v32.js`, commit `e77b7b5`) |
+| **Por que não é medido** | Provado por sonda transiente do `qa-engineer`: devolvendo o literal fixo — o comportamento anterior —, `d009` fecha **15 PASS · 0 FAIL e nenhum gate reprova**. C14 exige apenas "caminho explícito para o editor", que o literal também satisfazia. Não há critério, gate nem mutante que o cubra |
+| **Decisão** | **Aceito como não medido.** Não vira critério nesta demanda |
+| **Quem aceitou** | O proprietário |
+| **Quando** | 2026-08-28 |
+| **Onde** | No chat, com a frase literal *"Aceita como não medido e abre o PR"* |
+| **Onde vive a dívida** | `.claude/verify/mutation-matrix.json`, dívida declarada pelo `qa-engineer` |
+
+Razão da decisão, registrada para quem reabrir: o rótulo é melhoria real e de
+baixo risco, e transformá-lo em critério custaria uma rodada de red/green para
+provar em jsdom algo que o rito visual cobre melhor. **Isto não é precedente**
+para entregar comportamento sem critério — é uma aceitação nominal, desta
+frente, nesta demanda.
+
 ## Critérios de aceite → gates
 
 Todo critério é um gate executável, definido AQUI (antes do plano — R3 §1).

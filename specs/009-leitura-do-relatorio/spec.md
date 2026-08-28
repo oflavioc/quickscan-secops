@@ -96,6 +96,32 @@ Consequência declarada: `D009-UNS4` e o mutante **M15** entram no escopo desta
 demanda; o `refinement.md` não é reescrito retroativamente — a ampliação vive
 aqui, com a ratificação que a autoriza.
 
+## Autorização nominal §29.4 — registro (consumada)
+
+**Trilha de auditoria.** Descoberta durante a wave 3, quando o gate vivo
+`P50-GOV1` acusou os arquivos alterados. A causa é que existem **duas** listas de
+proteção e esta spec cruzou apenas a primeira:
+
+| Lista | Onde | Conteúdo |
+|---|---|---|
+| `boundary.json` (R6) | `.claude/verify/boundary.json` | engine, Camada 1, harness M41, snapshot funcional |
+| **§29.4** | `specs/PHASE_5_0_REV_B.md:1613` — normativa e imutável, exigida por P50-GOV2 | as quatro acima **mais** `ui_v32.js`, `ui_ux_v32.js`, `ui_target_v32.js`, `ui_journey_v32.js`, `ui_v32.css`, `ui_ux_v32.css` e outras |
+
+O cross-check desta spec afirmou "nenhum protegido tocado" — verdadeiro contra
+`boundary.json`, **falso** contra a §29.4. A afirmação fica corrigida aqui.
+
+| Campo | Registro |
+|---|---|
+| **O que foi autorizado** | Edição, **exclusivamente no escopo da demanda 009**, de `ui_target_v32.js`, `ui_journey_v32.js`, `ui_ux_v32.css` e `ui_v32.js` |
+| **Quem autorizou** | O proprietário |
+| **Quando** | 2026-08-28 |
+| **Onde** | No chat, com a frase literal *"Autorizo nominalmente a edição dos quatro arquivos para a 009"* |
+| **Precedente do rito** | As erratas já registradas no mapa `PROTECTED` de `tests_p50_core.js:82`, que citam autorização nominal de diretriz com trilha e "Identidade anterior" |
+| **Consequência** | Os hashes inline de `PROTECTED` (`tests_p50_core.js`) são repinados **depois** de os quatro arquivos alcançarem o estado final, citando esta seção; `P50-GOV1`, `P50-SUF0` e `P50-SUF8` voltam a verde e `p50core` volta a 64/0 |
+
+Esta autorização **não** amplia a boundary para outras demandas nem para outros
+arquivos: ela é nominal, por arquivo, e vale só para a 009.
+
 ## Critérios de aceite → gates
 
 Todo critério é um gate executável, definido AQUI (antes do plano — R3 §1).

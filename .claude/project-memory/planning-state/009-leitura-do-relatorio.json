@@ -25,7 +25,22 @@
     "approved_at": "2026-08-27"
   },
   "red": {
-    "status": "pending",
-    "notes": "wave 0 (ambiente) e wave 1 (fixtures) precedem; red da wave 2 e do qa-engineer"
+    "status": "proven",
+    "commit": "39502880de3b88f4928c1dc1a5cf369f5a34b520",
+    "gates": [
+      "D009-ORD1",
+      "D009-ORD2",
+      "D009-DOM1",
+      "D009-NXT1",
+      "D009-GLO1",
+      "D009-GLO2",
+      "D009-UNS1",
+      "D009-UNS3",
+      "D009-UNS4",
+      "D009-ABS1",
+      "D009-LEG1",
+      "P52-LAY3"
+    ],
+    "notes": "T002-T007 executados em 2026-08-28. Medido: d009 4 PASS/11 FAIL de 15; p52layout 44 PASS/1 FAIL de 45 (censo de ids identico ao de HEAD - 45 ids, mesma ordem, nenhum gate nasce ou morre; a unica FAIL e P52-LAY3, que consome as constantes reancoradas). As outras 13 suites do stage suites seguem 0 FAIL. QUATRO gates D009 nascem VERDES de proposito, por serem criterios de PRESERVACAO e nao de mudanca (C5 INV-7, C7 ramo insuficiente, C11 frase de S3, C16 base de evidencia): D009-DOM2, D009-NXT2, D009-UNS2, D009-EVB1 - declarados no cabecalho de cada gate e discriminados pelos mutantes D009-M6/M8/M13/M18-M19 na wave 6. NAO EXECUTADO, com motivo: p52chromium (55/0) - binario do Chromium ausente nesta maquina (playwright resolve C:/Users/usuario/AppData/Local/ms-playwright/chromium-1234/chrome-win64/chrome.exe, que nao existe); reancoragem de CANON/BLOCKED conferida por leitura e censo de ids, execucao agendada para o job visual (T022). NAO EXECUTADO, com motivo: campanha p52 (par P52-M3 x P52-TGT1) - o harness reconstroi o HTML gerado e a arvore precisa estar limpa (check_mutation.py:41-46); rodar agora arriscaria sujar o artefato generated as vesperas do red. Conferido sem executar: o `find` de P52-M3 casa 1x byte a byte no source atual, logo o mutante continua aplicavel; o KILL e provado em T019. DIVERGENCIAS DE SPEC ENCONTRADAS (nao resolvidas em silencio, ver relatorio do qa-engineer): (1) C10 x C13 - a clausula 'zero .ux-tgt-en com a frase de NONE' e anterior a ampliacao C13 ratificada, que manda S4 MANTER a frase; o gate afirma a clausula POR PRATICA (so as S2), nunca em bloco; (2) C5 - a comparacao byte a byte de .jn-narrative com paragraphs ignora o mapa de apresentacao publico da 5.2 (P52_COPY: 'Mandato e objetivos' -> 'Direcionamento e objetivos'), que ja existia antes desta demanda; os oraculos de TEXTO aplicam __P52.copyMap() no lado TELA - sem isso, tres asercoes NEGATIVAS (UNS1/UNS3/UNS4) passariam vacuosamente; (3) C8/B13 - nao existe hoje capability declaravel sem verbete (as 22 com landscapeEnabled:true tem verbete), entao o ramo e inalcancavel e o gate o guarda pela invariante que o torna vazio, falhando se alguem criar uma. Desvio de trilha: qa-engineer pinado em model:fable executado em Opus por indisponibilidade de creditos."
   }
 }

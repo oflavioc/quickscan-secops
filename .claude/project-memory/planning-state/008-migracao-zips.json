@@ -25,16 +25,33 @@
     "notes": "aprovado pelo usuário no chat ('Aprovado'); 15 tarefas T001–T015 em 6 waves; O3 nomeada (core-engineer implementa ZB-5, qa-engineer prova red/mutantes). Datas dos portões 0–2 corrigidas de 2026-08-25 para 2026-08-26 (erro de registro do orquestrador, não do conteúdo)"
   },
   "implement": {
-    "status": "in_progress",
     "status": "done",
-    "waves_done": [1, 2, 3, 4, 5],
+    "waves_done": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
     "pending": [],
     "notes": "Waves 1–5 concluídas. Wave 4: T006 release evidence-v32 publicado 2026-08-27 (autorização do proprietário no chat, 'Pode'; conferência pós-download ×3 + digest da API), T007 commit 7cd3182 (oráculos na âncora; 97/0 na árvore normal E em worktree sem os ZIPs — green do red 5bafacd-b), T008 commit dbe5b18 (unzip no env-doctor), T009 commit 1eefdb6 (R11/R13). Wave 5: T010 commit 4bd22c1 (desindexação dos 3 ZIPs + .gitignore literal + desc do stage), T011 commit 1465258 (repin único, 191 pins, captura incluiu CONTEXT.md). Verdes locais pós-wave-5: baseline 191/191 · 0 divergente · 0 sem pin; evidence-bridge 0 FAIL · 0 WARN (7 acervos · EB-1 409/409 · ignore 7/7 · online 7/7); heavy.session 97/0 com expected_suites.json byte-inalterado. Achado do core-engineer para a matriz de mutantes (T013): M-ZB5 como redigido na spec não é construtível — os 3 ZIPs entram no commit raiz e5ccd42, logo todo commit alcançável os contém; a forma realizável é SHA 40-hex inalcançável (mata 94/3) ou campo âncora adulterado (throw de validação)"
+  },
+  "validate": {
+    "status": "done",
+    "conformance": "24/24 (100%)",
+    "notes": "T012: pipeline completo 14 PASS · 0 FAIL (local e re-executado pelo orquestrador no head final f8b59e1); CI success run 33189161042 @ 9b7c6dd, novo dispatch 33193065751 sobre o head final. T013: campanha 17/17 mutantes mortos, 0 sobreviventes (M-ZB1…M-ZB6 + re-execução integral M1–M6 da 007); matriz em specs/008-migracao-zips/matriz-gate-mutante.md com a linha de transferência O1 e o veredito M-ZB5 (spec-errada de formulação: mutante como redigido é inconstruível porque os 3 ZIPs entram no commit raiz e5ccd42; forma canônica = SHA 40-hex inalcançável, registrada sem reescrever a spec aprovada). spec-validate: 22/24 na iteração 1 (2 gaps de prosa desatualizada em R11/R13, corrigidos em 1c26861) → 24/24 na iteração 2 (a2eb105). T014 relatório final: 33ce56e. T015 aceite de intenção do product-owner: 'não encontrei objeção' — 5 decisões da rodada 1 honradas, transferência O1 endossada, tratamento do M-ZB5 endossado. Três execuções de gen_pins.py (1465258, 5db4639, f8b59e1), cada uma nomeada na própria mensagem. Ciência pendente do proprietário no portão: veredito M-ZB5 e os 2 avisos herdados (histórico não emagrece; imutabilidade do release é convenção + gate). Portão de fase é do usuário, no chat.",
+    "pr_ci_dispatch": "https://github.com/oflavioc/quickscan-secops/actions/runs/33193065751"
   },
   "red": {
     "status": "proven",
     "commit": "5bafacd7f23bcec069a3ec6fdde67cd2c0539c11",
-    "gates": ["ZB-3", "ZB-4", "M-ZB5", "M-ZB6"],
+    "gates": [
+      "ZB-3",
+      "ZB-4",
+      "M-ZB5",
+      "M-ZB6"
+    ],
     "notes": "Fase 4: red triplo executado e commitado em 2026-08-27 (T004, carrega T003 — gate generalizado: shape 7 acervos e EB-1 409/409 verdes, veredito ZB-1/ZB-2 sobre o manifesto de T002). Contagens do red: gate evidence-bridge 12 FAIL (ZB-3 pacote AUSENTE ×3, HTTP 404 real; ZB-4/EB-6 ×9: índice + .gitignore + check-ignore por ZIP); M-ZB5 em worktree efêmera sem os ZIPs: 94 PASS · 3 FAIL de 97 (S64 false, S74+S75 false, S113 throw) — árvore do PR nunca vermelha na suíte de sessão (plan.md W3b); M-ZB6: grep unzip em env_doctor.py = 0 e execução sem linha nomeando unzip"
-  }
+  },
+  "pr_url": "https://github.com/oflavioc/quickscan-secops/pull/21"
 }

@@ -121,14 +121,23 @@ const MUTANTS = [
   },
   {
     id: "P52-M3",
-    desc: "empilhar o cenário-alvo DEPOIS do contexto tecnológico",
+    /* REESCRITO em 2026-08-27 pela reancoragem de P52-TGT1
+       (`specs/009-leitura-do-relatorio/spec.md`, C3). A MUTAÇÃO é a mesma — as
+       duas linhas continuam adjacentes na ordem nova e o `find` textual segue
+       casando byte a byte; o que muda é o que ela quebra: não mais "empilhar
+       depois", e sim a ADJACÊNCIA `context === target + 1`, único ramo de
+       posição que P52-TGT1 ainda afirma. `find`/`repl` permanecem intactos. */
+    desc: "quebrar a adjacência alvo→contexto trocando as duas linhas vizinhas do literal",
     file: P52JS,
     find: `    { key: "target",     title: "Cenário-alvo" },
     { key: "context",    title: "Contexto tecnológico" },`,
     repl: `    { key: "context",    title: "Contexto tecnológico" },
     { key: "target",     title: "Cenário-alvo" },`,
     gate: "P52-TGT1", cmd: "node tests_p52_layout.js", only: "P52-TGT1",
-    reason: /contexto \(\d+\) antes do alvo|alvo não é imediatamente posterior/
+    /* a alternativa `alvo não é imediatamente posterior` morreu junto com a
+       asserção de POSIÇÃO ABSOLUTA que a produzia — mantê-la faria o mutante
+       aceitar uma mensagem que o gate não emite mais */
+    reason: /contexto \(\d+\) antes do alvo/
   },
   {
     id: "P52-M4",

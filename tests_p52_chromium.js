@@ -235,8 +235,12 @@ async function lay2(browser, errs) {
 async function lay3(browser, errs) {
   const detail = [], observed = [];
   /* REV A · com o gate ABERTO a suficiência deixa de ser seção independente
-     (SUFF-REV-A); com o gate FECHADO ela sobe para a segunda posição. */
-  const CANON = ["exec", "target", "context", "detail", "priorities", "gaps", "support", "actions"];
+     (SUFF-REV-A); com o gate FECHADO ela sobe para a segunda posição.
+     ÂNCORA REANCORADA — 2026-08-27: esta sequência deixou de ser a §7 da
+     diretriz da Phase 5.2 e passou a ser a seção "Âncora normativa: a ordem
+     canônica de leitura" de `specs/009-leitura-do-relatorio/spec.md`, com a
+     troca ratificada pelo proprietário no chat naquela data (rota A). */
+  const CANON = ["exec", "priorities", "detail", "gaps", "target", "context", "support", "actions"];
   for (const vp of VIEWPORTS) {
     const pg = await pageAt(browser, vp, errs, "P52-LAY3");
     try {
@@ -296,7 +300,11 @@ async function lay3(browser, errs) {
    variante de gate fechado — sem que o alvo passe a vir depois do contexto. */
 async function gate1v(browser, errs) {
   const detail = [], observed = [];
-  const BLOCKED = ["exec", "evidence", "target", "context", "detail", "priorities", "gaps", "support", "actions"];
+  /* ÂNCORA REANCORADA — 2026-08-27, mesma troca de `CANON` acima
+     (`specs/009-leitura-do-relatorio/spec.md`, variante de gate FECHADO). A
+     evidência continua na 2ª posição, logo a medida de viewport deste gate não
+     muda: o que muda é onde caem alvo e contexto, mais abaixo. */
+  const BLOCKED = ["exec", "evidence", "priorities", "detail", "gaps", "target", "context", "support", "actions"];
   for (const vp of VIEWPORTS) {
     const pg = await pageAt(browser, vp, errs, "P52-GATE1v");
     try {

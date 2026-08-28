@@ -1,7 +1,7 @@
 {
   "_meta": {
     "descricao": "Registry único de pins — fonte de identidade dos artefatos (R8). Hashes = SHA-256 dos blobs de HEAD. Alterar arquivo pinado exige regenerar este registry no MESMO PR, com motivo no commit.",
-    "gerado_de_head": "a2eb1055773309e525ed4177100a7e6aed52cf06",
+    "gerado_de_head": "965a426fa0d01c63920db382bd5809671ed9065c",
     "gerado_em": "2026-08-28",
     "exclusoes": [
       "docs_phase5/**",
@@ -31,10 +31,10 @@
     ".claude/hooks/post-turn-verify.sh": "e46d2c17c4d7b0164154bd5220e2696011482da3dd49b28c41b90a844a89ea1a",
     ".claude/hooks/state-eval.sh": "f15c4df2e181f3f1b8db64bc6aedb46883d7600418f1c28a16446037b13d6b6e",
     ".claude/rules/boundary.md": "327888a7af5719d2bb264058457d1c6782f62a6dcaa506fdf844336a55da47f4",
-    ".claude/rules/design-decisions.md": "4379771da70f7b18e93bdfc935ddaf25f62b7b8a33ec452eb5a90eac4cce2813",
+    ".claude/rules/design-decisions.md": "4b9edf63eddef159ff114e83f383da9e26b3cab25861acede8f4521bbbe8e489",
     ".claude/rules/determinism.md": "90bab1c89c7b9a54c400b7124d60693a431face37f422e847e6d2e566cb5f76d",
     ".claude/rules/documentation.md": "d34405cb28f4413cef8e5c7512a952ca05f162aac14310bec9b0b12d9d9ce574",
-    ".claude/rules/evidence-intake.md": "4ed778f2eab91ac3861c5202f050f4fa27663d213e6b24778b90ed1abd15559b",
+    ".claude/rules/evidence-intake.md": "a93f8d063602e2b075c2096d38e74f9cd1f8452c8943691aca82c3847c84cd8c",
     ".claude/rules/evidence.md": "da270e16cd13f788667618e073a147a32ef04e7ff6294af79b713314155b6274",
     ".claude/rules/gates.md": "a8a7223b9eba4928bb274751430396fe8c75bd3f7d9cacbfd3c462080aac96c9",
     ".claude/rules/git-flow.md": "4312ce1421b6bb256fdb378c9fc8ccbe7eff5c89c2fbce619f391caa3e47af95",

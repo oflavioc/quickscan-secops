@@ -136,3 +136,17 @@ explícito, exatamente 1 item em `arquivos` e `sha256_pacote` igual ao hash do
 próprio blob; contrasta com o acervo-diretório (default `tipo: "diretorio"`,
 regime da 007).
 _Evitar_: zip avulso, acervo unitário, arquivo solto
+
+**Achado**:
+Registro durável de defeito ou anomalia no backlog (`.claude/BACKLOG.md`), com
+id permanente da série `EA-*` e cadeia arquivo:linha→efeito obrigatória — sem
+cadeia é palpite (R12). Distinto de exceção nominal (`known_issues.json`, que
+suspende um lint com prazo) e de decisão de desenho (`design-decisions.md`).
+_Evitar_: bug, issue, pendência, problema conhecido
+
+**Status de achado**:
+Campo de vocabulário fechado, um por achado, legível por máquina e auditado
+pelo `compliance-audit` (seção `backlog`): `aberto` · `resolvido` · `refutado`
+· `transferido`. Nunca prosa livre; refutado mantém a linha de status limpa e
+risca o restante (R2 §5).
+_Evitar_: situação, estado (genérico), "Status: aberto." em prosa

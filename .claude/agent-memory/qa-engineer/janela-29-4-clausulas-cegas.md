@@ -31,3 +31,15 @@ que salva a alínea (c) de `P50-IC4` — e (3) trate as restantes como dívida d
 janela, a fechar no repin. **Não repine para "destravar"**: o repin é tarefa
 própria e cita a seção "Autorização nominal §29.4" da spec. Ver
 [[trilha-e-ambiente-quickscan]].
+
+**Desfecho desta janela (2026-08-28, demanda 009).** Fechada no mesmo dia:
+`p50core` voltou a **64 PASS · 0 FAIL** e as cláusulas antes cegas, recomputadas
+por oráculo independente, acusaram **zero** achados — as 13 suítes congeladas e
+`tests_visual/` presentes, `dataSufficiency()` byte-idêntica no build, lint de
+fronteira limpo nos quatro módulos, `window.__V32UI` expondo `iconFor`. Nada
+estava escondido. Isso **não** enfraquece a regra: a cobertura esteve suspensa e
+ninguém sabia disso até medir. Duas práticas que valeram a pena e devem repetir:
+sondar o gate repinado com uma mutação transiente (um comentário a mais em
+`ui_ux_v32.css` fez `P50-GOV1` reprovar nomeando o arquivo — prova de que o
+repin não virou tautologia) e conferir o diff **com comentários removidos**, que
+deve mostrar só as linhas de hash.

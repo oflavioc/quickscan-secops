@@ -129,7 +129,33 @@ const PROTECTED = {
      Regra de score, de suficiência, schema de sessão e engine permanecem
      byte-idênticos. Identidade anterior (Phase 5.2, REV B + erratas de UAT):
      0fdf6f5bbffd3adb043817a30212be0cc3b6d564de4c8eaf4677955d93173677 */
-  "ui_v32.js": "0b30fe27ebc7fa0678b746ffe2fcd08fb1dcaf40a386ea774ffc3349f958e559",
+  /* DEMANDA 009 (`009-leitura-do-relatorio`) · AUTORIZAÇÃO NOMINAL §29.4.
+     O proprietário autorizou no chat, em 2026-08-28, com a frase literal
+     "Autorizo nominalmente a edição dos quatro arquivos para a 009". O registro
+     completo — o que foi autorizado, quem, quando, onde e a consequência — está
+     em `specs/009-leitura-do-relatorio/spec.md`, seção "Autorização nominal
+     §29.4 — registro (consumada)". A autorização é NOMINAL, por arquivo, e vale
+     só para a 009: não amplia a boundary para outra demanda nem para outro
+     arquivo. Identidade medida com as TRÊS fontes em acordo (R2 §2): blob de
+     HEAD (`git show HEAD:<path>`), working tree normalizado por
+     `.gitattributes` (`* text=auto eol=lf`) e o registry `pins.json` (R8).
+
+     EDIÇÃO EM `ui_v32.js` (C8/C9 da spec): nasce `capHelpHTML(capId, tag)`,
+     consumidor PURO de `window.__P52.capHelpLine()` sob guarda `typeof` — o
+     texto não nasce nem é recortado aqui, e o módulo não guarda cópia do
+     verbete. Ele emite `.v32-caphelp` em dois sítios: dentro da `.v32-decl-row`
+     (tela) e do `.pr-card` de `#pr-landscape` (papel). A lista de capabilities
+     declaradas continua derivada de `V32.TECH_LANDSCAPE` filtrando
+     `presence !== "UNSET"`, nunca do DOM, e a CONTAGEM de `.v32-decl-row`
+     consumida por `p52ContextSummary` não muda. `publishableStats()`,
+     `preparePrint()`, a regra de score, a de suficiência, o gate e o schema de
+     sessão permanecem byte-idênticos: nada calculado mudou, só o que é
+     EXPLICADO ao leitor. Este arquivo é pinado por DOIS gates — `P50-GOV1`
+     (mapa inteiro) e `P50-IC4` alínea (a), junto de `ui_icons_v32.js` e
+     `generate_icons_v32.py`. Identidade anterior (errata da auditoria externa
+     sênior de frontend):
+     0b30fe27ebc7fa0678b746ffe2fcd08fb1dcaf40a386ea774ffc3349f958e559 */
+  "ui_v32.js": "6340e712c6724dff8db8d5a90212dc0ec681183fd005b95fab1a32456d15e572",
   "ui_ux_v32.js": "a050401145a5ed7af597eae01a9a23826418119769c096db168b3b177a9d3938",
   /* ERRATA DA AUDITORIA EXTERNA · §4.1.1 ("qualquer texto derivado consome a
      mesma decisão canônica de publicabilidade"). A comparação Atual × Alvo
@@ -159,7 +185,38 @@ const PROTECTED = {
      sessão e o engine permanecem byte-idênticos: nenhum valor calculado mudou,
      só o que é PUBLICADO. Identidade anterior (errata da auditoria externa):
      77b7b6991219e6d5fd26e71193e70a1f50d0f3a3cc18257d1b3e7cb90dad471a */
-  "ui_target_v32.js": "d672da97a8c9b17d33890eaa97dcdea3a9367a02a57c682662d32f56e4aa63f8",
+  /* DEMANDA 009 (`009-leitura-do-relatorio`) · AUTORIZAÇÃO NOMINAL §29.4.
+     Mesma autorização registrada acima: proprietário, no chat, 2026-08-28,
+     frase literal "Autorizo nominalmente a edição dos quatro arquivos para a
+     009"; registro em `specs/009-leitura-do-relatorio/spec.md`, seção
+     "Autorização nominal §29.4 — registro (consumada)". Identidade medida pelas
+     três fontes em acordo (R2 §2): blob de HEAD, working tree LF e `pins.json`.
+
+     EDIÇÃO EM `ui_target_v32.js` (C10-C14 da spec): o card de prática-alvo
+     cobria com UMA frase estados que não são o mesmo. `tgtEnablersHTML(qid)`
+     ganha o parâmetro `semCtx` e passa a decidir entre QUATRO estados, via
+     `tgtEnablerState()`, sempre sobre o MODELO CANÔNICO (`V32.CAPABILITIES` ·
+     `V32.TECH_LANDSCAPE`) e nunca sobre texto renderizado nem sobre atributo
+     escrito por outro módulo:
+       S1 · há habilitadores ............ a linha de hoje, INTOCADA;
+       S2 · landscape aplicável e `presence === "UNSET"` ... a linha NÃO
+            renderiza e a prática entra no aviso único de ausência;
+       S3 · contexto INFORMADO e nada se aplica ... mantém a frase substantiva;
+       S4 · capability com `landscapeEnabled: false` ... mantém a frase de S3 e
+            NUNCA entra no aviso — não há contexto a informar.
+     Nasce `tgtAbsenceHTML()` e o nó único `[data-ux-absence="target-enablers"]`,
+     na tela (dentro de `#ux-tgt-cmp`, ANTES da lista) e no papel
+     (`__uxTargetPrintHTML`), com contagem e lista derivadas no MESMO PASSE da
+     lista de práticas — nunca por segunda varredura, nunca do DOM, de modo que
+     alvo removido por `revalidateTargets` não deixa órfão no aviso. Na tela o
+     aviso DELEGA ao controle canônico do editor (`#v32cta`) em vez de
+     reimplementar a rota. `computeTargetProfile()`, `setTarget()`,
+     `TARGET_PROFILE.overrides`, `tgtComparisonPublishable()`, a regra de score,
+     a de suficiência e o gate permanecem byte-idênticos: contexto não informado
+     não é ausência de tecnologia, e o relatório passa a se calar em vez de
+     concluir. Identidade anterior (errata final · ALTO-1):
+     d672da97a8c9b17d33890eaa97dcdea3a9367a02a57c682662d32f56e4aa63f8 */
+  "ui_target_v32.js": "fcedb7cf63d89ac20e2248a3f37026885d5c5c7ecee62f14cfa0a976ef8f584f",
   "ui_refinement_v32.js": "ade18a9afd265966feb40cb9f2926e20f5ffd2534dcfe7ec602e46cc6d01132c",
   /* PHASE 5.2 · REV B (COPY-B §5.1): uma linha — o tema "mandate" da jornada
      passou a dizer "direcionamento". Nenhuma regra, score ou estrutura muda. */
@@ -174,11 +231,58 @@ const PROTECTED = {
      Narrativa, temas, textos e a nota metodológica do alvo são byte-idênticos.
      Identidade anterior (Phase 5.2 REV B):
      a30db1ce94bf06b14a46ab1d41881f2fe2561c8c85a531862843eabe6bc2c15d */
-  "ui_journey_v32.js": "df0b00eb75f2ee2f8ae5542104bafd7f54580163e60432e7a48bb4bf8118aaf7",
+  /* DEMANDA 009 (`009-leitura-do-relatorio`) · AUTORIZAÇÃO NOMINAL §29.4.
+     Mesma autorização registrada acima: proprietário, no chat, 2026-08-28,
+     frase literal "Autorizo nominalmente a edição dos quatro arquivos para a
+     009"; registro em `specs/009-leitura-do-relatorio/spec.md`, seção
+     "Autorização nominal §29.4 — registro (consumada)". Identidade medida pelas
+     três fontes em acordo (R2 §2): blob de HEAD, working tree LF e `pins.json`.
+
+     EDIÇÃO EM `ui_journey_v32.js` (C4-C7 da spec), em duas frentes:
+       1 · o P3 de `buildExecutiveNarrative()` REENUMERAVA em prosa os temas de
+           evolução, duplicando a lista "Para avançar" (`.jn-themes`), que
+           continua sendo a ÚNICA enumeração. Agora ele APONTA para o rótulo
+           canônico dessa lista, em três ramos, e nenhum inventa lista: sem tema
+           não existe `.jn-themes`, logo não existe ponteiro. `trace[2].sources`
+           mantém `evolution.themes` onde há tema — a rastreabilidade não some
+           junto com a enumeração —, e a frase canônica do ramo insuficiente
+           ("completar e validar as evidências", regressão N13-N14 de
+           `tests_journey_m45.js`) é byte-idêntica;
+       2 · nasce `jnDomMark()`, pós-processamento de RENDERIZAÇÃO no precedente
+           dos eixos do radar (`ui_ux_v32.js:190-192`): marca a ocorrência
+           EXATA, sensível a maiúsculas e de PALAVRA INTEIRA, do nome canônico
+           `DOMS[i].pt` com `<span class="jn-dom" data-dom="i">`, aplicada
+           DEPOIS do `esc32` — o único markup possível no parágrafo é esse
+           `<span>`, e nenhum texto de narrativa pode virar tag.
+     `buildExecutiveNarrative()` continua devolvendo string PURA (INV-7): o
+     `textContent` do parágrafo é idêntico ao de antes da marcação, e NENHUM hex
+     de domínio entra neste arquivo — a cor vem do mapa único `[data-dom]` do
+     CSS. `journeyModel()`, os temas e a nota metodológica do alvo permanecem
+     byte-idênticos. Identidade anterior (errata final · ALTO-1):
+     df0b00eb75f2ee2f8ae5542104bafd7f54580163e60432e7a48bb4bf8118aaf7 */
+  "ui_journey_v32.js": "579592eb09039648441c7e3f68d1428d4a22cc18499882a68a30aee5aa0ab9a2",
   "ui_session_v32.js": "6fd849cdbdbb6838921a1519613e8a5194777c6eeb9e3e102c681a0ddc27164b",
   "ui_icons_v32.js": "32aabc3445571d447189edf4b486239c9256aa9bd0bc6bdab00635a65aa42151",
   "ui_v32.css": "acb0eba165ef25e6b97475430e9b042a9b39038be2b9882ec5b3c67a730faa6f",
-  "ui_ux_v32.css": "84af670571c7d11bec828636899b94e4f264e376febaaeb8e9ade1a841483b44",
+  /* DEMANDA 009 (`009-leitura-do-relatorio`) · AUTORIZAÇÃO NOMINAL §29.4.
+     Mesma autorização registrada acima: proprietário, no chat, 2026-08-28,
+     frase literal "Autorizo nominalmente a edição dos quatro arquivos para a
+     009"; registro em `specs/009-leitura-do-relatorio/spec.md`, seção
+     "Autorização nominal §29.4 — registro (consumada)". Identidade medida pelas
+     três fontes em acordo (R2 §2): blob de HEAD, working tree LF e `pins.json`.
+
+     EDIÇÃO EM `ui_ux_v32.css` (C4 da spec): UMA regra nova ao fim do arquivo,
+     `.jn-dom{ color:var(--dom-accent); font-weight:700; }`, que CONSOME o mapa
+     único `[data-dom] -> --dom-accent` de [4.3-B] (linhas 68-72) sem alterá-lo.
+     `font-weight` é o canal NÃO-CROMÁTICO obrigatório: `narrativeHTML()` serve
+     tela e papel pela MESMA função e, no papel, a cor é dispensável — o peso
+     sozinho tem de preservar o significado. Nenhuma regra existente foi tocada,
+     nenhum seletor foi ampliado e nenhuma declaração anterior foi sobrescrita.
+     A regra é o alvo do mutante `D009-M5`, que a esvazia deixando só `color` e
+     morre em `D009-DOM1` ("canal não-cromático ausente"). Identidade anterior
+     (core, intocado desde a 4.3.1):
+     84af670571c7d11bec828636899b94e4f264e376febaaeb8e9ade1a841483b44 */
+  "ui_ux_v32.css": "ccfffa27379845e67cfcbc6a987e87bb93113ae106906e7425aedc30265e61aa",
   /* [Onda-0 · 2026-08-25] REPIN autorizado (Estrutura Agêntica, R8): gerador determinístico
      (newline LF explícito + stdout UTF-8 + modo --check); output byte-idêntico (32aabc34…).
      Identidade anterior: 1acfe25c2f3ac3e4d76ce42eeb7ceec3108c1d3471c27e8f788e0168b8225bf7 */

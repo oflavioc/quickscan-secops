@@ -1,6 +1,6 @@
 {
   "demanda": "009-leitura-do-relatorio",
-  "phase": "red",
+  "phase": "validate",
   "spec_dir": "specs/009-leitura-do-relatorio",
   "brief": "Legibilidade da entrega ao cliente na tela de resultados: quebra da nota da jornada, redundancia entre narrativa e bullets, glossario do contexto tecnologico na secao de resultados, ordem canonica das 9 secoes, posicao da base de evidencia, regra de bloco de ausencia e o defeito de mensagem unica em ui_target_v32.js:166. Itens 4/6/8 saem para a 010 e o item 1 para a 011 (divisao aprovada em P1).",
   "branch": "feature/009-leitura-do-relatorio",
@@ -42,5 +42,25 @@
       "P52-LAY3"
     ],
     "notes": "T002-T007 executados em 2026-08-28. Medido: d009 4 PASS/11 FAIL de 15; p52layout 44 PASS/1 FAIL de 45 (censo de ids identico ao de HEAD - 45 ids, mesma ordem, nenhum gate nasce ou morre; a unica FAIL e P52-LAY3, que consome as constantes reancoradas). As outras 13 suites do stage suites seguem 0 FAIL. QUATRO gates D009 nascem VERDES de proposito, por serem criterios de PRESERVACAO e nao de mudanca (C5 INV-7, C7 ramo insuficiente, C11 frase de S3, C16 base de evidencia): D009-DOM2, D009-NXT2, D009-UNS2, D009-EVB1 - declarados no cabecalho de cada gate e discriminados pelos mutantes D009-M6/M8/M13/M18-M19 na wave 6. NAO EXECUTADO, com motivo: p52chromium (55/0) - binario do Chromium ausente nesta maquina (playwright resolve C:/Users/usuario/AppData/Local/ms-playwright/chromium-1234/chrome-win64/chrome.exe, que nao existe); reancoragem de CANON/BLOCKED conferida por leitura e censo de ids, execucao agendada para o job visual (T022). NAO EXECUTADO, com motivo: campanha p52 (par P52-M3 x P52-TGT1) - o harness reconstroi o HTML gerado e a arvore precisa estar limpa (check_mutation.py:41-46); rodar agora arriscaria sujar o artefato generated as vesperas do red. Conferido sem executar: o `find` de P52-M3 casa 1x byte a byte no source atual, logo o mutante continua aplicavel; o KILL e provado em T019. DIVERGENCIAS DE SPEC ENCONTRADAS (nao resolvidas em silencio, ver relatorio do qa-engineer): (1) C10 x C13 - a clausula 'zero .ux-tgt-en com a frase de NONE' e anterior a ampliacao C13 ratificada, que manda S4 MANTER a frase; o gate afirma a clausula POR PRATICA (so as S2), nunca em bloco; (2) C5 - a comparacao byte a byte de .jn-narrative com paragraphs ignora o mapa de apresentacao publico da 5.2 (P52_COPY: 'Mandato e objetivos' -> 'Direcionamento e objetivos'), que ja existia antes desta demanda; os oraculos de TEXTO aplicam __P52.copyMap() no lado TELA - sem isso, tres asercoes NEGATIVAS (UNS1/UNS3/UNS4) passariam vacuosamente; (3) C8/B13 - nao existe hoje capability declaravel sem verbete (as 22 com landscapeEnabled:true tem verbete), entao o ramo e inalcancavel e o gate o guarda pela invariante que o torna vazio, falhando se alguem criar uma. Desvio de trilha: qa-engineer pinado em model:fable executado em Opus por indisponibilidade de creditos."
+  },
+  "pr_url": "https://github.com/oflavioc/quickscan-secops/pull/24",
+  "implement": {
+    "status": "done",
+    "waves_done": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+    ],
+    "pending": []
+  },
+  "validate": {
+    "status": "awaiting_approval",
+    "conformance": "15/17 (88%) — zero gaps de implementacao; as 2 nao-conformidades eram redacao e foram fechadas na rodada 2 (61c646b)",
+    "notes": "PR #24 aberto para develop. d009 15/0 (fixada por execucao), p50core 64/0, p52layout 45/0, campanha d009 19 KILL/19 e core 3/3, pipeline 13 PASS/1 FAIL — o unico FAIL e mutation nomeando p51/p52 por ausencia de Chromium (KI-3, agendamento, fecha no job visual do PR). Red commitado antes da implementacao em 3950288 e d48b906. Aceite de intencao do product-owner: 'nao encontrei objecao' apos a iteracao — o achado dele (frase falsa no caso parcial) foi corrigido em e77b7b5 com gate endurecido D009-UNS3 e mutante D009-M20. CINCO ratificacoes do proprietario registradas na spec: troca de ancora §8, ampliacao C13, autorizacao nominal §29.4, errata de fidelidade e rotulo derivado aceito como nao medido. Merge e do usuario, no GitHub."
   }
 }

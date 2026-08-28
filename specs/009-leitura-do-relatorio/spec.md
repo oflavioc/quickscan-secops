@@ -117,7 +117,7 @@ O cross-check desta spec afirmou "nenhum protegido tocado" — verdadeiro contra
 | **Quando** | 2026-08-28 |
 | **Onde** | No chat, com a frase literal *"Autorizo nominalmente a edição dos quatro arquivos para a 009"* |
 | **Precedente do rito** | As erratas já registradas no mapa `PROTECTED` de `tests_p50_core.js:82`, que citam autorização nominal de diretriz com trilha e "Identidade anterior" |
-| **Consequência** | Os hashes inline de `PROTECTED` (`tests_p50_core.js`) são repinados **depois** de os quatro arquivos alcançarem o estado final, citando esta seção; `P50-GOV1`, `P50-SUF0` e `P50-SUF8` voltam a verde e `p50core` volta a 64/0 |
+| **Consequência** | Os hashes inline de `PROTECTED` (`tests_p50_core.js:82`) são repinados **depois** de os quatro arquivos alcançarem o estado final, citando esta seção. O mapa é consumido por **quatro** gates, não três: `P50-GOV1` (`:232`), `P50-SUF0` (`:1149`), `P50-SUF8` (`:1800`) e **`P50-IC4`** (`:2538`, alínea (a), que pina `ui_v32.js` junto de `ui_icons_v32.js` e `generate_icons_v32.py`). Com os quatro repinados, `p50core` volta a 64/0. *(Correção de 2026-08-28: a redação original desta linha omitia `P50-IC4`, achado pela execução de T013.)* |
 
 Esta autorização **não** amplia a boundary para outras demandas nem para outros
 arquivos: ela é nominal, por arquivo, e vale só para a 009.

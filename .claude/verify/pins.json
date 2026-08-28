@@ -1,7 +1,7 @@
 {
   "_meta": {
     "descricao": "Registry único de pins — fonte de identidade dos artefatos (R8). Hashes = SHA-256 dos blobs de HEAD. Alterar arquivo pinado exige regenerar este registry no MESMO PR, com motivo no commit.",
-    "gerado_de_head": "373f95b59369a169a2aeec31250f8d744d89cb6e",
+    "gerado_de_head": "95be641924468f4a710e7f328a6ba722cbec6b5c",
     "gerado_em": "2026-08-28",
     "exclusoes": [
       "docs_phase5/**",
@@ -186,7 +186,7 @@
     "specs/008-migracao-zips/tasks.md": "d94ee2f41c47c6997378d079e202e256911134aac52aedcafdfe9878b45f5ef6",
     "specs/009-leitura-do-relatorio/plan.md": "f956ff9455fb93b4faf982c7a3fa305896e6e735b14ae524d9b7c417d59c41a0",
     "specs/009-leitura-do-relatorio/refinement.md": "6762564abc8c005dd3022fb071a9b0ba40e8e016810b894a2c9ec6b6067fe194",
-    "specs/009-leitura-do-relatorio/spec.md": "2d93b9e1c1a3736617f9626580416baa01c3ae427ee50781574d7d44c40c65c2",
+    "specs/009-leitura-do-relatorio/spec.md": "4a92d5dba8966cf9d121bf8fd92529a5acc9daa20661d9cfe2ce1de2381c8091",
     "specs/009-leitura-do-relatorio/tasks.md": "8913a9ff0dc659cd2de9ab8ac49f6b65ae43a9e21cfc5d8ff6c695a7317d3435",
     "specs/PHASE_5_0_REV_A.md": "22e729174c6a3c5dd620da5330b03eb96d9eb6fc6e64eba097c2bde55eb0a510",
     "specs/PHASE_5_0_REV_B.md": "4f1583c733df62a9452aa7b218d962e40d781bb8d30dfc3179ad6e1ef004619b",

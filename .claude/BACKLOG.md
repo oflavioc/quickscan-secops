@@ -66,6 +66,10 @@ riscados, linha de status limpa); migração para `design-decisions.md`
 (R12/R13) → `transferido`, com ponteiro na prosa. Fix-finding **em curso**
 não muda o estado.
 
+**Data de abertura** (recomendada, não exigida pelo gate — decisão 1.3 da
+demanda 012, `specs/012-status-backlog/spec.md`): registre-a na prosa de
+cada achado novo, para a revisão humana; o parser não a confere.
+
 **Prefixo reservado**: dentro de um bloco de achado (do heading `## EA-*`
 até o próximo `## ` ou o fim do arquivo), qualquer linha começando com
 `**Status` em coluna 0 é lida como candidata a linha de status e precisa

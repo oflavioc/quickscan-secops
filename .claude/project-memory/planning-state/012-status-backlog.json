@@ -1,6 +1,6 @@
 {
   "demanda": "012-status-backlog",
-  "phase": "red",
+  "phase": "done",
   "spec_dir": "specs/012-status-backlog",
   "brief": "Status legível por máquina no .claude/BACKLOG.md, para o compliance-audit listar achados abertos como já faz com os tdd_waivers — hoje o status é prosa ('**Status: aberto.**') e nenhuma máquina o lê",
   "branch": "feature/012-status-backlog",
@@ -27,7 +27,27 @@
   "red": {
     "status": "proven",
     "commit": "13f4bb4965c3ff5be1226cf0785170211e25ebc1",
-    "proven_at": "2026-08-28",
-    "notes": "T002 (qa-engineer): red natural provado contra a árvore real (mecânica T8, BACKLOG.md intocado) — `--rule=backlog` reprova nomeando EA-1 (linha 52 em prosa não casa a canônica), exit 1; audit completo 12 PASS · 1 FAIL, 7 seções irmãs intactas. Adversariais em worktree efêmera (R7 §3): BS-2(a) sem status, BS-2(b) ×4 (abertto/pendente/Aberto/prosa antiga), BS-2(c) duplicada, BS-2(d) arquivo ausente, PO-1 resolvido aceito, PO-2 transferido aceito, PO-3 refutado riscado assere 'achados abertos: nenhum', PO-4a canônica deslocada reprova posição, PO-4b mensagens ensinam vocabulário + prefixo reservado — 14/14 conformes; saídas são insumo da matriz (T006). O CI vermelho deste commit no passo compliance É o red (precedente 008 M-ZB3/M-ZB5); green exclusivo da wave 2 (T004, doc-writer); repin R3 é a T003 (build-engineer)"
-  }
+    "gates": [
+      "BS-3"
+    ],
+    "notes": "Red natural commitado em 2026-08-28 (T002): a seção backlog reprovou o .claude/BACKLOG.md como estava, sem fixture — 0 PASS · 1 FAIL, exit 1, nomeando o EA-1. 14/14 cenários adversariais conformes em worktree efêmera. M-BS3 prova o red reprodutível. Ressalva de processo: a mecânica T8 previa o CI vermelho do commit red como prova, mas push de feature/* não dispara o verify.yml — a R3 §4 foi cumprida por commit + saída registrada"
+  },
+  "implement": {
+    "status": "done",
+    "waves_done": [
+      0,
+      1,
+      2,
+      3,
+      4
+    ],
+    "pending": [],
+    "notes": "Green em ebceb70 (1 PASS · 0 FAIL, exit 0, EA-1 listado). Campanha T006: 6/6 mutantes mortos, 2/2 sondas conformes; sondas provaram que a auto-exclusão R10 §10 vive no escopo de bloco, não na indentação por acidente. Repins R1-R5 executados: 0246dfd, 502fbdb, 3ca3320, c3c6e55, 692e458 — previsão de 5 cumprida com desvio zero, primeira demanda da série sem desvio"
+  },
+  "validate": {
+    "status": "done",
+    "conformance": "22/22 (100%)",
+    "notes": "T007: pipeline completo 14 PASS · 0 FAIL; compliance-audit 13 PASS · 0 FAIL (8 seções); baseline 202/202. spec-validate 22/22 sem iteração. CI: run 33219366036 (dispatch) verde e run 33220644653 (pull_request) verify+visual success. T008 aceite do product-owner: 'não encontrei objeção', com as 4 decisões da rodada 1 conferidas e os 4 não-bloqueantes dele executados como PO-1…PO-4b. Achado EA-2 encaminhado (falso positivo do grep tdd_waiver na seção waivers), com nota de guarda: não sanar editando a prosa do brief"
+  },
+  "pr_url": "https://github.com/oflavioc/quickscan-secops/pull/25"
 }

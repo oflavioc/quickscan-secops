@@ -1,7 +1,7 @@
 {
   "_meta": {
     "descricao": "Registry único de pins — fonte de identidade dos artefatos (R8). Hashes = SHA-256 dos blobs de HEAD. Alterar arquivo pinado exige regenerar este registry no MESMO PR, com motivo no commit.",
-    "gerado_de_head": "33ce56ea2c91d5718fa8073becc7a36dd4e1ce84",
+    "gerado_de_head": "a2eb1055773309e525ed4177100a7e6aed52cf06",
     "gerado_em": "2026-08-28",
     "exclusoes": [
       "docs_phase5/**",
@@ -159,7 +159,7 @@
     "specs/008-migracao-zips/plan.md": "b62f4483af15e00f2d7c146062b2df74982cd1996b4c097fdbb094d691533c07",
     "specs/008-migracao-zips/refinement.md": "cd0369a0c55c2a6228b743cc55b1041a4558840613192059338acafd584d4a9e",
     "specs/008-migracao-zips/relatorio-final.md": "121d8272eaaaf231732ebbdfb974a6f4fa125ee6874690efc5d68149c96ea44b",
-    "specs/008-migracao-zips/spec-validate.md": "46a52df0382f47d48d916f3321cecf4380ab887c95edf2ead2c7c83003cd4222",
+    "specs/008-migracao-zips/spec-validate.md": "96d82c595b147f07ac23865ae6cd5f5bfe0a5825dde340a8e5b80f4222d69ecc",
     "specs/008-migracao-zips/spec.md": "794280838787ffe8df2e4a0089fd0c303461cff39ce61e59dab8c18e1c1b83f7",
     "specs/008-migracao-zips/tasks.md": "d94ee2f41c47c6997378d079e202e256911134aac52aedcafdfe9878b45f5ef6",
     "specs/PHASE_5_0_REV_A.md": "22e729174c6a3c5dd620da5330b03eb96d9eb6fc6e64eba097c2bde55eb0a510",

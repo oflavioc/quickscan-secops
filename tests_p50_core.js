@@ -216,7 +216,44 @@ const PROTECTED = {
      não é ausência de tecnologia, e o relatório passa a se calar em vez de
      concluir. Identidade anterior (errata final · ALTO-1):
      d672da97a8c9b17d33890eaa97dcdea3a9367a02a57c682662d32f56e4aa63f8 */
-  "ui_target_v32.js": "fcedb7cf63d89ac20e2248a3f37026885d5c5c7ecee62f14cfa0a976ef8f584f",
+  /* DEMANDA 009 · AUTORIZAÇÃO NOMINAL §29.4 · SEGUNDO REPIN (rodada 2).
+     Mesma autorização já registrada acima e sem ampliação alguma: proprietário,
+     no chat, 2026-08-28, frase literal "Autorizo nominalmente a edição dos
+     quatro arquivos para a 009"; registro em
+     `specs/009-leitura-do-relatorio/spec.md`, seção "Autorização nominal §29.4
+     — registro (consumada)". `ui_target_v32.js` já estava entre os quatro
+     nomeados; o que muda é o VALOR, não o alcance. Os outros três (`ui_v32.js`,
+     `ui_journey_v32.js`, `ui_ux_v32.css`) NÃO foram tocados nesta rodada e
+     seguem nos hashes do primeiro repin. Identidade medida com as duas fontes
+     em acordo (R2 §2): blob de HEAD e working tree normalizado por
+     `.gitattributes`.
+
+     SEGUNDA EDIÇÃO EM `ui_target_v32.js` (rodada 2, defeito achado pelo
+     `product-owner` no aceite de intenção), em duas frentes:
+       1 · ESCOPO DA ABERTURA. `tgtAbsenceHTML()` montava a frase SEM ramo e
+           abria sempre em escopo de SESSÃO ("não foi informado nesta sessão").
+           Verdadeiro quando nada foi declarado; FALSO no caso PARCIAL, onde o
+           contexto foi informado e só as práticas nomeadas ficaram de fora — e
+           o próprio relatório desmentia a frase duas seções abaixo, onde
+           `#v32decl` lista as declaradas. Nasce `tgtCtxDeclaradoNaSessao()`,
+           cujo predicado é o MESMO de `#v32decl` (`ui_v32.js:246`): há
+           declaração quando alguma capability sai de UNSET. Os dois ramos
+           continuam declarando não-informação — a regra que `D009-UNS1` mede —;
+           o que muda é o ALCANCE afirmado. O caso 100% UNSET mantém a frase
+           byte a byte, porque ali ela é verdadeira;
+       2 · RÓTULO DERIVADO do caminho da TELA: o clique já era delegado ao
+           controle canônico `#v32cta`, mas o rótulo estava fixo em "Editar…"
+           enquanto o controle diz "Adicionar" em sessão limpa. O rótulo passa a
+           vir do mesmo nó a que o clique é delegado, sob guarda: sem controle ou
+           sem rótulo, o botão não nasce e o aviso fica informativo.
+     Nenhum valor calculado mudou: `computeTargetProfile()`, `setTarget()`,
+     `TARGET_PROFILE.overrides`, `tgtComparisonPublishable()`, `tgtEnablerState()`,
+     a regra de score, a de suficiência e o gate permanecem byte-idênticos — o
+     que muda é o que o relatório AFIRMA. Gate que provou a mudança:
+     `D009-UNS3`, endurecido com red commitado em `d48b906` ANTES da correção.
+     Identidade anterior (primeiro repin da 009):
+     fcedb7cf63d89ac20e2248a3f37026885d5c5c7ecee62f14cfa0a976ef8f584f */
+  "ui_target_v32.js": "6b882a06f7ad17c69abf8dbb11186338cf94ef859f8a8daff89c751ba4d2e9c8",
   "ui_refinement_v32.js": "ade18a9afd265966feb40cb9f2926e20f5ffd2534dcfe7ec602e46cc6d01132c",
   /* PHASE 5.2 · REV B (COPY-B §5.1): uma linha — o tema "mandate" da jornada
      passou a dizer "direcionamento". Nenhuma regra, score ou estrutura muda. */

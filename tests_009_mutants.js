@@ -18,10 +18,10 @@
    Este harness NÃO escreve recibo em arquivo versionado (R7 §3): o registro
    canônico vivo do par gate↔mutante é `.claude/verify/mutation-matrix.json`.
 
-   SÃO 18 MUTANTES EXECUTÁVEIS: `D009-M1`, `D009-M2` e `D009-M4`..`D009-M19`.
-   O 19º — `D009-M20`, par de `D009-UNS3` endurecido — está ESPECIFICADO ao pé
-   deste array, com ancoragem pendente da correção; leia o bloco antes de
-   supor que a campanha cobre a cláusula da frase de abertura. O `M3` da spec
+   SÃO 19 MUTANTES: `D009-M1`, `D009-M2` e `D009-M4`..`D009-M20`. O `D009-M20`
+   entrou na rodada 2, quando a correção do `ui-engineer` criou o ramo em que
+   ele ancora; até lá esteve declarado como especificado-e-não-executável, nunca
+   como cobertura que existisse. O `M3` da spec
    NÃO é mutante desta campanha — ele permanece `P52-M3` no harness `p52`
    (`tests_p52_mutants.js`), porque a mutação e o oráculo (`P52-TGT1`) são os da
    Phase 5.2; o que a demanda 009 fez lá foi reescrever o registro do mutante,
@@ -285,41 +285,32 @@ const MUTANTS = [
     gate: "D009-EVB1",
     reason: /#p52-evbase pendurado em p52-sec-exec/
   }
-
-  /* ==========================================================================
-     D009-M20 · ESPECIFICADO, ANCORAGEM PENDENTE — NÃO EXECUTA (e não finge que sim)
-
-     Par: `D009-M20` ↔ `D009-UNS3` (cláusula da frase de abertura, endurecida na
-     rodada 2 em 2026-08-28). Mutação: **devolver a frase de ausência GLOBAL ao
-     caso parcial** — isto é, fazer `tgtAbsenceHTML` voltar a abrir com "O
-     contexto tecnológico não foi informado nesta sessão." quando há capability
-     declarada e apenas parte das práticas ficou sem contexto.
-
-     POR QUE NÃO ESTÁ NO ARRAY ACIMA: o `find` deste harness é textual e casa
-     byte a byte. A mutação precisa ancorar no RAMO que a correção vai criar em
-     `ui_target_v32.js` — e essa correção ainda não existe (é do `ui-engineer`,
-     entra depois deste red). Inventar um `find` agora produziria âncora que casa
-     0x, e este harness trata isso como FALHA DO HARNESS, não como "não
-     aplicável": a campanha inteira ficaria vermelha por um mutante que não pode
-     existir ainda. Declarar é honesto; fingir âncora, não.
-
-     JÁ DETERMINADO (não depende da correção):
-       gate ....... "D009-UNS3"
-       reason ..... /declara ausência de contexto em ESCOPO DE SESSÃO/
-       file ....... ui_target_v32.js
-       desc ....... "devolver a frase de ausência global ao caso parcial: o aviso
-                     volta a afirmar não-informação em escopo de sessão enquanto
-                     o relatório lista capabilities declaradas"
-
-     REGRA DE ANCORAGEM, para quem o escrever quando a correção existir: o `find`
-     deve casar o RAMO que escolhe a abertura restrita, e o `repl` deve forçar a
-     abertura global nos DOIS casos. Se a correção não criar ramo — por exemplo,
-     se adotar uma frase restrita única, verdadeira nos dois estados —, então o
-     mutante é `repl` da frase única de volta à forma com "nesta sessão.".
-
-     Registrado como dívida declarada em `.claude/verify/mutation-matrix.json`
-     (R3 §5: gate sem mutante na matriz é dívida declarada, nunca omissão).
-     ========================================================================== */
+,
+  /* ------------------------------------------------------------------ C12-b */
+  {
+    id: "D009-M20",
+    desc: "devolver a frase de ausência GLOBAL ao caso parcial: o aviso volta a afirmar não-informação em escopo de sessão enquanto o relatório lista capabilities declaradas",
+    file: TARGET,
+    /* Âncora ESCRITA AGORA, não antes: o ramo só passou a existir com a correção
+       da rodada 2 (`e77b7b5`). O bloco de especificação que ocupava este lugar
+       declarava `find`/`repl` PENDENTES de propósito — âncora inventada casaria
+       0x e este harness trata isso como FALHA DO HARNESS, derrubando a campanha
+       inteira por um mutante que não podia existir.
+       A mutação quebra o PREDICADO, não a redação: `tgtCtxDeclaradoNaSessao()`
+       passa a dizer que nada foi declarado, e a frase de escopo de SESSÃO volta
+       a ser usada nos DOIS casos. Alvo cirúrgico — o predicado alimenta apenas o
+       ternário da abertura, então `D009-UNS1` (100% UNSET, onde a frase global é
+       VERDADEIRA) e `D009-ABS1` seguem verdes: o kill é de `D009-UNS3` e só. */
+    find: '  return Object.keys(L).some(id=>L[id] && L[id].presence!=="UNSET");',
+    repl: '  return false;   /* MUTANTE D009-M20: nega a declaração e devolve a frase global */',
+    gate: "D009-UNS3",
+    reason: /declara ausência de contexto em ESCOPO DE SESSÃO/,
+    /* PROVA DE DESENHO: este mutante tem de SOBREVIVER a `D009-UNS1`. Sob
+       landscape 100% UNSET a frase de escopo de sessão é VERDADEIRA, e é esse o
+       caso que UNS1 mede — se ele também morresse ali, a cláusula estaria no
+       gate errado e `D009-UNS1` teria sido endurecido por engano. */
+    sobrevive: { gate: "D009-UNS1", cmd: "node tests_009_leitura.js", env: { D009_ONLY: "D009-UNS1" } }
+  }
 ];
 
 /* ========================================================================== */

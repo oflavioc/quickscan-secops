@@ -25,7 +25,9 @@
     "notes": "aprovado pelo usuário no chat ('aprovado'); 10 tarefas T001-T010 em 5 waves; repins R2-R5 como tarefas próprias do build-engineer; PO-1…PO-4b nomeados dentro de T002/T006; nenhuma tarefa [P] (dependências lineares, justificado); tipagem defendida (T002 feature = gate novo com red real; T004 doc = green de gate já red-provado)"
   },
   "red": {
-    "status": "pending",
-    "notes": "Fase 4 aberta em 2026-08-28; wave 0 (repin R2) precede; o red da wave 1 é a T002 do qa-engineer, com a mecânica T8 (CI vermelho do commit red É o red)"
+    "status": "proven",
+    "commit": "13f4bb4965c3ff5be1226cf0785170211e25ebc1",
+    "proven_at": "2026-08-28",
+    "notes": "T002 (qa-engineer): red natural provado contra a árvore real (mecânica T8, BACKLOG.md intocado) — `--rule=backlog` reprova nomeando EA-1 (linha 52 em prosa não casa a canônica), exit 1; audit completo 12 PASS · 1 FAIL, 7 seções irmãs intactas. Adversariais em worktree efêmera (R7 §3): BS-2(a) sem status, BS-2(b) ×4 (abertto/pendente/Aberto/prosa antiga), BS-2(c) duplicada, BS-2(d) arquivo ausente, PO-1 resolvido aceito, PO-2 transferido aceito, PO-3 refutado riscado assere 'achados abertos: nenhum', PO-4a canônica deslocada reprova posição, PO-4b mensagens ensinam vocabulário + prefixo reservado — 14/14 conformes; saídas são insumo da matriz (T006). O CI vermelho deste commit no passo compliance É o red (precedente 008 M-ZB3/M-ZB5); green exclusivo da wave 2 (T004, doc-writer); repin R3 é a T003 (build-engineer)"
   }
 }

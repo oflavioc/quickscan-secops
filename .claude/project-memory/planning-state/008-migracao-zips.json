@@ -1,6 +1,6 @@
 {
   "demanda": "008-migracao-zips",
-  "phase": "validate",
+  "phase": "done",
   "spec_dir": "specs/008-migracao-zips",
   "brief": "Migrar os 3 ZIPs de evidência da raiz (visual_print_evidence_47/48/487.zip, ~45 MB) para GitHub Releases, refatorando os oráculos S64/S74/S113 para lerem via manifesto-ponte — continuação da 007, encerramento pleno do E10",
   "branch": "feature/008-migracao-zips",
@@ -39,7 +39,7 @@
   "validate": {
     "status": "done",
     "conformance": "24/24 (100%)",
-    "notes": "T012: pipeline completo 14 PASS · 0 FAIL (local e re-executado pelo orquestrador no head final f8b59e1); CI success run 33189161042 @ 9b7c6dd, novo dispatch 33193065751 sobre o head final. T013: campanha 17/17 mutantes mortos, 0 sobreviventes (M-ZB1…M-ZB6 + re-execução integral M1–M6 da 007); matriz em specs/008-migracao-zips/matriz-gate-mutante.md com a linha de transferência O1 e o veredito M-ZB5 (spec-errada de formulação: mutante como redigido é inconstruível porque os 3 ZIPs entram no commit raiz e5ccd42; forma canônica = SHA 40-hex inalcançável, registrada sem reescrever a spec aprovada). spec-validate: 22/24 na iteração 1 (2 gaps de prosa desatualizada em R11/R13, corrigidos em 1c26861) → 24/24 na iteração 2 (a2eb105). T014 relatório final: 33ce56e. T015 aceite de intenção do product-owner: 'não encontrei objeção' — 5 decisões da rodada 1 honradas, transferência O1 endossada, tratamento do M-ZB5 endossado. Três execuções de gen_pins.py (1465258, 5db4639, f8b59e1), cada uma nomeada na própria mensagem. Ciência pendente do proprietário no portão: veredito M-ZB5 e os 2 avisos herdados (histórico não emagrece; imutabilidade do release é convenção + gate). Portão de fase é do usuário, no chat.",
+    "notes": "T012: pipeline completo 14 PASS · 0 FAIL (local e re-executado pelo orquestrador no head final f8b59e1); CI success run 33189161042 @ 9b7c6dd, novo dispatch 33193065751 sobre o head final. T013: campanha 17/17 mutantes mortos, 0 sobreviventes (M-ZB1…M-ZB6 + re-execução integral M1–M6 da 007); matriz em specs/008-migracao-zips/matriz-gate-mutante.md com a linha de transferência O1 e o veredito M-ZB5 (spec-errada de formulação: mutante como redigido é inconstruível porque os 3 ZIPs entram no commit raiz e5ccd42; forma canônica = SHA 40-hex inalcançável, registrada sem reescrever a spec aprovada). spec-validate: 22/24 na iteração 1 (2 gaps de prosa desatualizada em R11/R13, corrigidos em 1c26861) → 24/24 na iteração 2 (a2eb105). T014 relatório final: 33ce56e. T015 aceite de intenção do product-owner: 'não encontrei objeção' — 5 decisões da rodada 1 honradas, transferência O1 endossada, tratamento do M-ZB5 endossado. Três execuções de gen_pins.py (1465258, 5db4639, f8b59e1), cada uma nomeada na própria mensagem. Ciência pendente do proprietário no portão: veredito M-ZB5 e os 2 avisos herdados (histórico não emagrece; imutabilidade do release é convenção + gate). Portão de fase é do usuário, no chat. CI do head final f8b59e1 (run 33193065751): success — condicao de 'done' da skill (PR aberto + CI verde) satisfeita. Merge do PR e portao de fase permanecem do usuario.",
     "pr_ci_dispatch": "https://github.com/oflavioc/quickscan-secops/actions/runs/33193065751"
   },
   "red": {

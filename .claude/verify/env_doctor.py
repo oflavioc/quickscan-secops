@@ -9,7 +9,9 @@ de uma suíte — e nunca mascarado por um exit 0.
 FAIL (exit != 0): python < 3.10 · git ausente · node ausente.
 WARN (exit 0)   : node fora do range de package.json · Chromium ausente
                   (suítes visuais declararão NÃO EXECUTADO) · autocrlf=true
-                  (inócuo com .gitattributes, mas informado).
+                  (inócuo com .gitattributes, mas informado) · unzip ausente
+                  (S64/S74+S75/S113 reprovam sem ele — o FAIL real é da suíte
+                  heavy.session, nunca deste stage; ZB-6/R10 §7).
 """
 import json, os, re, shutil, subprocess, sys
 
@@ -77,6 +79,13 @@ else:
     else:
         warn("Chromium indisponível (sem CHROME_PATH e sem cache ms-playwright) — "
              "suítes visuais devem declarar NÃO EXECUTADO, nunca passar em silêncio")
+
+# unzip (oráculos de sessão S64/S74+S75/S113 — ZB-6/R10 §7)
+if shutil.which("unzip"):
+    ok("unzip presente")
+else:
+    warn("unzip ausente do PATH — S64/S74+S75/S113 (suíte heavy.session) "
+         "reprovam sem ele; instale unzip para rodar a suíte heavy")
 
 # stdout
 enc = getattr(sys.stdout, "encoding", "") or ""

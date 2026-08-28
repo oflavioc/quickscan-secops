@@ -1,9 +1,9 @@
 {
   "_meta": {
-    "descricao": "Manifesto-ponte da migração de evidência (demanda 007). Os acervos docs_phase5/evidence_{p50,p51,p52,unset} saíram do índice git e vivem como assets dos releases nominais deste repositório; a verificabilidade é preservada por este manifesto — SHA-256 de cada blob do commit-âncora e de cada pacote — e pelo stage evidence-bridge. Complementa os manifestos históricos de fase (classe legacy), não os substitui. Gerado por .claude/verify/gen_evidence_bridge.py; nunca editado à mão (R12) e alterado só com repin e trilha (R8).",
+    "descricao": "Manifesto-ponte da migração de evidência (demandas 007 e 008). Os acervos docs_phase5/evidence_{p50,p51,p52,unset} (007) e os ZIPs de auditoria da raiz visual_print_evidence_{47,48,487}.zip (008) saíram do índice git e vivem como assets de releases deste repositório — nominais por acervo na 007, release único evidence-v32 na 008; a verificabilidade é preservada por este manifesto — SHA-256 de cada blob do commit-âncora e de cada pacote — e pelo stage evidence-bridge. Acervo sem campo `tipo` é `diretorio` e é publicado como .tar; `tipo: \"arquivo\"` publica o próprio blob, com `path` explícito e `pacote` == basename(path). Complementa os manifestos históricos de fase (classe legacy), não os substitui. Gerado por .claude/verify/gen_evidence_bridge.py; nunca editado à mão (R12) e alterado só com repin e trilha (R8).",
     "commit_ancora": "62590b5927496a61ab31dd476d46b03624546560",
     "repo": "oflavioc/quickscan-secops",
-    "gerado_em": "2026-08-25"
+    "gerado_em": "2026-08-27"
   },
   "acervos": {
     "evidence-p50": {
@@ -438,6 +438,36 @@
         "docs_phase5/evidence_unset/UG-print-unset.pdf": "4660b9648940455c30d873bab76e7507ec453985207d325a1fccade83a9be0ee",
         "docs_phase5/evidence_unset/UG-screen-radar-unset.png": "ed03fdb1d9f9271e35b4d012936527ce78d2a98c6f20341844f08a891e6cec6b",
         "docs_phase5/evidence_unset/UG-screen-ruler-unset.png": "37e3a1b015974b9400a35eb64cfd0216d2ac26499f790783d3b273977d0d2afa"
+      }
+    },
+    "evidence-47": {
+      "tipo": "arquivo",
+      "path": "visual_print_evidence_47.zip",
+      "release_tag": "evidence-v32",
+      "pacote": "visual_print_evidence_47.zip",
+      "sha256_pacote": "b89ea12a0c694869bb7950251054f410f415a22cca21e536038015b95408f99c",
+      "arquivos": {
+        "visual_print_evidence_47.zip": "b89ea12a0c694869bb7950251054f410f415a22cca21e536038015b95408f99c"
+      }
+    },
+    "evidence-48": {
+      "tipo": "arquivo",
+      "path": "visual_print_evidence_48.zip",
+      "release_tag": "evidence-v32",
+      "pacote": "visual_print_evidence_48.zip",
+      "sha256_pacote": "24736aeec12f71ea4efce801a8d511864a2176054ca511ae39fd80b5ed880677",
+      "arquivos": {
+        "visual_print_evidence_48.zip": "24736aeec12f71ea4efce801a8d511864a2176054ca511ae39fd80b5ed880677"
+      }
+    },
+    "evidence-487": {
+      "tipo": "arquivo",
+      "path": "visual_print_evidence_487.zip",
+      "release_tag": "evidence-v32",
+      "pacote": "visual_print_evidence_487.zip",
+      "sha256_pacote": "4f822d213c389fc9158fa0cc86de3b546876699f3c73330fecd186ddc7a4a904",
+      "arquivos": {
+        "visual_print_evidence_487.zip": "4f822d213c389fc9158fa0cc86de3b546876699f3c73330fecd186ddc7a4a904"
       }
     }
   }

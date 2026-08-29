@@ -1,7 +1,7 @@
 {
   "_meta": {
     "descricao": "Registry único de pins — fonte de identidade dos artefatos (R8). Hashes = SHA-256 dos blobs de HEAD. Alterar arquivo pinado exige regenerar este registry no MESMO PR, com motivo no commit.",
-    "gerado_de_head": "3888cc0a7e4ee32c3f2603875c9e5ac0c4588f25",
+    "gerado_de_head": "7ad12bccfc10ae574500922742770060c55480cf",
     "gerado_em": "2026-08-29",
     "exclusoes": [
       "docs_phase5/**",
@@ -17,6 +17,11 @@
   "files": {
     ".claude/BACKLOG.md": "ff09c7c24106d92ea1659a033769c942fe95ff107f71c517f49ccf5e3b8c58c9",
     ".claude/agent-memory/README.md": "2f868716c8785119c1d6a02a7715f7b5058ab968f55951410fc82fc45b960a93",
+    ".claude/agent-memory/product-owner/project_ids_ea_entre_branches.md": "f7788c69ec137ae12c441afbb0b9bdb715b24ebd0ac9ca41c319d5478afc78eb",
+    ".claude/agent-memory/tech-lead/feedback_crosscheck_specs_seladas.md": "4ba53e77b8628708cd6b0b17baf0be95cfa7594bdb3842aca1f6097b072c5521",
+    ".claude/agent-memory/tech-lead/project_autoridade_delegada.md": "d37e45cee96a10ea573a3cbe21f5850f6aec7520fe65420ad12e10d2aa89f1e6",
+    ".claude/agent-memory/tech-lead/project_repin_commit_separado.md": "808e325f6cdf57c03232df5eb0905aa741b4687f689223e82ba77553f6e5a8af",
+    ".claude/agent-memory/tech-lead/project_trilha_de_modelo.md": "b491daa579e81170f9d09d15aad6777dbfe62d220d41575bd81de02343072ee6",
     ".claude/agents/build-engineer.md": "8859f79081656a1ec7d8d1b29f806f718a0762d21494d5b177c1501957b84d00",
     ".claude/agents/core-engineer.md": "cec44dda7d6818cb85dac39a76a196bb210cd3487e19e294783fad4cd6c9a3d5",
     ".claude/agents/data-engineer.md": "6d4880ef8b9c430e1eba1274c4e3c164ecee81fea5f1df4a12c5bbe6d0013b37",
@@ -173,6 +178,7 @@
     "specs/013-integridade-da-campanha/plan.md": "fdb91f60b6bb3c97eccb71c513e4035e3b52818d95904199cbc9075ede02d026",
     "specs/013-integridade-da-campanha/refinement.md": "2c931afa07a09a5885fadada705d3b90ed3f76f71c92f38123452a57d0a247ec",
     "specs/013-integridade-da-campanha/spec.md": "7cf0743576f55efca5180d475c1c8eabbd08496d50ea99de8daabaaf9be72da9",
+    "specs/013-integridade-da-campanha/tasks.md": "5153fbed842845d4264eb1f74cb5a68bc2631fe4ffc5670c0da8e6d0c2a7b8c2",
     "specs/PHASE_5_0_REV_A.md": "22e729174c6a3c5dd620da5330b03eb96d9eb6fc6e64eba097c2bde55eb0a510",
     "specs/PHASE_5_0_REV_B.md": "4f1583c733df62a9452aa7b218d962e40d781bb8d30dfc3179ad6e1ef004619b",
     "synthetic_session_examples/exemplo-completo.json": "8970e68ca0ce6a6885b62a911532a0598c9c5bca1bb783089fb085ba858a314d",

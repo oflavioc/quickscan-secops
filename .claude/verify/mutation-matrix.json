@@ -1,7 +1,8 @@
 {
   "_meta": {
     "descricao": "Matriz gate↔mutante (Onda 3, R3 §5 / R10). Mantida pelo qa-engineer: cada linha registra o par, a última prova de kill e onde ela vive. O stage tdd valida a estrutura; o stage mutation re-prova por trigger de path. Gate sem mutante na matriz é dívida declarada, nunca omissão silenciosa.",
-    "onda": 3
+    "onda": 3,
+    "expansao_p51": "2026-08-29, demanda 013-integridade-da-campanha (T12/T024, contrato C3): a linha agregada 'campanhas P51 (múltiplos)' foi substituída por UM PAR POR MUTANTE dos 20 da p51, com propriedade, ancora e ultima_prova. É o que IC-5 (check_mutation.py) lê para exigir cobertura nominal: mutante do harness sem par aqui é FAIL, e par sem mutante correspondente também. NENHUM mutante da p51 foi aposentado nesta demanda — as oito âncoras triadas deram reancorar, nenhuma deu aposentadoria, logo nenhum gate ficou órfão. As linhas agregadas de P50 e P52 seguem agregadas: expandi-las é outra demanda (T13). A prova narrada da triagem e das reancoragens vive em specs/013-integridade-da-campanha/matriz-gate-mutante.md."
   },
   "pares": [
     {
@@ -60,14 +61,394 @@
       }
     },
     {
-      "mutante": "campanhas P51 (múltiplos)",
+      "mutante": "M51-01",
       "harness": "p51 (tests_p51_mutants.js)",
-      "gate": "suítes P50/P51",
+      "gate": "P51-VIS1 (tests_p50_chromium.js)",
       "invariante": "superfícies 5.1",
+      "propriedade": "no desktop o mapa e a pergunta ficam lado a lado (grid de duas colunas, áreas `main side`); o layout nunca volta a empilhar",
+      "ancora": {
+        "arquivo": "ui_p50_v32.css",
+        "ocorrencias": 1,
+        "verificada_em": "2026-08-29 · preflight (C1) na árvore real, exit 0 · 20/20 âncoras com ocorrencias == 1 (specs/013-integridade-da-campanha/matriz-gate-mutante.md §14)",
+        "recorte": "as duas linhas de `grid-template-columns` + `grid-template-areas` da faixa central"
+      },
       "ultima_prova": {
-        "data": "histórica (fase 5.1)",
+        "data": "2026-08-22",
         "resultado": "KILL",
-        "registro": "docs_phase5/AUDITORIA_INDEPENDENTE_REAUDITORIA_PHASE_5_1_ERRATA.md"
+        "registro": "docs_phase5/AUDITORIA_INDEPENDENTE_REAUDITORIA_PHASE_5_1_ERRATA.md",
+        "nota": "campanha `tests_p51_mutants.js` executada integralmente na reauditoria independente da fase 5.1: 20/20 mutantes detectados pelo gate e pelo motivo esperados, zero NÃO DETECTADO, zero ERRO, zero restauração divergente. Âncora conferida de novo em 2026-08-29 pelo preflight (C1), ocorrencias == 1 — a prova de KILL, porém, é a de 2026-08-22."
+      }
+    },
+    {
+      "mutante": "M51-02",
+      "harness": "p51 (tests_p51_mutants.js)",
+      "gate": "P51-UX1 (tests_p50_core.js)",
+      "invariante": "superfícies 5.1",
+      "propriedade": "existe um único controle focável de evidência por pergunta — o canônico",
+      "ancora": {
+        "arquivo": "ui_p50_shell_v32.js",
+        "ocorrencias": 1,
+        "verificada_em": "2026-08-29 · preflight (C1) na árvore real, exit 0 · 20/20 âncoras com ocorrencias == 1 (specs/013-integridade-da-campanha/matriz-gate-mutante.md §14)",
+        "recorte": "o comentário `Phase 5.1 · apresentação da pergunta e controle único de evidência.`"
+      },
+      "ultima_prova": {
+        "data": "2026-08-22",
+        "resultado": "KILL",
+        "registro": "docs_phase5/AUDITORIA_INDEPENDENTE_REAUDITORIA_PHASE_5_1_ERRATA.md",
+        "nota": "campanha `tests_p51_mutants.js` executada integralmente na reauditoria independente da fase 5.1: 20/20 mutantes detectados pelo gate e pelo motivo esperados, zero NÃO DETECTADO, zero ERRO, zero restauração divergente. Âncora conferida de novo em 2026-08-29 pelo preflight (C1), ocorrencias == 1 — a prova de KILL, porém, é a de 2026-08-22."
+      }
+    },
+    {
+      "mutante": "M51-03",
+      "harness": "p51 (tests_p51_mutants.js)",
+      "gate": "P51-UX2 (tests_p50_core.js)",
+      "invariante": "superfícies 5.1",
+      "propriedade": "o exemplo de MSSP/SLA é exclusivo da pergunta `monitoring-coverage` e não vaza para nenhum outro `qid`",
+      "ancora": {
+        "arquivo": "ui_p50_shell_v32.js",
+        "ocorrencias": 1,
+        "verificada_em": "2026-08-29 · preflight (C1) na árvore real, exit 0 · 20/20 âncoras com ocorrencias == 1 (specs/013-integridade-da-campanha/matriz-gate-mutante.md §14)",
+        "recorte": "o `ex:` de `mandate` em `P51_Q_HELP` (ui_p50_shell_v32.js:577) — sítio causal da propriedade",
+        "reancorada_em": "2026-08-29",
+        "razao": "âncora podre — ocorrencias=0 no preflight da W3: a COPY-B §5.1 reescreveu o texto do `ex:` de `mandate` ('charter' virou 'direcionamento'). A propriedade, o gate (tests_p50_core.js:2723-2724) e o `reason` seguem vivos; só o recorte mudou."
+      },
+      "ultima_prova": {
+        "data": "2026-08-29",
+        "resultado": "KILL",
+        "registro": "specs/013-integridade-da-campanha/matriz-gate-mutante.md",
+        "commit": "6d0a581",
+        "nota": "reancorado na T019 (demanda 013) com as três provas cumulativas de T9: (a) unicidade pelo preflight; (b) morte por P51-UX2 com o motivo esperado (`reason`); (c) sobrevivência com as asserções alcançadas pelo `reason` neutralizadas em bloco, em worktree efêmera. Triagem, propriedade e sítio na matriz §3-§4; as linhas de gate medidas estão registradas na mensagem do commit 6d0a581."
+      }
+    },
+    {
+      "mutante": "M51-04",
+      "harness": "p51 (tests_p51_mutants.js)",
+      "gate": "P51-JN1 (tests_p50_core.js)",
+      "invariante": "superfícies 5.1",
+      "propriedade": "todo nó da jornada exibe o número do estágio",
+      "ancora": {
+        "arquivo": "ui_journey_v32.js",
+        "ocorrencias": 1,
+        "verificada_em": "2026-08-29 · preflight (C1) na árvore real, exit 0 · 20/20 âncoras com ocorrencias == 1 (specs/013-integridade-da-campanha/matriz-gate-mutante.md §14)",
+        "recorte": "o `<span class=\"jn-num\">` com a interpolação do índice"
+      },
+      "ultima_prova": {
+        "data": "2026-08-22",
+        "resultado": "KILL",
+        "registro": "docs_phase5/AUDITORIA_INDEPENDENTE_REAUDITORIA_PHASE_5_1_ERRATA.md",
+        "nota": "campanha `tests_p51_mutants.js` executada integralmente na reauditoria independente da fase 5.1: 20/20 mutantes detectados pelo gate e pelo motivo esperados, zero NÃO DETECTADO, zero ERRO, zero restauração divergente. Âncora conferida de novo em 2026-08-29 pelo preflight (C1), ocorrencias == 1 — a prova de KILL, porém, é a de 2026-08-22."
+      }
+    },
+    {
+      "mutante": "M51-05",
+      "harness": "p51 (tests_p51_mutants.js)",
+      "gate": "P51-COR5 (tests_p50_core.js)",
+      "invariante": "superfícies 5.1",
+      "propriedade": "a tag de domínio da pergunta segue a ordem canônica de `DOMS`",
+      "ancora": {
+        "arquivo": "ui_p50_shell_v32.js",
+        "ocorrencias": 1,
+        "verificada_em": "2026-08-29 · preflight (C1) na árvore real, exit 0 · 20/20 âncoras com ocorrencias == 1 (specs/013-integridade-da-campanha/matriz-gate-mutante.md §14)",
+        "recorte": "o atributo `data-dom` da pergunta"
+      },
+      "ultima_prova": {
+        "data": "2026-08-22",
+        "resultado": "KILL",
+        "registro": "docs_phase5/AUDITORIA_INDEPENDENTE_REAUDITORIA_PHASE_5_1_ERRATA.md",
+        "nota": "campanha `tests_p51_mutants.js` executada integralmente na reauditoria independente da fase 5.1: 20/20 mutantes detectados pelo gate e pelo motivo esperados, zero NÃO DETECTADO, zero ERRO, zero restauração divergente. Âncora conferida de novo em 2026-08-29 pelo preflight (C1), ocorrencias == 1 — a prova de KILL, porém, é a de 2026-08-22."
+      }
+    },
+    {
+      "mutante": "M51-06",
+      "harness": "p51 (tests_p51_mutants.js)",
+      "gate": "P51-REC1 (tests_p50_core.js)",
+      "invariante": "superfícies 5.1",
+      "propriedade": "a recomendação do FortiClient declara escopo de endpoint e nunca se apresenta como plataforma universal de gestão de vulnerabilidades",
+      "ancora": {
+        "arquivo": "ui_v32.js",
+        "ocorrencias": 1,
+        "verificada_em": "2026-08-29 · preflight (C1) na árvore real, exit 0 · 20/20 âncoras com ocorrencias == 1 (specs/013-integridade-da-campanha/matriz-gate-mutante.md §14)",
+        "recorte": "a entrada `FortiClient administrado por EMS` com o texto do escopo"
+      },
+      "ultima_prova": {
+        "data": "2026-08-22",
+        "resultado": "KILL",
+        "registro": "docs_phase5/AUDITORIA_INDEPENDENTE_REAUDITORIA_PHASE_5_1_ERRATA.md",
+        "nota": "campanha `tests_p51_mutants.js` executada integralmente na reauditoria independente da fase 5.1: 20/20 mutantes detectados pelo gate e pelo motivo esperados, zero NÃO DETECTADO, zero ERRO, zero restauração divergente. Âncora conferida de novo em 2026-08-29 pelo preflight (C1), ocorrencias == 1 — a prova de KILL, porém, é a de 2026-08-22."
+      }
+    },
+    {
+      "mutante": "M51-07",
+      "harness": "p51 (tests_p51_mutants.js)",
+      "gate": "P51-REC1 (tests_p50_core.js)",
+      "invariante": "superfícies 5.1",
+      "propriedade": "cada recomendação de apoio fica anexada ao gap correto",
+      "ancora": {
+        "arquivo": "ui_v32.js",
+        "ocorrencias": 1,
+        "verificada_em": "2026-08-29 · preflight (C1) na árvore real, exit 0 · 20/20 âncoras com ocorrencias == 1 (specs/013-integridade-da-campanha/matriz-gate-mutante.md §14)",
+        "recorte": "a abertura de `QS_GAP_SUPPORT` com a primeira chave (`detection-lifecycle`)"
+      },
+      "ultima_prova": {
+        "data": "2026-08-22",
+        "resultado": "KILL",
+        "registro": "docs_phase5/AUDITORIA_INDEPENDENTE_REAUDITORIA_PHASE_5_1_ERRATA.md",
+        "nota": "campanha `tests_p51_mutants.js` executada integralmente na reauditoria independente da fase 5.1: 20/20 mutantes detectados pelo gate e pelo motivo esperados, zero NÃO DETECTADO, zero ERRO, zero restauração divergente. Âncora conferida de novo em 2026-08-29 pelo preflight (C1), ocorrencias == 1 — a prova de KILL, porém, é a de 2026-08-22."
+      }
+    },
+    {
+      "mutante": "M51-08",
+      "harness": "p51 (tests_p51_mutants.js)",
+      "gate": "P51-VIS2 (tests_p50_chromium.js)",
+      "invariante": "superfícies 5.1",
+      "propriedade": "a `option` do cenário-alvo tem cor e fundo explícitos e não herda do tema (contraste preservado)",
+      "ancora": {
+        "arquivo": "ui_p50_v32.css",
+        "ocorrencias": 1,
+        "verificada_em": "2026-08-29 · preflight (C1) na árvore real, exit 0 · 20/20 âncoras com ocorrencias == 1 (specs/013-integridade-da-campanha/matriz-gate-mutante.md §14)",
+        "recorte": "a regra de `option` de `#ux-target`, com `color` e `background-color` explícitos"
+      },
+      "ultima_prova": {
+        "data": "2026-08-22",
+        "resultado": "KILL",
+        "registro": "docs_phase5/AUDITORIA_INDEPENDENTE_REAUDITORIA_PHASE_5_1_ERRATA.md",
+        "nota": "campanha `tests_p51_mutants.js` executada integralmente na reauditoria independente da fase 5.1: 20/20 mutantes detectados pelo gate e pelo motivo esperados, zero NÃO DETECTADO, zero ERRO, zero restauração divergente. Âncora conferida de novo em 2026-08-29 pelo preflight (C1), ocorrencias == 1 — a prova de KILL, porém, é a de 2026-08-22."
+      }
+    },
+    {
+      "mutante": "M51-09",
+      "harness": "p51 (tests_p51_mutants.js)",
+      "gate": "P51-RPT2 (tests_p50_core.js)",
+      "invariante": "superfícies 5.1",
+      "propriedade": "o rótulo da sessão reflete o documento importado: import sem `label` limpa o rótulo anterior em vez de deixá-lo stale",
+      "ancora": {
+        "arquivo": "ui_p50_shell_v32.js",
+        "ocorrencias": 1,
+        "verificada_em": "2026-08-29 · preflight (C1) na árvore real, exit 0 · 20/20 âncoras com ocorrencias == 1 (specs/013-integridade-da-campanha/matriz-gate-mutante.md §14)",
+        "recorte": "a atribuição de `p51Meta.label` a partir de `doc.label`"
+      },
+      "ultima_prova": {
+        "data": "2026-08-22",
+        "resultado": "KILL",
+        "registro": "docs_phase5/AUDITORIA_INDEPENDENTE_REAUDITORIA_PHASE_5_1_ERRATA.md",
+        "nota": "campanha `tests_p51_mutants.js` executada integralmente na reauditoria independente da fase 5.1: 20/20 mutantes detectados pelo gate e pelo motivo esperados, zero NÃO DETECTADO, zero ERRO, zero restauração divergente. Âncora conferida de novo em 2026-08-29 pelo preflight (C1), ocorrencias == 1 — a prova de KILL, porém, é a de 2026-08-22."
+      }
+    },
+    {
+      "mutante": "M51-10",
+      "harness": "p51 (tests_p51_mutants.js)",
+      "gate": "P51-RPT2 (tests_p50_core.js)",
+      "invariante": "superfícies 5.1",
+      "propriedade": "a data da sessão é a de início da sessão, nunca a de geração do relatório",
+      "ancora": {
+        "arquivo": "ui_v32.js",
+        "ocorrencias": 1,
+        "verificada_em": "2026-08-29 · preflight (C1) na árvore real, exit 0 · 20/20 âncoras com ocorrencias == 1 (specs/013-integridade-da-campanha/matriz-gate-mutante.md §14)",
+        "recorte": "a atribuição de `sessionDateISO` a partir de `m.startedAt`"
+      },
+      "ultima_prova": {
+        "data": "2026-08-22",
+        "resultado": "KILL",
+        "registro": "docs_phase5/AUDITORIA_INDEPENDENTE_REAUDITORIA_PHASE_5_1_ERRATA.md",
+        "nota": "campanha `tests_p51_mutants.js` executada integralmente na reauditoria independente da fase 5.1: 20/20 mutantes detectados pelo gate e pelo motivo esperados, zero NÃO DETECTADO, zero ERRO, zero restauração divergente. Âncora conferida de novo em 2026-08-29 pelo preflight (C1), ocorrencias == 1 — a prova de KILL, porém, é a de 2026-08-22."
+      }
+    },
+    {
+      "mutante": "M51-11",
+      "harness": "p51 (tests_p51_mutants.js)",
+      "gate": "P51-PDF1 (tests_p50_chromium.js)",
+      "invariante": "superfícies 5.1",
+      "propriedade": "a régua só marca posição sob suficiência; sem dados suficientes o estágio fica não determinado",
+      "ancora": {
+        "arquivo": "ui_v32.js",
+        "ocorrencias": 1,
+        "verificada_em": "2026-08-29 · preflight (C1) na árvore real, exit 0 · 20/20 âncoras com ocorrencias == 1 (specs/013-integridade-da-campanha/matriz-gate-mutante.md §14)",
+        "recorte": "a linha `const determinado = suff && overall !== null;`"
+      },
+      "ultima_prova": {
+        "data": "2026-08-22",
+        "resultado": "KILL",
+        "registro": "docs_phase5/AUDITORIA_INDEPENDENTE_REAUDITORIA_PHASE_5_1_ERRATA.md",
+        "nota": "campanha `tests_p51_mutants.js` executada integralmente na reauditoria independente da fase 5.1: 20/20 mutantes detectados pelo gate e pelo motivo esperados, zero NÃO DETECTADO, zero ERRO, zero restauração divergente. Âncora conferida de novo em 2026-08-29 pelo preflight (C1), ocorrencias == 1 — a prova de KILL, porém, é a de 2026-08-22."
+      }
+    },
+    {
+      "mutante": "M51-12",
+      "harness": "p51 (tests_p51_mutants.js)",
+      "gate": "P51-RPT3 (tests_p50_core.js)",
+      "invariante": "superfícies 5.1",
+      "propriedade": "a régua concorda com `stageOf()` inclusive nas bordas das faixas",
+      "ancora": {
+        "arquivo": "ui_v32.js",
+        "ocorrencias": 1,
+        "verificada_em": "2026-08-29 · preflight (C1) na árvore real, exit 0 · 20/20 âncoras com ocorrencias == 1 (specs/013-integridade-da-campanha/matriz-gate-mutante.md §14)",
+        "recorte": "o par `bands` + `stageAt` do descritor da régua"
+      },
+      "ultima_prova": {
+        "data": "2026-08-22",
+        "resultado": "KILL",
+        "registro": "docs_phase5/AUDITORIA_INDEPENDENTE_REAUDITORIA_PHASE_5_1_ERRATA.md",
+        "nota": "campanha `tests_p51_mutants.js` executada integralmente na reauditoria independente da fase 5.1: 20/20 mutantes detectados pelo gate e pelo motivo esperados, zero NÃO DETECTADO, zero ERRO, zero restauração divergente. Âncora conferida de novo em 2026-08-29 pelo preflight (C1), ocorrencias == 1 — a prova de KILL, porém, é a de 2026-08-22."
+      }
+    },
+    {
+      "mutante": "M51-13",
+      "harness": "p51 (tests_p51_mutants.js)",
+      "gate": "P51-RPT4 (tests_p50_core.js)",
+      "invariante": "superfícies 5.1",
+      "propriedade": "a legenda de domínios preserva a ordem e a cor canônicas do sistema gráfico",
+      "ancora": {
+        "arquivo": "ui_v32.js",
+        "ocorrencias": 1,
+        "verificada_em": "2026-08-29 · preflight (C1) na árvore real, exit 0 · 20/20 âncoras com ocorrencias == 1 (specs/013-integridade-da-campanha/matriz-gate-mutante.md §14)",
+        "recorte": "o `map` da legenda de domínios, com `PR_DOM_HEX[i]`"
+      },
+      "ultima_prova": {
+        "data": "2026-08-22",
+        "resultado": "KILL",
+        "registro": "docs_phase5/AUDITORIA_INDEPENDENTE_REAUDITORIA_PHASE_5_1_ERRATA.md",
+        "nota": "campanha `tests_p51_mutants.js` executada integralmente na reauditoria independente da fase 5.1: 20/20 mutantes detectados pelo gate e pelo motivo esperados, zero NÃO DETECTADO, zero ERRO, zero restauração divergente. Âncora conferida de novo em 2026-08-29 pelo preflight (C1), ocorrencias == 1 — a prova de KILL, porém, é a de 2026-08-22."
+      }
+    },
+    {
+      "mutante": "M51-14",
+      "harness": "p51 (tests_p51_mutants.js)",
+      "gate": "P51-RPT5 (tests_p50_core.js)",
+      "invariante": "superfícies 5.1",
+      "propriedade": "o SVG do emblema é neutro — a geometria não varia com o score da sessão",
+      "ancora": {
+        "arquivo": "ui_v32.js",
+        "ocorrencias": 1,
+        "verificada_em": "2026-08-29 · preflight (C1) na árvore real, exit 0 · 20/20 âncoras com ocorrencias == 1 (specs/013-integridade-da-campanha/matriz-gate-mutante.md §14)",
+        "recorte": "a linha do polígono do emblema (`QS_PENTA.map`)"
+      },
+      "ultima_prova": {
+        "data": "2026-08-22",
+        "resultado": "KILL",
+        "registro": "docs_phase5/AUDITORIA_INDEPENDENTE_REAUDITORIA_PHASE_5_1_ERRATA.md",
+        "nota": "campanha `tests_p51_mutants.js` executada integralmente na reauditoria independente da fase 5.1: 20/20 mutantes detectados pelo gate e pelo motivo esperados, zero NÃO DETECTADO, zero ERRO, zero restauração divergente. Âncora conferida de novo em 2026-08-29 pelo preflight (C1), ocorrencias == 1 — a prova de KILL, porém, é a de 2026-08-22."
+      }
+    },
+    {
+      "mutante": "M51-15",
+      "harness": "p51 (tests_p51_mutants.js)",
+      "gate": "P51-RPT5 (tests_p50_core.js)",
+      "invariante": "superfícies 5.1",
+      "propriedade": "o emblema traz os rótulos completos dos domínios, não abreviações",
+      "ancora": {
+        "arquivo": "ui_v32.js",
+        "ocorrencias": 1,
+        "verificada_em": "2026-08-29 · preflight (C1) na árvore real, exit 0 · 20/20 âncoras com ocorrencias == 1 (specs/013-integridade-da-campanha/matriz-gate-mutante.md §14)",
+        "recorte": "o `<text>` do rótulo do domínio no emblema"
+      },
+      "ultima_prova": {
+        "data": "2026-08-22",
+        "resultado": "KILL",
+        "registro": "docs_phase5/AUDITORIA_INDEPENDENTE_REAUDITORIA_PHASE_5_1_ERRATA.md",
+        "nota": "campanha `tests_p51_mutants.js` executada integralmente na reauditoria independente da fase 5.1: 20/20 mutantes detectados pelo gate e pelo motivo esperados, zero NÃO DETECTADO, zero ERRO, zero restauração divergente. Âncora conferida de novo em 2026-08-29 pelo preflight (C1), ocorrencias == 1 — a prova de KILL, porém, é a de 2026-08-22."
+      }
+    },
+    {
+      "mutante": "M51-16",
+      "harness": "p51 (tests_p51_mutants.js)",
+      "gate": "P51-PDF1 (tests_p50_chromium.js)",
+      "invariante": "superfícies 5.1",
+      "propriedade": "a capa do PDF fica no fluxo, antes do cabeçalho, sem colidir com ele",
+      "ancora": {
+        "arquivo": "ui_v32.js",
+        "ocorrencias": 1,
+        "verificada_em": "2026-08-29 · preflight (C1) na árvore real, exit 0 · 20/20 âncoras com ocorrencias == 1 (specs/013-integridade-da-campanha/matriz-gate-mutante.md §14)",
+        "recorte": "`let h = qsCoverHTML();` (ui_v32.js:1036), linha única",
+        "reancorada_em": "2026-08-29",
+        "razao": "âncora podre — ocorrencias=0 no preflight da W3. Propriedade viva (ui_v32.js:1036, :1041), gate P51-PDF1 vivo (tests_p50_chromium.js:3603-3605) e `reason` casando a mensagem de hoje."
+      },
+      "ultima_prova": {
+        "data": "2026-08-22",
+        "resultado": "KILL",
+        "registro": "docs_phase5/AUDITORIA_INDEPENDENTE_REAUDITORIA_PHASE_5_1_ERRATA.md",
+        "nota": "KILL medido em 2026-08-22 contra a âncora ANTIGA, na campanha integral 20/20 da reauditoria da fase 5.1. Depois da reancoragem de 2026-08-29 (T019, commit 6d0a581) fecharam (a) unicidade e uma (b) PARCIAL por oráculo de artefato; a prova geométrica exige Chromium, ausente na máquina da demanda, e o harness classificou o mutante como NÃO EXECUTADO · gate não pôde ser executado — nunca SOBREVIVENTE. As provas (b) plena e (c) do recorte novo estão PENDENTES no job `visual`: pendência nominal em dividas_declaradas, não em silêncio."
+      }
+    },
+    {
+      "mutante": "M51-17",
+      "harness": "p51 (tests_p51_mutants.js)",
+      "gate": "P51-VIS3 (tests_p50_core.js)",
+      "invariante": "superfícies 5.1",
+      "propriedade": "o gap da matriz única é alvo − atual e o sinal nunca se inverte (mutação adversarial AUD-02 do auditor independente)",
+      "ancora": {
+        "arquivo": "ui_p50_results_v32.js",
+        "ocorrencias": 1,
+        "verificada_em": "2026-08-29 · preflight (C1) na árvore real, exit 0 · 20/20 âncoras com ocorrencias == 1 (specs/013-integridade-da-campanha/matriz-gate-mutante.md §14)",
+        "recorte": "o cálculo de `gap` com `p50Round1(tScore - score)`"
+      },
+      "ultima_prova": {
+        "data": "2026-08-22",
+        "resultado": "KILL",
+        "registro": "docs_phase5/AUDITORIA_INDEPENDENTE_REAUDITORIA_PHASE_5_1_ERRATA.md",
+        "nota": "campanha `tests_p51_mutants.js` executada integralmente na reauditoria independente da fase 5.1: 20/20 mutantes detectados pelo gate e pelo motivo esperados, zero NÃO DETECTADO, zero ERRO, zero restauração divergente. Âncora conferida de novo em 2026-08-29 pelo preflight (C1), ocorrencias == 1 — a prova de KILL, porém, é a de 2026-08-22."
+      }
+    },
+    {
+      "mutante": "M51-18",
+      "harness": "p51 (tests_p51_mutants.js)",
+      "gate": "P51-RPT6 (tests_p50_core.js)",
+      "invariante": "superfícies 5.1",
+      "propriedade": "o agregado do relatório é arredondado ANTES de nomear o estágio, para que número impresso e nome da faixa nunca divirjam (errata B1)",
+      "ancora": {
+        "arquivo": "ui_v32.js",
+        "ocorrencias": 1,
+        "verificada_em": "2026-08-29 · preflight (C1) na árvore real, exit 0 · 20/20 âncoras com ocorrencias == 1 (specs/013-integridade-da-campanha/matriz-gate-mutante.md §14)",
+        "recorte": "o comentário `ERRATA B1` + a linha do `const overall` de `buildPrintReport` (ui_v32.js:1022-1026)",
+        "reancorada_em": "2026-08-29",
+        "razao": "âncora podre — ocorrencias=0 no preflight da W3 (NÃO ambiguidade: o bloco de três linhas registrado não casava nenhum dos dois sítios). A unicidade do recorte novo é CONSTRUÍDA: ancora-se no comentário que ENUNCIA a propriedade, porque o `const` adjacente sozinho cairia em `legacySnapshot` (ui_v32.js:131) em vez de `buildPrintReport` (:1026) — e ali P51-RPT6 reprova com mensagem que não casa o `reason`, o que o harness contabiliza como SOBREVIVENTE."
+      },
+      "ultima_prova": {
+        "data": "2026-08-29",
+        "resultado": "KILL",
+        "registro": "specs/013-integridade-da-campanha/matriz-gate-mutante.md",
+        "commit": "6d0a581",
+        "nota": "reancorado na T019 (demanda 013) com as três provas cumulativas de T9: (a) unicidade pelo preflight; (b) morte por P51-RPT6 com o motivo esperado (`reason`); (c) sobrevivência com as asserções alcançadas pelo `reason` neutralizadas em bloco, em worktree efêmera. Triagem, propriedade e sítio na matriz §3-§4; as linhas de gate medidas estão registradas na mensagem do commit 6d0a581."
+      }
+    },
+    {
+      "mutante": "M51-19",
+      "harness": "p51 (tests_p51_mutants.js)",
+      "gate": "P51-DOC13 (tests_p50_core.js)",
+      "invariante": "superfícies 5.1",
+      "propriedade": "o manual descreve o score geral como média dos cinco scores de domínio — não como média direta das respostas (errata R2)",
+      "ancora": {
+        "arquivo": "USER_GUIDE.md",
+        "ocorrencias": 1,
+        "verificada_em": "2026-08-29 · preflight (C1) na árvore real, exit 0 · 20/20 âncoras com ocorrencias == 1 (specs/013-integridade-da-campanha/matriz-gate-mutante.md §14)",
+        "recorte": "o parágrafo `**Score 0–5.**` da definição de score"
+      },
+      "ultima_prova": {
+        "data": "2026-08-22",
+        "resultado": "KILL",
+        "registro": "docs_phase5/AUDITORIA_INDEPENDENTE_REAUDITORIA_PHASE_5_1_ERRATA.md",
+        "nota": "campanha `tests_p51_mutants.js` executada integralmente na reauditoria independente da fase 5.1: 20/20 mutantes detectados pelo gate e pelo motivo esperados, zero NÃO DETECTADO, zero ERRO, zero restauração divergente. Âncora conferida de novo em 2026-08-29 pelo preflight (C1), ocorrencias == 1 — a prova de KILL, porém, é a de 2026-08-22."
+      }
+    },
+    {
+      "mutante": "M51-20",
+      "harness": "p51 (tests_p51_mutants.js)",
+      "gate": "P51-DOC13 (tests_p50_core.js)",
+      "invariante": "superfícies 5.1",
+      "propriedade": "a §12 do manual não lista régua e legenda como seções próprias do relatório (errata R3)",
+      "ancora": {
+        "arquivo": "USER_GUIDE.md",
+        "ocorrencias": 1,
+        "verificada_em": "2026-08-29 · preflight (C1) na árvore real, exit 0 · 20/20 âncoras com ocorrencias == 1 (specs/013-integridade-da-campanha/matriz-gate-mutante.md §14)",
+        "recorte": "o item 4 da §12 (USER_GUIDE.md:427), linha única",
+        "reancorada_em": "2026-08-29",
+        "razao": "âncora podre — ocorrencias=0 no preflight da W3. Propriedade viva (USER_GUIDE.md:416-430), gate P51-DOC13 vivo (tests_p50_core.js:3714-3730) e `reason` casando a mensagem de hoje."
+      },
+      "ultima_prova": {
+        "data": "2026-08-29",
+        "resultado": "KILL",
+        "registro": "specs/013-integridade-da-campanha/matriz-gate-mutante.md",
+        "commit": "6d0a581",
+        "nota": "reancorado na T019 (demanda 013) com as três provas cumulativas de T9: (a) unicidade pelo preflight; (b) morte por P51-DOC13 com o motivo esperado (`reason`); (c) sobrevivência com as asserções alcançadas pelo `reason` neutralizadas em bloco, em worktree efêmera. Triagem, propriedade e sítio na matriz §3-§4; as linhas de gate medidas estão registradas na mensagem do commit 6d0a581."
       }
     },
     {
@@ -85,6 +466,10 @@
   "dividas_declaradas": [
     "tests_target_m431 e tests_journey_m45 têm mutantes só via harness p52 (requires chromium) — cobertura node-only é candidata a expansão da campanha core",
     "tests_unset_ug (UG1-12) é oracle de CM2 mas não tem mutante próprio da geometria UNSET — candidata a expansão",
-    "Trigger por merge-base não dispara em push na própria develop (diff vazio pós-merge) — a campanha p52 pós-integração v3.2.2 está coberta pela evidência de mutação da própria release (auditoria externa REV C, docs_phase5/evidence_v322) e re-executará no próximo PR que tocar alvos; melhoria do trigger (base = commit anterior do push) é candidata"
+    "Trigger por merge-base não dispara em push na própria develop (diff vazio pós-merge) — a campanha p52 pós-integração v3.2.2 está coberta pela evidência de mutação da própria release (auditoria externa REV C, docs_phase5/evidence_v322) e re-executará no próximo PR que tocar alvos; melhoria do trigger (base = commit anterior do push) é candidata",
+    "p51/M51-16 — as provas (b) plena e (c) do recorte reancorado em 2026-08-29 NÃO foram executadas: P51-PDF1 roda em tests_p50_chromium.js e exige Chromium, ausente na máquina da demanda 013 (CHROME_PATH vazia, cache ms-playwright inexistente). Fecharam (a) unicidade e uma (b) parcial por oráculo de artefato; o harness classificou como NÃO EXECUTADO · gate não pôde ser executado, nunca SOBREVIVENTE. Por isso a ultima_prova do par é a de 2026-08-22, contra a âncora antiga. Fecha no job visual do CI (D5/KI-3); registro em specs/013-integridade-da-campanha/matriz-gate-mutante.md §7",
+    "p52/V322-M3 — classificação do não-detectado residual da p52 (T13): o 106/107 do CI NÃO era sobrevivente nem regressão, era ÂNCORA PODRE DE NASCENÇA (ocorrencias=0 já no commit de autoria df5d9f6), de modo que V322-CTXPAR1 nunca chegou a rodar contra a mutação e o relatório somava não executado como não detectado. Reancorado em 2026-08-29 com (a) medida; (b) e (c) pendentes por Chromium, no job visual. A linha agregada 'campanhas P52 (múltiplos)' NÃO é expandida por par nesta demanda — expandir a P52 é demanda própria (T13). Narrativa em specs/013-integridade-da-campanha/matriz-gate-mutante.md §5, §10.4 e §13",
+    "core (tests_core_mutants.js) — sem preflight declarado no mutation_map.json (T8): é a REFERÊNCIA do interpretador e ficou fora das edições da demanda 013, que escopou a correção às três harnesses defeituosas. A consequência é impressa pelo stage, nunca omitida — [DÍVIDA] core: sem preflight declarado, âncora podre só aparece na execução da campanha. Enquanto durar, os mutantes do core não têm prova de unicidade de âncora fora da campanha",
+    "Borda 8 · deferimento sem contrapartida — sob MUTATION_DEFER_MISSING=1 (job verify do CI) a campanha exigida sem ambiente vira [DEFER] <harness>: exigida (alvo mudou) — delegada ao job com chromium (job visual), e o stage passa. Cadeia fechada: nada verifica que o job visual de fato executou a campanha delegada, logo um DEFER cujo job irmão falhe, seja pulado ou não rode deixa a campanha sem execução E sem FAIL. Vincular o DEFER à execução efetiva exige mexer em verify.yml e/ou em proteção de branch — fora do escopo da 013 (spec §Riscos 4), demanda própria"
   ]
 }

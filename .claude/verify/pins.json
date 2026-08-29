@@ -1,7 +1,7 @@
 {
   "_meta": {
     "descricao": "Registry único de pins — fonte de identidade dos artefatos (R8). Hashes = SHA-256 dos blobs de HEAD. Alterar arquivo pinado exige regenerar este registry no MESMO PR, com motivo no commit.",
-    "gerado_de_head": "d302f85c40a2420860ab01419e523bb0ca8aeb11",
+    "gerado_de_head": "fe0a461d303cf350ef9da6ef85fd46730b24c41b",
     "gerado_em": "2026-08-29",
     "exclusoes": [
       "docs_phase5/**",
@@ -85,7 +85,7 @@
     ".claude/verify/invariants.json": "b8571facafbe6098cc643886cd158f877dd702c0cba6ca5addff34fc3e10bee6",
     ".claude/verify/known_issues.json": "7f5e0404fd12725778ac032a136604cddbe52d062a2f3a658a91f061a36bb820",
     ".claude/verify/mutation-matrix.json": "2b51fcbf28833cd6d7d576e06d40451146a1b815553b0c751ee513c528f92f1a",
-    ".claude/verify/mutation_map.json": "c59f0fd38b6865ea6f94941b188bc122344000d180f67b3701e0a30a1e464fbe",
+    ".claude/verify/mutation_map.json": "9e49f50a34d0432fc2c396d416f8a435d21ac1999b89a182c1716dc134cf6809",
     ".claude/verify/pipeline.yaml": "4c87841da3b876cf7b594153f836ece74565b4a10f69ce296efff5d7751cf83a",
     ".claude/verify/run.sh": "b137b7a1c1bf9233b06ed8f87b04fb03150b316b59ce0b56231c28ab4e048faa",
     ".gitattributes": "37bb36fb03aa6edbf1ce9fdc3bb9cb705e0317da970df37783777795bbcdcdb9",
@@ -194,7 +194,7 @@
     "tests_p51_mutants.js": "0228954f66e5487e47ebf7c17d980c4dc828765a7ed48ac9446799df07876b2c",
     "tests_p52_chromium.js": "5c9f9cb613973f7331e2e1bfb0c6fc45d6dc32e5d417b87eeed806d1e536102d",
     "tests_p52_layout.js": "3b2fc589285f384c35bb04f282a63c3ea9732eacd08c38d4faea12b79772434e",
-    "tests_p52_mutants.js": "f8db2d94dac5350165e4e191842c30f423b70925d61e708a6f6e14e828760885",
+    "tests_p52_mutants.js": "1a62cef0e3357e54250c07e99882149f43c3e974fca0c79443a23544ce041d92",
     "tests_ref_m44.js": "5fe2e3336b20a018a5981371523306b771907ce7f5688002076066ab9ad1325c",
     "tests_session_m48.js": "e27a2ab8162d03544baa1146ad1a271e40a6ed3324efee977f56779c1a7f19d1",
     "tests_target_m431.js": "b167f704eeaa2fbf5bcd6b4c260c6ab7b2e2443a5b03c84f74e7f0411753a1d2",

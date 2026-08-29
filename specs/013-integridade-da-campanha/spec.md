@@ -252,7 +252,7 @@ permanece com a semântica atual, intocada.
 | `tests_p52_mutants.js` | T1/T4/T5/T6 (E1) — T3 **já cumprida** (0 prefixos; `envOverride` em uso, `:1374`) | `pins.json:188` |
 | `.claude/verify/check_mutation.py` | T2/T7 + asserções IC-1..IC-6 | `pins.json:69` |
 | `.claude/verify/mutation_map.json` | C2 (preflight + `targets` da `p51`) | `pins.json:83` |
-| `.claude/verify/mutation-matrix.json` | C3 (pares da P51 + dívidas) | fora do registry (`_meta.exclusoes`) — conferir no repin |
+| `.claude/verify/mutation-matrix.json` | C3 (pares da P51 + dívidas) | **pinado** (`pins.json:82`) — repin no mesmo PR (R8 §1). *(Errata de 2026-08-29: a redação original dizia "fora do registry"; as exclusões de `_meta` são `docs_phase5/**`, `.claude/project-memory/**`, `*.zip` e o próprio `pins.json` — a matriz não está entre elas. Achado pelo `tech-lead` na Fase 2 e conferido por execução.)* |
 | `specs/013-integridade-da-campanha/*.md` | artefatos da demanda | entram no repin (precedente 007/008/012) |
 | `.claude/BACKLOG.md` | **condicional** — EA-4, EA-5 e EA-6 escritos **juntos** pelo `doc-writer`, só depois que o PR #28 (EA-3) chegar a `develop` (decisão 1.6 + decisão de escopo de 2026-08-29) | `pins.json:18` |
 | `.claude/verify/pins.json` | regenerado (classe `registry`, motivo no commit) | — |

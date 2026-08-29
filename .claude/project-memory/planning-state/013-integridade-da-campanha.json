@@ -1,6 +1,6 @@
 {
   "demanda": "013-integridade-da-campanha",
-  "phase": "tasks",
+  "phase": "red",
   "spec_dir": "specs/013-integridade-da-campanha",
   "brief": "Integridade da campanha de mutacao: quatro ancoras podres pre-existentes na p51, harness Linux-only por construcao (python3 + prefixo POSIX de env) que reporta ambiente ausente como NAO DETECTADO, e dois mutantes possivelmente sem discriminante (1 em p51, 1 em p52). Bloqueia o merge do PR #24 (demanda 009).",
   "branch": "feature/013-integridade-da-campanha",
@@ -20,7 +20,12 @@
     "notes": "DECIDIDO SOB DELEGACAO do proprietario de 2026-08-29. plan.md (219 linhas): 9 waves, dono unico por arquivo, [P] uma unica vez (W8, entre matriz e BACKLOG, que nao medem nada). PREFLIGHT NASCE NA W3, na p51, que e o caminho critico: dali em diante as ancoras sao medidas com node e python apenas, sem Chromium. INVERSAO QUE SUSTENTA A ORDEM: o consumidor nasce antes do produtor — a W1 assere o contrato C1 (hoje reprova nomeando os tres harnesses) e o green da W3 PRODUZ o red seguinte (IC-4 acusando as quatro ancoras). A cadeia causal do refinamento vira commits. D1: id de gate digitado errado faz a suite rodar zero gates, sair 0, e o mutante ser lido como SOBREVIVENTE — classificar como NAO EXECUTADO. Necessario porque a linha de base de campanha pre-edicao NAO E OBTENIVEL (job visual roda sem --all e antes da edicao nenhum harness e exigido; local sem Chromium; rito manual depende do proprietario ausente). Risco registrado, nao contornado. D2: relato POR ASSERCAO — da W3 a W6 o stage fica legitimamente vermelho por IC-4, e um agregado esconderia o verde das outras: seria o colapso de estados da propria demanda, um nivel acima. D5: tres das quatro provas de E2 sao LOCAIS (M51-03, M51-18, M51-20 usam node tests_p50_core.js); so M51-16 (P51-PDF1) precisa de Chromium. SERIALIZACAO E ESTRUTURAL, nao disciplina pedida: check_mutation.py:39-44 RECUSA medir com arvore suja — quem tentar medir enquanto outro escreve recebe [FAIL] arvore suja, nunca um numero errado. O tech-lead RECUSOU mexer no verify.yml para obter linha de base, registrando o risco em vez de gastar autoridade emprestada. ERRATA aplicada por mim na spec: a tabela de pins dizia que mutation-matrix.json estava fora do registry; ele e pinado (pins.json:82) — conferido por execucao."
   },
   "tasks": {
-    "status": "in_progress",
-    "notes": "delegado ao tech-lead"
+    "status": "approved",
+    "approved_at": "2026-08-29",
+    "notes": "DECIDIDO SOB DELEGACAO do proprietario de 2026-08-29. tasks.md: 32 tarefas T001-T032 nas 9 waves. [P] uma unica vez (T024 x T025, W8). tests_p51_mutants.js com dois donos em waves distintas (T006 build/W3, T019 qa/W6). W4 com dois commits separados: T009 (preflight) e T011 (os 26 filtros da p50 como tarefa propria, o maior diff mecanico). Dois reds commitados: T002 (o julgador nasce reprovando os tres harnesses) e T017 (o red que o green da W3 produz — as quatro ancoras). Campanha do harness tocado a cada wave, quatro ao longo do PR, nunca uma auditoria no fim. DUAS ADICOES ACEITAS, ambas verificadas por mim: (1) T023 sincroniza a branch com origin/develop na W7 — o plano dava a condicao da W8 por satisfeita mas nao escreveu a mecanica, e conferi que EA-3 NAO esta nesta branch (0 ocorrencias); sem isso o doc-writer escreveria EA-4/5/6 num arquivo sem EA-3, dando quatro abertos em vez de cinco e conflito no BACKLOG.md. Posta na W7 e nao na W8 para o BACKLOG ter um unico autor por wave; gera repin fora da previsao R1-R10, nomeado e destinado ao relatorio final. (2) a auto-exclusao nominal de IC-1 (R10 §10) cobre specs/013-integridade-da-campanha/** inteiro, nao so a spec.md — conferi que os QUATRO arquivos carregam os literais proibidos (python3, P50_ONLY=); excluir so a spec faria o gate reprovar a si mesmo na wave seguinte."
+  },
+  "red": {
+    "status": "pending",
+    "notes": "W1/T002 produz o primeiro red: o julgador nasce reprovando os tres harnesses"
   }
 }

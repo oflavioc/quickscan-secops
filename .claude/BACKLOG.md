@@ -287,3 +287,112 @@ scanner, com o caso vivo como prova.
 `fix-finding` próprio para o `grep` da seção `waivers` — sem spec (não cria
 comportamento novo; corrige o oráculo para parar de casar prosa como se fosse
 dado estruturado). Cumprido — ver §Resolução acima.
+
+## EA-3 — O stage `mutation` não sabe dizer o que não está checando
+
+**Status**: `aberto`
+
+**Aberto em**: 2026-08-29. Nasceu ao conferir a premissa de uma rota registrada
+do backlog ("Onda 3 — harness de mutação scriptado, KI-2") antes de abrir
+trabalho sobre ela: a premissa estava **vencida**. `known_issues.json →
+_meta.descricao` registra que **KI-2 foi cumprida na Onda 4** (harness
+scriptado, trigger por path). Ao ler o mecanismo já existente para confirmar,
+encontrou-se este defeito nele.
+
+### Cadeia arquivo:linha → efeito
+
+- **`.claude/verify/check_mutation.py:58-59`** — o stage percorre **os
+  harnesses declarados**, não os arquivos que mudaram: `for name, h in
+  MAP.items(): due = ... any(t in changed for t in h["targets"])`.
+- Um arquivo que mudou e não figura nos `targets` de **nenhum** harness nunca
+  é avaliado — não emite `OK`, `WARN` nem `FAIL` **sobre ele próprio**. Mas o
+  efeito agregado é pior que silêncio simples (detalhe confirmado
+  independentemente pela sessão da demanda 009, verificado aqui no source):
+  `.claude/verify/check_mutation.py:61` emite, para cada harness cujos
+  `targets` não mudaram, `[OK]   <nome>: nenhum alvo mudou desde a base —
+  campanha não exigida`. Com os 4 harnesses inertes ao mesmo tempo em que o
+  arquivo órfão mudou, a saída do stage é **só verdes** — e quem a lê conclui,
+  corretamente pela mensagem e **incorretamente pelo fato**, que nenhuma
+  campanha era necessária. Formulação da sessão da 009, que vale citar por
+  precisão: *"um `[OK]` que mente por omissão é pior que um `[FAIL]`, porque
+  ninguém investiga um verde."* **Não existe checagem de órfão.**
+- **`.claude/verify/mutation_map.json → harnesses`** — 4 harnesses (`core`,
+  `p50`, `p51`, `p52`), todos com `targets` de módulos de UI da fase 5
+  (confirmado por leitura: nenhum deles cita qualquer arquivo de
+  `.claude/verify/` nem `tests_session_m48.js`). Contagem verificada nesta
+  sessão: 21 entradas somadas nos 4 arrays `targets` (16 arquivos distintos,
+  com sobreposição entre harnesses — `ui_v32.js` e `ui_session_v32.js`
+  aparecem em mais de um). A sessão da 009 relatou 20 na sua própria
+  contagem independente; a diferença de 1 não foi reconciliada nesta sessão
+  e não muda a conclusão — nenhum dos dois totais inclui qualquer arquivo de
+  `.claude/verify/` ou `tests_session_m48.js`.
+- **Efeito**: os gates entregues pelas demandas 008 e 012 são **órfãos** do
+  stage. Provados os seis: `.claude/verify/check_evidence_bridge.py`,
+  `.claude/verify/gen_evidence_bridge.py`, `.claude/verify/evidence_bridge.json`,
+  `tests_session_m48.js`, `.claude/verify/compliance-audit.sh` e
+  `.claude/BACKLOG.md` — a sessão da 009 amostrou 4 destes 6
+  independentemente e confirmou todos. Execução confirmatória nesta sessão:
+  `bash .claude/verify/run.sh --stage=mutation` na árvore atual → `[PASS]
+  mutation`, sem uma linha sequer sobre qualquer um dos seis.
+- **Consequência concreta e documentada**: na validação da 012 (T007), o
+  stage relatou "0 campanhas exigidas" **enquanto** o `qa-engineer` executava
+  à mão uma campanha real de 6 mutantes + 2 sondas exatamente sobre esses
+  arquivos (`specs/012-status-backlog/matriz-gate-mutante.md`). A campanha
+  existiu; a máquina não soube dizer que existia, nem que era necessária.
+- **Severidade**: cobertura silenciosa. Não é `FAIL` hoje — e é justamente
+  esse o problema: a ausência de campanha é **indistinguível** de "campanha
+  não exigida". Contraste com o desenho deliberado do resto do arquivo:
+  harness com `requires` ausente é reportado **por nome** (R10 §2, "SKIP
+  silencioso é FAIL") — a disciplina existe para o ambiente e falta para a
+  cobertura.
+
+### Achado-irmão (autoria da demanda 009 — citado, não registrado aqui)
+
+No mesmo dia, a sessão da demanda 009 encontrou o defeito complementar da
+mesma família: **âncora textual de mutante apodrece em silêncio** quando o
+dono do módulo reescreve a linha-alvo, e só a execução da campanha detecta —
+sempre depois do fato. Eles observaram cinco casos (`M51-16`, `M51-18`,
+`M51-20`, herdados e pré-existentes, mais `D009-M16` e `D009-M5`, apodrecidos
+por correção legítima do módulo). Esse achado é **de autoria da sessão da
+009** e será registrado como **`EA-4`** quando a 009 fechar — não é
+registrado por mim aqui, só citado como irmão.
+
+**A distinção entre os dois importa**: `EA-3` é **ausência de harness** — o
+arquivo nunca entra em campanha alguma, o sistema não sabe que deveria
+verificá-lo. `EA-4` é **decaimento dentro de um harness já registrado** — a
+campanha roda, mas a âncora não casa mais com o texto atual do módulo. Mesma
+família de causa raiz (o sistema de mutação não sabe dizer o que **não**
+está checando, seja por ausência de harness, seja por âncora podre dentro de
+um harness que existe) — remédios diferentes, portanto achados distintos com
+ids distintos.
+
+### Propriedade combinada — o EA-3 e o EA-4 fecham um ciclo
+
+Os dois achados não são só irmãos por família de causa: são
+**complementares**, e a soma das duas metades revela uma propriedade que
+nenhum dos dois sozinho deixa ver. Formulação da sessão da 009, registrada
+aqui com crédito:
+
+- `EA-3` diz: arquivo **fora** de `targets` nunca entra em campanha.
+- `EA-4` diz: arquivo **dentro** de `targets` pode carregar mutante cuja
+  âncora não casa mais com o texto atual do módulo.
+
+> **Um verde da campanha de mutação não prova cobertura. Prova apenas que
+> nada do que ainda está registrado e ainda casa falhou.**
+
+O que torna isso difícil de enxergar por conta própria: as duas metades da
+negação vivem em **lugares diferentes do sistema** — uma na ausência de
+entrada em `mutation_map.json`, outra na obsolescência de uma âncora dentro
+de uma entrada existente — e **nenhuma das duas é visível de dentro do
+relatório da campanha**. Quem lê `4 campanha(s) executada(s) · 0
+problema(s)` não tem como saber, só por essa linha, quantos alvos deixaram
+de existir (EA-4) nem quantos arquivos nunca foram alvo (EA-3).
+
+### Encaminhamento
+
+**Demanda própria** — não é `fix-finding`: criar checagem de órfão e/ou
+registrar harnesses novos é comportamento e gate novos (R10 "Nascimento de
+gate": caso positivo/negativo/adversarial/regressão + mutante próprio),
+exige spec (R4). A abrir quando o proprietário decidir. Este registro
+descreve o defeito e a cadeia verificada — **não propõe o desenho da
+correção**; o desenho, se a demanda abrir, é da spec.

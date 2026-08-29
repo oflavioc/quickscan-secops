@@ -193,3 +193,66 @@ arquivo:linha→efeito, as duas faces com remédios distintos, a tensão a
 resolver e o precedente a não reabrir. Nenhuma decisão de correção foi tomada
 aqui — só o registro do achado (R12; este documento não decide PASS/FAIL,
 papel do `doc-writer`).
+
+## EA-2 — A seção `waivers` reporta um waiver TDD que não existe
+
+**Status**: `aberto`
+
+**Aberto em**: 2026-08-29. Achado colateral da campanha de mutantes da
+demanda 012 (`specs/012-status-backlog/matriz-gate-mutante.md`, T006),
+descoberto pelo `qa-engineer` e deliberadamente adiado — ver §Por que é
+notável, e por que foi adiado abaixo.
+
+### Cadeia arquivo:linha → efeito
+
+- **`.claude/verify/compliance-audit.sh:126`** — a seção `waivers` roda
+  `grep -l "tdd_waiver" .claude/project-memory/planning-state/*.json` para
+  listar planning-states com waiver TDD ativo.
+- **`.claude/project-memory/planning-state/012-status-backlog.json:5`** — o
+  campo `brief` contém, **em prosa**, a palavra `tdd_waivers` (ao descrever a
+  própria demanda: "…listar achados abertos como já faz com os
+  tdd_waivers").
+- `grep` casa **substring livre**, sem fronteira de chave JSON estruturada —
+  não distingue a chave `tdd_waiver` de uma menção em texto corrido.
+- **Efeito**: a cada execução do audit, a seção `waivers` lista
+  `.../012-status-backlog.json` como "waiver TDD ativo" sem existir a chave
+  `tdd_waiver` nesse arquivo. Conferido por execução: dos 4 planning-states
+  existentes, só o da 012 casa (`grep -c "tdd_waiver"` = 1); os de 003, 007 e
+  008 dão 0.
+- **Severidade**: ruído de exibição — **nunca vira FAIL**, a seção emite `ok`
+  em ambos os ramos (com ou sem waiver listado). Não bloqueia pipeline.
+
+### Por que é notável, e por que foi adiado
+
+Este achado é **o mesmo defeito** que a própria demanda 012 curou uma seção
+abaixo: status lido por substring livre sobre prosa, em vez de campo em
+gramática fechada com parse que reprova o que não casa. A seção `waivers` foi
+o **precedente** que a seção `backlog` espelhou (`plan.md` da 012: "a seção
+`backlog` segue a anatomia das 7 seções irmãs") — e o espelho, ao nascer com
+parser fechado, revelou o defeito do original.
+
+Descoberto pelo `qa-engineer` durante a campanha de mutantes da 012 (T006) e
+**deliberadamente adiado**, por três razões registradas na matriz da 012:
+"corrigir de passagem" é exatamente a disciplina que deu origem à demanda 012
+(R5 §anti-patterns); tocar `waivers` naquele momento invalidaria a prova de
+regressão das 7 seções irmãs já executada (BS-1); e o dano observado é
+**ruído**, não falha — não há PASS/FAIL incorreto em jogo.
+
+### Nota de guarda do `product-owner`
+
+A correção **não é** editar a prosa do campo `brief` no planning-state da 012
+para remover a palavra `tdd_waivers` dali — isso **mascararia o caso de
+reprodução** em vez de corrigir o scanner: o caso vivo
+(`012-status-backlog.json` com `tdd_waivers` em prosa, ao lado dos outros 3
+planning-states sem a palavra) é o que torna o `fix-finding` fácil de provar
+por execução. A correção pertence a
+`.claude/verify/compliance-audit.sh:126` — casar campo estruturado (a chave
+JSON `"tdd_waiver"`, com aspas) em vez de substring livre no texto.
+
+### Encaminhamento
+
+`fix-finding` próprio para o `grep` da seção `waivers` — sem spec (não cria
+comportamento novo; corrige o oráculo para parar de casar prosa como se fosse
+dado estruturado). Nenhuma decisão de correção foi tomada aqui — só o
+registro do achado (R12; este documento não decide PASS/FAIL, papel do
+`doc-writer`).

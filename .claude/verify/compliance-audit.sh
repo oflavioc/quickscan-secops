@@ -123,7 +123,20 @@ fi
 # ---------------------------------------------------------------- waivers
 if secao waivers; then
   if [ -d ".claude/project-memory/planning-state" ]; then
-    W=$(grep -l "tdd_waiver" .claude/project-memory/planning-state/*.json 2>/dev/null || true)
+    # EA-2: casar a CHAVE JSON estruturada, nunca substring em prosa (grep -l
+    # listava planning-state cujo brief apenas mencionava "tdd_waivers")
+    W=$("$PYBIN" - <<'PY'
+import glob, json, os, sys
+sys.stdout.reconfigure(encoding="utf-8")  # R7 §2
+for p in sorted(glob.glob(".claude/project-memory/planning-state/*.json")):
+    try:
+        d = json.load(open(p, encoding="utf-8"))
+        if isinstance(d, dict) and "tdd_waiver" in d:
+            print(p.replace(os.sep, "/"))
+    except Exception as e:  # ilegível não é pulado em silêncio (R10 §2) — entra na lista de revisão
+        print(p.replace(os.sep, "/") + f" (ilegível para o parser de waivers: {type(e).__name__})")
+PY
+)
     if [ -z "$W" ]; then ok "waivers TDD: nenhum ativo"
     else ok "waivers TDD ativos (listados para revisão):"; printf '%s\n' "$W" | sed 's/^/       /'; fi
   else

@@ -34,6 +34,14 @@
         filtro faz a suíte selecionar zero gates e sair 0; a ausência da linha
         PASS/FAIL do gate ESPERADO passa a ser `NÃO EXECUTADO · gate não pôde
         ser executado`, com o filtro nomeado na nota.
+   T3 (commit (b)) · nenhum `cmd` de mutante carrega prefixo POSIX de variável:
+        os 26 filtros `P50_ONLY=` saíram das strings de comando e passaram para o
+        campo `only`, entregue pela opção `env` de execSync — a mesma plumbing
+        que o runner já aceitava e que o laço principal não usava. Prefixo POSIX
+        em `cmd` não é interpretado no shell do Windows: o filtro ia embora e a
+        suíte inteira rodava. A supressão de evidência (`P50_NO_EVIDENCE`)
+        continua aplicada POR CONSTRUÇÃO a toda execução do runner, não por
+        lembrança de autor (B-AUD-503-1).
    Shape de referência: tests_p51_mutants.js (W3). Cópia de shape, nunca
    extração de runner comum (R9).
    ========================================================================== */
@@ -178,6 +186,11 @@ function run(cmd, envOverride) {
              out: (e.stdout || "").toString() + (e.stderr || "").toString() };
   }
 }
+
+/* T3 · o filtro por gate é o campo `only` do mutante e chega pela opção `env`
+   acima — nunca por prefixo POSIX na string `cmd`, que o shell do Windows não
+   interpreta (o filtro sumia e a suíte inteira rodava). */
+const filtro = m => (m.only ? { P50_ONLY: m.only } : {});
 
 /* Extrai a linha de resultado do gate alvo (PASS/FAIL + motivo entre colchetes).
    Ausência de linha = o gate não rodou — é a decisão D1: filtro que não seleciona
@@ -455,7 +468,7 @@ const MUTANTS = [
     file: SUFF,
     find: `var P50_SUFF_REQUIRED = { global: 10, domain: 2 };`,
     repl: `var P50_SUFF_REQUIRED = { global: 9, domain: 2 };`,
-    gate: "P50-SUF7", cmd: "P50_ONLY=P50-SUF7 node tests_p50_core.js",
+    gate: "P50-SUF7", cmd: "node tests_p50_core.js", only: "P50-SUF7",
     reason: /requiredGlobal|missingGlobal|sufficient/
   },
   {
@@ -464,7 +477,7 @@ const MUTANTS = [
     file: SUFF,
     find: `  var P50_SUFF_REQUIRED = { global: 10, domain: 2 };`,
     repl: `  var P50_SUFF_REQUIRED = { global: 10, domain: 1 };`,
-    gate: "P50-SUF7", cmd: "P50_ONLY=P50-SUF7 node tests_p50_core.js",
+    gate: "P50-SUF7", cmd: "node tests_p50_core.js", only: "P50-SUF7",
     reason: /domains\[\d\]\.required|domains\[\d\]\.missing|sufficient/
   },
   {
@@ -473,7 +486,7 @@ const MUTANTS = [
     file: SUFF,
     find: `    var confirmedGlobal = confirmedCount();`,
     repl: `    var confirmedGlobal = ans.filter(function (v) { return v !== "NA"; }).length;`,
-    gate: "P50-SUF7", cmd: "P50_ONLY=P50-SUF7 node tests_p50_core.js",
+    gate: "P50-SUF7", cmd: "node tests_p50_core.js", only: "P50-SUF7",
     reason: /confirmedGlobal|missingGlobal|sufficient/
   },
   {
@@ -484,7 +497,7 @@ const MUTANTS = [
     var confirmedGlobal = confirmedCount();`,
     repl: `  function p50SuffContract() {
     var confirmedGlobal = ans.filter(function (v) { return v !== null; }).length;`,
-    gate: "P50-SUF7", cmd: "P50_ONLY=P50-SUF7 node tests_p50_core.js",
+    gate: "P50-SUF7", cmd: "node tests_p50_core.js", only: "P50-SUF7",
     reason: /confirmedGlobal|missingGlobal|sufficient/
   },
   {
@@ -494,7 +507,7 @@ const MUTANTS = [
     find: `    return { confirmed: st.n, toValidate: st.nNA, unanswered: total - st.n - st.nNA, total: total };`,
     repl: `    var noneless = st.idx.filter(function (k) { return ans[k] !== null && ans[k] !== "NA" && ans[k] !== 0; }).length;
     return { confirmed: noneless, toValidate: st.nNA, unanswered: total - st.n - st.nNA, total: total };`,
-    gate: "P50-SUF6", cmd: "P50_ONLY=P50-SUF6 node tests_p50_core.js",
+    gate: "P50-SUF6", cmd: "node tests_p50_core.js", only: "P50-SUF6",
     reason: /NONE \(0\) não foi contado como confirmado|confirmada/
   },
   {
@@ -503,7 +516,7 @@ const MUTANTS = [
     file: SUFF,
     find: `    var missingGlobal = p50Deficit(P50_SUFF_REQUIRED.global, confirmedGlobal);`,
     repl: `    var missingGlobal = P50_SUFF_REQUIRED.global - confirmedGlobal;`,
-    gate: "P50-SUF7", cmd: "P50_ONLY=P50-SUF7 node tests_p50_core.js",
+    gate: "P50-SUF7", cmd: "node tests_p50_core.js", only: "P50-SUF7",
     reason: /missingGlobal/
   },
   {
@@ -512,7 +525,7 @@ const MUTANTS = [
     file: SUFF,
     find: `      var miss = p50Deficit(P50_SUFF_REQUIRED.domain, have);`,
     repl: `      var miss = P50_SUFF_REQUIRED.domain - have;`,
-    gate: "P50-SUF7", cmd: "P50_ONLY=P50-SUF7 node tests_p50_core.js",
+    gate: "P50-SUF7", cmd: "node tests_p50_core.js", only: "P50-SUF7",
     reason: /domains\[\d\]\.missing/
   },
   {
@@ -521,7 +534,7 @@ const MUTANTS = [
     file: SUFF,
     find: `      if (dd.missing > 0) out.push(dd);`,
     repl: `      if (dd.missing >= 0) out.push(dd);`,
-    gate: "P50-SUF7", cmd: "P50_ONLY=P50-SUF7 node tests_p50_core.js",
+    gate: "P50-SUF7", cmd: "node tests_p50_core.js", only: "P50-SUF7",
     reason: /pendências|pending/
   },
   {
@@ -532,7 +545,7 @@ const MUTANTS = [
       if (dd.missing > 0) out.push(dd);`,
     repl: `      var dd = contract.domains[i];
       if (dd.missing > 1) out.push(dd);`,
-    gate: "P50-SUF3", cmd: "P50_ONLY=P50-SUF3 node tests_p50_core.js",
+    gate: "P50-SUF3", cmd: "node tests_p50_core.js", only: "P50-SUF3",
     reason: /pendências .* != déficits reais/
   },
   {
@@ -541,7 +554,7 @@ const MUTANTS = [
     file: SUFF,
     find: `      sufficient: missingGlobal === 0 && allDomainsMet`,
     repl: `      sufficient: missingGlobal === 0`,
-    gate: "P50-SUF7", cmd: "P50_ONLY=P50-SUF7 node tests_p50_core.js",
+    gate: "P50-SUF7", cmd: "node tests_p50_core.js", only: "P50-SUF7",
     reason: /sufficient|dataSufficiency/
   },
   {
@@ -550,7 +563,7 @@ const MUTANTS = [
     file: RESULTS,
     find: `    var released = contract.sufficient === true;`,
     repl: `    var released = contract.confirmedGlobal >= 10;`,
-    gate: "P50-SUF0", cmd: "P50_ONLY=P50-SUF0 node tests_p50_core.js",
+    gate: "P50-SUF0", cmd: "node tests_p50_core.js", only: "P50-SUF0",
     reason: /limiar global 10/
   },
   {
@@ -561,7 +574,7 @@ const MUTANTS = [
     var released = contract.sufficient === true;`,
     repl: `  function p50BuildResults(contract) {
     var released = contract.confirmedGlobal >= contract.requiredGlobal;`,
-    gate: "P50-SUF0", cmd: "P50_ONLY=P50-SUF0 node tests_p50_core.js",
+    gate: "P50-SUF0", cmd: "node tests_p50_core.js", only: "P50-SUF0",
     reason: /gate da UI .* != veredito canônico/
   },
   {
@@ -573,7 +586,7 @@ const MUTANTS = [
     repl: `    sec.appendChild(el("p", { "data-p50": "stage" }, "Managed"));
     if (released) sec.appendChild(p50ExecCards());
     return sec;`,
-    gate: "P50-SUF1", cmd: "P50_ONLY=P50-SUF1 node tests_p50_core.js",
+    gate: "P50-SUF1", cmd: "node tests_p50_core.js", only: "P50-SUF1",
     reason: /estágio presente sob gate fechado|estágio executivo renderizado/
   },
   {
@@ -582,7 +595,7 @@ const MUTANTS = [
     file: RESULTS,
     find: `    if (released) sec.appendChild(p50ExecCards());`,
     repl: `    sec.appendChild(p50ExecCards());`,
-    gate: "P50-SUF1", cmd: "P50_ONLY=P50-SUF1 node tests_p50_core.js",
+    gate: "P50-SUF1", cmd: "node tests_p50_core.js", only: "P50-SUF1",
     reason: /executive cards presentes sob gate fechado|executive card presente/
   },
   {
@@ -595,7 +608,7 @@ const MUTANTS = [
     repl: `  function p50BuildResults(contract) {
     var released = false;
     var sec = el("section", {`,
-    gate: "P50-SUF4", cmd: "P50_ONLY=P50-SUF4 node tests_p50_core.js",
+    gate: "P50-SUF4", cmd: "node tests_p50_core.js", only: "P50-SUF4",
     reason: /gate da UI não desbloqueou|executive cards não liberados/
   },
   {
@@ -606,7 +619,7 @@ const MUTANTS = [
     if (old && old.parentNode) old.parentNode.removeChild(old);`,
     repl: `    var old = document.getElementById("p50-results");
     if (false && old && old.parentNode) old.parentNode.removeChild(old);`,
-    gate: "P50-SUF5", cmd: "P50_ONLY=P50-SUF5 node tests_p50_core.js",
+    gate: "P50-SUF5", cmd: "node tests_p50_core.js", only: "P50-SUF5",
     reason: /executive cards permaneceram|card executivo stale|superfície duplicada|score stale|estágio stale/
   },
   {
@@ -619,7 +632,7 @@ const MUTANTS = [
     repl: `  function p50SuffContract() {
     var confirmedGlobal = ans.filter(function (v) { return v !== null && v !== "NA" && v !== 0; }).length;
     var domains = [];`,
-    gate: "P50-SUF7", cmd: "P50_ONLY=P50-SUF7 node tests_p50_core.js",
+    gate: "P50-SUF7", cmd: "node tests_p50_core.js", only: "P50-SUF7",
     reason: /confirmedGlobal|missingGlobal|sufficient|0 \(NONE\) não confirmou/
   },
   {
@@ -630,7 +643,7 @@ const MUTANTS = [
         domainId: i,`,
     repl: `      domains.unshift({
         domainId: i,`,
-    gate: "P50-SUF7", cmd: "P50_ONLY=P50-SUF7 node tests_p50_core.js",
+    gate: "P50-SUF7", cmd: "node tests_p50_core.js", only: "P50-SUF7",
     reason: /domainId|confirmed|missing/
   },
   {
@@ -641,7 +654,7 @@ const MUTANTS = [
       var canonical = domStat(i).score;               /* score canônico, já computado */`,
     repl: `    if (true) {
       var canonical = domStat(i).score;               /* score canônico, já computado */`,
-    gate: "P50-SUF2", cmd: "P50_ONLY=P50-SUF2 node tests_p50_core.js",
+    gate: "P50-SUF2", cmd: "node tests_p50_core.js", only: "P50-SUF2",
     reason: /estado scored sob gate fechado|valor .* != n\/d|número fabricado|estado \w+ sob gate fechado/
   },
 
@@ -655,7 +668,7 @@ const MUTANTS = [
     file: RESULTS,
     find: `        legHide(value, "gone");`,
     repl: `        void value;   /* MUTANTE: score parcial legado segue exposto */`,
-    gate: "P50-SUF1", cmd: "P50_ONLY=P50-SUF1 node tests_p50_core.js",
+    gate: "P50-SUF1", cmd: "node tests_p50_core.js", only: "P50-SUF1",
     reason: /permanece visível na tela|substituto honesto ausente/
   },
   {
@@ -665,7 +678,7 @@ const MUTANTS = [
     find: `    node.setAttribute("aria-hidden", "true");
     node.classList.add(mode === "veiled" ? "p50-legacy-veiled" : "p50-legacy-gone");`,
     repl: `    node.classList.add(mode === "veiled" ? "p50-legacy-veiled" : "p50-legacy-gone");   /* MUTANTE: some da tela, fica na árvore acessível */`,
-    gate: "P50-SUF1", cmd: "P50_ONLY=P50-SUF1 node tests_p50_core.js",
+    gate: "P50-SUF1", cmd: "node tests_p50_core.js", only: "P50-SUF1",
     reason: /permanece na árvore acessível|estágio de maturidade acessível na página/
   },
   {
@@ -674,7 +687,7 @@ const MUTANTS = [
     file: RESULTS,
     find: `        legHide(fill, "gone");`,
     repl: `        void fill;   /* MUTANTE: preenchimento parcial permanece exposto */`,
-    gate: "P50-SUF1", cmd: "P50_ONLY=P50-SUF1 node tests_p50_core.js",
+    gate: "P50-SUF1", cmd: "node tests_p50_core.js", only: "P50-SUF1",
     reason: /ruler\(s\) preenchido\(s\) exposto/
   },
   {
@@ -683,7 +696,7 @@ const MUTANTS = [
     file: RESULTS,
     find: `          if (!radar.children[i].classList.contains("p50-legacy-note")) legHide(radar.children[i], "veiled");`,
     repl: `          void i;   /* MUTANTE: radar parcial permanece exposto */`,
-    gate: "P50-SUF1", cmd: "P50_ONLY=P50-SUF1 node tests_p50_core.js",
+    gate: "P50-SUF1", cmd: "node tests_p50_core.js", only: "P50-SUF1",
     reason: /nó\(s\) do radar ainda expostos|radar parcial não neutralizado/
   },
   {
@@ -694,7 +707,7 @@ const MUTANTS = [
         legShow(conf);
         legShow(fill);`,
     repl: `        void value; void conf; void fill;   /* MUTANTE: restauração do unlock não ocorre */`,
-    gate: "P50-SUF4", cmd: "P50_ONLY=P50-SUF4 node tests_p50_core.js",
+    gate: "P50-SUF4", cmd: "node tests_p50_core.js", only: "P50-SUF4",
     reason: /nó congelado permanece oculto|valor legado permanece oculto|preenchimento\(s\) exposto\(s\)|marcador de neutralização stale/
   },
   {
@@ -707,7 +720,7 @@ const MUTANTS = [
     if (!node || node.getAttribute("data-p50-legacy") === "hidden") return;
     if (node.getAttribute("data-p50-sealed") !== null) return;   /* MUTANTE: não re-neutraliza */
     node.setAttribute("data-p50-sealed", "1");`,
-    gate: "P50-SUF5", cmd: "P50_ONLY=P50-SUF5 node tests_p50_core.js",
+    gate: "P50-SUF5", cmd: "node tests_p50_core.js", only: "P50-SUF5",
     reason: /permanece visível na tela|permanece na árvore acessível|estágio de maturidade acessível/
   },
 
@@ -722,7 +735,7 @@ const MUTANTS = [
     for (var mk = 0; mk < ans.length; mk++) {
       if (ans[mk] !== null && ans[mk] !== "NA") confirmedGlobal++;   /* MUTANTE: owner paralelo */
     }`,
-    gate: "P50-SUF0", cmd: "P50_ONLY=P50-SUF0 node tests_p50_core.js",
+    gate: "P50-SUF0", cmd: "node tests_p50_core.js", only: "P50-SUF0",
     reason: /owner paralelo|recontar respostas|indexa ans|itera ans|reproduz a fórmula|não reflete a sentinela/
   },
   {
@@ -860,7 +873,7 @@ function guardProof() {
     buildOuFalha("MUT_GUARD_PROOF/mutação");
 
     /* 1 · barreira preventiva DESATIVADA para esta execução isolada */
-    const unguarded = run(m.cmd, { P50_NO_EVIDENCE: "0" });
+    const unguarded = run(m.cmd, Object.assign({}, filtro(m), { P50_NO_EVIDENCE: "0" }));
     const detected = checkEvidence(false);
     const touchedCurrent = detected.filter(v => v.indexOf(CURRENT_PREFIX) >= 0);
     steps.push("1. M20 sem supressão · exit=" + unguarded.code);
@@ -883,7 +896,7 @@ function guardProof() {
     steps.push("4. barreira preventiva restaurada (P50_NO_EVIDENCE central em run())");
 
     /* 5 · M20 de novo, agora com a barreira: zero escrita */
-    const guarded = run(m.cmd);
+    const guarded = run(m.cmd, filtro(m));
     const residue = checkEvidence(false);
     steps.push("5. M20 com supressão · exit=" + guarded.code + " · violações=" + residue.length);
     if (residue.length) fail.push("houve escrita mesmo com a barreira: " + residue.join(" · "));
@@ -1019,7 +1032,7 @@ const QUAL = id => SUITE_NS + "::" + id;
         estado = NAO_EXECUTADO; causa = CAUSA.rebuild;
         nota = (rb.erro || String(rb.out).trim().split("\n").pop() || "").slice(0, 160);
       } else {
-        const r = run(m.cmd);
+        const r = run(m.cmd, filtro(m));
         if (r.spawnFalhou) {
           /* D1 · o processo do gate não chegou a existir: NÃO EXECUTADO. */
           estado = NAO_EXECUTADO; causa = CAUSA.gate; nota = r.erro.slice(0, 160);
@@ -1037,7 +1050,8 @@ const QUAL = id => SUITE_NS + "::" + id;
                foi executado (id de gate errado no filtro seleciona ZERO gates e
                sai 0). Nunca SOBREVIVENTE — sobrevivência exige gate executado. */
             estado = NAO_EXECUTADO; causa = CAUSA.gate;
-            nota = "a suíte não emitiu linha PASS/FAIL de " + m.gate + " (exit " + r.code + ")";
+            nota = "a suíte não emitiu linha PASS/FAIL de " + m.gate +
+                   " (exit " + r.code + ")" + (m.only ? " · filtro only=" + m.only : "");
           } else {
             const reprovou = /^FAIL/.test(linha);
             const motivo = m.reason.test(linha);

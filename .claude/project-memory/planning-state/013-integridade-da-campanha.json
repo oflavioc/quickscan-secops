@@ -25,7 +25,16 @@
     "notes": "DECIDIDO SOB DELEGACAO do proprietario de 2026-08-29. tasks.md: 32 tarefas T001-T032 nas 9 waves. [P] uma unica vez (T024 x T025, W8). tests_p51_mutants.js com dois donos em waves distintas (T006 build/W3, T019 qa/W6). W4 com dois commits separados: T009 (preflight) e T011 (os 26 filtros da p50 como tarefa propria, o maior diff mecanico). Dois reds commitados: T002 (o julgador nasce reprovando os tres harnesses) e T017 (o red que o green da W3 produz — as quatro ancoras). Campanha do harness tocado a cada wave, quatro ao longo do PR, nunca uma auditoria no fim. DUAS ADICOES ACEITAS, ambas verificadas por mim: (1) T023 sincroniza a branch com origin/develop na W7 — o plano dava a condicao da W8 por satisfeita mas nao escreveu a mecanica, e conferi que EA-3 NAO esta nesta branch (0 ocorrencias); sem isso o doc-writer escreveria EA-4/5/6 num arquivo sem EA-3, dando quatro abertos em vez de cinco e conflito no BACKLOG.md. Posta na W7 e nao na W8 para o BACKLOG ter um unico autor por wave; gera repin fora da previsao R1-R10, nomeado e destinado ao relatorio final. (2) a auto-exclusao nominal de IC-1 (R10 §10) cobre specs/013-integridade-da-campanha/** inteiro, nao so a spec.md — conferi que os QUATRO arquivos carregam os literais proibidos (python3, P50_ONLY=); excluir so a spec faria o gate reprovar a si mesmo na wave seguinte."
   },
   "red": {
-    "status": "pending",
-    "notes": "W1/T002 produz o primeiro red: o julgador nasce reprovando os tres harnesses"
+    "status": "proven",
+    "commit": "f89ab9506b3f7e7679c1b2529d30623a7e2d6d1b",
+    "gates": [
+      "IC-1",
+      "IC-2",
+      "IC-4",
+      "IC-5",
+      "IC-6"
+    ],
+    "artefato": "specs/013-integridade-da-campanha/red-integridade.md",
+    "notes": "T002/W1. Medido em 3e43a15 em worktree efemera (o stage recusa arvore suja) e reconferido em arvore limpa depois do commit, saida identica: exit 1, 14 problemas nomeados, ZERO campanha disparada. IC-1: 46 cmd com prefixo POSIX (20/20 na p51 + 26/53 na p50) e 4 literais de interpretador em 3 arquivos (p50:85, p51:200, p51:205, p52:85); core e p52 verdes no eixo do prefixo — o gate discrimina. IC-2: have('python') da o requisito por presente com MUTATION_PY apontando para binario inexistente (M-IC3 e o codigo de hoje, :30-31). IC-4: os tres harnesses nao declaram preflight: true, C1 sem produtor. IC-5: 20 mutantes da p51 sem par + 1 par que nao e mutante nenhum. IC-6: targets divergentes nas DUAS direcoes. Falsificacao em copia efemera levou cada assercao ao verde (P1) e a devolveu ao vermelho pelo mutante correspondente (M-IC5/M-IC6/M-IC7/M-IC8/M-IC9); M-IC1/M-IC2/M-IC3 sao o estado de hoje. ACHADO PROPRIO, com guarda no mesmo commit: 'preflight: true' declarado num harness que nao le argv fazia o consumidor rodar a CAMPANHA INTEIRA dentro de um stage declarado mutates: false — agora o consumidor confere no fonte se o harness le --preflight e recusa a invocacao (D4 virou pre-condicao verificada). DIVERGENCIA registrada contra o red previsto: no cenario IC-3(a) so a p51 imprime veredito e razao D/T com interpretador ausente; p50 e p52 abortam no build inicial com falha nao classificada, antes de mutar — as duas formas violam T4/T5 mas a correcao difere. Repin R3 e da T003: o stage baseline fica vermelho ate la (1 divergente + 1 rastreado sem pin)."
   }
 }

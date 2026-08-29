@@ -229,8 +229,44 @@ body[data-uxscreen="refinement"] #ux-progress-mobile{ display:none !important; }
 @media (max-width:720px){ .ses-actions .btn2{ width:100%; min-height:44px; } }
 
 /* ===== [5.9] leitura executiva: nome de domínio na narrativa (spec 009 · C4) =====
-   Consome o mapa único [data-dom] -> --dom-accent de [4.3-B] (68-72), que NÃO é
-   alterado aqui. `font-weight` é o canal NÃO-CROMÁTICO obrigatório: narrativeHTML
-   serve tela e papel pela mesma função, e no papel a cor é dispensável — o peso
-   sozinho tem de preservar o significado (D009-DOM1 / mutante D009-M5). */
-.jn-dom{ color:var(--dom-accent); font-weight:700; }
+   O mapa único [data-dom] -> --dom-accent de [4.3-B] (68-72) NÃO é alterado aqui:
+   borda, chip, trilho e eixo de radar continuam exatamente com o token de marca.
+   `font-weight` é o canal NÃO-CROMÁTICO obrigatório: narrativeHTML serve tela e
+   papel pela mesma função, e no papel a cor é dispensável — o peso sozinho tem de
+   preservar o significado (D009-DOM1 / mutante D009-M5).
+
+   [5.9-A] VARIANTE DE TEXTO. Os accents de domínio foram desenhados para borda,
+   chip e eixo — não para texto corrido. Aplicados como `color` eles reprovam em
+   WCAG AA (4.5:1 p/ texto normal): na TELA (--surface:#151517) o roxo dá 4.21:1 e
+   o azul 4.57:1; no PAPEL (@media print -> --surface:#fff, Camada 1) os CINCO
+   reprovam (roxo 4.33, verde 2.70, teal 1.97, azul 3.99, silver 2.16). O axe só
+   enxerga a tela — o PDF ninguém mede — então as duas superfícies são corrigidas.
+
+   `--dom-accent-text` é uma variante DERIVADA do token de marca por color-mix,
+   nunca um hex novo: tint (mistura com --ftnt-white) na tela, shade (mistura com
+   --ftnt-black) no papel. A identidade de cor por domínio é preservada — o roxo
+   continua lendo como roxo — e onde o token de marca já passa com folga na tela
+   ele é usado INTACTO. Escopo: só `.jn-dom` lê esta variante.
+
+   Contraste medido (WCAG 2.x, AA texto normal = 4.5:1; alvo desta regra >= 5:1):
+     dom  tom de tela        sobre #151517 | tom de papel       sobre #fff
+     0    #A682D7 tint 80%      5.90:1     | #734FA4 shade 80%    6.21:1
+     1    #3CB17E token         6.76:1     | #246A4C shade 60%    6.48:1
+     2    #2CCCD3 token         9.28:1     | #16666A shade 50%    6.68:1
+     3    #5999E8 tint 80%      6.21:1     | #245FAA shade 75%    6.38:1
+     4    #A2B2C8 token         8.46:1     | #59626E shade 55%    6.18:1
+   Pior caso 5.90:1 na tela e 6.18:1 no papel — folga sobre os 4.5:1 exigidos. */
+.jn-dom{ color:var(--dom-accent-text, inherit); font-weight:700; }
+.jn-dom[data-dom="0"]{ --dom-accent-text:color-mix(in srgb, var(--ftnt-purple) 80%, var(--ftnt-white)); }
+.jn-dom[data-dom="1"]{ --dom-accent-text:var(--ftnt-green); }
+.jn-dom[data-dom="2"]{ --dom-accent-text:var(--ftnt-teal); }
+.jn-dom[data-dom="3"]{ --dom-accent-text:color-mix(in srgb, var(--ftnt-blue) 80%, var(--ftnt-white)); }
+.jn-dom[data-dom="4"]{ --dom-accent-text:var(--ftnt-silver); }
+/* [5.9-B] papel: a superfície inverte (--surface:#fff), então o tom inverte junto */
+@media print{
+  .jn-dom[data-dom="0"]{ --dom-accent-text:color-mix(in srgb, var(--ftnt-purple) 80%, var(--ftnt-black)); }
+  .jn-dom[data-dom="1"]{ --dom-accent-text:color-mix(in srgb, var(--ftnt-green)  60%, var(--ftnt-black)); }
+  .jn-dom[data-dom="2"]{ --dom-accent-text:color-mix(in srgb, var(--ftnt-teal)   50%, var(--ftnt-black)); }
+  .jn-dom[data-dom="3"]{ --dom-accent-text:color-mix(in srgb, var(--ftnt-blue)   75%, var(--ftnt-black)); }
+  .jn-dom[data-dom="4"]{ --dom-accent-text:color-mix(in srgb, var(--ftnt-silver) 55%, var(--ftnt-black)); }
+}

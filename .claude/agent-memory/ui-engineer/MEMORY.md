@@ -7,3 +7,4 @@
 - [Pins duplos travam módulos de produto](pins-duplos-bloqueiam-modulos-de-produto.md) — p50core cai por hash inline ao tocar ui_target/ui_journey/ui_ux.css/ui_v32.js (GOV1, SUF0, SUF8, IC4)
 - [Régua de CSS: estreitar, não sobrepor](feedback_css_regua_estreitar.md) — tirar um nó de uma regra é estreitar o seletor; override posterior cega o oráculo
 - [Suítes paralelas da 009](project_009_suites_paralelas.md) — P52-GOV1 e vizinhas falham por dono alheio; confirmar contra HEAD antes de atribuir
+- [Accent de domínio não é cor de texto](feedback_accent_dominio_nao_e_cor_de_texto.md) — token cru reprova AA; variante derivada com tom próprio p/ tela e papel

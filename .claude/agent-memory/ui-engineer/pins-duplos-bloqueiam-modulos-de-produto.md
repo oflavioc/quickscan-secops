@@ -27,6 +27,12 @@ com domínio de teste resolver o pin — nunca tocar `tests_p50_core.js` (é do
 não-atribuição é rodar a mesma suíte com a versão de HEAD do módulo, ver
 [[workflow-verificacao-sem-rebuild]].
 
+**Cobertura medida por arquivo (2026-08-28):** os quatro gates NÃO caem juntos —
+cada um pina um conjunto próprio. Tocar **só** `ui_ux_v32.css` derruba
+**apenas `P50-GOV1`** (`63 PASS · 1 FAIL de 64`, "protegidos alterados:
+ui_ux_v32.css"); `SUF0`, `SUF8` e `IC4` seguem verdes. Reporte o gate que a sua
+medição realmente mostrou, não a lista inteira.
+
 **Registro da 009 (2026-08-28):** a seção "Autorização nominal §29.4" do
 `spec.md` lista, na linha *Consequência*, só `P50-GOV1`, `P50-SUF0` e `P50-SUF8`
 como gates a voltar ao verde após o repin — **`P50-IC4` ficou de fora**. Quem

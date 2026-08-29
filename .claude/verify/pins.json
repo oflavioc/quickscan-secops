@@ -1,7 +1,7 @@
 {
   "_meta": {
     "descricao": "Registry único de pins — fonte de identidade dos artefatos (R8). Hashes = SHA-256 dos blobs de HEAD. Alterar arquivo pinado exige regenerar este registry no MESMO PR, com motivo no commit.",
-    "gerado_de_head": "e9a04872e2a1057d15fda24fca30e2b836822941",
+    "gerado_de_head": "0c3f752317ecbeda44497823e69c0106928ba45e",
     "gerado_em": "2026-08-29",
     "exclusoes": [
       "docs_phase5/**",
@@ -15,7 +15,7 @@
     "baseline_core_zip_sha256": "625079c462be7d44ffd69b1cd85f256382322bd0555ae4b548f21bf30ee5b89d"
   },
   "files": {
-    ".claude/BACKLOG.md": "5ae8578aca908ad36207c33ea144c0cbb0b732759f2bfc2d69d74467e2d6b757",
+    ".claude/BACKLOG.md": "27bd17846f6b703de914ef819e3297fce824f5370164758864aa2eeb4bae7788",
     ".claude/agent-memory/README.md": "2f868716c8785119c1d6a02a7715f7b5058ab968f55951410fc82fc45b960a93",
     ".claude/agent-memory/product-owner/project_ids_ea_entre_branches.md": "f7788c69ec137ae12c441afbb0b9bdb715b24ebd0ac9ca41c319d5478afc78eb",
     ".claude/agent-memory/tech-lead/feedback_crosscheck_specs_seladas.md": "4ba53e77b8628708cd6b0b17baf0be95cfa7594bdb3842aca1f6097b072c5521",
@@ -84,7 +84,7 @@
     ".claude/verify/gen_pins.py": "730043800a41b4cfbb799945dd6499df8ba1375096f5f748df01c8c2d12a407a",
     ".claude/verify/invariants.json": "b8571facafbe6098cc643886cd158f877dd702c0cba6ca5addff34fc3e10bee6",
     ".claude/verify/known_issues.json": "7f5e0404fd12725778ac032a136604cddbe52d062a2f3a658a91f061a36bb820",
-    ".claude/verify/mutation-matrix.json": "2b51fcbf28833cd6d7d576e06d40451146a1b815553b0c751ee513c528f92f1a",
+    ".claude/verify/mutation-matrix.json": "b66b3c82f47f22e3f17e83ec1c92026b1aa36793f6cd8f8955f4a9c449b0714d",
     ".claude/verify/mutation_map.json": "9e49f50a34d0432fc2c396d416f8a435d21ac1999b89a182c1716dc134cf6809",
     ".claude/verify/pipeline.yaml": "4c87841da3b876cf7b594153f836ece74565b4a10f69ce296efff5d7751cf83a",
     ".claude/verify/run.sh": "b137b7a1c1bf9233b06ed8f87b04fb03150b316b59ce0b56231c28ab4e048faa",

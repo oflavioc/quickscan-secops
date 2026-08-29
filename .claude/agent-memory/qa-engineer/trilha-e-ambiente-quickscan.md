@@ -8,9 +8,16 @@ metadata:
 Dois fatos de ambiente que se repetem a cada fase e precisam ser **declarados**,
 nunca presumidos nem inventados:
 
-1. **Chromium ausente.** `playwright` resolve
-   `C:\Users\usuario\AppData\Local\ms-playwright\chromium-1234\chrome-win64\chrome.exe`
-   e o binário **não existe** (conferido por `fs.existsSync` em 2026-08-28).
+1. **Chromium ausente.** `playwright.chromium.executablePath()` resolve para o
+   cache local do Playwright e o binário **não existe** (conferido por
+   `fs.existsSync` em 2026-08-28); `CHROME_PATH` vazio.
+   *Descreva o caminho, nunca o cole:* em 2026-08-28 o `compliance-audit`
+   reprovou o PR #24 com "caminho absoluto em governança" porque o literal
+   dessa resolução — com nome de usuário — tinha ficado em
+   `mutation-matrix.json`. Arquivo de governança versionado não aceita caminho
+   de máquina; e o scanner (`compliance-audit.sh`) varre apenas
+   `*.sh|*.py|*.json|*.yaml` sob `.claude/hooks` e `.claude/verify` — `*.md` é
+   **ponto cego**, então aqui a disciplina é minha, não do gate.
    Logo `p52chromium` (55/0), `p50chromium` (27/0) e `playwright` (67/37) são
    **não executados, declarados com motivo** — o resultado vem do job `visual`
    no CI. `known_issues.json` está com `issues: []`: é agendamento, não dispensa.

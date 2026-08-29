@@ -122,9 +122,23 @@ const MUTANTS = [
     /* Âncora byte a byte da linha real de `ui_ux_v32.css` (a mesma armadilha do
        literal `P52_SECTIONS`): reformatar a regra faz o mutante deixar de
        aplicar e o gate perde o discriminante em silêncio. Por isso âncora
-       ausente é FALHA do harness, não "não aplicável". */
-    find: `.jn-dom{ color:var(--dom-accent); font-weight:700; }`,
-    repl: `.jn-dom{ color:var(--dom-accent); }`,
+       ausente é FALHA do harness, não "não aplicável".
+
+       [2026-08-28 · SEGUNDA ROT DE ÂNCORA desta demanda, depois de `D009-M16`]
+       A auditoria de acessibilidade do CI reprovou `P52-ACC1`/`V322-NI1` com
+       `color-contrast|serious`: os accents de `[data-dom]` foram desenhados
+       para BORDA e CHIP, não para texto — 4.21:1 no roxo, contra os 4.5:1 que
+       AA exige. A correção do `ui-engineer` trocou o token por uma variante
+       `--dom-accent-text` derivada por `color-mix`, e a linha em que este
+       mutante ancorava deixou de existir. Reancorado no literal atual.
+
+       O DISCRIMINANTE NÃO MUDOU: o `repl` continua removendo `font-weight`, e
+       `D009-DOM1` continua exigindo que ALGUMA regra de `.jn-dom` declare canal
+       não-cromático. As regras novas `.jn-dom[data-dom="N"]` só declaram a
+       variável de cor, então tirar o `font-weight` daqui zera o canal — o
+       mutante ataca exatamente o que atacava antes. */
+    find: `.jn-dom{ color:var(--dom-accent-text, inherit); font-weight:700; }`,
+    repl: `.jn-dom{ color:var(--dom-accent-text, inherit); }`,
     gate: "D009-DOM1",
     reason: /canal não-cromático ausente/
   },

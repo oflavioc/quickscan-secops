@@ -319,7 +319,31 @@ const PROTECTED = {
      morre em `D009-DOM1` ("canal não-cromático ausente"). Identidade anterior
      (core, intocado desde a 4.3.1):
      84af670571c7d11bec828636899b94e4f264e376febaaeb8e9ade1a841483b44 */
-  "ui_ux_v32.css": "ccfffa27379845e67cfcbc6a987e87bb93113ae106906e7425aedc30265e61aa",
+  /* DEMANDA 009 · AUTORIZAÇÃO NOMINAL §29.4 · TERCEIRO REPIN (correção de UAT
+     do CI). Mesma autorização, sem ampliação: proprietário, no chat,
+     2026-08-28, "Autorizo nominalmente a edição dos quatro arquivos para a
+     009"; registro em `specs/009-leitura-do-relatorio/spec.md`, seção
+     "Autorização nominal §29.4 — registro (consumada)". `ui_ux_v32.css` já
+     estava entre os quatro nomeados; muda o VALOR, não o alcance. Os outros
+     três NÃO foram tocados nesta rodada.
+
+     MOTIVO: o job `visual` do CI reprovou `P52-ACC1` e `V322-NI1` com
+     `color-contrast|serious`. A regra `.jn-dom` criada por esta demanda pintava
+     texto com os accents de `[data-dom]`, que foram desenhados para BORDA e
+     CHIP — o roxo dava 4.21:1 contra os 4.5:1 exigidos por AA, e os cinco
+     reprovavam TAMBÉM no papel, onde nenhum gate mede. A correção introduz
+     `--dom-accent-text`, variante derivada por `color-mix` sobre os MESMOS
+     tokens de marca, com ramo próprio dentro do `@media print`. O mapa canônico
+     `[data-dom] -> --dom-accent` de [4.3-B] NÃO é alterado: só `.jn-dom` lê a
+     variante. Pior caso medido após a correção: 5.90:1 na tela, 6.18:1 no
+     papel. Nenhuma regra existente foi sobrescrita e nenhum seletor ampliado.
+
+     `font-weight:700` permanece na regra: é o canal NÃO-CROMÁTICO que
+     `D009-DOM1` exige e que o mutante `D009-M5` ataca — reancorado no mesmo
+     commit, porque o literal antigo deixou de existir.
+     Identidade anterior (primeiro repin da 009):
+     ccfffa27379845e67cfcbc6a987e87bb93113ae106906e7425aedc30265e61aa */
+  "ui_ux_v32.css": "8afbd55f97a3abd10a0a217925807a92161506be7c3ef3a8ff0303a75ebabbf3",
   /* [Onda-0 · 2026-08-25] REPIN autorizado (Estrutura Agêntica, R8): gerador determinístico
      (newline LF explícito + stdout UTF-8 + modo --check); output byte-idêntico (32aabc34…).
      Identidade anterior: 1acfe25c2f3ac3e4d76ce42eeb7ceec3108c1d3471c27e8f788e0168b8225bf7 */

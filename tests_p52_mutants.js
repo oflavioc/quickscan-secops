@@ -1026,16 +1026,10 @@ const MUTANTS = [
     id: "V322-M3",
     desc: "reabrir SOC & Operations em todo rerender, anulando a decisão do usuário",
     file: P52JS,
-    find: `    p52ContextRegions(ed);
-    p52DecorateContextGroups(ed);
-    p52CapHelp(ed);
-  }`,
-    repl: `    p52ContextRegions(ed);
-    p52DecorateContextGroups(ed);
-    p52CapHelp(ed);
+    find: `    p52CapHelp(ed);`,
+    repl: `    p52CapHelp(ed);
     var g1m = ed.querySelector('details[data-gid="g1"]');
-    if (g1m) g1m.open = true;
-  }`,
+    if (g1m) g1m.open = true;`,
     /* MIGRAÇÃO · ERRATA V3.2.2 §4 · o defeito atacado é o mesmo: o decorador
        reabre `g1` a cada passagem, anulando a decisão do usuário. O que mudou é
        QUANDO o gate o pega. Com o estado inicial recolhido, a PRIMEIRA passagem

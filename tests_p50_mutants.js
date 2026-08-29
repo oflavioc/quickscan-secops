@@ -328,10 +328,11 @@ const MUTANTS = [
     id: "M13",
     desc: "escrever a evidência direto em notes[k] em vez do setter congelado",
     file: SHELL,
-    find: `      var t = document.getElementById("notetgl");        /* setter congelado */
-      if (t) t.click();`,
-    repl: `      notes[step - 1] = String(notes[step - 1] || "");
-      render();`,
+    find: `  function p50OnNoteInput() {
+    try {`,
+    repl: `  function p50OnNoteInput() {
+    try {
+      notes[step - 1] = String(notes[step - 1] || "");`,
     gate: "P50-UX4", cmd: "node tests_p50_core.js",
     reason: /campo canônico de nota não foi aberto|escreve diretamente em notes/
   },
@@ -428,10 +429,10 @@ const MUTANTS = [
     id: "M23",
     desc: "inverter a leitura de r.ok no observador de export",
     file: SHELL,
-    find: `        if (r && r.ok) { p50SesState = "exported"; p50MarkClean(); }
-        else { p50SesState = "export-failed"; }`,
-    repl: `        if (r && !r.ok) { p50SesState = "exported"; p50MarkClean(); }
-        else { p50SesState = "export-failed"; }`,
+    find: `        if (r && r.ok) {
+          p50SesState = "exported"; p50MarkClean();`,
+    repl: `        if (r && !r.ok) {
+          p50SesState = "exported"; p50MarkClean();`,
     gate: "P50-SESUX4", cmd: "node tests_p50_core.js",
     reason: /ok=true não marcou exported|ok=false marcou exported|ok=true não marcou clean/
   },
@@ -561,8 +562,10 @@ const MUTANTS = [
     id: "M35",
     desc: "renderer do gate passa a conter o limiar literal",
     file: RESULTS,
-    find: `    var released = contract.sufficient === true;`,
-    repl: `    var released = contract.confirmedGlobal >= 10;`,
+    find: `  function p50BuildResults(contract) {
+    var released = contract.sufficient === true;`,
+    repl: `  function p50BuildResults(contract) {
+    var released = contract.confirmedGlobal >= 10;`,
     gate: "P50-SUF0", cmd: "node tests_p50_core.js", only: "P50-SUF0",
     reason: /limiar global 10/
   },

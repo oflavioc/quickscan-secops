@@ -488,3 +488,575 @@ divergente / faltando). Nenhuma bloqueia a T019.
 | campanha `p51` completa | delegada ao job `visual`: o próprio `check_mutation.py` imprime `[DEFER] p51: exigida (alvo mudou) — delegada ao job com chromium (job visual)` |
 | pipeline completo (`suites`, `baseline`) | fora do escopo da T017. O repin desta matriz é **R8a/T018** (`build-engineer`), no commit seguinte — entre este commit e o dele, o stage `baseline` fica legitimamente vermelho |
 | edição de âncora, de `ui_*`, de `USER_GUIDE.md` ou de gate | **proibida nesta tarefa por construção** — e verificada: árvore limpa e SHA do harness inalterado |
+
+---
+---
+
+# E2 estendida (W6b) — as quatro âncoras que o instrumento revelou
+
+> **Esta seção fecha a dívida declarada na §5.** A §5 registrou quatro âncoras
+> fora de `ocorrencias == 1` em `p50` e `p52` e as deixou **não triadas**, porque
+> a E2 era nominalmente escopada às quatro da `p51`. O escopo foi **estendido**
+> pelo orquestrador sob delegação do proprietário (2026-08-29). A razão é dura e
+> vale registrada: sem elas o **`IC-4` fica vermelho para sempre**, o stage
+> `mutation` nunca fecha e o PR da 013 não mescla. A alternativa — fazer o gate
+> **tolerar** âncora podre como dívida — é exatamente o buraco que esta demanda
+> existe para fechar (R10 §1).
+>
+> Mesma disciplina da T017 + T019: **triagem escrita antes da edição**, as três
+> perguntas por âncora com `arquivo:linha`, e as **três provas cumulativas de
+> T9** — (a) unicidade pelo preflight · (b) morte pelo gate **e** motivo
+> esperados · (c) sobrevivência com a asserção correspondente neutralizada.
+>
+> **Zero byte de produto.** Nenhuma edição em `ui_*`, `USER_GUIDE.md`, engine ou
+> suíte de gate. O que muda são **duas** âncoras de harness: `tests_p50_mutants.js`
+> (M13, M23, M35) e `tests_p52_mutants.js` (V322-M3).
+
+---
+
+## 8. O red que esta extensão consome
+
+Medido nesta tarefa — **reexecutado, não herdado de relato** (R2 §4) — na
+worktree `phase5-013`, HEAD `18d78e6`, árvore limpa, 2026-08-29:
+
+```
+MUTATION_DEFER_MISSING=1 python .claude/verify/check_mutation.py
+  -> exit 1 · "mutation: 0 campanha(s) executada(s) · 6 problema(s)"
+
+[FAIL] IC-4: p50/M13 · âncora não encontrada — ocorrencias=0 em ui_p50_shell_v32.js (C1 exige exatamente 1 antes de mutar)
+[FAIL] IC-4: p50/M23 · âncora não encontrada — ocorrencias=0 em ui_p50_shell_v32.js (C1 exige exatamente 1 antes de mutar)
+[FAIL] IC-4: p50/M35 · âncora ambígua — ocorrencias=2 em ui_p50_results_v32.js (C1 exige exatamente 1 antes de mutar)
+[OK]   IC-4: p51: 20 âncora(s) com ocorrencias == 1 (preflight, C1)
+[FAIL] IC-4: p52/V322-M3 · âncora não encontrada — ocorrencias=0 em ui_p52_workspace_v32.js (C1 exige exatamente 1 antes de mutar)
+```
+
+Confirmado pelos **produtores** de C1, executados de forma independente:
+`node tests_p50_mutants.js --preflight` ⇒ `3 âncora(s) fora de ocorrencias == 1:
+M13, M23, M35` (de 53) · `node tests_p52_mutants.js --preflight` ⇒
+`1 âncora(s) fora de ocorrencias == 1: V322-M3` (de 107).
+
+**Os outros 2 dos 6 problemas são `IC-5`** (os 20 pares da `p51` ausentes de
+`mutation-matrix.json` + o par obsoleto `campanhas P51 (múltiplos)`) — escopo de
+**E4/T024, W8**. Ficam vermelhos ao fim desta wave **por previsão**, não por
+resíduo, e não são tocados aqui.
+
+### 8.1 Ambiente medido (R10 §2 — ausência se declara com nome)
+
+| item | estado medido |
+|---|---|
+| `node` | v24.19.0 |
+| `node_modules` em `phase5-013` | **inexistente** — resolvido por `NODE_PATH=C:\Projetos\QuickScan-SOC-CMM\phase5-009\node_modules` |
+| `jsdom` | **30.0.1** (mesma versão pinada) |
+| interpretador | `python` (padrão), resolvido em `C:\Python314\python.EXE` |
+| **Chromium** | **AUSENTE, nomeado**: `CHROME_PATH` vazia; `C:\Users\usuario\AppData\Local\ms-playwright` inexistente; a própria suíte diz `P52 CHROMIUM: falha fatal — browserType.launch: Executable doesn't exist at ...\ms-playwright\chromium_headless_shell-1234\chrome-headless-shell-win64\chrome-headless-shell.exe` |
+| trilha | **Opus** — não o `fable`/`max` pinado (créditos). Registrado em DEPENDÊNCIAS |
+
+**Onde as provas rodaram.** Todas em **cópia efêmera** fora da árvore (T10): a
+árvore real nunca foi mutada, e ao fim de cada experimento a cópia foi conferida
+byte a byte contra a árvore real (9 arquivos de produto + HTML: todos `OK`).
+O `check_mutation.py` **recusa árvore suja** (`:56-61`), então o veredito
+canônico pós-edição também é medido em cópia — a árvore real só o produz depois
+do commit, que não é meu.
+
+---
+
+## 9. A regra, e o corolário que esta seção exercita
+
+Vale a mesma regra dura da §2: **a âncora nova se escolhe pela PROPRIEDADE que o
+`desc` documenta, nunca por "casa e passa"**; propriedade morta ⇒ **aposentadoria
+com razão registrada**, nunca reancoragem oportunista.
+
+E o corolário, que aqui é o eixo do trabalho:
+
+> **`ocorrencias == 1` prova unicidade, não prova sítio.** Para cada âncora, o
+> sítio foi confirmado por **oráculo independente do preflight**: aplicação da
+> mutação em cópia + primeira linha divergente, e — novo nesta seção —
+> **arqueologia por `git log -S`**, que responde *quando a âncora casou e o que a
+> quebrou*, sem depender de leitura de código.
+
+A arqueologia devolveu um resultado que sozinho já ordena a triagem:
+
+| mutante | autoria | `ocorrencias` da âncora ORIGINAL na autoria | commit que a quebrou | `ocorrencias` da âncora NOVA no mesmo ponto |
+|---|---|---|---|---|
+| `M13` | `e520c05` (5.0.2) | **1** | `4aa1f12` (Phase 5.1 UAT) ⇒ 0 | 1 · **já existia na autoria** |
+| `M23` | `e520c05` (5.0.2) | **1** | `4aa1f12` (Phase 5.1 UAT) ⇒ 0 | 1 · **nasce no mesmo commit que quebra a antiga** |
+| `M35` | `4e30c8e` (5.0.3) | **1** | `e527ef6` (5.0.4, `p50Matrix`) ⇒ **2** | 1 em `4e30c8e`, `e527ef6` **e** HEAD |
+| `V322-M3` | `df5d9f6` (v3.2.2) | **0 — na própria autoria** | — | 1 · **já era 1 em `df5d9f6`** |
+
+**`M13` e `M23` têm causa comum, e agora ela tem nome**: `4aa1f12`. A §5 suspeitou
+("sugere causa comum, não coincidência"); está confirmado, e é o mesmo commit de
+REV B/UAT que também apodreceu `M51-03` — três âncoras, um alvo, uma reescrita.
+
+**`V322-M3` nasceu podre.** Não é rot: é âncora que **nunca casou em árvore
+commitada**. O gate `V322-CTXPAR1` jamais rodou contra esta mutação — nem uma vez
+desde `df5d9f6`. Isso fecha a leitura da §5 sobre o `106/107` do CI: não era
+sobrevivente, não era regressão, era um mutante que **nunca existiu na prática**,
+somado como "não detectado" por um relatório de dois estados.
+
+---
+
+## 10. Triagem — as quatro
+
+### 10.1 `p50` / `M13` — "escrever a evidência direto em `notes[k]` em vez do setter congelado"
+
+**Propriedade defendida.** O **handler congelado da Camada 1** é o **único
+escritor** de `notes[k]`; a Camada 5 observa o evento de evidência e reconcilia
+apresentação, **sem nunca escrever no owner**.
+
+**P1 · a propriedade existe hoje?** **Sim — e está enunciada no ponto exato dela.**
+
+- `ui_p50_shell_v32.js:502-510` é a especificação em português:
+  *"A observação é ADITIVA: `addEventListener` não substitui o handler congelado
+  (`t.oninput`), que continua sendo o único escritor de `notes[k]` … Não chama
+  `render()`."*;
+- o observador vive em `ui_p50_shell_v32.js:511-520` (`p50OnNoteInput`), ligado
+  ao textarea congelado em `:522-533` (`p50BindNoteObserver`);
+- a Camada 5 só **lê** `notes[k]`: `:538` (indicador), `:716` e `:760` (preview).
+  Não há uma única escrita — e é isso que a asserção estrutural do gate afere.
+
+**O que morreu foi o SÍTIO, não a propriedade.** A âncora antiga vivia no *proxy
+P50 de evidência*, o segundo botão que reencaminhava o clique para `#notetgl`.
+Ele foi **removido** — não escondido — pela UAT-03, e a remoção está documentada
+em `ui_p50_shell_v32.js:769-776`. Sítio removido com propriedade viva é caso de
+**reancoragem**, não de aposentadoria.
+
+**P2 · o gate faz a asserção, e o `reason` casa a mensagem de hoje?** **Sim — e
+aqui o gate MUDOU DE FORMA, com consequência que precisa ficar escrita.**
+`P50-UX4` (`tests_p50_core.js:1883`) tem **duas** asserções cujas mensagens o
+`reason` (`/campo canônico de nota não foi aberto|escreve diretamente em notes/`)
+alcança:
+
+```
+tests_p50_core.js:1896   "campo canônico de nota não foi aberto pelo atalho"   (comportamental)
+tests_p50_core.js:1919   "módulo novo escreve diretamente em notes[...]"        (estrutural, varre SHELL_JS)
+```
+
+O gate deixou de clicar no proxy e passou a clicar no controle canônico
+(`:1892`, com o comentário `:1888-1891` explicando a troca). **Consequência
+medida:** a primeira alternativa do `reason` tornou-se **inalcançável** por uma
+mutação confinada a `ui_p50_shell_v32.js` — quem abre o campo é a Camada 1, que
+este mutante não toca. A metade que mata hoje é a **estrutural**, e é ela que a
+medição confirma. Registro isto como achado (§13, divergência 1); **não** estreito
+o `reason` nesta wave: mexer no par vai além de reancorar, e a disciplina desta
+demanda é classificar, não consertar por conta própria.
+
+**P3 · unicidade e sítio.** Medidos — ver §11.
+
+**Saída da triagem: REANCORAR.**
+
+**Recorte proposto** (`tests_p50_mutants.js`):
+
+```js
+find: `  function p50OnNoteInput() {
+    try {`,
+repl: `  function p50OnNoteInput() {
+    try {
+      notes[step - 1] = String(notes[step - 1] || "");`,
+```
+
+**Por que este recorte carrega a propriedade e não só casa texto.** O observador
+**é** o lugar onde a Camada 5 encontra o evento de evidência e, por contrato,
+**escolhe não escrever**. Mutar ali é literalmente "escrever a evidência direto em
+`notes[k]` em vez de deixar o setter congelado fazê-lo" — a mesma transformação do
+mutante original, transposta para o único sítio em que a Camada 5 ainda toca esse
+evento. O `find` é o **menor recorte único** que põe a escrita **dentro** do bloco
+guardado do observador (o `try` é o que faz dele uma observação de falha isolada;
+escrever fora dele seria outra construção).
+
+**Mudança no `repl`, declarada.** O `repl` antigo tinha duas linhas —
+`notes[step - 1] = …` **e** `render();`. O `render()` era **plumbing do sítio
+removido**: depois de um clique no proxy a tela repintava. No observador,
+`render()` é proibido pelo **mesmo comentário** que enuncia a propriedade
+(`:509`). Mantê-lo faria o mutante atacar **duas** propriedades ao mesmo tempo e
+embaralharia "morte pelo motivo esperado". O mutante fica **menor** — e mutante
+menor que ainda morre prova mais, não menos.
+
+**Alternativa rejeitada: ancorar no comentário `:502-510`.** É a especificação da
+propriedade (foi esse o critério que decidiu `M51-18`), mas ali a unicidade
+**não** o exige: o cabeçalho da função já é único. A regra da §2 é explícita —
+contexto só entra quando a unicidade obriga.
+
+---
+
+### 10.2 `p50` / `M23` — "inverter a leitura de `r.ok` no observador de export"
+
+**Propriedade defendida.** O observador de exportação deriva o estado **do retorno
+real** do predecessor: `ok === true` ⇒ `exported` **e** owner limpo;
+`ok === false` ⇒ `export-failed`, sem tocar em metadado.
+
+**P1 · a propriedade existe hoje?** **Sim, byte a byte no mesmo lugar.**
+
+- `ui_p50_shell_v32.js:183-187` é o bloco: `if (r && r.ok) { p50SesState =
+  "exported"; p50MarkClean(); … } else { p50SesState = "export-failed"; }`, com o
+  comentário `/* falha não toca metadado */` na própria linha do `else`;
+- o observador irmão de **import** (`:198-203`) tem a **mesma condição literal**
+  `if (r && r.ok) {` — é o que torna a condição sozinha ambígua (medido: `n=2`).
+
+**O que apodreceu.** `4aa1f12` inseriu `p51MetaOnExport(...)` **dentro** do bloco
+de sucesso e, ao fazê-lo, quebrou o bloco de uma linha em bloco de três. A
+propriedade não se moveu um milímetro; a **forma** do texto sim.
+
+**P2 · o gate faz a asserção, e o `reason` casa a mensagem de hoje?** **Sim, sem
+re-derivação.** `P50-SESUX4` (`tests_p50_core.js:2127`) mantém as três asserções
+que o `reason` alcança:
+
+```
+tests_p50_core.js:2182   "ok=true não marcou exported"
+tests_p50_core.js:2183   "ok=true não marcou clean"
+tests_p50_core.js:2192   "ok=false marcou exported"
+```
+
+**P3 · unicidade e sítio.** Medidos — ver §11.
+
+**Saída da triagem: REANCORAR.**
+
+**Recorte proposto** (`tests_p50_mutants.js`):
+
+```js
+find: `        if (r && r.ok) {
+          p50SesState = "exported"; p50MarkClean();`,
+repl: `        if (r && !r.ok) {
+          p50SesState = "exported"; p50MarkClean();`,
+```
+
+**Por que este recorte carrega a propriedade e não só casa texto.** A condição
+**é** a leitura de `r.ok` que o `desc` nomeia; a segunda linha é o que a torna o
+observador **de export** e não o de import. Ou seja: o contexto entrou porque a
+unicidade obrigou (`if (r && r.ok) {` sozinho ⇒ `ocorrencias=2`, sítios 183 e 199
+— medido) **e** o contexto escolhido é o que documenta a propriedade
+(sucesso ⇒ `exported` + `markClean`), não o que estava por perto. As duas
+exigências da §2 caem no mesmo recorte.
+
+**Alternativa rejeitada: manter as duas linhas antigas incluindo o `else`.** O
+`else` não é mutado (aparece idêntico em `find` e `repl`), não acrescenta
+unicidade e **acrescenta superfície de apodrecimento** — foi uma inserção *dentro*
+do bloco que matou esta âncora. O `else` continua nomeado onde importa: na
+asserção `:2192` do gate.
+
+---
+
+### 10.3 `p50` / `M35` — a **única âncora ambígua** das 180 medidas
+
+**Propriedade defendida.** O **renderer do gate** não é dono de lógica de
+suficiência: ele **consome o veredito canônico** (`contract.sufficient`) e nunca
+reimplementa o limiar.
+
+**P1 · a propriedade existe hoje?** **Sim** — `ui_p50_results_v32.js:733-738`, com
+o cabeçalho da seção dizendo o nome dela: *"Superfície do gate executivo"*.
+
+**P2 · o gate faz a asserção, e o `reason` casa?** **Sim.** `P50-SUF0`
+(`tests_p50_core.js:1013`), bloco (a): `tests_p50_core.js:1032` emite
+`<arquivo> + " contém comparação com o limiar global 10"`, que o `reason`
+(`/limiar global 10/`) casa.
+
+**P3 · QUAL das duas ocorrências carrega a propriedade — e prova de que a outra
+não carrega.**
+
+As duas ocorrências de `    var released = contract.sufficient === true;`:
+
+| sítio | linha | função | o que `released` decide ali |
+|---|---|---|---|
+| **A** | `:300` | `p50Matrix(contract)` (`:292`) | se o **agregado por domínio** é publicado no modelo de dados das três visões (UI-013/UI-014 · B-503-COHERENCE) |
+| **B** | `:738` | `p50BuildResults(contract)` (`:737`) | **o gate**: `data-p50-gate` = `released`/`blocked`, o texto do veredito e a liberação dos executive cards |
+
+**Três oráculos independentes, e os três apontam para B.**
+
+1. **Arqueologia.** `p50BuildResults` nasceu em `4e30c8e` — **o mesmo commit que
+   escreveu `M35`** —, e ali a âncora tinha `ocorrencias=1`. `p50Matrix` só
+   apareceu uma microfase depois, em `e527ef6`, e foi essa chegada que fez a
+   contagem virar 2. O sítio A **não existia** quando o mutante foi escrito: ele
+   nunca foi o alvo, ele virou colisão.
+2. **O par estrutural/comportamental.** `M36` — `desc` "renderer do gate
+   reimplementa a comparação de suficiência" — já ancora **exatamente** em
+   `p50BuildResults`, com a mesma linha e o cabeçalho da função por contexto
+   (`tests_p50_mutants.js`, bloco de `M36`). `M35` e `M36` são as duas metades do
+   mesmo sítio: a estrutural (limiar literal) e a comportamental (veredito
+   próprio). O harness já dizia onde o sítio ficava.
+3. **Oráculo executável — e este é o que decide.** Com a asserção do limiar
+   literal **neutralizada** em cópia efêmera, os dois sítios se separam:
+
+   | `M35` ancorado em | `tests_p50_core.js` pristino | com a asserção do limiar neutralizada |
+   |---|---|---|
+   | **B** (`p50BuildResults`) | `DETECTADO` · `FAIL P50-SUF0 [ui_p50_results_v32.js contém comparação com o limiar global 10]` | `SOBREVIVENTE` · **`FAIL P50-SUF0`** `[gate da UI 'released' != veredito canônico false em [1,3,2,2,2]]` |
+   | **A** (`p50Matrix`) | `DETECTADO` · **mensagem idêntica** | `SOBREVIVENTE` · **`PASS P50-SUF0`** — o gate não reprova por nada |
+
+   Leitura, sem suavizar: **com a asserção ativa, os dois sítios são
+   indistinguíveis** — a varredura de `P50-SUF0` é por **arquivo**, e mutar
+   qualquer lugar de `ui_p50_results_v32.js` produz a mesma frase. É a camada
+   **de baixo** que discrimina: só o sítio B faz a **superfície do gate** divergir
+   do veredito canônico (`tests_p50_core.js:1132-1134`). A propriedade do `desc`
+   — *renderer **do gate*** — está em B; em A há outro `released`, que decide
+   publicação de agregado e que o gate não afere comportamentalmente.
+
+**Isto responde à pergunta que a extensão exigia**, e responde pela negativa ao
+cenário de escalonamento: **não** é o caso de "as duas carregam a propriedade".
+Carregam a mesma *sensibilidade do gate* (que é file-scoped), e isso é fato
+registrado — não a *propriedade*, que é function-scoped e vive em B.
+
+**Saída da triagem: REANCORAR no sítio B — a ambiguidade se desfaz por refinamento
+do recorte, não por escolha de ocorrência.**
+
+**Recorte proposto** (`tests_p50_mutants.js`):
+
+```js
+find: `  function p50BuildResults(contract) {
+    var released = contract.sufficient === true;`,
+repl: `  function p50BuildResults(contract) {
+    var released = contract.confirmedGlobal >= 10;`,
+```
+
+**Por que este recorte e não outro.** É o **menor recorte único** e o cabeçalho da
+função é precisamente o que distingue "renderer **do gate**" de "construtor da
+matriz" — o contexto exigido pela unicidade é o mesmo que documenta a
+propriedade. Medido em `4e30c8e`, `e527ef6` e HEAD: `ocorrencias=1` nos três —
+**este recorte teria sido correto desde a autoria** e a ambiguidade de 5.0.4 não o
+teria alcançado.
+
+**Consequência declarada: `M35` e `M36` passam a ter o `find` byte-idêntico.**
+Não é defeito, é o que os dois `desc` dizem — mesmo sítio, duas mutações, dois
+`reason` distintos (`/limiar global 10/` × `/gate da UI .* != veredito canônico/`).
+O precedente na casa é `M37`/`M38`, que já compartilham sítio com recortes
+diferentes. O custo é acoplamento: um refactor de `p50BuildResults` apodrece as
+duas ao mesmo tempo — e apodrecer junto, ali, é sinal correto.
+
+**Alternativa rejeitada: incluir o comentário `:733-736` ("Superfície do gate
+executivo").** Seria retoricamente forte, mas não acrescenta **nenhuma**
+discriminação sobre o cabeçalho da função e acrescenta rot (prosa se reescreve).
+
+---
+
+### 10.4 `p52` / `V322-M3` — "reabrir SOC & Operations em todo rerender, anulando a decisão do usuário"
+
+**Propriedade defendida.** A passagem de decoração do editor de contexto **não
+reabre** grupo que o usuário fechou: a decisão do usuário sobrevive a todo
+rerender.
+
+**P1 · a propriedade existe hoje?** **Sim.**
+
+- a passagem é `p52ContextEditorDecor()` (`ui_p52_workspace_v32.js:1413-1424`), e
+  as três chamadas de decoração seguem lá, em sequência (`:1418-1420`);
+- nenhuma delas abre grupo: a normalização recolhida é decidida em outro lugar
+  (`V322-M18` ancora nela, âncora sã);
+- o gate mede a propriedade nas duas frentes — abertura inicial e rerender.
+
+**O que apodreceu — e a resposta é diferente das outras três.** Nada apodreceu:
+**a âncora nasceu podre**. Em `df5d9f6`, o commit que **escreveu** `V322-M3`, a
+âncora já contava `ocorrencias=0` (medido) — o mesmo commit havia acrescentado o
+comentário da ERRATA A-02 e `p52RestoreEditorFocus(keep);` entre `p52CapHelp(ed);`
+e o `}` que a âncora exigia. O mutante nunca foi executável em árvore commitada.
+
+**P2 · o gate faz a asserção, e o `reason` casa a mensagem de hoje?** **Sim, por
+leitura de fonte** (gate não executável nesta máquina — §12). `V322-CTXPAR1`
+(`tests_p52_chromium.js:4477`) emite hoje:
+
+```
+tests_p52_chromium.js:4458   "o decorador REABRIU o grupo que o usuário fechou"
+tests_p52_chromium.js:4433   "<tag>: abertura inicial = [<gids>] (esperado nenhum grupo aberto)"
+```
+
+O `reason` registrado — `/o decorador REABRIU (no rerender )?o grupo que o usuário
+fechou|abertura inicial = \[g1\]/` — casa **as duas**, e a nota de migração do
+próprio harness (`tests_p52_mutants.js`, bloco de `V322-M3`) já previa por escrito
+que, com o estado inicial recolhido, é pela **abertura inicial** que o gate pega.
+Nada a re-derivar.
+
+**P3 · unicidade e sítio.** Medidos — ver §11.
+
+**Saída da triagem: REANCORAR.**
+
+**Recorte proposto** (`tests_p52_mutants.js`):
+
+```js
+find: `    p52CapHelp(ed);`,
+repl: `    p52CapHelp(ed);
+    var g1m = ed.querySelector('details[data-gid="g1"]');
+    if (g1m) g1m.open = true;`,
+```
+
+**Por que este recorte carrega a propriedade e não só casa texto.**
+`    p52CapHelp(ed);` é a **última chamada de decorador da passagem** — o ponto em
+que "o decorador terminou de passar" e a partir do qual reabrir `g1` é exatamente
+o defeito do `desc`. Conferido por oráculo estrutural: com a mutação aplicada, o
+bloco inserido fica **dentro** de `p52ContextEditorDecor`, entre `p52CapHelp(ed);`
+e a restauração de foco, e `node --check` aceita o arquivo. O precedente de forma
+está no próprio harness: `V322-M24` ancora em `    p52ContextRegions(ed);` — a
+**primeira** chamada da mesma passagem — para recolher a cada passagem. As duas
+âncoras emparedam a passagem pelas pontas, cada uma mínima e única.
+
+**Alternativa rejeitada: manter as três chamadas + `}` (o recorte de nascença).**
+Também é única hoje (medido), mas reconstrói a armadilha: o `}` é vizinho de uma
+correção **recente e volátil** (a restauração de foco de A-02, `:1421-1423`), e foi
+exatamente essa vizinhança que impediu esta âncora de casar **desde sempre**.
+Ancorar longe do que a história mostrou instável é a mesma lição de `M51-16`.
+
+---
+
+## 11. As três provas de T9 — medidas
+
+Tudo em **cópia efêmera** (T10), `NODE_PATH` para `phase5-009/node_modules`,
+árvore real nunca mutada.
+
+### (a) Unicidade — `ocorrencias == 1` pelo preflight, e o **sítio** por oráculo independente
+
+```
+node tests_p50_mutants.js --preflight   ->  exit 0 · "todas as âncoras com ocorrencias == 1"  (53/53)
+node tests_p52_mutants.js --preflight   ->  exit 0 · "todas as âncoras com ocorrencias == 1"  (107/107)
+```
+
+O preflight prova unicidade. O **sítio** vem de fora dele — mutação aplicada em
+cópia, primeira linha divergente:
+
+| mutante | recorte candidato | `ocorrencias` | 1ª linha divergente | é o sítio da propriedade? |
+|---|---|---|---|---|
+| `M13` | `p50OnNoteInput` + `try` | **1** | **513** | sim — dentro do observador (`:511-520`) |
+| `M23` | condição + `exported`/`markClean` | **1** | **183** | sim — observador de **export** (o de import fica em `:199`) |
+| `M35` | `p50BuildResults` + `released` | **1** | **738** | sim — **não** `:300` (`p50Matrix`) |
+| `V322-M3` | `p52CapHelp(ed);` | **1** | **1421** | sim — dentro de `p52ContextEditorDecor` (`:1413-1424`) |
+
+Contraprovas medidas no mesmo oráculo, que mostram por que o contexto entrou:
+
+```
+M23 com a condição sozinha  -> ocorrencias=2 (linhas 183 e 199)
+M35 com a linha sozinha     -> ocorrencias=2 (linhas 300 e 738)   <- o red de hoje
+```
+
+**Sondas de falsificação** — o verde de `IC-4` não pode ser tautologia (mesma
+disciplina da T019). Medidas em memória sobre a árvore real; nenhum arquivo
+escrito:
+
+| mutante | âncora real | sonda 1: **um caractere a mais** no `find` | sonda 2: âncora **duplicada no alvo** | veredito |
+|---|---|---|---|---|
+| `M13` | 1 | **0** (`âncora não encontrada`) | **2** (`âncora ambígua`) | discrimina |
+| `M23` | 1 | **0** | **2** | discrimina |
+| `M35` | 1 | **0** | **2** | discrimina |
+| `V322-M3` | 1 | **0** | **2** | discrimina |
+
+As quatro reagem **nas duas direções**: o `1` não é um número que o instrumento
+devolveria de qualquer jeito.
+
+### (b) Morte pelo **gate e motivo esperados**
+
+| mutante | comando | veredito | linha do gate |
+|---|---|---|---|
+| `M13` | `MUT_ONLY=M13 node tests_p50_mutants.js` | **DETECTADO** | `FAIL  P50-UX4 — … [módulo novo escreve diretamente em notes[...]]` |
+| `M23` | `MUT_ONLY=M23 node tests_p50_mutants.js` | **DETECTADO** | `FAIL  P50-SESUX4 — … [ok=true não marcou exported]` |
+| `M35` | `MUT_ONLY=M35 node tests_p50_mutants.js` | **DETECTADO** | `FAIL  P50-SUF0 — … [ui_p50_results_v32.js contém comparação com o limiar global 10]` |
+| `V322-M3` | `P52_MUT_ONLY=V322-M3 node tests_p52_mutants.js` | **NÃO EXECUTADO · gate não pôde ser executado** | — (Chromium ausente, §12) |
+
+Em todas: `restauração: … OK · html OK`; nenhuma evidência escrita
+(`P50_NO_EVIDENCE` por construção; com filtro ativo o recibo não é emitido).
+
+Sobre `V322-M3`: a causa impressa é **`gate não pôde ser executado`**, e **não**
+`rebuild` — ou seja, a mutação **foi aplicada e o HTML foi reconstruído com
+sucesso** sobre a âncora nova. O que faltou é ambiente, não âncora. É o vocabulário
+de três estados fazendo exatamente o que a demanda pediu: um mutante que não rodou
+não é sobrevivente.
+
+### (c) Sobrevivência com a asserção neutralizada
+
+Neutralização **em bloco**, nunca de uma asserção só: desliga-se **todas** as
+asserções do gate esperado cuja mensagem o `reason` alcança — neutralizar parte
+devolveria um falso "morre de qualquer jeito" (lição de `M51-20`).
+
+| mutante | asserções neutralizadas | veredito | resíduo |
+|---|---|---|---|
+| `M13` | `tests_p50_core.js:1896` + `:1919` | **SOBREVIVENTE** | `PASS P50-UX4` — o gate esperado **não reprovou** por nada |
+| `M23` | `:2182` + `:2183` + `:2192` | **SOBREVIVENTE** | `FAIL P50-SESUX4 [ok=false marcou clean]` — asserção **fora** do `reason`, portanto não é detecção |
+| `M35` | `:1032` | **SOBREVIVENTE** | `FAIL P50-SUF0 [gate da UI 'released' != veredito canônico false em [1,3,2,2,2]]` — a camada comportamental, fora do `reason` |
+| `V322-M3` | — | **não medível localmente** (§12) | — |
+
+As três provam o que (c) existe para provar: **foi aquela asserção que matou**, não
+o gate por acaso. Onde há resíduo (`M23`, `M35`), ele está **nomeado** e é de
+asserção que o `reason` não cobre — o harness classifica como `SOBREVIVENTE`
+("reprovou por motivo diferente do esperado"), que é a contabilidade correta.
+
+---
+
+## 12. O que esta tarefa **não** executou (R2 §1 — SKIP silencioso é FAIL)
+
+| não executado | causa nomeada | onde fecha |
+|---|---|---|
+| `V322-M3` provas **(b)** e **(c)** | **Chromium ausente**: `CHROME_PATH` vazia, `…\AppData\Local\ms-playwright` inexistente, `browserType.launch: Executable doesn't exist at …chromium_headless_shell-1234…` | job `visual` do commit pushado (D5/KI-3: honestidade do relato > paridade de execução) — mesmo tratamento dado a `M51-16` na T019 |
+| campanha completa das três harnesses | **proibida nesta wave por instrução** — as provas são por mutante, isoladas | T029 (W9) |
+| `gen_pins.py` | **proibido nesta wave por instrução** | repin é do `build-engineer` |
+| `check_mutation.py` na **árvore real** pós-edição | o stage **recusa árvore suja** (`:56-61`) e o commit não é meu | medido em cópia efêmera (§14); veredito canônico na árvore real, depois do commit |
+| `spec-validate`, pipeline completo | fora do escopo desta wave | T029 |
+
+---
+
+## 13. Divergências e achados
+
+Classificados nas três classes de `spec-validate`. Nenhum bloqueia a reancoragem.
+
+| # | divergência / achado | classe | direção proposta |
+|---|---|---|---|
+| 1 | **`P50-UX4` mudou de forma e uma metade do `reason` de `M13` ficou inalcançável.** O gate deixou de clicar no proxy P50 (removido pela UAT-03) e passa a clicar no controle canônico (`tests_p50_core.js:1892`): `campo canônico de nota não foi aberto` **não pode mais** ser produzido por mutação confinada a `ui_p50_shell_v32.js`. Um `reason` com alternativa inalcançável é uma porta aberta para **detecção incidental** — que o cabeçalho do harness proíbe | **implementação divergente** | estreitar o `reason` de `M13` para `/escreve diretamente em notes/` (medido: com o `reason` estreito, (b) continua `DETECTADO` e (c) continua `SOBREVIVENTE`). **Não executado aqui**: alterar o par vai além de reancorar. Consumidor: E3/T022 ou achado próprio |
+| 2 | **`V322-M3` nasceu podre** — `ocorrencias=0` no próprio commit de autoria (`df5d9f6`). O gate `V322-CTXPAR1` **nunca** rodou contra esta mutação | **implementação divergente** (o mutante nunca mediu nada) | resolvido pela reancoragem desta seção; o dado histórico entra no relatório final como a explicação completa do `106/107` — não era sobrevivente **nem** regressão |
+| 3 | **A asserção do limiar de `P50-SUF0` é por ARQUIVO; o `desc` de `M35` é por FUNÇÃO.** Com ela ativa, mutar `p50Matrix` ou `p50BuildResults` produz **a mesma** morte e a **mesma** frase. Unicidade + morte-pelo-motivo **não discriminam** o sítio neste par | **spec errada** (a §5 registrou "qual das duas é a propriedade" como se o gate pudesse responder; ele não pode) | registrado: o discriminante é a camada comportamental (`tests_p50_core.js:1132-1134`) + a arqueologia. Sem valor de bloqueio; vale como precedente para futuras âncoras sobre asserções de varredura |
+| 4 | `IC-5` segue vermelho para a `p51` (20 mutantes sem par + par obsoleto) | **faltando** (previsto) | **E4/T024, W8**. Registrado para não ser confundido com resíduo desta wave |
+
+**Nenhuma das quatro é candidata a aposentadoria.** As quatro propriedades estão
+vivas e localizadas com `arquivo:linha`; os quatro gates estão vivos; os quatro
+`reason` casam a mensagem de hoje; e existe recorte único para as quatro —
+**provado, não inspecionado**. Nenhuma resposta "a propriedade mudou de forma" a
+disparar `plan.md §Protótipo`; e o único gate que mudou de forma (`P50-UX4`)
+devolveu re-derivação com resultado registrado, não bloqueio.
+
+---
+
+## 14. Resumo da E2 estendida
+
+| harness | mutante | estado no red | recorte novo | (a) | (b) | (c) |
+|---|---|---|---|---|---|---|
+| `p50` | `M13` | `ocorrencias=0` | `p50OnNoteInput` + `try` (`:511-512`) | **1** · sítio 513 | **DETECTADO** `P50-UX4` | **SOBREVIVENTE** (`PASS`) |
+| `p50` | `M23` | `ocorrencias=0` | condição de export + `exported`/`markClean` (`:183-184`) | **1** · sítio 183 | **DETECTADO** `P50-SESUX4` | **SOBREVIVENTE** |
+| `p50` | `M35` | **`ocorrencias=2` · ambígua** | `p50BuildResults` + `released` (`:737-738`) | **1** · sítio 738 | **DETECTADO** `P50-SUF0` | **SOBREVIVENTE** |
+| `p52` | `V322-M3` | `ocorrencias=0` (**de nascença**) | `p52CapHelp(ed);` (`:1420`) | **1** · sítio 1421 | **NÃO EXECUTADO** · Chromium | **NÃO EXECUTADO** · Chromium |
+
+**`IC-4` medido depois da reancoragem**, em cópia efêmera do estado pós-edição
+(o stage recusa árvore suja; a árvore real só produz o veredito canônico depois do
+commit):
+
+```
+[OK]   IC-4: p50: 53 âncora(s) com ocorrencias == 1 (preflight, C1)
+[OK]   IC-4: p51: 20 âncora(s) com ocorrencias == 1 (preflight, C1)
+[OK]   IC-4: p52: 107 âncora(s) com ocorrencias == 1 (preflight, C1)
+---- integridade: 2 problema(s) nomeado(s) ----     (os dois são IC-5 / E4-T024)
+```
+
+**`IC-4` fica verde nas três harnesses pela primeira vez desde a W3** — e é a
+primeira vez desde sempre para `p50` e `p52`, que nunca tiveram preflight antes da
+W4/W5. Os problemas nomeados caem de **6 para 2**, e os **dois** que restam são os
+`[FAIL]` de `IC-5` (`p51`), escopo de **E4/T024** na W8.
+
+**Ressalva honesta sobre a medição em cópia** (R2 §1): a cópia efêmera não é um
+repositório git, então o **laço de trigger** que roda *depois* da seção de
+integridade se comporta de outro jeito lá (`[WARN] sem origin/develop para diff` ⇒
+executa a campanha `core`, que na árvore real está `[OK] core: nenhum alvo mudou
+desde a base — campanha não exigida`). **A seção de integridade não usa git** — ela
+lê o conteúdo da árvore e o JSON do contrato C1 —, portanto as linhas `IC-*` acima
+valem para o conteúdo pós-edição. O laço de trigger, não: aquele só se mede na
+árvore real, depois do commit.
+
+Conferido também na **árvore real** (o preflight, ao contrário do stage, não exige
+árvore limpa):
+
+```
+node tests_p50_mutants.js --preflight  ->  exit 0 · todas as âncoras com ocorrencias == 1   (53)
+node tests_p51_mutants.js --preflight  ->  exit 0 · todas as âncoras com ocorrencias == 1   (20)
+node tests_p52_mutants.js --preflight  ->  exit 0 · todas as âncoras com ocorrencias == 1   (107)
+```
+
+### 14.1 Regressão congelada — conferida, não presumida
+
+| item | estado |
+|---|---|
+| `IC-7` · nenhum path de produto no diff | **intacto** — `git diff --name-only` devolve **três** arquivos: esta matriz, `tests_p50_mutants.js`, `tests_p52_mutants.js` |
+| `tests_p51_mutants.js` (as quatro âncoras da T019) | **não tocado** · preflight segue `20/20`, exit 0 |
+| `tests_p50_core.js`, `tests_p52_chromium.js` (suítes de gate) | **não tocados** — a neutralização de (c) só existiu em cópia |
+| `check_mutation.py`, `expected_suites.json`, `mutation_map.json` | **não tocados** |
+| restauração por SHA (`tests_p50_mutants.js:1072`, `tests_p52_mutants.js:1643`) | **intacta**, não enfraquecida (borda 12) |
+| guarda do acervo de evidência (`p50:1077,1088` · `p52:1645,1653`) | **intacta** |
+| `IC-1` (prefixo POSIX e literal de interpretador) | **verde nos quatro harnesses** — `53`/`20`/`107`/`3` `cmd`, nenhum com prefixo |
+| `IC-6` (`p51.targets`) | **verde**, 7 caminhos |
+| registro canônico de suítes (R10 §3) | **nada a acrescentar**: as harnesses de mutação não vivem em `expected_suites.json` (são dirigidas pelo stage `mutation`, não pelo stage `suites`) — nenhuma suíte nova nasceu nesta wave |

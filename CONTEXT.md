@@ -93,6 +93,44 @@ Asserção executável com poder discriminante provado por mutante. O que decide
 gate, nunca a leitura de quem implementou.
 _Evitar_: teste (genérico), checagem manual
 
+**Âncora de mutante**:
+Trecho de texto exato que localiza, no arquivo-alvo, onde a mutação é aplicada.
+Distinta do alvo (o arquivo) e da propriedade (o comportamento defendido).
+_Evitar_: alvo, trecho, patch, find
+
+**Âncora podre**:
+Âncora que não casa mais nenhum texto do arquivo-alvo. O mutante não chega a ser
+aplicado e a campanha o contabiliza como não detectado.
+_Evitar_: mutante quebrado, teste falhando, âncora desatualizada
+
+**Reancoragem**:
+Reposicionar a âncora no texto atual PRESERVANDO a propriedade que o mutante
+defende — só legítima quando o comportamento-alvo ainda existe e a mutação
+continua produzindo a mesma violação, provada pelo gate e motivo esperados.
+_Evitar_: atualizar o mutante, consertar o find
+
+**Aposentadoria de mutante**:
+Remoção de mutante cujo comportamento-alvo deixou de existir, com a razão
+registrada na matriz; o gate que fica sem mutante vira dívida declarada.
+_Evitar_: deletar mutante, remover teste, limpar campanha
+
+**Mutante não executado**:
+Mutante que não chegou a rodar (ambiente ausente, build que não aconteceu,
+âncora podre). Terceiro estado, distinto de detectado e de sobrevivente — nunca
+somado a nenhum dos dois.
+_Evitar_: não detectado (ambíguo), pulado, falhou
+
+**Mutante sobrevivente**:
+Mutante aplicado, com o gate executado, e ainda assim não reprovado pelo gate e
+motivo esperados — o gate não tem poder discriminante para aquela propriedade.
+_Evitar_: mutante não detectado, falso negativo
+
+**Alvo declarado de campanha**:
+Conjunto de paths em `mutation_map.json → targets` que dispara a re-execução de
+um harness por gatilho de path. Deve ser exatamente o conjunto de arquivos que o
+harness muta, mais o próprio harness.
+_Evitar_: arquivo do mutante, escopo da campanha
+
 **Selagem**:
 Ato do auditor humano que congela uma fase: release develop→main com tag anotada;
 a boundary da fase fecha para sempre.

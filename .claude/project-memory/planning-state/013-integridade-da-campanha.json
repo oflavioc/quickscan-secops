@@ -1,0 +1,16 @@
+{
+  "demanda": "013-integridade-da-campanha",
+  "phase": "specify",
+  "spec_dir": "specs/013-integridade-da-campanha",
+  "brief": "Integridade da campanha de mutacao: quatro ancoras podres pre-existentes na p51, harness Linux-only por construcao (python3 + prefixo POSIX de env) que reporta ambiente ausente como NAO DETECTADO, e dois mutantes possivelmente sem discriminante (1 em p51, 1 em p52). Bloqueia o merge do PR #24 (demanda 009).",
+  "branch": "feature/013-integridade-da-campanha",
+  "refinement": {
+    "status": "approved",
+    "approved_at": "2026-08-29",
+    "notes": "DECIDIDO SOB DELEGACAO DO PROPRIETARIO de 2026-08-29 ('tome as decisoes por mim'), nao aprovado por ele pessoalmente. Adotadas as 8 recomendacoes do product-owner: 1.1 uma demanda (dependencia causal — sem portabilidade toda reancoragem e inverificavel localmente); 1.2 quatro entregas ordenadas E1 harness honesto -> E2 triagem das 4 ancoras -> E3 classificacao dos sobreviventes -> E4 declaracao verdadeira; 1.3 investigacao DENTRO, correcao FORA (gate sem discriminante vira achado proprio); 1.4 criterio de familia para as 3 harnesses defeituosas, SEM runner compartilhado (R9); 1.5 reconciliar targets da p51 (causa direta do rot de M51-20 — USER_GUIDE.md nao esta em targets de harness nenhum); 1.6 EA-4 como tarefa da demanda, pelo doc-writer, DEPOIS que a branch do EA-3 chegar a develop (risco verificado de colisao de id entre branches); 1.7 EA-4 nasce aberto; 1.8 mutation-matrix expandida por par, com aposentadoria registrada. 7 verbetes inseridos no CONTEXT.md (autoria do PO, insercao minha). Correcoes do PO a minha evidencia: as 4 ancoras sao REANCORAVEIS (gates e propriedades vivos); o defeito de portabilidade tambem esta em p50 e p52 (core ja resolvido, e a referencia); have('python') retorna True incondicionalmente (check_mutation.py:30); ancora podre IMPRIME ERRO no Linux, logo a portabilidade e pre-condicao da investigacao; reancoragem ingenua de M51-18 mutaria a ocorrencia errada (ui_v32.js:131 vs :1026)."
+  },
+  "specify": {
+    "status": "in_progress",
+    "notes": "delegado ao tech-lead"
+  }
+}

@@ -4,7 +4,7 @@
 #   bash .claude/verify/compliance-audit.sh            # todas as seções
 #   bash .claude/verify/compliance-audit.sh --rule=X   # uma seção
 #
-# Seções: hooks, deny, invariantes, suites, paths, known-issues, waivers
+# Seções: hooks, deny, invariantes, suites, paths, known-issues, waivers, backlog
 #
 # Diferente do run.sh (que verifica artefatos), isto audita o CUMPRIMENTO das
 # regras — inclusive da própria configuração: a referência que inspirou esta
@@ -129,6 +129,79 @@ if secao waivers; then
   else
     ok "waivers TDD: máquina SDD ainda não instalada (Onda 2) — nada a listar"
   fi
+fi
+
+# ---------------------------------------------------------------- backlog
+# Gramática da linha de status dos achados (spec 012-status-backlog, T1-T9):
+# lista os achados `aberto` com ok; FAIL só por violação de forma (decisão 1.3).
+# Auto-exclusão nominal (R10 §10 / T6): o parser lê EXCLUSIVAMENTE o path
+# literal .claude/BACKLOG.md — este script, specs, regras e templates citam
+# exemplos livremente; dentro do arquivo, candidatas só contam em bloco de
+# achado, e os exemplos do rito vivem no cabeçalho, em código indentado.
+if secao backlog; then
+  OUT=$("$PYBIN" - <<'PY'
+import os, re, sys
+sys.stdout.reconfigure(encoding="utf-8")  # R7 §2: stdout UTF-8 explícito, mesmo byte em qualquer SO
+path = ".claude/BACKLOG.md"
+if not os.path.exists(path):
+    print("FAIL")
+    print("BACKLOG.md ausente — arquivo pinado, pré-condição da R12")
+    sys.exit(0)
+# T3: linha a linha, removendo só o \n (espaço à direita reprova; newline="" não traduz CRLF)
+linhas = open(path, encoding="utf-8", newline="").read().split("\n")
+RE_HEAD  = re.compile(r"^## (?:~~)?(EA-\d+[a-z]?)\b")   # heading de achado (tolera refutado riscado)
+RE_CAND  = re.compile(r"^\*\*Status")                     # candidata a status
+RE_CANON = re.compile(r"^\*\*Status\*\*: `(aberto|resolvido|refutado|transferido)`$")  # canônica (fullmatch)
+# T4: bloco = heading de achado até o próximo ^## (qualquer nível 2) ou EOF; ### não fecha
+blocos, atual = [], None
+for ln in linhas:
+    m = RE_HEAD.match(ln)
+    if m:
+        atual = {"id": m.group(1), "titulo": (m.group(1) + ln[m.end(1):]).rstrip(), "corpo": []}
+        blocos.append(atual)
+        continue
+    if ln.startswith("## "):
+        atual = None
+        continue
+    if atual is not None:
+        atual["corpo"].append(ln)
+falhas, abertos = [], []
+VOC = "vocabulário: `aberto`|`resolvido`|`refutado`|`transferido`"
+for b in blocos:
+    corpo = b["corpo"]
+    cand = [i for i, ln in enumerate(corpo) if RE_CAND.match(ln)]
+    primeira = next((i for i, ln in enumerate(corpo) if ln.strip() != ""), None)
+    if len(cand) >= 2:  # T5-(c)
+        falhas.append(b["id"] + ": linha de status duplicada — **Status em coluna 0 dentro de bloco é reservado; mova a prosa ou indente o exemplo (rito no cabeçalho)")
+    elif primeira is None or primeira not in cand:  # T5-(a): zero candidatas OU deslocada
+        falhas.append(b["id"] + ": sem linha de status na posição canônica (primeira linha não vazia após o heading)")
+    else:
+        ln = corpo[primeira]
+        m = RE_CANON.fullmatch(ln)
+        if not m:  # T5-(b)
+            falhas.append(b["id"] + ': linha de status fora da forma/vocabulário: "' + ln + '" — ' + VOC + "; dentro de bloco de achado, linha iniciando com **Status é reservada à gramática (rito no cabeçalho do BACKLOG.md)")
+        elif m.group(1) == "aberto":  # T9: só abertos listam; demais só validados na forma
+            abertos.append(b["titulo"])
+if falhas:
+    print("FAIL")
+    print("\n".join(falhas))
+elif abertos:
+    print("OPEN")
+    print("\n".join(abertos))
+else:
+    print("NONE")
+PY
+)
+  ST=$(printf '%s\n' "$OUT" | head -n1)
+  CORPO=$(printf '%s\n' "$OUT" | tail -n +2)
+  case "$ST" in
+    FAIL) falha "violação de forma no BACKLOG.md:" "$CORPO";;
+    OPEN) N=$(printf '%s\n' "$CORPO" | grep -c .)
+          ok "achados abertos ($N), listados para revisão:"
+          printf '%s\n' "$CORPO" | sed 's/^/       /';;
+    NONE) ok "achados abertos: nenhum";;
+    *)    falha "seção backlog: saída inesperada do parser" "$OUT";;
+  esac
 fi
 
 echo "----"

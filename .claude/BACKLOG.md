@@ -45,11 +45,48 @@ começando em `EA-1`. A série `E-*` permanece citável como histórico — as
 regras que a citam não são retro-editadas (R13) — mas não recebe novos
 membros por aqui.
 
+## Rito de escrita da linha de status
+
+Todo achado tem, na **primeira linha não vazia após o heading `## EA-*`**,
+uma linha de status em forma canônica: rótulo em negrito fechado
+(`**Status**`), dois-pontos **fora** do negrito, um espaço, valor entre
+**crases**, sem ponto final. Vocabulário fechado, minúsculas,
+case-sensitive — 4 estados:
+
+    **Status**: `aberto`
+    **Status**: `resolvido`
+    **Status**: `refutado`
+    **Status**: `transferido`
+
+Eventos que escrevem a linha (mantenedor declarado: `doc-writer`,
+`BACKLOG.md:3`): abertura de achado → `aberto`; fix-finding §4 ("o que foi
+feito", com PR/commit registrado na prosa) → `resolvido`; fix-finding §1
+("se não reproduz: risque com a razão") → `refutado` (título e corpo
+riscados, linha de status limpa); migração para `design-decisions.md`
+(R12/R13) → `transferido`, com ponteiro na prosa. Fix-finding **em curso**
+não muda o estado.
+
+**Data de abertura** (recomendada, não exigida pelo gate — decisão 1.3 da
+demanda 012, `specs/012-status-backlog/spec.md`): registre-a na prosa de
+cada achado novo, para a revisão humana; o parser não a confere.
+
+**Prefixo reservado**: dentro de um bloco de achado (do heading `## EA-*`
+até o próximo `## ` ou o fim do arquivo), qualquer linha começando com
+`**Status` em coluna 0 é lida como candidata a linha de status e precisa
+casar a forma canônica acima — não escreva prosa com esse prefixo em coluna
+0 dentro de um bloco de achado; reformule ou desloque.
+
+Os quatro exemplos acima ficam **antes do primeiro achado** (auto-exclusão
+de escopo de bloco, R10 §10) e **em código indentado (4 espaços)**, nunca em
+coluna 0: a indentação retira o `^` que o parser exige tanto do heading de
+achado (`^## `) quanto da candidata a status (`^\*\*Status`) — nenhum
+exemplo deste rito vira achado ou candidata fantasma.
+
 ---
 
 ## EA-1 — As três listas de proteção nunca foram reconciliadas
 
-**Status: aberto.**
+**Status**: `aberto`
 
 **Mesmo formato do achado E2** ("a §29.4 da spec (prosa) não impediu edição de
 protegidos nas fases 5.1/5.2" — citado em

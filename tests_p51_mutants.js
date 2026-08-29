@@ -141,7 +141,7 @@ const MUTANTS = [
   { id: "M51-03", desc: "exemplo de MSSP vaza para um qid incorreto",
     file: F.shell, gate: "P51-UX2", cmd: "node tests_p50_core.js", only: "P51-UX2",
     reason: /exemplo de MSSP aparece em/i,
-    find: `      ex: "Ex.: charter aprovado pelo CISO em 03/2025; sponsor é o Diretor de TI; metas revistas no comitê trimestral; responsável nomeado."`,
+    find: `      ex: "Ex.: direcionamento aprovado pelo CISO; patrocinador é o Diretor de TI; objetivos revistos trimestralmente; responsáveis definidos."`,
     repl: `      ex: "Ex.: MSSP cobre 8×5; plantão interno fora do horário. SLA P1 = 30 min."` },
 
   { id: "M51-04", desc: "jornada perde o número do estágio",
@@ -232,10 +232,8 @@ const MUTANTS = [
   { id: "M51-16", desc: "capa colide com o cabeçalho no PDF",
     file: F.uiv32, gate: "P51-PDF1", cmd: "node tests_p50_chromium.js",
     reason: /colidem|capa/i,
-    find: `  let h = qsCoverHTML();
-  h += \`<div class="pr-head">`,
-    repl: `  let h = \`<div style="position:absolute;top:0;left:0;height:400px">\` + qsCoverHTML() + \`</div>\`;
-  h += \`<div class="pr-head">` },
+    find: `  let h = qsCoverHTML();`,
+    repl: `  let h = \`<div style="position:absolute;top:0;left:0;height:400px">\` + qsCoverHTML() + \`</div>\`;` },
 
   /* ---------------- ERRATA pós-auditoria independente (2026-08-22) ----------------
      Dois mutantes novos, um por gate novo. M51-17 é exatamente a mutação
@@ -251,12 +249,14 @@ const MUTANTS = [
   { id: "M51-18", desc: "agregado do relatório volta à forma sem arredondamento (regresso do B1)",
     file: F.uiv32, gate: "P51-RPT6", cmd: "node tests_p50_core.js", only: "P51-RPT6",
     reason: /KPI diz|régua lê|jornada|leitura executiva|canônico/i,
-    find: `  const overall = suff && scored.length ? Math.round(scored.reduce((a,s)=>a+s.score,0)/scored.length*10)/10 : null;
-  const {findings, validate} = computeFindings();
-  const prios =`,
-    repl: `  const overall = suff && scored.length ? (scored.reduce((a,s)=>a+s.score,0)/scored.length) : null;
-  const {findings, validate} = computeFindings();
-  const prios =` },
+    find: `  /* ERRATA B1 · agregado do relatorio na forma canonica (mesma de renderResults,
+     legacySnapshot, computeTargetProfile e buildNarrativeSnapshot): arredondar ANTES
+     de nomear o estagio, para que numero impresso e nome da faixa nunca divirjam. */
+  const overall = suff && scored.length ? Math.round(scored.reduce((a,s)=>a+s.score,0)/scored.length*10)/10 : null;`,
+    repl: `  /* ERRATA B1 · agregado do relatorio na forma canonica (mesma de renderResults,
+     legacySnapshot, computeTargetProfile e buildNarrativeSnapshot): arredondar ANTES
+     de nomear o estagio, para que numero impresso e nome da faixa nunca divirjam. */
+  const overall = suff && scored.length ? (scored.reduce((a,s)=>a+s.score,0)/scored.length) : null;` },
 
   { id: "M51-19", desc: "manual volta a descrever o score geral como média das respostas (R2)",
     file: F.guide, gate: "P51-DOC13", cmd: "node tests_p50_core.js", only: "P51-DOC13",
@@ -270,12 +270,10 @@ direta das respostas.`,
   { id: "M51-20", desc: "manual volta a listar régua e legenda como seções próprias (R3)",
     file: F.guide, gate: "P51-DOC13", cmd: "node tests_p50_core.js", only: "P51-DOC13",
     reason: /§12|ordem|item \d+|legenda|r[ée]gua/i,
-    find: `3. **Como interpretar este relatório** — caixa curta com as regras de leitura;
-4. **Prioridades declaradas pelo negócio**;`,
-    repl: `3. **Como interpretar este relatório** — caixa curta com as regras de leitura;
-4. **Régua 0–5** — posição do score entre os seis estágios;
+    find: `4. **Prioridades declaradas pelo negócio**, já na **página 2**;`,
+    repl: `4. **Régua 0–5** — posição do score entre os seis estágios;
 5. **Legenda dos domínios** — nomes completos, na ordem canônica;
-6. **Prioridades declaradas pelo negócio**;` }
+6. **Prioridades declaradas pelo negócio**, já na **página 2**;` }
 ];
 
 /* Seleção por mutante (MUT_ONLY) — vale para a campanha E para o preflight. */

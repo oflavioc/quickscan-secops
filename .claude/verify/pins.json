@@ -1,7 +1,7 @@
 {
   "_meta": {
     "descricao": "Registry único de pins — fonte de identidade dos artefatos (R8). Hashes = SHA-256 dos blobs de HEAD. Alterar arquivo pinado exige regenerar este registry no MESMO PR, com motivo no commit.",
-    "gerado_de_head": "7ad12bccfc10ae574500922742770060c55480cf",
+    "gerado_de_head": "6d615e22fe025c4fe35c4dac5f5cba35106c8a3e",
     "gerado_em": "2026-08-29",
     "exclusoes": [
       "docs_phase5/**",
@@ -71,7 +71,7 @@
     ".claude/verify/check_lint_arch.py": "aac4e0f8be4cc25801dfe21dbf56374d1bce1a43a8fa4e1b67ab0cddfd20f9ee",
     ".claude/verify/check_m41.py": "f5f59097ab1510d6bbd0a3e63272e00da95bb65c818c23a7fff2141e8f5d9b4f",
     ".claude/verify/check_markers.py": "5623d9cb3203cf16a307014a4255bc3d8ecf08e469eaf2f110927802a9b2fe7c",
-    ".claude/verify/check_mutation.py": "ca76805a4273ae5a675e7293535dcff296f649dd0a10cf8d4bc21fa822359c87",
+    ".claude/verify/check_mutation.py": "428988907b15cd9585905452d6b05453f5084978a1b7b8529fa0be9f111e3c8a",
     ".claude/verify/check_state.py": "934999bd6e989bd09e17d322b65ac1c92fece5db85d409558b28de5b6b2fc212",
     ".claude/verify/check_suites.py": "457516eae3a5f98ac894a13fb6283f30a2f5e5dce158d24fced5295fd1978dfe",
     ".claude/verify/check_tdd.py": "1077e9025a9559f34e23658bba12a98ac6fb65c718d057a62687251671de2ce9",
@@ -176,6 +176,7 @@
     "specs/012-status-backlog/spec.md": "9c1f07f8f3d6fa7a97539a155db8c0c397bca4b9978a080eaee878e930166d0e",
     "specs/012-status-backlog/tasks.md": "350d1a623a4b890468dfc1fc1293a2284a164f183c4f6ba2df27f9a8e0c831aa",
     "specs/013-integridade-da-campanha/plan.md": "fdb91f60b6bb3c97eccb71c513e4035e3b52818d95904199cbc9075ede02d026",
+    "specs/013-integridade-da-campanha/red-integridade.md": "7dc99a32b75b2a357a8c4557f43c755acab2142aaa974dc9f0bce5ac4eaf9e50",
     "specs/013-integridade-da-campanha/refinement.md": "2c931afa07a09a5885fadada705d3b90ed3f76f71c92f38123452a57d0a247ec",
     "specs/013-integridade-da-campanha/spec.md": "7cf0743576f55efca5180d475c1c8eabbd08496d50ea99de8daabaaf9be72da9",
     "specs/013-integridade-da-campanha/tasks.md": "5153fbed842845d4264eb1f74cb5a68bc2631fe4ffc5670c0da8e6d0c2a7b8c2",

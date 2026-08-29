@@ -24,11 +24,28 @@ MAP = json.load(open(".claude/verify/mutation_map.json", encoding="utf-8"))["har
 def sh(args):
     return subprocess.run(args, capture_output=True, text=True, encoding="utf-8", errors="replace")
 
+def mutation_py_bin():
+    """Nome (ou caminho) do interpretador Python — fonte ÚNICA de T1/C4.
+
+    `MUTATION_PY` é o override explícito do operador; sem ele vale o padrão da
+    referência da casa (`tests_core_mutants.js:22`): win32 ? "python" : "python3".
+    A MESMA regra vale nas três harnesses (T1) — aqui e lá, sem divergência; é a
+    divergência entre o que se declara e o que se invoca que esta demanda mata.
+    Precedente de forma para o seam: `CHROME_PATH`, logo abaixo.
+    """
+    return os.environ.get("MUTATION_PY") or ("python" if sys.platform == "win32" else "python3")
+
+
 def have(req):
     if req == "node":
         return shutil.which("node") is not None
     if req == "python":
-        return True
+        # [013/T2] o requisito RESOLVE — era `return True` incondicional (M-IC3), e
+        # por isso o DEFER/FAIL nomeado do laço de trigger era inalcançável para
+        # `python`. `shutil.which` aceita nome ou caminho com diretório, então
+        # MUTATION_PY serve aos dois. Nada abaixo muda: quem NOMEIA o ausente
+        # continua sendo o laço, com o vocabulário de sempre (R10 §2).
+        return shutil.which(mutation_py_bin()) is not None
     if req == "chromium":
         if os.environ.get("CHROME_PATH") and os.path.exists(os.environ["CHROME_PATH"]):
             return True
@@ -117,6 +134,13 @@ def ic_fail(gate, alvo, causa):
 
 def ic_nota(gate, msg):
     print(f"[NOTA] {gate}: {msg}")
+
+
+def ic_divida(alvo, msg):
+    """Dívida declarada (T8) — nem OK nem FAIL: o que esta demanda NÃO cobre,
+    dito em voz alta. Assimetria silenciosa seria a mesma doença um nível acima
+    (R10 §2); é esta dívida que a matriz declara em `dividas_declaradas` (C3)."""
+    print(f"[DÍVIDA] {alvo}: {msg}")
 
 
 def ic_path(p):
@@ -305,8 +329,13 @@ def ic_preflight(nome, h):
 
 for _nome, _h in sorted(MAP.items()):
     if _nome in IC_SEM_PREFLIGHT:
-        ic_nota("IC-4", f"{_nome} · sem preflight por decisão da spec (T8: é a referência do "
-                        "interpretador e fica fora das edições) — dívida declarada, não FAIL")
+        # Literal normativo de T8 (spec §Decisões técnicas fixadas). O harness vem de
+        # IC_SEM_PREFLIGHT e não escrito à mão — por propriedade, para não apodrecer
+        # como as âncoras que esta demanda conserta. Substitui o [NOTA] do red: o
+        # mesmo fato dito duas vezes com prefixos diferentes é ruído, e o literal
+        # normativo é o de T8.
+        ic_divida(_nome, "sem preflight declarado — âncora podre só aparece "
+                         "na execução da campanha")
         continue
     _dados, _causa = ic_preflight(_nome, _h)
     IC_PREFLIGHT[_nome] = _dados

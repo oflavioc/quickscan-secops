@@ -19,6 +19,7 @@
     },
     "p50": {
       "cmd": "node tests_p50_mutants.js",
+      "preflight": true,
       "targets": [
         "ui_p50_shell_v32.js",
         "ui_p50_v32.css",

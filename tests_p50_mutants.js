@@ -10,6 +10,32 @@
 
    Este harness NÃO integra test:all: é executado sob demanda na entrega da
    microfase e o seu resultado é evidência de auditoria.
+
+   DEMANDA 013 · integridade da campanha — E1 na p50, commit (a)
+   -------------------------------------------------------------
+   T1 · o interpretador tem UMA fonte: `MUTATION_PY` (override do operador) ou o
+        padrão por plataforma da referência da casa (tests_core_mutants.js:22).
+        É a MESMA regra de check_mutation.py (C4) — o que se declara e o que se
+        invoca passam a ser a mesma coisa. O caminho do script vai entre aspas
+        (R10 §7): a família P2.1-16/I11/S64 quebrou em path com espaço.
+   T4/T5 · TRÊS estados, vocabulário fechado: DETECTADO · SOBREVIVENTE ·
+        NÃO EXECUTADO (este sempre com UMA causa do conjunto fechado). Antes
+        havia dois rótulos, e tudo que não fosse detecção caía em "NÃO
+        DETECTADO": âncora podre, rebuild quebrado e gate que não rodou eram
+        lidos como sobrevivência. Um número que não foi medido não é impresso —
+        havendo não executado, a razão D/T some e o exit é ≠ 0. Com U == 0 a
+        linha histórica fica LITERAL (R13).
+   T6 · `--preflight` (argv): resolve o interpretador e CONTA as ocorrências da
+        âncora de cada um dos 53 mutantes no arquivo-alvo. Não muta, não
+        reconstrói, não executa gate, não escreve nada. Um objeto JSON em stdout
+        (contrato C1); texto humano em stderr. Exit 0 sse interpretador
+        resolvido e toda âncora com ocorrencias == 1.
+   D1 · gate que NÃO rodou nunca é sobrevivente. Id de gate digitado errado no
+        filtro faz a suíte selecionar zero gates e sair 0; a ausência da linha
+        PASS/FAIL do gate ESPERADO passa a ser `NÃO EXECUTADO · gate não pôde
+        ser executado`, com o filtro nomeado na nota.
+   Shape de referência: tests_p51_mutants.js (W3). Cópia de shape, nunca
+   extração de runner comum (R9).
    ========================================================================== */
 "use strict";
 
@@ -82,7 +108,47 @@ function checkEvidence(restore) {
 }
 let BASE_HTML_SHA = null;
 
-function build() { execSync("python3 build_v32_html.py", { cwd: HERE, stdio: "pipe" }); }
+/* ── T1 · interpretador: fonte ÚNICA, a mesma de check_mutation.py (C4) ──────
+   `MUTATION_PY` é o override explícito do operador; sem ele vale o padrão da
+   referência da casa (tests_core_mutants.js:22). Precedente de forma do seam:
+   `CHROME_PATH`. Havia aqui um nome fixo embutido no literal de comando, que
+   fazia a campanha abortar sem classificação em toda máquina cujo interpretador
+   não atende por esse nome. */
+const PY_ORIGEM = process.env.MUTATION_PY ? "MUTATION_PY" : "padrão";
+const PY = process.env.MUTATION_PY || (process.platform === "win32" ? "python" : "python3");
+const BUILD_PY = path.join(HERE, "build_v32_html.py");
+
+/* Resolve o binário no PATH sem lançar processo NENHUM — o preflight não pode
+   executar nada (C1 / R7 §3). Equivale ao shutil.which() de check_mutation.py. */
+function resolvePy(nome) {
+  if (nome.indexOf("/") >= 0 || nome.indexOf("\\") >= 0) {
+    try { return fs.statSync(nome).isFile() ? path.resolve(nome) : null; } catch (e) { return null; }
+  }
+  const exts = process.platform === "win32"
+    ? [""].concat((process.env.PATHEXT || ".COM;.EXE;.BAT;.CMD").split(";").filter(Boolean))
+    : [""];
+  for (const dir of String(process.env.PATH || "").split(path.delimiter)) {
+    if (!dir) continue;
+    for (const ext of exts) {
+      const cand = path.join(dir.replace(/^"|"$/g, ""), nome + ext);
+      try { if (fs.statSync(cand).isFile()) return cand; } catch (e) { /* próximo candidato */ }
+    }
+  }
+  return null;
+}
+
+/* Caminho do script SEMPRE entre aspas (R10 §7). `build()` DEVOLVE o resultado:
+   rebuild quebrado por mutante é causa fechada de T4, não crash sem rótulo. */
+function build() { return run(`"${PY}" "${BUILD_PY}"`); }
+/* Rebuild cujo fracasso não é classificável (árvore base, restauração, modo de
+   prova da guarda): continua sendo ruído alto, como antes de 013. */
+function buildOuFalha(onde) {
+  const r = build();
+  if (r.code !== 0)
+    throw new Error(onde + ": rebuild falhou · " +
+      (r.erro || String(r.out).trim().split("\n").pop() || "").slice(0, 200));
+  return r;
+}
 
 /* ============================================================================
    B-AUD-503-1 · SUPRESSÃO CENTRAL DE ESCRITA DE EVIDÊNCIA.
@@ -98,16 +164,42 @@ function build() { execSync("python3 build_v32_html.py", { cwd: HERE, stdio: "pi
 const SUPPRESS_EVIDENCE = { P50_NO_EVIDENCE: "1" };
 function run(cmd, envOverride) {
   const env = Object.assign({}, process.env, SUPPRESS_EVIDENCE, envOverride || {});
-  try { return { code: 0, out: execSync(cmd, { cwd: HERE, stdio: "pipe", env }).toString() }; }
-  catch (e) { return { code: e.status || 1, out: (e.stdout || "").toString() + (e.stderr || "").toString() }; }
+  try {
+    return { code: 0, spawnFalhou: false, erro: "",
+             out: execSync(cmd, { cwd: HERE, stdio: "pipe", env }).toString() };
+  } catch (e) {
+    /* `status` indefinido = o processo não chegou a existir (spawn). Distinguir
+       spawn de exit ≠ 0 é o que impede um gate NÃO EXECUTADO de ser lido como
+       sobrevivente — o colapso de estados que a demanda 013 mata. Antes, o
+       `e.status || 1` achatava as duas coisas no mesmo código. */
+    const spawnFalhou = e.status === undefined || e.status === null;
+    return { code: spawnFalhou ? -1 : e.status, spawnFalhou,
+             erro: spawnFalhou ? String(e.message || e).split("\n")[0] : "",
+             out: (e.stdout || "").toString() + (e.stderr || "").toString() };
+  }
 }
 
-/* Extrai a linha de resultado do gate alvo (PASS/FAIL + motivo entre colchetes). */
+/* Extrai a linha de resultado do gate alvo (PASS/FAIL + motivo entre colchetes).
+   Ausência de linha = o gate não rodou — é a decisão D1: filtro que não seleciona
+   gate nenhum é NÃO EXECUTADO, jamais SOBREVIVENTE. */
 function gateLine(out, gateId) {
   const re = new RegExp("^(PASS|FAIL)\\s+" + gateId.replace(/[-]/g, "\\-") + "\\s+—.*$", "m");
   const m = out.match(re);
   return m ? m[0] : null;
 }
+
+/* ── T4 · vocabulário fechado (spec §Vocabulário fechado, normativo) ──────── */
+const DETECTADO = "DETECTADO", SOBREVIVENTE = "SOBREVIVENTE", NAO_EXECUTADO = "NÃO EXECUTADO";
+const CAUSA = {
+  interpretador: "interpretador ausente",
+  ausente:       "âncora não encontrada",
+  ambigua:       "âncora ambígua",
+  rebuild:       "rebuild falhou",
+  gate:          "gate não pôde ser executado"
+};
+/* Escape NOMEADO: falha fora do conjunto fechado não vira detectado nem
+   sobrevivente — é impressa como tal e também reprova. */
+const naoClassificada = msg => "falha não classificada: " + msg;
 
 const MUTANTS = [
   {
@@ -684,6 +776,65 @@ const MUTANTS = [
   }
 ];
 
+/* Filtro OPCIONAL (MUT_ONLY="M7,M40") para verificação dirigida durante o
+   desenvolvimento. A campanha de entrega roda SEM filtro; quando o filtro está
+   ativo o total impresso declara explicitamente a execução parcial. Vale para a
+   campanha E para o preflight. */
+function selecionar() {
+  const only = (process.env.MUT_ONLY || "").split(",").map(x => x.trim()).filter(Boolean);
+  return { only, sel: only.length ? MUTANTS.filter(m => only.indexOf(m.id) >= 0) : MUTANTS };
+}
+
+/* Conta as ocorrências da âncora no arquivo-alvo. É CONTAGEM, não presença: 0 é
+   âncora podre e ≥2 é âncora ambígua — as duas reprovam, e a mutação nunca é
+   aplicada "na primeira ocorrência". */
+function ocorrencias(m) {
+  return fs.readFileSync(m.file, "utf8").split(m.find).length - 1;
+}
+
+/* ── T6 · modo preflight (argv, D6) · emite o contrato C1 ───────────────────
+   Não muta, não reconstrói, não executa gate, não escreve arquivo nenhum.
+   stdout carrega SÓ o objeto JSON; todo texto humano vai para stderr. */
+function preflight(sel) {
+  const binario = resolvePy(PY);
+  const dados = {
+    harness: "p50",
+    arquivo: path.basename(__filename),
+    interpretador: { nome: PY, origem: PY_ORIGEM, resolvido: !!binario },
+    /* Declaração do que o harness realmente muta. Sai de MUTANTS inteiro, não da
+       seleção: MUT_ONLY filtra a medição, não o alvo. */
+    arquivos_mutados: Array.from(new Set(MUTANTS.map(m => path.basename(m.file)))).sort(),
+    mutantes: []
+  };
+  for (const m of sel) {
+    const n = ocorrencias(m);
+    const e = { id: m.id, arquivo: path.basename(m.file), ocorrencias: n,
+                estado: n === 1 ? "ok" : "nao_executavel" };
+    if (n === 0) e.causa = CAUSA.ausente;
+    else if (n > 1) e.causa = CAUSA.ambigua;
+    dados.mutantes.push(e);
+  }
+  process.stdout.write(JSON.stringify(dados) + "\n");
+
+  const podres = dados.mutantes.filter(m => m.estado !== "ok");
+  process.stderr.write("PREFLIGHT p50 · " + dados.mutantes.length + " mutante(s) · interpretador " +
+    PY + " (" + PY_ORIGEM + "): " + (binario ? "resolvido em " + binario : "NÃO RESOLVIDO") + "\n");
+  for (const m of dados.mutantes) {
+    process.stderr.write("  " + (m.estado === "ok" ? "ok           " : "nao_executavel") + " " +
+      m.id + " · ocorrencias=" + m.ocorrencias + " em " + m.arquivo +
+      (m.causa ? " · " + m.causa : "") + "\n");
+  }
+  process.stderr.write(podres.length
+    ? podres.length + " âncora(s) fora de ocorrencias == 1: " + podres.map(m => m.id).join(", ") + "\n"
+    : "todas as âncoras com ocorrencias == 1\n");
+  if (!binario) process.stderr.write(CAUSA.interpretador + ": " + PY + "\n");
+  return (binario && podres.length === 0) ? 0 : 1;
+}
+
+if (process.argv.slice(2).indexOf("--preflight") >= 0) {
+  process.exit(preflight(selecionar().sel));
+}
+
 /* ============================================================================
    B-AUD-503-1 §2.3 · PROVA NÃO VACUOSA DA GUARDA (MUT_GUARD_PROOF=1)
    Uma guarda que nunca disparou não é evidência de nada. Este modo controlado
@@ -706,7 +857,7 @@ function guardProof() {
   try {
     if (orig.indexOf(m.find) < 0) throw new Error("MUT_GUARD_PROOF: âncora de M20 não encontrada");
     fs.writeFileSync(m.file, orig.replace(m.find, m.repl), "utf8");
-    build();
+    buildOuFalha("MUT_GUARD_PROOF/mutação");
 
     /* 1 · barreira preventiva DESATIVADA para esta execução isolada */
     const unguarded = run(m.cmd, { P50_NO_EVIDENCE: "0" });
@@ -744,7 +895,7 @@ function guardProof() {
   } finally {
     fs.writeFileSync(m.file, orig, "utf8");
     if (sha(m.file) !== BASE_SHA[m.file]) throw new Error("MUT_GUARD_PROOF: restauração do source NÃO byte-idêntica");
-    build();
+    buildOuFalha("MUT_GUARD_PROOF/restauração");
     checkEvidence(true);
   }
   const ok = fail.length === 0;
@@ -763,8 +914,82 @@ const SUITE_NS = "P50";
 const QUAL = id => SUITE_NS + "::" + id;
 
 (function main() {
-  build();
+  const { only: MUT_ONLY, sel: SELECTED } = selecionar();
+  const report = [];
+  let D = 0, S = 0, U = 0;
+
+  const emitir = (m, estado, causa, nota, linha) => {
+    if (estado === DETECTADO) D++; else if (estado === SOBREVIVENTE) S++; else U++;
+    report.push({ id: m.id, desc: m.desc, gate: m.gate, estado,
+                  causa: causa || "", nota: nota || "",
+                  /* `detected` preservado: o recibo da 5.0.3 é lido por auditoria
+                     anterior a esta demanda e não pode perder o campo. */
+                  detected: estado === DETECTADO, line: String(linha || "").slice(0, 200) });
+    console.log(estado + "  " + QUAL(m.id) + " · " + m.desc);
+    console.log("              gate esperado: " + m.gate +
+      (causa ? " · causa: " + causa : "") + (nota ? " · " + nota : ""));
+    if (linha) console.log("              " + String(linha).slice(0, 200));
+    console.log("");
+  };
+
+  /* T5 · um número que não foi medido não é impresso; com U == 0 a linha
+     histórica sai LITERAL (R13), que é o que mantém comparabilidade com a
+     evidência das microfases 5.0.x. */
+  const fechar = () => {
+    const MUTANT_IDS = SELECTED.map(m => QUAL(m.id));
+    if (U > 0) {
+      console.log("\nCAMPANHA NÃO CONCLUÍDA [tests_p50_mutants.js · namespace " + SUITE_NS + "]" +
+        (MUT_ONLY.length ? " [PARCIAL]" : "") + ": " + D + " detectados · " + S +
+        " sobreviventes · " + U + " não executados (de " + MUTANT_IDS.length + ")" +
+        (MUT_ONLY.length ? " · inventário completo: " + MUTANTS.length : ""));
+      for (const r of report.filter(r => r.estado === NAO_EXECUTADO)) {
+        console.log("  NÃO EXECUTADO  " + QUAL(r.id) + " · " + r.causa + (r.nota ? " · " + r.nota : ""));
+      }
+    } else {
+      console.log("\nMUTATION TESTING (5.0.1+5.0.2+5.0.3) [tests_p50_mutants.js · namespace " + SUITE_NS + "]" + (MUT_ONLY.length ? " [PARCIAL]" : "") + ": " +
+        D + "/" + MUTANT_IDS.length + " mutantes detectados pelo gate e motivo esperados" +
+        (MUT_ONLY.length ? " · inventário completo: " + MUTANTS.length : ""));
+      if (S > 0) console.log("  " + S + " sobrevivente(s): " +
+        report.filter(r => r.estado === SOBREVIVENTE).map(r => QUAL(r.id)).join(", "));
+    }
+    /* Recibo só quando houve campanha completa e medida. BASE_HTML_SHA nulo =
+       nada foi construído (interpretador ausente): não se escreve recibo de
+       campanha que não existiu. */
+    if (!MUT_ONLY.length && BASE_HTML_SHA) {
+      fs.mkdirSync(path.join(HERE, "docs_phase5", "evidence_p50"), { recursive: true });
+      const baseline = {}; MUTABLE.forEach(f => { baseline[path.basename(f)] = BASE_SHA[f]; });
+      baseline.html = BASE_HTML_SHA;
+      /* Evidência NOVA da 5.0.3; as evidências anteriores permanecem preservadas. */
+      fs.writeFileSync(path.join(HERE, "docs_phase5", "evidence_p50", "P50-5.0.3-mutation.json"),
+        JSON.stringify({ baseline, ids: MUTANT_IDS, detected: D, sobreviventes: S,
+          nao_executados: U, total: MUTANT_IDS.length, mutants: report }, null, 2) + "\n", "utf8");
+    }
+    process.exit(D === MUTANTS.length ? 0 : 1);
+  };
+
+  /* T1/IC-3(a) · interpretador ausente NÃO é mais um crash sem rótulo no build
+     inicial: é classificado. Aborta ANTES de construir e antes de mutar —
+     nenhum arquivo tocado, nenhum recibo escrito, a árvore fica limpa, e nada é
+     dado por detectado ou por sobrevivente. */
+  const binario = resolvePy(PY);
+  if (!binario) {
+    console.log("interpretador " + PY + " (" + PY_ORIGEM + ") não resolvido no PATH — " +
+      "campanha abortada antes de construir e antes de mutar; nenhum arquivo tocado\n");
+    if (MUT_ONLY.length) console.log("CAMPANHA PARCIAL (verificação dirigida): " + MUT_ONLY.join(", ") + "\n");
+    for (const m of SELECTED) emitir(m, NAO_EXECUTADO, CAUSA.interpretador, "", "");
+    return fechar();
+  }
+
+  const rb0 = build();
+  if (rb0.code !== 0) {
+    console.log("build da árvore BASE falhou (" + PY + ", " + PY_ORIGEM + ") — " +
+      "campanha abortada antes de mutar; nenhum arquivo tocado\n");
+    const detalhe = (rb0.erro || String(rb0.out).trim().split("\n").pop() || "").slice(0, 160);
+    for (const m of SELECTED) emitir(m, NAO_EXECUTADO, CAUSA.rebuild, "árvore base · " + detalhe, "");
+    return fechar();
+  }
   BASE_HTML_SHA = sha(HTML);
+  console.log("interpretador: " + PY + " (" + PY_ORIGEM + ") resolvido em " + binario);
   console.log("acervo sob guarda: " + GUARDED.length + " artefato(s) em evidence_p50/ (inclui " +
     GUARDED_CURRENT + " do prefixo corrente " + CURRENT_PREFIX + "*)");
   const pre = checkEvidence(false);
@@ -774,35 +999,57 @@ const QUAL = id => SUITE_NS + "::" + id;
 
   if (process.env.MUT_GUARD_PROOF === "1") { process.exit(guardProof() ? 0 : 1); }
 
-  /* Filtro OPCIONAL (MUT_ONLY="M7,M40") para verificação dirigida durante o
-     desenvolvimento. A campanha de entrega roda SEM filtro; quando o filtro
-     está ativo o total impresso declara explicitamente a execução parcial. */
-  const MUT_ONLY = (process.env.MUT_ONLY || "").split(",").map(x => x.trim()).filter(Boolean);
-  const SELECTED = MUT_ONLY.length ? MUTANTS.filter(m => MUT_ONLY.indexOf(m.id) >= 0) : MUTANTS;
   if (MUT_ONLY.length) console.log("CAMPANHA PARCIAL (verificação dirigida): " + MUT_ONLY.join(", ") + "\n");
 
-  const report = [];
   for (const m of SELECTED) {
     const orig = fs.readFileSync(m.file, "utf8");
-    let detected = false, note = "", line = "";
+    /* Âncora provada por CONTAGEM antes de mutar (T6/IC-4): sem unicidade não se
+       muta. `indexOf` aceitava âncora ambígua e mutava a primeira ocorrência. */
+    const n = orig.split(m.find).length - 1;
+    if (n !== 1) {
+      emitir(m, NAO_EXECUTADO, (n === 0 ? CAUSA.ausente : CAUSA.ambigua + " (n=" + n + ")"),
+        "ocorrencias=" + n + " em " + path.basename(m.file), "");
+      continue;
+    }
+    let estado = "", causa = "", nota = "", linha = "";
     try {
-      if (orig.indexOf(m.find) < 0) { note = "ÂNCORA DE MUTAÇÃO NÃO ENCONTRADA"; }
-      else {
-        fs.writeFileSync(m.file, orig.replace(m.find, m.repl), "utf8");
-        build();
+      fs.writeFileSync(m.file, orig.replace(m.find, m.repl), "utf8");
+      const rb = build();
+      if (rb.code !== 0) {
+        estado = NAO_EXECUTADO; causa = CAUSA.rebuild;
+        nota = (rb.erro || String(rb.out).trim().split("\n").pop() || "").slice(0, 160);
+      } else {
         const r = run(m.cmd);
-        if (m.lineless) {
-          detected = r.code !== 0 && m.reason.test(r.out);
-          line = (r.out.match(/^FAIL\s+\S+.*$/m) || ["(sem linha FAIL)"])[0];
+        if (r.spawnFalhou) {
+          /* D1 · o processo do gate não chegou a existir: NÃO EXECUTADO. */
+          estado = NAO_EXECUTADO; causa = CAUSA.gate; nota = r.erro.slice(0, 160);
+        } else if (m.lineless) {
+          /* Mutante sem linha nomeada de gate (M2 · UX 4.1): o oráculo é o exit
+             da suíte inteira, que rodou. Continua um par detectado/sobrevivente. */
+          linha = (r.out.match(/^FAIL\s+\S+.*$/m) || [""])[0];
+          const reprovou = r.code !== 0 && m.reason.test(r.out);
+          estado = reprovou ? DETECTADO : SOBREVIVENTE;
+          if (!reprovou) nota = "a suíte não reprovou pelo motivo esperado (exit " + r.code + ")";
         } else {
-          line = gateLine(r.out, m.gate) || "(gate não reportado)";
-          const isFail = /^FAIL/.test(line);
-          const reasonOk = m.reason.test(line);
-          detected = isFail && reasonOk;
-          if (isFail && !reasonOk) note = "FAIL com motivo INCOMPATÍVEL";
-          if (!isFail) note = "gate NÃO detectou";
+          linha = gateLine(r.out, m.gate) || "";
+          if (!linha) {
+            /* D1 · a suíte rodou e não emitiu linha do gate esperado: o gate não
+               foi executado (id de gate errado no filtro seleciona ZERO gates e
+               sai 0). Nunca SOBREVIVENTE — sobrevivência exige gate executado. */
+            estado = NAO_EXECUTADO; causa = CAUSA.gate;
+            nota = "a suíte não emitiu linha PASS/FAIL de " + m.gate + " (exit " + r.code + ")";
+          } else {
+            const reprovou = /^FAIL/.test(linha);
+            const motivo = m.reason.test(linha);
+            estado = (reprovou && motivo) ? DETECTADO : SOBREVIVENTE;
+            if (!reprovou) nota = "o gate esperado NÃO reprovou";
+            else if (!motivo) nota = "reprovou por motivo diferente do esperado";
+          }
         }
       }
+    } catch (e) {
+      estado = NAO_EXECUTADO;
+      causa = naoClassificada(String((e && e.message) || e).split("\n")[0].slice(0, 160));
     } finally {
       fs.writeFileSync(m.file, orig, "utf8");
       if (sha(m.file) !== BASE_SHA[m.file]) throw new Error(m.id + ": restauração NÃO byte-idêntica");
@@ -815,15 +1062,11 @@ const QUAL = id => SUITE_NS + "::" + id;
           "nenhuma evidência mutada sobrevive ao mutante seguinte)");
       }
     }
-    report.push({ id: m.id, desc: m.desc, gate: m.gate, detected, note, line: line.slice(0, 200) });
-    console.log((detected ? "DETECTADO    " : "NÃO DETECTADO") + "  " + QUAL(m.id) + " · " + m.desc +
-      "\n              gate esperado: " + m.gate + (note ? " · " + note : "") +
-      "\n              " + line.slice(0, 200) + "\n");
+    emitir(m, estado, causa, nota, linha);
   }
 
-  build();
+  buildOuFalha("fecho da campanha");
   const htmlBack = sha(HTML);
-  const ok = report.filter(r => r.detected).length;
   const evFinal = checkEvidence(false);
   if (evFinal.length) throw new Error("acervo de evidência divergente ao fim da campanha — " + evFinal.join(" · "));
   console.log("acervo de evidência: " + GUARDED.length + "/" + GUARDED.length +
@@ -831,17 +1074,5 @@ const QUAL = id => SUITE_NS + "::" + id;
   const restored = MUTABLE.map(f => path.basename(f) + " " + (sha(f) === BASE_SHA[f] ? "OK" : "DIVERGENTE"));
   console.log("restauração: " + restored.join(" · ") +
     " · html " + (htmlBack === BASE_HTML_SHA ? "OK" : "DIVERGENTE (" + htmlBack + ")"));
-  /* O total NÃO é presumido: deriva do inventário real de MUTANT_IDS. */
-  const MUTANT_IDS = SELECTED.map(m => QUAL(m.id));
-  console.log("\nMUTATION TESTING (5.0.1+5.0.2+5.0.3) [tests_p50_mutants.js · namespace " + SUITE_NS + "]" + (MUT_ONLY.length ? " [PARCIAL]" : "") + ": " +
-    ok + "/" + MUTANT_IDS.length + " mutantes detectados pelo gate e motivo esperados" +
-    (MUT_ONLY.length ? " · inventário completo: " + MUTANTS.length : ""));
-  fs.mkdirSync(path.join(HERE, "docs_phase5", "evidence_p50"), { recursive: true });
-  const baseline = {}; MUTABLE.forEach(f => { baseline[path.basename(f)] = BASE_SHA[f]; });
-  baseline.html = BASE_HTML_SHA;
-  /* Evidência NOVA da 5.0.3; as evidências anteriores permanecem preservadas. */
-  if (!MUT_ONLY.length) fs.writeFileSync(path.join(HERE, "docs_phase5", "evidence_p50", "P50-5.0.3-mutation.json"),
-    JSON.stringify({ baseline, ids: MUTANT_IDS, detected: ok, total: MUTANT_IDS.length,
-      mutants: report }, null, 2) + "\n", "utf8");
-  process.exit(ok === MUTANTS.length ? 0 : 1);
+  fechar();
 })();

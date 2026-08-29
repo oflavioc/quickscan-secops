@@ -196,7 +196,7 @@ papel do `doc-writer`).
 
 ## EA-2 — A seção `waivers` reporta um waiver TDD que não existe
 
-**Status**: `aberto`
+**Status**: `resolvido`
 
 **Aberto em**: 2026-08-29. Achado colateral da campanha de mutantes da
 demanda 012 (`specs/012-status-backlog/matriz-gate-mutante.md`, T006),
@@ -249,10 +249,41 @@ por execução. A correção pertence a
 `.claude/verify/compliance-audit.sh:126` — casar campo estruturado (a chave
 JSON `"tdd_waiver"`, com aspas) em vez de substring livre no texto.
 
-### Encaminhamento
+### Resolução — o que foi feito
+
+`fix-finding` provado e commitado em **`e9329de`**
+(`fix(ea2): secao waivers casa a chave JSON tdd_waiver, nao substring em
+prosa`): na seção `waivers` de `.claude/verify/compliance-audit.sh`, o
+`grep -l "tdd_waiver"` deu lugar a um **parse da chave JSON de topo**
+`tdd_waiver` via `$PYBIN` — o mesmo padrão já usado pelas seções irmãs
+(`known-issues`, `backlog`) — com stdout UTF-8 explícito, ordem
+determinística e arquivo ilegível **listado nomeando a causa**, nunca
+pulado em silêncio (R10 §2).
+
+Três provas executadas e registradas pelo `qa-engineer`:
+
+- **Negativo** (árvore real): `[PASS] waivers TDD: nenhum ativo` — o
+  fantasma do planning-state da 012 sumiu da listagem.
+- **Positivo** (worktree efêmera, `tdd_waiver: {motivo, data}` real inserido
+  numa cópia do planning-state da 008): o waiver **verdadeiro continua
+  listado** — o falso positivo foi eliminado sem criar falso negativo, que
+  era o risco central da correção.
+- **Adversarial**: o planning-state da 012 — com o substring `tdd_waivers`
+  na prosa do `brief`, **intocado** — não aparece mais na listagem.
+- Borda extra provada: JSON corrompido é listado como ilegível, com a causa
+  nomeada, nunca `SKIP` silencioso.
+- `compliance-audit` completo: **13 PASS · 0 FAIL**.
+
+**O caso de reprodução continua vivo e intocado**: a prosa do campo `brief`
+do planning-state da 012 (`.claude/project-memory/planning-state/012-status-backlog.json:5`)
+segue com a palavra `tdd_waivers`, e agora ela é **corretamente ignorada** —
+é a prova permanente de que o scanner passou a distinguir campo estruturado
+de texto corrido. A nota de guarda do `product-owner` foi honrada: a
+correção não mascarou o caso editando a prosa do `brief`; corrigiu o
+scanner, com o caso vivo como prova.
+
+### Encaminhamento original (histórico)
 
 `fix-finding` próprio para o `grep` da seção `waivers` — sem spec (não cria
 comportamento novo; corrige o oráculo para parar de casar prosa como se fosse
-dado estruturado). Nenhuma decisão de correção foi tomada aqui — só o
-registro do achado (R12; este documento não decide PASS/FAIL, papel do
-`doc-writer`).
+dado estruturado). Cumprido — ver §Resolução acima.

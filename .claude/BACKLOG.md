@@ -45,11 +45,48 @@ começando em `EA-1`. A série `E-*` permanece citável como histórico — as
 regras que a citam não são retro-editadas (R13) — mas não recebe novos
 membros por aqui.
 
+## Rito de escrita da linha de status
+
+Todo achado tem, na **primeira linha não vazia após o heading `## EA-*`**,
+uma linha de status em forma canônica: rótulo em negrito fechado
+(`**Status**`), dois-pontos **fora** do negrito, um espaço, valor entre
+**crases**, sem ponto final. Vocabulário fechado, minúsculas,
+case-sensitive — 4 estados:
+
+    **Status**: `aberto`
+    **Status**: `resolvido`
+    **Status**: `refutado`
+    **Status**: `transferido`
+
+Eventos que escrevem a linha (mantenedor declarado: `doc-writer`,
+`BACKLOG.md:3`): abertura de achado → `aberto`; fix-finding §4 ("o que foi
+feito", com PR/commit registrado na prosa) → `resolvido`; fix-finding §1
+("se não reproduz: risque com a razão") → `refutado` (título e corpo
+riscados, linha de status limpa); migração para `design-decisions.md`
+(R12/R13) → `transferido`, com ponteiro na prosa. Fix-finding **em curso**
+não muda o estado.
+
+**Data de abertura** (recomendada, não exigida pelo gate — decisão 1.3 da
+demanda 012, `specs/012-status-backlog/spec.md`): registre-a na prosa de
+cada achado novo, para a revisão humana; o parser não a confere.
+
+**Prefixo reservado**: dentro de um bloco de achado (do heading `## EA-*`
+até o próximo `## ` ou o fim do arquivo), qualquer linha começando com
+`**Status` em coluna 0 é lida como candidata a linha de status e precisa
+casar a forma canônica acima — não escreva prosa com esse prefixo em coluna
+0 dentro de um bloco de achado; reformule ou desloque.
+
+Os quatro exemplos acima ficam **antes do primeiro achado** (auto-exclusão
+de escopo de bloco, R10 §10) e **em código indentado (4 espaços)**, nunca em
+coluna 0: a indentação retira o `^` que o parser exige tanto do heading de
+achado (`^## `) quanto da candidata a status (`^\*\*Status`) — nenhum
+exemplo deste rito vira achado ou candidata fantasma.
+
 ---
 
 ## EA-1 — As três listas de proteção nunca foram reconciliadas
 
-**Status: aberto.**
+**Status**: `aberto`
 
 **Mesmo formato do achado E2** ("a §29.4 da spec (prosa) não impediu edição de
 protegidos nas fases 5.1/5.2" — citado em
@@ -156,3 +193,66 @@ arquivo:linha→efeito, as duas faces com remédios distintos, a tensão a
 resolver e o precedente a não reabrir. Nenhuma decisão de correção foi tomada
 aqui — só o registro do achado (R12; este documento não decide PASS/FAIL,
 papel do `doc-writer`).
+
+## EA-2 — A seção `waivers` reporta um waiver TDD que não existe
+
+**Status**: `aberto`
+
+**Aberto em**: 2026-08-29. Achado colateral da campanha de mutantes da
+demanda 012 (`specs/012-status-backlog/matriz-gate-mutante.md`, T006),
+descoberto pelo `qa-engineer` e deliberadamente adiado — ver §Por que é
+notável, e por que foi adiado abaixo.
+
+### Cadeia arquivo:linha → efeito
+
+- **`.claude/verify/compliance-audit.sh:126`** — a seção `waivers` roda
+  `grep -l "tdd_waiver" .claude/project-memory/planning-state/*.json` para
+  listar planning-states com waiver TDD ativo.
+- **`.claude/project-memory/planning-state/012-status-backlog.json:5`** — o
+  campo `brief` contém, **em prosa**, a palavra `tdd_waivers` (ao descrever a
+  própria demanda: "…listar achados abertos como já faz com os
+  tdd_waivers").
+- `grep` casa **substring livre**, sem fronteira de chave JSON estruturada —
+  não distingue a chave `tdd_waiver` de uma menção em texto corrido.
+- **Efeito**: a cada execução do audit, a seção `waivers` lista
+  `.../012-status-backlog.json` como "waiver TDD ativo" sem existir a chave
+  `tdd_waiver` nesse arquivo. Conferido por execução: dos 4 planning-states
+  existentes, só o da 012 casa (`grep -c "tdd_waiver"` = 1); os de 003, 007 e
+  008 dão 0.
+- **Severidade**: ruído de exibição — **nunca vira FAIL**, a seção emite `ok`
+  em ambos os ramos (com ou sem waiver listado). Não bloqueia pipeline.
+
+### Por que é notável, e por que foi adiado
+
+Este achado é **o mesmo defeito** que a própria demanda 012 curou uma seção
+abaixo: status lido por substring livre sobre prosa, em vez de campo em
+gramática fechada com parse que reprova o que não casa. A seção `waivers` foi
+o **precedente** que a seção `backlog` espelhou (`plan.md` da 012: "a seção
+`backlog` segue a anatomia das 7 seções irmãs") — e o espelho, ao nascer com
+parser fechado, revelou o defeito do original.
+
+Descoberto pelo `qa-engineer` durante a campanha de mutantes da 012 (T006) e
+**deliberadamente adiado**, por três razões registradas na matriz da 012:
+"corrigir de passagem" é exatamente a disciplina que deu origem à demanda 012
+(R5 §anti-patterns); tocar `waivers` naquele momento invalidaria a prova de
+regressão das 7 seções irmãs já executada (BS-1); e o dano observado é
+**ruído**, não falha — não há PASS/FAIL incorreto em jogo.
+
+### Nota de guarda do `product-owner`
+
+A correção **não é** editar a prosa do campo `brief` no planning-state da 012
+para remover a palavra `tdd_waivers` dali — isso **mascararia o caso de
+reprodução** em vez de corrigir o scanner: o caso vivo
+(`012-status-backlog.json` com `tdd_waivers` em prosa, ao lado dos outros 3
+planning-states sem a palavra) é o que torna o `fix-finding` fácil de provar
+por execução. A correção pertence a
+`.claude/verify/compliance-audit.sh:126` — casar campo estruturado (a chave
+JSON `"tdd_waiver"`, com aspas) em vez de substring livre no texto.
+
+### Encaminhamento
+
+`fix-finding` próprio para o `grep` da seção `waivers` — sem spec (não cria
+comportamento novo; corrige o oráculo para parar de casar prosa como se fosse
+dado estruturado). Nenhuma decisão de correção foi tomada aqui — só o
+registro do achado (R12; este documento não decide PASS/FAIL, papel do
+`doc-writer`).

@@ -320,12 +320,17 @@ encontrou-se este defeito nele.
   `p50`, `p51`, `p52`), todos com `targets` de módulos de UI da fase 5
   (confirmado por leitura: nenhum deles cita qualquer arquivo de
   `.claude/verify/` nem `tests_session_m48.js`). Contagem verificada nesta
-  sessão: 21 entradas somadas nos 4 arrays `targets` (16 arquivos distintos,
-  com sobreposição entre harnesses — `ui_v32.js` e `ui_session_v32.js`
-  aparecem em mais de um). A sessão da 009 relatou 20 na sua própria
-  contagem independente; a diferença de 1 não foi reconciliada nesta sessão
-  e não muda a conclusão — nenhum dos dois totais inclui qualquer arquivo de
-  `.claude/verify/` ou `tests_session_m48.js`.
+  sessão, na `develop`: 21 entradas somadas nos 4 arrays `targets` (16
+  arquivos distintos, com sobreposição entre harnesses — `ui_v32.js` e
+  `ui_session_v32.js` aparecem em mais de um). A sessão da 009 mediu 20
+  arquivos distintos na própria branch, que carrega um harness a mais —
+  `d009` (9 targets), criado pela demanda 009 e ainda não mesclado na
+  `develop` no momento desta medição. As duas contagens estão corretas em
+  suas respectivas árvores: nenhum engano, só contexto de árvore que
+  faltou registrar na primeira vez. Vale reter mesmo sem divergência real:
+  **o número de arquivos órfãos depende de qual árvore se mede** — dado
+  relevante para quem desenhar o conserto (o inventário de órfãos não é
+  uma constante do repositório, muda conforme harnesses novos chegam).
 - **Efeito**: os gates entregues pelas demandas 008 e 012 são **órfãos** do
   stage. Provados os seis: `.claude/verify/check_evidence_bridge.py`,
   `.claude/verify/gen_evidence_bridge.py`, `.claude/verify/evidence_bridge.json`,

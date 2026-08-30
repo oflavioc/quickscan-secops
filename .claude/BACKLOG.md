@@ -86,7 +86,7 @@ exemplo deste rito vira achado ou candidata fantasma.
 
 ## EA-1 — As três listas de proteção nunca foram reconciliadas
 
-**Status**: `aberto`
+**Status**: `resolvido`
 
 **Mesmo formato do achado E2** ("a §29.4 da spec (prosa) não impediu edição de
 protegidos nas fases 5.1/5.2" — citado em
@@ -126,11 +126,18 @@ força diferente**, e essa distinção é o coração do achado:
   suítes congeladas (`tests_m42_m86.js` … `tests_session_m48.js` …
   `tests_unset_ug.js`).
 
-**Efeito**: das 13 suítes que §29.4 declara "edição proibida nesta fase", só
-`tests_unset_ug.js` tem identidade byte a byte fixada por algum gate — as
-outras **12 podem ser editadas livremente sem que nenhuma máquina reclame**,
-apesar da prosa dizer o contrário. `P50-GOV1` continua passando: o arquivo
-ainda existe, só não é mais o mesmo.
+~~**Efeito**: das 13 suítes que §29.4 declara "edição proibida nesta fase", só~~
+~~`tests_unset_ug.js` tem identidade byte a byte fixada por algum gate — as~~
+~~outras **12 podem ser editadas livremente sem que nenhuma máquina reclame**,~~
+~~apesar da prosa dizer o contrário. `P50-GOV1` continua passando: o arquivo~~
+~~ainda existe, só não é mais o mesmo.~~
+
+**Refutado no fix-finding (2026-08-30), riscado e mantido (R2 §5)**: o efeito
+está errado em dois pontos — as 13 suítes estão **todas** pinadas em
+`.claude/verify/pins.json` (stage `baseline`, que reprova divergência) e
+`tests_icons_m46.js` tem identidade byte a byte num segundo gate. Os números
+conferidos estão em §Resolução, abaixo; a cadeia das três listas (itens 1-3
+acima) permanece verdadeira e é o que sustenta a Face A.
 
 ### Duas faces, com remédios diferentes
 
@@ -167,9 +174,11 @@ a INV-2 (`tests_unset_ug.js`, com a errata UG8 já registrada e confirmada em
 [`design-decisions.md`](rules/design-decisions.md), linha "Exceção UG8 no
 oráculo do p50_core") e presença (não apagar, mas poder evoluir) para as
 demais. Se essa hipótese se confirmar, quem está desatualizada é a prosa da
-§29.4, e o fix alinha o texto ao gate — não o contrário. Esta é uma hipótese a
-ser decidida pelo `product-owner`/proprietário no fix-finding, não uma
-conclusão deste registro.
+§29.4, e o fix alinha o texto ao gate — não o contrário. ~~Esta é uma hipótese a~~
+~~ser decidida pelo `product-owner`/proprietário no fix-finding, não uma~~
+~~conclusão deste registro.~~ **Riscado (R2 §5)**: não era hipótese a decidir —
+a decisão já existia quando este registro foi escrito
+(`docs_phase5/RECONCILIACAO_BOUNDARY_5_1_5_2.md`, Disposição §2, 2026-08-25).
 
 ### Precedente concreto (registrado com honestidade)
 
@@ -193,6 +202,66 @@ arquivo:linha→efeito, as duas faces com remédios distintos, a tensão a
 resolver e o precedente a não reabrir. Nenhuma decisão de correção foi tomada
 aqui — só o registro do achado (R12; este documento não decide PASS/FAIL,
 papel do `doc-writer`).
+
+### Resolução — o que foi feito
+
+`fix-finding` encomendado nominalmente pelo proprietário, aplicado em
+`fix/ea1-crosscheck-specs-seladas` (de `origin/develop`, `4092463`), em dois
+commits separados: o conteúdo e este fechamento.
+
+**Face A — remédio aplicado no template.** `.claude/templates/spec.md`, seção
+`## Cross-check (obrigatório)`: entrou um **5º item** — "Specs de fase seladas
+— por leitura, não por memória", que manda abrir as specs de
+`current_phase.json → specs_normativas` e citar `arquivo:linha` do que toca o
+escopo, **inclusive o resultado negativo** ("nada sobre <tema> em <arquivo>"),
+que também é leitura. E o item de **Boundary** foi reescrito para cruzar as
+**três** fontes (`.claude/verify/boundary.json` · `PROTECTED` e `frozenSuites`
+em `tests_p50_core.js` · `.claude/verify/pins.json`) com **regra de
+precedência** escrita: onde a prosa de spec selada divergir do executável, vale
+o regime de pins (R8; `RECONCILIACAO_BOUNDARY_5_1_5_2.md`, Disposição §2), e a
+divergência vira **achado** aqui — nunca edição de spec selada. É essa cláusula
+que fecha a tensão em vez de a redocumentar: sem ela, toda Fase 1 futura
+reabriria a mesma discussão. Precedente de forma, já praticado fora do template:
+`specs/013-integridade-da-campanha/spec.md:370` e `:380`.
+
+**Duas correções de fato ao registro original** (o texto errado fica riscado
+acima, com a razão — R2 §5; nada é apagado):
+
+1. **As 13 suítes de `frozenSuites` estão todas pinadas.** `frozenSuites`
+   (`tests_p50_core.js:400-403`) lista 13 arquivos; os 13 têm entrada em
+   `.claude/verify/pins.json` — conferido nesta branch, um a um, 13/13
+   presentes. O stage `baseline` reprova divergência de identidade
+   (`.claude/verify/check_baseline.py:57`, `[FAIL] pin diverge`, com
+   `sys.exit(1)` em `:68`), e também "rastreado sem pin" (`:61`). Logo,
+   "editáveis sem que nenhuma máquina reclame" é **falso desde a Onda 0**: o
+   que `P50-GOV1` não fixa por byte, o registry de pins fixa.
+2. **`tests_icons_m46.js` é a segunda suíte pinada por byte.** Além de
+   `tests_unset_ug.js` em `PROTECTED`, ela está em `FROZEN_VISUAL_AUTHORITY`
+   (`tests_p50_core.js:2655`), asserida por `P50-COR4` (`:2664`, identidade
+   SHA-256 em `:2666-2671`). São **2 de 13**, não 1.
+
+**Face B — encerrada por remissão, não por conserto.** O que o registro tratou
+como "hipótese a ser decidida" já era disposição vigente:
+`docs_phase5/RECONCILIACAO_BOUNDARY_5_1_5_2.md`, **Disposição §2** (2026-08-25)
+— "o freeze acumulativo da estrutura parte do estado REAL: a identidade vigente
+de todos esses arquivos está pinada em `.claude/verify/pins.json` e protegida
+por `boundary.json` + `guard-boundary` + stage `boundary`". Nenhuma lista foi
+alinhada, ampliada ou reescrita neste fix: a Face B se lê contra o regime que a
+supera, e é para ele que este achado passa a apontar.
+
+**A §29.4 permanece intocada.** `specs/PHASE_5_0_REV_B.md:1613-1621` foi aberta
+só para conferência de leitura. Alterá-la é rito — `P50-GOV2`
+(`tests_p50_core.js:410`) confere o SHA-256 do arquivo inteiro contra
+`CLAUDE.md` e o registro de promoção, e `current_phase.json → specs_normativas`
+registra o mesmo hash: mexer no texto seria promoção de REV C, expressamente
+fora desta tarefa. A prosa da §29.4 não precisava de conserto — precisa ser
+lida junto com o registro que a supera, e é isso que o template agora obriga.
+
+**Evidência**: `bash .claude/verify/compliance-audit.sh --rule=backlog` →
+`1 PASS · 0 FAIL`, **5 achados abertos** (EA-1 sai da listagem: EA-3, EA-4,
+EA-5, EA-6, EA-7). `gen_pins.py` **não foi rodado** neste passo — o repin do
+registry (`.claude/templates/spec.md` e `.claude/BACKLOG.md` são pinados,
+R8 §1) é do `build-engineer`, no mesmo PR.
 
 ## EA-2 — A seção `waivers` reporta um waiver TDD que não existe
 

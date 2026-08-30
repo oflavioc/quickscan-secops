@@ -1,7 +1,7 @@
 {
   "_meta": {
     "descricao": "Registry único de pins — fonte de identidade dos artefatos (R8). Hashes = SHA-256 dos blobs de HEAD. Alterar arquivo pinado exige regenerar este registry no MESMO PR, com motivo no commit.",
-    "gerado_de_head": "0d4a3294f10aef740c009f45ed1a42f0a85fbaa6",
+    "gerado_de_head": "cce5652a7ca89fcfa808de085bd107462784ca69",
     "gerado_em": "2026-08-30",
     "exclusoes": [
       "docs_phase5/**",
@@ -15,7 +15,7 @@
     "baseline_core_zip_sha256": "625079c462be7d44ffd69b1cd85f256382322bd0555ae4b548f21bf30ee5b89d"
   },
   "files": {
-    ".claude/BACKLOG.md": "cfdc32a1aa919c8bd0c4139aa71d2ba156baf9d3176ecac74e4ef9806e1a19dc",
+    ".claude/BACKLOG.md": "0a7546341b70edc62f6a2e7d29e1235cfaa209a2dbecc69daec7e7580bc53447",
     ".claude/agent-memory/README.md": "2f868716c8785119c1d6a02a7715f7b5058ab968f55951410fc82fc45b960a93",
     ".claude/agent-memory/build-engineer/MEMORY.md": "c1718832965955a9ef20631c7b0fc6af4cdbc4c02223b69f45120c39989859f9",
     ".claude/agent-memory/build-engineer/project_013_e1_harnesses.md": "109cd0778c35a7312a6afae586956ae91df9e886afe531b01958fe7335b58eba",
@@ -102,7 +102,7 @@
     ".claude/templates/plan.md": "b781687058f0a658c4573621bccd783b7f1b2d8b62b752b1f8473e5ae06dae8f",
     ".claude/templates/planning-state.schema.json": "c4bbac2732c74e197eefc812282f21f436eb9810e3daabcd887c06b1f04a4911",
     ".claude/templates/refinement.md": "c215d8e54de2debc530c85d0aa9f22db0d7a1afd9d8dad97eafc193bec19f327",
-    ".claude/templates/spec.md": "578a96c27273761ad2b8b79e395d9798a808961a50bf605330e4e872411383a4",
+    ".claude/templates/spec.md": "3b8a335b4ced3e69162f3a1478d53daca318c8e26f1f56ccd03d6887129c34a8",
     ".claude/templates/tasks.md": "08ce20d1d62483d632d79916c1a456a1e5fdd1cb25397561cd4a290fa21e1d15",
     ".claude/verify/boundary.json": "559b2bd35a38e00d66cad7b447c38c423c42b0a5ae92a24a8643bedb391affe4",
     ".claude/verify/bridges.json": "c0a7b3441345575140dcab473b40936ecdc29a122d3ab17a17704622403c9099",

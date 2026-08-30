@@ -14,7 +14,9 @@
                   agora"), que é outro título e outro bloco contíguo;
      · D010-F2  — o par de C8: HÁ substituto (whitespace com candidatos DIRECT)
                   convivendo com práticas-alvo sem contexto;
-     · D010-F3  — gate de suficiência FECHADO com a Camada 1 nomeando produto;
+     · D010-F3  — gate de suficiência FECHADO, com um alvo em S2 de contexto e
+                  `MAP` não vazio que só NÃO publica por causa do gate (emenda
+                  final de 2026-08-30, errata E5);
      · D010-F4  — o vão SERVIDO (emenda de 2026-08-30): duas capabilities-alvo
                   que recebem SERVIÇO por `hasGap` e ZERO candidatos, uma delas
                   carregando a colisão de identidade do catálogo congelado.
@@ -60,12 +62,19 @@
    eram vacuidades de FIXTURE: o critério é mensurável, só que nenhum estado
    alcançado o exercitava. Esta emenda fecha as duas.
 
-   O acréscimo NÃO cabe dentro de D010-F1..F3, e isso é medido, não opinião:
+   O acréscimo NÃO cabe dentro de D010-F1/F1b/F2, e isso é medido, não opinião:
    pôr `vulnerability-management` e `monitoring-coverage` no nível 0 muda o
    VETOR, e com ele mudam valores já declarados de D010-F1 — `basePresented`
    passa de 4 para 6 capabilities e `baseInV32Base` de 2 para 4. Emendar F1
    reescreveria asserções que já vigoram; a instrução é o contrário disso.
-   Logo: fixture nova, e F1..F3 continuam com os MESMOS valores declarados.
+   Logo: fixture nova, e F1, F1b e F2 continuam com os MESMOS valores
+   declarados — conferido byte a byte a cada emenda desta série.
+
+   D010-F3 é a exceção decidida, e por uma razão que não vale para as outras:
+   dela só pendem dois critérios, e o censo de um deles (`D010-ARB3` (c)) é da
+   Camada 1, que não muda por card V3.2 novo. Ela recebeu a emenda final de
+   2026-08-30 (errata E5) porque `D010-CARD3` (b) era verdadeiro por ESTADO e
+   não por GATE — ver o cabeçalho de D010-F3, com o custo medido campo a campo.
 
    Os dois estados novos moram na MESMA fixture porque foi medido que NÃO
    interferem um no outro: com os dois alvos juntos, o contexto de
@@ -190,27 +199,67 @@ const D010_F2 = {
 
 /* ---------------------------------------------------------------------------
    D010-F3 · gate de suficiência FECHADO
-   Vetor de `P50-F2` (4 confirmadas + 1 "NA" ⇒ `suff === false`) +
-   `saasAllowed = "yes"` + 1 alvo cujo `MAP` no nível ATUAL é não vazio.
+   Vetor de `P50-F2` (4 confirmadas + 1 "NA") ACRESCIDO de
+   `vulnerability-management` = 0 ⇒ 5 confirmadas, e `5 < 10` mantém
+   `suff === false`. Mais `saasAllowed = "yes"` e DOIS alvos.
 
-   O alvo é `team-capacity` (atual 0 ⇒ `MAP.team-capacity.lv[0].c` =
-   [SOCaaS, FortiGuard-MDR-Service]): é o único par alvo/MAP do vetor que faz a
-   Camada 1 NOMEAR produto sob gate fechado, que é o contraste de C9. `mandate`
-   serviria com um item só; `governance` e `logs` têm `lv[ans].c` vazio; o alvo
-   de `logs` seria removido por `revalidateTargets` (atual 3).
+   ==========================================================================
+   EMENDA DE 2026-08-30 (errata da spec, E5) — o vetor TINHA de ganhar resposta
+   ==========================================================================
+   T002 mediu que nenhum alvo legítimo do vetor original estava em estado de
+   CONTEXTO S2 com `MAP` não vazio: `mandate`/`governance`/`team-capacity`
+   pertencem a capabilities com `landscapeEnabled:false` (S4), `logs` está em
+   nível 3 com `MAP.lv[3].c` vazio e o alvo seria removido por
+   `revalidateTargets`, e `incident-response` é "NA". Logo `D010-CARD3` (b) —
+   "zero `[data-ux-enablers=a-validar]` sob gate fechado" — era verdadeiro por
+   ESTADO e não por GATE: não havia nada que o gate pudesse estar impedindo.
+   Não há atalho pelos qids já confirmados; o vetor tem de ganhar uma resposta.
 
-   RESÍDUO MEDIDO, declarado e não escondido: `team-capacity` pertence a
-   `soc-staffing`, que tem `landscapeEnabled: false` ⇒ estado de CONTEXTO S4.
-   Nenhum alvo legítimo deste vetor está em S2 com `MAP` não vazio, de modo que
-   a fixture prova "não publica sob gate fechado" mas NÃO prova que é o gate —
-   e não o estado — quem impede. Ver `D010_VACUIDADES_CONHECIDAS`.
+   `vulnerability-management` = 0 é a resposta que serve, e o CUSTO foi medido
+   por execução aqui (previsão do `tech-lead` conferida, não presumida):
+     · `confirmedCount()` 4 → 5, `suff` FALSE e
+       `tgtComparisonPublishable(tgtCurrentProfile())` FALSE — o gate continua
+       FECHADO, que é a razão de ser desta fixture;
+     · EXATAMENTE UMA capability muda em todo o render: `vulnerability-management`
+       sai de `card` (`NEEDS_VALIDATION`/`VALIDATE`, payload zero) e entra em
+       apresentação `base` (`CONTEXT_NOT_INFORMED`/`LEGACY-LABELLED`, serviço
+       `vulnerability-assessment`, `gap-high`). As outras 11 saem idênticas,
+       campo a campo;
+     · ZERO cards novos — `cardsSemPayload` vai de 10 para 9, nunca para 11 —,
+       logo "há substituto" continua FALSE e a Camada 1 continua sem substituto;
+     · o censo de títulos congelados não se move.
+
+   O ALVO VAI A 1, e o nível não é decorativo. `D010-CARD3` (c) mede o
+   DIFERENCIAL entre fixtures: o mesmo par (qid, nível confirmado) publica o nó
+   sob D010-F4 (gate ABERTO) e não publica aqui (gate FECHADO), "com todas as
+   demais condições de C7 idênticas nas duas". Medido: com alvo 1, as duas
+   metades coincidem em 16 campos — nível confirmado, alvo, estado de payload,
+   estado de contexto, `MAP` no nível atual e no nível alvo, classificação,
+   supportMode, candidatos, serviços, notas, maturidade, apresentação,
+   `landscapeEnabled`, presence e chips — e divergem SÓ no gate (5 × 15
+   confirmadas, `suff` false × true, publicável false × true). Com alvo 2,
+   `MAP.lv[2].c` é vazio e o nível do alvo viraria uma SEGUNDA diferença: o
+   diferencial deixaria de isolar o gate, que é a única coisa que ele mede.
+
+   `team-capacity` PERMANECE como segundo alvo. Ele é o alvo em S4 cujo `MAP` no
+   nível atual é não vazio ([SOCaaS, FortiGuard-MDR-Service]) e cuja capability
+   recebe serviço por `hasGap` — é ele que põe o chip "FortiGuard SOCaaS" na tela
+   SOB GATE FECHADO, que é o contraste do enunciado de C9 ("mesmo que a Camada 1
+   nomeie produto nesse estado"). Tirá-lo removeria esse contraste e moveria
+   valores já declarados sem que critério algum peça.
 --------------------------------------------------------------------------- */
+const D010_F3_VEC = (() => {
+  const v = FX50.P50_F2.vec.slice();
+  v[K("vulnerability-management")] = 0;
+  return v;
+})();
+
 const D010_F3 = {
   id: "D010-F3",
-  name: "gate de suficiência FECHADO · Camada 1 nomeia produto",
-  vec: FX50.P50_F2.vec.slice(),
+  name: "gate de suficiência FECHADO · alvo em S2 que só não publica por causa do gate",
+  vec: D010_F3_VEC,
   arch: { saasAllowed: "yes" },
-  targets: { "team-capacity": 2 },
+  targets: { "team-capacity": 2, "vulnerability-management": 1 },
   landscape: "UNSET",
   screen: "results"
 };
@@ -331,6 +380,26 @@ function d010RequireMap(w) {
 }
 /* Vetor de respostas corrente, lido do owner canônico. */
 function d010Answers(w) { return JSON.parse(d010Eval(w, "JSON.stringify(ans)")); }
+
+/* O VEREDITO DE SUFICIÊNCIA, lido das duas funções canônicas do runtime
+   congelado — as MESMAS que o card consome (`ui_target_v32.js:116`). Nenhuma
+   das duas está em `window.__DEV`: o bloco exportado por `ui_target_v32.js`
+   termina em `tgtCurrentProfile`, e `confirmedCount` é função de topo de script
+   do HTML. Reimplementá-las aqui tornaria a asserção equivalente por construção
+   — é exatamente o defeito que a errata E5 tirou de C9 (c) —, e criar bridge
+   nova exigiria editar arquivo `frozen` (R-3). Sobra a leitura por `d010Eval`,
+   com falha ALTA se a função sumir: função ausente não vira "não medi". */
+function d010ConfirmedCount(w) {
+  const t = d010Eval(w, "typeof confirmedCount");
+  if (t !== "function") throw new Error("d010ConfirmedCount: confirmedCount inalcançável (typeof " + t + ")");
+  return d010Eval(w, "confirmedCount()");
+}
+function d010ComparisonPublishable(w) {
+  const t = d010Eval(w, "typeof tgtComparisonPublishable");
+  if (t !== "function")
+    throw new Error("d010ComparisonPublishable: tgtComparisonPublishable inalcançável (typeof " + t + ")");
+  return d010Eval(w, "tgtComparisonPublishable(tgtCurrentProfile())");
+}
 /* `MAP[qid].lv[nivel].c` mapeado para as chaves de produto (`c.p`). Nível não
    numérico ("NA"/null) devolve lista vazia — é a propriedade que C7 (d) usa. */
 function d010MapItems(w, qid, nivel) {
@@ -623,29 +692,47 @@ const D010_DECLARED = {
     arch: { saasAllowed: "yes" },
     landscapeDeclarada: {},
     prioridades: [],
-    alvos: { "team-capacity": 2 },
-    estados:    { "team-capacity": "S1" },
-    estadosCtx: { "team-capacity": "S4" },
-    mapNivelAtual: { "team-capacity": ["SOCaaS", "FortiGuard-MDR-Service"] },
-    mapNivelAlvo:  { "team-capacity": [] },
-    basePresented: [],
-    baseInV32Base: [],
-    /* as 10 capabilities `NEEDS_VALIDATION`/`VALIDATE` com 0 candidatos, 0
+    alvos: { "team-capacity": 2, "vulnerability-management": 1 },
+    /* `team-capacity` é S4 de contexto (capability `soc-staffing`,
+       `landscapeEnabled:false`); `vulnerability-management` é o alvo em S2 que a
+       emenda E5 trouxe — S1 pela leitura COM itens (o serviço) e S2 pela leitura
+       de CONTEXTO (presence UNSET). É ele que satisfaz todas as demais condições
+       de C7 e só não publica por causa do gate. */
+    estados:    { "team-capacity": "S1", "vulnerability-management": "S1" },
+    estadosCtx: { "team-capacity": "S4", "vulnerability-management": "S2" },
+    mapNivelAtual: { "team-capacity": ["SOCaaS", "FortiGuard-MDR-Service"],
+                     "vulnerability-management": ["FortiRecon", "FortiEndpoint"] },
+    mapNivelAlvo:  { "team-capacity": [], "vulnerability-management": ["FortiRecon"] },
+    /* a ÚNICA consequência da emenda no censo de apresentação: uma capability a
+       mais em `base`, e nenhum card novo. Sem prioridades declaradas, os dois
+       conjuntos coincidem. */
+    basePresented: ["vulnerability-management"],
+    baseInV32Base: ["vulnerability-management"],
+    /* as 9 capabilities `NEEDS_VALIDATION`/`VALIDATE` com 0 candidatos, 0
        serviços e 0 notas: são elas que tornam a cláusula "candidato/serviço/
-       nota" load-bearing, e é por elas que "há substituto" é false aqui. */
+       nota" load-bearing, e é por elas que "há substituto" é false aqui.
+       Eram 10 antes da emenda E5: `vulnerability-management` SAIU de `card` e
+       entrou em `base`. A emenda tira um card, nunca acrescenta — se esta lista
+       crescer, a previsão do `tech-lead` foi violada e a fixture grita aqui. */
     cardsSemPayload: ["continuous-monitoring", "detection-engineering", "endpoint-detection",
       "external-exposure", "incident-management", "knowledge-management", "network-detection",
-      "security-automation", "soc-skills", "vulnerability-management"],
+      "security-automation", "soc-skills"],
     /* `team-capacity` pertence a `soc-staffing`, e É por gap que o serviço
        chega — mas `soc-staffing` tem `landscapeEnabled: false`, logo o estado
-       de contexto é S4 e não S2. Por isso D010-F3 NÃO serve para C8 (b) nem
-       para C10 (c): o universo dessas alíneas é S2. O chip abaixo mostra que a
-       colisão fortiguard-socaas × SOCaaS também existe aqui — sob gate
-       FECHADO, que é outro cenário e o de C9. */
-    servicosPorGap: { "soc-staffing": ["fortiguard-socaas"] },
-    habilitadores: { "team-capacity": ["fortiguard-socaas|FortiGuard SOCaaS|serviço"] },
+       de contexto é S4 e não S2. O chip dele mostra que a colisão
+       fortiguard-socaas × SOCaaS também existe aqui — sob gate FECHADO, que é
+       outro cenário e o de C9. D010-F3 continua NÃO servindo para C8 (b) nem
+       para C10 (c): lá o universo é o card que publica, e aqui nada publica. */
+    servicosPorGap: { "soc-staffing": ["fortiguard-socaas"],
+                      "vulnerability-management": ["vulnerability-assessment"] },
+    habilitadores: { "team-capacity": ["fortiguard-socaas|FortiGuard SOCaaS|serviço"],
+                     "vulnerability-management": ["vulnerability-assessment|Vulnerability Assessment|serviço"] },
     titulosCongelados: [{ texto: "Como a Fortinet pode apoiar agora", oculto: true },
-                        { texto: "Pode fazer sentido — após validação", oculto: true }]
+                        { texto: "Pode fazer sentido — após validação", oculto: true }],
+    /* C9 (a) · o veredito de suficiência, DECLARADO para ser consumido como dado */
+    gateSuficiencia: { confirmadas: 5, suff: false, publicavel: false },
+    /* C9 (c) · a metade FECHADA do diferencial */
+    diferencialC9: { qid: "vulnerability-management", nivel: 0, alvo: 1, gateAberto: false }
   },
   "D010-F4": {
     legacy: false, suff: true, substituto: false,
@@ -694,6 +781,42 @@ const D010_DECLARED = {
       servicoAnexado: "fortiguard-socaas", chaveMapHomonima: "SOCaaS", nomeComum: "FortiGuard SOCaaS",
       controleChaveMap: "FortiGuard-MDR-Service", controleServicoNaoAnexado: "fortiguard-mdr",
       controleNome: "FortiGuard MDR"
+    },
+    /* C9 (a) · o veredito de suficiência, declarado também aqui: é a metade
+       ABERTA do diferencial, e sem os DOIS vereditos declarados o oráculo teria
+       de recalcular a suficiência — que é o que a errata E5 proibiu. */
+    gateSuficiencia: { confirmadas: 15, suff: true, publicavel: true },
+    /* C9 (c) · a metade ABERTA. O par é IDÊNTICO ao de D010-F3 (mesmo qid,
+       mesmo nível confirmado, mesmo nível de alvo) — é essa identidade que faz
+       o gate ser a única variável do diferencial. `gateAberto` é o oposto do de
+       F3, e o assert exige que sejam opostos: dois iguais não são diferencial. */
+    diferencialC9: { qid: "vulnerability-management", nivel: 0, alvo: 1, gateAberto: true },
+    /* E2 da errata · as DUAS leituras de "S2", por qid, lado a lado. Não é
+       repetição de `estados`/`estadosCtx`: o que esta declaração acrescenta é a
+       lista de qids em que as duas DIVERGEM, e é ela que C8 (b) consome como
+       pré-condição de não-vacuidade — "prática com apenas serviços (nenhum
+       candidato) e em S2 de CONTEXTO". Lista vazia = alínea sem caso. */
+    leiturasPorQid: {
+      "automation":              { payload: "S2", contexto: "S2" },
+      "endpoint":                { payload: "S2", contexto: "S2" },
+      "network-visibility":      { payload: "S2", contexto: "S2" },
+      "external-surface":        { payload: "S2", contexto: "S2" },
+      "vulnerability-management": { payload: "S1", contexto: "S2" },
+      "monitoring-coverage":     { payload: "S1", contexto: "S2" }
+    },
+    leiturasDivergentes: ["monitoring-coverage", "vulnerability-management"],
+    /* C10 (c) · os DOIS homônimos no MESMO card, declarados como conjunto
+       TOTAL: os pares abaixo têm de ser exatamente a tabela de equivalência
+       inteira do catálogo (`D010_EQUIVALENCIA_NOME`), e os dois têm de estar no
+       nó do `MAP` deste qid. Um anexado (colide, tem de fundir) e um NÃO
+       anexado (controle, tem de sobreviver) — se algum dia os dois ficarem do
+       mesmo lado, o cartão perdeu uma direção e o assert diz qual. */
+    homonimosNoCard: {
+      qid: "monitoring-coverage", capability: "continuous-monitoring",
+      pares: [
+        { chaveMap: "SOCaaS", servico: "fortiguard-socaas", nome: "FortiGuard SOCaaS", anexado: true },
+        { chaveMap: "FortiGuard-MDR-Service", servico: "fortiguard-mdr", nome: "FortiGuard MDR", anexado: false }
+      ]
     }
   }
 };
@@ -707,23 +830,29 @@ const D010_DECLARED = {
    decisão do `tech-lead`/`product-owner` não vier.
 
    T002 (2026-08-30) mediu quatro. A emenda do proprietário de 2026-08-29,
-   executada em 2026-08-30, fecha DUAS por fixture (C8 (b) e C10 (c)) e tira as
-   outras duas do caminho por decisão, não por medição nova:
-     · C9 (c) foi para CONSERTO DE REDAÇÃO — o critério não pode afirmar o que
-       não pode provar. O texto é do `tech-lead`; o achado desta fixture
-       permanece registrado abaixo porque é ele que justifica a reescrita.
-     · A5 foi para NENHUM MUTANTE — a cláusula fica no predicado como guarda
-       contra mudança futura no engine, e para de receber atribuição de peso.
-       Fica registrada aqui como PROVA de que nada a mata, para que ninguém
-       tente escrever esse mutante de novo.
+   executada em 2026-08-30 em três passagens, deixa UMA aberta:
+     · C8 (b) e C10 (c) — FECHADAS por D010-F4 (2ª passagem);
+     · C9 (b) e (c) — FECHADAS pela emenda de D010-F3 (3ª e última passagem):
+       (b) ganhou o alvo que só não publica por causa do gate, e (c) virou o
+       diferencial declarado F3 × F4, com o mesmo par (qid, nível) dos dois
+       lados. A redação nova do `tech-lead` (errata E5) chegou antes da fixture,
+       e é ela que esta emenda cumpre — não há critério pendente de texto;
+     · A5 continua ABERTA POR CONSTRUÇÃO e sem mutante — a cláusula fica no
+       predicado como guarda contra mudança futura no engine e para de receber
+       atribuição de peso. Fica registrada aqui como PROVA de que nada a mata,
+       para que ninguém tente escrever esse mutante de novo.
    ========================================================================== */
 const D010_VACUIDADES_CONHECIDAS = [
   { criterio: "C8 · D010-CARD2 (b)", status: "FECHADA em 2026-08-30 por D010-F4", fixture: "D010-F4",
-    medido: "T002 mediu que nenhuma das capabilities dos 5 alvos de D010-F1..F3 recebia serviço por hasGap " +
-            "(`servicosPorGap` declarado {} em F1, F1b e F2). D010-F4 põe `vulnerability-management` e " +
-            "`monitoring-coverage` no nível 0 com alvo: o engine anexa `vulnerability-assessment` e " +
-            "`fortiguard-socaas` às capabilities correspondentes, com ZERO candidatos, presence UNSET " +
-            "(estado de contexto S2) e MAP.lv[atual].c não vazio nos dois.",
+    medido: "T002 mediu que nenhuma capability de alvo de D010-F1/F1b/F2 recebia serviço por hasGap " +
+            "(`servicosPorGap` declarado {} nas três) e que o único alvo servido de D010-F3 — " +
+            "`team-capacity`, via `soc-staffing` — estava em S4 de contexto, fora do universo da alínea. " +
+            "D010-F4 põe `vulnerability-management` e `monitoring-coverage` no nível 0 com alvo: o engine " +
+            "anexa `vulnerability-assessment` e `fortiguard-socaas` às capabilities correspondentes, com " +
+            "ZERO candidatos, presence UNSET (estado de contexto S2) e MAP.lv[atual].c não vazio nos dois. " +
+            "ATUALIZAÇÃO da 3ª passagem: D010-F3 emendada também passou a ter capability de alvo servida " +
+            "em S2 (`vulnerability-management`), mas a fixture de C8 (b) continua sendo D010-F4 — sob F3 o " +
+            "gate está FECHADO e nada publica, de modo que não há \"nó ao lado da linha do engine\" para medir.",
     consequencia: "a alínea passa a ser exercitável: um mutante que trate serviço-sem-candidato como " +
             "\"já tem contexto\" e suprima o nó morre em D010-F4. O par S1 (com itens) × S2 (contexto) fica " +
             "declarado lado a lado na mesma fixture, que é onde um gate que confunda as duas leituras é pego." },
@@ -738,23 +867,54 @@ const D010_VACUIDADES_CONHECIDAS = [
             "mesmo nó, então deduplicar contra a tabela sem olhar o que está anexado apaga \"FortiGuard MDR\" " +
             "e também morre. A tabela inteira tem 2 pares e é re-derivada a cada execução por " +
             "`d010EquivalenciaNome` — ver `D010_EQUIVALENCIA_NOME`." },
-  { criterio: "C9 · D010-CARD3 (b)(c)", status: "ABERTA — endereçada por redação, não por fixture", fixture: "D010-F3",
-    medido: "nenhum alvo legítimo do vetor P50-F2 está em estado de contexto S2 com MAP não vazio: " +
-            "mandate/governance/team-capacity são S4 (landscapeEnabled:false), logs é S2 mas MAP.lv[3].c é vazio " +
-            "e o alvo seria removido por revalidateTargets, incident-response é S2 mas a resposta é \"NA\".",
-    consequencia: "a ausência de nó a-validar sob gate fechado é verdadeira por ESTADO, não por GATE; " +
-            "flipar a suficiência não muda o veredito do card, então (c) não tem como ser provado com esta fixture. " +
-            "Decisão do proprietário de 2026-08-29: o critério é reescrito pelo `tech-lead` para não afirmar o que " +
-            "não pode provar. Enquanto o texto novo não chegar, nenhum gate pode dar (c) por medida.",
-    naoFechavelPorFixture: "não é falta de fixture: acrescentar alvo em S2 a este vetor exigiria mudar o vetor, " +
-            "e um vetor com suficiência ABERTA deixa de ser o cenário de gate fechado que C9 mede." },
+  { criterio: "C9 · D010-CARD3 (b)", status: "FECHADA em 2026-08-30 pela emenda de D010-F3", fixture: "D010-F3",
+    medido: "com o vetor ORIGINAL de P50-F2, nenhum alvo legítimo estava em estado de contexto S2 com MAP não " +
+            "vazio: mandate/governance/team-capacity são S4 (landscapeEnabled:false), logs é S2 mas MAP.lv[3].c é " +
+            "vazio e o alvo seria removido por revalidateTargets, incident-response é S2 mas a resposta é \"NA\". " +
+            "A ausência de nó a-validar era verdadeira por ESTADO, não por GATE. A emenda acrescenta " +
+            "`vulnerability-management` = 0 com alvo 1: S2 de contexto, resposta confirmada e " +
+            "MAP.lv[0].c = [FortiRecon, FortiEndpoint] — todas as demais condições de C7 satisfeitas.",
+    custoMedido: "conferido por execução, contra a previsão do `tech-lead`, e sem ajustar critério a medição: " +
+            "confirmedCount() 4 → 5 com o gate AINDA FECHADO (suff false, tgtComparisonPublishable false); " +
+            "EXATAMENTE UMA capability muda em todo o render (`vulnerability-management` sai de card " +
+            "NEEDS_VALIDATION/VALIDATE e entra em apresentação base CONTEXT_NOT_INFORMED + serviço), as outras 11 " +
+            "saem idênticas campo a campo; ZERO cards novos (cardsSemPayload 10 → 9); \"há substituto\" continua " +
+            "FALSE; censo de títulos congelados inalterado.",
+    consequencia: "a alínea passa a medir o GATE: existe um alvo que satisfaz tudo o que C7 pede e cuja única " +
+            "razão para não publicar é a suficiência fechada. Um mutante que publique o nó ignorando o gate (M12) " +
+            "morre aqui — com o vetor original ele sobreviveria, porque não havia nó a suprimir." },
+  { criterio: "C9 · D010-CARD3 (c) · diferencial declarado entre fixtures",
+    status: "FECHADA em 2026-08-30 pelo par D010-F3 × D010-F4", fixture: "D010-F3 + D010-F4",
+    medido: "o par (vulnerability-management, nível confirmado 0, alvo 1) existe NAS DUAS fixtures e coincide " +
+            "nelas em 16 campos medidos — nível confirmado, alvo, estado de payload (S1), estado de contexto (S2), " +
+            "MAP no nível atual e no nível alvo, classification (CONTEXT_NOT_INFORMED), supportMode " +
+            "(LEGACY-LABELLED), candidatos (0), serviços ([vulnerability-assessment]), notas (0), maturidade " +
+            "(gap-high), apresentação (base), landscapeEnabled (true), presence (UNSET) e chips do cartão-alvo. " +
+            "Divergem SÓ no gate: 5 × 15 confirmadas, suff false × true, publicável false × true.",
+    consequencia: "(c) deixa de exigir que alguém altere `dataSufficiency` — que vive em arquivo frozen (Porta B) " +
+            "e cuja reimplementação tornaria a asserção equivalente por construção — e passa a ler o veredito como " +
+            "DADO: `d010AssertFixtureStates` declara `gateSuficiencia` e `diferencialC9` nas duas fixtures, exige " +
+            "que o par seja o MESMO e que os vereditos sejam OPOSTOS. Par ausente, par diferente ou vereditos " +
+            "iguais = FAIL nomeado, nunca verde silencioso.",
+    riscada_e_refutada: "RISCADO por medição em 2026-08-30 — a T002 registrava \"não é falta de fixture: " +
+            "acrescentar alvo em S2 a este vetor exigiria mudar o vetor, e um vetor com suficiência ABERTA deixa " +
+            "de ser o cenário de gate fechado que C9 mede\". FALSO: 5 confirmadas continuam abaixo do limiar de 10, " +
+            "então o vetor muda e o gate NÃO abre. Fica registrado em vez de apagado (R2 §5) — foi essa afirmação " +
+            "que quase transformou uma vacuidade fechável em vacuidade permanente." },
   { criterio: "§1 · cláusula \"classificação ≠ CONTEXT_NOT_INFORMED\" (A5)",
     status: "ABERTA por construção — decidida: fica no predicado, sem mutante", fixture: "todas",
-    medido: "em D010-F1, F1b, F2, F3, F4 e também numa sessão 15×0 e 15×1 sem nada declarado, o predicado dá o " +
-            "MESMO valor com e sem a cláusula. Nenhuma capability CONTEXT_NOT_INFORMED alcança apresentação " +
-            "\"card\": o supportMode dessa classificação é LEGACY-LABELLED, que presentationOf nunca promove a " +
-            "card. D010-F4 REFORÇA a medição em vez de mudá-la: as duas capabilities novas são " +
-            "CONTEXT_NOT_INFORMED, têm serviço anexado, e ainda assim \"há substituto\" continua FALSE.",
+    medido: "re-derivado a cada passagem da série, a última em 2026-08-30 com D010-F3 já emendada: nas cinco " +
+            "fixtures o predicado dá o MESMO valor com e sem a cláusula, e o número de capabilities " +
+            "CONTEXT_NOT_INFORMED que alcançam apresentação \"card\" é ZERO em todas (4 delas em F1/F1b/F2, " +
+            "3 em F3, 6 em F4). O supportMode dessa classificação é LEGACY-LABELLED, que presentationOf nunca " +
+            "promove a card. D010-F4 REFORÇA a medição em vez de mudá-la: as duas capabilities novas são " +
+            "CONTEXT_NOT_INFORMED, têm serviço anexado, e ainda assim \"há substituto\" continua FALSE; a emenda " +
+            "de F3 acrescenta uma terceira nessa forma, com o mesmo resultado.",
+    ressalva: "CORREÇÃO de 2026-08-30 à redação anterior desta entrada: as sessões 15×0 e 15×1 \"sem nada " +
+            "declarado\" NÃO sustentam a medição — sem contexto declarado o runtime está em modo legado e " +
+            "`buildRecommendationContext().contexts` sai VAZIO, de modo que o predicado é falso dos dois lados por " +
+            "universo vazio. Sonda vacuosa não é evidência. O que sustenta A5 são as cinco fixtures, onde há de 3 " +
+            "a 6 capabilities CONTEXT_NOT_INFORMED e nenhuma alcança \"card\".",
     consequencia: "a cláusula é guarda redundante, não load-bearing. Decisão do proprietário de 2026-08-29: " +
             "permanece no predicado como defesa contra mudança futura no engine, o texto do critério para de " +
             "lhe atribuir peso e NENHUM mutante a tem como alvo. Registro aqui para que a matriz gate↔mutante " +
@@ -765,6 +925,17 @@ const D010_VACUIDADES_CONHECIDAS = [
 
 const _eqL = (a, b) => a.slice().sort().join("|") === b.slice().sort().join("|");
 
+/* Blocos que a errata torna OBRIGATÓRIOS em fixtures nomeadas. Sem esta lista,
+   as conferências abaixo são guardadas por `if (dec.<bloco>)` e apagar uma
+   declaração faria a asserção correspondente SUMIR EM SILÊNCIO — que dá no
+   mesmo que nunca tê-la escrito, e é a forma de vacuidade mais difícil de ver,
+   porque a suíte continua verde. Bloco exigido e ausente = FAIL nomeado. */
+const D010_DECLARACOES_OBRIGATORIAS = {
+  "D010-F3": ["gateSuficiencia", "diferencialC9"],
+  "D010-F4": ["gateSuficiencia", "diferencialC9", "leiturasPorQid", "leiturasDivergentes",
+              "colisaoDeIdentidade", "homonimosNoCard"]
+};
+
 /* Confere, sobre um runtime JÁ com a fixture aplicada, TODO o estado declarado.
    Lança com a divergência nomeada, no primeiro desvio. Recebe `w` e a fixture,
    como `d009AssertFixtureStates`; o documento sai de `w.document`. */
@@ -774,6 +945,14 @@ function d010AssertFixtureStates(w, fx) {
   const d = w.document;
   const V = w.__DEV.V32;
   const fail = m => { throw new Error(fx.id + ": " + m); };
+
+  /* 0 · os blocos que a errata exige DESTA fixture existem. Vem antes de tudo:
+         asserção que não está na tabela não reprova ninguém. */
+  (D010_DECLARACOES_OBRIGATORIAS[fx.id] || []).forEach(k => {
+    if (!(k in dec))
+      fail("tabela declarada sem `" + k + "` — a errata exige este bloco nesta fixture, e sem ele a " +
+           "conferência correspondente é PULADA em silêncio");
+  });
 
   /* 1 · modo legado — pré-condição de TODOS os gates da demanda */
   if (V.isLegacyModeV32() !== dec.legacy)
@@ -925,6 +1104,12 @@ function d010AssertFixtureStates(w, fx) {
           primeiro deixaria vivo o mutante que deduplica demais. */
   if (dec.colisaoDeIdentidade) {
     const z = dec.colisaoDeIdentidade;
+    /* o qid e a capability declarados têm de ser O MESMO nó. Sem esta amarra,
+       declarar um qid cujo `MAP` por acaso traz as mesmas chaves (é o caso de
+       `team-capacity`) passaria pelo resto do bloco medindo outro cartão —
+       achado da bateria negativa desta emenda. */
+    if (d010CapOf(w, z.qid) !== z.capability)
+      fail("colisão: qid " + z.qid + " pertence a " + d010CapOf(w, z.qid) + ", declarado " + z.capability);
     const nomeSvc = d010ServiceName(w, z.servicoAnexado), nomeProd = d010ProductName(w, z.chaveMapHomonima);
     if (nomeSvc !== z.nomeComum || nomeProd !== z.nomeComum)
       fail("colisão: SERVICES[" + z.servicoAnexado + "].name=" + JSON.stringify(nomeSvc) +
@@ -950,15 +1135,135 @@ function d010AssertFixtureStates(w, fx) {
            " — o par de controle deixou de ser controle e o cenário perdeu a direção 'deduplica demais'");
   }
 
+  /* 17 · O VEREDITO DE SUFICIÊNCIA, declarado e provado contra as DUAS funções
+          canônicas do runtime (`confirmedCount` e `tgtComparisonPublishable`).
+          C9 (a) e (c) consomem a decisão como DADO; sem esta asserção "gate
+          fechado" seria alegação da prosa, e um oráculo que recalculasse a
+          suficiência seria equivalente por construção (errata E5). */
+  if (dec.gateSuficiencia) {
+    const g = dec.gateSuficiencia;
+    const conf = d010ConfirmedCount(w), pub = d010ComparisonPublishable(w);
+    if (conf !== g.confirmadas) fail("confirmedCount() = " + conf + ", declarado " + g.confirmadas);
+    if (cur.suff !== g.suff) fail("suff = " + cur.suff + ", declarado em gateSuficiencia " + g.suff);
+    if (pub !== g.publicavel) fail("tgtComparisonPublishable(tgtCurrentProfile()) = " + pub + ", declarado " + g.publicavel);
+    if (g.suff !== dec.suff)
+      fail("gateSuficiencia.suff (" + g.suff + ") diverge do `suff` declarado (" + dec.suff + ") na MESMA tabela");
+  }
+
+  /* 18 · O PAR DO DIFERENCIAL de C9 (c). Aqui se prova o lado desta fixture — o
+          par existe, satisfaz TODAS as demais condições de C7 (respondido no
+          nível declarado, alvo no nível declarado, S2 de contexto, `MAP` do
+          nível confirmado não vazio) e o veredito do gate é o declarado — e a
+          coerência entre as duas metades: mesmo par, vereditos OPOSTOS. Sem a
+          segunda parte, editar um dos lados passaria despercebido e o
+          "diferencial" viraria duas medições soltas. */
+  if (dec.diferencialC9) {
+    const D = dec.diferencialC9;
+    if (typeof D.nivel !== "number") fail("diferencial: nível confirmado não numérico (" + D.nivel + ")");
+    if (ansNow[K(D.qid)] !== D.nivel)
+      fail("diferencial: " + D.qid + " respondido " + JSON.stringify(ansNow[K(D.qid)]) +
+           ", declarado nível " + D.nivel);
+    if (alvos[D.qid] !== D.alvo)
+      fail("diferencial: alvo de " + D.qid + " é " + alvos[D.qid] + " na tabela de alvos e " + D.alvo + " no diferencial");
+    if (w.__DEV.TARGET.overrides[D.qid] !== D.alvo)
+      fail("diferencial: alvo aplicado de " + D.qid + " = " + w.__DEV.TARGET.overrides[D.qid] + ", declarado " + D.alvo);
+    const ctxSt = d010CtxStateOf(w, D.qid);
+    if (ctxSt !== "S2") fail("diferencial: " + D.qid + " em estado de contexto " + ctxSt + " — C7 exige S2");
+    const mapAt = d010MapItems(w, D.qid, D.nivel);
+    if (!mapAt.length)
+      fail("diferencial: MAP[" + D.qid + "].lv[" + D.nivel + "].c vazio — o par não satisfaz C7 e nada estaria sendo impedido");
+    if (d010ComparisonPublishable(w) !== D.gateAberto)
+      fail("diferencial: gate publicável = " + d010ComparisonPublishable(w) + ", declarado gateAberto " + D.gateAberto);
+    const outras = Object.keys(D010_DECLARED).filter(id => id !== fx.id && D010_DECLARED[id].diferencialC9);
+    if (!outras.length)
+      fail("diferencial: nenhuma outra fixture declara `diferencialC9` — não há diferencial, só uma medição");
+    outras.forEach(id => {
+      const O = D010_DECLARED[id].diferencialC9;
+      if (O.qid !== D.qid || O.nivel !== D.nivel || O.alvo !== D.alvo)
+        fail("diferencial: " + id + " declara (" + O.qid + ", nível " + O.nivel + ", alvo " + O.alvo + ") e " +
+             fx.id + " declara (" + D.qid + ", nível " + D.nivel + ", alvo " + D.alvo +
+             ") — o par tem de ser o MESMO nas duas metades");
+      if (O.gateAberto === D.gateAberto)
+        fail("diferencial: " + id + " e " + fx.id + " declaram o mesmo veredito de gate (" + D.gateAberto +
+             ") — sem as duas direções não há diferencial");
+    });
+  }
+
+  /* 19 · As DUAS leituras de "S2" por qid (E2 da errata), e a lista de qids em
+          que divergem. A lista é a pré-condição de não-vacuidade de C8 (b):
+          prática com ZERO candidatos, ao menos um serviço e S2 de CONTEXTO.
+          Lista vazia = alínea sem caso, e o assert recusa em vez de deixar a
+          vacuidade viajar para dentro do gate. */
+  if (dec.leiturasPorQid) {
+    const L = dec.leiturasPorQid;
+    const lq = Object.keys(L).sort(), aq = Object.keys(alvos).sort();
+    if (lq.join(",") !== aq.join(","))
+      fail("leituras declaradas para [" + lq + "] != alvos declarados [" + aq + "]");
+    const div = [];
+    lq.forEach(qid => {
+      const p = d010StateOf(w, qid), c = d010CtxStateOf(w, qid);
+      if (p !== L[qid].payload || c !== L[qid].contexto)
+        fail("leituras de " + qid + ": payload " + p + " / contexto " + c +
+             ", declarado payload " + L[qid].payload + " / contexto " + L[qid].contexto);
+      if (p !== c) div.push(qid);
+    });
+    if (!_eqL(div, dec.leiturasDivergentes || []))
+      fail("qids com leituras divergentes [" + div.slice().sort() + "] != declarados [" +
+           (dec.leiturasDivergentes || []).slice().sort() + "]");
+    if (!div.length)
+      fail("nenhum qid com as duas leituras divergentes — a pré-condição de C8 (b) não existe nesta fixture");
+    div.forEach(qid => {
+      const c = res.contexts[d010CapOf(w, qid)] || {};
+      const nc = (c.candidates || []).length, ns = (c.services || []).length;
+      if (nc !== 0 || ns === 0)
+        fail("divergência de " + qid + " não é 'apenas serviços': " + nc + " candidato(s) e " + ns + " serviço(s)");
+      if (d010CtxStateOf(w, qid) !== "S2")
+        fail("divergência de " + qid + " fora de S2 de contexto — o universo de C8 (b) é S2");
+    });
+  }
+
+  /* 20 · Os DOIS homônimos no MESMO card. Vai além do item 16: aqui se exige
+          TOTALIDADE — os pares declarados são a tabela de equivalência INTEIRA
+          do catálogo, re-derivada — e BIDIRECIONALIDADE — exatamente um serviço
+          anexado e exatamente um livre. É essa forma que põe as duas direções da
+          fusão no mesmo cartão; se um dia os dois caírem do mesmo lado, o card
+          perdeu uma direção e o assert diz qual. */
+  if (dec.homonimosNoCard) {
+    const H = dec.homonimosNoCard;
+    if (d010CapOf(w, H.qid) !== H.capability)
+      fail("homônimos: qid " + H.qid + " pertence a " + d010CapOf(w, H.qid) + ", declarado " + H.capability);
+    const decl = H.pares.map(p => p.servico + "≡" + p.chaveMap + "|" + p.nome).sort();
+    if (JSON.stringify(decl) !== JSON.stringify(D010_EQUIVALENCIA_NOME))
+      fail("homônimos declarados no card " + JSON.stringify(decl) +
+           " != tabela de equivalência INTEIRA " + JSON.stringify(D010_EQUIVALENCIA_NOME));
+    const noNo = d010MapItems(w, H.qid, ansNow[K(H.qid)]);
+    const anex = (svcs[H.capability] || []);
+    let comServico = 0;
+    H.pares.forEach(p => {
+      if (noNo.indexOf(p.chaveMap) < 0)
+        fail("homônimo " + p.chaveMap + " fora de MAP[" + H.qid + "].lv[atual].c = " + JSON.stringify(noNo));
+      if (d010ProductName(w, p.chaveMap) !== p.nome || d010ServiceName(w, p.servico) !== p.nome)
+        fail("homônimo " + p.servico + "/" + p.chaveMap + " não renderiza " + JSON.stringify(p.nome));
+      const est = anex.indexOf(p.servico) >= 0;
+      if (est !== p.anexado)
+        fail("homônimo " + p.servico + ": anexado a " + H.capability + " = " + est + ", declarado " + p.anexado);
+      if (est) comServico++;
+    });
+    if (comServico !== 1)
+      fail("homônimos com serviço anexado = " + comServico + " (esperado exatamente 1) — sem um anexado e um livre " +
+           "o card de " + H.qid + " perde uma das duas direções da fusão");
+  }
+
   return true;
 }
 
 module.exports = {
   D010_F1, D010_F1b, D010_F2, D010_F3, D010_F4, D010_FIXTURES, D010_DECLARED,
   D010_GAP_QIDS, D010_ALVOS_VAO, D010_ALVOS_SERVICO, D010_HIDE_EYEBROWS,
-  D010_EQUIVALENCIA_NOME, D010_VACUIDADES_CONHECIDAS,
+  D010_EQUIVALENCIA_NOME, D010_VACUIDADES_CONHECIDAS, D010_DECLARACOES_OBRIGATORIAS,
   d010VecVao, d010ApplyContext, d010ApplyResults,
-  d010Eval, d010Answers, d010MapItems, d010MapKeys, d010ProductName, d010ServiceName, d010EquivalenciaNome,
+  d010Eval, d010Answers, d010ConfirmedCount, d010ComparisonPublishable,
+  d010MapItems, d010MapKeys, d010ProductName, d010ServiceName, d010EquivalenciaNome,
   d010CapOf, d010EnablerCount, d010StateWith, d010StateOf, d010CtxStateOf, d010TargetsByState,
   d010PresentationOf, d010HasSubstitute, d010BasePresented, d010BaseInV32Base, d010CardsSemPayload,
   d010ServicesByCapability, d010TargetEnablers, d010FrozenTitles, d010AssertFixtureStates

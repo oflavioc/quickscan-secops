@@ -578,6 +578,16 @@ function d010ServicesByCapability(w, res) {
    contém. É a SUPERFÍCIE onde a colisão de C10 acontece: o emissor é
    `ui_target_v32.js:262` e a identidade que ele já publica é `data-eid`.
 
+   CONSUMIDORES (T030): só os GATES — `D010-CARD2` (c) e `D010-CARD4` (c1)/(c2).
+   `d010AssertFixtureStates` NÃO chama mais este helper: chip é saída do módulo
+   que a demanda reescreve, e o assert declara apenas o que ela não escreve. O
+   helper fica porque a superfície continua sendo medida — só que por quem tem
+   competência para julgá-la. CONSEQUÊNCIA DECLARADA: a guarda de agrupamento
+   abaixo deixa de rodar sob D010-F1/F1b/F3 (o assert a exercia em todas as
+   cinco); passa a rodar sob D010-F2 e D010-F4, que são as duas fixtures com
+   chip na tela. Sob F1/F1b o censo é ZERO chip e a guarda era vacuosa de
+   qualquer modo; a perda real é D010-F3, com 2 chips e nenhum gate que a varra.
+
    A guarda do final não é decorativa: se o emissor sair de `li.ux-tgt-ov`, um
    agrupador ingênuo devolveria `{}` e toda asserção de ausência sobre chips
    viraria PASS vacuoso. Aqui ele grita com a contagem que não fecha. */
@@ -599,7 +609,13 @@ function d010TargetEnablers(d) {
 /* Títulos congelados de recomendação presentes na tela, e quais estão ocultos.
    A lista é a mesma de `HIDE_EYEBROWS` (`ui_v32.js:109-110`), transcrita aqui
    caractere a caractere: se o produto mudar o texto, o gate falha — que é o
-   comportamento correto para uma âncora de regressão. */
+   comportamento correto para uma âncora de regressão.
+
+   O campo `oculto` continua sendo DEVOLVIDO, e desde T030 nenhum chamador deste
+   arquivo o consome: `d010AssertFixtureStates` declara só a PRESENÇA (o texto),
+   porque a ocultação é saída de `ui_v32.js` e é a arbitragem que os gates
+   D010-ARB1..ARB4 julgam — com censo próprio (`censoCamada1`, que também varre
+   os blocos contíguos). Fica aqui como leitura disponível, não como asserção. */
 const D010_HIDE_EYEBROWS = ["Como a Fortinet pode apoiar nas prioridades declaradas",
   "Como a Fortinet pode apoiar agora", "Pode fazer sentido — após validação"];
 function d010FrozenTitles(d) {
@@ -615,7 +631,45 @@ function d010FrozenTitles(d) {
    010. Se a fixture deixar de produzir o cenário documentado, o erro aparece
    em `d010AssertFixtureStates` — nunca silenciosamente dentro de um gate.
    Fixture que não alcança o estado faz o gate morrer vacuoso, e gate vacuoso é
-   pior que gate ausente. */
+   pior que gate ausente.
+
+   ==========================================================================
+   A LINHA DIVISÓRIA — o que esta tabela declara, e o que ela NUNCA declara
+   ==========================================================================
+   (T030, 2026-08-30. Decisão do proprietário de 2026-08-29, com a condição do
+   `tech-lead`: nada é apenas removido — cada declaração que sai MIGRA para o
+   gêmeo canônico, e só some da tabela o que já é medido de propósito por um
+   gate.)
+
+   DECLARA-SE aqui só o que esta demanda NÃO PODE ESCREVER: estado aplicado
+   pelos owners canônicos (respostas, prioridades, alvos, contexto) e o que
+   dele se DERIVA em código `frozen` — `engine_v32.js`
+   (`buildRecommendationContext`: classificação, candidatos, serviços, notas,
+   maturidade), o catálogo (`MAP`, `PRODUCTS`, `SERVICES`, `CAPABILITIES`), a
+   suficiência (`confirmedCount`/`tgtComparisonPublishable`) e a PRESENÇA da
+   Camada 1 congelada da V3.1.3.
+
+   NÃO SE DECLARA aqui saída de `ui_v32.js` ou de `ui_target_v32.js` — os dois
+   módulos que a demanda reescreve. Declarar o valor de hoje congelaria o
+   pré-fix: o assert roda ANTES da primeira alínea de todo gate (`R()` em
+   `tests_010_vao.js`), de modo que a implementação correta faria a suíte
+   inteira morrer por erro de FIXTURE, sem chegar a medir critério algum. Essa
+   superfície é objeto de GATE, e o critério é o diff da demanda, não gosto.
+   Precedente: `d009AssertFixtureStates` deriva o estado do PAYLOAD, nunca do
+   DOM.
+
+   Foram por essa linha, em T030, com o gêmeo para onde migraram:
+     · `titulosCongelados[].oculto` (saída de `ui_v32.js`) -> julgado por
+       D010-ARB1 (b)/(c)/(d), D010-ARB2 (a)/(c), D010-ARB3 (a)/(c) e
+       D010-ARB4 (a)/(b)/(c). O `texto` FICA: a presença é da Camada 1
+       congelada e é a guarda anti-vacuidade desses mesmos gates;
+     · o censo de chips `habilitadores` (saída de `ui_target_v32.js:262`) ->
+       vira `candidatosPorAlvo`, o payload do engine por prática-alvo; a
+       superfície na tela é julgada por D010-CARD2 (b)/(c), D010-CARD4
+       (c1)/(c2) e D010-CARD6 (b).
+   O que a migração NÃO cobre está nomeado no relatório de T030, não aqui:
+   registro de perda vive na conversa da tarefa, âncora de código vive no
+   código. */
 const D010_DECLARED = {
   "D010-F1": {
     legacy: false, suff: true, substituto: false,
@@ -635,8 +689,11 @@ const D010_DECLARED = {
     /* nenhum `hasGap` alcança capability de alvo: é a vacuidade de C8 (b) que
        esta fixture NÃO fecha, agora declarada como valor e não como prosa */
     servicosPorGap: {},
-    habilitadores: { "automation": [], "endpoint": [], "network-visibility": [], "external-surface": [] },
-    titulosCongelados: [{ texto: "Como a Fortinet pode apoiar nas prioridades declaradas", oculto: true }]
+    /* payload do engine por prática-alvo: os CANDIDATOS (os serviços estão no
+       item acima, por capability). Zero nos quatro — é o VÃO, e é essa forma
+       que o item 14 do assert passa a exigir de toda prática-alvo. */
+    candidatosPorAlvo: { "automation": [], "endpoint": [], "network-visibility": [], "external-surface": [] },
+    titulosCongelados: [{ texto: "Como a Fortinet pode apoiar nas prioridades declaradas" }]
   },
   "D010-F1b": {
     legacy: false, suff: true, substituto: false,
@@ -654,8 +711,8 @@ const D010_DECLARED = {
     baseInV32Base: ["endpoint-detection", "external-exposure", "network-detection", "security-automation"],
     cardsSemPayload: [],
     servicosPorGap: {},
-    habilitadores: { "automation": [], "endpoint": [], "network-visibility": [], "external-surface": [] },
-    titulosCongelados: [{ texto: "Como a Fortinet pode apoiar agora", oculto: true }]
+    candidatosPorAlvo: { "automation": [], "endpoint": [], "network-visibility": [], "external-surface": [] },
+    titulosCongelados: [{ texto: "Como a Fortinet pode apoiar agora" }]
   },
   "D010-F2": {
     legacy: false, suff: true, substituto: true,
@@ -679,10 +736,13 @@ const D010_DECLARED = {
        sem alcançar capability de alvo alguma — a vacuidade de C8 (b) sobrevive
        aqui e é D010-F4 quem a fecha */
     servicosPorGap: {},
-    habilitadores: { "automation": [], "endpoint": [], "network-visibility": [], "external-surface": [],
-                     "logs": ["fortianalyzer|FortiAnalyzer|apoio direto", "fortisiem|FortiSIEM|apoio direto",
-                              "fortisiem-cloud|FortiSIEM Cloud|apoio direto"] },
-    titulosCongelados: [{ texto: "Como a Fortinet pode apoiar nas prioridades declaradas", oculto: true }],
+    /* a ÚNICA prática-alvo COM candidato das cinco fixtures: é ela que dá à
+       tabela do item 14 a direção "candidato a mais/a menos" — sem ela, o item
+       só mediria zeros e um mutante que anexasse candidato indevido a um alvo
+       do vão morreria, mas um que APAGASSE candidato de um alvo servido não. */
+    candidatosPorAlvo: { "automation": [], "endpoint": [], "network-visibility": [], "external-surface": [],
+                         "logs": ["fortianalyzer", "fortisiem", "fortisiem-cloud"] },
+    titulosCongelados: [{ texto: "Como a Fortinet pode apoiar nas prioridades declaradas" }],
     /* o substituto, nomeado: é ele que autoriza a supressão de C2 */
     substitutoEm: { capability: "security-analytics", classification: "TECHNOLOGY_WHITESPACE",
                     supportMode: "DIRECT", candidates: ["fortianalyzer", "fortisiem", "fortisiem-cloud"], services: [] }
@@ -725,10 +785,11 @@ const D010_DECLARED = {
        para C10 (c): lá o universo é o card que publica, e aqui nada publica. */
     servicosPorGap: { "soc-staffing": ["fortiguard-socaas"],
                       "vulnerability-management": ["vulnerability-assessment"] },
-    habilitadores: { "team-capacity": ["fortiguard-socaas|FortiGuard SOCaaS|serviço"],
-                     "vulnerability-management": ["vulnerability-assessment|Vulnerability Assessment|serviço"] },
-    titulosCongelados: [{ texto: "Como a Fortinet pode apoiar agora", oculto: true },
-                        { texto: "Pode fazer sentido — após validação", oculto: true }],
+    /* os dois alvos de F3 são servidos por SERVIÇO e por nenhum candidato — o
+       payload por alvo é, aqui, inteiramente o item 13 mais estes zeros. */
+    candidatosPorAlvo: { "team-capacity": [], "vulnerability-management": [] },
+    titulosCongelados: [{ texto: "Como a Fortinet pode apoiar agora" },
+                        { texto: "Pode fazer sentido — após validação" }],
     /* C9 (a) · o veredito de suficiência, DECLARADO para ser consumido como dado */
     gateSuficiencia: { confirmadas: 5, suff: false, publicavel: false },
     /* C9 (c) · a metade FECHADA do diferencial */
@@ -767,14 +828,15 @@ const D010_DECLARED = {
        alvo, ZERO candidatos nas duas. */
     servicosPorGap: { "continuous-monitoring": ["fortiguard-socaas"],
                       "vulnerability-management": ["vulnerability-assessment"] },
-    /* C10 · D010-CARD4 (c), materializado: o chip `fortiguard-socaas` já existe
-       na tela ANTES de T008, com o mesmo nome renderizado que a chave `SOCaaS`
-       do nó do `MAP` do MESMO qid. Os quatro alvos herdados seguem sem chip —
-       é o que separa "alvo servido" de "alvo do vão". */
-    habilitadores: { "automation": [], "endpoint": [], "network-visibility": [], "external-surface": [],
-                     "vulnerability-management": ["vulnerability-assessment|Vulnerability Assessment|serviço"],
-                     "monitoring-coverage": ["fortiguard-socaas|FortiGuard SOCaaS|serviço"] },
-    titulosCongelados: [{ texto: "Como a Fortinet pode apoiar nas prioridades declaradas", oculto: true }],
+    /* C10 · D010-CARD4 (c): os dois alvos servidos recebem SERVIÇO e ZERO
+       candidatos (o serviço está no item 13, capability a capability), e os
+       quatro alvos herdados não recebem nada — é o que separa "alvo servido"
+       de "alvo do vão", lido do engine e não do chip. A materialização na TELA
+       (o chip `fortiguard-socaas` já emitido ANTES de T008, homônimo da chave
+       `SOCaaS` do nó do `MAP` do MESMO qid) é objeto de D010-CARD4 (c1)/(c2). */
+    candidatosPorAlvo: { "automation": [], "endpoint": [], "network-visibility": [], "external-surface": [],
+                         "vulnerability-management": [], "monitoring-coverage": [] },
+    titulosCongelados: [{ texto: "Como a Fortinet pode apoiar nas prioridades declaradas" }],
     /* a colisão, NOMEADA — com o par de controle que a torna bidirecional */
     colisaoDeIdentidade: {
       qid: "monitoring-coverage", capability: "continuous-monitoring",
@@ -1061,11 +1123,29 @@ function d010AssertFixtureStates(w, fx) {
       fail(s.capability + " serviços " + JSON.stringify(svc) + " != declarados " + JSON.stringify(s.services));
   }
 
-  /* 12 · a Camada 1 congelada existe na tela — sem título presente, todo gate
-          de arbitragem passa vacuosamente */
-  const tit = d010FrozenTitles(d);
+  /* 12 · a Camada 1 congelada está PRESENTE na tela, e SÓ isso — sem título
+          presente, todo gate de arbitragem passa vacuosamente, e é essa guarda
+          anti-vacuidade que o item existe para dar.
+          Declara-se o TEXTO e não a OCULTAÇÃO (T030): a presença é produzida
+          pela Camada 1 congelada da V3.1.3, que esta demanda não escreve; a
+          ocultação é saída de `ui_v32.js`, que ela reescreve — declarar aqui o
+          valor de hoje faria o assert abortar no primeiro render corrigido,
+          antes de qualquer alínea, e o vermelho de C1..C4 viraria erro de
+          fixture. Quem JULGA a ocultação são as alíneas dos gates, de
+          propósito e com pré-condição de não-vacuidade: D010-ARB1 (b)/(c)/(d),
+          D010-ARB2 (a)/(c), D010-ARB3 (a)/(c) e D010-ARB4 (a)/(b)/(c). O texto
+          continua conferido caractere a caractere contra `D010_HIDE_EYEBROWS`
+          (`ui_v32.js:109-110`) por `d010FrozenTitles`. */
+  dec.titulosCongelados.forEach((o, i) => {
+    const ks = Object.keys(o).sort();
+    if (ks.length !== 1 || ks[0] !== "texto")
+      fail("titulosCongelados[" + i + "] declara [" + ks + "] — esta tabela declara SÓ `texto`. Campo " +
+           "declarado e NÃO conferido é vacuidade silenciosa; a ocultação é saída de módulo e pertence ao gate");
+  });
+  const tit = d010FrozenTitles(d).map(o => ({ texto: o.texto }));
   if (JSON.stringify(tit) !== JSON.stringify(dec.titulosCongelados))
-    fail("títulos congelados " + JSON.stringify(tit) + " != declarados " + JSON.stringify(dec.titulosCongelados));
+    fail("títulos congelados presentes " + JSON.stringify(tit) +
+         " != declarados " + JSON.stringify(dec.titulosCongelados));
 
   /* 13 · serviços anexados por `hasGap`, por capability. OBRIGATÓRIO em toda
           fixture: é o eixo de C8 (b), e "não declarei" não pode virar "não
@@ -1076,18 +1156,45 @@ function d010AssertFixtureStates(w, fx) {
   if (JSON.stringify(svcs) !== JSON.stringify(dec.servicosPorGap))
     fail("serviços por capability " + JSON.stringify(svcs) + " != declarados " + JSON.stringify(dec.servicosPorGap));
 
-  /* 14 · chips de habilitador do cartão-alvo, por qid. Também OBRIGATÓRIO: é a
-          superfície onde a colisão de C10 se materializa, e onde a AUSÊNCIA de
-          chip nos alvos do vão precisa ser asserção, não silêncio. */
-  if (!dec.habilitadores) fail("tabela declarada sem `habilitadores` — superfície de C10 não medida");
-  const hab = d010TargetEnablers(d);
-  const hq = Object.keys(hab).sort(), dq = Object.keys(dec.habilitadores).sort();
-  if (hq.join(",") !== dq.join(","))
-    fail("cartões-alvo na tela [" + hq + "] != declarados [" + dq + "]");
-  dq.forEach(qid => {
-    if (JSON.stringify(hab[qid]) !== JSON.stringify(dec.habilitadores[qid]))
-      fail("habilitadores de " + qid + " " + JSON.stringify(hab[qid]) +
-           " != declarados " + JSON.stringify(dec.habilitadores[qid]));
+  /* 14 · PAYLOAD DO ENGINE por prática-alvo — os CANDIDATOS, por qid. Também
+          OBRIGATÓRIO: é o outro somando do `nItems` que separa a leitura
+          S1-payload da S2-contexto (itens 8 e 19), e "não declarei" não pode
+          virar "não medi".
+          Este item media, até T030, o censo de chips `.ux-tgt-enabler` do
+          cartão-alvo. O chip é saída de `ui_target_v32.js` — o módulo que esta
+          demanda reescreve, e cujo censo muda POR CONSTRUÇÃO quando T008
+          publica o nó `a-validar` nos alvos do vão. Declarar aqui o censo de
+          hoje congelaria o pré-fix e abortaria o assert antes da primeira
+          alínea. O gêmeo canônico do mesmo fato é o payload de
+          `buildRecommendationContext()`: `engine_v32.js` é `frozen` e está fora
+          do alcance da demanda, e é dele que o chip é derivado hoje (medido nas
+          cinco fixtures: um chip por item do payload, sem sobra nem falta).
+          SÓ candidatos, e isso é medição e não estilo: os SERVIÇOS já são
+          declarados por inteiro no item 13 (`servicosPorGap`, por capability,
+          cobrindo TODAS as capabilities-alvo das cinco fixtures) — redeclarar
+          aqui criaria duas fontes para o mesmo fato, e duas fontes envelhecem
+          em direções diferentes. O que faltava era o outro somando.
+          A força desta tabela está nos ZEROS: "zero candidatos" deixa de ser
+          propriedade só dos qids de `leiturasDivergentes` (item 19, e só em
+          D010-F4) e passa a ser asserção sobre TODA prática-alvo de TODA
+          fixture — a pré-condição de C8 (b) e o que separa "alvo servido" de
+          "alvo do vão". A SUPERFÍCIE (o chip) continua medida de propósito
+          pelos gates: D010-CARD2 (b)/(c), D010-CARD4 (c1)/(c2) e
+          D010-CARD6 (b), que é quem exige ZERO `.ux-tgt-en` nos alvos do vão.
+          `d010TargetEnablers` fica neste arquivo, com a guarda de agrupamento,
+          servindo esses gates. */
+  if (!dec.candidatosPorAlvo)
+    fail("tabela declarada sem `candidatosPorAlvo` — o payload do engine por prática-alvo não é medido, e com " +
+         "ele some a metade 'candidatos' do `nItems` que distingue S1-payload de S2-contexto");
+  const cq = Object.keys(dec.candidatosPorAlvo).sort();
+  if (cq.join(",") !== decq.join(","))
+    fail("candidatos declarados para [" + cq + "] != alvos declarados [" + decq + "]");
+  decq.forEach(qid => {
+    const cap = d010CapOf(w, qid);
+    const got = ((res.contexts[cap] || {}).candidates || []).map(x => x.itemId);
+    if (JSON.stringify(got) !== JSON.stringify(dec.candidatosPorAlvo[qid]))
+      fail("candidatos do engine em " + qid + " (" + cap + ") " + JSON.stringify(got) +
+           " != declarados " + JSON.stringify(dec.candidatosPorAlvo[qid]));
   });
 
   /* 15 · a tabela de equivalência de nome, RE-DERIVADA do catálogo congelado a

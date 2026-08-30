@@ -3,5 +3,17 @@
     "descricao": "Exceções nominais dos lints — cada uma com remoção prevista. Padrão herdado da referência: scanner sem auto-exclusão nominal falha no próprio gate; exceção sem prazo vira permissão permanente. O compliance-audit lista todas e exige remocao_prevista. HISTÓRICO: KI-1 cumprida pela demanda 003; KI-2/KI-3 cumpridas na Onda 4 (job visual calibrado no CI em 6 rodadas: playwright 67/37 canônico, P50 27/27, P52 44/44 com âncora imutável, campanha p52 72/72 por trigger).",
     "onda": 1
   },
-  "issues": []
+  "issues": [
+    {
+      "id": "KI-4",
+      "lint": "mutation-sobrevivente",
+      "excecao": {
+        "harness": "p51",
+        "mutante": "M51-01",
+        "gate": "P51-VIS1"
+      },
+      "motivo": "EA-7 (.claude/BACKLOG.md) — gate sem poder discriminante: a âncora é única (preflight C1, ocorrencias == 1), o `reason` segue emitido por tests_p50_chromium.js:3405/:3408/:3412, a mutação é aplicada e P51-VIS1 RODA E PASSA, porque desde c1e3649 a composição de duas colunas da tela de pergunta é governada por ui_p52_workspace_v32.css:70-83 (vence a regra 5.1 por especificidade e por ordem de inlining). A campanha p51 fecha 19/20 por esse par, e só por ele. Classificação registrada em mutation-matrix.json e narrativa em specs/013-integridade-da-campanha/matriz-gate-mutante.md §17.",
+      "remocao_prevista": "Merge da demanda 014 na develop — a 014 reconstrói o poder discriminante do par; no dia em que a ultima_prova voltar a KILL, IC-9.3 REPROVA esta entrada e força a remoção"
+    }
+  ]
 }

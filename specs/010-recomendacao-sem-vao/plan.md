@@ -155,8 +155,20 @@ Cada uma viaja no prompt de delegação da wave correspondente.
 10. **`tgtComparisonPublishable` já é global** (`ui_target_v32.js:88`, declaração
     top-level em arquivo sem IIFE): `D010-CARD3` (a) a alcança por
     `w.tgtComparisonPublishable(w.__DEV.tgtCurrentProfile())` **sem** exposição
-    nova. `MAP` e `PRODUCTS` idem — é assim que o oráculo de `D010-CARD4` (a)
-    deriva as 11 chaves **sem** ler a tabela do produto.
+    nova. ~~`MAP` e `PRODUCTS` idem~~ — **errado, corrigido em 2026-08-30
+    (errata, E7)**: `tgtComparisonPublishable` é **declaração de função** e por
+    isso vira propriedade do objeto global; `MAP` (`quickscan_…:420`), `PRODUCTS`
+    (`:262`), `QS` (`:296`) e `ans` (`:475`) são **`const` de topo de script** —
+    vivem no escopo de script e **não** existem em `window` (`w.MAP` é
+    `undefined`). O oráculo de `D010-CARD4` (a) deriva as 11 chaves pelo helper da
+    fixture (**`d010MapKeys(w)`**) e continua **sem** ler a tabela do produto.
+    Expor o `MAP` por bridge exigiria editar arquivo `frozen`: Porta B, PARADA.
+11. **O nó a validar só nasce com item.** Lista vazia ⇒ **nenhum nó**, em nenhuma
+    superfície: contêiner vazio não é publicação, é defeito (errata, **E11** —
+    achado por sonda do `qa-engineer`, que fechou um verde falso antes do red).
+12. **Âncora de fixture não vigia produto.** `d010AssertFixtureStates` declara só
+    o que esta demanda **não pode escrever**; a saída de `ui_v32.js` e
+    `ui_target_v32.js` é objeto de gate (errata, **E10**). O critério é o **diff**.
 
 ## Contratos e registros
 
@@ -243,10 +255,13 @@ vacuosa para ele por construção (item sem equivalente nunca vem do engine).
 - **Alvos do harness `d010`:** `ui_v32.js`, `ui_target_v32.js`,
   `tests_010_vao.js`, `fixtures_010_vao.js`, `tests_010_mutants.js` (spec
   §Critérios). Oráculo e fixture entram como alvo pelo precedente do `d009`.
-- **Namespace dos mutantes:** `D010-M1..M19`, na correspondência 1:1 com
-  `M1..M19` da spec (R10 §1 — nunca continuar numeração alheia; `M1` global já
-  existe desde a 003). *`M18`/`M19` acrescidos em 2026-08-30 pela errata de
-  vacuidade (E9), sobre `D010-CARD4`, que já existia — nenhum gate novo.* Cada par entra em `mutation-matrix.json` com `harness`,
+- **Namespace dos mutantes:** `D010-M1..M20`, na correspondência 1:1 com
+  `M1..M20` da spec (R10 §1 — nunca continuar numeração alheia; `M1` global já
+  existe desde a 003). *`M18`/`M19`/`M20` acrescidos em 2026-08-30 pela errata
+  (E9 e a disposição de `D010-ARB3`), sobre gates que já existiam — nenhum gate
+  novo.* **`M3` e `M4` não entram na campanha**: medidos sem caso nas fixtures e
+  registrados como **dívida declarada com causa** em `mutation-matrix.json`, com a
+  execução que os dispõe escrita na célula de C3. Campanha executa **18** pares. Cada par entra em `mutation-matrix.json` com `harness`,
   `gate` e `ultima_prova.resultado` — os três são exigidos por
   `check_tdd.py:47-52`.
 - **Pins (R8).** Arquivos rastreados que mudam nesta demanda: `ui_v32.js`,
@@ -326,12 +341,12 @@ sobrevivendo num commit. `[P]` só aparece onde a wave **não escreve nada**.
 | **1 — fixtures** | `fixtures_010_vao.js` com `D010-F1`, `F1b`, `F2`, `F3` **e `F4`** (a quinta nasceu na própria wave, pela errata de vacuidade de 2026-08-30 — spec §E3/E4; `F1`/`F1b`/`F2` ficam **byte-idênticas** e `F3` ganha `vulnerability-management` = 0 com alvo, spec §E5) + `d010AssertFixtureStates` e os helpers `d010MapKeys(w)`/`d010EquivalenciaNome` no padrão da 009. Estado aplicado **só** por owners canônicos (`__DEV.setAnswerById`, `setPriorities`, `setTarget`, editor + `#v32save`) | `qa-engineer` | `chore` | 0 |
 | **2 — equivalência** | Ratificar a tabela contra `OFFERINGS`/`SERVICES`/`ICON_MAP_V32`, decidindo as duas linhas marcadas "a ratificar". **Leitura pura: não escreve arquivo nenhum** — a decisão volta na resposta e o orquestrador a registra no planning-state | `data-engineer` | `chore` `[P]` com 1 | — |
 | **3 — gates e RED** | `tests_010_vao.js` com os 13 gates (`D010-ARB1..4`, `INV7`, `ABS1`, `CARD1..6`, `PAPEL1`) **+** entrada `d010` em `expected_suites.json` no mesmo commit; executar, nomear o FAIL de cada gate, **commitar o red**, registrar `red.commit` + `red.status: proven` no planning-state (R3 §4) | `qa-engineer` | `feature` (produz o red de 4 e 7) | 1, 2 |
-| **4 — `ui_target_v32.js`** | Tabela de equivalência + `tgtValidateHTML` + as duas chamadas + `__DEV.TGT_EQUIV`. Um módulo, uma delegação | `ui-engineer` | `feature` | 3 |
+| **4 — `ui_target_v32.js`** | **Antes da implementação**, a emenda do `d010AssertFixtureStates` (errata E10): sai `titulosCongelados[].oculto`, entra o payload do engine por alvo no lugar do censo de chips — âncora de fixture não vigia produto, e sem isso o green aborta no assert em vez de medir critério. Depois: tabela de equivalência + `tgtValidateHTML` + as duas chamadas + `__DEV.TGT_EQUIV`. **Dois arquivos, dois donos, em série** (`fixtures_010_vao.js` pelo `qa-engineer`, `ui_target_v32.js` pelo `ui-engineer`) — nunca na mesma delegação | `qa-engineer` → `ui-engineer` | `chore` → `feature` | 3 |
 | **5 — rebuild** | `python build_v32_html.py`. **Pré-condição do verde, não acabamento**: as suítes jsdom bootam o HTML gerado, não os módulos-fonte | `build-engineer` | `chore` | 4 |
 | **6 — medição isolada** | Suítes `target`, `journey`, `icons46`, `ux41`, `d009`, `ui31`, `ui32`, `p52layout` + campanha **`d009`** (node+python), com árvore limpa. Um único arquivo de produto mudou: se `D009-*` cair, a causa é inequívoca | `qa-engineer` | `chore` | 5 |
 | **7 — `ui_v32.js`** | Predicado + bloco de ausência (duas superfícies) + 4º parâmetro do card base + `__DEV.hasSubstitute`. Um módulo, uma delegação | `ui-engineer` | `feature` | 6 |
 | **8 — rebuild** | `python build_v32_html.py` | `build-engineer` | `chore` | 7 |
-| **9 — verde e campanha nova** | Fixar a contagem de `d010` no verde; `tests_010_mutants.js` (**19** mutantes, **com `--preflight`**) **+** harness `d010` em `mutation_map.json` no mesmo commit; executar `d010`, `d009` e `core`; registrar os 17 pares em `mutation-matrix.json` | `qa-engineer` | `chore` (instrumento de medição; sem red próprio — o aceite é 100% KILL, R10 §5) | 8 |
+| **9 — verde e campanha nova** | Fixar a contagem de `d010` no verde; `tests_010_mutants.js` (**18** mutantes executados de **20** declarados — `M3`/`M4` em dívida declarada —, **com `--preflight`**) **+** harness `d010` em `mutation_map.json` no mesmo commit; executar `d010`, `d009` e `core`; registrar os 17 pares em `mutation-matrix.json` | `qa-engineer` | `chore` (instrumento de medição; sem red próprio — o aceite é 100% KILL, R10 §5) | 8 |
 | **10 — repin de `PROTECTED`** | Dois hashes inline em `tests_p50_core.js` + comentário-trilha citando a §"Autorização nominal §29.4" da spec, com "Identidade anterior" — e o `gen_pins.py` correspondente logo depois. **Dono é o `build-engineer`, não o QA**: quem escreve o hash não pode ser quem valida o gate que o consome (R3 §2) | `build-engineer` | `chore` | 9 |
 | **11 — validação** | `run.sh` completo; `p50core` de volta a 64/0; job `visual` do CI para `p51`/`p52`; `spec-validate`; aceite de intenção do PO | `qa-engineer`, `build-engineer`, `product-owner` | `chore` | 10 |
 
@@ -400,6 +415,8 @@ de `PROTECTED` **e** o `gen_pins.py` se repetem — nesta ordem.
 | Risco | Detecção (gate) | Resposta / rollback |
 |---|---|---|
 | **`D010-F2` não alcança o estado declarado.** Provado por execução nesta fase: com `logs` respondido em nível 2, declarar `security-analytics` como `NONE` produz `POSSIBLE_CONTEXT_DIVERGENCE`/`VALIDATE` com **zero** candidatos — `D010-CARD2` (a) ficaria vacuoso e `D010-ARB2` (b) falharia | `d010AssertFixtureStates` | A fixture **fixa `logs` em nível 0**; aí sim `TECHNOLOGY_WHITESPACE`/`DIRECT` com `fortianalyzer`, `fortisiem`, `fortisiem-cloud`. Restrição viaja no prompt da wave 1 |
+| **Âncora de fixture que descreve o produto sob conserto** (o assert declarava `titulosCongelados[].oculto: true` e o censo de chips do DOM) | `d010AssertFixtureStates` aborta **antes** de qualquer alínea e converte os 12 gates em falha de fixture — visto na W3, ao projetar o green | Regra da errata **E10**: o assert só declara o que a demanda **não pode escrever**, e o critério é o **diff**. A emenda entra na wave 4, **antes** da implementação; nada é removido sem migrar para o gêmeo canônico ou para a alínea que já mede. Se algum veredito do vermelho mudar por causa dela, é **achado**, não conserto |
+| **Nó de habilitador vazio passando por publicação** | `D010-CARD1` (a), `CARD6` (b), `PAPEL1` (a) — todas exigem nó **com item** (**E11**) | Achado por sonda do `qa-engineer` **antes** do commit do red, e fechado lá: "publicar" passou a exigir item. As alíneas negativas proíbem **o nó**, vazio ou não — a assimetria é de propósito |
 | **Nó a validar com a classe `.ux-tgt-en`** | `D009-UNS1` **e** `D010-CARD6` (b) — prova cruzada por desenho (mutante `M16`) | R-1 é dura: se acontecer, é reversão da wave 4, não conserto no gate |
 | **Item duplicado no card** (`fortiguard-socaas` do serviço × `SOCaaS` do `MAP`) | `D010-CARD4` (c1), sob `D010-F4` | Fusão por `data-eid` **contra o que está anexado** já é regra do desenho (restrição 2). Sem ela o defeito é silencioso na maioria das sessões e aparece **só em `monitoring-coverage`** — *corrigido em 2026-08-30: `incident-response` não tem `SOCaaS` no `MAP`, e `team-capacity` é S4; medido, não inferido* |
 | **Fusão apaga item legítimo** (`FortiGuard-MDR-Service` some porque tem equivalente na tabela, ainda que `fortiguard-mdr` **não** esteja anexado) | `D010-CARD4` (c2), sob `D010-F4` | Risco **oposto** ao de cima e igualmente silencioso — o único lugar do produto onde a perda seria invisível. A regra escrita (spec §4 · E9) manda olhar o conjunto anexado; o mutante `M19` a guarda |

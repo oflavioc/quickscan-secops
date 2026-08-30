@@ -6,7 +6,7 @@
    fixture, não suíte: não entra em `expected_suites.json` e não imprime
    PASS/FAIL — quem julga são os gates de `tests_010_vao.js`.
 
-   Existem porque nenhuma fixture 5.0/5.2/D009 alcança os quatro estados que a
+   Existem porque nenhuma fixture 5.0/5.2/D009 alcança os cinco estados que a
    demanda precisa exercitar:
      · D010-F1  — o VÃO canônico: contexto declarado, nenhuma capability
                   declarada, e a Camada 1 congelada oculta sem substituto;
@@ -14,7 +14,10 @@
                   agora"), que é outro título e outro bloco contíguo;
      · D010-F2  — o par de C8: HÁ substituto (whitespace com candidatos DIRECT)
                   convivendo com práticas-alvo sem contexto;
-     · D010-F3  — gate de suficiência FECHADO com a Camada 1 nomeando produto.
+     · D010-F3  — gate de suficiência FECHADO com a Camada 1 nomeando produto;
+     · D010-F4  — o vão SERVIDO (emenda de 2026-08-30): duas capabilities-alvo
+                  que recebem SERVIÇO por `hasGap` e ZERO candidatos, uma delas
+                  carregando a colisão de identidade do catálogo congelado.
 
    ==========================================================================
    OWNERS CANÔNICOS — a regra que este arquivo não quebra
@@ -49,6 +52,47 @@
    práticas medidas ficam sozinhas no palco. O plano registra que o veredito de
    arbitragem é o mesmo com 2, 1 ou 0; conferido por execução nesta tarefa
    (ver `D010_VACUIDADES_CONHECIDAS`, que também registra o que 1/0 mudariam).
+
+   ==========================================================================
+   EMENDA DE 2026-08-30 — POR QUE FIXTURE NOVA, E NÃO EMENDA NAS EXISTENTES
+   ==========================================================================
+   A T002 mediu quatro vacuidades. Duas delas (C8·CARD2 (b) e C10·CARD4 (c))
+   eram vacuidades de FIXTURE: o critério é mensurável, só que nenhum estado
+   alcançado o exercitava. Esta emenda fecha as duas.
+
+   O acréscimo NÃO cabe dentro de D010-F1..F3, e isso é medido, não opinião:
+   pôr `vulnerability-management` e `monitoring-coverage` no nível 0 muda o
+   VETOR, e com ele mudam valores já declarados de D010-F1 — `basePresented`
+   passa de 4 para 6 capabilities e `baseInV32Base` de 2 para 4. Emendar F1
+   reescreveria asserções que já vigoram; a instrução é o contrário disso.
+   Logo: fixture nova, e F1..F3 continuam com os MESMOS valores declarados.
+
+   Os dois estados novos moram na MESMA fixture porque foi medido que NÃO
+   interferem um no outro: com os dois alvos juntos, o contexto de
+   `vulnerability-management` (CONTEXT_NOT_INFORMED/LEGACY-LABELLED, zero
+   candidatos, serviço `vulnerability-assessment`, `gap-high`) é idêntico ao
+   que ele tem sozinho, e o mesmo vale para `continuous-monitoring`. Juntá-los
+   ainda paga um bônus adversarial: o cartão de `vulnerability-management` é o
+   CONTROLE do cartão de `monitoring-coverage` — tem serviço e nó do `MAP` sem
+   nenhuma colisão de nome, de modo que um mutante que deduplique DEMAIS morre
+   no mesmo runtime em que um que deduplique de MENOS morre.
+
+   Níveis escolhidos por poder discriminante, não por conveniência:
+     · `vulnerability-management` resposta 0, ALVO 1 — `lv[1].c` = [FortiRecon]
+       é SUBCONJUNTO ESTRITO de `lv[0].c` = [FortiRecon, FortiEndpoint]. Um
+       mutante INV-5 (ler o nível-alvo em vez do atual) devolve aqui uma lista
+       PARCIAL e não vazia: some FortiEndpoint e sobra FortiRecon. Nenhuma
+       fixture anterior tem essa forma — em D010-F1 o par de `automation` é
+       superconjunto (`lv[1]` ⊋ `lv[0]`), que é mais fácil de ver.
+     · `monitoring-coverage` resposta 0, ALVO 2 — `lv[1].c` é IDÊNTICO a
+       `lv[0].c` neste qid; um alvo em 1 tornaria o mutante INV-5 INVISÍVEL
+       justamente no cartão da colisão, isto é, eu estaria criando a vacuidade
+       que vim fechar. Com alvo 2, `lv[2].c` é vazio e o mutante apaga o nó.
+     · `monitoring-coverage` resposta 0 e não 1 — medido: em 1 a maturidade cai
+       para `gap-moderate` e o censo de títulos congelados GANHA uma segunda
+       entrada ("Pode fazer sentido — após validação"). Em 0 o censo de D010-F4
+       é idêntico ao de D010-F1, e a diferença F1→F4 fica atribuível apenas aos
+       dois alvos novos.
    ========================================================================== */
 "use strict";
 
@@ -171,7 +215,57 @@ const D010_F3 = {
   screen: "results"
 };
 
-const D010_FIXTURES = { "D010-F1": D010_F1, "D010-F1b": D010_F1b, "D010-F2": D010_F2, "D010-F3": D010_F3 };
+/* ---------------------------------------------------------------------------
+   D010-F4 · o vão SERVIDO (emenda de 2026-08-30)
+   D010-F1 + dois qids novos no nível 0 (`vulnerability-management` e
+   `monitoring-coverage`) e alvo em cada um. O engine anexa serviço por
+   `hasGap` às duas capabilities correspondentes, e NENHUM candidato: é o
+   estado que C8·`D010-CARD2` (b) exige — "capability-alvo que recebe serviço
+   e continua em S2 de contexto" — e que nenhuma das quatro fixtures anteriores
+   alcançava.
+
+   O vão continua sendo vão: medido `isLegacyModeV32() === false`,
+   `suff === true` e "há substituto" === FALSE. Serviço anexado não vira
+   substituto porque a classificação com presence UNSET é CONTEXT_NOT_INFORMED,
+   cuja apresentação é `base` e nunca `card` — que é a mesma cláusula que A5
+   deixou provada como redundante no predicado.
+
+   `monitoring-coverage` carrega a COLISÃO DE IDENTIDADE de C10·`D010-CARD4`
+   (c). Medido no catálogo congelado, sem inferir por semelhança de nome:
+     · `SERVICES["fortiguard-socaas"].name` === `PRODUCTS["SOCaaS"].n`
+       === "FortiGuard SOCaaS" — ids diferentes, MESMO nome renderizado;
+     · o serviço `fortiguard-socaas` está ANEXADO a `continuous-monitoring` e
+       já emite `data-eid="fortiguard-socaas"` no cartão-alvo
+       (`ui_target_v32.js:262`), ANTES de T008 existir;
+     · `MAP["monitoring-coverage"].lv[0].c` = [SOCaaS, FortiGuard-MDR-Service]
+       — o nó que T008 publica traz `SOCaaS`, homônimo do chip já presente.
+   O par de CONTROLE mora no mesmo nó: `FortiGuard-MDR-Service` também tem
+   homônimo no catálogo (`fortiguard-mdr`, "FortiGuard MDR"), mas esse serviço
+   NÃO está anexado aqui. Deduplicar contra a tabela de equivalência sem olhar
+   o que está de fato anexado apaga "FortiGuard MDR" do nó — e é assim que o
+   cenário mata o mutante que deduplica demais, não só o que deduplica de
+   menos. Os dois pares acima são a tabela INTEIRA: ver `D010_EQUIVALENCIA_NOME`.
+
+   `vulnerability-management` é o contrapeso sem colisão: serviço
+   `vulnerability-assessment` ("Vulnerability Assessment") e nó do `MAP` com
+   [FortiRecon, FortiEndpoint] — nenhum nome em comum. Um mutante que
+   deduplique por qualquer critério largo mexe aqui e é visto.
+--------------------------------------------------------------------------- */
+const D010_ALVOS_SERVICO = { "vulnerability-management": 1, "monitoring-coverage": 2 };
+
+const D010_F4 = {
+  id: "D010-F4",
+  name: "vão servido · alvos com serviço por hasGap e a colisão de identidade",
+  vec: d010VecVao({ "vulnerability-management": 0, "monitoring-coverage": 0 }),
+  arch: { saasAllowed: "yes" },
+  priorities: ["automation", "endpoint"],
+  targets: Object.assign({}, D010_ALVOS_VAO, D010_ALVOS_SERVICO),
+  landscape: "UNSET",
+  screen: "results"
+};
+
+const D010_FIXTURES = { "D010-F1": D010_F1, "D010-F1b": D010_F1b, "D010-F2": D010_F2,
+                        "D010-F3": D010_F3, "D010-F4": D010_F4 };
 
 /* ===================== aplicação sobre o runtime real ===================== */
 
@@ -254,6 +348,45 @@ function d010MapKeys(w) {
   return JSON.parse(d010Eval(w,
     "JSON.stringify(Object.keys(MAP).reduce(function(acc,q){(MAP[q].lv||[]).forEach(function(l){(l.c||[]).forEach(function(x){if(acc.indexOf(x.p)<0)acc.push(x.p);});});return acc;},[]).sort())"));
 }
+
+/* Nome RENDERIZADO de uma chave de produto do `MAP` (`PRODUCTS[chave].n`) e de
+   um serviço do catálogo (`SERVICES[id].name`). São os dois lados da colisão de
+   identidade de C10 e vivem em registros diferentes: `PRODUCTS` é `const` de
+   escopo de script (só por `d010Eval`), `SERVICES` está em `__DEV.V32`. */
+function d010ProductName(w, chave) {
+  return JSON.parse(d010Eval(w, "JSON.stringify((PRODUCTS[" + JSON.stringify(chave) + "]||{}).n||null)"));
+}
+function d010ServiceName(w, sid) {
+  const S = (w.__DEV.V32.SERVICES || {})[sid];
+  return S ? (S.name || null) : null;
+}
+
+/* A TABELA DE EQUIVALÊNCIA, derivada do catálogo congelado e não de uma lista
+   escrita à mão: todo par (serviceId, chave do `MAP`) que RENDERIZA o mesmo
+   nome. É o oráculo independente de C10 — se T008 escrever a própria tabela, é
+   contra esta que ela é medida, e se a Fortinet renomear qualquer um dos lados
+   o gate cai e alguém decide a direção (R10 §1), em vez de a tabela envelhecer
+   em silêncio. Formato: "<serviceId>≡<chaveMAP>|<nome>", ordenado. */
+function d010EquivalenciaNome(w) {
+  const V = w.__DEV.V32;
+  const sids = Object.keys(V.SERVICES || {});
+  const pares = [];
+  d010MapKeys(w).forEach(pk => {
+    const pn = d010ProductName(w, pk);
+    if (!pn) return;
+    sids.forEach(sid => { if (d010ServiceName(w, sid) === pn) pares.push(sid + "≡" + pk + "|" + pn); });
+  });
+  return pares.sort();
+}
+
+/* Medido em 2026-08-30 sobre `quickscan_secops_soccmm_v3_2_dev.html`: o
+   catálogo congelado tem EXATAMENTE dois pares homônimos, e os DOIS moram no
+   mesmo `MAP["monitoring-coverage"].lv[0].c`. Um deles tem o serviço anexado
+   sob D010-F4 (colisão real, a deduplicar); o outro não (controle, a preservar). */
+const D010_EQUIVALENCIA_NOME = [
+  "fortiguard-mdr≡FortiGuard-MDR-Service|FortiGuard MDR",
+  "fortiguard-socaas≡SOCaaS|FortiGuard SOCaaS"
+];
 
 /* ===================== oráculos derivados do MODELO ======================= */
 
@@ -359,6 +492,41 @@ function d010CardsSemPayload(w, res) {
     ((ctxs[id].candidates || []).length + (ctxs[id].services || []).length + (ctxs[id].notes || []).length) === 0).sort();
 }
 
+/* Serviços que o engine anexou por capability — o payload que faz C8·CARD2 (b)
+   existir. Vazio em D010-F1/F1b/F2: lá o `hasGap` não alcança capability alguma
+   dos alvos, que é exatamente a vacuidade que D010-F4 fecha. */
+function d010ServicesByCapability(w, res) {
+  const ctxs = (res || w.__DEV.V32.buildRecommendationContext()).contexts;
+  const out = {};
+  Object.keys(ctxs).sort().forEach(id => {
+    const s = (ctxs[id].services || []).map(x => x.serviceId);
+    if (s.length) out[id] = s;
+  });
+  return out;
+}
+
+/* Chips de habilitador do cartão-alvo, agrupados pelo qid do `li` que os
+   contém. É a SUPERFÍCIE onde a colisão de C10 acontece: o emissor é
+   `ui_target_v32.js:262` e a identidade que ele já publica é `data-eid`.
+
+   A guarda do final não é decorativa: se o emissor sair de `li.ux-tgt-ov`, um
+   agrupador ingênuo devolveria `{}` e toda asserção de ausência sobre chips
+   viraria PASS vacuoso. Aqui ele grita com a contagem que não fecha. */
+function d010TargetEnablers(d) {
+  const T = n => (n ? (n.textContent || "") : "").replace(/\s+/g, " ").trim();
+  const out = {};
+  Array.from(d.querySelectorAll("li.ux-tgt-ov[data-qid]")).forEach(li => {
+    out[li.getAttribute("data-qid")] = Array.from(li.querySelectorAll(".ux-tgt-enabler")).map(s =>
+      s.getAttribute("data-eid") + "|" + T(s.querySelector(".ux-tgt-enabler-name")) + "|" + T(s.querySelector(".ux-tgt-mode")));
+  });
+  const total = d.querySelectorAll(".ux-tgt-enabler").length;
+  const soma = Object.keys(out).reduce((a, q) => a + out[q].length, 0);
+  if (total !== soma)
+    throw new Error("d010TargetEnablers: " + total + " chips `.ux-tgt-enabler` no documento mas " + soma +
+      " agrupados por `li.ux-tgt-ov[data-qid]` — o emissor saiu do sítio conhecido (ui_target_v32.js:262)");
+  return out;
+}
+
 /* Títulos congelados de recomendação presentes na tela, e quais estão ocultos.
    A lista é a mesma de `HIDE_EYEBROWS` (`ui_v32.js:109-110`), transcrita aqui
    caractere a caractere: se o produto mudar o texto, o gate falha — que é o
@@ -395,6 +563,10 @@ const D010_DECLARED = {
     basePresented: ["endpoint-detection", "external-exposure", "network-detection", "security-automation"],
     baseInV32Base: ["external-exposure", "network-detection"],
     cardsSemPayload: [],
+    /* nenhum `hasGap` alcança capability de alvo: é a vacuidade de C8 (b) que
+       esta fixture NÃO fecha, agora declarada como valor e não como prosa */
+    servicosPorGap: {},
+    habilitadores: { "automation": [], "endpoint": [], "network-visibility": [], "external-surface": [] },
     titulosCongelados: [{ texto: "Como a Fortinet pode apoiar nas prioridades declaradas", oculto: true }]
   },
   "D010-F1b": {
@@ -412,6 +584,8 @@ const D010_DECLARED = {
     basePresented: ["endpoint-detection", "external-exposure", "network-detection", "security-automation"],
     baseInV32Base: ["endpoint-detection", "external-exposure", "network-detection", "security-automation"],
     cardsSemPayload: [],
+    servicosPorGap: {},
+    habilitadores: { "automation": [], "endpoint": [], "network-visibility": [], "external-surface": [] },
     titulosCongelados: [{ texto: "Como a Fortinet pode apoiar agora", oculto: true }]
   },
   "D010-F2": {
@@ -432,6 +606,13 @@ const D010_DECLARED = {
     basePresented: ["endpoint-detection", "external-exposure", "network-detection", "security-automation"],
     baseInV32Base: ["external-exposure", "network-detection"],
     cardsSemPayload: [],
+    /* o substituto de F2 vem de CANDIDATO, não de serviço: o `hasGap` continua
+       sem alcançar capability de alvo alguma — a vacuidade de C8 (b) sobrevive
+       aqui e é D010-F4 quem a fecha */
+    servicosPorGap: {},
+    habilitadores: { "automation": [], "endpoint": [], "network-visibility": [], "external-surface": [],
+                     "logs": ["fortianalyzer|FortiAnalyzer|apoio direto", "fortisiem|FortiSIEM|apoio direto",
+                              "fortisiem-cloud|FortiSIEM Cloud|apoio direto"] },
     titulosCongelados: [{ texto: "Como a Fortinet pode apoiar nas prioridades declaradas", oculto: true }],
     /* o substituto, nomeado: é ele que autoriza a supressão de C2 */
     substitutoEm: { capability: "security-analytics", classification: "TECHNOLOGY_WHITESPACE",
@@ -455,45 +636,129 @@ const D010_DECLARED = {
     cardsSemPayload: ["continuous-monitoring", "detection-engineering", "endpoint-detection",
       "external-exposure", "incident-management", "knowledge-management", "network-detection",
       "security-automation", "soc-skills", "vulnerability-management"],
+    /* `team-capacity` pertence a `soc-staffing`, e É por gap que o serviço
+       chega — mas `soc-staffing` tem `landscapeEnabled: false`, logo o estado
+       de contexto é S4 e não S2. Por isso D010-F3 NÃO serve para C8 (b) nem
+       para C10 (c): o universo dessas alíneas é S2. O chip abaixo mostra que a
+       colisão fortiguard-socaas × SOCaaS também existe aqui — sob gate
+       FECHADO, que é outro cenário e o de C9. */
+    servicosPorGap: { "soc-staffing": ["fortiguard-socaas"] },
+    habilitadores: { "team-capacity": ["fortiguard-socaas|FortiGuard SOCaaS|serviço"] },
     titulosCongelados: [{ texto: "Como a Fortinet pode apoiar agora", oculto: true },
                         { texto: "Pode fazer sentido — após validação", oculto: true }]
+  },
+  "D010-F4": {
+    legacy: false, suff: true, substituto: false,
+    arch: { saasAllowed: "yes" },
+    landscapeDeclarada: {},
+    prioridades: ["automation", "endpoint"],
+    alvos: { "automation": 1, "endpoint": 2, "network-visibility": 2, "external-surface": 2,
+             "vulnerability-management": 1, "monitoring-coverage": 2 },
+    /* Os dois qids novos saem em S1 pela leitura COM itens (1 serviço cada) e
+       em S2 pela leitura de CONTEXTO (presence UNSET). Essa divergência é o
+       ponto inteiro de C8 (b): serviço do engine não pode bloquear o nó do
+       `MAP`, e é aqui que um gate que confunda as duas leituras é pego. */
+    estados:    { "automation": "S2", "endpoint": "S2", "network-visibility": "S2", "external-surface": "S2",
+                  "vulnerability-management": "S1", "monitoring-coverage": "S1" },
+    estadosCtx: { "automation": "S2", "endpoint": "S2", "network-visibility": "S2", "external-surface": "S2",
+                  "vulnerability-management": "S2", "monitoring-coverage": "S2" },
+    mapNivelAtual: { "automation": ["FortiSOAR"], "endpoint": ["FortiEndpoint"],
+                     "network-visibility": ["FortiNDR"], "external-surface": ["FortiRecon"],
+                     "vulnerability-management": ["FortiRecon", "FortiEndpoint"],
+                     "monitoring-coverage": ["SOCaaS", "FortiGuard-MDR-Service"] },
+    /* `vulnerability-management` é o único par SUBCONJUNTO ESTRITO das cinco
+       fixtures; `monitoring-coverage` esvazia. As duas formas de INV-5 ficam
+       disponíveis nos dois cartões que a emenda acrescenta. */
+    mapNivelAlvo:  { "automation": ["FortiSOAR", "FortiXDR"], "endpoint": [],
+                     "network-visibility": [], "external-surface": [],
+                     "vulnerability-management": ["FortiRecon"], "monitoring-coverage": [] },
+    basePresented: ["continuous-monitoring", "endpoint-detection", "external-exposure",
+                    "network-detection", "security-automation", "vulnerability-management"],
+    baseInV32Base: ["continuous-monitoring", "external-exposure", "network-detection", "vulnerability-management"],
+    cardsSemPayload: [],
+    /* C8 · D010-CARD2 (b), materializado: serviço por `hasGap` em capability de
+       alvo, ZERO candidatos nas duas. */
+    servicosPorGap: { "continuous-monitoring": ["fortiguard-socaas"],
+                      "vulnerability-management": ["vulnerability-assessment"] },
+    /* C10 · D010-CARD4 (c), materializado: o chip `fortiguard-socaas` já existe
+       na tela ANTES de T008, com o mesmo nome renderizado que a chave `SOCaaS`
+       do nó do `MAP` do MESMO qid. Os quatro alvos herdados seguem sem chip —
+       é o que separa "alvo servido" de "alvo do vão". */
+    habilitadores: { "automation": [], "endpoint": [], "network-visibility": [], "external-surface": [],
+                     "vulnerability-management": ["vulnerability-assessment|Vulnerability Assessment|serviço"],
+                     "monitoring-coverage": ["fortiguard-socaas|FortiGuard SOCaaS|serviço"] },
+    titulosCongelados: [{ texto: "Como a Fortinet pode apoiar nas prioridades declaradas", oculto: true }],
+    /* a colisão, NOMEADA — com o par de controle que a torna bidirecional */
+    colisaoDeIdentidade: {
+      qid: "monitoring-coverage", capability: "continuous-monitoring",
+      servicoAnexado: "fortiguard-socaas", chaveMapHomonima: "SOCaaS", nomeComum: "FortiGuard SOCaaS",
+      controleChaveMap: "FortiGuard-MDR-Service", controleServicoNaoAnexado: "fortiguard-mdr",
+      controleNome: "FortiGuard MDR"
+    }
   }
 };
 
 /* ==========================================================================
-   VACUIDADES CONHECIDAS — achados abertos, medidos, NÃO resolvidos aqui
+   VACUIDADES CONHECIDAS — o que foi FECHADO e o que continua ABERTO
    ==========================================================================
    Este bloco é dado, não desculpa. Ele existe para que um gate de
    `tests_010_vao.js` não nasça vacuoso sem que alguém tenha decidido isso: a
-   alínea listada aqui NÃO pode ser dada por medida enquanto a decisão do
-   `tech-lead`/`product-owner` não vier. Nenhuma delas é corrigível dentro de
-   T002 — todas exigem mexer em conteúdo de fixture que a spec declara.
+   alínea com `status: "ABERTA"` NÃO pode ser dada por medida enquanto a
+   decisão do `tech-lead`/`product-owner` não vier.
+
+   T002 (2026-08-30) mediu quatro. A emenda do proprietário de 2026-08-29,
+   executada em 2026-08-30, fecha DUAS por fixture (C8 (b) e C10 (c)) e tira as
+   outras duas do caminho por decisão, não por medição nova:
+     · C9 (c) foi para CONSERTO DE REDAÇÃO — o critério não pode afirmar o que
+       não pode provar. O texto é do `tech-lead`; o achado desta fixture
+       permanece registrado abaixo porque é ele que justifica a reescrita.
+     · A5 foi para NENHUM MUTANTE — a cláusula fica no predicado como guarda
+       contra mudança futura no engine, e para de receber atribuição de peso.
+       Fica registrada aqui como PROVA de que nada a mata, para que ninguém
+       tente escrever esse mutante de novo.
    ========================================================================== */
 const D010_VACUIDADES_CONHECIDAS = [
-  { criterio: "C9 · D010-CARD3 (b)(c)", fixture: "D010-F3",
+  { criterio: "C8 · D010-CARD2 (b)", status: "FECHADA em 2026-08-30 por D010-F4", fixture: "D010-F4",
+    medido: "T002 mediu que nenhuma das capabilities dos 5 alvos de D010-F1..F3 recebia serviço por hasGap " +
+            "(`servicosPorGap` declarado {} em F1, F1b e F2). D010-F4 põe `vulnerability-management` e " +
+            "`monitoring-coverage` no nível 0 com alvo: o engine anexa `vulnerability-assessment` e " +
+            "`fortiguard-socaas` às capabilities correspondentes, com ZERO candidatos, presence UNSET " +
+            "(estado de contexto S2) e MAP.lv[atual].c não vazio nos dois.",
+    consequencia: "a alínea passa a ser exercitável: um mutante que trate serviço-sem-candidato como " +
+            "\"já tem contexto\" e suprima o nó morre em D010-F4. O par S1 (com itens) × S2 (contexto) fica " +
+            "declarado lado a lado na mesma fixture, que é onde um gate que confunda as duas leituras é pego." },
+  { criterio: "C10 · D010-CARD4 (c) · dedup por data-eid", status: "FECHADA em 2026-08-30 por D010-F4", fixture: "D010-F4",
+    medido: "a colisão foi confirmada NOMINALMENTE, não por semelhança de nome: " +
+            "SERVICES[\"fortiguard-socaas\"].name === PRODUCTS[\"SOCaaS\"].n === \"FortiGuard SOCaaS\", " +
+            "ids distintos. Sob D010-F4 o chip `data-eid=\"fortiguard-socaas\"` já é emitido pelo cartão-alvo " +
+            "de `monitoring-coverage` (ui_target_v32.js:262) ANTES de T008, e MAP[\"monitoring-coverage\"].lv[0].c " +
+            "traz a chave `SOCaaS`. Sob D010-F1 há ZERO chips na tela — o cenário é novo, não herdado.",
+    consequencia: "a deduplicação de T008 nasce com cenário que a mata nas DUAS direções: o par de controle " +
+            "`fortiguard-mdr`/`FortiGuard-MDR-Service` (homônimo no catálogo, serviço NÃO anexado) está no " +
+            "mesmo nó, então deduplicar contra a tabela sem olhar o que está anexado apaga \"FortiGuard MDR\" " +
+            "e também morre. A tabela inteira tem 2 pares e é re-derivada a cada execução por " +
+            "`d010EquivalenciaNome` — ver `D010_EQUIVALENCIA_NOME`." },
+  { criterio: "C9 · D010-CARD3 (b)(c)", status: "ABERTA — endereçada por redação, não por fixture", fixture: "D010-F3",
     medido: "nenhum alvo legítimo do vetor P50-F2 está em estado de contexto S2 com MAP não vazio: " +
             "mandate/governance/team-capacity são S4 (landscapeEnabled:false), logs é S2 mas MAP.lv[3].c é vazio " +
             "e o alvo seria removido por revalidateTargets, incident-response é S2 mas a resposta é \"NA\".",
     consequencia: "a ausência de nó a-validar sob gate fechado é verdadeira por ESTADO, não por GATE; " +
-            "flipar a suficiência não muda o veredito do card, então (c) não tem como ser provado com esta fixture." },
-  { criterio: "C8 · D010-CARD2 (b)", fixture: "D010-F2",
-    medido: "nenhuma das capabilities dos 5 alvos recebe serviço por hasGap. Os serviços do engine só chegam a " +
-            "soc-staffing, soc-skills, incident-management, continuous-monitoring e vulnerability-management, " +
-            "e nenhum qid dessas está no conjunto de alvos declarado pela spec.",
-    consequencia: "\"capability com apenas serviços e em S2 continua recebendo o nó\" não é exercitável; " +
-            "um 6º alvo em vulnerability-management (nível 0 ⇒ serviço vulnerability-assessment, sem candidato, " +
-            "presence UNSET, MAP.lv[0].c = [FortiRecon, FortiEndpoint]) tornaria a alínea real." },
-  { criterio: "C10 · D010-CARD4 (c) · dedup por data-eid", fixture: "nenhuma",
-    medido: "a colisão real (serviço fortiguard-socaas × chave SOCaaS do MAP) vive em monitoring-coverage / " +
-            "continuous-monitoring, e só materializa com a resposta em nível 0 ou 1 E um alvo naquele qid. " +
-            "Nenhuma das quatro fixtures tem alvo em monitoring-coverage.",
-    consequencia: "a deduplicação exigida de T008 nasce sem cenário que a mate; (c) passa vacuosamente." },
-  { criterio: "§1 · cláusula \"classificação ≠ CONTEXT_NOT_INFORMED\" (A5)", fixture: "todas",
-    medido: "em D010-F1, F1b, F2, F3 e também numa sessão 15×0 e 15×1 sem nada declarado, o predicado dá o MESMO " +
-            "valor com e sem a cláusula. Nenhuma capability CONTEXT_NOT_INFORMED alcança apresentação \"card\": " +
-            "o supportMode dessa classificação é LEGACY-LABELLED, que presentationOf nunca promove a card.",
-    consequencia: "a cláusula é guarda redundante, não load-bearing como o plano registra; " +
-            "nenhum mutante que a remova pode ser morto por fixture alguma desta demanda." }
+            "flipar a suficiência não muda o veredito do card, então (c) não tem como ser provado com esta fixture. " +
+            "Decisão do proprietário de 2026-08-29: o critério é reescrito pelo `tech-lead` para não afirmar o que " +
+            "não pode provar. Enquanto o texto novo não chegar, nenhum gate pode dar (c) por medida.",
+    naoFechavelPorFixture: "não é falta de fixture: acrescentar alvo em S2 a este vetor exigiria mudar o vetor, " +
+            "e um vetor com suficiência ABERTA deixa de ser o cenário de gate fechado que C9 mede." },
+  { criterio: "§1 · cláusula \"classificação ≠ CONTEXT_NOT_INFORMED\" (A5)",
+    status: "ABERTA por construção — decidida: fica no predicado, sem mutante", fixture: "todas",
+    medido: "em D010-F1, F1b, F2, F3, F4 e também numa sessão 15×0 e 15×1 sem nada declarado, o predicado dá o " +
+            "MESMO valor com e sem a cláusula. Nenhuma capability CONTEXT_NOT_INFORMED alcança apresentação " +
+            "\"card\": o supportMode dessa classificação é LEGACY-LABELLED, que presentationOf nunca promove a " +
+            "card. D010-F4 REFORÇA a medição em vez de mudá-la: as duas capabilities novas são " +
+            "CONTEXT_NOT_INFORMED, têm serviço anexado, e ainda assim \"há substituto\" continua FALSE.",
+    consequencia: "a cláusula é guarda redundante, não load-bearing. Decisão do proprietário de 2026-08-29: " +
+            "permanece no predicado como defesa contra mudança futura no engine, o texto do critério para de " +
+            "lhe atribuir peso e NENHUM mutante a tem como alvo. Registro aqui para que a matriz gate↔mutante " +
+            "não ganhe de novo um mutante que nenhuma fixture pode matar." }
 ];
 
 /* ===================== conferência dos estados declarados ================== */
@@ -623,15 +888,78 @@ function d010AssertFixtureStates(w, fx) {
   if (JSON.stringify(tit) !== JSON.stringify(dec.titulosCongelados))
     fail("títulos congelados " + JSON.stringify(tit) + " != declarados " + JSON.stringify(dec.titulosCongelados));
 
+  /* 13 · serviços anexados por `hasGap`, por capability. OBRIGATÓRIO em toda
+          fixture: é o eixo de C8 (b), e "não declarei" não pode virar "não
+          medi". Sem esta asserção, um mutante que anexasse serviço a mais (ou
+          a menos) não seria visto por fixture alguma da demanda. */
+  if (!dec.servicosPorGap) fail("tabela declarada sem `servicosPorGap` — eixo de C8 (b) não medido");
+  const svcs = d010ServicesByCapability(w, res);
+  if (JSON.stringify(svcs) !== JSON.stringify(dec.servicosPorGap))
+    fail("serviços por capability " + JSON.stringify(svcs) + " != declarados " + JSON.stringify(dec.servicosPorGap));
+
+  /* 14 · chips de habilitador do cartão-alvo, por qid. Também OBRIGATÓRIO: é a
+          superfície onde a colisão de C10 se materializa, e onde a AUSÊNCIA de
+          chip nos alvos do vão precisa ser asserção, não silêncio. */
+  if (!dec.habilitadores) fail("tabela declarada sem `habilitadores` — superfície de C10 não medida");
+  const hab = d010TargetEnablers(d);
+  const hq = Object.keys(hab).sort(), dq = Object.keys(dec.habilitadores).sort();
+  if (hq.join(",") !== dq.join(","))
+    fail("cartões-alvo na tela [" + hq + "] != declarados [" + dq + "]");
+  dq.forEach(qid => {
+    if (JSON.stringify(hab[qid]) !== JSON.stringify(dec.habilitadores[qid]))
+      fail("habilitadores de " + qid + " " + JSON.stringify(hab[qid]) +
+           " != declarados " + JSON.stringify(dec.habilitadores[qid]));
+  });
+
+  /* 15 · a tabela de equivalência de nome, RE-DERIVADA do catálogo congelado a
+          cada execução. Âncora global: não depende da fixture, e é ela que faz
+          um renome no catálogo virar decisão explícita em vez de rot silenciosa. */
+  const eq = d010EquivalenciaNome(w);
+  if (JSON.stringify(eq) !== JSON.stringify(D010_EQUIVALENCIA_NOME))
+    fail("tabela de equivalência de nome " + JSON.stringify(eq) +
+         " != declarada " + JSON.stringify(D010_EQUIVALENCIA_NOME));
+
+  /* 16 · a colisão de identidade, quando declarada, é conferida DOS DOIS LADOS:
+          o par que colide tem de colidir, e o par de controle tem de estar no
+          mesmo nó do `MAP` SEM o serviço anexado. Um cenário que só provasse o
+          primeiro deixaria vivo o mutante que deduplica demais. */
+  if (dec.colisaoDeIdentidade) {
+    const z = dec.colisaoDeIdentidade;
+    const nomeSvc = d010ServiceName(w, z.servicoAnexado), nomeProd = d010ProductName(w, z.chaveMapHomonima);
+    if (nomeSvc !== z.nomeComum || nomeProd !== z.nomeComum)
+      fail("colisão: SERVICES[" + z.servicoAnexado + "].name=" + JSON.stringify(nomeSvc) +
+           " / PRODUCTS[" + z.chaveMapHomonima + "].n=" + JSON.stringify(nomeProd) +
+           ", declarado " + JSON.stringify(z.nomeComum));
+    if (z.servicoAnexado === z.chaveMapHomonima)
+      fail("colisão: serviço e chave do MAP têm o MESMO id — não há o que deduplicar");
+    const mapAtual = d010MapItems(w, z.qid, ansNow[K(z.qid)]);
+    if (mapAtual.indexOf(z.chaveMapHomonima) < 0)
+      fail("colisão: " + z.chaveMapHomonima + " não está em MAP[" + z.qid + "].lv[atual].c = " + JSON.stringify(mapAtual));
+    const anexados = (svcs[z.capability] || []);
+    if (anexados.indexOf(z.servicoAnexado) < 0)
+      fail("colisão: " + z.servicoAnexado + " não está anexado a " + z.capability + " = " + JSON.stringify(anexados));
+    /* o controle: mesmo nó, homônimo no catálogo, serviço NÃO anexado */
+    if (mapAtual.indexOf(z.controleChaveMap) < 0)
+      fail("controle: " + z.controleChaveMap + " não está em MAP[" + z.qid + "].lv[atual].c = " + JSON.stringify(mapAtual));
+    if (d010ServiceName(w, z.controleServicoNaoAnexado) !== z.controleNome ||
+        d010ProductName(w, z.controleChaveMap) !== z.controleNome)
+      fail("controle: par " + z.controleServicoNaoAnexado + "/" + z.controleChaveMap + " não renderiza " +
+           JSON.stringify(z.controleNome));
+    if (anexados.indexOf(z.controleServicoNaoAnexado) >= 0)
+      fail("controle: " + z.controleServicoNaoAnexado + " ESTÁ anexado a " + z.capability +
+           " — o par de controle deixou de ser controle e o cenário perdeu a direção 'deduplica demais'");
+  }
+
   return true;
 }
 
 module.exports = {
-  D010_F1, D010_F1b, D010_F2, D010_F3, D010_FIXTURES, D010_DECLARED,
-  D010_GAP_QIDS, D010_ALVOS_VAO, D010_HIDE_EYEBROWS, D010_VACUIDADES_CONHECIDAS,
+  D010_F1, D010_F1b, D010_F2, D010_F3, D010_F4, D010_FIXTURES, D010_DECLARED,
+  D010_GAP_QIDS, D010_ALVOS_VAO, D010_ALVOS_SERVICO, D010_HIDE_EYEBROWS,
+  D010_EQUIVALENCIA_NOME, D010_VACUIDADES_CONHECIDAS,
   d010VecVao, d010ApplyContext, d010ApplyResults,
-  d010Eval, d010Answers, d010MapItems, d010MapKeys,
+  d010Eval, d010Answers, d010MapItems, d010MapKeys, d010ProductName, d010ServiceName, d010EquivalenciaNome,
   d010CapOf, d010EnablerCount, d010StateWith, d010StateOf, d010CtxStateOf, d010TargetsByState,
   d010PresentationOf, d010HasSubstitute, d010BasePresented, d010BaseInV32Base, d010CardsSemPayload,
-  d010FrozenTitles, d010AssertFixtureStates
+  d010ServicesByCapability, d010TargetEnablers, d010FrozenTitles, d010AssertFixtureStates
 };

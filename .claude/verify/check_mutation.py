@@ -608,6 +608,96 @@ def mut_relata(name, saida, returncode):
 IC9_LINT = "mutation-sobrevivente"
 IC9_CAMPOS = ("harness", "mutante", "gate")
 IC9_CURINGA = re.compile(r"[*?%]|^\s*(todos|todas|qualquer|all|any)\s*$", re.I)
+# [013/IC-9 · green] Teto do `motivo` na linha impressa. A razão da KI-4 tem ~700
+# caracteres (a cascata inteira do EA-7) e não cabe num stage que roda em todo PR.
+# Trunca-se com marca EXPLÍCITA e ponteiro para o registro integral — precedente do
+# teto de IC-1/mut_relata: nada fica anônimo, nada fica implícito.
+IC9_TETO_MOTIVO = 180
+
+
+def mut_perdao(harness, blocos, excecoes):
+    """Perdão nominal de mutante sobrevivente — contrato C5. FUNÇÃO PURA.
+
+    Sem I/O, sem efeito, sem leitura de arquivo: `excecoes` entra por PARÂMETRO
+    para que o poder discriminante siga medido com dados SINTÉTICOS depois que a
+    última exceção real for cumprida — o dia em que ninguém olha (IC-9.4).
+
+      harness  — nome do harness no mutation_map.json
+      blocos   — a lista `todos` de mut_ler(): {estado, id, desc, gate, resto}
+      excecoes — entradas `lint == "mutation-sobrevivente"` do known_issues
+
+    Devolve {"perdoados", "obsoletas", "remanescentes", "aplicadas",
+             "perdoa_o_exit"} — forma declarada no cabeçalho desta seção.
+
+    Depende só do vocabulário acima (IC9_LINT/IC9_CAMPOS/IC9_CURINGA), nunca das
+    asserções abaixo: o gate depende do mecanismo, e não o contrário.
+    """
+    perdoados, obsoletas, aplicadas = [], [], []
+    porid = {}
+    for b in (blocos or []):
+        if isinstance(b, dict):
+            porid.setdefault(str(b.get("id", "")).strip(), b)
+    for e in (excecoes or []):
+        if not isinstance(e, dict):
+            continue
+        # O lint é reconferido DE PROPÓSITO: a função é pública e recebe a lista
+        # já filtrada, mas não pode perdoar uma exceção de outro lint que caia
+        # nela por descuido de quem chama.
+        if e.get("lint") not in (None, IC9_LINT):
+            continue
+        exc = e.get("excecao")
+        if not isinstance(exc, dict):
+            continue
+        campos = {c: exc.get(c) for c in IC9_CAMPOS}
+        # Exceção MALFORMADA nunca perdoa. Campo ausente, vazio, não-texto ou com
+        # curinga é abrangente por omissão; IC-9.1 já a reprova no registro, e aqui
+        # ela simplesmente não tem efeito. A direção segura é NÃO perdoar.
+        if any(not isinstance(v, str) or not v.strip() or IC9_CURINGA.search(v)
+               for v in campos.values()):
+            continue
+        if not all(isinstance(e.get(c), str) and e.get(c, "").strip()
+                   for c in ("motivo", "remocao_prevista")):
+            continue   # sem prazo/motivo não é exceção: é permissão permanente
+        if campos["harness"].strip() != str(harness).strip():
+            continue   # NOMINAL ao harness: exceção da p51 não cobre a p50
+        mid = campos["mutante"].strip()
+        alvo = porid.get(mid)
+        if alvo is None:
+            continue   # esta campanha não emitiu o mutante — nada a perdoar aqui
+        kid = str(e.get("id") or "?")
+        estado = str(alvo.get("estado", "")).strip()
+        motivo = " ".join(e["motivo"].split())
+        if len(motivo) > IC9_TETO_MOTIVO:
+            motivo = (motivo[:IC9_TETO_MOTIVO].rstrip()
+                      + f"\u2026 [integral em known_issues.json \u2192 {kid}]")
+        if estado == "DETECTADO":
+            obsoletas.append(mid)
+            aplicadas.append(
+                f"       [EXCEÇÃO OBSOLETA] {kid}: {harness}/{mid} voltou a DETECTADO nesta "
+                f"campanha — o mutante morreu e a exceção perdeu o motivo; REMOVA a entrada")
+            aplicadas.append(
+                f"                          prazo declarado: {e['remocao_prevista']}")
+        elif estado == "SOBREVIVENTE":
+            perdoados.append(mid)
+            aplicadas.append(
+                f"       [EXCEÇÃO] {kid}: {harness}/{mid} SOBREVIVENTE perdoado · gate "
+                f"{campos['gate'].strip()}")
+            aplicadas.append(f"                 prazo: {e['remocao_prevista']}")
+            aplicadas.append(f"                 motivo: {motivo}")
+        # `NÃO EXECUTADO` cai fora dos dois ramos DE PROPÓSITO: não executar não é
+        # sobreviver, e perdoar o que não rodou é o SKIP silencioso da R10 §2
+        # entrando pela porta dos fundos. Ele desce inteiro para `remanescentes`.
+    remanescentes = [str(b.get("id", "")).strip() for b in (blocos or [])
+                     if isinstance(b, dict)
+                     and str(b.get("estado", "")).strip() != "DETECTADO"
+                     and str(b.get("id", "")).strip() not in perdoados]
+    return {"perdoados": perdoados, "obsoletas": obsoletas,
+            "remanescentes": remanescentes, "aplicadas": aplicadas,
+            # Campanha vazia NUNCA é perdoada: sem `perdoados` não há perdão, e um
+            # harness que morreu antes de emitir mutante nenhum não vira verde.
+            "perdoa_o_exit": bool(perdoados) and not obsoletas and not remanescentes}
+
+
 EX_FAILS = 0
 
 
@@ -876,7 +966,20 @@ for name, h in MAP.items():
     # julgador. Só relata — o veredito é a linha abaixo, e só ela.
     mut_relata(name, r.stdout, r.returncode)
     ran += 1
-    if r.returncode != 0:
+    # [013/IC-9 · green] O perdão nominal entra ENTRE o relato e o veredito. Só ele
+    # pode transformar um `returncode != 0` em não-problema, e só quando uma exceção
+    # VIVA cobre todos os não-KILL da campanha (`perdoa_o_exit`, contrato C5).
+    #
+    # Roda mesmo com `returncode == 0`, e essa é a metade da cláusula ⚠️ que só aqui
+    # existe: a obsolescência pela EXECUÇÃO (o mutante nomeado voltou a DETECTADO)
+    # tem de reprovar campanha VERDE — senão a exceção sobrevive à própria razão e
+    # ninguém percebe. A outra metade, pelo REGISTRO, é IC-9.3 lá em cima.
+    #
+    # `mut_ler` é chamada de novo (pura, mesma entrada): `mut_relata` fica intacta.
+    perdao = mut_perdao(name, mut_ler(r.stdout)[0], EX_ENTRADAS)
+    for linha in perdao["aplicadas"]:
+        print(linha)          # IMPRESSA, nunca silenciosa (cláusula 3)
+    if (r.returncode != 0 and not perdao["perdoa_o_exit"]) or perdao["obsoletas"]:
         fails += 1
     # recibos declarados: o harness legado grava seu registro em arquivo rastreado
     # por design — restauramos após capturar (o registro vivo é a matriz)

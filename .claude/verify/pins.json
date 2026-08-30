@@ -1,7 +1,7 @@
 {
   "_meta": {
     "descricao": "Registry único de pins — fonte de identidade dos artefatos (R8). Hashes = SHA-256 dos blobs de HEAD. Alterar arquivo pinado exige regenerar este registry no MESMO PR, com motivo no commit.",
-    "gerado_de_head": "1ac6157aca15e32e1974c70fd67ab0030f5a0358",
+    "gerado_de_head": "aecc6fcf3fe0f55b4a96b4e6dc75d8ab7f39760d",
     "gerado_em": "2026-08-30",
     "exclusoes": [
       "docs_phase5/**",
@@ -218,7 +218,7 @@
     "specs/009-leitura-do-relatorio/tasks.md": "8913a9ff0dc659cd2de9ab8ac49f6b65ae43a9e21cfc5d8ff6c695a7317d3435",
     "specs/010-recomendacao-sem-vao/plan.md": "f478c07e91575a717b61e2eddcaf3ee4dc132283d827b324a1471b18584cf021",
     "specs/010-recomendacao-sem-vao/refinement.md": "ef7f012fcb38a0902ba56366ff412fa198a15903b686abf5b344573f619fc6bf",
-    "specs/010-recomendacao-sem-vao/spec.md": "0c081d9b6c1979c547bd0c5bf607ff66f1d4f1c95365bb7719afc3374cbb58c4",
+    "specs/010-recomendacao-sem-vao/spec.md": "636fc0136164370496aba2858e9cf9c38d2d2aca030e1f46204927894681c524",
     "specs/010-recomendacao-sem-vao/tasks.md": "39fa0a8de12e350e9462a68df715a8a646130b7fe89259d6c2d794879d26bcfa",
     "specs/012-status-backlog/matriz-gate-mutante.md": "a9062efbc5f2dfa185d71fe7fe8e84dd8eedefc7273b3987ea6d297d7c158947",
     "specs/012-status-backlog/plan.md": "c47539aec862ba8bcfdfb78a375ef2c92b57db0ab9c02c7d67a4341f8a265904",

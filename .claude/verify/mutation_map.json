@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "descricao": "Mapa harness→alvos do trigger de mutação por path (Onda 3, E7). check_mutation.py compara os arquivos tocados (diff contra a base) com os alvos de cada harness e re-executa APENAS as campanhas cujos alvos mudaram — mata o padrão 'campanha one-shot stale'. requires declara o ambiente (harness sem o requisito é reportado por nome, nunca pulado em silêncio). Campo receipts: artefatos-recibo que o harness legado grava por design (rastreados); o runner os restaura após capturar o resultado — o registro canônico vivo é mutation-matrix.json.",
+    "descricao": "Mapa harness→alvos do trigger de mutação por path (Onda 3, E7). check_mutation.py compara os arquivos tocados (diff contra a base) com os alvos de cada harness e re-executa APENAS as campanhas cujos alvos mudaram — mata o padrão 'campanha one-shot stale'. requires declara o ambiente (harness sem o requisito é reportado por nome, nunca pulado em silêncio). Campo receipts: artefatos-recibo que o harness legado grava por design (rastreados); o runner os restaura após capturar o resultado — o registro canônico vivo é mutation-matrix.json. Campo preflight (demanda 013, contrato C2): o harness responde a `<cmd> --preflight` emitindo o objeto JSON de C1 em stdout — resolve o interpretador e conta as ocorrências de cada âncora, sem mutar, sem reconstruir e sem escrever nada. A chave só é declarada no MESMO commit em que o harness passa a ler `--preflight` em argv; harness sem a chave tem a ausência de preflight impressa como dívida declarada, nunca omitida.",
     "onda": 3
   },
   "harnesses": {
@@ -19,6 +19,7 @@
     },
     "p50": {
       "cmd": "node tests_p50_mutants.js",
+      "preflight": true,
       "targets": [
         "ui_p50_shell_v32.js",
         "ui_p50_v32.css",
@@ -37,8 +38,13 @@
     },
     "p51": {
       "cmd": "node tests_p51_mutants.js",
+      "preflight": true,
       "targets": [
-        "ui_session_v32.js",
+        "USER_GUIDE.md",
+        "ui_journey_v32.js",
+        "ui_p50_results_v32.js",
+        "ui_p50_shell_v32.js",
+        "ui_p50_v32.css",
         "ui_v32.js",
         "tests_p51_mutants.js"
       ],
@@ -50,6 +56,7 @@
     },
     "p52": {
       "cmd": "node tests_p52_mutants.js",
+      "preflight": true,
       "targets": [
         "ui_p52_workspace_v32.js",
         "ui_p52_workspace_v32.css",

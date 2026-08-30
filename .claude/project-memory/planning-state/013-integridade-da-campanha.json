@@ -1,0 +1,58 @@
+{
+  "demanda": "013-integridade-da-campanha",
+  "phase": "validate",
+  "spec_dir": "specs/013-integridade-da-campanha",
+  "brief": "Integridade da campanha de mutacao: quatro ancoras podres pre-existentes na p51, harness Linux-only por construcao (python3 + prefixo POSIX de env) que reporta ambiente ausente como NAO DETECTADO, e dois mutantes possivelmente sem discriminante (1 em p51, 1 em p52). Bloqueia o merge do PR #24 (demanda 009).",
+  "branch": "feature/013-integridade-da-campanha",
+  "refinement": {
+    "status": "approved",
+    "approved_at": "2026-08-29",
+    "notes": "DECIDIDO SOB DELEGACAO DO PROPRIETARIO de 2026-08-29 ('tome as decisoes por mim'), nao aprovado por ele pessoalmente. Adotadas as 8 recomendacoes do product-owner: 1.1 uma demanda (dependencia causal — sem portabilidade toda reancoragem e inverificavel localmente); 1.2 quatro entregas ordenadas E1 harness honesto -> E2 triagem das 4 ancoras -> E3 classificacao dos sobreviventes -> E4 declaracao verdadeira; 1.3 investigacao DENTRO, correcao FORA (gate sem discriminante vira achado proprio); 1.4 criterio de familia para as 3 harnesses defeituosas, SEM runner compartilhado (R9); 1.5 reconciliar targets da p51 (causa direta do rot de M51-20 — USER_GUIDE.md nao esta em targets de harness nenhum); 1.6 EA-4 como tarefa da demanda, pelo doc-writer, DEPOIS que a branch do EA-3 chegar a develop (risco verificado de colisao de id entre branches); 1.7 EA-4 nasce aberto; 1.8 mutation-matrix expandida por par, com aposentadoria registrada. 7 verbetes inseridos no CONTEXT.md (autoria do PO, insercao minha). Correcoes do PO a minha evidencia: as 4 ancoras sao REANCORAVEIS (gates e propriedades vivos); o defeito de portabilidade tambem esta em p50 e p52 (core ja resolvido, e a referencia); have('python') retorna True incondicionalmente (check_mutation.py:30); ancora podre IMPRIME ERRO no Linux, logo a portabilidade e pre-condicao da investigacao; reancoragem ingenua de M51-18 mutaria a ocorrencia errada (ui_v32.js:131 vs :1026)."
+  },
+  "specify": {
+    "status": "approved",
+    "approved_at": "2026-08-29",
+    "notes": "DECIDIDO SOB DELEGACAO do proprietario de 2026-08-29, nao aprovado por ele pessoalmente. spec.md (433 linhas): T1-T13, gates IC-1..IC-8 com mutante previsto, 13 bordas, contratos C1-C4. Eixo do desenho: preflight (--preflight, JSON em stdout, nao muta/nao constroi/nao escreve) que resolve o interpretador e conta ocorrencias de cada ancora — torna ancora podre E ambigua visiveis sem Chromium em qualquer plataforma, logo o red desta demanda e provavel LOCALMENTE em vez de confiado ao CI. Reancoragem exige tres provas cumulativas: unicidade, morte pelo gate/motivo esperados, e SOBREVIVENCIA sob asserçao neutralizada (a que mata o teatro). Sem PARADA, sem rito de boundary, nenhum ponto pede ratificacao de proprietario, zero byte de produto. RODADA 2 — recusei o portao da rodada 1 por erro de fato: a spec afirmava que so a p51 erra nas duas frentes de portabilidade. Medi: p50 tem 26 prefixos POSIX (de 53 mutantes), p51 tem 20/20, p52 tem 0. O tech-lead reproduziu, confirmou e achou a causa do proprio erro: usou a classe [A-Z_]*=, que nao casa digito, entao P50_ONLY= falhava no '5' e sumia da contagem — instrumento reportando zero sem ter medido, a doenca desta demanda cometida dentro dela. IC-1 passou a fixar a classe [A-Za-z_][A-Za-z0-9_]*= no texto do criterio, a ser escrito POR PROPRIEDADE (nenhum cmd de mutante comeca com prefixo de variavel, em todo harness do mutation_map) e nao por lista nominal, com red medido de 46 ocorrencias. Nuance que agrava: p50 TEM a plumbing run(cmd, envOverride) (:99) mas o laco principal chama run(m.cmd) puro (:793) — o conserto e migracao mecanica de 26 filtros, nao trabalho conceitual novo."
+  },
+  "plan": {
+    "status": "approved",
+    "approved_at": "2026-08-29",
+    "notes": "DECIDIDO SOB DELEGACAO do proprietario de 2026-08-29. plan.md (219 linhas): 9 waves, dono unico por arquivo, [P] uma unica vez (W8, entre matriz e BACKLOG, que nao medem nada). PREFLIGHT NASCE NA W3, na p51, que e o caminho critico: dali em diante as ancoras sao medidas com node e python apenas, sem Chromium. INVERSAO QUE SUSTENTA A ORDEM: o consumidor nasce antes do produtor — a W1 assere o contrato C1 (hoje reprova nomeando os tres harnesses) e o green da W3 PRODUZ o red seguinte (IC-4 acusando as quatro ancoras). A cadeia causal do refinamento vira commits. D1: id de gate digitado errado faz a suite rodar zero gates, sair 0, e o mutante ser lido como SOBREVIVENTE — classificar como NAO EXECUTADO. Necessario porque a linha de base de campanha pre-edicao NAO E OBTENIVEL (job visual roda sem --all e antes da edicao nenhum harness e exigido; local sem Chromium; rito manual depende do proprietario ausente). Risco registrado, nao contornado. D2: relato POR ASSERCAO — da W3 a W6 o stage fica legitimamente vermelho por IC-4, e um agregado esconderia o verde das outras: seria o colapso de estados da propria demanda, um nivel acima. D5: tres das quatro provas de E2 sao LOCAIS (M51-03, M51-18, M51-20 usam node tests_p50_core.js); so M51-16 (P51-PDF1) precisa de Chromium. SERIALIZACAO E ESTRUTURAL, nao disciplina pedida: check_mutation.py:39-44 RECUSA medir com arvore suja — quem tentar medir enquanto outro escreve recebe [FAIL] arvore suja, nunca um numero errado. O tech-lead RECUSOU mexer no verify.yml para obter linha de base, registrando o risco em vez de gastar autoridade emprestada. ERRATA aplicada por mim na spec: a tabela de pins dizia que mutation-matrix.json estava fora do registry; ele e pinado (pins.json:82) — conferido por execucao."
+  },
+  "tasks": {
+    "status": "approved",
+    "approved_at": "2026-08-29",
+    "notes": "DECIDIDO SOB DELEGACAO do proprietario de 2026-08-29. tasks.md: 32 tarefas T001-T032 nas 9 waves. [P] uma unica vez (T024 x T025, W8). tests_p51_mutants.js com dois donos em waves distintas (T006 build/W3, T019 qa/W6). W4 com dois commits separados: T009 (preflight) e T011 (os 26 filtros da p50 como tarefa propria, o maior diff mecanico). Dois reds commitados: T002 (o julgador nasce reprovando os tres harnesses) e T017 (o red que o green da W3 produz — as quatro ancoras). Campanha do harness tocado a cada wave, quatro ao longo do PR, nunca uma auditoria no fim. DUAS ADICOES ACEITAS, ambas verificadas por mim: (1) T023 sincroniza a branch com origin/develop na W7 — o plano dava a condicao da W8 por satisfeita mas nao escreveu a mecanica, e conferi que EA-3 NAO esta nesta branch (0 ocorrencias); sem isso o doc-writer escreveria EA-4/5/6 num arquivo sem EA-3, dando quatro abertos em vez de cinco e conflito no BACKLOG.md. Posta na W7 e nao na W8 para o BACKLOG ter um unico autor por wave; gera repin fora da previsao R1-R10, nomeado e destinado ao relatorio final. (2) a auto-exclusao nominal de IC-1 (R10 §10) cobre specs/013-integridade-da-campanha/** inteiro, nao so a spec.md — conferi que os QUATRO arquivos carregam os literais proibidos (python3, P50_ONLY=); excluir so a spec faria o gate reprovar a si mesmo na wave seguinte."
+  },
+  "red": {
+    "status": "proven",
+    "commit": "8181f05b42ca819208e0f49288b1b53e2ef475ee",
+    "gates": [
+      "IC-1",
+      "IC-2",
+      "IC-4",
+      "IC-5",
+      "IC-6",
+      "IC-9"
+    ],
+    "notes": "dois reds commitados: f89ab95 (o julgador nasce reprovando os tres harnesses, 14 problemas) e 8181f05 (o red que o green da W3 produziu — as quatro ancoras da p51 nomeadas pelo preflight) Terceiro red: 2f60e2c (IC-9, excecao nominal de mutante sobrevivente) — comportamento novo de gate ratificado NOMINALMENTE pelo proprietario no chat em 2026-08-30."
+  },
+  "implement": {
+    "status": "done",
+    "waves_done": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8
+    ],
+    "pending": []
+  },
+  "validate": {
+    "status": "in_progress",
+    "notes": "pipeline completo 13 PASS/1 FAIL — o unico FAIL e mutation exigindo chromium para p50/p51/p52, agendamento do job visual (KI-3). Seçao de integridade: 0 problemas. IC-4 verde nas tres harnesses, 180/180 ancoras."
+  }
+}

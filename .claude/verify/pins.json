@@ -1,7 +1,7 @@
 {
   "_meta": {
     "descricao": "Registry único de pins — fonte de identidade dos artefatos (R8). Hashes = SHA-256 dos blobs de HEAD. Alterar arquivo pinado exige regenerar este registry no MESMO PR, com motivo no commit.",
-    "gerado_de_head": "0aa3778c0c6987c6ae2cac0d3a9ee82a6932153b",
+    "gerado_de_head": "a43d6f401e03f2919fe10064768c36f542f8d023",
     "gerado_em": "2026-08-30",
     "exclusoes": [
       "docs_phase5/**",
@@ -149,7 +149,7 @@
     "docs/screenshot_audit_43.md": "4bbdbb4b25f884347e4089205c0fe466f05a01cce7c0687844c5679426ef8aca",
     "engine_v32.js": "9a4a2e674389a115a56c0bce9785ad0f90651546e31d264a947998e2bb5d247a",
     "fixtures_009_leitura.js": "c5d10e056a2d7aa1383e1c2ce3050f094c24de6a23cf7f63afc44efea86475ef",
-    "fixtures_010_vao.js": "deae79d23d249acd2002aabd128c54aa0e5aaef66f74ac59d6012a79c3325d8c",
+    "fixtures_010_vao.js": "211ebe64309d9b2d2638bc0d6bdf338198f183d9e2b12b8e84b6d322ccecd24d",
     "fixtures_p50.js": "08610c8f92238eefb82a07ec57cb1ab9cdbb626cad1c9483d278e26ed572443f",
     "fixtures_p52.js": "6830420e7acae5860b18c72ddba208c76cabe1b770d61132fe7f5db684a22b60",
     "generate_icons_v32.py": "e4fc59576cd3817c8c84c7c46dc5f8a6fe33d5786467cbefd0de3557c536cb0a",
@@ -216,10 +216,10 @@
     "specs/009-leitura-do-relatorio/refinement.md": "6762564abc8c005dd3022fb071a9b0ba40e8e016810b894a2c9ec6b6067fe194",
     "specs/009-leitura-do-relatorio/spec.md": "0b6f386b5442f6efd23747f8f2fd99dc7d9e6480a7b2148ce74e270b564c336c",
     "specs/009-leitura-do-relatorio/tasks.md": "8913a9ff0dc659cd2de9ab8ac49f6b65ae43a9e21cfc5d8ff6c695a7317d3435",
-    "specs/010-recomendacao-sem-vao/plan.md": "7eef7f4ffc9fa02182ae986bc03b75a851eafae7283648a6a4e43ea165fa4864",
+    "specs/010-recomendacao-sem-vao/plan.md": "feb06559c7ac3f2b57343ad28f5972452519803565a880028e4ee2246c908ec1",
     "specs/010-recomendacao-sem-vao/refinement.md": "ef7f012fcb38a0902ba56366ff412fa198a15903b686abf5b344573f619fc6bf",
-    "specs/010-recomendacao-sem-vao/spec.md": "e9f767238c4d7e5e799973ce083c0d510d86a5b7516307bdfa1d59a8b60403d8",
-    "specs/010-recomendacao-sem-vao/tasks.md": "c7efd489a1efc74cf2a15b246950c600a275919901dc6da20927fc4d67db6be6",
+    "specs/010-recomendacao-sem-vao/spec.md": "98a9fdd30c2f64d26e7cfb4d2223f85ac40a17cbbf32e3031d31344694c73d85",
+    "specs/010-recomendacao-sem-vao/tasks.md": "265828f9d25716c0ad4e4828a4e2860160f1da9329d0f5e8ae32ad4657b5f888",
     "specs/012-status-backlog/matriz-gate-mutante.md": "a9062efbc5f2dfa185d71fe7fe8e84dd8eedefc7273b3987ea6d297d7c158947",
     "specs/012-status-backlog/plan.md": "c47539aec862ba8bcfdfb78a375ef2c92b57db0ab9c02c7d67a4341f8a265904",
     "specs/012-status-backlog/refinement.md": "1ac9926904a617dc706e7d313ece85fc15c7d7ffd3a802cb5fbb1b4bbb042d49",

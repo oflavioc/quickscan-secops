@@ -1,7 +1,7 @@
 {
   "_meta": {
     "descricao": "Registry único de pins — fonte de identidade dos artefatos (R8). Hashes = SHA-256 dos blobs de HEAD. Alterar arquivo pinado exige regenerar este registry no MESMO PR, com motivo no commit.",
-    "gerado_de_head": "3944021fbc106592360dc3732a3deda45e48499a",
+    "gerado_de_head": "e96756c4f9836170f0cf6cfb922d9e34b954d7f4",
     "gerado_em": "2026-08-30",
     "exclusoes": [
       "docs_phase5/**",
@@ -216,10 +216,10 @@
     "specs/009-leitura-do-relatorio/refinement.md": "6762564abc8c005dd3022fb071a9b0ba40e8e016810b894a2c9ec6b6067fe194",
     "specs/009-leitura-do-relatorio/spec.md": "0b6f386b5442f6efd23747f8f2fd99dc7d9e6480a7b2148ce74e270b564c336c",
     "specs/009-leitura-do-relatorio/tasks.md": "8913a9ff0dc659cd2de9ab8ac49f6b65ae43a9e21cfc5d8ff6c695a7317d3435",
-    "specs/010-recomendacao-sem-vao/plan.md": "feb06559c7ac3f2b57343ad28f5972452519803565a880028e4ee2246c908ec1",
+    "specs/010-recomendacao-sem-vao/plan.md": "f478c07e91575a717b61e2eddcaf3ee4dc132283d827b324a1471b18584cf021",
     "specs/010-recomendacao-sem-vao/refinement.md": "ef7f012fcb38a0902ba56366ff412fa198a15903b686abf5b344573f619fc6bf",
-    "specs/010-recomendacao-sem-vao/spec.md": "98a9fdd30c2f64d26e7cfb4d2223f85ac40a17cbbf32e3031d31344694c73d85",
-    "specs/010-recomendacao-sem-vao/tasks.md": "265828f9d25716c0ad4e4828a4e2860160f1da9329d0f5e8ae32ad4657b5f888",
+    "specs/010-recomendacao-sem-vao/spec.md": "8fa5e17949e74a3636f20843510296270bd1ba2d4aca543c9e196d64a0f0a659",
+    "specs/010-recomendacao-sem-vao/tasks.md": "39fa0a8de12e350e9462a68df715a8a646130b7fe89259d6c2d794879d26bcfa",
     "specs/012-status-backlog/matriz-gate-mutante.md": "a9062efbc5f2dfa185d71fe7fe8e84dd8eedefc7273b3987ea6d297d7c158947",
     "specs/012-status-backlog/plan.md": "c47539aec862ba8bcfdfb78a375ef2c92b57db0ab9c02c7d67a4341f8a265904",
     "specs/012-status-backlog/refinement.md": "1ac9926904a617dc706e7d313ece85fc15c7d7ffd3a802cb5fbb1b4bbb042d49",

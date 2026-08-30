@@ -1,7 +1,7 @@
 {
   "_meta": {
     "descricao": "Registry único de pins — fonte de identidade dos artefatos (R8). Hashes = SHA-256 dos blobs de HEAD. Alterar arquivo pinado exige regenerar este registry no MESMO PR, com motivo no commit.",
-    "gerado_de_head": "a43d6f401e03f2919fe10064768c36f542f8d023",
+    "gerado_de_head": "a4f2118722e640cc2e974324499ea7bf76511d55",
     "gerado_em": "2026-08-30",
     "exclusoes": [
       "docs_phase5/**",
@@ -149,7 +149,7 @@
     "docs/screenshot_audit_43.md": "4bbdbb4b25f884347e4089205c0fe466f05a01cce7c0687844c5679426ef8aca",
     "engine_v32.js": "9a4a2e674389a115a56c0bce9785ad0f90651546e31d264a947998e2bb5d247a",
     "fixtures_009_leitura.js": "c5d10e056a2d7aa1383e1c2ce3050f094c24de6a23cf7f63afc44efea86475ef",
-    "fixtures_010_vao.js": "211ebe64309d9b2d2638bc0d6bdf338198f183d9e2b12b8e84b6d322ccecd24d",
+    "fixtures_010_vao.js": "0b038ca8711af32f681d5c65ca5767089754cd1240d3bc70fd71a4b69bc0f80c",
     "fixtures_p50.js": "08610c8f92238eefb82a07ec57cb1ab9cdbb626cad1c9483d278e26ed572443f",
     "fixtures_p52.js": "6830420e7acae5860b18c72ddba208c76cabe1b770d61132fe7f5db684a22b60",
     "generate_icons_v32.py": "e4fc59576cd3817c8c84c7c46dc5f8a6fe33d5786467cbefd0de3557c536cb0a",

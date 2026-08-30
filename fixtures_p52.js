@@ -17,9 +17,13 @@ const FX50 = require("./fixtures_p50.js");
 /* ---------------------------------------------------------------------------
    P52-F1 · Workspace completo
    15 respostas confirmadas (gate liberado), severidades mistas e duas
-   prioridades declaradas. É a fixture da tela cheia: visão executiva, alvo,
-   contexto, evidência, detalhe, prioridades, gaps altos + moderados, apoio e
-   ações — todas as nove seções presentes ao mesmo tempo.
+   prioridades declaradas. É a fixture da tela cheia, na ordem canônica de
+   `specs/009-leitura-do-relatorio/spec.md` (âncora ratificada pelo proprietário
+   em 2026-08-27): visão executiva, prioridades, detalhe, gaps altos +
+   moderados, alvo, contexto, apoio e ações — as OITO seções da variante de
+   gate ABERTO, presentes ao mesmo tempo. A suficiência não é a nona: desde
+   SUFF-REV-A, com o gate liberado ela deixa de ser seção e vira o disclosure
+   "Base de evidência da sessão" dentro de "Relatório e sessão" (`actions`).
 --------------------------------------------------------------------------- */
 const P52_F1 = {
   id: "P52-F1",

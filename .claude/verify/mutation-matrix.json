@@ -23,9 +23,9 @@
       "gate": "SESSION 4.8 (tests_session_m48.js)",
       "invariante": "INV-8 — derivado nunca é fonte",
       "ultima_prova": {
-        "data": "2026-08-25",
-        "resultado": "KILL (96/97)",
-        "registro": "campanha inicial da Onda 3, provada antes do commit"
+        "data": "2026-08-28",
+        "resultado": "KILL (oracle SESSION 4.8, exit 1)",
+        "registro": "re-executada em T019 (wave 6) da demanda 009 porque ui_v32.js é alvo do harness core e a demanda o tocou: 3/3 KILL, restauração byte a byte OK. Campanha inicial: Onda 3, 2026-08-25"
       }
     },
     {
@@ -34,9 +34,9 @@
       "gate": "UNSET GEOMETRY (tests_unset_ug.js)",
       "invariante": "INV-2/INV-3 — publicação sob suficiência",
       "ultima_prova": {
-        "data": "2026-08-25",
-        "resultado": "KILL (9/12; também mata P50 CORE 62/64)",
-        "registro": "campanha inicial da Onda 3"
+        "data": "2026-08-28",
+        "resultado": "KILL (oracle UNSET GEOMETRY, exit 1)",
+        "registro": "re-executada em T019 (wave 6) da demanda 009: 3/3 KILL. Campanha inicial: Onda 3, 2026-08-25"
       }
     },
     {
@@ -45,9 +45,9 @@
       "gate": "REF 4.4 (tests_ref_m44.js)",
       "invariante": "INV-6 — refinamento nunca afeta scoring",
       "ultima_prova": {
-        "data": "2026-08-25",
-        "resultado": "KILL (27/28)",
-        "registro": "campanha inicial da Onda 3"
+        "data": "2026-08-28",
+        "resultado": "KILL (oracle REF 4.4, exit 1)",
+        "registro": "re-executada em T019 (wave 6) da demanda 009: 3/3 KILL. Campanha inicial: Onda 3, 2026-08-25"
       }
     },
     {
@@ -469,9 +469,234 @@
         "resultado": "KILL",
         "registro": "docs_phase5/evidence_p52/P52-mutation.json"
       }
+    },
+    {
+      "mutante": "P52-M3 (reescrito pela demanda 009)",
+      "harness": "p52 (tests_p52_mutants.js) — executado FILTRADO (P52_MUT_ONLY=P52-M3), sem Chromium: o oráculo deste par é jsdom",
+      "gate": "P52-TGT1 (tests_p52_layout.js, P52_ONLY=P52-TGT1)",
+      "invariante": "C3 — adjacência alvo→contexto sobrevive à reancoragem da ordem; a POSIÇÃO ABSOLUTA que P52-TGT1 deixou de afirmar passou para D009-ORD1/ORD2",
+      "ultima_prova": {
+        "data": "2026-08-28",
+        "resultado": "KILL — 'P52-F1: contexto (4) antes do alvo (5)' (o `reason` reescrito, /contexto \\(\\d+\\) antes do alvo/, casou; a alternativa antiga 'alvo não é imediatamente posterior' foi removida junto com a asserção que a produzia)",
+        "registro": "T019 (wave 6) — fecha o 'NÃO EXECUTADO, com motivo' declarado no red (commit 3950288): a árvore estava limpa e o harness reconstrói o HTML gerado. Restauração byte a byte OK (9 arquivos + html); acervo de evidência 43 arquivos byte-idênticos; nenhum recibo escrito (execução PARCIAL não grava P52-mutation.json)"
+      }
+    },
+    {
+      "mutante": "D009-M1",
+      "harness": "d009 (tests_009_mutants.js)",
+      "gate": "D009-ORD1 (tests_009_leitura.js)",
+      "invariante": "C1 — a ordem completa das 8 seções presentes com gate ABERTO é a da âncora da spec 009",
+      "ultima_prova": {
+        "data": "2026-08-28",
+        "resultado": "KILL — 'fluxo observado [exec > target > context > priorities > detail > gaps > support > actions] != ordem aberta da spec'. PROVA DE DESENHO no mesmo passe: SOBREVIVEU a P52-TGT1 (PASS), como a spec §C1/C3 exige — adjacência não deduz sequência",
+        "registro": "campanha d009 REEXECUTADA na passagem final (2026-08-28, rodada 2, worktree exclusiva e árvore limpa): 19 KILL / 19, restauração byte a byte OK do source e do HTML gerado · campanha d009, T019 (wave 6): 18/18 KILL"
+      }
+    },
+    {
+      "mutante": "D009-M2",
+      "harness": "d009 (tests_009_mutants.js)",
+      "gate": "D009-ORD2 (tests_009_leitura.js)",
+      "invariante": "C2 — a exceção declarada do gate FECHADO (suficiência na 2ª seção) é preservada",
+      "ultima_prova": {
+        "data": "2026-08-28",
+        "resultado": "KILL — 'fluxo observado [... support > evidence > actions] != ordem fechada da spec' (a suficiência cai para a 8ª posição sem a exceção)",
+        "registro": "campanha d009 REEXECUTADA na passagem final (2026-08-28, rodada 2, worktree exclusiva e árvore limpa): 19 KILL / 19, restauração byte a byte OK do source e do HTML gerado · campanha d009, T019 (wave 6): 18/18 KILL"
+      }
+    },
+    {
+      "mutante": "D009-M4",
+      "harness": "d009 (tests_009_mutants.js)",
+      "gate": "D009-DOM1 (tests_009_leitura.js)",
+      "invariante": "C4 — a marca de domínio identifica o domínio que marca (índice conferido contra DOMS do runtime congelado)",
+      "ultima_prova": {
+        "data": "2026-08-28",
+        "resultado": "KILL — \"tela: 'Negócio' ocorre 1x na narrativa e tem 0 marca(s) .jn-dom[data-dom=\\\"0\\\"]\"",
+        "registro": "campanha d009 REEXECUTADA na passagem final (2026-08-28, rodada 2, worktree exclusiva e árvore limpa): 19 KILL / 19, restauração byte a byte OK do source e do HTML gerado · campanha d009, T019 (wave 6): 18/18 KILL"
+      }
+    },
+    {
+      "mutante": "D009-M5",
+      "harness": "d009 (tests_009_mutants.js)",
+      "gate": "D009-DOM1 (tests_009_leitura.js)",
+      "invariante": "C4 — a cor nunca é o único portador do significado (canal não-cromático obrigatório)",
+      "ultima_prova": {
+        "data": "2026-08-28",
+        "resultado": "KILL — 'canal não-cromático ausente: nenhuma regra de .jn-dom declara font-weight'. SEGUNDA ROT DE ÂNCORA desta demanda (a primeira foi D009-M16): a auditoria de acessibilidade do CI reprovou P52-ACC1/V322-NI1 com color-contrast|serious — os accents de [data-dom] foram desenhados para borda e chip, não para texto (4.21:1 no roxo, contra 4.5:1 de AA) — e a correção trocou o token por --dom-accent-text derivado por color-mix, apagando o literal em que o mutante ancorava. Reancorado no literal atual; o discriminante NÃO mudou, porque o repl continua removendo font-weight e as regras novas .jn-dom[data-dom=\"N\"] só declaram a variável de cor.",
+        "registro": "campanha d009 REEXECUTADA após a correção de contraste (2026-08-28): 19 KILL / 19, restauração byte a byte OK do source e do HTML gerado · campanha d009 REEXECUTADA na passagem final (2026-08-28, rodada 2, worktree exclusiva e árvore limpa): 19 KILL / 19, restauração byte a byte OK do source e do HTML gerado · campanha d009, T019 (wave 6). Âncora byte a byte de ui_ux_v32.css ('.jn-dom{ color:var(--dom-accent); font-weight:700; }') — o harness trata âncora que não casa 1x como FALHA DO HARNESS, nunca como 'não aplicável' (a armadilha do literal P52_SECTIONS)"
+      }
+    },
+    {
+      "mutante": "D009-M6",
+      "harness": "d009 (tests_009_mutants.js)",
+      "gate": "D009-DOM2 (tests_009_leitura.js)",
+      "invariante": "INV-7 / C5 — a narrativa continua string pura; colorir é pós-processamento de renderização",
+      "ultima_prova": {
+        "data": "2026-08-28",
+        "resultado": "KILL — 'P52-F1: markup em paragraphs[0]'. Discrimina um gate que NASCEU VERDE (critério de preservação)",
+        "registro": "campanha d009 REEXECUTADA na passagem final (2026-08-28, rodada 2, worktree exclusiva e árvore limpa): 19 KILL / 19, restauração byte a byte OK do source e do HTML gerado · campanha d009, T019 (wave 6): 18/18 KILL"
+      }
+    },
+    {
+      "mutante": "D009-M7",
+      "harness": "d009 (tests_009_mutants.js)",
+      "gate": "D009-NXT1 (tests_009_leitura.js)",
+      "invariante": "C6 — a lista 'Para avançar' é a ÚNICA enumeração; o P3 aponta e não reenumera",
+      "ultima_prova": {
+        "data": "2026-08-28",
+        "resultado": "KILL — 'tema enumerado em prosa no P3 (forma minúscula)' (a forma exata que o P3 usava antes da demanda)",
+        "registro": "campanha d009 REEXECUTADA na passagem final (2026-08-28, rodada 2, worktree exclusiva e árvore limpa): 19 KILL / 19, restauração byte a byte OK do source e do HTML gerado · campanha d009, T019 (wave 6): 18/18 KILL"
+      }
+    },
+    {
+      "mutante": "D009-M8",
+      "harness": "d009 (tests_009_mutants.js)",
+      "gate": "D009-NXT2 (tests_009_leitura.js)",
+      "invariante": "C7 — a narrativa nunca aponta para uma lista que não existe",
+      "ultima_prova": {
+        "data": "2026-08-28",
+        "resultado": "KILL — 'P3 aponta para uma lista que não existe'. Discrimina um gate que NASCEU VERDE (critério de preservação)",
+        "registro": "campanha d009 REEXECUTADA na passagem final (2026-08-28, rodada 2, worktree exclusiva e árvore limpa): 19 KILL / 19, restauração byte a byte OK do source e do HTML gerado · campanha d009, T019 (wave 6): 18/18 KILL"
+      }
+    },
+    {
+      "mutante": "D009-M9",
+      "harness": "d009 (tests_009_mutants.js)",
+      "gate": "D009-GLO1 (tests_009_leitura.js)",
+      "invariante": "C8 — a explicação na tela é o PRIMEIRO PERÍODO do verbete canônico (transformação declarada e pública, precedente do copyMap())",
+      "ultima_prova": {
+        "data": "2026-08-28",
+        "resultado": "KILL — 'security-analytics: frase = \"Onde eventos e logs são centralizados…\" != primeiro período'. O oráculo reimplementa o recorte em vez de chamar __P52.capHelpLine()",
+        "registro": "campanha d009 REEXECUTADA na passagem final (2026-08-28, rodada 2, worktree exclusiva e árvore limpa): 19 KILL / 19, restauração byte a byte OK do source e do HTML gerado · campanha d009, T019 (wave 6). Mutação vive em ui_p52_workspace_v32.js (p52CapHelpLine), não no consumidor"
+      }
+    },
+    {
+      "mutante": "D009-M10",
+      "harness": "d009 (tests_009_mutants.js)",
+      "gate": "D009-GLO1 (tests_009_leitura.js)",
+      "invariante": "C8 — capability UNSET não ganha linha nem explicação; a contagem de .v32-decl-row consumida por p52ContextSummary não muda",
+      "ultima_prova": {
+        "data": "2026-08-28",
+        "resultado": "KILL — '22 .v32-decl-row para 3 capabilities declaradas'. TRANSPARÊNCIA: morreu pela cláusula de CONTAGEM DE LINHAS de C8, não pela de .v32-caphelp — a frase só existe DENTRO da linha declarada, logo nenhum defeito plausível a emite sob UNSET sem criar a linha (ver dívida declarada)",
+        "registro": "campanha d009 REEXECUTADA na passagem final (2026-08-28, rodada 2, worktree exclusiva e árvore limpa): 19 KILL / 19, restauração byte a byte OK do source e do HTML gerado · campanha d009, T019 (wave 6): 18/18 KILL"
+      }
+    },
+    {
+      "mutante": "D009-M11",
+      "harness": "d009 (tests_009_mutants.js)",
+      "gate": "D009-GLO2 (tests_009_leitura.js)",
+      "invariante": "C9 — a mesma explicação acompanha o relatório impresso (P14: o glossário acompanha o papel; a ordem do papel, não)",
+      "ultima_prova": {
+        "data": "2026-08-28",
+        "resultado": "KILL — 'security-analytics: 0 nós .v32-caphelp no papel (esperado 1)'",
+        "registro": "campanha d009 REEXECUTADA na passagem final (2026-08-28, rodada 2, worktree exclusiva e árvore limpa): 19 KILL / 19, restauração byte a byte OK do source e do HTML gerado · campanha d009, T019 (wave 6): 18/18 KILL"
+      }
+    },
+    {
+      "mutante": "D009-M12",
+      "harness": "d009 (tests_009_mutants.js)",
+      "gate": "D009-UNS1 (tests_009_leitura.js)",
+      "invariante": "C10 — contexto não informado (S2) não fala como NONE: o relatório se cala e delega ao aviso único",
+      "ultima_prova": {
+        "data": "2026-08-28",
+        "resultado": "KILL — 'logs (S2): linha .ux-tgt-en renderizada — \"Nenhum habilitador tecnológico específico foi identificado…\"'",
+        "registro": "campanha d009 REEXECUTADA na passagem final (2026-08-28, rodada 2, worktree exclusiva e árvore limpa): 19 KILL / 19, restauração byte a byte OK do source e do HTML gerado · campanha d009, T019 (wave 6): 18/18 KILL"
+      }
+    },
+    {
+      "mutante": "D009-M13",
+      "harness": "d009 (tests_009_mutants.js)",
+      "gate": "D009-UNS2 (tests_009_leitura.js)",
+      "invariante": "C11 — contexto INFORMADO e nada se aplica mantém a frase substantiva, sem aviso de ausência",
+      "ultima_prova": {
+        "data": "2026-08-28",
+        "resultado": "KILL — 'logs (S3): 0 linhas .ux-tgt-en (esperado 1)'. Discrimina um gate que NASCEU VERDE (critério de preservação); o estado S3 é recalculado pela fixture a partir do modelo, nunca por tgtEnablerState()",
+        "registro": "campanha d009 REEXECUTADA na passagem final (2026-08-28, rodada 2, worktree exclusiva e árvore limpa): 19 KILL / 19, restauração byte a byte OK do source e do HTML gerado · campanha d009, T019 (wave 6): 18/18 KILL"
+      }
+    },
+    {
+      "mutante": "D009-M14",
+      "harness": "d009 (tests_009_mutants.js)",
+      "gate": "D009-UNS3 (tests_009_leitura.js)",
+      "invariante": "C12 — no contexto parcial (B9) o aviso nomeia EXATAMENTE quem ficou de fora",
+      "ultima_prova": {
+        "data": "2026-08-28",
+        "resultado": "KILL — 'o aviso nomeia logs, cuja capability foi informada'",
+        "registro": "campanha d009 REEXECUTADA na passagem final (2026-08-28, rodada 2, worktree exclusiva e árvore limpa): 19 KILL / 19, restauração byte a byte OK do source e do HTML gerado · campanha d009, T019 (wave 6): 18/18 KILL"
+      }
+    },
+    {
+      "mutante": "D009-M15",
+      "harness": "d009 (tests_009_mutants.js)",
+      "gate": "D009-UNS4 (tests_009_leitura.js)",
+      "invariante": "C13 (ampliação ratificada) — landscape não aplicável (landscapeEnabled:false) nunca vira 'não informado'",
+      "ultima_prova": {
+        "data": "2026-08-28",
+        "resultado": "KILL — 'landscape 100% UNSET: o aviso nomeia governance, cuja capability não tem landscape a informar'",
+        "registro": "campanha d009 REEXECUTADA na passagem final (2026-08-28, rodada 2, worktree exclusiva e árvore limpa): 19 KILL / 19, restauração byte a byte OK do source e do HTML gerado · campanha d009, T019 (wave 6). A fixture P52-F2 tem mandate/governance/team-capacity entre os alvos, logo a cláusula de S4 é exercitada de fato, não vacuamente"
+      }
+    },
+    {
+      "mutante": "D009-M16",
+      "harness": "d009 (tests_009_mutants.js)",
+      "gate": "D009-ABS1 (tests_009_leitura.js)",
+      "invariante": "C14 — o aviso é único, acionável, e nomeia a contagem E a lista",
+      "ultima_prova": {
+        "data": "2026-08-28",
+        "resultado": "KILL — 'o aviso não nomeia a prática logs (Centralização de logs)'. ESCAPOU antes, na primeira execução desta passagem, por ÂNCORA: a correção e77b7b5 transformou a frase única em ternário de dois ramos e o find deixou de casar. O harness reportou FALHA DO HARNESS, não 'mutante não aplicável' — a distinção existe exatamente para isto. D009-ABS1 esteve verde o tempo todo; o que se perdeu, entre e77b7b5 e 6670dc3, foi a PROVA do par. Reancorado no ternário inteiro, removendo a lista dos DOIS ramos.",
+        "registro": "campanha d009 REEXECUTADA na passagem final (2026-08-28, rodada 2, worktree exclusiva e árvore limpa): 19 KILL / 19, restauração byte a byte OK do source e do HTML gerado · campanha d009, T019 (wave 6): 18/18 KILL"
+      }
+    },
+    {
+      "mutante": "D009-M17",
+      "harness": "d009 (tests_009_mutants.js)",
+      "gate": "D009-LEG1 (tests_009_leitura.js)",
+      "invariante": "C15 — a nota da jornada sai da régua de 78ch, e SÓ ela (o restante de .ux-micro continua sob o teto)",
+      "ultima_prova": {
+        "data": "2026-08-28",
+        "resultado": "KILL — 'a nota da jornada continua na régua de leitura por: .p52-sec .ux-micro'. O oráculo decide por Element.matches sobre o nó REAL; seletor não suportado vira FAIL nomeado, nunca 'não casou'",
+        "registro": "campanha d009 REEXECUTADA na passagem final (2026-08-28, rodada 2, worktree exclusiva e árvore limpa): 19 KILL / 19, restauração byte a byte OK do source e do HTML gerado · campanha d009, T019 (wave 6): 18/18 KILL"
+      }
+    },
+    {
+      "mutante": "D009-M18",
+      "harness": "d009 (tests_009_mutants.js)",
+      "gate": "D009-EVB1 (tests_009_leitura.js)",
+      "invariante": "C16 — a base de evidência muda de POSIÇÃO, não de comportamento: nasce fechada",
+      "ultima_prova": {
+        "data": "2026-08-28",
+        "resultado": "KILL — '#p52-evbase nasce com o atributo open'. Discrimina um gate que NASCEU VERDE (critério de preservação)",
+        "registro": "campanha d009 REEXECUTADA na passagem final (2026-08-28, rodada 2, worktree exclusiva e árvore limpa): 19 KILL / 19, restauração byte a byte OK do source e do HTML gerado · campanha d009, T019 (wave 6): 18/18 KILL"
+      }
+    },
+    {
+      "mutante": "D009-M19",
+      "harness": "d009 (tests_009_mutants.js)",
+      "gate": "D009-EVB1 (tests_009_leitura.js)",
+      "invariante": "C16 — a base de evidência vive na última seção (actions), não na visão executiva",
+      "ultima_prova": {
+        "data": "2026-08-28",
+        "resultado": "KILL — '#p52-evbase pendurado em p52-sec-exec (esperado p52-sec-actions)'",
+        "registro": "campanha d009 REEXECUTADA na passagem final (2026-08-28, rodada 2, worktree exclusiva e árvore limpa): 19 KILL / 19, restauração byte a byte OK do source e do HTML gerado · campanha d009, T019 (wave 6): 18/18 KILL"
+      }
+    },
+    {
+      "mutante": "D009-M20",
+      "harness": "d009 (tests_009_mutants.js)",
+      "gate": "D009-UNS3 (tests_009_leitura.js, cláusula da frase de abertura)",
+      "invariante": "C12 · rodada 2 — no caso PARCIAL o aviso não pode declarar ausência de contexto em escopo de SESSÃO: o contexto FOI informado, e #v32decl o lista duas seções abaixo",
+      "ultima_prova": {
+        "data": "2026-08-28",
+        "resultado": "KILL — 'no caso PARCIAL o aviso declara ausência de contexto em ESCOPO DE SESSÃO'. PROVA DE DESENHO no mesmo passe: SOBREVIVEU a D009-UNS1 (PASS), como exigido — sob landscape 100% UNSET a frase global é VERDADEIRA e é esse o caso que UNS1 mede; se morresse nos dois, a cláusula estaria no gate errado",
+        "registro": "campanha d009 REEXECUTADA na passagem final (2026-08-28, rodada 2, worktree exclusiva e árvore limpa): 19 KILL / 19, restauração byte a byte OK do source e do HTML gerado · o par nasceu do red commitado em d48b906 ANTES da correção; o mutante só pôde ser ancorado depois de e77b7b5 criar o ramo tgtCtxDeclaradoNaSessao(), e até lá esteve declarado como especificado-e-não-executável, nunca como cobertura existente"
+      }
     }
   ],
   "dividas_declaradas": [
+    "CONTRASTE NO PAPEL NÃO TEM ORÁCULO. O CI pegou P52-ACC1/V322-NI1 na TELA, mas os cinco accents de domínio reprovavam TAMBÉM no @media print, onde nenhum gate mede — o buraco só não custou mais caro porque a mesma correção serviu às duas superfícies. Nenhum gate desta casa mede contraste no papel, em nenhuma fase. Registrado como buraco de oráculo conhecido; a decisão de criar critério é do product-owner (R4), e a rota mais barata avaliada é um gate jsdom que resolva os tokens do CSS e calcule a razão aritmeticamente, sem navegador.",
+    "O RÓTULO DERIVADO do botão do aviso (segunda frente de e77b7b5: o rótulo passa a vir de #v32cta em vez do literal 'Editar contexto tecnológico') NÃO É MEDIDO POR GATE ALGUM. Provado por sonda transiente em 2026-08-28: devolvendo o literal fixo — o comportamento ANTERIOR à correção — d009 fecha 15 PASS · 0 FAIL e NENHUM gate reprova. C14 só exige 'caminho explícito para o editor', que o literal também satisfazia, então isto é comportamento ALÉM da spec, entregue sem critério, sem gate e sem mutante. Não escrevi gate novo: criar critério é do product-owner (R4 — ampliação não refinada não entra por decisão de agente). Decisão pendente: ou vira critério com gate e mutante, ou é aceito como não medido, por escrito.",
+    "D009-GLO1 · a cláusula 'nenhum .v32-caphelp além das declaradas com verbete' não tem mutante que a mate SOZINHA: a frase só existe DENTRO da .v32-decl-row, então todo defeito plausível que a emita sob UNSET cria também a linha, e a cláusula de CONTAGEM DE LINHAS (a primeira do gate) dispara antes. D009-M10 morre por ela. Não fabriquei mutante sintético para isolar a segunda cláusula — seria teatro. A cobertura do limite UNSET está provada; a redundância interna do gate, não.",
+    "D009-GLO1 · o ramo B13 (capability declarável SEM verbete) é INALCANÇÁVEL hoje — as 22 com landscapeEnabled:true têm verbete. O gate o guarda pela invariante que o torna vazio (falha se alguém criar uma), e por isso o ramo NÃO tem mutante: um mutante que o exercitasse precisaria alterar o modelo de capabilities, que não é superfície desta demanda.",
+    "As campanhas p51 e p52 (INTEGRAIS) estão EXIGIDAS pelo trigger de path — a demanda 009 tocou ui_v32.js, ui_journey_v32.js, ui_target_v32.js, ui_p52_workspace_v32.js e ui_p52_workspace_v32.css, todos alvos delas — e NÃO foram executadas nesta worktree: não há binário do Chromium (playwright resolve caminho de cache do playwright ausente na maquina de desenvolvimento) e known_issues.json está com issues: []. É AGENDAMENTO NOMEADO, não dispensa: T022 (wave 8) as roda no job `visual` do CI e o resultado volta para esta matriz. Único par dessas campanhas provado localmente: P52-M3, cujo oráculo (P52-TGT1) é jsdom — registrado acima com resultado real.",
     "tests_target_m431 e tests_journey_m45 têm mutantes só via harness p52 (requires chromium) — cobertura node-only é candidata a expansão da campanha core",
     "tests_unset_ug (UG1-12) é oracle de CM2 mas não tem mutante próprio da geometria UNSET — candidata a expansão",
     "Trigger por merge-base não dispara em push na própria develop (diff vazio pós-merge) — a campanha p52 pós-integração v3.2.2 está coberta pela evidência de mutação da própria release (auditoria externa REV C, docs_phase5/evidence_v322) e re-executará no próximo PR que tocar alvos; melhoria do trigger (base = commit anterior do push) é candidata",

@@ -77,6 +77,12 @@
       "pass": 45,
       "fail": 0,
       "_trilha": "35->45 na integração da v3.2.2 (merge main->develop, 2026-08-25): +10 gates de layout da release do proprietário; medido por execução"
+    },
+    "d009": {
+      "cmd": "node tests_009_leitura.js",
+      "pass": 15,
+      "fail": 0,
+      "_trilha": "JANELA VERMELHA DA RODADA 2 ENCERRADA (2026-08-28): a correção do ui-engineer (e77b7b5) entrou e a execução real voltou a 15 PASS · 0 FAIL, medida após o rebuild; o par D009-UNS3 x D009-M20 está provado (KILL, campanha d009). A contagem canônica nunca foi rebaixada durante o vermelho, de propósito. HISTÓRICO DA JANELA:  D009-UNS3 foi ENDURECIDO para afirmar a frase de ABERTURA do aviso no caso parcial, e a execução real é 14 PASS · 1 FAIL — o único FAIL é D009-UNS3, que mede comportamento ainda inexistente (tgtAbsenceHTML monta a frase sem ramo e declara ausência em escopo de SESSÃO quando a ausência é PARCIAL). A contagem canônica permanece 15/0 de propósito: rebaixá-la para 14/1 enshrinaria o vermelho como alvo, que é exatamente o enfraquecimento que R10 §1 proíbe. O stage suites fica VERMELHO por projeto até o ui-engineer corrigir a frase; nenhum outro gate mudou. Correção e green NÃO são do qa-engineer. HISTÓRICO — demanda 009-leitura-do-relatorio · registrada no MESMO commit da criação da suíte (R10 §3). JANELA VERMELHA ANTERIOR, ENCERRADA: entre o red (T007, commit 3950288) e o rebuild da wave 5 (T016) a execução real foi 4 PASS · 11 FAIL; em T017 (wave 6, 2026-08-28) a contagem foi FIXADA POR EXECUÇÃO em 15 PASS · 0 FAIL — deixa de ser o total declarado pela spec e passa a ser medida. Os 4 gates que nasceram verdes por serem critérios de PRESERVAÇÃO (D009-DOM2, D009-NXT2, D009-UNS2, D009-EVB1) têm poder discriminante provado em T019 pelos mutantes D009-M6, D009-M8, D009-M13 e D009-M18/M19 (18/18 KILL, campanha d009)."
     }
   },
   "heavy": {

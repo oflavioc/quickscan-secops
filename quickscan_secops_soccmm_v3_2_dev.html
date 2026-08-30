@@ -676,6 +676,49 @@ body[data-uxscreen="refinement"] #ux-progress-mobile{ display:none !important; }
 @media print{ .ses-actions, #ses-import-home, .ux-modal{ display:none !important; } }
 @media (max-width:720px){ .ses-actions .btn2{ width:100%; min-height:44px; } }
 
+/* ===== [5.9] leitura executiva: nome de domínio na narrativa (spec 009 · C4) =====
+   O mapa único [data-dom] -> --dom-accent de [4.3-B] (68-72) NÃO é alterado aqui:
+   borda, chip, trilho e eixo de radar continuam exatamente com o token de marca.
+   `font-weight` é o canal NÃO-CROMÁTICO obrigatório: narrativeHTML serve tela e
+   papel pela mesma função, e no papel a cor é dispensável — o peso sozinho tem de
+   preservar o significado (D009-DOM1 / mutante D009-M5).
+
+   [5.9-A] VARIANTE DE TEXTO. Os accents de domínio foram desenhados para borda,
+   chip e eixo — não para texto corrido. Aplicados como `color` eles reprovam em
+   WCAG AA (4.5:1 p/ texto normal): na TELA (--surface:#151517) o roxo dá 4.21:1 e
+   o azul 4.57:1; no PAPEL (@media print -> --surface:#fff, Camada 1) os CINCO
+   reprovam (roxo 4.33, verde 2.70, teal 1.97, azul 3.99, silver 2.16). O axe só
+   enxerga a tela — o PDF ninguém mede — então as duas superfícies são corrigidas.
+
+   `--dom-accent-text` é uma variante DERIVADA do token de marca por color-mix,
+   nunca um hex novo: tint (mistura com --ftnt-white) na tela, shade (mistura com
+   --ftnt-black) no papel. A identidade de cor por domínio é preservada — o roxo
+   continua lendo como roxo — e onde o token de marca já passa com folga na tela
+   ele é usado INTACTO. Escopo: só `.jn-dom` lê esta variante.
+
+   Contraste medido (WCAG 2.x, AA texto normal = 4.5:1; alvo desta regra >= 5:1):
+     dom  tom de tela        sobre #151517 | tom de papel       sobre #fff
+     0    #A682D7 tint 80%      5.90:1     | #734FA4 shade 80%    6.21:1
+     1    #3CB17E token         6.76:1     | #246A4C shade 60%    6.48:1
+     2    #2CCCD3 token         9.28:1     | #16666A shade 50%    6.68:1
+     3    #5999E8 tint 80%      6.21:1     | #245FAA shade 75%    6.38:1
+     4    #A2B2C8 token         8.46:1     | #59626E shade 55%    6.18:1
+   Pior caso 5.90:1 na tela e 6.18:1 no papel — folga sobre os 4.5:1 exigidos. */
+.jn-dom{ color:var(--dom-accent-text, inherit); font-weight:700; }
+.jn-dom[data-dom="0"]{ --dom-accent-text:color-mix(in srgb, var(--ftnt-purple) 80%, var(--ftnt-white)); }
+.jn-dom[data-dom="1"]{ --dom-accent-text:var(--ftnt-green); }
+.jn-dom[data-dom="2"]{ --dom-accent-text:var(--ftnt-teal); }
+.jn-dom[data-dom="3"]{ --dom-accent-text:color-mix(in srgb, var(--ftnt-blue) 80%, var(--ftnt-white)); }
+.jn-dom[data-dom="4"]{ --dom-accent-text:var(--ftnt-silver); }
+/* [5.9-B] papel: a superfície inverte (--surface:#fff), então o tom inverte junto */
+@media print{
+  .jn-dom[data-dom="0"]{ --dom-accent-text:color-mix(in srgb, var(--ftnt-purple) 80%, var(--ftnt-black)); }
+  .jn-dom[data-dom="1"]{ --dom-accent-text:color-mix(in srgb, var(--ftnt-green)  60%, var(--ftnt-black)); }
+  .jn-dom[data-dom="2"]{ --dom-accent-text:color-mix(in srgb, var(--ftnt-teal)   50%, var(--ftnt-black)); }
+  .jn-dom[data-dom="3"]{ --dom-accent-text:color-mix(in srgb, var(--ftnt-blue)   75%, var(--ftnt-black)); }
+  .jn-dom[data-dom="4"]{ --dom-accent-text:color-mix(in srgb, var(--ftnt-silver) 55%, var(--ftnt-black)); }
+}
+
 /* V32_UXCSS_END */
 /* V32_P50CSS_BEGIN */
 /* ============================================================================
@@ -1545,9 +1588,14 @@ body[data-uxscreen="refinement"] #ux-progress-mobile{ display:none !important; }
     html body .wrap { width: 100%; max-width: 100%; }
   }
 
-  /* Linha de leitura confortável dentro do grid amplo. */
+  /* Linha de leitura confortável dentro do grid amplo.
+     `.jn-note` é rodapé de bloco full-bleed, não corpo de texto (spec 009 §C15):
+     ela nunca esteve nomeada aqui — era alcançada por `.ux-micro`, porque o nó
+     nasce `class="ux-micro jn-note"`. Sai da régua ESTREITANDO este seletor; um
+     override posterior com `max-width:none` deixaria duas declarações
+     contraditórias vivas e cegaria o oráculo de D009-LEG1. */
   .p52-sec p,
-  .p52-sec .ux-micro,
+  .p52-sec .ux-micro:not(.jn-note),
   .p52-sec .arq-tag,
   .p52-sec .banner-ok { max-width: 78ch; }
   .p52-sec-lead {
@@ -5429,6 +5477,43 @@ function hideLegacyRecommendation(app, hide){
     else { if (hiding && !allowed) hiding = false; node.classList.remove("v32-hidden"); }
   });
 }
+/* ----------------------------------------------------------------------------
+   [009 · C8/C9] Explicação de UMA frase por capability declarada, nas duas
+   superfícies (tela e papel).
+
+   O texto NÃO nasce aqui e não é recortado aqui: a frase é a transformação
+   DECLARADA e PÚBLICA do glossário `P52_CAP_HELP`, publicada pela 5.2 em
+   `__P52.capHelpLine()` — mesma natureza do `copyMap()` já consumido pelos
+   oráculos de texto. Este módulo é o consumidor: não guarda cópia do verbete,
+   não reimplementa o "primeiro período" e não decide o que é explicável.
+
+   Guarda `typeof` no precedente vivo de `window.__uxJourneyPrintHTML` e
+   irmãos (adiante, no relatório impresso): a ponte é de RUNTIME, a ordem de
+   injeção do builder não é contrato, e a ausência do módulo 5.2 não pode
+   quebrar a renderização do contexto declarado.
+
+   Duas omissões, ambas por construção e não por CSS:
+   · capability SEM verbete → `capHelpLine()` devolve "" → NENHUM nó nasce
+     (nada é inventado, e a linha não vira um vazio que o leitor mede);
+   · capability UNSET nunca chega aqui — as duas superfícies derivam a lista
+     de `V32.TECH_LANDSCAPE` filtrando `presence !== "UNSET"`, nunca do DOM.
+
+   O nó é ADITIVO dentro da linha/card que já existe: a CONTAGEM de
+   `.v32-decl-row` (consumida por `p52ContextSummary`) e a de `.pr-card` em
+   `#pr-landscape` ficam intactas.
+
+   `tag` existe porque as duas superfícies têm fluxo diferente e NENHUM arquivo
+   `.css` entra nesta tarefa: na tela a linha já é um contêiner de itens e o nó
+   entra como `span`, irmão do estado; no papel o card empilha blocos (`.pr-tech`)
+   e um `span` colaria no rótulo de presença — o `div` quebra a linha pelo fluxo
+   normal do documento, sem regra de estilo nova.
+   -------------------------------------------------------------------------- */
+function capHelpHTML(capId, tag){
+  const line = (typeof window!=="undefined" && window.__P52 &&
+    typeof window.__P52.capHelpLine === "function") ? window.__P52.capHelpLine(capId) : "";
+  const t = tag || "span";
+  return line ? `<${t} class="v32-caphelp">${esc32(line)}</${t}>` : "";
+}
 function renderBlocks(app){
   const p = ensurePanel(app);
   const legacy = V32.isLegacyModeV32();
@@ -5452,7 +5537,8 @@ function renderBlocks(app){
             (s.status ? " · " + esc(STATUS_LABELS[s.status]||s.status) : "")).join("; ");
         return `<div class="v32-decl-row"><strong>${esc(V32.CAPABILITIES[id].name)}</strong>
           <span class="v32-state v32-state-${L.presence.toLowerCase()}">${PRESENCE_LABELS[L.presence]}</span>
-          ${techs ? `<span class="v32-techs">${techs}</span>` : ""}</div>`;
+          ${techs ? `<span class="v32-techs">${techs}</span>` : ""}
+          ${capHelpHTML(id)}</div>`;
       }).join("");
     const interp = Object.keys(ctxs).filter(id => {
         const c = ctxs[id];
@@ -6345,7 +6431,7 @@ function buildPrintReport(){
       const rows=(L.solutions||[]).map(s=>`<div class="pr-tech">${["vendor","product","status","coverage","deployment","notes"]
         .filter(f=>s[f]).map(f=>`<span class="pr-kv"><i>${f==="status"?"status":f}</i> ${esc32(f==="status"?(STATUS_LABELS[s[f]]||s[f]):s[f])}</span>`).join(" · ")}</div>`).join("");
       return `<div class="pr-card"><b>${esc32(V32.CAPABILITIES[id].name)}</b>
-        <span class="pr-state">${PRESENCE_LABELS[L.presence]}</span>${rows}</div>`;}).join("") : `<div class="pr-mut">Nenhuma capability declarada.</div>`}</div>`;
+        <span class="pr-state">${PRESENCE_LABELS[L.presence]}</span>${capHelpHTML(id,"div")}${rows}</div>`;}).join("") : `<div class="pr-mut">Nenhuma capability declarada.</div>`}</div>`;
   /* [3.3.3-9] plataformas/licenciamento + sinais — nada default/unset ocupa espaço */
   const fgt = (V32.PLATFORM_CONTEXT.declaredPlatforms||[]).find(x=>x&&x.platform==="fortigate");
   if (fgt) h += `<div class="pr-sec" id="pr-entitlements"><h2>Plataformas e licenciamento declarados</h2>
@@ -6886,11 +6972,16 @@ function tgtSection(app){
   const curO=pubO(cur.overall), tgtO=pubO(tgt.overall);
   const delta=(curO!==null&&tgtO!==null)?` <span class="ux-tgt-delta">${tgtO>=curO?"+":""}${(tgtO-curO).toFixed(1)}</span>`:"";
   const gateNote=cmpPub?"":`<div class="ux-mut ux-tgt-nopub" data-p52-nopub="target">O cenário-alvo está salvo. A comparação será apresentada quando o perfil atual tiver evidência suficiente. Evidência insuficiente: até o gate canônico abrir, nenhum score, estágio, valor por domínio ou delta é publicado nesta comparação, de nenhum dos dois lados. As práticas-alvo declaradas continuam listadas, uma a uma, abaixo.</div>`;
+  /* [D009 · B5] o conjunto de práticas sem contexto declarado é derivado NO MESMO
+     PASSE que a lista renderizada — nunca por segunda varredura e nunca do DOM;
+     alvo removido por `revalidateTargets` não deixa órfão no aviso. */
+  const semCtx=[];
   const ovList=Object.keys(TARGET_PROFILE.overrides).map(qid=>{
     const k=tgtKOf(qid), cur0=ans[k], t=TARGET_PROFILE.overrides[qid];
     const base=(cur0===null||cur0==="NA")?`<span class="ux-mut">Baseline atual não validado — delta local n/d.</span>`
       :`${esc32(QS[k].opts[cur0].t)} · ${SCORES[cur0].toFixed(1)} → `;
-    return `<li class="ux-tgt-ov" data-qid="${esc32(qid)}"><b>${esc32(QS[k].lbl)}</b><br>${base}${esc32(QS[k].opts[t].t)} · ${SCORES[t].toFixed(1)}${(cur0!==null&&cur0!=="NA")?` <span class="ux-tgt-delta">+${(SCORES[t]-SCORES[cur0]).toFixed(1)}</span>`:""}${tgtEnablersHTML(qid)}</li>`;}).join("");
+    return `<li class="ux-tgt-ov" data-qid="${esc32(qid)}"><b>${esc32(QS[k].lbl)}</b><br>${base}${esc32(QS[k].opts[t].t)} · ${SCORES[t].toFixed(1)}${(cur0!==null&&cur0!=="NA")?` <span class="ux-tgt-delta">+${(SCORES[t]-SCORES[cur0]).toFixed(1)}</span>`:""}${tgtEnablersHTML(qid,semCtx)}</li>`;}).join("");
+  const absNote=tgtAbsenceHTML(semCtx,true);
   sec.innerHTML = `<div class="section-title"><div class="eyebrow">Perfil atual × Cenário-alvo de maturidade</div></div>
     <div class="v32-block" id="ux-tgt-cmp">${notice}
       <div class="ux-tgt-kpis">
@@ -6901,6 +6992,7 @@ function tgtSection(app){
       <div class="ux-tgt-legend">— Perfil atual&nbsp;&nbsp;&nbsp;- - Cenário-alvo</div>
       ${gateNote}
       <table class="ux-tgt-table"><tbody>${rows}</tbody></table>
+      ${absNote}
       <div class="ux-tgt-ovs"><div class="eyebrow">Práticas-alvo definidas</div><ul>${ovList}</ul></div>
       <div class="ux-tgt-disc">${esc32(TGT_DISCLAIMER)}</div>
       <div class="ux-ctxactions">
@@ -6908,13 +7000,98 @@ function tgtSection(app){
         <button class="btn2" id="ux-tgt-clear" type="button">Limpar cenário-alvo</button>
       </div></div>`;
   sec.querySelector("#ux-tgt-edit").onclick=()=>{ tgtNotices=[]; tgtEditor(app); };
+  /* [D009 · C14] o aviso é acionável na TELA: delega ao controle CANÔNICO do
+     editor de contexto (`#v32cta`, de `ui_v32.js`) em vez de reimplementar a
+     rota. Ausente o controle, o aviso permanece informativo — nunca inventa
+     caminho próprio. */
+  const absCta=sec.querySelector("#ux-tgt-absctx");
+  if(absCta) absCta.onclick=()=>{
+    const cta=document.getElementById("v32cta"); if(!cta) return;
+    if(typeof cta.scrollIntoView==="function") cta.scrollIntoView({block:"center"});
+    cta.click();
+  };
   sec.querySelector("#ux-tgt-clear").onclick=()=>uxModal({title:"Limpar cenário-alvo?",
     body:"Somente o cenário-alvo será removido. Avaliação, prioridades, contexto tecnológico e recomendações permanecem.",
     confirmLabel:"Limpar cenário-alvo", origin:sec.querySelector("#ux-tgt-clear"),
     onConfirm:()=>{ clearTargetProfile(); tgtSection(app); tgtRadarOverlay(app); }});
   tgtRadarOverlay(app);
 }
-function tgtEnablersHTML(qid){                                  /* [L] SOMENTE itens já existentes no ctx atual */
+/* ==========================================================================
+   DEMANDA 009 · §5 · O CARD DE PRÁTICA-ALVO TEM QUATRO ESTADOS, NÃO UM.
+
+   `tgtEnablersHTML()` cobria com UMA frase estados que não são o mesmo: quem
+   declarou o contexto e nada aderiu, quem não declarou nada, e quem não tem
+   contexto algum a declarar. O estado é decidido sobre o MODELO CANÔNICO
+   (`V32.CAPABILITIES` · `V32.TECH_LANDSCAPE`) — nunca sobre texto renderizado,
+   nunca sobre atributo escrito por outro módulo (R9 §3):
+
+     S1 · há habilitadores ............ a linha de hoje, INTOCADA
+     S2 · sem habilitadores, landscape aplicável e `presence === "UNSET"`
+          ............................. a linha NÃO renderiza e a prática entra
+                                        no aviso único de ausência
+     S3 · sem habilitadores, contexto INFORMADO
+          ............................. mantém a frase substantiva de hoje
+     S4 · sem habilitadores e capability com `landscapeEnabled: false`
+          (`soc-governance`, `soc-staffing`, `soc-skills` — `mandate`,
+          `governance`, `policies`, `team-capacity`, `training`)
+          ............................. mantém a frase de S3 e NUNCA entra no
+                                        aviso: não há contexto a informar
+
+   Contexto não informado não é ausência de tecnologia. Sob S2 o relatório se
+   CALA — não afirma que falta ferramenta e não conclui sobre processo, pessoas
+   ou governança. É a mesma disciplina de INV-2: dado ausente não vira medida.
+   ========================================================================== */
+function tgtEnablerState(qid, nItems){
+  if (nItems > 0) return "S1";
+  const caps=Object.keys(V32.CAPABILITIES).filter(id=>(V32.CAPABILITIES[id].questionIds||[]).includes(qid));
+  if (caps.length !== 1) return "S3";                           /* fora do modelo canônico: jamais alega "não informado" */
+  if (V32.CAPABILITIES[caps[0]].landscapeEnabled !== true) return "S4";
+  const L=V32.TECH_LANDSCAPE[caps[0]];
+  return (!L || L.presence==="UNSET") ? "S2" : "S3";
+}
+/* [D009 · C14] AVISO ÚNICO de ausência — um nó por render, dentro do card de
+   comparação e antes da lista de práticas. `qids` chega pronto do mesmo passe
+   da lista (B5). Declara que o contexto não foi informado, QUANTAS e QUAIS
+   práticas ficaram sem refino. Na TELA acompanha o caminho para o editor de
+   contexto; no PAPEL é a MESMA frase, sem controle. */
+/* [D009 · rodada 2 · ESCOPO DA ABERTURA] A frase tinha um só ramo e abria sempre
+   em escopo de SESSÃO ("não foi informado nesta sessão"). Isso é verdade quando
+   NADA foi declarado e FALSO no caso parcial — lá o contexto foi informado, só
+   não para as práticas nomeadas, e o próprio relatório desmente a frase duas
+   seções abaixo, onde `#v32decl` lista as capabilities declaradas. É o mesmo
+   defeito que esta demanda corrige em `:166`, um degrau acima: afirmar mais do
+   que a sessão sustenta.
+   O predicado do ramo é o MESMO de `#v32decl` (`ui_v32.js:246`): há declaração
+   quando alguma capability sai de UNSET. Estado canônico do engine, lido — não
+   recalculado nem redefinido aqui. Os dois ramos continuam declarando
+   não-informação (a regra que `D009-UNS1` mede); o que muda é o ALCANCE. */
+function tgtCtxDeclaradoNaSessao(){
+  const L=V32.TECH_LANDSCAPE||{};
+  return Object.keys(L).some(id=>L[id] && L[id].presence!=="UNSET");
+}
+function tgtAbsenceHTML(qids, isScreen){
+  if (!qids || !qids.length) return "";
+  const nomes=qids.map(qid=>tgtKOf(qid)).filter(k=>k>=0).map(k=>esc32(QS[k].lbl));
+  if (!nomes.length) return "";
+  const n=nomes.length, uma=n===1;
+  const frase=tgtCtxDeclaradoNaSessao()
+    ? `O contexto tecnológico não foi informado para ${n} ${uma?"prática-alvo":"práticas-alvo"}. Por isso ${uma?"ela ficou":"elas ficaram"} sem refino por habilitadores já identificados: ${nomes.join("; ")}.`
+    : `O contexto tecnológico não foi informado nesta sessão. Por isso ${n} ${uma?"prática-alvo ficou":"práticas-alvo ficaram"} sem refino por habilitadores já identificados: ${nomes.join("; ")}.`;
+  if (!isScreen) return `<div class="pr-mut" data-ux-absence="target-enablers">${frase}</div>`;
+  /* [D009 · rodada 2 · RÓTULO DERIVADO] o caminho da TELA já delegava o CLIQUE ao
+     controle canônico (`#v32cta`, de `ui_v32.js`); o RÓTULO estava fixo em
+     "Editar…". Numa sessão limpa o aviso mandava "Editar" logo acima de um botão
+     que dizia "Adicionar" (`ui_v32.js:240` × `:294`) — atrito na exata rota de
+     conversão que o aviso existe para abrir. Agora o rótulo vem do mesmo nó a
+     que o clique é delegado; o dono do rótulo continua sendo `ui_v32.js`.
+     Sob guarda: sem controle (ou sem rótulo) NÃO nasce botão e o aviso permanece
+     informativo — nunca inventa caminho nem rótulo próprio. */
+  const cta=(typeof document!=="undefined") ? document.getElementById("v32cta") : null;
+  const rotulo=cta ? String(cta.textContent||"").replace(/\s+/g," ").trim() : "";
+  const caminho=rotulo ? ` <button class="btn2" id="ux-tgt-absctx" type="button">${esc32(rotulo)}</button>` : "";
+  return `<div class="ux-mut" data-ux-absence="target-enablers"><span>${frase}</span>${caminho}</div>`;
+}
+function tgtEnablersHTML(qid, semCtx){                          /* [L] SOMENTE itens já existentes no ctx atual */
   const caps=Object.keys(V32.CAPABILITIES).filter(id=>(V32.CAPABILITIES[id].questionIds||[]).includes(qid));
   const ctx=V32.buildRecommendationContext().contexts;          /* mesmo payload congelado (byte-idêntico, testado) */
   const MODE_PT={DIRECT:"apoio direto",CONTEXTUAL:"apoio contextual",VALIDATE:"validar"};
@@ -6922,7 +7099,11 @@ function tgtEnablersHTML(qid){                                  /* [L] SOMENTE i
   caps.forEach(cid=>{ const c=ctx[cid]; if(!c) return;
     (c.candidates||[]).forEach(x=>items.push({id:x.itemId, n:(V32.OFFERINGS[x.itemId]||{}).name||x.itemId, m:MODE_PT[c.supportMode]||"contexto", kind:"candidate"}));
     (c.services||[]).forEach(s=>items.push({id:s.serviceId, n:(V32.SERVICES[s.serviceId]||{}).name||s.serviceId, m:"serviço", kind:"service"}));});
-  if(!items.length) return `<div class="ux-tgt-en ux-mut">Nenhum habilitador tecnológico específico foi identificado pelo contexto atual. A evolução desta prática pode depender principalmente de processo, pessoas, governança ou de aprofundamento adicional.</div>`;
+  if(!items.length){
+    /* [D009 · §5] S2 se cala e delega ao aviso único; S3 e S4 mantêm a frase. */
+    if (tgtEnablerState(qid, 0)==="S2"){ if (semCtx) semCtx.push(qid); return ""; }
+    return `<div class="ux-tgt-en ux-mut">Nenhum habilitador tecnológico específico foi identificado pelo contexto atual. A evolução desta prática pode depender principalmente de processo, pessoas, governança ou de aprofundamento adicional.</div>`;
+  }
   return `<div class="ux-tgt-en"><i>Possíveis habilitadores já identificados neste Quickscan:</i><div class="ux-tgt-enablers">${items.map(it=>`<span class="ux-tgt-enabler" data-eid="${esc32(it.id)}">${window.__V32UI.iconFor(it.id, it.n)}<span class="ux-tgt-enabler-name">${esc32(it.n)}</span><span class="ux-tgt-mode">${esc32(it.m)}</span></span>`).join("")}</div></div>`;
 }
 function tgtRadarOverlay(app){                                  /* [I] geometria EXATA extraída dos eixos legados */
@@ -7022,8 +7203,11 @@ window.__uxTargetPrintHTML = function(){
   const rows=DOMS.map((dm,i)=>{const c=curPub[i].score,t=tgtPub[i].score;
     const d=(c!==null&&t!==null)?`${t>=c?"+":""}${(t-c).toFixed(1)}`:"n/d";
     return `<tr><td>${esc32(dm.pt)}</td><td>${fmt(c)}</td><td>${cmpPub?"→":""}</td><td>${fmt(t)}</td><td>${d}</td></tr>`;}).join("");
+  /* [D009 · B5] mesmo passe da lista, também no papel. */
+  const semCtx=[];
   const ovs=Object.keys(TARGET_PROFILE.overrides).map(qid=>{const k=tgtKOf(qid),c0=ans[k],t=TARGET_PROFILE.overrides[qid];
-    return `<div class="pr-card"><b>${esc32(QS[k].lbl)}</b><div>${(c0!==null&&c0!=="NA")?esc32(QS[k].opts[c0].t)+" → ":"<i>Baseline atual não validado</i> → "}${esc32(QS[k].opts[t].t)}</div>${tgtEnablersHTML(qid)}</div>`;}).join("");
+    return `<div class="pr-card"><b>${esc32(QS[k].lbl)}</b><div>${(c0!==null&&c0!=="NA")?esc32(QS[k].opts[c0].t)+" → ":"<i>Baseline atual não validado</i> → "}${esc32(QS[k].opts[t].t)}</div>${tgtEnablersHTML(qid,semCtx)}</div>`;}).join("");
+  const absNote=tgtAbsenceHTML(semCtx,false);                   /* [D009 · C14] a MESMA frase da tela, sem controle */
   return `<div class="pr-sec" id="pr-target"><h2>Perfil atual × Cenário-alvo de maturidade</h2>
     <div class="pr-kpis"><div class="pr-kpi"><b>${fmt(curO)}${curO!==null?" / 5":""}</b><span>Atual · ${(cmpPub&&cur.stage)?esc32(cur.stage.pt):"n/d"}</span></div>
     <div class="pr-kpi"><b>${fmt(tgtO)}${tgtO!==null?" / 5":""}</b><span>Cenário-alvo · ${(cmpPub&&tgt.stage)?esc32(tgt.stage.pt):"n/d"}</span></div>
@@ -7033,7 +7217,7 @@ window.__uxTargetPrintHTML = function(){
       <polygon points="${poly(tgtPub)}" fill="none" stroke="#3CB17E" stroke-width="1.6" stroke-dasharray="5 4"/>${labels}</svg>
     <div class="pr-mut" style="text-align:center">— Perfil atual (azul) · - - Cenário-alvo (verde)</div>
     ${ndNote}
-    <table class="pr-doms"><tbody>${rows}</tbody></table>${ovs}
+    <table class="pr-doms"><tbody>${rows}</tbody></table>${absNote}${ovs}
     <div class="pr-card"><i>${esc32(TGT_DISCLAIMER)}</i></div></div>`;
 };
 if (window.__DEV) Object.assign(window.__DEV, {
@@ -7342,11 +7526,26 @@ function buildExecutiveNarrative(snap){
   });
   P.push(p2); trace.push({paragraph:2, sources:s2});
   /* P3 — direção de evolução */
+  /* ==========================================================================
+     009 · C6/C7 — FIM DA REPETIÇÃO EM PROSA DOS PRÓXIMOS PASSOS.
+     O P3 reenumerava os temas em minúscula e sem ponto, duplicando a lista
+     "Para avançar" (`journeyHTML`, `.jn-themes`), que continua sendo a ÚNICA
+     enumeração. Agora o P3 APONTA para o rótulo canônico dessa lista.
+     Três ramos, e nenhum inventa lista:
+       · suficiência aberta + tema  → só o ponteiro;
+       · suficiência fechada + tema → a frase canônica de validação de
+         evidências (regressão N13-N14 de `tests_journey_m45.js`) e o ponteiro
+         "em paralelo";
+       · sem tema → NÃO existe `.jn-themes`, logo não existe ponteiro; vale a
+         frase de sustentação/otimização já existente.
+     `trace[2].sources` mantém `evolution.themes` onde há tema: a frase existe
+     porque os temas existem, e a rastreabilidade não some com a enumeração.
+     ========================================================================== */
   let p3="", s3=[];
   const themes=evolutionThemes(snap);
   if(!snap.maturity.sufficient){ p3+=`O próximo passo mais consistente é completar e validar as evidências pendentes, em vez de perseguir um estágio artificial.`; s3.push("evolution.validate");
-    if(themes.length){ p3+=` Em paralelo, os sinais já confirmados apontam para: ${themes.map(t=>t.phrase.replace(/\.$/,"").toLowerCase()).join("; ")}.`; s3.push("evolution.themes"); } }
-  else if(themes.length){ p3+=`Os próximos passos mais consistentes envolvem: ${themes.map(t=>t.phrase.replace(/\.$/,"").toLowerCase()).join("; ")}.`; s3.push("evolution.themes"); }
+    if(themes.length){ p3+=` Em paralelo, os temas de evolução já identificados estão reunidos na lista “Para avançar”.`; s3.push("evolution.themes"); } }
+  else if(themes.length){ p3+=`Os próximos passos mais consistentes desta leitura estão reunidos na lista “Para avançar”.`; s3.push("evolution.themes"); }
   else { p3+=`O conjunto avaliado não apresenta gaps confirmados relevantes; a evolução tende a se concentrar em sustentação e otimização das práticas existentes.`; s3.push("evolution.none"); }
   if(snap.technologyContext.informed){
     const ops=snap.technologyContext.classifications.some(c=>/OPERATIONAL|ADOPTION|COVERAGE/.test(c||""));
@@ -7418,10 +7617,36 @@ function journeyHTML(snap, forPrint){
     <div class="${forPrint?"pr-card":"v32-block"} jn-wrap">${head}<div class="jn-track" role="img"
       aria-label="Jornada de maturidade: estágios do modelo com perfil atual${m.tgt>=0?", próximo estágio e cenário-alvo":m.next>=0?" e próximo estágio":""}.">${nodes}</div>${themesHTML}${notes}</div>`;
 }
+/* ============================================================================
+   009 · C4 — IDENTIDADE DO DOMÍNIO NA LEITURA EXECUTIVA.
+   Pós-processamento de RENDERIZAÇÃO, no precedente dos eixos do radar
+   (`ui_ux_v32.js:190-192`): a identidade entra no nó, nunca na fonte.
+   `buildExecutiveNarrative` continua devolvendo string PURA (INV-7) e o
+   `textContent` do parágrafo é idêntico ao de antes da marcação — a marcação
+   é aplicada DEPOIS do `esc32`, de modo que o único markup do parágrafo é o
+   `<span>` desta função e nenhum texto de narrativa pode virar tag.
+   Só ocorrência EXATA, sensível a maiúsculas e de PALAVRA INTEIRA do nome
+   canônico `DOMS[i].pt`: "serviços" e "tecnológico" em minúscula aparecem no
+   mesmo texto com outro sentido e não podem ser marcados.
+   A cor vem do CSS pelo mapa único `[data-dom] → --dom-accent`, com canal
+   NÃO-CROMÁTICO na regra de `.jn-dom` (a marcação chega ao papel pela mesma
+   função, e no papel o peso sozinho preserva o significado). NENHUM hex de
+   domínio entra neste arquivo.
+   ========================================================================== */
+let JN_DOM_RE=null;
+function jnDomMark(escaped){
+  if(!JN_DOM_RE) JN_DOM_RE=new RegExp("(?<![\\p{L}\\p{N}_])("+
+    DOMS.map(d=>String(d.pt).replace(/[.*+?^${}()|[\]\\]/g,"\\$&")).join("|")+
+    ")(?![\\p{L}\\p{N}_])","gu");
+  return String(escaped).replace(JN_DOM_RE, m=>{
+    const i=DOMS.findIndex(d=>d.pt===m);
+    return i<0? m : `<span class="jn-dom" data-dom="${i}">${m}</span>`;
+  });
+}
 function narrativeHTML(snap, forPrint){
   const n=buildExecutiveNarrative(snap);
   return `${forPrint?"":`<div class="section-title"><div class="eyebrow">Leitura executiva</div></div>`}
-    <div class="${forPrint?"pr-card":"v32-block"} jn-narrative">${n.paragraphs.map(p=>`<p>${esc32(p)}</p>`).join("")}</div>`;
+    <div class="${forPrint?"pr-card":"v32-block"} jn-narrative">${n.paragraphs.map(p=>`<p>${jnDomMark(esc32(p))}</p>`).join("")}</div>`;
 }
 function journeySection(app){
   const old=document.getElementById("ux-journey"); if(old) old.remove();
@@ -10499,6 +10724,34 @@ if (window.__DEV) Object.assign(window.__DEV, { openExportModal, openImportPicke
       "se há controle específico. Usar IA com política não prova que abusos sejam detectados."
   };
 
+  /* --------------------------------------------------------------------------
+     Transformação DECLARADA e PÚBLICA sobre o glossário acima
+     (`specs/009-leitura-do-relatorio/spec.md` §4 · C8/C9).
+
+     `P52_CAP_HELP` continua sendo a ÚNICA fonte do texto; esta função devolve
+     o PRIMEIRO PERÍODO do verbete — prefixo até o primeiro ". ", ponto
+     incluído. Os outros dois períodos são instrução ao facilitador e ressalva
+     de método: pertencem ao editor de contexto, não ao relatório.
+
+     Capability sem verbete → "" (nada é inventado — mesma regra do controle de
+     ajuda). Derivado puro: sem efeito colateral, sem DOM, sem leitura de
+     sessão. Publicada em `__P52.capHelpLine`, no precedente do `copyMap()` já
+     público: um gate que compara texto canônico com texto exibido aplica a
+     MESMA transformação declarada em vez de aceitar qualquer divergência.
+
+     DEFINIDA DEPOIS DO LITERAL, de propósito: `P52-HOME1`
+     (`tests_p52_layout.js:678`) varre `js.split("P52_CAP_HELP")[0]` à procura
+     de asset externo na construção do emblema. Mover esta função para antes da
+     declaração encolheria o prefixo varrido e enfraqueceria o gate sem que
+     ninguém visse — R10 §1 proíbe.
+     -------------------------------------------------------------------------- */
+  function p52CapHelpLine(capId) {
+    var v = Object.prototype.hasOwnProperty.call(P52_CAP_HELP, capId) ? P52_CAP_HELP[capId] : "";
+    var s = String(v == null ? "" : v);
+    var i = s.indexOf(". ");
+    return i < 0 ? s : s.slice(0, i + 1);
+  }
+
   /* ==========================================================================
      REV B · HELP-B §4 — glossário de arquitetura, dados e IA.
      Mesmo contrato de acessibilidade da ajuda por capability. Os textos de
@@ -10764,16 +11017,32 @@ if (window.__DEV) Object.assign(window.__DEV, { openExportModal, openImportPicke
      ordem visual, a ordem de foco e a ordem do trilho lateral.
      "Gaps observados" é UM item de navegação com DOIS grupos estruturais
      internos (P52-GAP1): altos e moderados nunca se misturam.
+
+     ÂNCORA REANCORADA — 2026-08-27. A ordem abaixo deixou de ser a §7/§8 da
+     diretriz da Phase 5.2 e passou a ser a seção "Âncora normativa: a ordem
+     canônica de leitura" de `specs/009-leitura-do-relatorio/spec.md`, ratificada
+     pelo proprietário (rota A — substituir a regra selada). A §8 ("o
+     cenário-alvo vem imediatamente depois da visão executiva") é SUBSTITUÍDA e
+     segue citável como histórico. A ordem é NARRATIVA: o leitor vê o quadro
+     (exec), o que o negócio pediu (priorities), o que foi medido (detail), o
+     que falta (gaps) e só então para onde ir (target) e com o que (context).
+     Nenhum oráculo lê esta lista: os gates comparam o DOM com a lista literal
+     copiada da spec (D009-ORD1/ORD2), nunca o contrário.
+
+     RESTRIÇÃO DE FORMA: o alinhamento de colunas das linhas abaixo é contrato
+     com a campanha de mutação — o `find` de `P52-M3` casa as duas linhas de
+     `target`/`context` byte a byte. Reformatar o literal faz o mutante deixar
+     de aplicar e o gate perde o discriminante sem que ninguém veja.
      ========================================================================== */
   var P52_SECTIONS = [
     { key: "exec",       title: "Visão executiva" },
+    { key: "priorities", title: "Prioridades do negócio" },
+    { key: "detail",     title: "Domínios e heat map" },
+    { key: "gaps",       title: "Gaps observados" },
     { key: "target",     title: "Cenário-alvo" },
     { key: "context",    title: "Contexto tecnológico" },
-    { key: "evidence",   title: "Evidência e suficiência" },
-    { key: "detail",     title: "Domínios e heat map" },
-    { key: "priorities", title: "Prioridades do negócio" },
-    { key: "gaps",       title: "Gaps observados" },
     { key: "support",    title: "Formas de apoio" },
+    { key: "evidence",   title: "Evidência e suficiência" },
     { key: "actions",    title: "Relatório e sessão" }
   ];
   function secId(key) { return "p52-sec-" + key; }
@@ -10792,8 +11061,13 @@ if (window.__DEV) Object.assign(window.__DEV, { openExportModal, openImportPicke
      trata como duras continuam valendo nas DUAS ordens:
        · o cenário-alvo continua ANTES do contexto tecnológico (P52-TGT1);
        · a ordem relativa de todo o resto é a canônica.
-     Com o gate ABERTO nada muda: vale a ordem canônica da §7, e o alvo é
-     imediatamente posterior à visão executiva.
+     Com o gate ABERTO nada muda: vale a ordem canônica declarada acima.
+     [2026-08-27] A frase original desta linha dizia "e o alvo é imediatamente
+     posterior à visão executiva" — cláusula da §8, SUBSTITUÍDA pela âncora de
+     `specs/009-leitura-do-relatorio/spec.md`. A única cláusula dura que resta
+     sobre o alvo, nas DUAS variantes, é a adjacência `context === target + 1`.
+     A posição absoluta passou a ser garantida pela sequência completa
+     (D009-ORD1/ORD2). O comportamento desta função NÃO muda.
 
      Esta é uma leitura de duas cláusulas que se tensionam no caso bloqueado.
      Está registrada no relatório da fase para decisão explícita do
@@ -12898,6 +13172,11 @@ if (window.__DEV) Object.assign(window.__DEV, { openExportModal, openImportPicke
        canônico com texto exibido aplica a MESMA transformação declarada, em
        vez de aceitar qualquer divergência. */
     copyMap: function () { return P52_COPY.map(function (r) { return [r[0], r[1]]; }); },
+    /* Mesma natureza do `copyMap()`: transformação declarada sobre um texto
+       canônico deste módulo. Consumida por `ui_v32.js` (tela e papel) sempre
+       sob guarda `typeof` — a chamada é de runtime e não altera a ordem de
+       injeção do builder. Ver `specs/009-leitura-do-relatorio/spec.md` §4. */
+    capHelpLine: function (capId) { return p52CapHelpLine(capId); },
     applyCopy: function (v) {
       var o = String(v == null ? "" : v);
       for (var i = 0; i < P52_COPY.length; i++) o = o.split(P52_COPY[i][0]).join(P52_COPY[i][1]);

@@ -47,9 +47,14 @@
     html body .wrap { width: 100%; max-width: 100%; }
   }
 
-  /* Linha de leitura confortável dentro do grid amplo. */
+  /* Linha de leitura confortável dentro do grid amplo.
+     `.jn-note` é rodapé de bloco full-bleed, não corpo de texto (spec 009 §C15):
+     ela nunca esteve nomeada aqui — era alcançada por `.ux-micro`, porque o nó
+     nasce `class="ux-micro jn-note"`. Sai da régua ESTREITANDO este seletor; um
+     override posterior com `max-width:none` deixaria duas declarações
+     contraditórias vivas e cegaria o oráculo de D009-LEG1. */
   .p52-sec p,
-  .p52-sec .ux-micro,
+  .p52-sec .ux-micro:not(.jn-note),
   .p52-sec .arq-tag,
   .p52-sec .banner-ok { max-width: 78ch; }
   .p52-sec-lead {

@@ -127,11 +127,16 @@ function tgtSection(app){
   const curO=pubO(cur.overall), tgtO=pubO(tgt.overall);
   const delta=(curO!==null&&tgtO!==null)?` <span class="ux-tgt-delta">${tgtO>=curO?"+":""}${(tgtO-curO).toFixed(1)}</span>`:"";
   const gateNote=cmpPub?"":`<div class="ux-mut ux-tgt-nopub" data-p52-nopub="target">O cenário-alvo está salvo. A comparação será apresentada quando o perfil atual tiver evidência suficiente. Evidência insuficiente: até o gate canônico abrir, nenhum score, estágio, valor por domínio ou delta é publicado nesta comparação, de nenhum dos dois lados. As práticas-alvo declaradas continuam listadas, uma a uma, abaixo.</div>`;
+  /* [D009 · B5] o conjunto de práticas sem contexto declarado é derivado NO MESMO
+     PASSE que a lista renderizada — nunca por segunda varredura e nunca do DOM;
+     alvo removido por `revalidateTargets` não deixa órfão no aviso. */
+  const semCtx=[];
   const ovList=Object.keys(TARGET_PROFILE.overrides).map(qid=>{
     const k=tgtKOf(qid), cur0=ans[k], t=TARGET_PROFILE.overrides[qid];
     const base=(cur0===null||cur0==="NA")?`<span class="ux-mut">Baseline atual não validado — delta local n/d.</span>`
       :`${esc32(QS[k].opts[cur0].t)} · ${SCORES[cur0].toFixed(1)} → `;
-    return `<li class="ux-tgt-ov" data-qid="${esc32(qid)}"><b>${esc32(QS[k].lbl)}</b><br>${base}${esc32(QS[k].opts[t].t)} · ${SCORES[t].toFixed(1)}${(cur0!==null&&cur0!=="NA")?` <span class="ux-tgt-delta">+${(SCORES[t]-SCORES[cur0]).toFixed(1)}</span>`:""}${tgtEnablersHTML(qid)}</li>`;}).join("");
+    return `<li class="ux-tgt-ov" data-qid="${esc32(qid)}"><b>${esc32(QS[k].lbl)}</b><br>${base}${esc32(QS[k].opts[t].t)} · ${SCORES[t].toFixed(1)}${(cur0!==null&&cur0!=="NA")?` <span class="ux-tgt-delta">+${(SCORES[t]-SCORES[cur0]).toFixed(1)}</span>`:""}${tgtEnablersHTML(qid,semCtx)}</li>`;}).join("");
+  const absNote=tgtAbsenceHTML(semCtx,true);
   sec.innerHTML = `<div class="section-title"><div class="eyebrow">Perfil atual × Cenário-alvo de maturidade</div></div>
     <div class="v32-block" id="ux-tgt-cmp">${notice}
       <div class="ux-tgt-kpis">
@@ -142,6 +147,7 @@ function tgtSection(app){
       <div class="ux-tgt-legend">— Perfil atual&nbsp;&nbsp;&nbsp;- - Cenário-alvo</div>
       ${gateNote}
       <table class="ux-tgt-table"><tbody>${rows}</tbody></table>
+      ${absNote}
       <div class="ux-tgt-ovs"><div class="eyebrow">Práticas-alvo definidas</div><ul>${ovList}</ul></div>
       <div class="ux-tgt-disc">${esc32(TGT_DISCLAIMER)}</div>
       <div class="ux-ctxactions">
@@ -149,13 +155,98 @@ function tgtSection(app){
         <button class="btn2" id="ux-tgt-clear" type="button">Limpar cenário-alvo</button>
       </div></div>`;
   sec.querySelector("#ux-tgt-edit").onclick=()=>{ tgtNotices=[]; tgtEditor(app); };
+  /* [D009 · C14] o aviso é acionável na TELA: delega ao controle CANÔNICO do
+     editor de contexto (`#v32cta`, de `ui_v32.js`) em vez de reimplementar a
+     rota. Ausente o controle, o aviso permanece informativo — nunca inventa
+     caminho próprio. */
+  const absCta=sec.querySelector("#ux-tgt-absctx");
+  if(absCta) absCta.onclick=()=>{
+    const cta=document.getElementById("v32cta"); if(!cta) return;
+    if(typeof cta.scrollIntoView==="function") cta.scrollIntoView({block:"center"});
+    cta.click();
+  };
   sec.querySelector("#ux-tgt-clear").onclick=()=>uxModal({title:"Limpar cenário-alvo?",
     body:"Somente o cenário-alvo será removido. Avaliação, prioridades, contexto tecnológico e recomendações permanecem.",
     confirmLabel:"Limpar cenário-alvo", origin:sec.querySelector("#ux-tgt-clear"),
     onConfirm:()=>{ clearTargetProfile(); tgtSection(app); tgtRadarOverlay(app); }});
   tgtRadarOverlay(app);
 }
-function tgtEnablersHTML(qid){                                  /* [L] SOMENTE itens já existentes no ctx atual */
+/* ==========================================================================
+   DEMANDA 009 · §5 · O CARD DE PRÁTICA-ALVO TEM QUATRO ESTADOS, NÃO UM.
+
+   `tgtEnablersHTML()` cobria com UMA frase estados que não são o mesmo: quem
+   declarou o contexto e nada aderiu, quem não declarou nada, e quem não tem
+   contexto algum a declarar. O estado é decidido sobre o MODELO CANÔNICO
+   (`V32.CAPABILITIES` · `V32.TECH_LANDSCAPE`) — nunca sobre texto renderizado,
+   nunca sobre atributo escrito por outro módulo (R9 §3):
+
+     S1 · há habilitadores ............ a linha de hoje, INTOCADA
+     S2 · sem habilitadores, landscape aplicável e `presence === "UNSET"`
+          ............................. a linha NÃO renderiza e a prática entra
+                                        no aviso único de ausência
+     S3 · sem habilitadores, contexto INFORMADO
+          ............................. mantém a frase substantiva de hoje
+     S4 · sem habilitadores e capability com `landscapeEnabled: false`
+          (`soc-governance`, `soc-staffing`, `soc-skills` — `mandate`,
+          `governance`, `policies`, `team-capacity`, `training`)
+          ............................. mantém a frase de S3 e NUNCA entra no
+                                        aviso: não há contexto a informar
+
+   Contexto não informado não é ausência de tecnologia. Sob S2 o relatório se
+   CALA — não afirma que falta ferramenta e não conclui sobre processo, pessoas
+   ou governança. É a mesma disciplina de INV-2: dado ausente não vira medida.
+   ========================================================================== */
+function tgtEnablerState(qid, nItems){
+  if (nItems > 0) return "S1";
+  const caps=Object.keys(V32.CAPABILITIES).filter(id=>(V32.CAPABILITIES[id].questionIds||[]).includes(qid));
+  if (caps.length !== 1) return "S3";                           /* fora do modelo canônico: jamais alega "não informado" */
+  if (V32.CAPABILITIES[caps[0]].landscapeEnabled !== true) return "S4";
+  const L=V32.TECH_LANDSCAPE[caps[0]];
+  return (!L || L.presence==="UNSET") ? "S2" : "S3";
+}
+/* [D009 · C14] AVISO ÚNICO de ausência — um nó por render, dentro do card de
+   comparação e antes da lista de práticas. `qids` chega pronto do mesmo passe
+   da lista (B5). Declara que o contexto não foi informado, QUANTAS e QUAIS
+   práticas ficaram sem refino. Na TELA acompanha o caminho para o editor de
+   contexto; no PAPEL é a MESMA frase, sem controle. */
+/* [D009 · rodada 2 · ESCOPO DA ABERTURA] A frase tinha um só ramo e abria sempre
+   em escopo de SESSÃO ("não foi informado nesta sessão"). Isso é verdade quando
+   NADA foi declarado e FALSO no caso parcial — lá o contexto foi informado, só
+   não para as práticas nomeadas, e o próprio relatório desmente a frase duas
+   seções abaixo, onde `#v32decl` lista as capabilities declaradas. É o mesmo
+   defeito que esta demanda corrige em `:166`, um degrau acima: afirmar mais do
+   que a sessão sustenta.
+   O predicado do ramo é o MESMO de `#v32decl` (`ui_v32.js:246`): há declaração
+   quando alguma capability sai de UNSET. Estado canônico do engine, lido — não
+   recalculado nem redefinido aqui. Os dois ramos continuam declarando
+   não-informação (a regra que `D009-UNS1` mede); o que muda é o ALCANCE. */
+function tgtCtxDeclaradoNaSessao(){
+  const L=V32.TECH_LANDSCAPE||{};
+  return Object.keys(L).some(id=>L[id] && L[id].presence!=="UNSET");
+}
+function tgtAbsenceHTML(qids, isScreen){
+  if (!qids || !qids.length) return "";
+  const nomes=qids.map(qid=>tgtKOf(qid)).filter(k=>k>=0).map(k=>esc32(QS[k].lbl));
+  if (!nomes.length) return "";
+  const n=nomes.length, uma=n===1;
+  const frase=tgtCtxDeclaradoNaSessao()
+    ? `O contexto tecnológico não foi informado para ${n} ${uma?"prática-alvo":"práticas-alvo"}. Por isso ${uma?"ela ficou":"elas ficaram"} sem refino por habilitadores já identificados: ${nomes.join("; ")}.`
+    : `O contexto tecnológico não foi informado nesta sessão. Por isso ${n} ${uma?"prática-alvo ficou":"práticas-alvo ficaram"} sem refino por habilitadores já identificados: ${nomes.join("; ")}.`;
+  if (!isScreen) return `<div class="pr-mut" data-ux-absence="target-enablers">${frase}</div>`;
+  /* [D009 · rodada 2 · RÓTULO DERIVADO] o caminho da TELA já delegava o CLIQUE ao
+     controle canônico (`#v32cta`, de `ui_v32.js`); o RÓTULO estava fixo em
+     "Editar…". Numa sessão limpa o aviso mandava "Editar" logo acima de um botão
+     que dizia "Adicionar" (`ui_v32.js:240` × `:294`) — atrito na exata rota de
+     conversão que o aviso existe para abrir. Agora o rótulo vem do mesmo nó a
+     que o clique é delegado; o dono do rótulo continua sendo `ui_v32.js`.
+     Sob guarda: sem controle (ou sem rótulo) NÃO nasce botão e o aviso permanece
+     informativo — nunca inventa caminho nem rótulo próprio. */
+  const cta=(typeof document!=="undefined") ? document.getElementById("v32cta") : null;
+  const rotulo=cta ? String(cta.textContent||"").replace(/\s+/g," ").trim() : "";
+  const caminho=rotulo ? ` <button class="btn2" id="ux-tgt-absctx" type="button">${esc32(rotulo)}</button>` : "";
+  return `<div class="ux-mut" data-ux-absence="target-enablers"><span>${frase}</span>${caminho}</div>`;
+}
+function tgtEnablersHTML(qid, semCtx){                          /* [L] SOMENTE itens já existentes no ctx atual */
   const caps=Object.keys(V32.CAPABILITIES).filter(id=>(V32.CAPABILITIES[id].questionIds||[]).includes(qid));
   const ctx=V32.buildRecommendationContext().contexts;          /* mesmo payload congelado (byte-idêntico, testado) */
   const MODE_PT={DIRECT:"apoio direto",CONTEXTUAL:"apoio contextual",VALIDATE:"validar"};
@@ -163,7 +254,11 @@ function tgtEnablersHTML(qid){                                  /* [L] SOMENTE i
   caps.forEach(cid=>{ const c=ctx[cid]; if(!c) return;
     (c.candidates||[]).forEach(x=>items.push({id:x.itemId, n:(V32.OFFERINGS[x.itemId]||{}).name||x.itemId, m:MODE_PT[c.supportMode]||"contexto", kind:"candidate"}));
     (c.services||[]).forEach(s=>items.push({id:s.serviceId, n:(V32.SERVICES[s.serviceId]||{}).name||s.serviceId, m:"serviço", kind:"service"}));});
-  if(!items.length) return `<div class="ux-tgt-en ux-mut">Nenhum habilitador tecnológico específico foi identificado pelo contexto atual. A evolução desta prática pode depender principalmente de processo, pessoas, governança ou de aprofundamento adicional.</div>`;
+  if(!items.length){
+    /* [D009 · §5] S2 se cala e delega ao aviso único; S3 e S4 mantêm a frase. */
+    if (tgtEnablerState(qid, 0)==="S2"){ if (semCtx) semCtx.push(qid); return ""; }
+    return `<div class="ux-tgt-en ux-mut">Nenhum habilitador tecnológico específico foi identificado pelo contexto atual. A evolução desta prática pode depender principalmente de processo, pessoas, governança ou de aprofundamento adicional.</div>`;
+  }
   return `<div class="ux-tgt-en"><i>Possíveis habilitadores já identificados neste Quickscan:</i><div class="ux-tgt-enablers">${items.map(it=>`<span class="ux-tgt-enabler" data-eid="${esc32(it.id)}">${window.__V32UI.iconFor(it.id, it.n)}<span class="ux-tgt-enabler-name">${esc32(it.n)}</span><span class="ux-tgt-mode">${esc32(it.m)}</span></span>`).join("")}</div></div>`;
 }
 function tgtRadarOverlay(app){                                  /* [I] geometria EXATA extraída dos eixos legados */
@@ -263,8 +358,11 @@ window.__uxTargetPrintHTML = function(){
   const rows=DOMS.map((dm,i)=>{const c=curPub[i].score,t=tgtPub[i].score;
     const d=(c!==null&&t!==null)?`${t>=c?"+":""}${(t-c).toFixed(1)}`:"n/d";
     return `<tr><td>${esc32(dm.pt)}</td><td>${fmt(c)}</td><td>${cmpPub?"→":""}</td><td>${fmt(t)}</td><td>${d}</td></tr>`;}).join("");
+  /* [D009 · B5] mesmo passe da lista, também no papel. */
+  const semCtx=[];
   const ovs=Object.keys(TARGET_PROFILE.overrides).map(qid=>{const k=tgtKOf(qid),c0=ans[k],t=TARGET_PROFILE.overrides[qid];
-    return `<div class="pr-card"><b>${esc32(QS[k].lbl)}</b><div>${(c0!==null&&c0!=="NA")?esc32(QS[k].opts[c0].t)+" → ":"<i>Baseline atual não validado</i> → "}${esc32(QS[k].opts[t].t)}</div>${tgtEnablersHTML(qid)}</div>`;}).join("");
+    return `<div class="pr-card"><b>${esc32(QS[k].lbl)}</b><div>${(c0!==null&&c0!=="NA")?esc32(QS[k].opts[c0].t)+" → ":"<i>Baseline atual não validado</i> → "}${esc32(QS[k].opts[t].t)}</div>${tgtEnablersHTML(qid,semCtx)}</div>`;}).join("");
+  const absNote=tgtAbsenceHTML(semCtx,false);                   /* [D009 · C14] a MESMA frase da tela, sem controle */
   return `<div class="pr-sec" id="pr-target"><h2>Perfil atual × Cenário-alvo de maturidade</h2>
     <div class="pr-kpis"><div class="pr-kpi"><b>${fmt(curO)}${curO!==null?" / 5":""}</b><span>Atual · ${(cmpPub&&cur.stage)?esc32(cur.stage.pt):"n/d"}</span></div>
     <div class="pr-kpi"><b>${fmt(tgtO)}${tgtO!==null?" / 5":""}</b><span>Cenário-alvo · ${(cmpPub&&tgt.stage)?esc32(tgt.stage.pt):"n/d"}</span></div>
@@ -274,7 +372,7 @@ window.__uxTargetPrintHTML = function(){
       <polygon points="${poly(tgtPub)}" fill="none" stroke="#3CB17E" stroke-width="1.6" stroke-dasharray="5 4"/>${labels}</svg>
     <div class="pr-mut" style="text-align:center">— Perfil atual (azul) · - - Cenário-alvo (verde)</div>
     ${ndNote}
-    <table class="pr-doms"><tbody>${rows}</tbody></table>${ovs}
+    <table class="pr-doms"><tbody>${rows}</tbody></table>${absNote}${ovs}
     <div class="pr-card"><i>${esc32(TGT_DISCLAIMER)}</i></div></div>`;
 };
 if (window.__DEV) Object.assign(window.__DEV, {

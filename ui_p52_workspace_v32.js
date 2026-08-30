@@ -281,6 +281,34 @@
       "se há controle específico. Usar IA com política não prova que abusos sejam detectados."
   };
 
+  /* --------------------------------------------------------------------------
+     Transformação DECLARADA e PÚBLICA sobre o glossário acima
+     (`specs/009-leitura-do-relatorio/spec.md` §4 · C8/C9).
+
+     `P52_CAP_HELP` continua sendo a ÚNICA fonte do texto; esta função devolve
+     o PRIMEIRO PERÍODO do verbete — prefixo até o primeiro ". ", ponto
+     incluído. Os outros dois períodos são instrução ao facilitador e ressalva
+     de método: pertencem ao editor de contexto, não ao relatório.
+
+     Capability sem verbete → "" (nada é inventado — mesma regra do controle de
+     ajuda). Derivado puro: sem efeito colateral, sem DOM, sem leitura de
+     sessão. Publicada em `__P52.capHelpLine`, no precedente do `copyMap()` já
+     público: um gate que compara texto canônico com texto exibido aplica a
+     MESMA transformação declarada em vez de aceitar qualquer divergência.
+
+     DEFINIDA DEPOIS DO LITERAL, de propósito: `P52-HOME1`
+     (`tests_p52_layout.js:678`) varre `js.split("P52_CAP_HELP")[0]` à procura
+     de asset externo na construção do emblema. Mover esta função para antes da
+     declaração encolheria o prefixo varrido e enfraqueceria o gate sem que
+     ninguém visse — R10 §1 proíbe.
+     -------------------------------------------------------------------------- */
+  function p52CapHelpLine(capId) {
+    var v = Object.prototype.hasOwnProperty.call(P52_CAP_HELP, capId) ? P52_CAP_HELP[capId] : "";
+    var s = String(v == null ? "" : v);
+    var i = s.indexOf(". ");
+    return i < 0 ? s : s.slice(0, i + 1);
+  }
+
   /* ==========================================================================
      REV B · HELP-B §4 — glossário de arquitetura, dados e IA.
      Mesmo contrato de acessibilidade da ajuda por capability. Os textos de
@@ -546,16 +574,32 @@
      ordem visual, a ordem de foco e a ordem do trilho lateral.
      "Gaps observados" é UM item de navegação com DOIS grupos estruturais
      internos (P52-GAP1): altos e moderados nunca se misturam.
+
+     ÂNCORA REANCORADA — 2026-08-27. A ordem abaixo deixou de ser a §7/§8 da
+     diretriz da Phase 5.2 e passou a ser a seção "Âncora normativa: a ordem
+     canônica de leitura" de `specs/009-leitura-do-relatorio/spec.md`, ratificada
+     pelo proprietário (rota A — substituir a regra selada). A §8 ("o
+     cenário-alvo vem imediatamente depois da visão executiva") é SUBSTITUÍDA e
+     segue citável como histórico. A ordem é NARRATIVA: o leitor vê o quadro
+     (exec), o que o negócio pediu (priorities), o que foi medido (detail), o
+     que falta (gaps) e só então para onde ir (target) e com o que (context).
+     Nenhum oráculo lê esta lista: os gates comparam o DOM com a lista literal
+     copiada da spec (D009-ORD1/ORD2), nunca o contrário.
+
+     RESTRIÇÃO DE FORMA: o alinhamento de colunas das linhas abaixo é contrato
+     com a campanha de mutação — o `find` de `P52-M3` casa as duas linhas de
+     `target`/`context` byte a byte. Reformatar o literal faz o mutante deixar
+     de aplicar e o gate perde o discriminante sem que ninguém veja.
      ========================================================================== */
   var P52_SECTIONS = [
     { key: "exec",       title: "Visão executiva" },
+    { key: "priorities", title: "Prioridades do negócio" },
+    { key: "detail",     title: "Domínios e heat map" },
+    { key: "gaps",       title: "Gaps observados" },
     { key: "target",     title: "Cenário-alvo" },
     { key: "context",    title: "Contexto tecnológico" },
-    { key: "evidence",   title: "Evidência e suficiência" },
-    { key: "detail",     title: "Domínios e heat map" },
-    { key: "priorities", title: "Prioridades do negócio" },
-    { key: "gaps",       title: "Gaps observados" },
     { key: "support",    title: "Formas de apoio" },
+    { key: "evidence",   title: "Evidência e suficiência" },
     { key: "actions",    title: "Relatório e sessão" }
   ];
   function secId(key) { return "p52-sec-" + key; }
@@ -574,8 +618,13 @@
      trata como duras continuam valendo nas DUAS ordens:
        · o cenário-alvo continua ANTES do contexto tecnológico (P52-TGT1);
        · a ordem relativa de todo o resto é a canônica.
-     Com o gate ABERTO nada muda: vale a ordem canônica da §7, e o alvo é
-     imediatamente posterior à visão executiva.
+     Com o gate ABERTO nada muda: vale a ordem canônica declarada acima.
+     [2026-08-27] A frase original desta linha dizia "e o alvo é imediatamente
+     posterior à visão executiva" — cláusula da §8, SUBSTITUÍDA pela âncora de
+     `specs/009-leitura-do-relatorio/spec.md`. A única cláusula dura que resta
+     sobre o alvo, nas DUAS variantes, é a adjacência `context === target + 1`.
+     A posição absoluta passou a ser garantida pela sequência completa
+     (D009-ORD1/ORD2). O comportamento desta função NÃO muda.
 
      Esta é uma leitura de duas cláusulas que se tensionam no caso bloqueado.
      Está registrada no relatório da fase para decisão explícita do
@@ -2680,6 +2729,11 @@
        canônico com texto exibido aplica a MESMA transformação declarada, em
        vez de aceitar qualquer divergência. */
     copyMap: function () { return P52_COPY.map(function (r) { return [r[0], r[1]]; }); },
+    /* Mesma natureza do `copyMap()`: transformação declarada sobre um texto
+       canônico deste módulo. Consumida por `ui_v32.js` (tela e papel) sempre
+       sob guarda `typeof` — a chamada é de runtime e não altera a ordem de
+       injeção do builder. Ver `specs/009-leitura-do-relatorio/spec.md` §4. */
+    capHelpLine: function (capId) { return p52CapHelpLine(capId); },
     applyCopy: function (v) {
       var o = String(v == null ? "" : v);
       for (var i = 0; i < P52_COPY.length; i++) o = o.split(P52_COPY[i][0]).join(P52_COPY[i][1]);

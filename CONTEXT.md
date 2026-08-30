@@ -61,6 +61,39 @@ Agrupamento de recomendação por severidade do achado (T1 alto, T2 moderado, T3
 não priorizado com evidência positiva).
 _Evitar_: prioridade (é do negócio), ranking
 
+**Habilitador**:
+Item de catálogo (produto ou serviço) que PODE apoiar a evolução de uma prática,
+apresentado como possibilidade condicionada e sempre derivado de evidência
+confirmada. Nunca é requisito, compra recomendada, nem origem do cenário-alvo.
+Termo canônico de doc, spec e prompt; as strings já congeladas na UI permanecem
+como estão (INV-10).
+_Evitar_: recomendação, solução, caminho de apoio, forma de apoio
+
+**Bloco de ausência**:
+Bloco de resultado cujo único conteúdo possível é declarar que algo não foi
+informado ou não foi avaliado. Não renderiza: a ausência vira um aviso único e
+acionável, com a lista do que ficou de fora.
+_Evitar_: bloco vazio, placeholder, estado nulo
+
+**Ordem canônica de leitura**:
+Sequência declarada das seções do resultado (P52-RES2), que É a ordem do DOM, do
+foco e do trilho lateral — e tem uma exceção declarada sob gate de suficiência
+fechado. Alterá-la exige âncora normativa nova antes do código.
+_Evitar_: layout, ordem visual, disposição
+
+**Base de evidência da sessão**:
+Disclosure do resultado que guarda o painel canônico de suficiência quando o gate
+está ABERTO, para responder "de onde saiu este número". É de SESSÃO — distinta do
+*Acervo de evidência*, que é o conjunto congelado que sustenta a selagem de uma
+fase.
+_Evitar_: acervo, anexo, evidências da sessão
+
+**Tecla de atalho (priorização)**:
+Glifo 1–9 exibido no botão da tela de prioridade que indica o ATALHO DE TECLADO
+daquele item, não a sua posição numa lista. Itens além do nono não recebem
+atalho.
+_Evitar_: numeração, índice, ranking, ordem
+
 ## Estrutura (processo)
 
 **Demanda**:

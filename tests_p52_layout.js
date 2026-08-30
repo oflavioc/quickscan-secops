@@ -47,21 +47,28 @@ const qa = (d, s) => Array.from(d.querySelectorAll(s));
 const txt = el => (el ? (el.textContent || "").replace(/\s+/g, " ").trim() : "");
 const readIf = p => (fs.existsSync(p) ? fs.readFileSync(p, "utf8") : null);
 
-/* Ordem canônica declarada pela diretriz §7 (P52-RES2), reescrita aqui como
-   oráculo independente: NÃO é lida de `window.__P52.sections()`.
-   A variante de gate FECHADO sobe "Evidência e suficiência" para logo depois
-   da visão executiva — a última cláusula da §7 exige destaque no primeiro
-   viewport quando o resultado está bloqueado. Nas duas ordens, o cenário-alvo
-   permanece ANTES do contexto tecnológico. */
-const P52_CANONICAL_ORDER = ["exec", "target", "context", "evidence", "detail",
-  "priorities", "gaps", "support", "actions"];
+/* ÂNCORA REANCORADA — 2026-08-27.
+   Estas três listas deixaram de ser a §7 da diretriz da Phase 5.2 e passaram a
+   ser a seção "Âncora normativa: a ordem canônica de leitura" de
+   `specs/009-leitura-do-relatorio/spec.md`. O proprietário ratificou a troca no
+   chat em **2026-08-27** (rota A — "trocar a regra selada"): a §8 da diretriz
+   ("o cenário-alvo vem imediatamente depois da visão executiva") é SUBSTITUÍDA,
+   e segue citável como histórico. R10 §1 proíbe enfraquecer gate para passar —
+   reancorar só é legítimo como troca de âncora ratificada, e é o que isto é.
+
+   Continuam valendo, sem mudança: as listas são oráculo INDEPENDENTE, jamais
+   lidas de `window.__P52.sections()`; a variante de gate FECHADO sobe
+   "Evidência e suficiência" para logo depois da visão executiva; e, nas duas
+   ordens, o cenário-alvo permanece imediatamente ANTES do contexto tecnológico. */
+const P52_CANONICAL_ORDER = ["exec", "priorities", "detail", "gaps", "target",
+  "context", "evidence", "support", "actions"];
 /* REV A · SUFF-REV-A: com o gate ABERTO, "Evidência e suficiência" deixa de ser
    seção independente — vira status compacto + disclosure dentro da visão
    executiva, e o refinamento operacional acompanha o resultado detalhado. */
-const P52_RELEASED_ORDER = ["exec", "target", "context", "detail",
-  "priorities", "gaps", "support", "actions"];
-const P52_BLOCKED_ORDER = ["exec", "evidence", "target", "context", "detail",
-  "priorities", "gaps", "support", "actions"];
+const P52_RELEASED_ORDER = ["exec", "priorities", "detail", "gaps", "target",
+  "context", "support", "actions"];
+const P52_BLOCKED_ORDER = ["exec", "evidence", "priorities", "detail", "gaps",
+  "target", "context", "support", "actions"];
 function expectedOrder(d) {
   const ws = d.getElementById("p52-workspace");
   return ws && ws.getAttribute("data-p52-gate") === "blocked" ? P52_BLOCKED_ORDER : P52_RELEASED_ORDER;
@@ -228,16 +235,22 @@ T("P52-TGT1", "cenário-alvo vem antes do contexto tecnológico, com explicaçã
     const R = resultsDom(fx);
     const iT = indexOfSec(R.d, "target"), iC = indexOfSec(R.d, "context"), iE = indexOfSec(R.d, "exec");
     if (iT < 0 || iC < 0) throw new Error(fx.id + ": seção de alvo ou de contexto ausente");
+    /* REANCORADO em 2026-08-27 por `specs/009-leitura-do-relatorio/spec.md`
+       (C3), com a ratificação do proprietário registrada naquela spec. A
+       cláusula de POSIÇÃO ABSOLUTA do alvo (`iT === iE+1` / `iE+2`) era a forma
+       forte da §8 da diretriz, agora substituída; ela NÃO fica órfã — passa a
+       ser garantida pela sequência completa em `D009-ORD1`/`D009-ORD2`
+       (`tests_009_leitura.js`), cujo mutante é justamente o que este gate não
+       pega. O que P52-TGT1 continua afirmando, nas DUAS variantes:
+         · o alvo vem DEPOIS da visão executiva  (iT > iE)
+         · o contexto tecnológico é IMEDIATAMENTE posterior ao alvo (iC === iT+1)
+       e, no gate fechado, que a suficiência subiu para logo depois da exec. */
     if (!(iT > iE)) throw new Error(fx.id + ": alvo antes da visão executiva");
-    if (!(iT < iC)) throw new Error(fx.id + ": contexto (" + iC + ") antes do alvo (" + iT + ")");
-    /* com o gate ABERTO o alvo é imediatamente posterior à visão executiva;
-       com o gate FECHADO só a suficiência pode se interpor (§7, última
-       cláusula), e nada mais */
+    if (iC !== iT + 1)
+      throw new Error(fx.id + (iC < iT
+        ? ": contexto (" + iC + ") antes do alvo (" + iT + ")"
+        : ": contexto (" + iC + ") não é imediatamente posterior ao alvo (" + iT + ")"));
     const bloqueado = q(R.d, "#p52-workspace").getAttribute("data-p52-gate") === "blocked";
-    const esperado = bloqueado ? iE + 2 : iE + 1;
-    if (iT !== esperado)
-      throw new Error(fx.id + ": alvo em " + iT + ", esperado " + esperado +
-        (bloqueado ? " (gate fechado: exec > evidência > alvo)" : " (imediatamente após a visão executiva)"));
     if (bloqueado && indexOfSec(R.d, "evidence") !== iE + 1)
       throw new Error(fx.id + ": com gate fechado a suficiência não subiu para logo depois da visão executiva");
     const lead = q(R.d, '#p52-sec-target [data-p52="target-lead"]');

@@ -135,11 +135,26 @@ function buildExecutiveNarrative(snap){
   });
   P.push(p2); trace.push({paragraph:2, sources:s2});
   /* P3 — direção de evolução */
+  /* ==========================================================================
+     009 · C6/C7 — FIM DA REPETIÇÃO EM PROSA DOS PRÓXIMOS PASSOS.
+     O P3 reenumerava os temas em minúscula e sem ponto, duplicando a lista
+     "Para avançar" (`journeyHTML`, `.jn-themes`), que continua sendo a ÚNICA
+     enumeração. Agora o P3 APONTA para o rótulo canônico dessa lista.
+     Três ramos, e nenhum inventa lista:
+       · suficiência aberta + tema  → só o ponteiro;
+       · suficiência fechada + tema → a frase canônica de validação de
+         evidências (regressão N13-N14 de `tests_journey_m45.js`) e o ponteiro
+         "em paralelo";
+       · sem tema → NÃO existe `.jn-themes`, logo não existe ponteiro; vale a
+         frase de sustentação/otimização já existente.
+     `trace[2].sources` mantém `evolution.themes` onde há tema: a frase existe
+     porque os temas existem, e a rastreabilidade não some com a enumeração.
+     ========================================================================== */
   let p3="", s3=[];
   const themes=evolutionThemes(snap);
   if(!snap.maturity.sufficient){ p3+=`O próximo passo mais consistente é completar e validar as evidências pendentes, em vez de perseguir um estágio artificial.`; s3.push("evolution.validate");
-    if(themes.length){ p3+=` Em paralelo, os sinais já confirmados apontam para: ${themes.map(t=>t.phrase.replace(/\.$/,"").toLowerCase()).join("; ")}.`; s3.push("evolution.themes"); } }
-  else if(themes.length){ p3+=`Os próximos passos mais consistentes envolvem: ${themes.map(t=>t.phrase.replace(/\.$/,"").toLowerCase()).join("; ")}.`; s3.push("evolution.themes"); }
+    if(themes.length){ p3+=` Em paralelo, os temas de evolução já identificados estão reunidos na lista “Para avançar”.`; s3.push("evolution.themes"); } }
+  else if(themes.length){ p3+=`Os próximos passos mais consistentes desta leitura estão reunidos na lista “Para avançar”.`; s3.push("evolution.themes"); }
   else { p3+=`O conjunto avaliado não apresenta gaps confirmados relevantes; a evolução tende a se concentrar em sustentação e otimização das práticas existentes.`; s3.push("evolution.none"); }
   if(snap.technologyContext.informed){
     const ops=snap.technologyContext.classifications.some(c=>/OPERATIONAL|ADOPTION|COVERAGE/.test(c||""));
@@ -211,10 +226,36 @@ function journeyHTML(snap, forPrint){
     <div class="${forPrint?"pr-card":"v32-block"} jn-wrap">${head}<div class="jn-track" role="img"
       aria-label="Jornada de maturidade: estágios do modelo com perfil atual${m.tgt>=0?", próximo estágio e cenário-alvo":m.next>=0?" e próximo estágio":""}.">${nodes}</div>${themesHTML}${notes}</div>`;
 }
+/* ============================================================================
+   009 · C4 — IDENTIDADE DO DOMÍNIO NA LEITURA EXECUTIVA.
+   Pós-processamento de RENDERIZAÇÃO, no precedente dos eixos do radar
+   (`ui_ux_v32.js:190-192`): a identidade entra no nó, nunca na fonte.
+   `buildExecutiveNarrative` continua devolvendo string PURA (INV-7) e o
+   `textContent` do parágrafo é idêntico ao de antes da marcação — a marcação
+   é aplicada DEPOIS do `esc32`, de modo que o único markup do parágrafo é o
+   `<span>` desta função e nenhum texto de narrativa pode virar tag.
+   Só ocorrência EXATA, sensível a maiúsculas e de PALAVRA INTEIRA do nome
+   canônico `DOMS[i].pt`: "serviços" e "tecnológico" em minúscula aparecem no
+   mesmo texto com outro sentido e não podem ser marcados.
+   A cor vem do CSS pelo mapa único `[data-dom] → --dom-accent`, com canal
+   NÃO-CROMÁTICO na regra de `.jn-dom` (a marcação chega ao papel pela mesma
+   função, e no papel o peso sozinho preserva o significado). NENHUM hex de
+   domínio entra neste arquivo.
+   ========================================================================== */
+let JN_DOM_RE=null;
+function jnDomMark(escaped){
+  if(!JN_DOM_RE) JN_DOM_RE=new RegExp("(?<![\\p{L}\\p{N}_])("+
+    DOMS.map(d=>String(d.pt).replace(/[.*+?^${}()|[\]\\]/g,"\\$&")).join("|")+
+    ")(?![\\p{L}\\p{N}_])","gu");
+  return String(escaped).replace(JN_DOM_RE, m=>{
+    const i=DOMS.findIndex(d=>d.pt===m);
+    return i<0? m : `<span class="jn-dom" data-dom="${i}">${m}</span>`;
+  });
+}
 function narrativeHTML(snap, forPrint){
   const n=buildExecutiveNarrative(snap);
   return `${forPrint?"":`<div class="section-title"><div class="eyebrow">Leitura executiva</div></div>`}
-    <div class="${forPrint?"pr-card":"v32-block"} jn-narrative">${n.paragraphs.map(p=>`<p>${esc32(p)}</p>`).join("")}</div>`;
+    <div class="${forPrint?"pr-card":"v32-block"} jn-narrative">${n.paragraphs.map(p=>`<p>${jnDomMark(esc32(p))}</p>`).join("")}</div>`;
 }
 function journeySection(app){
   const old=document.getElementById("ux-journey"); if(old) old.remove();

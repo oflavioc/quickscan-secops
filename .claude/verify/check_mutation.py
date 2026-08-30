@@ -698,6 +698,67 @@ def mut_perdao(harness, blocos, excecoes):
             "perdoa_o_exit": bool(perdoados) and not obsoletas and not remanescentes}
 
 
+# ═══════════════════════════════════════════════════════════════════════════
+# Contrato C6 · GUARDA DE LEITURA PARCIAL NO PERDÃO (013 · IC-10)
+#
+# O DEFEITO que este contrato fecha — medido em 8b5be3e, worktree efêmera, com
+# harness sintético (preflight declara 3 mutantes; a campanha emite 1, o
+# SOBREVIVENTE coberto pela exceção, e morre com exit 1):
+#
+#     [RUN]  sonda013: node tests_sonda013_mutants.js
+#            não-KILL: LEITURA PARCIAL em `sonda013` — 1 mutante(s) lido(s) … contra 3 …
+#            [EXCEÇÃO] KI-…: sonda013/MUT-… SOBREVIVENTE perdoado · gate …
+#     mutation: 1 campanha(s) executada(s) · 0 problema(s)          ← exit 0
+#
+# Campanha que NÃO TERMINOU sai verde. Antes do green do IC-9 essa mesma campanha
+# reprovava — o perdão é que passou a engolir o vermelho.
+#
+# CLASSIFICAÇÃO (decisão do proprietário no chat de 2026-08-30, CONTRA a
+# classificação do `qa-engineer`, que havia proposto tratar isto como cláusula
+# nova a ratificar): não é cláusula nova, é DEFEITO DO MECANISMO contra a PRIMEIRA
+# cláusula já ratificada — "nominal, nunca abrangente". Um perdão aplicado sobre
+# leitura parcial NÃO É NOMINAL: ele perdoa o que leu e, sem querer, tudo o que
+# não leu. Não se pode afirmar que o perdoado é o único não-KILL sem ter lido
+# TODOS. O mecanismo não cumpre a cláusula que já foi ratificada.
+#
+#   mut_guarda_leitura(harness, blocos, esperados, perdao) -> dict  FUNÇÃO PURA
+#     harness   — nome do harness no mutation_map.json
+#     blocos    — a lista `todos` de mut_ler(): o que a campanha DE FATO emitiu
+#     esperados — quantos mutantes o preflight (C1) declara para o harness, ou
+#                 None quando oráculo nenhum respondeu (harness sem preflight)
+#     perdao    — o dicionário devolvido por mut_perdao() (contrato C5)
+#     devolve  {"parcial": bool,        # len(blocos) != esperados, OU esperados None
+#               "recusa":  bool,        # havia perdão aplicável e ele foi ANULADO
+#               "linhas":  [linha…],    # o que o stage IMPRIME — não vazia SSE `recusa`
+#               "perdoa_o_exit": bool}  # perdao["perdoa_o_exit"] AND NOT parcial
+#
+# O ponto de conserto é o LAÇO (que tem `IC_PREFLIGHT`), não `mut_perdao`: a
+# função pura de C5 não sabe — e não pode saber — quantos mutantes deveriam ter
+# aparecido. C5 fica INTACTA, e com ela as quatro cláusulas verdes do IC-9.
+#
+# As duas exigências que o proprietário fixou, e onde cada uma é medida:
+#   1. RECUSA IMPRESSA E NOMEADA, COM OS NÚMEROS — `linhas` traz IC10_MARCA, o
+#      harness, o(s) id(s) cujo perdão foi anulado e as duas contagens (IC-10.3,
+#      cenários i/iii/iv/vii). Recusa silenciosa trocaria um engolimento por outro.
+#   2. A `LEITURA PARCIAL` de `mut_relata` NÃO É ENFRAQUECIDA — ela é RELATO, a
+#      guarda é VEREDITO, e as duas COEXISTEM (IC-10.4, regressão executada, que
+#      também exige que a marca da guarda não vaze para dentro do relato).
+#
+# `esperados is None` conta como PARCIAL de propósito: sem oráculo de contagem
+# ninguém pode afirmar que leu tudo, e a direção segura é NÃO perdoar — com a
+# ausência do oráculo DITA na linha (IC10_SEM_ORACULO), nunca em silêncio (R10 §2).
+#
+# O que a guarda NÃO faz: não inventa problema onde perdão nenhum foi aplicado (o
+# relato já fala — cenários v/vi/viii), não mexe em `obsoletas` (que já reprova
+# por conta própria), não lê arquivo e não escreve nada (R7 §3).
+# ═══════════════════════════════════════════════════════════════════════════
+IC10_MARCA = "[EXCEÇÃO NÃO APLICADA]"
+IC10_SEM_ORACULO = "sem oráculo de contagem (C1)"
+# Chaves que a guarda LÊ do dicionário de C5: o acordo de forma entre os dois
+# contratos é MEDIDO (IC-10.1), não presumido.
+IC10_LIDAS = ("perdoados", "perdoa_o_exit")
+
+
 EX_FAILS = 0
 
 
@@ -930,7 +991,240 @@ else:
 
 print(f"---- exceção nominal: {EX_FAILS} problema(s) nomeado(s) ----")
 
-fails = IC_FAILS + EX_FAILS  # [013] integridade (IC-1…IC-6) + exceção nominal (IC-9),
+# ═══════════════════════════════════════════════════════════════════════════
+# IC-10 · A GUARDA DE LEITURA PARCIAL TEM DENTES (contrato C6)
+#
+# Bloco ADITIVO, com contador PRÓPRIO e fecho próprio, exatamente como o do IC-9:
+# `---- integridade: N ----` e `---- exceção nominal: N ----` continuam contando
+# só o que sempre contaram. A seção de integridade (IC-1…IC-6) e as quatro
+# cláusulas verdes do IC-9 não são tocadas.
+#
+# Sonda EM PROCESSO com dados SINTÉTICOS, pela mesma razão do IC-9.4: o poder
+# discriminante da guarda tem de seguir medido no dia em que não houver exceção
+# nenhuma declarada — que é o dia em que ninguém olha.
+#
+# LIMITE ESTRUTURAL, declarado em vez de fingido: esta sonda mede a FUNÇÃO, não a
+# FIAÇÃO. Passam por IC-10 tanto a guarda impecável que o laço nunca chama
+# (M-IC29) quanto a que o laço chama alimentando `esperados` com o próprio número
+# lido (M-IC31, o erro mais provável do green) — os dois registrados com o job
+# onde morrem. Asserção por `grep` no próprio fonte foi considerada e RECUSADA
+# pelo mesmo motivo do IC-9: comentário ou chamada morta a satisfazem, e verde
+# que não mede é a doença desta demanda.
+# ═══════════════════════════════════════════════════════════════════════════
+import contextlib, io
+
+print("---- guarda de leitura parcial no perdão (013 · IC-10) ----")
+
+GP_FAILS = 0
+
+
+def gp_ok(msg):
+    print(f"[OK]   IC-10: {msg}")
+
+
+def gp_fail(alvo, causa):
+    global GP_FAILS
+    GP_FAILS += 1
+    print(f"[FAIL] IC-10: {alvo} · {causa}")
+
+
+IC10_SONDA_H = "harness-sonda-C6-013"
+IC10_SONDA_A = "MUT-C6-A-013"
+IC10_SONDA_B = "MUT-C6-B-013"
+IC10_SONDA_G = "GATE-SONDA-C6-013"
+IC10_SONDA_KI = "KI-SONDA-C6-013"
+
+
+def ic10_bloco(estado, mid):
+    return {"estado": estado, "id": mid, "desc": "sonda IC-10 (sintética)",
+            "gate": IC10_SONDA_G, "resto": ""}
+
+
+def ic10_perdao(perdoados=(), obsoletas=(), remanescentes=()):
+    """Dicionário de C5 SINTÉTICO, construído à mão — a guarda é medida SOZINHA.
+
+    Deliberado: assim um mutante de `mut_perdao` não derruba a sonda da guarda
+    por tabela (morte incidental polui a matriz gate↔mutante). O acordo de FORMA
+    com o C5 real é medido à parte, em IC-10.1, e é lá que a divergência aparece.
+    """
+    return {"perdoados": list(perdoados), "obsoletas": list(obsoletas),
+            "remanescentes": list(remanescentes),
+            "aplicadas": [f"       [EXCEÇÃO] {IC10_SONDA_KI}: {m} perdoado"
+                          for m in perdoados],
+            "perdoa_o_exit": bool(perdoados) and not obsoletas and not remanescentes}
+
+
+# (rótulo, blocos emitidos, esperados pelo preflight, perdão de C5, veredito exigido)
+IC10_CENARIOS = [
+    ("i · positivo canônico — o DEFEITO: campanha truncada cujo único não-KILL "
+     "emitido é justamente o perdoado",
+     [ic10_bloco("SOBREVIVENTE", IC10_SONDA_A)], 3, ic10_perdao([IC10_SONDA_A]),
+     {"parcial": True, "recusa": True, "perdoa_o_exit": False}),
+    ("ii · negativo canônico — leitura COMPLETA: o perdão do IC-9 segue valendo",
+     [ic10_bloco("SOBREVIVENTE", IC10_SONDA_A), ic10_bloco("DETECTADO", IC10_SONDA_B)],
+     2, ic10_perdao([IC10_SONDA_A]),
+     {"parcial": False, "recusa": False, "perdoa_o_exit": True}),
+    ("iii · adversarial — divergência para MAIS (leu mais do que o preflight declara)",
+     [ic10_bloco("SOBREVIVENTE", IC10_SONDA_A), ic10_bloco("DETECTADO", IC10_SONDA_B)],
+     1, ic10_perdao([IC10_SONDA_A]),
+     {"parcial": True, "recusa": True, "perdoa_o_exit": False}),
+    ("iv · adversarial — oráculo de contagem AUSENTE (harness sem preflight)",
+     [ic10_bloco("SOBREVIVENTE", IC10_SONDA_A)], None, ic10_perdao([IC10_SONDA_A]),
+     {"parcial": True, "recusa": True, "perdoa_o_exit": False}),
+    ("v · leitura parcial SEM perdão aplicável — a guarda não inventa problema",
+     [ic10_bloco("SOBREVIVENTE", IC10_SONDA_B)], 3, ic10_perdao([]),
+     {"parcial": True, "recusa": False, "perdoa_o_exit": False}),
+    ("vi · OBSOLETA sob leitura parcial — a guarda não mexe em `obsoletas`",
+     [ic10_bloco("DETECTADO", IC10_SONDA_A)], 3,
+     ic10_perdao([], obsoletas=[IC10_SONDA_A]),
+     {"parcial": True, "recusa": False, "perdoa_o_exit": False}),
+    ("vii · perdão aplicado sobre leitura parcial COM remanescente — anulado E dito",
+     [ic10_bloco("SOBREVIVENTE", IC10_SONDA_A), ic10_bloco("SOBREVIVENTE", IC10_SONDA_B)],
+     3, ic10_perdao([IC10_SONDA_A], remanescentes=[IC10_SONDA_B]),
+     {"parcial": True, "recusa": True, "perdoa_o_exit": False}),
+    ("viii · regressão — campanha que não emitiu mutante nenhum",
+     [], 3, ic10_perdao([]),
+     {"parcial": True, "recusa": False, "perdoa_o_exit": False}),
+]
+
+# ── IC-10.1 · acordo de forma C5 → C6 (o oráculo da forma é o C5 real) ───────
+_ic10_c5 = globals().get("mut_perdao")
+if not callable(_ic10_c5):
+    print("[NOTA] IC-10: acordo de forma C5→C6 NÃO MEDIDO — `mut_perdao` não existe; "
+          "IC-9 já nomeia esse FAIL e não se duplica. A sonda abaixo segue medindo a "
+          "guarda com dicionários sintéticos da forma declarada em C6")
+else:
+    _ic10_exc = [{"id": IC10_SONDA_KI, "lint": IC9_LINT,
+                  "excecao": {"harness": IC10_SONDA_H, "mutante": IC10_SONDA_A,
+                              "gate": IC10_SONDA_G},
+                  "motivo": "sonda de IC-10 — não vem do known_issues.json",
+                  "remocao_prevista": "sonda em processo — não é exceção real"}]
+    try:
+        _ic10_ref = _ic10_c5(IC10_SONDA_H, [ic10_bloco("SOBREVIVENTE", IC10_SONDA_A)],
+                             _ic10_exc)
+    except Exception as _e_c5:
+        _ic10_ref = None
+        gp_fail("C5 → C6", f"`mut_perdao` levantou {type(_e_c5).__name__} ao produzir a "
+                           f"forma de referência da sonda: {_e_c5}")
+    if isinstance(_ic10_ref, dict):
+        _ic10_faltam = [k for k in IC10_LIDAS if k not in _ic10_ref]
+        if _ic10_faltam:
+            gp_fail("C5 → C6", "o dicionário de `mut_perdao` não traz " +
+                    ", ".join(repr(k) for k in _ic10_faltam) + " — a guarda lê essas chaves "
+                    "e, sem elas, C6 mediria uma forma que nunca ocorre na execução real")
+        else:
+            gp_ok("acordo de forma C5→C6: `mut_perdao` devolve as chaves que a guarda lê "
+                  f"({', '.join(IC10_LIDAS)}) — a sonda sintética abaixo não mede forma "
+                  "inventada")
+    elif _ic10_ref is not None:
+        gp_fail("C5 → C6", f"`mut_perdao` devolveu {type(_ic10_ref).__name__}, não dict")
+
+# ── IC-10.2/10.3 · o seam existe e discrimina (contrato C6) ──────────────────
+_ic10_guarda = globals().get("mut_guarda_leitura")
+if not callable(_ic10_guarda):
+    gp_fail("check_mutation.py",
+            "o laço não expõe `mut_guarda_leitura(harness, blocos, esperados, perdao)` "
+            "(contrato C6) — o perdão nominal do IC-9 é aplicado SEM conferir se a campanha "
+            "foi lida inteira: campanha TRUNCADA cujo único não-KILL emitido é justamente o "
+            "perdoado fecha `0 problema(s)` e sai 0, com a `LEITURA PARCIAL` impressa e "
+            "ignorada pelo veredito. Perdão sobre leitura parcial não é NOMINAL — perdoa o "
+            "que leu e, sem querer, tudo o que não leu; e um verde que esconde campanha que "
+            "não terminou é a doença desta demanda inteira")
+else:
+    _ic10_maus = 0
+    for _rot, _blocos, _esp, _perdao, _quer in IC10_CENARIOS:
+        try:
+            _got = _ic10_guarda(IC10_SONDA_H, _blocos, _esp, _perdao)
+        except Exception as _err10:
+            gp_fail(f"mut_guarda_leitura · cenário {_rot}",
+                    f"levantou {type(_err10).__name__}: {_err10}")
+            _ic10_maus += 1
+            continue
+        if not isinstance(_got, dict):
+            gp_fail(f"mut_guarda_leitura · cenário {_rot}",
+                    f"C6 exige dict; veio {type(_got).__name__}")
+            _ic10_maus += 1
+            continue
+        for _k, _v in _quer.items():
+            if _got.get(_k) != _v:
+                gp_fail(f"mut_guarda_leitura · cenário {_rot}",
+                        f"`{_k}` = {_got.get(_k)!r}, esperado {_v!r}")
+                _ic10_maus += 1
+        _linhas10 = _got.get("linhas")
+        if not isinstance(_linhas10, list):
+            gp_fail(f"mut_guarda_leitura · cenário {_rot}",
+                    f"`linhas` tem de ser lista; veio {type(_linhas10).__name__}")
+            _ic10_maus += 1
+            continue
+        _txt10 = " ".join(str(x) for x in _linhas10)
+        if _quer["recusa"]:
+            # Exigência 1 do proprietário: recusa IMPRESSA e NOMEADA, com os números.
+            _exig10 = [IC10_MARCA, IC10_SONDA_H, str(len(_blocos))]
+            _exig10 += list(_perdao["perdoados"])
+            _exig10.append(str(_esp) if _esp is not None else IC10_SEM_ORACULO)
+            _falta10 = [t for t in _exig10 if t not in _txt10]
+            if _falta10:
+                gp_fail(f"mut_guarda_leitura · cenário {_rot}",
+                        "a recusa não nomeia " + ", ".join(repr(t) for t in _falta10) +
+                        " — recusa silenciosa troca um engolimento por outro: o stage tem de "
+                        "dizer que havia exceção aplicável, que ela NÃO foi aplicada por "
+                        "leitura parcial, e os números")
+                _ic10_maus += 1
+        elif _linhas10:
+            gp_fail(f"mut_guarda_leitura · cenário {_rot}",
+                    f"recusou nada e mesmo assim imprimiu {len(_linhas10)} linha(s) "
+                    f"({_txt10[:90]!r}…) — sem perdão anulado a guarda cala; quem relata o "
+                    "que faltou ler é `mut_relata`, e o ruído aqui mataria a distinção")
+            _ic10_maus += 1
+    if not _ic10_maus:
+        gp_ok(f"mut_guarda_leitura discrimina nos {len(IC10_CENARIOS)} cenários da sonda: "
+              "truncada perdoada · leitura completa · divergência para mais · oráculo "
+              "ausente · parcial sem perdão · obsoleta · remanescente · campanha vazia")
+
+# ── IC-10.4 · regressão executada: o RELATO `LEITURA PARCIAL` não é enfraquecido
+# A guarda é VEREDITO; `mut_relata` é RELATO. As duas coexistem — trocar uma pela
+# outra seria enfraquecer um gate para acomodar o outro (R10 §1).
+_ic10_relata = globals().get("mut_relata")
+if not callable(_ic10_relata):
+    gp_fail("check_mutation.py", "`mut_relata` desapareceu — o relato `LEITURA PARCIAL` é "
+                                 "quem NOMEIA o que se deixou de ler; a guarda é veredito e "
+                                 "não substitui o relato")
+else:
+    _ic10_nome_rel = "harness-relato-C6-013"
+    _ic10_saida_rel = "".join(
+        f"{e}  {i} · sonda IC-10 (sintética)\n" + " " * 14 + f"gate esperado: {IC10_SONDA_G}\n"
+        for e, i in (("SOBREVIVENTE", IC10_SONDA_A), ("DETECTADO", IC10_SONDA_B)))
+    # 2 blocos lidos contra 5 declarados: os dois números são discriminantes na
+    # saída (nenhum outro `2` ou `5` aparece nela), o que impede casamento por acaso.
+    IC_PREFLIGHT[_ic10_nome_rel] = {"mutantes": [{"id": f"MUT-C6-{n}-013"}
+                                                 for n in "ABCDE"]}
+    _buf10 = io.StringIO()
+    try:
+        with contextlib.redirect_stdout(_buf10):
+            _ic10_relata(_ic10_nome_rel, _ic10_saida_rel, 1)
+    except Exception as _e_rel:
+        gp_fail("mut_relata · regressão", f"levantou {type(_e_rel).__name__}: {_e_rel}")
+    finally:
+        IC_PREFLIGHT.pop(_ic10_nome_rel, None)   # estado global devolvido intacto
+    _rel10 = _buf10.getvalue()
+    _falta_rel = [t for t in ("LEITURA PARCIAL", _ic10_nome_rel, "2", "5") if t not in _rel10]
+    if _falta_rel:
+        gp_fail("mut_relata · regressão", "o relato de leitura parcial deixou de nomear " +
+                ", ".join(repr(t) for t in _falta_rel) + " — ele é a metade que diz O QUE se "
+                "deixou de ler, e a guarda (veredito) não o substitui")
+    elif IC10_MARCA in _rel10:
+        gp_fail("mut_relata · regressão", f"o relato passou a imprimir {IC10_MARCA!r} — "
+                "relato e veredito colapsaram num só; `mut_relata` não altera contagem e "
+                "não decide perdão, e é essa separação que deixa as duas coexistirem")
+    else:
+        gp_ok("regressão: `mut_relata` segue emitindo `LEITURA PARCIAL` com as duas "
+              "contagens (2 lidos × 5 declarados) e sem a marca da guarda — relato e "
+              "veredito coexistem, cada um no seu papel")
+
+print(f"---- guarda de leitura parcial: {GP_FAILS} problema(s) nomeado(s) ----")
+
+fails = IC_FAILS + EX_FAILS + GP_FAILS  # [013] integridade (IC-1…IC-6) + exceção
+                             # nominal (IC-9) + guarda de leitura parcial (IC-10),
                              # cada bloco com o seu contador e o seu fecho nomeado
 ran = 0
 for name, h in MAP.items():

@@ -1,6 +1,6 @@
 {
   "demanda": "010-recomendacao-sem-vao",
-  "phase": "tasks",
+  "phase": "red",
   "spec_dir": "specs/010-recomendacao-sem-vao",
   "brief": "O vao entre as duas doutrinas de recomendacao: a Camada 1 congelada recomenda produto a partir do gap sem contexto, o engine V3.2 exige contexto declarado, e isLegacyModeV32() escolhe entre elas exigindo contexto ZERO. Contexto parcial desliga a primeira sem ligar a segunda — foi onde o cliente caiu e recebeu zero recomendacoes. Itens 4, 6 e 8 do feedback de 2026-08-27.",
   "branch": "feature/010-recomendacao-sem-vao",
@@ -20,7 +20,12 @@
     "notes": "DECIDIDO SOB DELEGACAO de 2026-08-29. plan.md (439 linhas): 12 waves, dono unico por arquivo, julgador antes do julgado (W3 escreve os 13 gates D010-*, registra d010 em expected_suites e commita o red antes de qualquer implementacao). ui_target_v32.js primeiro (W4), ui_v32.js depois (W7), cada um com rebuild e medicao isolada — o criterio nao e conveniencia: ui_target e o que arrisca a 009, e isola-lo torna qualquer queda de D009-* inequivoca. A SONDA DESCARTAVEL DO TECH-LEAD MUDOU O PLANO EM QUATRO PONTOS: (1) D010-F2 da spec NAO alcanca o estado declarado — com logs em nivel 2 o estado e POSSIBLE_CONTEXT_DIVERGENCE/VALIDATE com ZERO candidatos, e dois criterios ficariam vacuosos; a fixture precisa fixar logs em 0 (errata aplicada a spec); (2) a clausula A5 e load-bearing e esta provada: 15 niveis em 0 e nada declarado anexa 7 servicos por hasGap e ainda assim 'ha substituto' = false; (3) sob D010-F3 os 12 cards VALIDATE tem 0 candidatos, 0 servicos e 0 notas — o criterio e alcancavel; (4) COLISAO DE IDENTIDADE REAL: monitoring-coverage recebe o servico fortiguard-socaas e o MAP traz SOCaaS, o MESMO id — sem deduplicacao por data-eid, dois enablers iguais no mesmo card reprovam D010-CARD4. Correcao ao meu briefing, pelo mutation_map: ui_v32.js dispara core, p51, p52 E d009; ui_target_v32.js dispara p52 E d009. E o tech-lead corrigiu a si mesmo: tinha copiado 'repin unico no fim' do plan.md da 009; o git log desta branch mostra o rito vivo — um repin por commit de conteudo. Registrou que a 009 e bom precedente de formato e MAU precedente de repin. d010 nasce com --preflight no MESMO commit da chave: check_mutation.py roda o preflight de todo harness fora de IC_SEM_PREFLIGHT independente de trigger, entao um d010 sem ele derruba o stage inteiro mesmo com a campanha verde."
   },
   "tasks": {
-    "status": "in_progress",
-    "notes": "delegado ao tech-lead"
+    "status": "approved",
+    "approved_at": "2026-08-30",
+    "notes": "DECIDIDO SOB DELEGACAO de 2026-08-29. tasks.md: 29 tarefas T001-T029 nas 12 waves. UM UNICO RED (T005 escreve os 13 gates + registra d010; T006 executa, nomeia cada FAIL e commita) consumido pelas duas implementacoes — o que separa T008 de T013 e a MEDICAO ISOLADA, nao um novo red. D010-PAPEL1 declarado como o unico gate de autoridade dividida (alinea a em T008, alinea b em T013) para ninguem tentar consertar arquivo que nao e seu. Repin virou serie R1-R11, uma tarefa por commit de conteudo que toca pinado, COM REGRA DE AUTOCORRECAO: commit extra herda o proximo numero em vez de a contagem virar dogma — resposta direta a tres demandas seguidas que furaram previsao de contagem. DECISAO MINHA sobre a dependencia 2: o achado A6 (T3 oculto por contiguidade) e confirmado por execucao junto de T017, como leitura pura, e NAO vai para o backlog sem confirmacao. O tech-lead recusou criar a tarefa por ser ampliacao de plano ratificado, e agiu certo; a inclusao e minha, declarada, e nao muda escopo de produto — so transforma hipotese de leitura de source em fato ou refutacao (R2 §5). Duas escolhas de granularidade dele que subscrevo: T017 mede as suites congeladas alcancadas por ui_v32.js, nao so a contagem de d010 — sem isso a serializacao de T013 perderia sentido; e a wave 9 tem tres commits de conteudo porque a campanha exige arvore limpa e a matriz so existe depois dela."
+  },
+  "red": {
+    "status": "pending",
+    "notes": "T006 produz o red unico, consumido pelas duas implementacoes"
   }
 }

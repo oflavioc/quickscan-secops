@@ -72,7 +72,7 @@ e por isso cada uma declara seus estados, no padrão `d009AssertFixtureStates`.
 |---|---|
 | **D010-F1 · vão canônico** | 15 respostas confirmadas (suficiência **ABERTA**), nível 0 em `automation`, `endpoint`, `network-visibility`, `external-surface`; landscape **100% UNSET**; **única** declaração de contexto: `#v32-arch-saasAllowed = "yes"` (tira do legado sem anexar serviço nem candidato — `engine_v32.js:305-311`); prioridades `["automation","endpoint"]`; alvos nos quatro qids. Reproduz o estado do relatório do cliente (P10) |
 | **D010-F1b · vão sem prioridades** | D010-F1 sem `setPriorities` — exercita o ramo `!hasPrio` (`quickscan_…:991-996`) |
-| **D010-F2 · substituto presente** | D010-F1 + `security-analytics` declarada `NONE` (⇒ `TECHNOLOGY_WHITESPACE`, candidatos DIRECT) + alvo em `logs`. É o par de C8 |
+| **D010-F2 · substituto presente** | D010-F1 + `security-analytics` declarada `NONE` **com `logs` no nível 0** (⇒ `TECHNOLOGY_WHITESPACE`, candidatos DIRECT: `fortianalyzer`, `fortisiem`, `fortisiem-cloud`) + alvo em `logs`. É o par de C8. *(Errata de 2026-08-30, achada por sonda do `tech-lead` na Fase 2: a redação original não fixava o nível de `logs`. Com `logs` em 2, o estado é `POSSIBLE_CONTEXT_DIVERGENCE`/`VALIDATE` com **zero** candidatos — `D010-CARD2`(a) ficaria vacuoso e `D010-ARB2`(b) falharia. Medido no engine, não inferido.)* |
 | **D010-F3 · gate fechado** | Vetor de `fixtures_p50.js · P50_F2` (4 confirmadas + 1 "NA" ⇒ suficiência **FECHADA**) + `saasAllowed="yes"` + 1 alvo com `MAP` não vazio |
 
 | # | Critério | Gate (id · arquivo · asserção) | Mutante previsto |

@@ -32,9 +32,10 @@
       "IC-2",
       "IC-4",
       "IC-5",
-      "IC-6"
+      "IC-6",
+      "IC-9"
     ],
-    "notes": "dois reds commitados: f89ab95 (o julgador nasce reprovando os tres harnesses, 14 problemas) e 8181f05 (o red que o green da W3 produziu — as quatro ancoras da p51 nomeadas pelo preflight)"
+    "notes": "dois reds commitados: f89ab95 (o julgador nasce reprovando os tres harnesses, 14 problemas) e 8181f05 (o red que o green da W3 produziu — as quatro ancoras da p51 nomeadas pelo preflight) Terceiro red: 2f60e2c (IC-9, excecao nominal de mutante sobrevivente) — comportamento novo de gate ratificado NOMINALMENTE pelo proprietario no chat em 2026-08-30."
   },
   "implement": {
     "status": "done",

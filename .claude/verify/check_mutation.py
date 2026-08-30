@@ -759,6 +759,62 @@ IC10_SEM_ORACULO = "sem oráculo de contagem (C1)"
 IC10_LIDAS = ("perdoados", "perdoa_o_exit")
 
 
+def mut_guarda_leitura(harness, blocos, esperados, perdao):
+    """Guarda de leitura parcial no perdão — contrato C6. FUNÇÃO PURA.
+
+    Chamada pelo LAÇO, entre `mut_perdao` (C5) e o veredito. Vive aqui e não
+    dentro de C5 por uma razão de conhecimento, não de arrumação: `mut_perdao`
+    não sabe — e não pode saber — quantos mutantes DEVERIAM ter aparecido; quem
+    tem o oráculo de contagem (`IC_PREFLIGHT`, contrato C1) é o laço.
+
+      harness   — nome do harness no mutation_map.json
+      blocos    — a lista `todos` de mut_ler(): o que a campanha DE FATO emitiu
+      esperados — quantos mutantes o preflight (C1) declara, ou None quando
+                  oráculo nenhum respondeu (harness sem preflight, ou preflight
+                  que fracassou — IC-4 já nomeia o fracasso lá em cima)
+      perdao    — o dicionário devolvido por `mut_perdao()` (contrato C5)
+
+    Devolve {"parcial", "recusa", "linhas", "perdoa_o_exit"} — forma declarada no
+    cabeçalho desta seção. NÃO mexe em `obsoletas` (que reprova por conta
+    própria), não inventa problema onde perdão nenhum foi aplicado, não lê
+    arquivo e não escreve nada (R7 §3).
+    """
+    lidos = len(blocos or [])
+    perdao = perdao if isinstance(perdao, dict) else {}
+    perdoados = [str(m).strip() for m in (perdao.get("perdoados") or [])]
+    # `bool` é subclasse de `int` e entraria numa comparação com sentido nenhum:
+    # excluído de propósito, junto com qualquer outro tipo — oráculo malformado
+    # cai no MESMO ramo do oráculo ausente, que é a direção segura.
+    tem_oraculo = isinstance(esperados, int) and not isinstance(esperados, bool)
+    # Sem oráculo, PARCIAL por decisão: ninguém pode afirmar que leu tudo, e a
+    # ausência sai DITA na linha (IC10_SEM_ORACULO), nunca em silêncio (R10 §2).
+    parcial = (not tem_oraculo) or lidos != esperados
+    # A recusa exige que houvesse perdão A APLICAR. Note que ela NÃO olha
+    # `perdoa_o_exit`: no cenário vii o perdão já não perdoava o exit (havia
+    # remanescente) e mesmo assim foi anulado e DITO — o que se anula é o ato de
+    # perdoar, não o seu efeito aritmético.
+    recusa = parcial and bool(perdoados)
+    linhas = []
+    if recusa:
+        if not tem_oraculo:
+            causa = (f"NÃO PÔDE ser conferida ({lidos} mutante(s) lido(s) e "
+                     f"{IC10_SEM_ORACULO}: o harness não declara preflight, ou o "
+                     f"preflight fracassou e IC-4 já o nomeou)")
+        elif lidos < esperados:
+            causa = (f"lida PARCIALMENTE ({lidos} mutante(s) lido(s) contra "
+                     f"{esperados} declarado(s) pelo preflight (C1))")
+        else:
+            causa = (f"lida em DIVERGÊNCIA com o preflight ({lidos} mutante(s) "
+                     f"lido(s) contra {esperados} declarado(s) pelo preflight (C1))")
+        linhas.append(f"       {IC10_MARCA} {harness}: perdão de "
+                      f"{', '.join(perdoados)} ANULADO — a campanha foi {causa}")
+        linhas.append("                        o perdão do IC-9 é NOMINAL: aplicado "
+                      "sobre leitura parcial ele perdoaria o que leu e, sem saber, "
+                      "tudo o que não leu")
+    return {"parcial": parcial, "recusa": recusa, "linhas": linhas,
+            "perdoa_o_exit": bool(perdao.get("perdoa_o_exit")) and not parcial}
+
+
 EX_FAILS = 0
 
 
@@ -1270,10 +1326,30 @@ for name, h in MAP.items():
     # ninguém percebe. A outra metade, pelo REGISTRO, é IC-9.3 lá em cima.
     #
     # `mut_ler` é chamada de novo (pura, mesma entrada): `mut_relata` fica intacta.
-    perdao = mut_perdao(name, mut_ler(r.stdout)[0], EX_ENTRADAS)
+    blocos = mut_ler(r.stdout)[0]
+    perdao = mut_perdao(name, blocos, EX_ENTRADAS)
+    # [013/IC-10 · green] `esperados` vem do PREFLIGHT (C1) e de mais lugar nenhum.
+    # Derivá-lo de `blocos` (`len(blocos)`) faria a guarda comparar a leitura consigo
+    # mesma: `parcial` seria False por construção, o IC-10 ficaria verde e a campanha
+    # truncada voltaria a sair 0 — o buraco intacto sob um gate satisfeito (M-IC31).
+    # Chave ausente (harness de IC_SEM_PREFLIGHT) e valor None (preflight que
+    # fracassou, já nomeado por IC-4) caem os dois em `esperados = None`, que a guarda
+    # trata como PARCIAL — sem oráculo não se afirma leitura completa.
+    pf = IC_PREFLIGHT.get(name)
+    esperados = len(pf["mutantes"]) if isinstance(pf, dict) else None
+    guarda = mut_guarda_leitura(name, blocos, esperados, perdao)
     for linha in perdao["aplicadas"]:
         print(linha)          # IMPRESSA, nunca silenciosa (cláusula 3)
-    if (r.returncode != 0 and not perdao["perdoa_o_exit"]) or perdao["obsoletas"]:
+    # A linha `[EXCEÇÃO] … perdoado` NÃO é suprimida quando há recusa, e a escolha é
+    # deliberada: ela é a única que nomeia a KI, o prazo e o motivo, e apagá-la faria
+    # o stage esconder QUAL exceção esteve em jogo — o oposto da cláusula 3 do IC-9. A
+    # anulação sai logo abaixo, com marca própria e mais alta, e é ela que vale.
+    for linha in guarda["linhas"]:
+        print(linha)          # recusa IMPRESSA e NOMEADA, com os números (C6)
+    # O veredito passa a consumir `guarda["perdoa_o_exit"]`, nunca mais o de C5: só o
+    # laço sabe se a campanha foi lida inteira, e perdão sobre leitura parcial não
+    # perdoa o exit. `obsoletas` segue intocada — reprova por conta própria.
+    if (r.returncode != 0 and not guarda["perdoa_o_exit"]) or perdao["obsoletas"]:
         fails += 1
     # recibos declarados: o harness legado grava seu registro em arquivo rastreado
     # por design — restauramos após capturar (o registro vivo é a matriz)

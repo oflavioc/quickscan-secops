@@ -27,7 +27,18 @@ Bridge/payload/estado novo: shape, owner do estado (R9 §5), consumidores.
 - [ ] Invariantes R1 — nenhuma violada
 - [ ] design-decisions.md — nenhum conflito
 - [ ] Specs validadas anteriores — nenhuma contradição
-- [ ] Boundary (R6) — toca protegido? Se sim: rito nomeado e autorização PARADA aqui
+- [ ] **Specs de fase seladas — por leitura, não por memória.** Abrir as de
+  `current_phase.json → specs_normativas` e citar `arquivo:linha` do que toca o
+  escopo — inclusive o resultado negativo ("nada sobre <tema> em <arquivo>"),
+  que também é leitura. Spec selada nunca é editada aqui (rito de promoção).
+- [ ] **Boundary (R6) — as três fontes cruzadas**, nesta ordem:
+  `.claude/verify/boundary.json` (classes), `PROTECTED` e `frozenSuites`
+  (`tests_p50_core.js`) e `.claude/verify/pins.json` (identidade de HEAD, stage
+  `baseline`). Toca protegido? Rito nomeado e autorização PARADA aqui.
+  **Precedência**: onde a prosa de spec selada divergir do executável, vale o
+  regime de pins (R8; `docs_phase5/RECONCILIACAO_BOUNDARY_5_1_5_2.md`,
+  Disposição §2) — e a divergência vira **achado** em `.claude/BACKLOG.md`,
+  nunca edição de spec selada.
 
 ## Fora de escopo
 

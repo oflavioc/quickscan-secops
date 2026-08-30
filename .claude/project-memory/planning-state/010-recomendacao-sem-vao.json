@@ -42,5 +42,25 @@
       "D010-PAPEL1"
     ],
     "notes": "1 PASS · 12 FAIL de 13; D010-ARB2 nasce verde por ser criterio de PRESERVACAO. Os dois bloqueios do green que o qa-engineer escalou foram FECHADOS por T030 (e96756c/emenda do assert): a fixture parou de pinar o pre-fix. Veredito inalterado, provado por injecao do julgador de HEAD no require.cache com saida byte-identica. · 2026-08-30: red REPROVADO apos emenda de cobertura (D010-F4 entra em D010-ARB3; a guarda de agrupamento volta a rodar sob D010-F3 via CARD2(c); e CARD6(b) passa a cabear a guarda sob F1, onde ela so ganha sujeito no green). Veredito inalterado: 1 PASS · 12 FAIL de 13, razoes byte-identicas contra o juiz de HEAD. red.commit 4d2d49d segue valido. Erratas E12/E13 na spec."
+  },
+  "t004_equivalencia": {
+    "status": "ratificada",
+    "quando": "2026-08-30",
+    "decidido_por": "data-engineer (leitura pura) + product-owner (rota) + qa-engineer (medicao)",
+    "forma_do_contrato": "chave do MAP -> id do V3.2 | sem equivalente (rota B; NAO vira chave -> id[])",
+    "linha_10": "FortiNDR -> ndr-family. Ratificada. Unico no com name identico a PRODUCTS.FortiNDR.n em todos os 8 registros do engine; e e exatamente o no que resolveCandidates emite quando a modalidade nao foi declarada (engine_v32.js:456-465). Mapear para variante contradiria o proprio engine na mesma tela.",
+    "linha_11": "FortiGuard-Service-Bundle -> sem equivalente V3.2. Ratificada. name 'Servicos FortiGuard' tem ZERO hits nos 8 registros. Contracandidato SERVICE_FAMILIES.fortiguard-labs-advisory recusado por tres razoes independentes, a decisiva sendo que id de SERVICE_FAMILIES NUNCA e anexavel (engine_v32.js:746,749,811) - declarar equivalencia para ele seria PIOR que null.",
+    "as_outras_nove": "conferidas. A tabela nao e uma lista de 11 julgamentos: e a funcao k -> id tal que name(id) === PRODUCTS[k].n, TOTAL e INJETORA no dominio. 10 chaves com exatamente 1 hit, 1 com 0. Corolario: nenhum item muda de nome ao fundir.",
+    "totalidade": "11/11. As 11 chaves derivadas do MAP pelo proprio data-engineer, nao da lista do plano. Nenhuma orfa. PRODUCTS tem 13; FortiDeceptor e FortiDLP nao sao referenciadas pelo MAP.",
+    "colisao_map": "aprovada por propriedade mais forte: nos 95 ids + 22 SIGNAL_IDS, NENHUM id contem ':'. O dois-pontos nao pertence ao alfabeto de ids do engine.",
+    "icone": "o risco previsto e o INVERSO. iconFor(chaveCrua) cai em iniciais nas 11; iconFor(idEquivalente) da <img> real em 10 de 10. A fusao PROMOVE 10 itens.",
+    "achados_registrados": [
+      "fortiai-assist e id simultaneo em OFFERINGS e SOLUTION_AREAS - data-eid nao e chave global no engine (candidato a EA-*, alocacao do doc-writer)",
+      "validateConfigV32 nao proibe ':' em id - a seguranca do prefixo map: e convencao observada, nao invariante checada (candidato a EA-*)",
+      "o asset FortiGuard-Service-Bundle existe no ICONS legado e e INALCANCAVEL por iconFor - a unica chave sem equivalente e a unica que termina em iniciais tendo icone disponivel. Perda recuperavel apresentada como neutra no plano. Conserto exigiria generate_icons_v32.py (classe generated), fora da 29.4 desta demanda.",
+      "SOCaaS e o unico asset do ICON_MAP_V32 servido apenas pelo ICONS da Camada 1 - a linha 8 passa a depender disso"
+    ],
+    "alinea_d_c8": "NAO NASCE. Universo de (d) identico ao de (a) e com UM elemento (D010-F2/logs); (d) e estritamente mais fraca (conjuncao vs termo unico). Alinea implicada por outra, sobre universo de um: e E1. Propriedade fica so na errata E14.",
+    "errata": "E14 em spec.md"
   }
 }

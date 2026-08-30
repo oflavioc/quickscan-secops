@@ -472,6 +472,87 @@ if "--all" not in sys.argv:
     else:
         print("[WARN] sem origin/develop para diff — executando todas as campanhas disponíveis")
 
+# ═══════════════════════════════════════════════════════════════════════════
+# RELATO DOS MUTANTES NÃO-KILL (013, E3 passo 0)
+#
+# O que muda: o que o stage RELATA. O que NÃO muda: o veredito. `fails` continua
+# nascendo de um só lugar — o EXIT CODE da campanha, `r.returncode != 0`, abaixo.
+# Nada aqui incrementa `fails`, nada aqui decide PASS/FAIL.
+#
+# Por que ler a saída PT-BR do harness não fere R10 §6: a proibição é usar regex
+# sobre stdout como ORÁCULO. Aqui o regex é RELATO — se ele errar, o veredito é
+# idêntico e a leitura falha em VOZ ALTA (a linha "NÃO NOMEADOS" abaixo), nunca
+# em silêncio (R10 §2). Quem responde "quantos mutantes deveriam aparecer" é o
+# JSON do contrato C1 (preflight), já consumido em IC_PREFLIGHT — esse sim um
+# oráculo, e um oráculo estruturado.
+#
+# Formato lido — o MESMO nas três harnesses, no `emitir()` de cada uma
+# (tests_p50_mutants.js:944, tests_p51_mutants.js:344, tests_p52_mutants.js:1526):
+#     <ESTADO>␣␣<id>␣·␣<desc>
+#     ␣×14      gate esperado: <gate>[ · causa: <causa>][ · <nota>]
+# ESTADO vem do vocabulário FECHADO de T4/T5 (DETECTADO · SOBREVIVENTE ·
+# NÃO EXECUTADO); é ele, e não a razão D/T, que distingue sobrevivente de não
+# executado — a distinção que esta demanda existe para não deixar colapsar.
+RE_MUT_LINHA = re.compile(r"^(DETECTADO|SOBREVIVENTE|NÃO EXECUTADO)  (\S+) · (.*)$")
+RE_MUT_GATE = re.compile(r"^ {14}gate esperado: (.*)$")
+# Teto de linhas detalhadas: campanha de 107 mutantes não despeja 107 linhas num
+# stage que roda em todo PR. Acima do teto NADA fica anônimo — os ids restantes
+# saem nomeados numa linha só, pelo precedente do próprio IC-1 acima.
+MUT_TETO_DETALHE = 15
+
+
+def mut_ler(saida):
+    """Blocos por mutante da saída da campanha. Devolve (todos, não-KILL)."""
+    linhas = (saida or "").splitlines()
+    todos = []
+    for i, l in enumerate(linhas):
+        m = RE_MUT_LINHA.match(l)
+        if not m:
+            continue
+        gate, resto = "?", ""
+        g = RE_MUT_GATE.match(linhas[i + 1]) if i + 1 < len(linhas) else None
+        if g:
+            # `gate esperado: <gate>[ · causa: …][ · <nota>]` — o gate vai até o
+            # primeiro " · "; o resto sai VERBATIM, nas palavras do harness, para
+            # não inventar classificação, que é ato da E3 e não do julgador.
+            gate, _, resto = g.group(1).partition(" · ")
+        todos.append({"estado": m.group(1), "id": m.group(2), "desc": m.group(3),
+                      "gate": gate.strip(), "resto": resto.strip()})
+    return todos, [t for t in todos if t["estado"] != "DETECTADO"]
+
+
+def mut_relata(name, saida, returncode):
+    """Imprime os não-KILL POR NOME. Não devolve nada e não altera contagem."""
+    todos, nao_kill = mut_ler(saida)
+    if not todos:
+        # Vale para o harness que morreu antes de emitir mutante nenhum E para o
+        # harness cujo fecho tem formato próprio (`core`, sem o `emitir()` de
+        # T4/T5, logo sem estado por mutante para relatar — dívida de T8). Nos
+        # dois casos a ausência é DITA, nunca omitida (R10 §2).
+        print(f"       não-KILL: NÃO NOMEADOS em `{name}` — nenhuma linha "
+              f"`<ESTADO>  <id> · <desc>` na saída (exit {returncode}); o veredito vale e a "
+              f"identidade, se existir, está no fecho do harness acima")
+        return
+    esperados = IC_PREFLIGHT.get(name)
+    esperados = len(esperados["mutantes"]) if esperados else None
+    if esperados is not None and len(todos) != esperados:
+        print(f"       não-KILL: LEITURA PARCIAL em `{name}` — {len(todos)} mutante(s) lido(s) "
+              f"na saída contra {esperados} declarado(s) pelo preflight (C1); a lista abaixo "
+              f"pode estar incompleta, e a divergência é do relato, não do veredito")
+    if not nao_kill:
+        print(f"       não-KILL: nenhum — os {len(todos)} mutante(s) lidos estão DETECTADO")
+        return
+    print(f"       não-KILL: {len(nao_kill)} de {len(todos)} mutante(s) lido(s) · "
+          f"{len(todos) - len(nao_kill)} KILL ficam na contagem")
+    for t in nao_kill[:MUT_TETO_DETALHE]:
+        print(f"         {t['estado']:<14} {t['id']} · gate {t['gate']}"
+              + (f" · {t['resto']}" if t["resto"] else ""))
+    sobra = nao_kill[MUT_TETO_DETALHE:]
+    if sobra:
+        print(f"         + {len(sobra)} não-KILL além do teto de {MUT_TETO_DETALHE} linhas, "
+              f"nomeado(s) aqui: " + ", ".join(t["id"] for t in sobra))
+
+
 fails = IC_FAILS  # [013] a seção de integridade acima já contou seus FAIL nomeados
 ran = 0
 for name, h in MAP.items():
@@ -494,9 +575,18 @@ for name, h in MAP.items():
         continue
     print(f"[RUN]  {name}: {h['cmd']}")
     r = subprocess.run(h["cmd"], shell=True, capture_output=True, text=True, encoding="utf-8", errors="replace")
+    # As duas últimas linhas do harness continuam saindo LITERAIS: é o fecho dele
+    # (razão histórica D/T ou `CAMPANHA NÃO CONCLUÍDA`, R13) e o único diagnóstico
+    # que sobra quando o harness morre antes de emitir mutante nenhum. O relato
+    # dos não-KILL é ADITIVO a isso — nada foi trocado por nada.
     tail = [l for l in (r.stdout or "").splitlines() if l.strip()][-2:]
     for l in tail:
         print("       " + l)
+    # [013/E3 passo 0] os não-KILL param de ser descartados: identidade, gate
+    # esperado, estado e a causa nas palavras do harness. Um `[FAIL]` que diz
+    # "2 problemas" sem dizer QUAIS é a doença desta demanda cometida no próprio
+    # julgador. Só relata — o veredito é a linha abaixo, e só ela.
+    mut_relata(name, r.stdout, r.returncode)
     ran += 1
     if r.returncode != 0:
         fails += 1

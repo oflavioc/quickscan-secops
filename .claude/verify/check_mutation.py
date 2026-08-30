@@ -553,7 +553,295 @@ def mut_relata(name, saida, returncode):
               f"nomeado(s) aqui: " + ", ".join(t["id"] for t in sobra))
 
 
-fails = IC_FAILS  # [013] a seção de integridade acima já contou seus FAIL nomeados
+# ═══════════════════════════════════════════════════════════════════════════
+# IC-9 · EXCEÇÃO NOMINAL DE MUTANTE SOBREVIVENTE (013 · addendum de 2026-08-30)
+#
+# Autorização: o proprietário autorizou NOMINALMENTE, no chat de 2026-08-30, que
+# o stage `mutation` passe a honrar exceção nominal do `known_issues.json` — até
+# aqui só `check_markers.py`, `check_suites.py` e o `compliance-audit` o
+# consultavam. Não é delegação genérica: muda o que o gate EXIGE, e por isso foi
+# ratificado nominalmente.
+#
+# Bloco ADITIVO: roda DEPOIS do fecho da seção de integridade (IC-1…IC-6, que
+# não é tocada) e ANTES do laço de trigger, com contador PRÓPRIO — a linha
+# canônica `---- integridade: N problema(s) ----` continua contando só o que
+# sempre contou. Independe de `requires` e de qualquer alvo ter mudado, pela
+# mesma razão de T7: exceção podre reprova mesmo quando nenhuma campanha é
+# exigida.
+#
+# As quatro cláusulas duras, na ordem em que o proprietário as fixou:
+#   1. NOMINAL, nunca abrangente — a exceção nomeia harness + id do mutante +
+#      gate, um de cada. Curinga, campo vazio ou coleção reprovam (IC-9.1).
+#   2. PRAZO obrigatório (`remocao_prevista`) — o `_meta` do próprio
+#      known_issues diz que exceção sem prazo vira permissão permanente (IC-9.1).
+#   3. IMPRESSA, nunca silenciosa — o veredito do perdão carrega a LINHA que o
+#      stage imprime, com id da exceção, mutante e prazo (IC-9.4, cenário i).
+#      Verde que não conta que houve exceção é a doença desta demanda.
+#   4. EXCEÇÃO OBSOLETA REPROVA — se o mutante nomeado deixar de sobreviver, a
+#      exceção perdeu o motivo. DUAS direções, medidas em lugares diferentes:
+#      IC-9.3 pelo REGISTRO (`mutation-matrix.json` volta a dizer `KILL`) e
+#      IC-9.4 cenário ii pela EXECUÇÃO (o bloco do mutante volta a `DETECTADO`).
+#      Exceção que sobrevive à própria razão apodrece como as âncoras que a
+#      demanda 013 acabou de consertar.
+#
+# Contrato C5 — o seam que o laço de campanha tem de expor, e que esta asserção
+# sonda EM PROCESSO (mesma forma de IC-2, que sonda `have("python")` com env
+# adversarial). A sonda usa dados SINTÉTICOS, nunca a entrada real: o mecanismo
+# tem de ser medido também depois que a última exceção for removida.
+#
+#   mut_perdao(harness, blocos, excecoes) -> dict          FUNÇÃO PURA (sem I/O)
+#     harness  — nome do harness no mutation_map.json
+#     blocos   — a lista `todos` de mut_ler(): {estado, id, desc, gate, resto}
+#     excecoes — as entradas `lint == "mutation-sobrevivente"` do known_issues
+#     devolve  {"perdoados":     [id…],  # SOBREVIVENTE coberto por exceção viva
+#               "obsoletas":     [id…],  # nomeado pela exceção e DETECTADO agora
+#               "remanescentes": [id…],  # não-KILL que exceção nenhuma cobre
+#               "aplicadas":     [linha…],  # o que o stage IMPRIME (cláusula 3)
+#               "perdoa_o_exit": bool}      # o veredito único que o laço consome
+#     `perdoa_o_exit` é True SSE houve ao menos um perdão, nenhuma obsoleta e
+#     nenhum remanescente. Campanha que morreu antes de emitir mutante nenhum
+#     (`blocos == []`) NUNCA é perdoada — borda medida no cenário vi.
+#
+# O que este bloco NÃO faz: não escreve (R7 §3), não muta, não invoca processo
+# externo, não decide veredito de campanha. Só mede.
+# ═══════════════════════════════════════════════════════════════════════════
+IC9_LINT = "mutation-sobrevivente"
+IC9_CAMPOS = ("harness", "mutante", "gate")
+IC9_CURINGA = re.compile(r"[*?%]|^\s*(todos|todas|qualquer|all|any)\s*$", re.I)
+EX_FAILS = 0
+
+
+def ex_ok(msg):
+    print(f"[OK]   IC-9: {msg}")
+
+
+def ex_fail(alvo, causa):
+    global EX_FAILS
+    EX_FAILS += 1
+    print(f"[FAIL] IC-9: {alvo} · {causa}")
+
+
+def ex_ids_do_harness(nome):
+    """(ids declarados pelo harness, oráculo que respondeu).
+
+    Mesma escada de IC-5/IC-6: preflight (C1) primeiro, leitura estática do
+    fonte como reserva. Quem responde nunca fica implícito — o oráculo sai
+    impresso junto do veredito.
+    """
+    d = IC_PREFLIGHT.get(nome)
+    if d:
+        return [m.get("id", "?") for m in d["mutantes"]], "preflight (C1)"
+    h = MAP.get(nome) or {}
+    fontes = [f for f in ic_fontes(h) if os.path.exists(f)]
+    if not fontes:
+        return [], "nenhum (harness sem preflight e sem fonte varrível)"
+    return ic_estatico(fontes[0])[0], "leitura estática do fonte (reserva)"
+
+
+print("---- exceção nominal de mutante sobrevivente (013 · IC-9) ----")
+
+try:
+    EX_ENTRADAS = [i for i in json.load(open(".claude/verify/known_issues.json",
+                                             encoding="utf-8"))["issues"]
+                   if i.get("lint") == IC9_LINT]
+except Exception as _e_ki:
+    EX_ENTRADAS = []
+    ex_fail("known_issues.json", f"não pôde ser lido para IC-9: "
+                                 f"{type(_e_ki).__name__}: {_e_ki}")
+try:
+    EX_MATRIZ = json.load(open(".claude/verify/mutation-matrix.json", encoding="utf-8"))
+except Exception:
+    EX_MATRIZ = None   # IC-5 acima já nomeia a falha de leitura; não se duplica FAIL
+
+# ── IC-9.1/9.2/9.3 · a entrada: nominal, com prazo, com objeto vivo e não obsoleta
+if not EX_ENTRADAS:
+    ex_ok(f"nenhuma exceção `{IC9_LINT}` declarada em known_issues.json — nada a "
+          "honrar (o mecanismo continua medido abaixo, com dados sintéticos)")
+for _e in EX_ENTRADAS:
+    _kid = str(_e.get("id") or "?")
+    _exc = _e.get("excecao")
+    if not isinstance(_exc, dict):
+        ex_fail(f"known_issues/{_kid}", "sem objeto `excecao` — exceção que não nomeia "
+                                        "harness, mutante e gate é abrangente por omissão")
+        continue
+    _ruim = False
+    for _c in IC9_CAMPOS:
+        _v = _exc.get(_c)
+        if not isinstance(_v, str) or not _v.strip():
+            ex_fail(f"known_issues/{_kid}", f"`excecao.{_c}` ausente, vazio ou não-texto "
+                                            f"({_v!r}) — a exceção é NOMINAL: harness + id do "
+                                            f"mutante + gate, um de cada, nunca coleção")
+            _ruim = True
+        elif IC9_CURINGA.search(_v):
+            ex_fail(f"known_issues/{_kid}", f"`excecao.{_c}` = {_v!r} carrega curinga — nada "
+                                            "de 'tolerar sobreviventes do harness inteiro'")
+            _ruim = True
+    for _c in ("motivo", "remocao_prevista"):
+        if not isinstance(_e.get(_c), str) or not _e[_c].strip():
+            ex_fail(f"known_issues/{_kid}", f"`{_c}` ausente ou vazio — o `_meta` do próprio "
+                                            "known_issues diz que exceção sem prazo vira "
+                                            "permissão permanente")
+            _ruim = True
+    if _ruim:
+        continue
+    _hn, _mn, _gn = (_exc["harness"].strip(), _exc["mutante"].strip(), _exc["gate"].strip())
+    # IC-9.2 · o objeto da exceção existe (exceção a fantasma é permissão eterna)
+    if _hn not in MAP:
+        ex_fail(f"known_issues/{_kid}", f"harness {_hn!r} não existe em mutation_map.json — "
+                                        "exceção que nomeia fantasma nunca pode ser cumprida")
+        continue
+    _ids, _orc = ex_ids_do_harness(_hn)
+    if not _ids:
+        ex_fail(f"known_issues/{_kid}", f"os mutantes de {_hn} não puderam ser obtidos por "
+                                        f"oráculo nenhum — existência do mutante nomeado NÃO "
+                                        f"MEDIDA (R10 §2: não é SKIP, é FAIL)")
+        continue
+    if _mn not in _ids:
+        ex_fail(f"known_issues/{_kid}", f"o harness {_hn} não declara o mutante {_mn!r} "
+                                        f"[oráculo: {_orc}] — a exceção nomeia um fantasma")
+        continue
+    ex_ok(f"{_kid}: {_hn}/{_mn} existe no harness [oráculo: {_orc}] · prazo: "
+          f"{_e['remocao_prevista']}")
+    # IC-9.3 · não obsoleta, pelo REGISTRO (a direção medível sem Chromium)
+    if EX_MATRIZ is None:
+        ex_fail(f"known_issues/{_kid}", "mutation-matrix.json ilegível — a exceção fica sem "
+                                        "prova registrada que a sustente; NÃO MEDIDA (R10 §2)")
+        continue
+    _par = next((p for p in EX_MATRIZ.get("pares", [])
+                 if str(p.get("mutante", "")).strip() == _mn
+                 and re.match(r"\s*" + re.escape(_hn) + r"\b", str(p.get("harness", "")))), None)
+    if _par is None:
+        ex_fail(f"known_issues/{_kid}", f"nenhum par {_hn}/{_mn} em mutation-matrix.json — "
+                                        "exceção sem par não tem última prova, e sem última "
+                                        "prova não há como saber se ela ficou obsoleta")
+        continue
+    _up = _par.get("ultima_prova") or {}
+    _res, _data = _up.get("resultado"), _up.get("data")
+    if _res is None:
+        ex_fail(f"known_issues/{_kid}", f"o par {_hn}/{_mn} não tem `ultima_prova.resultado` — "
+                                        "a obsolescência da exceção fica NÃO MEDIDA (R10 §2)")
+    elif _res == "KILL":
+        ex_fail(f"known_issues/{_kid}",
+                f"EXCEÇÃO OBSOLETA — mutation-matrix.json registra ultima_prova.resultado = "
+                f"'KILL' para {_hn}/{_mn} ({_data}): o mutante voltou a morrer e a exceção "
+                f"perdeu o motivo. Remova a entrada (prazo declarado: "
+                f"{_e['remocao_prevista']!r}) — exceção que sobrevive à própria razão apodrece "
+                "exatamente como âncora podre")
+    else:
+        _gp = str(_par.get("gate", "")).strip()
+        if not _gp.startswith(_gn):
+            ex_fail(f"known_issues/{_kid}", f"gate declarado {_gn!r} diverge do par na matriz "
+                                            f"({_gp!r}) — a exceção tem de nomear o gate que de "
+                                            "fato deixou de reprovar")
+        else:
+            ex_ok(f"{_kid}: {_hn}/{_mn} segue não-KILL no registro (ultima_prova.resultado = "
+                  f"{_res!r}, {_data}) · gate {_gn} · classificação: "
+                  f"{_par.get('classificacao')!r}")
+
+# ── IC-9.4 · o mecanismo tem dentes (sonda em processo, contrato C5) ─────────
+# Dados SINTÉTICOS por construção: o poder discriminante do perdão não pode
+# depender de existir uma exceção real, senão ele deixa de ser medido no dia em
+# que a última for cumprida — que é justamente o dia em que ninguém olha.
+IC9_SONDA_H = "harness-sonda-013"
+IC9_SONDA_A = "MUT-SONDA-A-013"
+IC9_SONDA_B = "MUT-SONDA-B-013"
+IC9_SONDA_G = "GATE-SONDA-013"
+IC9_SONDA_KI = "KI-SONDA-013"
+IC9_SONDA_PRAZO = "sonda em processo — não é exceção real"
+IC9_SONDA_EXC = [{"id": IC9_SONDA_KI, "lint": IC9_LINT,
+                  "excecao": {"harness": IC9_SONDA_H, "mutante": IC9_SONDA_A,
+                              "gate": IC9_SONDA_G},
+                  "motivo": "sonda de IC-9 — não vem do known_issues.json",
+                  "remocao_prevista": IC9_SONDA_PRAZO}]
+
+
+def ic9_bloco(estado, mid):
+    return {"estado": estado, "id": mid, "desc": "sonda IC-9 (sintética)",
+            "gate": IC9_SONDA_G, "resto": ""}
+
+
+IC9_CENARIOS = [
+    ("i · positivo canônico (o nomeado sobrevive, o vizinho morre)", IC9_SONDA_H, True,
+     [ic9_bloco("SOBREVIVENTE", IC9_SONDA_A), ic9_bloco("DETECTADO", IC9_SONDA_B)],
+     {"perdoados": [IC9_SONDA_A], "obsoletas": [], "remanescentes": [], "perdoa_o_exit": True}),
+    ("ii · EXCEÇÃO OBSOLETA (o nomeado voltou a KILL)", IC9_SONDA_H, True,
+     [ic9_bloco("DETECTADO", IC9_SONDA_A), ic9_bloco("DETECTADO", IC9_SONDA_B)],
+     {"perdoados": [], "obsoletas": [IC9_SONDA_A], "remanescentes": [], "perdoa_o_exit": False}),
+    ("iii · sobrevivente NOVO ao lado do perdoado", IC9_SONDA_H, True,
+     [ic9_bloco("SOBREVIVENTE", IC9_SONDA_A), ic9_bloco("SOBREVIVENTE", IC9_SONDA_B)],
+     {"perdoados": [IC9_SONDA_A], "obsoletas": [], "remanescentes": [IC9_SONDA_B],
+      "perdoa_o_exit": False}),
+    ("iv · a exceção é nominal ao HARNESS, não só ao id", "outro-harness-013", True,
+     [ic9_bloco("SOBREVIVENTE", IC9_SONDA_A)],
+     {"perdoados": [], "obsoletas": [], "remanescentes": [IC9_SONDA_A], "perdoa_o_exit": False}),
+    ("v · NÃO EXECUTADO não é sobrevivência perdoável", IC9_SONDA_H, True,
+     [ic9_bloco("NÃO EXECUTADO", IC9_SONDA_A)],
+     {"perdoados": [], "obsoletas": [], "remanescentes": [IC9_SONDA_A], "perdoa_o_exit": False}),
+    ("vi · campanha que não emitiu mutante nenhum", IC9_SONDA_H, True, [],
+     {"perdoados": [], "obsoletas": [], "remanescentes": [], "perdoa_o_exit": False}),
+    ("vii · regressão: sem exceção declarada, nada muda", IC9_SONDA_H, False,
+     [ic9_bloco("SOBREVIVENTE", IC9_SONDA_A)],
+     {"perdoados": [], "obsoletas": [], "remanescentes": [IC9_SONDA_A], "perdoa_o_exit": False}),
+]
+
+_ic9_perdao = globals().get("mut_perdao")
+if not callable(_ic9_perdao):
+    ex_fail("check_mutation.py",
+            "o julgador não expõe `mut_perdao(harness, blocos, excecoes)` (contrato C5) — a "
+            "exceção nominal do known_issues.json não é honrada por mecanismo nenhum: um "
+            "SOBREVIVENTE conhecido e classificado segue indistinguível de um novo, e uma "
+            "exceção que já perdeu a razão não tem por onde reprovar")
+else:
+    _ic9_maus = 0
+    for _rot, _h, _com_exc, _blocos, _quer in IC9_CENARIOS:
+        _exc_in = IC9_SONDA_EXC if _com_exc else []
+        try:
+            _got = _ic9_perdao(_h, _blocos, _exc_in)
+        except Exception as _err:
+            ex_fail(f"mut_perdao · cenário {_rot}",
+                    f"levantou {type(_err).__name__}: {_err}")
+            _ic9_maus += 1
+            continue
+        if not isinstance(_got, dict):
+            ex_fail(f"mut_perdao · cenário {_rot}",
+                    f"C5 exige dict; veio {type(_got).__name__}")
+            _ic9_maus += 1
+            continue
+        for _k, _v in _quer.items():
+            _r = _got.get(_k)
+            if isinstance(_v, list):
+                _r = sorted(_r) if isinstance(_r, (list, tuple)) else _r
+                _v = sorted(_v)
+            if _r != _v:
+                ex_fail(f"mut_perdao · cenário {_rot}", f"`{_k}` = {_r!r}, esperado {_v!r}")
+                _ic9_maus += 1
+        if _quer["perdoa_o_exit"]:
+            _linhas = _got.get("aplicadas")
+            if not isinstance(_linhas, list) or not _linhas:
+                ex_fail(f"mut_perdao · cenário {_rot}",
+                        "perdoou sem `aplicadas` — verde que não conta que houve exceção é a "
+                        "doença desta demanda: a exceção é IMPRESSA, nunca silenciosa")
+                _ic9_maus += 1
+            else:
+                _txt = " ".join(str(x) for x in _linhas)
+                _faltam = [t for t in (IC9_SONDA_KI, IC9_SONDA_A, IC9_SONDA_PRAZO)
+                           if t not in _txt]
+                if _faltam:
+                    ex_fail(f"mut_perdao · cenário {_rot}",
+                            "a linha de aplicação não nomeia " +
+                            ", ".join(repr(t) for t in _faltam) +
+                            " — id da exceção, mutante e prazo saem impressos, ou o perdão "
+                            "é silencioso")
+                    _ic9_maus += 1
+    if not _ic9_maus:
+        ex_ok(f"mut_perdao discrimina nos {len(IC9_CENARIOS)} cenários da sonda: perdão · "
+              "OBSOLETA · sobrevivente novo · harness alheio · não executado · campanha "
+              "vazia · sem exceção")
+
+print(f"---- exceção nominal: {EX_FAILS} problema(s) nomeado(s) ----")
+
+fails = IC_FAILS + EX_FAILS  # [013] integridade (IC-1…IC-6) + exceção nominal (IC-9),
+                             # cada bloco com o seu contador e o seu fecho nomeado
 ran = 0
 for name, h in MAP.items():
     due = changed is None or any(t in changed for t in h["targets"])

@@ -32,6 +32,28 @@
    Nenhum gate de `tests_009_leitura.js` mede geometria.
 
    Filtro de depuração: D009_MUT_ONLY=D009-M5,D009-M9 node tests_009_mutants.js
+
+   DEMANDA 013 · integridade da campanha — E1 neste harness
+   -------------------------------------------------------
+   T1 · o interpretador tem UMA fonte: `MUTATION_PY` (override do operador) ou o
+        padrão por plataforma da referência da casa (tests_core_mutants.js:22).
+        É a MESMA regra de `mutation_py_bin()` em `check_mutation.py` (contrato
+        C4): sem ela o stage aferia o requisito por um binário e a campanha
+        invocava outro — a divergência entre o que se declara e o que se invoca
+        que a 013 existe para matar. O caminho do interpretador E o do script vão
+        entre aspas (R10 §7): a família P2.1-16/I11/S64 quebrou exatamente por
+        diretório com espaço no caminho.
+   T6 · `--preflight` (argv): resolve o interpretador e CONTA as ocorrências de
+        cada âncora no arquivo-alvo. Não muta, não reconstrói, não executa gate e
+        não escreve nada (R7 §3) — nem o rebuild que `main()` faz na primeira
+        linha. Um objeto JSON em stdout (contrato C1); todo texto humano vai para
+        stderr. Exit 0 sse interpretador resolvido e toda âncora com
+        ocorrencias == 1. `mutation_map.json` declara `"preflight": true` no
+        MESMO commit — a guarda de fonte do julgador recusa a chave sem o modo.
+
+   Shape copiado de `tests_p51_mutants.js` (R9: cópia de shape, nunca extração de
+   runner comum). Nenhum `find`/`repl` foi tocado por esta edição: reancorar é
+   outro eixo e outro dono; âncora fora de ocorrencias == 1 é ACHADO reportado.
    ============================================================================ */
 "use strict";
 
@@ -39,8 +61,35 @@ const { execSync } = require("child_process");
 const fs = require("fs"), path = require("path"), crypto = require("crypto");
 
 const HERE = __dirname;
-const PY = process.platform === "win32" ? "python" : "python3";
+
+/* ── T1 · interpretador: fonte ÚNICA, a mesma de check_mutation.py (C4) ──────
+   `MUTATION_PY` é o override explícito do operador; sem ele vale o padrão da
+   referência da casa (tests_core_mutants.js:22). Precedente de forma do seam:
+   `CHROME_PATH`. O que o stage declara e o que a campanha invoca passam a ser a
+   MESMA coisa. */
+const PY_ORIGEM = process.env.MUTATION_PY ? "MUTATION_PY" : "padrão";
+const PY = process.env.MUTATION_PY || (process.platform === "win32" ? "python" : "python3");
+const BUILD_PY = path.join(HERE, "build_v32_html.py");
 const sha = p => crypto.createHash("sha256").update(fs.readFileSync(p)).digest("hex");
+
+/* Resolve o binário no PATH sem lançar processo NENHUM — o preflight não pode
+   executar nada (C1 / R7 §3). Equivale ao shutil.which() de check_mutation.py. */
+function resolvePy(nome) {
+  if (nome.indexOf("/") >= 0 || nome.indexOf("\\") >= 0) {
+    try { return fs.statSync(nome).isFile() ? path.resolve(nome) : null; } catch (e) { return null; }
+  }
+  const exts = process.platform === "win32"
+    ? [""].concat((process.env.PATHEXT || ".COM;.EXE;.BAT;.CMD").split(";").filter(Boolean))
+    : [""];
+  for (const dir of String(process.env.PATH || "").split(path.delimiter)) {
+    if (!dir) continue;
+    for (const ext of exts) {
+      const cand = path.join(dir.replace(/^"|"$/g, ""), nome + ext);
+      try { if (fs.statSync(cand).isFile()) return cand; } catch (e) { /* próximo candidato */ }
+    }
+  }
+  return null;
+}
 
 const WS_JS = path.join(HERE, "ui_p52_workspace_v32.js");
 const WS_CSS = path.join(HERE, "ui_p52_workspace_v32.css");
@@ -342,7 +391,9 @@ const MUTANTS = [
 
 /* ========================================================================== */
 
-function build() { execSync(`${PY} "${path.join(HERE, "build_v32_html.py")}"`, { cwd: HERE, stdio: "pipe" }); }
+/* Interpretador E script SEMPRE entre aspas (R10 §7) — com MUTATION_PY o nome
+   pode ser um caminho completo, e caminho com espaço quebra o comando. */
+function build() { execSync(`"${PY}" "${BUILD_PY}"`, { cwd: HERE, stdio: "pipe" }); }
 
 function run(cmd, envOverride) {
   const env = Object.assign({}, process.env, envOverride || {});
@@ -358,6 +409,68 @@ function gateLine(out, gateId) {
 
 const ONLY = (process.env.D009_MUT_ONLY || "").split(",").map(x => x.trim()).filter(Boolean);
 const SELECTED = ONLY.length ? MUTANTS.filter(m => ONLY.indexOf(m.id) >= 0) : MUTANTS;
+
+/* Conjunto FECHADO de causas de não executável (T4) — o julgador só aceita estas
+   em `causa` do contrato C1; string fora do conjunto reprova IC-4 por si só. */
+const CAUSA = {
+  interpretador: "interpretador ausente",
+  ausente:       "âncora não encontrada",
+  ambigua:       "âncora ambígua"
+};
+
+/* Conta as ocorrências da âncora no arquivo-alvo. É CONTAGEM, não presença: 0 é
+   âncora podre e ≥2 é âncora ambígua — as duas reprovam, e a mutação nunca é
+   aplicada "na primeira ocorrência". Expressão IDÊNTICA à que o laço da campanha
+   usa antes de mutar (`src.split(m.find).length - 1`), para que o que o preflight
+   promete e o que a campanha faz não possam divergir. */
+function ocorrencias(m) {
+  return fs.readFileSync(m.file, "utf8").split(m.find).length - 1;
+}
+
+/* ── T6 · modo preflight (argv) · emite o contrato C1 ───────────────────────
+   Não muta, não reconstrói, não executa gate, não escreve arquivo nenhum.
+   stdout carrega SÓ o objeto JSON; todo texto humano vai para stderr. */
+function preflight(sel) {
+  const binario = resolvePy(PY);
+  const dados = {
+    harness: "d009",
+    arquivo: path.basename(__filename),
+    interpretador: { nome: PY, origem: PY_ORIGEM, resolvido: !!binario },
+    /* Declaração do que o harness realmente muta — oráculo de IC-6. Sai de
+       MUTANTS inteiro, não da seleção: D009_MUT_ONLY filtra a medição, não o alvo. */
+    arquivos_mutados: Array.from(new Set(MUTANTS.map(m => path.basename(m.file)))).sort(),
+    mutantes: []
+  };
+  for (const m of sel) {
+    const n = ocorrencias(m);
+    const e = { id: m.id, arquivo: path.basename(m.file), ocorrencias: n,
+                estado: n === 1 ? "ok" : "nao_executavel" };
+    if (n === 0) e.causa = CAUSA.ausente;
+    else if (n > 1) e.causa = CAUSA.ambigua;
+    dados.mutantes.push(e);
+  }
+  process.stdout.write(JSON.stringify(dados) + "\n");
+
+  const podres = dados.mutantes.filter(m => m.estado !== "ok");
+  process.stderr.write("PREFLIGHT d009 · " + dados.mutantes.length + " mutante(s) · interpretador " +
+    PY + " (" + PY_ORIGEM + "): " + (binario ? "resolvido em " + binario : "NÃO RESOLVIDO") + "\n");
+  for (const m of dados.mutantes) {
+    process.stderr.write("  " + (m.estado === "ok" ? "ok           " : "nao_executavel") + " " +
+      m.id + " · ocorrencias=" + m.ocorrencias + " em " + m.arquivo +
+      (m.causa ? " · " + m.causa : "") + "\n");
+  }
+  process.stderr.write(podres.length
+    ? podres.length + " âncora(s) fora de ocorrencias == 1: " + podres.map(m => m.id).join(", ") + "\n"
+    : "todas as âncoras com ocorrencias == 1\n");
+  if (!binario) process.stderr.write(CAUSA.interpretador + ": " + PY + "\n");
+  return (binario && podres.length === 0) ? 0 : 1;
+}
+
+/* Antes de qualquer efeito: `main()` reconstrói o HTML na primeira linha, e o
+   preflight não pode escrever nada (C1). */
+if (process.argv.slice(2).indexOf("--preflight") >= 0) {
+  process.exit(preflight(SELECTED));
+}
 
 (function main() {
   build();

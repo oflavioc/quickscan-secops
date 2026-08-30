@@ -33,6 +33,18 @@ parcial: o que se mede localmente é o julgador (`check_mutation.py`) e o
 `env` se faz com sonda (`node -e "console.log(process.env.X)"`), nunca com a
 suíte real.
 
+**Quando a worktree TEM `node_modules` (verificado em `phase5-009`, 2026-08-30):**
+o limite acima se inverte e vira risco. Com node+python presentes, o laço de
+trigger DISPARA de verdade a campanha de qualquer harness cujo `requires` esteja
+satisfeito e cujos alvos tenham mudado contra a base (`d009` é o caso: node +
+python, sem Chromium). `MUTATION_DEFER_MISSING=1` não protege — ele só cobre
+`requires` AUSENTE. Para medir IC-1…IC-10 sem disparar campanha: driver que lê
+`check_mutation.py`, corta no marcador `\nran = 0\n` (primeira linha do laço,
+ocorrência única) e faz `exec` só do cabeçalho. Tudo acima do corte roda com os
+bytes REAIS do julgador, incluindo os três fechos nomeados; o que fica de fora é
+o laço de trigger, a execução de campanha e a checagem final de árvore suja.
+Declarar sempre quantos bytes de quantos foram executados.
+
 **Quando a entrega são DOIS commits e eu não posso commitar:** carregar a divisão
 no **índice** — `git apply --cached <patch-do-commit-a>`, deixando o working tree
 com (a)+(b). `git diff --cached` vira o commit (a) e `git diff` vira o (b), sem eu

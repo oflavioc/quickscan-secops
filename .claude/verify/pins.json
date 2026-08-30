@@ -1,7 +1,7 @@
 {
   "_meta": {
     "descricao": "Registry único de pins — fonte de identidade dos artefatos (R8). Hashes = SHA-256 dos blobs de HEAD. Alterar arquivo pinado exige regenerar este registry no MESMO PR, com motivo no commit.",
-    "gerado_de_head": "c8334a85ca316e692a8c58dcf901493310524770",
+    "gerado_de_head": "bab7e357ed85105d2ea3668ed94fd064a5dc7837",
     "gerado_em": "2026-08-30",
     "exclusoes": [
       "docs_phase5/**",
@@ -71,7 +71,7 @@
     ".claude/verify/check_lint_arch.py": "aac4e0f8be4cc25801dfe21dbf56374d1bce1a43a8fa4e1b67ab0cddfd20f9ee",
     ".claude/verify/check_m41.py": "f5f59097ab1510d6bbd0a3e63272e00da95bb65c818c23a7fff2141e8f5d9b4f",
     ".claude/verify/check_markers.py": "5623d9cb3203cf16a307014a4255bc3d8ecf08e469eaf2f110927802a9b2fe7c",
-    ".claude/verify/check_mutation.py": "8a04dd3ccdaf681c56296057c6eacc19695050df1615ea613afa535627236ae9",
+    ".claude/verify/check_mutation.py": "90dc5cd04259220ab8e136301af1945daec74d7385811e3af295a3f9d09d286a",
     ".claude/verify/check_state.py": "934999bd6e989bd09e17d322b65ac1c92fece5db85d409558b28de5b6b2fc212",
     ".claude/verify/check_suites.py": "457516eae3a5f98ac894a13fb6283f30a2f5e5dce158d24fced5295fd1978dfe",
     ".claude/verify/check_tdd.py": "1077e9025a9559f34e23658bba12a98ac6fb65c718d057a62687251671de2ce9",
@@ -83,7 +83,7 @@
     ".claude/verify/gen_evidence_bridge.py": "1cb4d6cc0ad7ae4e6a801286202c637a6cfb527475e92a84e6197449c4209cf2",
     ".claude/verify/gen_pins.py": "730043800a41b4cfbb799945dd6499df8ba1375096f5f748df01c8c2d12a407a",
     ".claude/verify/invariants.json": "b8571facafbe6098cc643886cd158f877dd702c0cba6ca5addff34fc3e10bee6",
-    ".claude/verify/known_issues.json": "7f5e0404fd12725778ac032a136604cddbe52d062a2f3a658a91f061a36bb820",
+    ".claude/verify/known_issues.json": "b9dd23b1a05ab09a11122aee68d555938f250223de2911de8c56079ddd742140",
     ".claude/verify/mutation-matrix.json": "8400a4e1bb96aade92b65c5b1d1d42af4cd8e91e181277184095dbcb135291c2",
     ".claude/verify/mutation_map.json": "9e49f50a34d0432fc2c396d416f8a435d21ac1999b89a182c1716dc134cf6809",
     ".claude/verify/pipeline.yaml": "4c87841da3b876cf7b594153f836ece74565b4a10f69ce296efff5d7751cf83a",
@@ -178,6 +178,7 @@
     "specs/013-integridade-da-campanha/matriz-gate-mutante.md": "da3c4b16583a5d467407286013520fe4e29648049eba9ddc29fbfc9edbdfd81a",
     "specs/013-integridade-da-campanha/plan.md": "fdb91f60b6bb3c97eccb71c513e4035e3b52818d95904199cbc9075ede02d026",
     "specs/013-integridade-da-campanha/red-excecao-nominal.md": "e70fe77d7d7097851caa04f96c0ed5acc74f6e69fd2a6b93f1f5492c732f9381",
+    "specs/013-integridade-da-campanha/red-guarda-leitura-parcial.md": "cb9ab618c2b5f8ba63a9aa37448d44e8709182411e62ab7c914297219ac189f8",
     "specs/013-integridade-da-campanha/red-integridade.md": "7dc99a32b75b2a357a8c4557f43c755acab2142aaa974dc9f0bce5ac4eaf9e50",
     "specs/013-integridade-da-campanha/refinement.md": "2c931afa07a09a5885fadada705d3b90ed3f76f71c92f38123452a57d0a247ec",
     "specs/013-integridade-da-campanha/spec.md": "7cf0743576f55efca5180d475c1c8eabbd08496d50ea99de8daabaaf9be72da9",

@@ -635,3 +635,82 @@ família** — requisito declarado em `requires` sem asserção que o sustente. 
 próximo requisito decorativo nasceria do mesmo jeito e ficaria igualmente
 invisível, porque o sinal de que ele é decorativo é justamente **a ausência de
 qualquer falha na sua história**.
+## EA-7 — Gate verde que já não pode reprovar: a Fase 5.2 assumiu a composição que o mutante da 5.1 ataca
+
+**Status**: `aberto`
+
+**Aberto em**: 2026-08-29. Encontrado pelo `qa-engineer` na E3 da demanda 013, ao
+classificar os dois não-KILL da campanha no vocabulário fechado. Janela de
+regressão: `4aa1f12..HEAD`.
+
+### O que o sistema faz quando falha
+
+**Passa.** `P51-VIS1` está verde no baseline e continua verde COM a mutação
+aplicada — o harness reporta `SOBREVIVENTE M51-01 · o gate esperado NÃO
+reprovou`. Não é o silêncio do `EA-3`, nem o aviso tardio do `EA-4`, nem o
+rótulo mentiroso do `EA-5`: aqui **todo o instrumento está saudável**. A âncora
+é única, o `reason` casa mensagens que o gate ainda emite, a mutação é aplicada
+e o gate roda. O que se perdeu foi o **poder discriminante**: o gate afirma uma
+propriedade que a mutação não consegue mais violar, porque quem implementa a
+propriedade mudou de camada.
+
+É a doença que o `EA-4` NÃO cobre. Âncora podre grita na hora em que alguém
+conta ocorrências. Esta não: a contagem é 1, o preflight sai 0, e o par parece
+íntegro sob todos os instrumentos que a 013 construiu.
+
+### Cadeia arquivo:linha → efeito
+
+- **`tests_p51_mutants.js:125-131`** — `M51-01` ("layout desktop volta a
+  empilhar mapa e pergunta") muta `ui_p50_v32.css`, trocando
+  `grid-template-columns:minmax(0,1fr) 340px` / `grid-template-areas:"main side"`
+  por uma coluna só e áreas empilhadas.
+- **`ui_p50_v32.css:693-702`** (Fase 5.1, nascida em `4aa1f12`) — o sítio da
+  âncora: `body[data-uxscreen="question"] .wrap` com as duas colunas e, em
+  `:701-702`, `grid-area:side` / `grid-area:main` nos filhos.
+- **`ui_p52_workspace_v32.css:70-83`** (Fase 5.2, nascida em `c1e3649`) — passou a
+  governar a MESMA composição: `html body[data-uxscreen="question"] .wrap` declara
+  `grid-template-columns: minmax(0, 1fr) clamp(320px, 23vw, 440px)`, e `:80-81`
+  colocam `#app` e `#p50-shell` por `grid-column`/`grid-row` explícitos.
+- **Cascata, medida** — a regra da 5.2 tem especificidade `(0,2,2)` contra
+  `(0,2,1)` da 5.1 (conferido com `@bramus/specificity`, já presente em
+  `node_modules`), logo vence `grid-template-columns` por especificidade, em
+  qualquer ordem. As colocações dos filhos empatam em `(1,2,1)` e são decididas
+  por ordem de fonte — e **`build_v32_html.py:76`** inlina `ui_p52_workspace_v32.css`
+  DEPOIS de `ui_p50_v32.css`, então a 5.2 vence de novo.
+- **Efeito** — a mutação recai sobre declarações que já não decidem nada. O grid
+  renderizado em ≥1180px é o da 5.2, idêntico com e sem mutação; `P51-VIS1`
+  (`tests_p50_chromium.js:3352-3430`) mede caixas reais e não tem o que reprovar.
+  As três alternativas do `reason` (`:3405`, `:3408`, `:3412`) continuam vivas e
+  emissíveis — só que nada as dispara.
+
+### Por que o remédio não cabia na demanda 013
+
+Escrever asserção NOVA sobre comportamento de produto é outro tipo de trabalho e
+outro dono (spec `013` §Fora de escopo; §Riscos 3 manda a demanda **parar** nesta
+saída). Duas rotas plausíveis, nenhuma decidida aqui: (i) reancorar `M51-01` no
+sítio da 5.2 que hoje governa — mas isso é mover o par para outra fase e outra
+camada, decisão de desenho; (ii) gate novo que detecte **regra morta** — CSS da
+5.0/5.1 inteiramente sobreposta por camada posterior —, que é a classe geral do
+defeito e vale para além deste par.
+
+### O que este achado NÃO decide, e o que fica medido
+
+A causa foi verificada por **análise estática de cascata** na árvore real e por
+oráculo independente de especificidade; a execução do gate em navegador **não**
+foi possível nesta máquina (sem Chromium: `CHROME_PATH` vazia, cache
+`ms-playwright` inexistente — `tests_p50_chromium.js` devolve 23
+`SKIP … NÃO EXECUTADO (browser indisponível)`). O `19/20 · SOBREVIVENTE M51-01`
+é execução do job `visual` do CI, relatada, não medida aqui. A classificação
+`gate sem poder discriminante (achado EA-7)` está registrada no par
+(`.claude/verify/mutation-matrix.json`) e em `dividas_declaradas`; a narrativa
+com as provas vive em
+`specs/013-integridade-da-campanha/matriz-gate-mutante.md` §15.
+
+**A generalização que interessa**: a Fase 5.2 (`c1e3649`, e a integração
+`df5d9f6`) reescreveu composição que camadas anteriores declaravam. `M51-01` é o
+caso que a campanha conseguiu enxergar porque alguém foi olhar um número de
+19/20. **Nenhum instrumento deste repositório procura a família** — par cuja
+âncora vive em CSS que uma camada posterior sobrepõe. Os outros pares da `p51`
+que mutam `ui_p50_v32.css` (`M51-08`) e todos os da `p50` que mutam o mesmo
+arquivo estão sujeitos ao mesmo mecanismo, e passariam pelo preflight do mesmo
+jeito.

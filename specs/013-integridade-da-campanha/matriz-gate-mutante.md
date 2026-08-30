@@ -1060,3 +1060,294 @@ node tests_p52_mutants.js --preflight  ->  exit 0 · todas as âncoras com ocorr
 | `IC-1` (prefixo POSIX e literal de interpretador) | **verde nos quatro harnesses** — `53`/`20`/`107`/`3` `cmd`, nenhum com prefixo |
 | `IC-6` (`p51.targets`) | **verde**, 7 caminhos |
 | registro canônico de suítes (R10 §3) | **nada a acrescentar**: as harnesses de mutação não vivem em `expected_suites.json` (são dirigidas pelo stage `mutation`, não pelo stage `suites`) — nenhuma suíte nova nasceu nesta wave |
+---
+
+# E3 (W7) — classificação dos dois não-KILL no vocabulário fechado
+
+## 15. As duas saídas, e por que são diferentes
+
+O red desta seção é o relato do job `visual` do CI, **não medido aqui** (sem
+Chromium nesta máquina):
+
+```
+p50:  52/53   · não-KILL: SOBREVIVENTE P50::M51 · gate P50-PR1  · reprovou por motivo diferente do esperado
+p51:  19/20   · não-KILL: SOBREVIVENTE M51-01   · gate P51-VIS1 · o gate esperado NÃO reprovou
+p52: 107/107  · não-KILL: nenhum
+```
+
+As duas **notas** do harness já separam os casos, e a classificação da spec
+(§Classificação de par não-KILL) confirma a separação:
+
+| par | nota do harness | classificação | conserto |
+|---|---|---|---|
+| `P50::M51` | `reprovou por motivo diferente do esperado` | **rot semântica** | **em escopo** — o par é re-derivado da mensagem atual |
+| `p51/M51-01` | `o gate esperado NÃO reprovou` | **gate sem poder discriminante (achado EA-7)** | **fora de escopo** — a demanda para; achado + demanda própria |
+
+A diferença não é de grau: no primeiro caso **o gate reprovou** (a propriedade
+está viva e medida, envelheceu a mensagem); no segundo **o gate passou** (a
+propriedade está viva e o gate a afirma, mas a mutação não consegue mais
+violá-la).
+
+---
+
+## 16. `P50::M51` — rot semântica, e a re-derivação do `reason`
+
+### 16.1 As três perguntas da triagem (respondidas antes da edição)
+
+**(1) A propriedade que o `desc` documenta ainda existe?** Sim.
+`ui_p50_v32.css:637-656` é explícito: *"Toda decisão de neutralização da Camada 5
+vive AQUI dentro"* — dentro de `@media screen`. O bloco existe, as quatro regras
+existem, e a razão registrada (B-AUD-503-2 + B-AUD-FIN-503-1) é a mesma. A
+mutação — remover o `@media screen{…}` que envolve as quatro — continua sendo
+uma violação real da propriedade. **Não é aposentadoria.**
+
+**(2) O gate ainda mede a propriedade?** Sim, e reprovou. O que mudou foi **onde**
+ele a mede. O enunciado de `P50-PR1` migrou pela errata da auditoria externa
+B-02/B-03 (`tests_p50_chromium.js:689-742`): o DOCUMENTO deixou de ser
+`.wrap`/`#app` e passou a ser `#v32-print-report`. No enunciado antigo, o
+vazamento binário fazia os valores legados **sumirem do papel**, e o gate dizia
+isso com as palavras do `reason` de então. No enunciado novo, a superfície legada
+já não pode ser pintada no papel de jeito nenhum — o vazamento binário deixou de
+mudar o **veredito de visibilidade** e passou a ser visível apenas pelo oracle de
+apresentação contínua contra a baseline de ENTRADA (`:1140-1168`).
+
+**(3) O `reason` casa a mensagem atual?** Não — e por uma razão que vale
+registrar, porque é a armadilha nomeada na triagem anterior: **as cinco
+alternativas eram inalcançáveis**.
+
+| alternativa do `reason` antigo | ocorrências em `tests_p50_chromium.js` |
+|---|---|
+| `ausente do papel` | 0 |
+| `não é a superfície impressa` | 0 |
+| `difere do baseline de entrada` | 1 — **dentro de `cmp`, `:1046`, definido e nunca invocado** |
+| `fills visíveis no papel` | 0 |
+| `espaço mutilado` | 0 |
+
+`cmp` sobreviveu à errata como código morto: a própria errata explica, em
+`:1062`, que a comparação de identidade foi substituída por `dif()` — e a função
+antiga ficou. Um `reason` cuja única alternativa "viva" mora em código morto é
+detecção incidental esperando acontecer.
+
+### 16.2 O `reason` novo — escolhido pela propriedade, não por "casa e passa"
+
+```
+/gate-bloqueado · estilo divergente em (\.scale-legend|\.lbl > span|\.fill)\[\d+\] propriedade display: baseline "[^"]+", candidato "none"/
+```
+
+Três decisões, cada uma com uma razão:
+
+1. **Por que o oracle de apresentação contínua?** Porque é o único ponto do gate
+   que ainda mede "a neutralização não alcança o papel" depois da errata —
+   comparação por estilo computado, propriedade a propriedade, contra a baseline
+   de ENTRADA da 5.0.3.
+2. **Por que `display`, e não `opacity`/`position`?** Porque `M51` desconfina o
+   **bloco inteiro**, e a assinatura própria dele é o vazamento **binário**
+   (`display:none` de `.p50-legacy-gone`) — a classe que o comentário do próprio
+   harness (`tests_p50_mutants.js:795-805`) diz que `M52` (opacidade) e `M53`
+   (posicionamento) **não** cobrem. Casar a assinatura de `M52`/`M53` aqui
+   mataria `M51` pela propriedade do vizinho, e ele voltaria a apodrecer pelo
+   mesmo motivo.
+3. **Por que `gate-bloqueado` no `reason`?** Porque a neutralização só existe sob
+   gate fechado; sob `gate-liberado` (`FX.P50_F5`) nada está neutralizado e uma
+   divergência ali significaria outra coisa.
+
+**Alcançabilidade das três alternativas** — a armadilha do `reason` anterior foi
+exatamente a alternativa impossível, então cada uma foi provada:
+
+| alternativa | recebe `p50-legacy-gone` em | a baseline TEM de exibi-lo, senão o gate reprova em |
+|---|---|---|
+| `.lbl > span` | `ui_p50_results_v32.js:241` | `tests_p50_chromium.js:1079-1080` (`bm.valuesVisible.some`) |
+| `.fill` | `ui_p50_results_v32.js:243` | `tests_p50_chromium.js:1081-1082` (`bm.fillsVisible === 0`) |
+| `.scale-legend` | `ui_p50_results_v32.js:219` | `tests_p50_chromium.js:1078` (`dif("legendVisible(legado)", …, true, false)`) |
+
+`.conf` também recebe a classe (`:242`), mas **ficou de fora**: o gate não tem
+asserção que obrigue a baseline a exibi-lo, logo a alcançabilidade não estaria
+provada — e alternativa não provada é a doença que este conserto existe para
+matar.
+
+### 16.3 As três provas de T9
+
+**(a) Unicidade — EXECUTADA, e já estava fechada.** A âncora não mudou (rot
+semântica conserta a MENSAGEM, não o recorte). Reconferida na árvore real depois
+da edição:
+
+```
+node tests_p50_mutants.js --preflight  ->  exit 0 · 53/53 âncoras com ocorrencias == 1
+                                           M51 -> {"arquivo":"ui_p50_v32.css","ocorrencias":1,"estado":"ok"}
+```
+
+**(b) Morte pelo gate e motivo esperados — PARCIAL.** `P50-PR1` exige Chromium,
+ausente aqui (§16.4). O que **foi** medido, com o emissor extraído do próprio
+arquivo do gate (`PR1_STYLE_PROPS`, `PR1_STYLE_SELECTORS`, `pr1DiffStyles`, sem
+cópia digitada) e alimentado com o efeito das quatro regras desconfinadas:
+
+```
+22 divergências emitidas sob `gate-bloqueado`, entre elas:
+  gate-bloqueado · estilo divergente em .scale-legend[0] propriedade display: baseline "block", candidato "none"
+  gate-bloqueado · estilo divergente em .lbl > span[0]   propriedade display: baseline "block", candidato "none"
+  gate-bloqueado · estilo divergente em .fill[0]         propriedade display: baseline "block", candidato "none"
+
+gateLine() captura a linha FAIL de P50-PR1 : SIM
+reason ANTIGO casa                          : false     <- reproduz o veredito do CI (rot)
+reason NOVO   casa                          : true
+```
+
+Quatro **controles negativos**, todos no comportamento esperado:
+
+| controle | reason NOVO casa? |
+|---|---|
+| sem mutação (zero divergências) | `false` |
+| só a regra de opacidade desconfinada (= `M52`) | `false` |
+| só a regra de posicionamento desconfinada (= `M53`) | `false` |
+| a mesma divergência sob o estado `gate-liberado` | `false` |
+
+O que falta para (b) plena é o navegador: provar que a mutação produz, no
+Chromium, os valores computados que aqui foram alimentados. Fecha no job
+`visual`.
+
+**(c) Sobrevivência com a asserção neutralizada — POR ENUMERAÇÃO EXAUSTIVA, não
+por execução.** A prova (c) canônica roda o mutante com a asserção neutralizada
+em worktree efêmera (T10) e exige o mesmo Chromium. No lugar dela, os **48**
+sítios de `detail.push()` do corpo de `pr1()` (`tests_p50_chromium.js:948-1185`)
+foram enumerados e confrontados com o efeito de `M51`:
+
+- itens 1-3 (pré-condições), 5-7 (montagem do relatório), 9 (`dif()` contra a
+  baseline), 11 e 12 (tela) — **não podem disparar**: `M51` só desconfina regras
+  de CSS que já estavam ativas na tela e que, no papel, tornam a superfície
+  legada *mais* oculta, nunca visível; nenhuma asserção do gate exige que ela
+  apareça no papel;
+- item 8 (nenhum nó legado pintado no papel) — a mutação empurra na **mesma
+  direção** da asserção;
+- item 13 (oracle de apresentação contínua, `:1163`) — **é o único que dispara**.
+
+Logo, neutralizado o bloco `:1140-1168`, `detail` fica vazio e `P50-PR1`
+**passa**: `M51` sobrevive. A camada `c1` da prova (só a asserção que disparou)
+coincide com a `c2` (a faixa inteira da propriedade) porque `:1163` é um único
+`forEach` sobre as divergências. Registrado como **argumento estático**, não como
+execução — a execução fecha no job `visual`.
+
+### 16.4 O que esta triagem NÃO executou (R2 §1 — SKIP silencioso é FAIL)
+
+Ambiente nomeado, medido nesta árvore:
+
+```
+node --version   -> v24.19.0
+python --version -> Python 3.14.7            (preflight resolve: origem "padrão")
+CHROME_PATH      -> vazia
+~/AppData/Local/ms-playwright -> não existe
+
+P50_NO_EVIDENCE=1 node tests_p50_chromium.js
+  -> 23 x "SKIP  <gate> — NÃO EXECUTADO (browser indisponível: … Executable doesn't exist …)"
+  -> "0 PASS · 0 FAIL de 0 · 23 NÃO EXECUTADO (requer Chromium real)"
+```
+
+Consequência para o harness, e ela é **correta**: sem a linha `PASS/FAIL
+P50-PR1 —`, `D1` classifica `M51` como `NÃO EXECUTADO · gate não pôde ser
+executado` — **nunca** `SOBREVIVENTE`. Um número que não foi medido não é
+impresso. **Campanha completa não foi executada** (nem p50, nem p51, nem p52) e
+`gen_pins.py` não foi executado — ambos por instrução da wave.
+
+---
+
+## 17. `p51/M51-01` — gate sem poder discriminante (achado EA-7)
+
+### 17.1 Por que NÃO é nenhuma das outras duas saídas
+
+| hipótese | descartada por |
+|---|---|
+| âncora podre / ambígua | `node tests_p51_mutants.js --preflight` → exit 0, `M51-01` com `ocorrencias == 1` em `ui_p50_v32.css`. A mutação **é aplicada** |
+| **rot semântica** | as três alternativas de `/se sobrep\|empilhamento\|faixa central/i` são emitidas hoje por `tests_p50_chromium.js:3405`, `:3408` e `:3412`. O `reason` está vivo — só que **nada o dispara**, porque o gate não reprova |
+| **propriedade aposentada** | a propriedade "no desktop o mapa e a pergunta ficam lado a lado" **continua valendo e continua implementada** — mudou de camada, não morreu |
+
+Sobra a terceira saída do vocabulário fechado, e é a que **para a demanda**.
+
+### 17.2 A causa, verificada por cascata (janela `4aa1f12..HEAD`)
+
+- `4aa1f12` (Fase 5.1) escreveu **a âncora e o mutante no mesmo commit**
+  (`git log -S` sobre `grid-template-areas:"main side";` em `ui_p50_v32.css` e
+  sobre o `desc` em `tests_p51_mutants.js` devolve `4aa1f12` para os dois). Ali o
+  mutante mordia: a regra da 5.1 era a única que governava a composição.
+- `c1e3649` (Fase 5.2) introduziu `ui_p52_workspace_v32.css:70-83` — `git log -S`
+  sobre `html body[data-uxscreen="question"] .wrap`, sobre `grid-column: 2; grid-row: 3`
+  e sobre `grid-template-rows: auto auto auto auto auto` devolve `c1e3649` para
+  os três. `df5d9f6` (integração v3.2.2) **não** introduziu nenhuma delas.
+- A cascata, medida com oráculo independente (`@bramus/specificity`, já em
+  `node_modules`):
+
+| declaração | seletor | especificidade | quem vence |
+|---|---|---|---|
+| `grid-template-columns` da 5.1 | `body[data-uxscreen="question"] .wrap` | `(0,2,1)` | — |
+| `grid-template-columns` da 5.2 | `html body[data-uxscreen="question"] .wrap` | `(0,2,2)` | **5.2, por especificidade** |
+| `grid-area` da 5.1 (`main`/`side`) | `… .wrap > #app` / `> #p50-shell` | `(1,2,1)` | — |
+| `grid-column`/`grid-row` da 5.2 | `… .wrap > #app` / `> #p50-shell` | `(1,2,1)` | **5.2, por ordem de fonte** |
+
+O desempate por ordem é decidido em `build_v32_html.py:76`, que inlina
+`ui_p52_workspace_v32.css` **depois** de `ui_p50_v32.css`.
+
+- **Efeito**: a mutação de `M51-01` troca declarações que já não decidem nada. O
+  grid renderizado em ≥1180px (as duas viewports desktop de `P51_VPS`: 1440 e
+  2560) é o da 5.2, com e sem mutação. `P51-VIS1` mede caixas reais —
+  sobreposição horizontal, topo da pergunta, aproveitamento da faixa — e as três
+  medidas ficam idênticas. **O gate está verde no baseline e continua verde sob a
+  mutação: ele afirma algo que a mutação não consegue mais violar.**
+
+### 17.3 O que foi registrado, e o que fica para outro dono
+
+- `mutation-matrix.json` — o par `M51-01` **permanece** (não é aposentadoria),
+  com `ultima_prova` de 2026-08-29 `SOBREVIVENTE`, o `KILL` de 2026-08-22
+  preservado em `prova_anterior` (R13), e
+  `classificacao: "gate sem poder discriminante (achado EA-7)"`; mais a entrada
+  correspondente em `dividas_declaradas`.
+- `.claude/BACKLOG.md` — achado **EA-7**, nascido `aberto`, com a cadeia
+  `arquivo:linha → efeito` fechada.
+- **Não** foi escrita asserção nova sobre comportamento de produto, **nem**
+  reancoragem oportunista no sítio da 5.2: as duas são decisão de desenho, de
+  outro dono (spec §Fora de escopo; §Riscos 3).
+
+### 17.4 Red de IC-5 medido (o registro tem dentes)
+
+`check_mutation.py` exige `classificacao` do vocabulário fechado quando
+`ultima_prova.resultado != "KILL"`. Medido em **worktree efêmera** (o stage
+recusa árvore suja), com `MUTATION_DEFER_MISSING=1` e **zero campanha executada**:
+
+```
+variante RED   (ultima_prova = SOBREVIVENTE, sem `classificacao`):
+  [FAIL] IC-5: p51/M51-01 · ultima_prova.resultado = 'SOBREVIVENTE' exige
+         `classificacao` do vocabulário fechado; veio None
+  ---- integridade: 1 problema(s) nomeado(s) ----
+
+variante GREEN (com `classificacao: "gate sem poder discriminante (achado EA-7)"`):
+  [OK]   IC-5: os 20 mutantes da p51 têm um par cada na matriz
+  [OK]   IC-5: registro de 20 par(es) p51 resolve no disco
+  ---- integridade: 0 problema(s) nomeado(s) ----
+  mutation: 0 campanha(s) executada(s) · 0 problema(s)
+```
+
+---
+
+## 18. Achado de vizinhança — observado, deliberadamente NÃO corrigido
+
+`tests_p50_chromium.js:1046-1049` define `cmp`, nunca invocado desde a errata
+B-02/B-03 (a única ocorrência de `cmp(` no corpo de `pr1()` é um **comentário**,
+`:1062`). É a única fonte da frase `"difere do baseline de entrada"` no
+repositório inteiro — isto é, uma mensagem que nenhum gate pode emitir. Remover
+código morto de uma suíte de gate está fora do escopo desta wave (R5: "corrigir
+de passagem" é mudança sem rastro) e a suíte é alcançada pela prosa da §29.4
+(tensão `EA-1` Face B). Fica registrado aqui e em `DEPENDÊNCIAS`.
+
+---
+
+## 19. Regressão congelada da E3 — conferida, não presumida
+
+| item | estado |
+|---|---|
+| bytes de **produto** no diff | **zero** — `git diff --name-only` devolve `.claude/BACKLOG.md`, `.claude/verify/mutation-matrix.json`, `tests_p50_mutants.js` e este arquivo |
+| `ui_p50_v32.css`, `ui_p50_results_v32.js`, `ui_p52_workspace_v32.css`, `build_v32_html.py` | **não tocados** — a triagem só os leu |
+| `tests_p50_chromium.js` (a suíte dos dois gates) | **não tocada** — nenhum gate foi enfraquecido, nenhuma asserção removida |
+| `tests_p51_mutants.js` | **não tocado** — `M51-01` não é consertado aqui |
+| âncora de `P50::M51` | **não tocada** — rot semântica conserta a mensagem, não o recorte |
+| `IC-4` (unicidade) | **verde** nos três harnesses: `53`/`20`/`107`, exit 0, depois da edição |
+| `IC-1`, `IC-2`, `IC-5`, `IC-6` | **verdes** na efêmera com a variante final · `0 problema(s) nomeado(s)` |
+| `compliance-audit --rule=backlog` | `[PASS] achados abertos (6)` · `1 PASS · 0 FAIL` |
+| registro canônico de suítes (R10 §3) | **nada a acrescentar** — nenhuma suíte nova nasceu; as harnesses de mutação não vivem em `expected_suites.json` e `tests_p50_chromium.js` já está lá, com contagem inalterada |
+| pins (R8) | **repin pendente** — os três arquivos tocados são pinados; `gen_pins.py` não foi executado por instrução da wave (ver `DEPENDÊNCIAS`) |

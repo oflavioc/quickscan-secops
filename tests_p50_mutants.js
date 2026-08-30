@@ -756,7 +756,40 @@ const MUTANTS = [
 #app .radar-box.p50-legacy-off{ position:relative; }
 #app .dom[data-p50-legacy="neutralized"] .ruler{ opacity:.45; }`,
     gate: "P50-PR1", cmd: "node tests_p50_chromium.js",
-    reason: /ausente do papel|não é a superfície impressa|difere do baseline de entrada|fills visíveis no papel|espaço mutilado/
+    /* DEMANDA 013 · E3 — ROT SEMÂNTICA (spec §Classificação de par não-KILL).
+       O `reason` anterior — /ausente do papel|não é a superfície impressa|
+       difere do baseline de entrada|fills visíveis no papel|espaço mutilado/ —
+       era o vocabulário do enunciado PRÉ-ERRATA de P50-PR1, quando o papel era
+       `.wrap`/`#app` e o gate exigia os valores legados PRESENTES nele. A errata
+       da auditoria externa B-02/B-03 (`tests_p50_chromium.js:689-742`) inverteu
+       o DOCUMENTO: o papel passou a ser `#v32-print-report` e nenhum nó legado
+       pode ser pintado. As cinco alternativas ficaram INALCANÇÁVEIS — quatro com
+       zero ocorrência no arquivo do gate, e a quinta ("difere do baseline de
+       entrada") viva só dentro de `cmp` (`:1046`), definido e nunca invocado. O
+       gate continuou reprovando — a propriedade está viva; envelheceu a
+       MENSAGEM. Reprovar por motivo diferente do esperado é SOBREVIVENTE
+       (`tests_p51_mutants.js:9`), e foi o que a campanha reportou.
+
+       O `reason` novo é re-derivado da PROPRIEDADE que o `desc` documenta —
+       "toda decisão de neutralização da Camada 5 vive AQUI dentro", isto é, em
+       `@media screen` (`ui_p50_v32.css:637-656`) —, nunca de "casa e passa".
+       Quem mede essa propriedade hoje é o ORACLE DE APRESENTAÇÃO CONTÍNUA
+       contra a baseline de ENTRADA da 5.0.3 (`:1140-1168`, emissor em `:906`).
+       M51 desconfina o BLOCO INTEIRO, logo a assinatura PRÓPRIA dele é o
+       vazamento BINÁRIO (`display:none` de `.p50-legacy-gone`) alcançando a
+       mídia print sob o gate BLOQUEADO — classe que M52 (opacidade) e M53
+       (posicionamento) explicitamente NÃO cobrem. Casar a assinatura deles aqui
+       seria detecção pela propriedade do vizinho.
+
+       Alcançabilidade das três alternativas (a armadilha do `reason` anterior
+       foi justamente a alternativa impossível): `.lbl > span` e `.fill` recebem
+       `p50-legacy-gone` em `ui_p50_results_v32.js:241-243` e a baseline TEM de
+       imprimi-los, senão o próprio gate reprova (`:1079-1082`); `.scale-legend`
+       recebe a classe em `ui_p50_results_v32.js:219` e a baseline TEM de
+       exibi-la, senão reprova em `:1078` (`dif("legendVisible(legado)"…, true,
+       false)`). O estado é pinado: sob `gate-liberado` nada está neutralizado e
+       a divergência não existe. */
+    reason: /gate-bloqueado · estilo divergente em (\.scale-legend|\.lbl > span|\.fill)\[\d+\] propriedade display: baseline "[^"]+", candidato "none"/
   },
 
   /* ==========================================================================

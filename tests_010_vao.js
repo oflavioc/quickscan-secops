@@ -375,9 +375,31 @@ T("D010-ARB2", "C2 · com substituto, a leitura congelada continua oculta (D010-
 
 /* ============================================================================
    C3 · D010-ARB3 — arbitragem tudo-ou-nada, alcance inalterado
+
+   POR QUE A VARREDURA INCLUI `D010-F4`, QUE A SPEC §C3 NÃO LISTA
+   ---------------------------------------------------------------------------
+   A redação de C3 nomeia três fixtures porque é ANTERIOR à errata de vacuidade
+   (E3/E4, 2026-08-30), que criou `D010-F4`; a lista não foi estendida junto, e a
+   fixture nasceu sem alínea de arbitragem alguma que a exercitasse. A varredura
+   é ampliada AQUI e a redação de C3 tem de segui-la: divergência gate↔spec se
+   DECIDE, nunca se absorve em silêncio (R10 §1). O gate é o lado ESTRITO da
+   divergência; a redação é do `product-owner`, e o gap está reportado.
+
+   CUSTO MEDIDO ANTES DE APLICAR (2026-08-30, pré-implementação): sob `D010-F4` o
+   censo da Camada 1 é 3 nós, 3 ocultos, ZERO forasteiros — idêntico ao de
+   `D010-F1` —, logo (a) e (b) fecham VERDE e o veredito do gate não se move.
+
+   O QUE F4 ACRESCENTA — e o que NÃO acrescenta, que também fica escrito:
+   hoje, nenhum censo que `D010-F1` já não produza. O que ela traz é
+   CONFIGURAÇÃO distinta, não censo distinto: gate de suficiência ABERTO,
+   landscape 100% UNSET e as DUAS fontes do cartão-alvo se cruzando no mesmo
+   card. O ganho materializa no GREEN — F4 é a única fixture desta varredura
+   cujos cards publicam item das duas fontes, e é nela que uma arbitragem presa
+   ao CONTEÚDO do card, em vez do predicado da spec §1, teria configuração
+   própria para divergir de F1 sem que nenhuma outra fixture notasse.
    ========================================================================== */
-T("D010-ARB3", "C3 · tudo-ou-nada e sem transbordo, nas três fixturas (F1/F2/F3)", () => gate(g => {
-  ["D010-F1", "D010-F2", "D010-F3"].forEach(fxId => {
+T("D010-ARB3", "C3 · tudo-ou-nada e sem transbordo, nas quatro fixturas (F1/F2/F3/F4)", () => gate(g => {
+  ["D010-F1", "D010-F2", "D010-F3", "D010-F4"].forEach(fxId => {
     const { d } = R(fxId);
     exigeTelaLimpa(d, "D010-ARB3");
     /* (a) o conjunto oculto é ∅ OU exatamente o conjunto da Camada 1 */
@@ -763,7 +785,7 @@ T("D010-CARD1", "C7 · nó a-validar sse S2-contexto + resposta confirmada + MAP
 /* ============================================================================
    C8 · D010-CARD2 — precedência de fonte
    ========================================================================== */
-T("D010-CARD2", "C8 · candidato do engine bloqueia o MAP; serviço não (F2 · F4)", () => gate(g => {
+T("D010-CARD2", "C8 · candidato do engine bloqueia o MAP; serviço não (a·F2 · b·F4 · c·F2/F3/F4)", () => gate(g => {
   const A = R("D010-F2");
   const B = R("D010-F4");
   /* (a) `logs` tem candidatos DIRECT ⇒ só a linha do engine, sem nó a-validar.
@@ -814,11 +836,43 @@ T("D010-CARD2", "C8 · candidato do engine bloqueia o MAP; serviço não (F2 · 
           "serviço do engine não pode bloquear o MAP (E2/E3)");
     });
   });
-  /* (c) nenhum nome de produto aparece duas vezes no mesmo card — nas duas fixtures */
-  g.passo("(c) nenhum nome repetido no mesmo card", () => {
+  /* (c) nenhum nome de produto aparece duas vezes no mesmo card — em TODA fixture
+         desta suíte que tenha chip, e não só nas duas de C8.
+
+         POR QUE `D010-F3` ENTROU (cobertura, 2026-08-30, antes do green)
+         ---------------------------------------------------------------------
+         `d010TargetEnablers` carrega a GUARDA DE AGRUPAMENTO
+         (`fixtures_010_vao.js:601-605`): chip `.ux-tgt-enabler` emitido FORA de
+         `li.ux-tgt-ov[data-qid]` deixa o censo por qid cego, e com ele toda
+         asserção de ausência por qid vira PASS vacuoso. A guarda só roda quando
+         alguém CHAMA o helper — e não rodava sob nenhuma fixture de gate
+         FECHADO. Medido: `D010-F3` tem 2 chips (`team-capacity`,
+         `vulnerability-management`) e nenhum gate a varria.
+         O QUE F3 ACRESCENTA: a guarda sobre um render COM chip e gate FECHADO,
+         que é o estado em que o emissor de `ui_target_v32.js` continua rodando
+         mesmo sem publicar item.
+         O QUE F3 NÃO ACRESCENTA, e fica escrito (R10 §2): sob gate fechado o
+         `MAP` não publica, então existe UMA fonte só — a direção "duas fontes
+         fundem o mesmo nome" não tem caso ali e continua medida por F2/F4.
+         `D010-F1b` permanece FORA de propósito: nenhuma alínea desta suíte lê o
+         cartão-alvo sob F1b, e guarda que não protege asserção alguma é ruído.
+         Sob `D010-F1` a guarda passou a rodar em `D010-CARD6` (b), colada à
+         asserção de ausência que ela protege. */
+  g.passo("(c) nenhum nome repetido no mesmo card, com o emissor no sítio conhecido", () => {
     let cards = 0;
-    [{ id: "D010-F2", ctx: A }, { id: "D010-F4", ctx: B }].forEach(caso => {
-      const chips = FX.d010TargetEnablers(caso.ctx.d);
+    /* boot próprio de F3, DENTRO da alínea: falha de fixture fica atribuída a (c)
+       e não derruba (a)/(b), que medem outras fixtures. */
+    const C = R("D010-F3");
+    [{ id: "D010-F2", ctx: A }, { id: "D010-F3", ctx: C }, { id: "D010-F4", ctx: B }].forEach(caso => {
+      /* o censo do helper é do DOCUMENTO inteiro: com o papel montado, os cards
+         impressos entrariam na soma e a guarda mediria duas superfícies. */
+      exigeTelaLimpa(caso.ctx.d, "D010-CARD2 (c)/" + caso.id);
+      /* a guarda vive na fixture e não sabe qual render está sendo julgado; com
+         três renders na alínea, "2 chips no documento mas 1 agrupados" não diria
+         ONDE. O prefixo é do caso, como em toda mensagem desta alínea. */
+      let chips;
+      try { chips = FX.d010TargetEnablers(caso.ctx.d); }
+      catch (x) { throw new Error(caso.id + ": " + x.message); }
       const comChip = Object.keys(chips).filter(q => chips[q].length);
       if (!comChip.length)
         vac("(c)", caso.id + ": nenhum card traz chip algum — não há repetição possível a medir");
@@ -1147,6 +1201,18 @@ T("D010-CARD6", "C12 · o aviso único da 009 e o nó a-validar coexistem sem ó
   /* (b) essas práticas exibem o nó a-validar e NENHUMA `.ux-tgt-en` */
   g.passo("(b) as mesmas práticas exibem `a-validar` e nenhuma `.ux-tgt-en` (R-1)", () => {
     if (!s2payload.length) vac("(b)", "conjunto S2-payload vazio — não há prática a conferir");
+    /* GUARDA DE AGRUPAMENTO, colada à asserção de ausência que ela protege
+       (cobertura, 2026-08-30, antes do green). `cartao(d,qid).engine` é censo POR
+       QID: uma `.ux-tgt-en` emitida FORA do `li.ux-tgt-ov[data-qid]` deixaria
+       "nenhuma `.ux-tgt-en`" VERDADEIRA no censo e FALSA na tela — PASS vacuoso
+       exatamente onde R-1 é medida. `d010TargetEnablers` compara o total do
+       documento com a soma por qid e transforma isso em FALHA NOMEADA.
+       POR QUE AGORA, e não quando "houver o que medir": sob `D010-F1` o censo de
+       chip é ZERO hoje, e essa é uma propriedade do PRÉ-FIX — os itens que T008
+       publica são `.ux-tgt-enabler` (ver `cartao`, :232), logo é no GREEN que este
+       render passa a ter chip. Guarda cabeada depois do green é indistinguível de
+       guarda que sempre esteve lá. */
+    FX.d010TargetEnablers(d);
     const nos = aValidarPorQid(d, "D010-CARD6");
     s2payload.forEach(qid => {
       if (cartao(d, qid).engine.length)

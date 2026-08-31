@@ -3,9 +3,14 @@
 
   1. Pureza do engine: zero document./window./innerHTML em engine_v32.js —
      protege a INV-1 contra o vetor mais provável de contaminação;
-  2. innerHTML proibido (atribuição) nos módulos das fases 5.x (ui_p5*);
-  3. Módulos 5.x são IIFE (escopo próprio — E12: 115 declarações top-level
-     nos módulos 4.x é o estado herdado, não o padrão);
+  2. innerHTML proibido (atribuição) nos módulos novos — fases 5.x (ui_p5*)
+     e módulos de demanda (ui_d0*);
+  3. Módulos novos são IIFE (escopo próprio — E12: 115 declarações top-level
+     nos módulos 4.x é o estado herdado, não o padrão). O conjunto varrido é
+     nominal por prefixo, nunca ui_*_v32.js: os módulos 4.x (ui_ux, ui_target,
+     ui_session, ui_refinement, ui_journey, ui_icons) não são IIFE e usam
+     innerHTML — um glob largo tornaria o stage FAIL permanente sobre
+     arquivos protegidos, e não é isto que a regra pede;
   4. Bridge global window.__* só com entrada no registro bridges.json.
 """
 import json, re, sys
@@ -28,15 +33,16 @@ if dom:
 else:
     print("[OK]   engine puro: zero tokens de DOM")
 
-# 2 e 3 · módulos das fases 5.x
-novos = sorted(str(p) for p in Path(".").glob("ui_p5*_v32.js"))
+# 2 e 3 · módulos novos: fases 5.x (ui_p5*) e demandas (ui_d0*)
+PREFIXOS_NOVOS = ("ui_p5*_v32.js", "ui_d0*_v32.js")
+novos = sorted({str(p) for g in PREFIXOS_NOVOS for p in Path(".").glob(g)})
 for m in novos:
     src = open(m, encoding="utf-8").read()
     if re.search(r"\.innerHTML\s*=", src):
-        fail(f"{m}: atribuição .innerHTML= (proibido em módulo 5.x)")
+        fail(f"{m}: atribuição .innerHTML= (proibido em módulo novo)")
     if "(function" not in src:
         fail(f"{m}: sem IIFE — escopo compartilhado é proibido em módulo novo")
-print(f"[OK]   {len(novos)} módulos 5.x: zero innerHTML= e IIFE presente" if fails == 0 else "")
+print(f"[OK]   {len(novos)} módulos novos (5.x + demanda): zero innerHTML= e IIFE presente" if fails == 0 else "")
 
 # 4 · bridges registrados
 reg = set(json.load(open(".claude/verify/bridges.json", encoding="utf-8"))["bridges"].keys())

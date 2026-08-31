@@ -84,6 +84,12 @@
       "fail": 0,
       "_trilha": "JANELA VERMELHA DA RODADA 2 ENCERRADA (2026-08-28): a correção do ui-engineer (e77b7b5) entrou e a execução real voltou a 15 PASS · 0 FAIL, medida após o rebuild; o par D009-UNS3 x D009-M20 está provado (KILL, campanha d009). A contagem canônica nunca foi rebaixada durante o vermelho, de propósito. HISTÓRICO DA JANELA:  D009-UNS3 foi ENDURECIDO para afirmar a frase de ABERTURA do aviso no caso parcial, e a execução real é 14 PASS · 1 FAIL — o único FAIL é D009-UNS3, que mede comportamento ainda inexistente (tgtAbsenceHTML monta a frase sem ramo e declara ausência em escopo de SESSÃO quando a ausência é PARCIAL). A contagem canônica permanece 15/0 de propósito: rebaixá-la para 14/1 enshrinaria o vermelho como alvo, que é exatamente o enfraquecimento que R10 §1 proíbe. O stage suites fica VERMELHO por projeto até o ui-engineer corrigir a frase; nenhum outro gate mudou. Correção e green NÃO são do qa-engineer. HISTÓRICO — demanda 009-leitura-do-relatorio · registrada no MESMO commit da criação da suíte (R10 §3). JANELA VERMELHA ANTERIOR, ENCERRADA: entre o red (T007, commit 3950288) e o rebuild da wave 5 (T016) a execução real foi 4 PASS · 11 FAIL; em T017 (wave 6, 2026-08-28) a contagem foi FIXADA POR EXECUÇÃO em 15 PASS · 0 FAIL — deixa de ser o total declarado pela spec e passa a ser medida. Os 4 gates que nasceram verdes por serem critérios de PRESERVAÇÃO (D009-DOM2, D009-NXT2, D009-UNS2, D009-EVB1) têm poder discriminante provado em T019 pelos mutantes D009-M6, D009-M8, D009-M13 e D009-M18/M19 (18/18 KILL, campanha d009)."
     },
+    "d011": {
+      "cmd": "node tests_011_prioridade.js",
+      "pass": 6,
+      "fail": 0,
+      "_trilha": "CONTAGEM FIXADA POR EXECUCAO (2026-08-31, T024): 6 PASS - 0 FAIL de 6, medida DEPOIS do rebuild da correcao de print (forma B) — nao e o total declarado pela spec, e a saida real da suite. JANELA VERMELHA 2 ENCERRADA: aberta pela reprovacao do product-owner sobre C11 e fechada pela correcao do ui-engineer; durante ela a execucao real foi 5 PASS - 1 FAIL, com o unico FAIL em D011-PRT1(f), e a contagem canonica NUNCA foi rebaixada para 5/1, de proposito (R10 §1). O par que faltava esta provado: D011-M20 DETECTADO em D011-PRT1(f), campanha d011 de 19 mutantes. JANELA VERMELHA 2 ABERTA (2026-08-31, reprovacao do product-owner sobre C11). D011-PRT1 ganhou a 3a clausula, alinea (f): no papel, o item SEM ATALHO tambem tem de sumir. Execucao real 5 PASS - 1 FAIL; o unico FAIL e D011-PRT1, com 'D011-PRT1(f): 6/6 item(ns) SEM ATALHO continuam visiveis no papel'. Defeito MEDIDO, nao deduzido: o seletor de ui_d011_prioridade_v32.css:59 casa so data-d011=\"atalho\"; visibility:hidden apaga o elemento inteiro, entao o item 'mudo' imprime a MOLDURA VAZIA herdada de .opt .key (border:1px solid var(--line), e --line vira #c9c9c9 no @media print) — marca visivel exatamente nos 6 itens que o cliente apontou, e sem a legenda para explica-los, que some por desenho na alinea (d). A contagem canonica NAO e rebaixada para 5/1: rebaixa-la enshrinaria o vermelho como alvo, que e o enfraquecimento que R10 §1 proibe (mesmo precedente da janela 1 e do d009). O stage suites fica VERMELHO POR PROJETO ate o ui-engineer corrigir o CSS — correcao e green NAO sao do qa-engineer. JANELA VERMELHA ABERTA (2026-08-31, demanda 011-numeracao-das-prioridades) — registrada no MESMO commit da criação da suíte (R10 §3). O TOTAL de 6 é MEDIDO POR EXECUÇÃO ('de 6' na saída real), não derivado dos 12 critérios da spec: C6/C7/C9 são critérios de processo sem gate próprio nesta suíte e C10 vive em tests_011_chromium.js. A execução real de hoje é 1 PASS · 5 FAIL: PASS D011-KEY1 (critério de PRESERVAÇÃO, nasce verde por desenho — a dívida está escrita na linha de C1 da spec); FAIL D011-KEY2 (6 itens sem atalho ainda exibem '·'), D011-ACC1 (15/15 .key sem aria-hidden), D011-LEG1 (0 nós com o texto canônico da legenda), D011-IDEM1 (glifos/atalhos/aria-hidden/legenda divergem do oráculo) e D011-PRT1 (bloco CSS do módulo ausente no HTML construído). A contagem canônica NÃO é rebaixada para 1/5 de propósito: rebaixá-la enshrinaria o vermelho como alvo, que é o enfraquecimento que R10 §1 proíbe (precedente d009). O stage suites fica VERMELHO POR PROJETO até o ui-engineer (wave 3) e o build-engineer (wave 4, rebuild) fecharem — correção e green NÃO são do qa-engineer. A FIXAÇÃO POR EXECUÇÃO é a tarefa T024, depois do rebuild de T015: contagem medida antes do rebuild não vale, porque a suíte boota o HTML construído e não os módulos-fonte."
+    },
     "d010": {
       "cmd": "node tests_010_vao.js",
       "pass": 13,
@@ -124,6 +130,15 @@
         "chromium"
       ],
       "_trilha": "44->55 na integração da v3.2.2: +11 gates chromium da release; medido pelo job visual do CI (run 32887668115, SUCCESS)"
+    },
+    "d011chromium": {
+      "cmd": "node tests_011_chromium.js",
+      "pass": 1,
+      "fail": 0,
+      "requires": [
+        "chromium"
+      ],
+      "_trilha": "Demanda 011 · D011-CON1 (C10, contraste da legenda). Registrada no MESMO commit da criação da suíte (R10 §3). Contagem DECLARADA (1 gate), ainda NÃO fixada por execução: não há Chromium nesta worktree — é KI-3 (design-decisions.md: execução canônica no job visual do CI e no rito do proprietário), portanto AGENDAMENTO POR DESENHO e não pendência. Executada aqui em 2026-08-31 e terminou em 0 PASS · 1 FAIL com o motivo NOMEADO ('Executable doesn't exist ... npx playwright install'): a suíte NÃO pula em silêncio (R10 §2). A fixação por execução e o KILL de D011-M9 são as tarefas T030/T031, com o número do run."
     }
   }
 }

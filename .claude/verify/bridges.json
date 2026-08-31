@@ -63,6 +63,10 @@
     "__P52CtxDraftSync": {
       "owner": "ui_p52_workspace_v32.js",
       "nota": "sincronização de rascunho do editor de contexto (v3.2.2, fix context/footer/print UX do proprietário)"
+    },
+    "__D011": {
+      "owner": "ui_d011_prioridade_v32.js",
+      "nota": "numeração das prioridades (demanda 011). Shape fechado: { __installed, diag() } — e nada além. NÃO expõe decorate() por desenho: gate que chamasse a decoração à mão mediria o efeito com o observador morto, passando sem medir o mecanismo (é o que D011-M11 existe para provar). Contrato registrado antes do consumidor (R5); a decoração só entra por MutationObserver sobre #app."
     }
   }
 }

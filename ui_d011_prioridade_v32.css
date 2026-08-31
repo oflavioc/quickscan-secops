@@ -1,0 +1,91 @@
+/* ============================================================================
+   DEMANDA 011 · NUMERAÇÃO DAS PRIORIDADES — folha do módulo.
+
+   ZERO SELETOR ALHEIO (R9 §6). Toda regra pende de classe que o PRÓPRIO
+   módulo aplica (`.d011-legenda`, `.d011-key`). `.ux-priolayout` é ponto de
+   montagem em JS e nunca aparece aqui: marcar o nó antes de estilizá-lo custa
+   uma linha e elimina a dependência de um seletor que pertence a
+   `ui_ux_v32.css`. A allowlist de exceções fica VAZIA por desenho.
+
+   Sem `!important` em regra alguma: este bloco é o ÚLTIMO injetado no
+   `<style>` único (depois de `V32_P52CSS_END`), então vence empate de
+   especificidade por ordem — que é a forma barata de vencer.
+
+   NÃO se estiliza largura ou altura do `.key`: `.opt .key{flex:0 0 26px;
+   height:26px}` (Camada 1, `:68`) é caixa de BASE FIXA, independente do
+   conteúdo. Esvaziar o `textContent` do item sem atalho NÃO colapsa o
+   alinhamento — a preocupação de C2 está resolvida pela regra congelada, e
+   regra nova aqui só criaria um segundo dono do mesmo pixel.
+   ========================================================================== */
+
+/* C4 · a legenda que diz, em português, o que o número é e o que ele não é.
+   Primeiro filho de um container `display:grid` de duas colunas no desktop:
+   `1 / -1` faz a frase ocupar a faixa inteira acima da grade e da coluna-resumo,
+   sem deslocar nenhuma das duas e sem entrar como célula da grade.
+   `var(--muted)` é TOKEN da Camada 1 consumido como token (não é seletor
+   alheio). PREVISTO na Fase 2, por calculo sobre os tokens: 8,17:1 na tela e
+   10,86:1 no papel. MEDIDO por D011-CON1 no job visual do CI (2026-08-31,
+   run 33426062475), sobre as cores resolvidas em navegador real: 8,82:1 na
+   tela, contra o minimo 4,5:1. A divergencia entre previsto e medido e
+   esperada — o calculo usa o token, o gate usa a cor efetiva —, e o numero
+   citavel e o MEDIDO. `--faint`
+   daria 4,92:1 — passa, mas sem folga, e por isso não é a escolha.
+   O juiz do contraste continua sendo D011-CON1 sobre as cores resolvidas. */
+.d011-legenda{
+  grid-column: 1 / -1;
+  margin: 0 0 2px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--muted);
+}
+
+/* C11 · impressão. TRÊS cláusulas, e a terceira nasceu de uma reprovação:
+
+   1. o glifo de atalho SOME — no papel não há teclado, e um número impresso
+      ao lado de cada linha volta a ser lido como ordem, que é exatamente o
+      que a demanda existe para tirar;
+   2. o item SEM atalho some também — ver "a moldura que sobrava", abaixo;
+   3. a legenda SOME junto — se o glifo que ela explica não está lá, a frase
+      perde referente e vira o mesmo ruído.
+
+   `visibility:hidden` e não `display:none`: preserva a calha de 26px e mantém
+   o alinhamento das linhas no papel — o mesmo motivo pelo qual C2 mantém o
+   `.key` no DOM.
+
+   A MOLDURA QUE SOBRAVA — o defeito que este bloco corrigiu.
+   A primeira versão casava SÓ `data-d011="atalho"`, e a justificativa escrita
+   aqui era "preservar o estado de seleção no papel". Essa razão exige excluir
+   `"estado"` — e NÃO exige excluir `"mudo"`. O seletor ficou estreito por ter
+   sido escrito pela POSITIVA, e o efeito foi medido: `visibility:hidden` apaga
+   o elemento, mas a borda herdada de `.opt .key` (`quickscan_…v3_1_3.html:68-69`,
+   `border:1px solid var(--line)`, e `--line` vira `#c9c9c9` no papel, `:205`)
+   permanece. Censo do papel na fixture com um item selecionado: 8 `atalho`
+   escondidos, 1 `estado` visível (correto) e SEIS `mudo` VISÍVEIS — molduras
+   vazias exatamente nos seis itens que o cliente apontou como "sem numeração",
+   e sem a legenda para explicá-los, porque a legenda some na cláusula 3. É a
+   troca de categoria que a demanda existe para desfazer, sobrevivendo na
+   superfície onde ninguém pode corrigi-la lendo.
+
+   A REGRA, ESCRITA PELA NEGATIVA — E EM DUAS LINHAS, POR CUSTO MEDIDO.
+   O que se preserva é UM valor, `"estado"`, e não dois. Isso caberia numa linha
+   só (`.d011-key:not([data-d011="estado"])`), e a asserção do gate passa nas
+   duas formas — o que difere é o custo colateral: a forma com `:not()`
+   SUBSTITUI a linha de `atalho` e leva as âncoras de `D011-M10`, `D011-M13` e
+   `D011-M19` a `ocorrencias=0`, reprovando o `IC-4` e derrubando o stage
+   `mutation` inteiro mesmo com a campanha correta. A linha de `atalho` abaixo
+   está BYTE A BYTE como estava, e é exatamente por isso.
+
+   O controle inverso é real, e as duas alíneas são independentes: esconder de
+   menos reprova em `D011-PRT1(f)`; esconder demais (um `.d011-key` sem
+   exclusão) reprova em `D011-PRT1(e)`. O `✓`, o `.sel` e o badge
+   `Prioridade N` continuam sobrevivendo à impressão — são os únicos números do
+   papel, e SÃO a ordem, por declaração do negócio.
+
+   Zero contato com o pipeline de impressão congelado (§29.6): nada em
+   `buildPrintReport`, `preparePrint`, `beforeprint`/`afterprint`. A regra vive
+   em arquivo novo e alcança só `.d011-*`. */
+@media print{
+  .d011-key[data-d011="atalho"]{ visibility: hidden; }
+  .d011-key[data-d011="mudo"]{ visibility: hidden; }
+  .d011-legenda{ display: none; }
+}

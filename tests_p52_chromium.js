@@ -4093,6 +4093,47 @@ async function tgt4(browser, errs) {
         const ini = t.indexOf("Perfil atual");
         const fim = t.indexOf("A adoção de tecnologia");
         blocoTexto = t.slice(ini, fim > ini ? fim : undefined);
+        /* ── LIMITE DO NÚCLEO (2026-08-31, 2ª emenda desta derivação) ──────
+           O fluxo multi-página consertou o caso de gate ABERTO e ABRIU o de
+           gate FECHADO — e a causa é minha: ao cobrir o bloco INTEIRO, o
+           recorte passou a incluir a LISTA DE PRÁTICAS-ALVO declaradas, que
+           é conteúdo AUTORIZADO sob gate fechado. O próprio gate já diz isso
+           na medida de acessibilidade, onde exclui `.ux-tgt-ovs` nominalmente
+           — o PDF-TEXTO nunca excluiu, e só não aparecia porque a fatia era
+           truncada pela quebra de página, por acidente.
+           MEDIDO: sob gate fechado o bloco contém "definido" no offset 1156,
+           vindo de `QS["training"].opts[2].t` = "Plano de capacitação
+           definido" — RÓTULO DE OPÇÃO, não estágio de maturidade. São SEIS os
+           rótulos de `QS` que casam `P52_ESTAGIOS` por ser case-insensitive
+           (training, incident-response, detection-lifecycle, automation,
+           logs, vulnerability-management).
+           O LIMITE É DERIVADO, não arbitrado: o núcleo da comparação termina
+           na TABELA DE DOMÍNIOS, cujo último campo é o último nome de
+           `DOM_PT` seguido das suas até 4 células (atual, seta, alvo, gap) —
+           a mesma forma que `papel.linhas` já captura. Medido nas DUAS formas
+           de texto, porque elas diferem: `pdftotext` junta palavras com
+           espaço (`words.join(" ")`) e o DOM concatena sem — 4/4 casos.
+           NÃO ENFRAQUECE: o que sai do recorte é exatamente o conteúdo que o
+           critério autoriza, e o que o gate assere sobre KPIs e tabela
+           continua dentro. Sob gate ABERTO o `2.8` do domínio 3 permanece no
+           núcleo (medido). A TINTA não encolhe junto e isso é deliberado: as
+           PÁGINAS do bloco são as mesmas, o que encolheu foi o TEXTO medido,
+           e o único verde do bloco é o polígono do radar, que está no núcleo.
+           ACHADO DE FUNDO, fora desta autorização: `P52_ESTAGIOS` casar
+           rótulo de opção é falso positivo do sensor, e este limite o contorna
+           em vez de resolvê-lo. Resolver exige mexer na ASSERÇÃO, não na
+           derivação — achado próprio. */
+        const ultDom = DOM_PT[DOM_PT.length - 1];
+        const iUlt = blocoTexto.lastIndexOf(ultDom);
+        if (iUlt >= 0) {
+          let corte = iUlt + ultDom.length;
+          for (let campo = 0; campo < 4; campo++) {
+            const m = blocoTexto.slice(corte).match(/^\s*(?:n\/d|[0-9]+[.,][0-9]+|[0-9]+|→|\+|-|—)\s*/);
+            if (!m || !m[0].length) break;
+            corte += m[0].length;
+          }
+          blocoTexto = blocoTexto.slice(0, corte);
+        }
       }
       let tinta = null;
       for (let k = idxBloco; idxBloco >= 0 && k <= idxFim; k++) {

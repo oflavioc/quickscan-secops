@@ -1,7 +1,7 @@
 {
   "_meta": {
     "descricao": "Registry único de pins — fonte de identidade dos artefatos (R8). Hashes = SHA-256 dos blobs de HEAD. Alterar arquivo pinado exige regenerar este registry no MESMO PR, com motivo no commit.",
-    "gerado_de_head": "30d63bd29dedf79fdb6efd1921943c72ac14ad52",
+    "gerado_de_head": "84c92a174b3c5bdc033ea44e770b137e7731ff6f",
     "gerado_em": "2026-08-31",
     "exclusoes": [
       "docs_phase5/**",
@@ -105,12 +105,12 @@
     ".claude/templates/spec.md": "3b8a335b4ced3e69162f3a1478d53daca318c8e26f1f56ccd03d6887129c34a8",
     ".claude/templates/tasks.md": "08ce20d1d62483d632d79916c1a456a1e5fdd1cb25397561cd4a290fa21e1d15",
     ".claude/verify/boundary.json": "559b2bd35a38e00d66cad7b447c38c423c42b0a5ae92a24a8643bedb391affe4",
-    ".claude/verify/bridges.json": "c0a7b3441345575140dcab473b40936ecdc29a122d3ab17a17704622403c9099",
+    ".claude/verify/bridges.json": "2c81fc304f1faef67e42bc33c3e02fe5461907fe1d877a1bc103f0fe6396d9c9",
     ".claude/verify/check_baseline.py": "66e0c2c6f678a84ace076e38a474fb6c1a0d92f504c03da3145c2bf5d487c2f7",
     ".claude/verify/check_boundary.py": "2441e32e6bd5477d4a9bec027345d74be26b7e260de245e49dfe5d6b0d853633",
     ".claude/verify/check_build.py": "65c8f33185cbaee3dcba03ce88d7935a982176814c9a2802540f2c49af51d924",
     ".claude/verify/check_evidence_bridge.py": "f79bfb9021c1d4e2fa1adb3a25035d5e032b854ae8695af2d9b73311d271e62a",
-    ".claude/verify/check_lint_arch.py": "aac4e0f8be4cc25801dfe21dbf56374d1bce1a43a8fa4e1b67ab0cddfd20f9ee",
+    ".claude/verify/check_lint_arch.py": "ef3b65187a895b7b9d4d970a5763974d3e72345eca98bf9625457397c0f0fe8a",
     ".claude/verify/check_m41.py": "f5f59097ab1510d6bbd0a3e63272e00da95bb65c818c23a7fff2141e8f5d9b4f",
     ".claude/verify/check_markers.py": "5623d9cb3203cf16a307014a4255bc3d8ecf08e469eaf2f110927802a9b2fe7c",
     ".claude/verify/check_mutation.py": "973290179ab853e6f3c30fe3b74574ef4c7f49adf0ad051056d767bbed46384b",
@@ -128,7 +128,7 @@
     ".claude/verify/known_issues.json": "b9dd23b1a05ab09a11122aee68d555938f250223de2911de8c56079ddd742140",
     ".claude/verify/mutation-matrix.json": "7fef759d69fa98fd0fd5112ff5170787b217545b835d2f5d3972bf6487b63be1",
     ".claude/verify/mutation_map.json": "720a58167a102c5c7ea62a488d58a8396cf8df591b7fc62134a50d4778cbcb32",
-    ".claude/verify/pipeline.yaml": "4c87841da3b876cf7b594153f836ece74565b4a10f69ce296efff5d7751cf83a",
+    ".claude/verify/pipeline.yaml": "18581a19186417522d15e30e7072e5b58e31dc16045ff253b672827288fdbf9e",
     ".claude/verify/run.sh": "b137b7a1c1bf9233b06ed8f87b04fb03150b316b59ce0b56231c28ab4e048faa",
     ".gitattributes": "37bb36fb03aa6edbf1ce9fdc3bb9cb705e0317da970df37783777795bbcdcdb9",
     ".github/workflows/verify.yml": "14613dccba9a74fb67c80248df74d70596039fdf65fd0c445bd53321399251e1",

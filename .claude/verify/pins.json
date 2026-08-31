@@ -1,7 +1,7 @@
 {
   "_meta": {
     "descricao": "Registry único de pins — fonte de identidade dos artefatos (R8). Hashes = SHA-256 dos blobs de HEAD. Alterar arquivo pinado exige regenerar este registry no MESMO PR, com motivo no commit.",
-    "gerado_de_head": "eca8d8f3dfa49ca2e5c3692cfde6ac85d3c04462",
+    "gerado_de_head": "23fe24c0d8dfc66095941f5bc9c80799377533ba",
     "gerado_em": "2026-08-31",
     "exclusoes": [
       "docs_phase5/**",
@@ -126,7 +126,7 @@
     ".claude/verify/gen_pins.py": "730043800a41b4cfbb799945dd6499df8ba1375096f5f748df01c8c2d12a407a",
     ".claude/verify/invariants.json": "b8571facafbe6098cc643886cd158f877dd702c0cba6ca5addff34fc3e10bee6",
     ".claude/verify/known_issues.json": "b9dd23b1a05ab09a11122aee68d555938f250223de2911de8c56079ddd742140",
-    ".claude/verify/mutation-matrix.json": "bc8bf80c18fffea409038a15a3bb52269fcdd218c22411ba9aa8d7576a69acc0",
+    ".claude/verify/mutation-matrix.json": "666a61603515807265007f376bd4639e15b0ec2652f74c0eb8b5ef8ec685896f",
     ".claude/verify/mutation_map.json": "fcbb103282d19b80ac60fa8ff2c265d199e1c4e504a61dec2a808a2c83fe26a8",
     ".claude/verify/pipeline.yaml": "4c87841da3b876cf7b594153f836ece74565b4a10f69ce296efff5d7751cf83a",
     ".claude/verify/run.sh": "b137b7a1c1bf9233b06ed8f87b04fb03150b316b59ce0b56231c28ab4e048faa",
@@ -252,7 +252,7 @@
     "tests_p50_core.js": "e499d200af65e3d43be1d60cdf4e1429d34e7b533125d3d51d6f5f6b385603cd",
     "tests_p50_mutants.js": "78264522536d0c5bc2ffd96fa890701b032b0304da66194a9c448cff4b1c9872",
     "tests_p51_mutants.js": "37a207898b1df84a5b5182066407ce17cea0230ed8503eea5cf00bb1ab4554c5",
-    "tests_p52_chromium.js": "72967b1c0957cf106b07bf1cf87458cdd1d452a8b449d14cf02890d5f08ba2d5",
+    "tests_p52_chromium.js": "eec962e18f9f8f8dbd1b03527245bfa18fff43e878cbf9bc712021feeaa058c7",
     "tests_p52_layout.js": "47c7708e6db8955b9e98693ea0a0c1b9af3a25c0910c37e4418e943d750c6469",
     "tests_p52_mutants.js": "ce8b45563d1a41cd30e1ab1b3c4ed3d5074b3cbc2abf832668844ff516081b1a",
     "tests_ref_m44.js": "5fe2e3336b20a018a5981371523306b771907ce7f5688002076066ab9ad1325c",

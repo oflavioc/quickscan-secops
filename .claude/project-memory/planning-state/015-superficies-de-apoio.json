@@ -1,6 +1,6 @@
 {
   "demanda": "015-superficies-de-apoio",
-  "phase": "tasks",
+  "phase": "red",
   "spec_dir": "specs/015-superficies-de-apoio",
   "branch": "feature/015-superficies-de-apoio",
   "brief": "Itens 6a e 8 do cliente (2026-08-27), reunidos porque sao a mesma decisao: quantas superficies de apoio o relatorio tem e quem nomeia produto em cada uma. AS DUAS LEITURAS LITERAIS CAEM, por medicao: remover o bloco do 6a subtrairia TRES estados unicos no relatorio e custaria sete gates em quatro suites; e suprimir qualquer uma das duas listas do papel subtrai conteudo em TRES das sete combinacoes qid x nivel alcancaveis (perde FortiAI-Assist, perde FortiXDR, troca FortiEndpoint por FortiClient). O que o cliente sentiu e real e a causa e outra: dois titulos adjacentes com quatro palavras em comum, e TRES curadorias que se contradizem sem que a tela diga que existem.",
@@ -24,5 +24,15 @@
     "status": "approved",
     "approved_at": "2026-08-31",
     "notes": "DECIDIDO SOB DELEGACAO. 33 tarefas em 5 waves, serie de repins R2-R12. Tres restricoes que a spec nao podia conhecer, achadas na Fase 2: uma substring proibida por tres assercoes de suite congelada, MAIS FORTE que a alinea da spec; unicidade de titulo; e o eyebrow tendo de continuar fora das duas listas de ocultacao. Mais a ressalva de que o titulo entra no payload de evidencia pinado. Duas ausencias viraram tarefa em vez de surpresa: node_modules e o proprio planning-state."
+  },
+  "red": {
+    "status": "proven",
+    "commit": "8396a4c",
+    "gates": [
+      "D015-TIT1",
+      "D015-ANC1",
+      "D015-HOWTO1"
+    ],
+    "notes": "2 PASS · 3 FAIL de 5. D015-NOSUB1 e D015-GOV1 nascem VERDES por desenho: sao criterios de PRESERVACAO, e no red a ancora imutavel e o HEAD sao o MESMO BLOB, logo sao tautologicos neste instante. O discriminante vem de M14/M15 e M16, e a divida esta escrita no _trilha e no corpo do gate. Tres divergencias medidas contra a spec, devolvidas ao product-owner e nao acomodadas: C1(h) e MEIO-INERTE (o titulo vive fora do alcance da varredura; mutante simulado deu ZERO diferenca observavel, e a frase da spec sobre derrubar o gate congelado e FALSA por medicao); M15 mata (b) e nao (d); M14 nascia SOBREVIVENTE ate uma varredura de 120 combinacoes achar o caso. N41 NAO alcanca o h3 novo — a unicidade de titulo no papel nao tem cobertura congelada, e o gate desta demanda a carrega sozinho."
   }
 }

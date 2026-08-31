@@ -229,6 +229,17 @@ Três correções de fato sobre o source entram junto.
 | **Por que não ficou como dívida** | Esta é a **única rota alcançável no produto inteiro** que exercita o ramo sem equivalência (`incident-response@lv0`; as outras 8 ocorrências da chave estão em capabilities `landscapeEnabled: false`, S4 por construção). Propriedade com uma rota só e nenhum gate é propriedade que apodrece sem ruído — e foi preciso uma fixture nova só para chegar até ela |
 | **Classe** | Plano mais específico que o critério, com o gate obedecendo ao critério. A direção do conserto é sempre esta: o critério alcança o plano, e só então o gate pina. Nunca o gate pinando por conta própria — foi o que o QA se recusou a fazer, e a recusa estava certa |
 
+### E16 · Prova manual apodrece — o que couber em mutação de fonte vira mutante de fonte
+
+| | |
+|---|---|
+| **O que estava escrito** | A spec declara **20** mutantes (`D010-M1..M20`), dos quais **18** executados. Os cinco pares nascidos de **E15** (`data-eid` do ramo sem equivalência: chave crua, `map-<chave>`, `map:<chave errada>`, `MAP:<chave>`, `map:` sem chave) entraram na matriz como série própria, com `harness: "manual (simulação da saída no DOM)"` |
+| **O problema com prova manual** | Ela vale no dia em que é feita e **não é re-executada pela campanha**. Um par provado à mão não distingue, seis meses depois, "a propriedade continua guardada" de "a âncora apodreceu e ninguém viu" — que é exatamente o defeito que a demanda **013** achou depois de meses: mutantes nascidos podres, somados às sobrevivências como se fossem a mesma coisa. Aceitar prova manual onde mutação de fonte é possível é comprar a mesma dívida de novo, com o mesmo desconto |
+| **O que passa a valer** | Propriedade derivada de **E15** ganha **mutante de fonte** sempre que a mutação for exprimível como **mudança de uma linha numa âncora real do produto**. O que exigir andaime sintético permanece **par declarado manual, com a razão escrita** — nunca omitido, e nunca convertido em mutante sintético (proibido por R3 §5 e pelo próprio §"Achados" desta spec). Quem julga o que é exprimível é o `qa-engineer`, na âncora, não em prosa |
+| **Consequência de contagem** | O número de mutantes **declarados** e o de **executados** se movem conforme o julgamento acima, e os novos recebem ids na série `D010-M*`, em ordem, após `M20`. `plan.md` §Waves e o cabeçalho do harness acompanham. **Contagem não é sagrada** — ids são (R12): nenhum id existente renumera |
+| **O caso que motivou** | O `M-SE9` — `data-eid="map:FortiSIEM"`, prefixo certo e **chave errada** — era sobrevivente antes de E15. Sem forma normativa o gate não distinguia "veio do `MAP`" de "veio do `MAP`, mas de outra chave". É propriedade de produto, medida, e por isso merece guarda que a campanha re-execute |
+| **Classe** | Rito de prova mais fraco que o disponível. A regra geral: **a prova mais forte que couber é a devida** — e o que não couber se declara, com a causa |
+
 ## Critérios de aceite → gates
 
 Todo critério é um gate executável, definido AQUI (antes do plano — R3 §1).

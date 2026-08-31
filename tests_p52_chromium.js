@@ -4047,13 +4047,23 @@ async function tgt4(browser, errs) {
 
          RETIFICAÇÃO DO `EA-10` — e do parágrafo "ESCOPO E AUTORIZAÇÃO" logo acima,
          que ficou errado. O item (i) foi registrado como "o recorte alarga o
-         sujeito em silêncio até o fim da página": **esse item NÃO tem caso
-         comprovado**. O sintoma que lhe foi atribuído — nome de estágio dentro do
-         bloco sob gate fechado — era do SELETOR, que casava a régua de
-         `#pr-journey`, e sumiu quando o seletor foi desambiguado. O achado com
-         caso provado é o desta emenda: UMA página escolhida para um bloco que
-         ocupa DUAS. Quem for abrir demanda a partir do `EA-10` deve procurar
-         isto, não aquilo.
+         sujeito em silêncio até o fim da página". Quando isto foi escrito, esse
+         item NÃO tinha caso comprovado: o sintoma que lhe fora atribuído — nome
+         de estágio dentro do bloco sob gate fechado — era do SELETOR, que casava
+         a régua de `#pr-journey`, e sumiu quando o seletor foi desambiguado.
+
+         **ESTE PARÁGRAFO ENVELHECEU EM HORAS, E A CORREÇÃO ESTÁ ABAIXO.** O
+         `EA-10` tem DUAS metades, e as duas já estão fechadas:
+           (a) UMA página escolhida para um bloco que ocupa DUAS — a que esta
+               emenda do fluxo multi-página resolveu;
+           (b) o recorte alargando o sujeito sobre conteúdo AUTORIZADO — que
+               PASSOU a ter caso quando a emenda (a) fez a fatia cobrir o bloco
+               inteiro e engolir a lista de práticas-alvo. Ou seja: a metade que
+               eu declarei sem caso ganhou um, criado pela minha própria
+               correção, e está fechada pelo LIMITE DO NÚCLEO logo adiante.
+         Quem for ler o `EA-10` tem de encontrar as duas metades e o fato de que
+         a segunda nasceu da correção da primeira — senão reabre a demanda atrás
+         de um sintoma que já não existe, ou pior, desfaz (a) por causa de (b).
 
          POR QUE A TINTA VEM JUNTO, E NÃO DEPOIS. `p52PdfColorInk` rasterizava só
          `idxBloco + 1`. Hoje o controle "nenhuma tinta do alvo na página do

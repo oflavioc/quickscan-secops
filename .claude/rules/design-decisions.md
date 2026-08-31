@@ -26,5 +26,26 @@ metodológico. Até confirmação, **não são achados nem defeitos** — são p
   ler como "Managed", nunca "Initial".
 - `setTarget` aceita alvo igual ao atual; `revalidateTargets` o remove depois
   (assimetria criação/revalidação).
+- **Cláusula defensiva inalcançável por construção** — disposição do
+  `product-owner` na demanda 010, na forma dada por ele: *cláusula defensiva
+  inalcançável por construção, declarada, sem mutante — **não reportar como código
+  morto***. Três instâncias vivas, todas baratas e todas capazes apenas de deixar o
+  produto mais conservador:
+  - a cláusula **A5** do predicado de arbitragem — `ui_v32.js:679`, documentada
+    como defensiva em `:662-666` (errata **E1**,
+    `specs/010-recomendacao-sem-vao/spec.md:74-82`);
+  - `if (temCandidato) return "";` de `tgtValidateHTML` — `ui_target_v32.js:341`
+    (errata **E17**, `specs/010-recomendacao-sem-vao/spec.md:243-255`);
+  - o **4º parâmetro** de `prCards` (`afirmaPreservacao`) — `ui_v32.js:833`, lido
+    em `:836` e nunca passado truthy pelos quatro sítios de chamada (`:1275`,
+    `:1278`, `:1282`, `:1284`), por desenho de C13.
+
+  A durabilidade **não é sorte de catálogo**: está ancorada em `engine_v32.js:696`
+  + `validateConfigV32` — capability com `questionIds` não pode ser
+  `assessmentCoverage: "none"` —, que é a metade estática da prova de
+  inalcançabilidade. Mutante que remova qualquer uma delas é **equivalente por
+  construção** e entra em `dividas_declaradas` como *"inalcançável, provado"*,
+  nunca como par vazio na coluna de mutantes. O que **é** achado, e vive no
+  backlog, é o inverso: gate que promete asserção e entrega tautologia (`EA-20`).
 
 Confirmada qualquer uma como intencional → sobe para a tabela acima com a fonte.

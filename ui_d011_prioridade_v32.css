@@ -1,0 +1,61 @@
+/* ============================================================================
+   DEMANDA 011 · NUMERAÇÃO DAS PRIORIDADES — folha do módulo.
+
+   ZERO SELETOR ALHEIO (R9 §6). Toda regra pende de classe que o PRÓPRIO
+   módulo aplica (`.d011-legenda`, `.d011-key`). `.ux-priolayout` é ponto de
+   montagem em JS e nunca aparece aqui: marcar o nó antes de estilizá-lo custa
+   uma linha e elimina a dependência de um seletor que pertence a
+   `ui_ux_v32.css`. A allowlist de exceções fica VAZIA por desenho.
+
+   Sem `!important` em regra alguma: este bloco é o ÚLTIMO injetado no
+   `<style>` único (depois de `V32_P52CSS_END`), então vence empate de
+   especificidade por ordem — que é a forma barata de vencer.
+
+   NÃO se estiliza largura ou altura do `.key`: `.opt .key{flex:0 0 26px;
+   height:26px}` (Camada 1, `:68`) é caixa de BASE FIXA, independente do
+   conteúdo. Esvaziar o `textContent` do item sem atalho NÃO colapsa o
+   alinhamento — a preocupação de C2 está resolvida pela regra congelada, e
+   regra nova aqui só criaria um segundo dono do mesmo pixel.
+   ========================================================================== */
+
+/* C4 · a legenda que diz, em português, o que o número é e o que ele não é.
+   Primeiro filho de um container `display:grid` de duas colunas no desktop:
+   `1 / -1` faz a frase ocupar a faixa inteira acima da grade e da coluna-resumo,
+   sem deslocar nenhuma das duas e sem entrar como célula da grade.
+   `var(--muted)` é TOKEN da Camada 1 consumido como token (não é seletor
+   alheio): 8,17:1 sobre `--surface` na tela e 10,86:1 no papel. `--faint`
+   daria 4,92:1 — passa, mas sem folga, e por isso não é a escolha.
+   O juiz do contraste continua sendo D011-CON1 sobre as cores resolvidas. */
+.d011-legenda{
+  grid-column: 1 / -1;
+  margin: 0 0 2px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--muted);
+}
+
+/* C11 · impressão. Duas cláusulas, e as duas são deliberadas:
+
+   1. o glifo de atalho SOME — no papel não há teclado, e um número impresso
+      ao lado de cada linha volta a ser lido como ordem, que é exatamente o
+      que a demanda existe para tirar;
+   2. a legenda SOME junto — se o glifo que ela explica não está lá, a frase
+      perde referente e vira o mesmo ruído.
+
+   `visibility:hidden` e não `display:none` no glifo: preserva a calha de 26px
+   e mantém o alinhamento das linhas no papel — o mesmo motivo pelo qual C2
+   mantém o `.key` no DOM.
+
+   O seletor casa SÓ com `data-d011="atalho"`, que por construção exclui o
+   selecionado (`"estado"`) e o item sem atalho (`"mudo"`). É isso que preserva
+   o estado de seleção no papel: o `✓`, o `.sel` e o badge `Prioridade N` — os
+   únicos números que sobrevivem à impressão, e que SÃO a ordem, por
+   declaração do negócio.
+
+   Zero contato com o pipeline de impressão congelado (§29.6): nada em
+   `buildPrintReport`, `preparePrint`, `beforeprint`/`afterprint`. A regra vive
+   em arquivo novo e alcança só `.d011-*`. */
+@media print{
+  .d011-key[data-d011="atalho"]{ visibility: hidden; }
+  .d011-legenda{ display: none; }
+}

@@ -1,6 +1,6 @@
 {
   "demanda": "010-recomendacao-sem-vao",
-  "phase": "implement",
+  "phase": "validate",
   "spec_dir": "specs/010-recomendacao-sem-vao",
   "brief": "O vao entre as duas doutrinas de recomendacao: a Camada 1 congelada recomenda produto a partir do gap sem contexto, o engine V3.2 exige contexto declarado, e isLegacyModeV32() escolhe entre elas exigindo contexto ZERO. Contexto parcial desliga a primeira sem ligar a segunda — foi onde o cliente caiu e recebeu zero recomendacoes. Itens 4, 6 e 8 do feedback de 2026-08-27.",
   "branch": "feature/010-recomendacao-sem-vao",
@@ -104,5 +104,32 @@
         "o 4o parametro de prCards nunca e passado truthy no produto, por desenho (C13: o papel nunca afirma preservacao). Nao e ramo sem medicao - M6 ataca baseCardHTML e morre em INV7(c), que e o papel -, mas um mutante que atacasse SO o repasse de prCards seria equivalente por construcao. Sugerido registrar como equivalente declarado na matriz, no padrao que E1 deu a clausula A5."
       ]
     }
+  },
+  "validacao": {
+    "t021_campanhas": {
+      "d010": "24 DETECTADO · 0 SOBREVIVENTE · 0 NAO EXECUTADO. 27 declarados, 24 executados; 3 em divida: M3/M4 (sem caso nas fixtures) e M11 (equivalente por construcao, provado).",
+      "d009": "19 KILL de 19",
+      "core": "3 KILL de 3",
+      "p50": "nenhum alvo mudou - campanha nao exigida",
+      "p51_p52": "FAIL nomeado: campanha EXIGIDA e ambiente sem chromium (KI-3). Declarado, nunca SKIP (R10 §2). Fecha no job visual do CI."
+    },
+    "t023_repin_inline": "p50core de 60/4 para 64/0. Sao DOIS hashes, nao quatro: P50-GOV1 e P50-IC4 leem ui_v32.js; P50-SUF0 e P50-SUF8 leem ui_target_v32.js. Comentarios-trilha R8 §2 com motivo, data e Identidade anterior, abrindo com a declaracao de que e assercao de PIN e nao de comportamento. Executado pelo qa-engineer por EXCECAO NOMINAL do orquestrador ao tasks.md (que o atribui ao build-engineer) - tarefa mecanica cuja fonte de verdade estava na mao de quem acabou de medir.",
+    "t026_pipeline": "13 PASS · 1 FAIL de 14 stages. O FAIL e o stage mutation com p51/p52 exigidas e sem chromium - previsto e declarado.",
+    "spec_validate": "13 de 14 conformes. Um gap real de classe spec-errada: a linha normativa de C8 nao acompanhava a errata E17. Corrigido. Dois dos tres flags do extrator foram descartados pelo proprio QA como artefato dele, em vez de virarem 'gaps'.",
+    "t029_aceite_po": {
+      "primeiro_veredito": "REPROVADO. Objecao: V3 subtrai conteudo. Sob CONTEXT_NOT_INFORMED a apresentacao base e atribuida tambem por (c.services||[]).length, e o card renderizava Servicos, maturidade e why. A premissa que gerou V3 - 'N cards cujo unico conteudo possivel e dizer que nao houve declaracao' - e do proprio PO, do refinamento, e e verdadeira para o card VAZIO e falsa para o card com servico. O PO nomeou a propria autoria.",
+      "falsificacao": "PROCEDE, e maior que o alegado. Os tres nomes nao apareciam fora do cartao-alvo. Sessao inicial tipica: 7 servicos anexados, baseIds 10, 3 com servico, 5 nomes somem da tela. Papel: #pr-support de 8944 para 2645 chars, 31%, com todas as outras secoes byte-identicas.",
+      "raiz_unica": "A MESMA subtracao era a raiz do vermelho do CI. #pr-sup-base vem ANTES de #pr-target na ordem canonica; encolhe-lo em 2842 (caso B) e 5603 (caso C) chars puxou o bloco de comparacao quase uma pagina para cima. O gate fatia o texto do pdftotext por posicao numa pagina entre dois marcadores, e o terminador e o TGT_DISCLAIMER: fora da pagina, fim vira -1 e o recorte cresce ate o fim da pagina, engolindo o vizinho. Dois sintomas opostos, uma causa. #pr-target nao muda um byte.",
+      "correcao": "errata E18 + particao de baseIds por payload. C6(a) virou igualdade de conjunto, C6(b) moveu junto. De 5 nomes ausentes para 0. Os 42% de cards SEM payload continuam colapsados - a premissa do refinamento permanece intacta para eles."
+    },
+    "geometria_pos_correcao": "Na condicao EXATA do P52-TGT4 (p52DeclaraContexto reproduzido), base do PR x hoje: caso B de -2842 para -34 chars (1,2% do desvio, restaurado); caso C de -5604 para -1807 (68% recuperado). #pr-target: 0 nos dois. O residuo de C e POR DESENHO - sao as capabilities sem payload. Risco de C nao eliminado; so o PDF real decide.",
+    "achados_do_ciclo_de_correcao": [
+      "a metade do PAPEL nao era medida por alinea nenhuma: ABS1(e) e PAPEL1(b) exigiam zero card em #pr-sup-base varrendo so F1, onde com=0. Sem a particao do sitio do papel as duas continuariam verdes. Fechadas com igualdade de conjunto por data-cap, varrendo F1 e F4, com red provado por simulacao. Achado do PROPRIO IMPLEMENTADOR olhando o proprio trabalho.",
+      "a ancora do D010-M8 apodreceu NESTA correcao, e o preflight da 013 a pegou antes da campanha: ocorrencias=0, exit 1, provado em copia efemera.",
+      "buraco no array de mutantes por virgula dupla numa edicao anterior: forEach PULA buracos (por isso nenhuma sonda viu), mas Array.from(new Set(map)) o materializa como undefined e derruba o preflight.",
+      "segunda quebra de reason alheia por mudanca de literal - desta vez por escrever mensagens SEM ACENTO, que quebrou a regex do M7 e violou R12 de quebra. Regex nao afrouxada: acentuacao corrigida em 18 tokens e 24/24 reauditadas.",
+      "falso positivo latente: (a) exigia exatamente 1 aviso e teria reprovado um estado LEGITIMO (todo baseIds com payload - um SOC maduro com uma pratica fraca). Aviso passou a ser esperado condicionalmente. Fixture do ramo fica em divida declarada, com rota medida."
+    ],
+    "erratas": "E12 a E18, todas nascidas de medicao. E17 nomeou o padrao que a demanda encontrou tres vezes: alinea cuja pre-condicao nunca falha e indistinguivel de alinea que mede, ate alguem escrever o mutante e ele sobreviver."
   }
 }

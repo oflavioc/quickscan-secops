@@ -1,0 +1,28 @@
+{
+  "demanda": "015-superficies-de-apoio",
+  "phase": "tasks",
+  "spec_dir": "specs/015-superficies-de-apoio",
+  "branch": "feature/015-superficies-de-apoio",
+  "brief": "Itens 6a e 8 do cliente (2026-08-27), reunidos porque sao a mesma decisao: quantas superficies de apoio o relatorio tem e quem nomeia produto em cada uma. AS DUAS LEITURAS LITERAIS CAEM, por medicao: remover o bloco do 6a subtrairia TRES estados unicos no relatorio e custaria sete gates em quatro suites; e suprimir qualquer uma das duas listas do papel subtrai conteudo em TRES das sete combinacoes qid x nivel alcancaveis (perde FortiAI-Assist, perde FortiXDR, troca FortiEndpoint por FortiClient). O que o cliente sentiu e real e a causa e outra: dois titulos adjacentes com quatro palavras em comum, e TRES curadorias que se contradizem sem que a tela diga que existem.",
+  "autorizacao_29_4": "Nominal do proprietario, 2026-08-31: APENAS ui_v32.js. E ele confirmou na mesma data que COBRE o caminho de impressao dentro dele (buildPrintReport) - precedente da 010. ui_target_v32.js NAO autorizado, e o tech-lead demonstrou em tres passos que nao e necessario.",
+  "refinement": {
+    "status": "approved",
+    "approved_at": "2026-08-31",
+    "notes": "DECIDIDO SOB DELEGACAO de 2026-08-29. Inventario que ninguem tinha feito: 11 superficies de apoio na tela em 4 das 9 secoes canonicas, 8 no papel, alimentadas por TRES curadorias com regras de ancoragem diferentes (MAP por qid x nivel; engine por capability x contexto; QS_GAP_SUPPORT por qid sem nivel). Duas descobertas estruturais: p52Classify manda o painel inteiro para a secao de contexto, entao quase todo o apoio V3.2 vive FORA de 'Formas de apoio'; e a Camada 1 nunca e impressa. 6a e redundancia DE PROMESSA, nao de conteudo. O PO REFUTOU A PROPRIA PROPOSTA DA 010: tirar o sufixo pioraria o que o cliente reclamou, porque hoje e o unico desambiguador. Rotas: S3 (retitular pela funcao) + T3 (declarar a relacao entre curadorias) + P14."
+  },
+  "specify": {
+    "status": "approved",
+    "approved_at": "2026-08-31",
+    "notes": "DECIDIDO SOB DELEGACAO. Seis criterios, seis gates D015-*, dezesseis mutantes. GUARDA DE TAUTOLOGIA SEM MAQUIAGEM: treze alineas classificadas, SETE sem estado alcancavel de falha - assercoes sobre literal constante, onde o discriminante e exclusivamente o mutante -, uma marcada 'nao sei' com desfecho definido (se o mutante nao morrer, vira divida com causa, nunca afrouxamento), e uma clausula defensiva inalcancavel. E O PO RECUSOU UM CONTRABANDO DE BOUNDARY: ui_target_v32.js nao e IIFE e expoe TARGET_PROFILE no escopo global, entao seria tecnicamente possivel ler o estado do modulo PROIBIDO de dentro do AUTORIZADO - acoplamento fora de bridge para dentro do arquivo vedado. Resolvido por fraseado condicional. C5 e o criterio que a 010 nao teve: 'nada e removido' virou ASSERCAO contra ancora imutavel. C6 assere que a propria autorizacao nao foi excedida. C4 CAIU, decidido pelo orquestrador: acrescentaria texto a uma tela que o cliente chamou de carregada, e o proprio PO classificou a evidencia como fraca."
+  },
+  "plan": {
+    "status": "approved",
+    "approved_at": "2026-08-31",
+    "notes": "DECIDIDO SOB DELEGACAO. Quatro sitios em ui_v32.js, um dono, um commit. ui_target_v32.js demonstrado NAO NECESSARIO em tres passos. E O ORCAMENTO REAL E MENOR QUE A ESTIMATIVA, POR METRICA: o bloco tem 585 chars CRUS e 544 normalizados, e a que REPROVA PRIMEIRO e a crua - sobra ~308 visiveis, nao ~360. Medir pelo instrumento errado foi o que a 010 pagou tres vezes. Campanhas medidas ANTES de desenhar as waves: ui_v32.js dispara core/d009/d010 (fecham local) e p51/p52 (exigem Chromium), e o workflow so dispara em PR - entao FECHAR EXIGE ABRIR O PR. Ancoras de mutante nos cinco harnesses contra os quatro sitios: ZERO ocorrencias, conferido."
+  },
+  "tasks": {
+    "status": "approved",
+    "approved_at": "2026-08-31",
+    "notes": "DECIDIDO SOB DELEGACAO. 33 tarefas em 5 waves, serie de repins R2-R12. Tres restricoes que a spec nao podia conhecer, achadas na Fase 2: uma substring proibida por tres assercoes de suite congelada, MAIS FORTE que a alinea da spec; unicidade de titulo; e o eyebrow tendo de continuar fora das duas listas de ocultacao. Mais a ressalva de que o titulo entra no payload de evidencia pinado. Duas ausencias viraram tarefa em vez de surpresa: node_modules e o proprio planning-state."
+  }
+}

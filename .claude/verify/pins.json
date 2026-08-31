@@ -1,7 +1,7 @@
 {
   "_meta": {
     "descricao": "Registry único de pins — fonte de identidade dos artefatos (R8). Hashes = SHA-256 dos blobs de HEAD. Alterar arquivo pinado exige regenerar este registry no MESMO PR, com motivo no commit.",
-    "gerado_de_head": "ab6f70b606b6a743d8accd27afd97b57d06299f6",
+    "gerado_de_head": "8e843bd0333b774be257e02a092224a64ea55083",
     "gerado_em": "2026-08-31",
     "exclusoes": [
       "docs_phase5/**",
@@ -126,7 +126,7 @@
     ".claude/verify/gen_pins.py": "730043800a41b4cfbb799945dd6499df8ba1375096f5f748df01c8c2d12a407a",
     ".claude/verify/invariants.json": "b8571facafbe6098cc643886cd158f877dd702c0cba6ca5addff34fc3e10bee6",
     ".claude/verify/known_issues.json": "b9dd23b1a05ab09a11122aee68d555938f250223de2911de8c56079ddd742140",
-    ".claude/verify/mutation-matrix.json": "33608d339a509000b272f31974e400cd1cac19e17d10f12d69a3ff481d6fb9d4",
+    ".claude/verify/mutation-matrix.json": "bc8bf80c18fffea409038a15a3bb52269fcdd218c22411ba9aa8d7576a69acc0",
     ".claude/verify/mutation_map.json": "bf13a2d9270907bb6f5f021a74eed2e528034b0fd6325022cc7fcdb5d2b1ea47",
     ".claude/verify/pipeline.yaml": "4c87841da3b876cf7b594153f836ece74565b4a10f69ce296efff5d7751cf83a",
     ".claude/verify/run.sh": "b137b7a1c1bf9233b06ed8f87b04fb03150b316b59ce0b56231c28ab4e048faa",
@@ -241,8 +241,8 @@
     "synthetic_session_examples/exemplo-minimo.json": "314e4a7ba4e90aca5a0660370a97b31f82a5cc87b044e937f1a8066020c57ede",
     "tests_009_leitura.js": "4322961372c4505dd7abb2202c5a0e895f1ba6ac0c43575a8956c68ab5e28cdd",
     "tests_009_mutants.js": "e2e475698bb23743fe0f2fe71dca9f02cac9f3d4fa85077ec5a1a5d3f4b86dcc",
-    "tests_010_mutants.js": "0bac7b5f1722dd173b8b584c83e3e3c37ddbaeaeae7c5cbe40e115f77903e804",
-    "tests_010_vao.js": "6ba23b0e54640525db1659fef81eca8cb349b7841e64cc3e7d0dd16dd6bfbb6c",
+    "tests_010_mutants.js": "6e8661b4d24347ad957fef69e8d7a0fefbb7472d2ab52ad7894c112d01f07d9f",
+    "tests_010_vao.js": "52aa030b9689eed65dae03e3a8aa4d8dd0840e1637a3a90abc7e52296035d81e",
     "tests_core_mutants.js": "8a0502c2d7f34832722059435f2ccf4d7889614769526b645d4e2a720732af7e",
     "tests_icons_m46.js": "f73f96e32951507135c0b36d968fe12e9ffbc268e8ad438ea2e6c861a8b88123",
     "tests_journey_m45.js": "84d99be32e122f867dc1620cd1f49e4f3ae9795a32185cc75aa246d8682941f5",

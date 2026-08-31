@@ -4029,15 +4029,78 @@ async function tgt4(browser, errs) {
          `p52PdfColorInk(file, idxBloco + 1, ...)`, que rasteriza UMA página só e
          por isso não mede tinta do alvo quando o bloco atravessa duas. */
       const idxBloco = paginas.findIndex(p => /Perfil atual\s*[×x]\s*Cen[áa]rio-alvo/.test(p.texto));
-      /* recorte do bloco: da âncora até o disclaimer metodológico */
-      let blocoTexto = "";
+      /* ── RECORTE E TINTA · O BLOCO OCUPA AS PÁGINAS QUE OCUPAR (2026-08-31) ──
+         MOTIVO · CAUSA PROVADA. `idxBloco` escolhe UMA página, e o bloco ocupa
+         DUAS. Provado por eliminação, com o papel medido: sob gate ABERTO o valor
+         do domínio 3 (`2.8`) está no offset 287 de 1412 dentro de `#pr-target`, e
+         o disclaimer metodológico — o terminador do recorte — no 1203. Se o
+         disclaimer estivesse na MESMA página, `fim` seria 1203 e a fatia cobriria
+         [0,1203), que contém 287: o valor seria achado. Como o gate reprovou por
+         não achá-lo, o disclaimer está noutra página, `fim` é -1, e a fatia já ia
+         ATÉ O FIM DA PÁGINA — logo a página termina antes do offset 287. A ordem
+         interna confirma: <h2> 0→41, `.pr-kpis` 41→124, <svg> do alvo 124→166,
+         `.pr-mut` 166→214, `table.pr-doms` (onde vive o 2.8) 214→310. Título,
+         KPIs e radar cabem; a tabela de domínios vai para a página seguinte.
+         Consequência: alargar a fatia DENTRO de uma página não muda nada. O
+         recorte passa a ser o FLUXO em ordem de documento, da página da âncora
+         até a do terminador, e só então cortado nos dois marcadores.
+
+         RETIFICAÇÃO DO `EA-10` — e do parágrafo "ESCOPO E AUTORIZAÇÃO" logo acima,
+         que ficou errado. O item (i) foi registrado como "o recorte alarga o
+         sujeito em silêncio até o fim da página": **esse item NÃO tem caso
+         comprovado**. O sintoma que lhe foi atribuído — nome de estágio dentro do
+         bloco sob gate fechado — era do SELETOR, que casava a régua de
+         `#pr-journey`, e sumiu quando o seletor foi desambiguado. O achado com
+         caso provado é o desta emenda: UMA página escolhida para um bloco que
+         ocupa DUAS. Quem for abrir demanda a partir do `EA-10` deve procurar
+         isto, não aquilo.
+
+         POR QUE A TINTA VEM JUNTO, E NÃO DEPOIS. `p52PdfColorInk` rasterizava só
+         `idxBloco + 1`. Hoje o controle "nenhuma tinta do alvo na página do
+         bloco" passa por MARGEM MEDIDA DE NO MÁXIMO 121 CARACTERES: o polígono
+         verde está em 124→166 e a quebra cai entre 166 e 287. Qualquer
+         deslocamento menor que isso empurra o polígono para a página seguinte e o
+         controle reprova FALSAMENTE, dizendo "nenhuma tinta" quando há — na outra
+         página. Corrigir o texto sem a tinta trocaria um falso negativo por um
+         falso positivo, com a mesma causa. A tinta passa a somar as MESMAS
+         páginas que o bloco ocupa (`idxBloco..idxFim`), e nenhuma outra: página
+         vizinha que o bloco não toca continua fora da medida. Falha de
+         rasterização em QUALQUER dessas páginas devolve `null`, preservando o
+         ramo "prova não executada" — soma parcial nunca vira veredito.
+
+         NÃO ENFRAQUECE. Medido como função pura, com o seletor já corrigido: com o
+         bloco INTEIRO numa página, a saída é BYTE A BYTE idêntica à anterior. E o
+         fluxo corta NO terminador em vez de correr até o fim da página, então em
+         nenhum cenário ele engole conteúdo vizinho.
+
+         RESSALVA REGISTRADA, NÃO CORRIGIDA (fora desta autorização). O comentário
+         de `P52_TGT_GREEN` chama `#3CB17E` de "encoding exclusivo do alvo", e
+         `ui_v32.js:796` usa o MESMO hex como cor do domínio 2 em `PR_DOM_HEX[1]`.
+         Logo a asserção de tinta pode passar por causa de uma tag de domínio na
+         mesma página: ela NÃO prova presença do alvo. Medido no papel: o verde
+         aparece em `#pr-maturity` (2x) e `#pr-target` (1x), e em nenhuma outra
+         seção. Achado próprio, alocado ao backlog pós-merge.
+
+         ESCOPO. Suíte congelada (§29.4). Autorização NOMINAL do proprietário em
+         2026-08-31, restrita a `tgt4()` e a DUAS coisas: a derivação de
+         `blocoTexto` e a chamada de `p52PdfColorInk`. As duas juntas, pela razão
+         acima. Nada mais neste arquivo. */
+      let blocoTexto = "", idxFim = idxBloco;
       if (idxBloco >= 0) {
-        const t = paginas[idxBloco].texto;
+        for (let k = idxBloco; k < paginas.length; k++)
+          if (paginas[k].texto.indexOf("A adoção de tecnologia") >= 0) { idxFim = k; break; }
+        const t = paginas.slice(idxBloco, idxFim + 1).map(p => p.texto).join(" ");
         const ini = t.indexOf("Perfil atual");
         const fim = t.indexOf("A adoção de tecnologia");
         blocoTexto = t.slice(ini, fim > ini ? fim : undefined);
       }
-      const tinta = idxBloco >= 0 ? p52PdfColorInk(file, idxBloco + 1, P52_TGT_GREEN, 28) : null;
+      let tinta = null;
+      for (let k = idxBloco; idxBloco >= 0 && k <= idxFim; k++) {
+        const parcial = p52PdfColorInk(file, k + 1, P52_TGT_GREEN, 28);
+        if (!parcial) { tinta = null; break; }
+        tinta = tinta ? { px: tinta.px + parcial.px, amostras: tinta.amostras + parcial.amostras,
+                          w: parcial.w, h: parcial.h } : parcial;
+      }
 
       observed[caso.id] = { oraculo: { atualSuff: or.atual.suff, alvoSuff: or.alvo.suff,
         publicavel: or.publicavel, kpiAtual: or.kpiAtual, kpiAlvo: or.kpiAlvo,

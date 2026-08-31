@@ -94,6 +94,32 @@ daquele item, não a sua posição numa lista. Itens além do nono não recebem
 atalho.
 _Evitar_: numeração, índice, ranking, ordem
 
+**Habilitador a validar**:
+Habilitador listado a partir do gap e do catálogo congelado quando o contexto
+tecnológico da capability NÃO foi declarado. É hipótese explícita — o relatório diz
+"validar aderência" e nunca afirma ausência de tecnologia. Distinto do habilitador
+de apoio direto, que exige NONE declarado e suficiência.
+_Evitar_: recomendação condicional, sugestão, produto provável
+
+**Vão de contexto parcial**:
+Estado de sessão em que algum contexto foi declarado (saindo do modo legado) sem que
+nenhuma capability com gap tenha saído de UNSET — a leitura congelada é suprimida e
+a leitura V3.2 não produz substituto. Estado não desenhado: o relatório passa a
+conter MENOS do que conteria sem declaração alguma.
+_Evitar_: modo intermediário, contexto incompleto, sessão híbrida
+
+**Arbitragem de camada**:
+Regra que decide qual das leituras de apoio (a congelada da Camada 1 ou a do engine
+V3.2) é apresentada ao leitor. É de APRESENTAÇÃO, nunca de cálculo, e seu predicado
+é a existência de substituto — não a existência de contexto declarado.
+_Evitar_: modo legado, supressão, fallback
+
+**Convergência no card**:
+Forma de apresentação em que o habilitador é uma linha discreta DENTRO do card da
+prática-alvo, em vez de uma seção própria. É aditiva: não implica dissolver a seção
+de apoio, que carrega também conteúdo não-comercial (capabilities a validar, tiers).
+_Evitar_: fusão de seções, unificação, merge de blocos
+
 ## Estrutura (processo)
 
 **Demanda**:

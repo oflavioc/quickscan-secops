@@ -3,7 +3,8 @@
     "descricao": "Matriz gate↔mutante (Onda 3, R3 §5 / R10). Mantida pelo qa-engineer: cada linha registra o par, a última prova de kill e onde ela vive. O stage tdd valida a estrutura; o stage mutation re-prova por trigger de path. Gate sem mutante na matriz é dívida declarada, nunca omissão silenciosa.",
     "onda": 3,
     "expansao_p51": "2026-08-29, demanda 013-integridade-da-campanha (T12/T024, contrato C3): a linha agregada 'campanhas P51 (múltiplos)' foi substituída por UM PAR POR MUTANTE dos 20 da p51, com propriedade, ancora e ultima_prova. É o que IC-5 (check_mutation.py) lê para exigir cobertura nominal: mutante do harness sem par aqui é FAIL, e par sem mutante correspondente também. NENHUM mutante da p51 foi aposentado nesta demanda — as oito âncoras triadas deram reancorar, nenhuma deu aposentadoria, logo nenhum gate ficou órfão. As linhas agregadas de P50 e P52 seguem agregadas: expandi-las é outra demanda (T13). A prova narrada da triagem e das reancoragens vive em specs/013-integridade-da-campanha/matriz-gate-mutante.md.",
-    "classificacao_e3": "2026-08-29, demanda 013 (E3/T022 · W7): os DOIS não-KILL relatados pelo CI foram classificados no vocabulário fechado, e deram saídas DIFERENTES. (1) P50::M51 — `rot semântica`: o gate P50-PR1 reprovou, mas com mensagem que o `reason` não casava mais; as cinco alternativas eram INALCANÇÁVEIS depois da errata externa B-02/B-03 (quatro com zero ocorrência no arquivo do gate; a quinta viva só dentro de `cmp`, tests_p50_chromium.js:1046, definido e nunca invocado). Conserto EM ESCOPO: o par foi re-derivado da mensagem atual pela propriedade que o `desc` documenta (spec §Casos de borda, caso 5). A linha agregada 'campanhas P50 (múltiplos)' NÃO é expandida por par — expandir a P50 é outra demanda (T13). (2) p51/M51-01 — `gate sem poder discriminante (achado EA-7)`: o gate P51-VIS1 rodou e NÃO reprovou; âncora única e `reason` vivo, mas a Fase 5.2 passou a governar a composição que a mutação ataca via CSS da 5.0/5.1. NÃO é consertado aqui (spec §Fora de escopo e §Riscos 3): a demanda PARA nesse ponto e o remédio é asserção nova sobre comportamento de produto. Narrativa das duas em specs/013-integridade-da-campanha/matriz-gate-mutante.md §15."
+    "classificacao_e3": "2026-08-29, demanda 013 (E3/T022 · W7): os DOIS não-KILL relatados pelo CI foram classificados no vocabulário fechado, e deram saídas DIFERENTES. (1) P50::M51 — `rot semântica`: o gate P50-PR1 reprovou, mas com mensagem que o `reason` não casava mais; as cinco alternativas eram INALCANÇÁVEIS depois da errata externa B-02/B-03 (quatro com zero ocorrência no arquivo do gate; a quinta viva só dentro de `cmp`, tests_p50_chromium.js:1046, definido e nunca invocado). Conserto EM ESCOPO: o par foi re-derivado da mensagem atual pela propriedade que o `desc` documenta (spec §Casos de borda, caso 5). A linha agregada 'campanhas P50 (múltiplos)' NÃO é expandida por par — expandir a P50 é outra demanda (T13). (2) p51/M51-01 — `gate sem poder discriminante (achado EA-7)`: o gate P51-VIS1 rodou e NÃO reprovou; âncora única e `reason` vivo, mas a Fase 5.2 passou a governar a composição que a mutação ataca via CSS da 5.0/5.1. NÃO é consertado aqui (spec §Fora de escopo e §Riscos 3): a demanda PARA nesse ponto e o remédio é asserção nova sobre comportamento de produto. Narrativa das duas em specs/013-integridade-da-campanha/matriz-gate-mutante.md §15.",
+    "execucao_ci_demanda_010": "T027, 2026-08-31. Primeira execução das campanhas deferidas neste PR: o passo vinha saindo `skipped` porque as suítes visuais estavam vermelhas, e só rodou quando `P52-TGT4` fechou. PROVENIÊNCIA: job `visual` do CI, run 33389017967 (job 99478074174), 2026-08-31 — `mutation: 5 campanha(s) executada(s) · 0 problema(s)`. LIDO DO LOG, não inferido: (a) `p52` — 'MUTATION TESTING (Phase 5.2) [tests_p52_mutants.js]: 107/107 mutantes detectados pelo gate e motivo esperados' e 'não-KILL: nenhum — os 107 mutante(s) lidos estão DETECTADO'; (b) `p51` — 'MUTATION TESTING (Phase 5.1): 19/20 mutantes detectados' e 'não-KILL: 1 de 20 mutante(s) lido(s) · 19 KILL ficam na contagem'. O único não-KILL é a EXCEÇÃO NOMINAL KI-4: '[EXCEÇÃO] KI-4: p51/M51-01 SOBREVIVENTE perdoado · gate P51-VIS1', classificação 'gate sem poder discriminante (achado EA-7)', prazo 'Merge da demanda 014 na develop'. O IC-9 validou os DOIS lados: que a entrada existe no harness (oráculo: preflight C1) e que segue não-KILL no registro (ultima_prova.resultado = 'SOBREVIVENTE', 2026-08-29); (c) `d010` — '24/24 mutantes detectados' e 'não-KILL: nenhum — os 24 mutante(s) lidos estão DETECTADO', com 3 em dívida declarada (D010-M3/M4 sem caso nas fixtures; D010-M11 equivalente por construção); (d) `d009` — '19 KILL · 0 escaparam de 19'; (e) `core` — '3 KILL · 0 escaparam de 3'. SÃO CINCO E NÃO SEIS porque `p50` NÃO foi exigida: '[OK] p50: nenhum alvo mudou desde a base — campanha não exigida'. As linhas de `p50` e `p52` seguem AGREGADAS nesta matriz por decisão registrada em `expansao_p51` (expandi-las é a T13 da 013), então os 107 mutantes de p52 NÃO ganham par nominal aqui — e isso não é omissão: o IC-5 exige cobertura nominal apenas de `p51`, e ela está completa (20 pares, um por mutante). A alternativa de DÍVIDA DECLARADA que o tasks.md previa, caso o job não fechasse dentro do PR, NÃO se aplica: fechou, e os dois jobs saíram verdes (verify 11m34s, visual 37m45s)."
   },
   "pares": [
     {
@@ -465,9 +466,9 @@
       "gate": "suítes P52/Target/Journey",
       "invariante": "superfícies 5.2",
       "ultima_prova": {
-        "data": "histórica (fase 5.2)",
+        "data": "2026-08-31",
         "resultado": "KILL",
-        "registro": "docs_phase5/evidence_p52/P52-mutation.json"
+        "registro": "docs_phase5/evidence_p52/P52-mutation.json | reconfirmado em job `visual` do CI, run 33389017967 (job 99478074174), 2026-08-31 — `mutation: 5 campanha(s) executada(s) · 0 problema(s)`: 107/107 DETECTADO, nenhum não-KILL"
       }
     },
     {
@@ -476,9 +477,9 @@
       "gate": "P52-TGT1 (tests_p52_layout.js, P52_ONLY=P52-TGT1)",
       "invariante": "C3 — adjacência alvo→contexto sobrevive à reancoragem da ordem; a POSIÇÃO ABSOLUTA que P52-TGT1 deixou de afirmar passou para D009-ORD1/ORD2",
       "ultima_prova": {
-        "data": "2026-08-28",
+        "data": "2026-08-31",
         "resultado": "KILL — 'P52-F1: contexto (4) antes do alvo (5)' (o `reason` reescrito, /contexto \\(\\d+\\) antes do alvo/, casou; a alternativa antiga 'alvo não é imediatamente posterior' foi removida junto com a asserção que a produzia)",
-        "registro": "T019 (wave 6) — fecha o 'NÃO EXECUTADO, com motivo' declarado no red (commit 3950288): a árvore estava limpa e o harness reconstrói o HTML gerado. Restauração byte a byte OK (9 arquivos + html); acervo de evidência 43 arquivos byte-idênticos; nenhum recibo escrito (execução PARCIAL não grava P52-mutation.json)"
+        "registro": "T019 (wave 6) — fecha o 'NÃO EXECUTADO, com motivo' declarado no red (commit 3950288): a árvore estava limpa e o harness reconstrói o HTML gerado. Restauração byte a byte OK (9 arquivos + html); acervo de evidência 43 arquivos byte-idênticos; nenhum recibo escrito (execução PARCIAL não grava P52-mutation.json) | reconfirmado em job `visual` do CI, run 33389017967 (job 99478074174), 2026-08-31 — `mutation: 5 campanha(s) executada(s) · 0 problema(s)`: 107/107 DETECTADO, nenhum não-KILL"
       }
     },
     {
@@ -920,6 +921,368 @@
         "resultado": "DETECTADO — 'D011-PRT1(b): 1 seletor(es) fora do prefixo do modulo no @media print'. Par PROPOSTO nesta wave, e ele importa mais do que parece: check_lint_arch.py NAO tem regra de CSS, entao esta alinea e a UNICA verificacao de 'zero seletor alheio' que existe no pipeline para este modulo — e so dentro do @media print",
         "registro": "campanha d011 executada em 2026-08-31, worktree exclusiva phase5-011, em BACKGROUND (timeout em primeiro plano mata a campanha no meio e deixa mutante aplicado): 18 DETECTADO / 0 SOBREVIVENTE / 0 NAO EXECUTADO de 18 · restauracao byte a byte OK do source E do HTML gerado · porcelain e SHA-256 dos 4 arquivos identicos antes e depois. Preflight (contrato C1 da 013) declarado no mesmo commit: 18 ancoras com ocorrencias == 1, interpretador resolvido. Sintaxe das 18 replicas validada ANTES da campanha (node --check / py_compile / balanco de chaves): replica invalida vira NAO EXECUTADO disfarcado de sobrevivente."
       }
+    },
+    {
+      "mutante": "D010-M1",
+      "harness": "d010 (tests_010_mutants.js)",
+      "gate": "D010-ARB1",
+      "invariante": "INV-9 / C1 - sem substituto a Camada 1 congelada permanece VISIVEL",
+      "ultima_prova": {
+        "data": "2026-08-31",
+        "resultado": "KILL",
+        "registro": "tests_010_mutants.js"
+      }
+    },
+    {
+      "mutante": "D010-M2",
+      "harness": "d010 (tests_010_mutants.js)",
+      "gate": "D010-ARB2",
+      "invariante": "C2 - havendo substituto a supressao vigente e preservada",
+      "ultima_prova": {
+        "data": "2026-08-31",
+        "resultado": "KILL",
+        "registro": "tests_010_mutants.js"
+      }
+    },
+    {
+      "mutante": "D010-M5",
+      "harness": "d010 (tests_010_mutants.js)",
+      "gate": "D010-ARB4",
+      "invariante": "C4 - o ramo !hasPrio segue a MESMA arbitragem",
+      "ultima_prova": {
+        "data": "2026-08-31",
+        "resultado": "KILL",
+        "registro": "tests_010_mutants.js"
+      }
+    },
+    {
+      "mutante": "D010-M6",
+      "harness": "d010 (tests_010_mutants.js)",
+      "gate": "D010-INV7",
+      "invariante": "INV-7 - nenhuma superficie afirma preservacao de leitura oculta",
+      "ultima_prova": {
+        "data": "2026-08-31",
+        "resultado": "KILL",
+        "registro": "tests_010_mutants.js"
+      }
+    },
+    {
+      "mutante": "D010-M7",
+      "harness": "d010 (tests_010_mutants.js)",
+      "gate": "D010-ABS1",
+      "invariante": "C6 - o aviso de ausencia traz contagem E lista nominal",
+      "ultima_prova": {
+        "data": "2026-08-31",
+        "resultado": "KILL",
+        "registro": "tests_010_mutants.js"
+      }
+    },
+    {
+      "mutante": "D010-M8",
+      "harness": "d010 (tests_010_mutants.js)",
+      "gate": "D010-ABS1 (a)",
+      "invariante": "C6 - N cards viram UM aviso, nao aviso somado aos cards",
+      "ultima_prova": {
+        "data": "2026-08-31",
+        "resultado": "KILL",
+        "registro": "tests_010_mutants.js"
+      },
+      "nota": " [E18, 2026-08-31] Este par PASSA A SER a direcao (i) da particao por payload — 'a particao NAO acontece: todos os baseIds seguem card'. A assercao que o mata mudou de 'zero .v32-card' para IGUALDADE DE CONJUNTO ('.v32-card exatamente nos COM payload'), e por isso a `reason` foi retranscrita do literal novo do oraculo: a mensagem perdeu a contagem e ganhou o qualificador SEM payload. Provado por simulacao da saida no DOM antes da implementacao: morre em (a) sob D010-F1, nomeando external-exposure e network-detection como cards SEM payload que sobreviveram. Auditoria das 24 regex contra o fonte do oraculo depois da retranscricao: 24/24 casam. [2026-08-31] ANCORA RETRANSCRITA: a anterior foi a ZERO ocorrencias quando a particao entrou, e o --preflight a pegou ANTES da campanha — provado em copia efemera com a ancora antiga restaurada: 'nao_executavel D010-M8 · ocorrencias=0 · ancora nao encontrada', exit 1. E a classe que a demanda 013 existiu para cacar, e desta vez o instrumento funcionou."
+    },
+    {
+      "mutante": "D010-M9",
+      "harness": "d010 (tests_010_mutants.js)",
+      "gate": "D010-CARD1",
+      "invariante": "INV-5 - o habilitador ancora no nivel ATUAL confirmado, nunca no alvo",
+      "ultima_prova": {
+        "data": "2026-08-31",
+        "resultado": "KILL",
+        "registro": "tests_010_mutants.js"
+      }
+    },
+    {
+      "mutante": "D010-M10",
+      "harness": "d010 (tests_010_mutants.js)",
+      "gate": "D010-CARD1",
+      "invariante": "INV-2 - resposta nao confirmada (null/NA) nao ancora habilitador",
+      "ultima_prova": {
+        "data": "2026-08-31",
+        "resultado": "KILL",
+        "registro": "tests_010_mutants.js"
+      }
+    },
+    {
+      "mutante": "D010-M11",
+      "harness": "d010 (tests_010_mutants.js)",
+      "gate": "D010-CARD2",
+      "invariante": "C8 - precedencia de fonte: candidato do engine bloqueia o MAP",
+      "ultima_prova": {
+        "data": "2026-08-30",
+        "resultado": "EQUIVALENTE POR CONSTRUCAO - nao executado",
+        "registro": "tests_010_mutants.js"
+      },
+      "classificacao": "equivalente declarado (clausula inalcancavel)",
+      "achado": "EQUIVALENTE POR CONSTRUCAO - reconciliado em 2026-08-30 contra a varredura que sustenta a errata E14. RETIFICA o relato de T021, que dizia 'falta fixture': a fixture NAO PODE EXISTIR, e a diferenca importa porque 'falta fixture' e divida que alguem tenta pagar e nao consegue. CADEIA: S2-de-CONTEXTO exige capability UNICA dona do qid com landscapeEnabled true; capability dona de qid tem questionIds nao vazio; o invariante de validateConfigV32 (erra em coverage 'none' COM questionIds; 0 erros hoje, com gate vivo em tests_m42_m86.js) implica coverage != 'none'; e a UNICA rota que emite candidato sob presence UNSET e UNASSESSED_CAPABILITY, exclusiva das capabilities coverage 'none'. MEDIDO: catalogo com 25 capabilities - 13 com questionIds, ZERO delas coverage 'none'; 12 sem questionIds, TODAS coverage 'none'. Varredura adversarial de 900 sessoes com landscape todo UNSET e vetor/sinais/arquitetura/plataforma variados: 9000 observacoes (dona de qid x UNSET), 0 contraexemplos, e as classificacoes observadas nessa classe sao so CONTEXT_NOT_INFORMED / null / NEEDS_VALIDATION - UNASSESSED_CAPABILITY nao aparece. Logo temCandidato e SEMPRE falso onde tgtValidateHTML chega. Desfecho igual ao de E1/A5: a clausula FICA no predicado como defesa contra mudanca futura no engine, e NENHUM mutante a tem como alvo. CONSEQUENCIA PARA O GATE, que e o segundo fato: D010-CARD2 (a) e verdadeira por ESTADO e nao por GATE - a ausencia do no em `logs` sob D010-F2 e explicada pelo S3 de contexto, e por nada mais. Quem mede C8 e a alinea (b) - 'capability com apenas servicos e em S2-contexto CONTINUA recebendo o no' -, essa sim viva e com caso em D010-F4 (3 qids). Com M11 fora, D010-CARD2 fica SEM MUTANTE ate que se escreva o de (b): proposta medida no relatorio de T022, com ancora e replica, pendente de autorizacao (move o declarado de 25 para 26)."
+    },
+    {
+      "mutante": "D010-M12",
+      "harness": "d010 (tests_010_mutants.js)",
+      "gate": "D010-CARD3",
+      "invariante": "INV-3 - sob gate de suficiencia FECHADO nada e publicado",
+      "ultima_prova": {
+        "data": "2026-08-31",
+        "resultado": "KILL",
+        "registro": "tests_010_mutants.js"
+      }
+    },
+    {
+      "mutante": "D010-M13",
+      "harness": "d010 (tests_010_mutants.js)",
+      "gate": "D010-CARD4",
+      "invariante": "C10 - a tabela de equivalencia e TOTAL sobre as 11 chaves do MAP",
+      "ultima_prova": {
+        "data": "2026-08-31",
+        "resultado": "KILL",
+        "registro": "tests_010_mutants.js"
+      }
+    },
+    {
+      "mutante": "D010-M14",
+      "harness": "d010 (tests_010_mutants.js)",
+      "gate": "D010-CARD4",
+      "invariante": "C10 - item com equivalencia sai com o id equivalente, nunca a chave crua",
+      "ultima_prova": {
+        "data": "2026-08-31",
+        "resultado": "KILL",
+        "registro": "tests_010_mutants.js"
+      }
+    },
+    {
+      "mutante": "D010-M15",
+      "harness": "d010 (tests_010_mutants.js)",
+      "gate": "D010-CARD5",
+      "invariante": "INV-4 / C11 - o disclaimer vem DEPOIS dos habilitadores, na mesma superficie",
+      "ultima_prova": {
+        "data": "2026-08-31",
+        "resultado": "KILL",
+        "registro": "tests_010_mutants.js"
+      }
+    },
+    {
+      "mutante": "D010-M16",
+      "harness": "d010 (tests_010_mutants.js)",
+      "gate": "D010-CARD6",
+      "invariante": "R-1 - o no a-validar e IRMAO de .ux-tgt-en, nunca a classe (prova cruzada com D009-UNS1)",
+      "ultima_prova": {
+        "data": "2026-08-31",
+        "resultado": "KILL",
+        "registro": "tests_010_mutants.js"
+      }
+    },
+    {
+      "mutante": "D010-M17",
+      "harness": "d010 (tests_010_mutants.js)",
+      "gate": "D010-PAPEL1",
+      "invariante": "C13 - o vao fecha nas DUAS superficies; papel nao e opcional",
+      "ultima_prova": {
+        "data": "2026-08-31",
+        "resultado": "KILL",
+        "registro": "tests_010_mutants.js"
+      }
+    },
+    {
+      "mutante": "D010-M18",
+      "harness": "d010 (tests_010_mutants.js)",
+      "gate": "D010-CARD4",
+      "invariante": "E9 - a fusao olha o conjunto ANEXADO (direcao 'deduplica de menos')",
+      "ultima_prova": {
+        "data": "2026-08-31",
+        "resultado": "KILL",
+        "registro": "tests_010_mutants.js"
+      }
+    },
+    {
+      "mutante": "D010-M19",
+      "harness": "d010 (tests_010_mutants.js)",
+      "gate": "D010-CARD4",
+      "invariante": "E9 - a fusao NAO olha o dominio da tabela (direcao 'deduplica demais')",
+      "ultima_prova": {
+        "data": "2026-08-31",
+        "resultado": "KILL",
+        "registro": "tests_010_mutants.js"
+      },
+      "achado": "KILL - fechado em 2026-08-30 depois da emenda de C10 (c) decidida pelo coordenador. ANTES: o gate reprovava, mas por VACUIDADE em (b) e (c), NUNCA pela assercao (c2) que a spec lhe atribui - a linha real (913 chars) nao continha nem '(c2)' nem 'FortiGuard MDR'. Causa: os dois homonimos do card tem equivalente, entao deduplicar pelo dominio esvazia o no inteiro e a guarda de nao-vacuidade dispara antes do laco por par. DIRECAO ESCOLHIDA: nem alargar o `reason` (petrificaria atribuicao que a medicao contradiz) nem corrigir a spec (enfraqueceria o gate: a vacuidade dispara igual para qualquer mutacao que esvazie o no). O gate passou a NOMEAR o item perdido antes de ceder a vacuidade, quando o no esta vazio E o catalogo do nivel ATUAL, ja descontada a fusao legitima, esperava sobrevivente. MEDIDO que nao e alinea subsumida: sob a saida de M19, D010-CARD1 (a) tambem reprova mas para em D010-F1/automation e nunca alcanca monitoring-coverage - nenhum gate da suite nomeava o item. Bateria negativa de 4 casos: controle PASS; saida de M19 e no removido inteiro dao '(c2) ... [\"FortiGuard MDR\"] sumiu'; e o CONTROLE INVERTIDO (chips do engine removidos, no intacto) continua dando VACUIDADE - a emenda nao engoliu o caminho legitimo."
+    },
+    {
+      "mutante": "D010-M20",
+      "harness": "d010 (tests_010_mutants.js)",
+      "gate": "D010-ARB3",
+      "invariante": "C3 - arbitragem tudo-ou-nada: titulo e blocos contiguos, nunca um terceiro conjunto",
+      "ultima_prova": {
+        "data": "2026-08-31",
+        "resultado": "KILL",
+        "registro": "tests_010_mutants.js"
+      }
+    },
+    {
+      "mutante": "D010-E15-1",
+      "harness": "manual (simulacao da saida no DOM, zero byte de produto)",
+      "gate": "D010-CARD4 (b)",
+      "invariante": "C10 (b) apos a errata E15 - o prefixo `map:` e NORMATIVO: e ele que torna a proveniencia do item legivel no DOM (item do MAP congelado x item do catalogo V3.2)",
+      "descricao": "emitir a chave CRUA do MAP como data-eid no ramo sem equivalencia",
+      "ultima_prova": {
+        "data": "2026-08-30",
+        "resultado": "SUPERADO por E16 - ver D010-M21 (KILL manual em T014 permanece citavel como historico, nao como guarda viva)",
+        "registro": "specs/010-recomendacao-sem-vao/spec.md"
+      },
+      "riscado_por": "SUPERADO pela errata E16 em 2026-08-30. O par manual NAO e apagado nem renumerado (R2 §5, R12): ele registra a prova que existiu e a razao pela qual deixou de bastar. E16 dispoe que prova manual vale no dia em que e feita e NAO e re-executada pela campanha - meses depois nao distingue 'a propriedade continua guardada' de 'a ancora apodreceu e ninguem viu', que foi o achado da 013. Sucessor de FONTE, re-executado a cada campanha: D010-M21."
+    },
+    {
+      "mutante": "D010-E15-2",
+      "harness": "manual (simulacao da saida no DOM, zero byte de produto)",
+      "gate": "D010-CARD4 (b)",
+      "invariante": "C10 (b) apos a errata E15 - o prefixo `map:` e NORMATIVO: e ele que torna a proveniencia do item legivel no DOM (item do MAP congelado x item do catalogo V3.2)",
+      "descricao": "emitir `map-<chave>` (separador trocado) no ramo sem equivalencia",
+      "ultima_prova": {
+        "data": "2026-08-30",
+        "resultado": "SUPERADO por E16 - ver D010-M22 (KILL manual em T014 permanece citavel como historico, nao como guarda viva)",
+        "registro": "specs/010-recomendacao-sem-vao/spec.md"
+      },
+      "riscado_por": "SUPERADO pela errata E16 em 2026-08-30. O par manual NAO e apagado nem renumerado (R2 §5, R12): ele registra a prova que existiu e a razao pela qual deixou de bastar. E16 dispoe que prova manual vale no dia em que e feita e NAO e re-executada pela campanha - meses depois nao distingue 'a propriedade continua guardada' de 'a ancora apodreceu e ninguem viu', que foi o achado da 013. Sucessor de FONTE, re-executado a cada campanha: D010-M22."
+    },
+    {
+      "mutante": "D010-E15-3",
+      "harness": "manual (simulacao da saida no DOM, zero byte de produto)",
+      "gate": "D010-CARD4 (b)",
+      "invariante": "C10 (b) apos a errata E15 - o prefixo `map:` e NORMATIVO: e ele que torna a proveniencia do item legivel no DOM (item do MAP congelado x item do catalogo V3.2)",
+      "descricao": "emitir `map:<chave errada>` - prefixo certo, proveniencia mentida",
+      "ultima_prova": {
+        "data": "2026-08-30",
+        "resultado": "SUPERADO por E16 - ver D010-M23 (KILL manual em T014 permanece citavel como historico, nao como guarda viva)",
+        "registro": "specs/010-recomendacao-sem-vao/spec.md"
+      },
+      "riscado_por": "SUPERADO pela errata E16 em 2026-08-30. O par manual NAO e apagado nem renumerado (R2 §5, R12): ele registra a prova que existiu e a razao pela qual deixou de bastar. E16 dispoe que prova manual vale no dia em que e feita e NAO e re-executada pela campanha - meses depois nao distingue 'a propriedade continua guardada' de 'a ancora apodreceu e ninguem viu', que foi o achado da 013. Sucessor de FONTE, re-executado a cada campanha: D010-M23."
+    },
+    {
+      "mutante": "D010-E15-4",
+      "harness": "manual (simulacao da saida no DOM, zero byte de produto)",
+      "gate": "D010-CARD4 (b)",
+      "invariante": "C10 (b) apos a errata E15 - o prefixo `map:` e NORMATIVO: e ele que torna a proveniencia do item legivel no DOM (item do MAP congelado x item do catalogo V3.2)",
+      "descricao": "emitir `MAP:<chave>` (caixa trocada no prefixo)",
+      "ultima_prova": {
+        "data": "2026-08-30",
+        "resultado": "SUPERADO por E16 - ver D010-M24 (KILL manual em T014 permanece citavel como historico, nao como guarda viva)",
+        "registro": "specs/010-recomendacao-sem-vao/spec.md"
+      },
+      "riscado_por": "SUPERADO pela errata E16 em 2026-08-30. O par manual NAO e apagado nem renumerado (R2 §5, R12): ele registra a prova que existiu e a razao pela qual deixou de bastar. E16 dispoe que prova manual vale no dia em que e feita e NAO e re-executada pela campanha - meses depois nao distingue 'a propriedade continua guardada' de 'a ancora apodreceu e ninguem viu', que foi o achado da 013. Sucessor de FONTE, re-executado a cada campanha: D010-M24."
+    },
+    {
+      "mutante": "D010-E15-5",
+      "harness": "manual (simulacao da saida no DOM, zero byte de produto)",
+      "gate": "D010-CARD4 (b)",
+      "invariante": "C10 (b) apos a errata E15 - o prefixo `map:` e NORMATIVO: e ele que torna a proveniencia do item legivel no DOM (item do MAP congelado x item do catalogo V3.2)",
+      "descricao": "emitir `map:` sem chave alguma",
+      "ultima_prova": {
+        "data": "2026-08-30",
+        "resultado": "SUPERADO por E16 - ver D010-M25 (KILL manual em T014 permanece citavel como historico, nao como guarda viva)",
+        "registro": "specs/010-recomendacao-sem-vao/spec.md"
+      },
+      "riscado_por": "SUPERADO pela errata E16 em 2026-08-30. O par manual NAO e apagado nem renumerado (R2 §5, R12): ele registra a prova que existiu e a razao pela qual deixou de bastar. E16 dispoe que prova manual vale no dia em que e feita e NAO e re-executada pela campanha - meses depois nao distingue 'a propriedade continua guardada' de 'a ancora apodreceu e ninguem viu', que foi o achado da 013. Sucessor de FONTE, re-executado a cada campanha: D010-M25."
+    },
+    {
+      "mutante": "D010-M21",
+      "harness": "d010 (tests_010_mutants.js)",
+      "gate": "D010-CARD4 (b)",
+      "invariante": "C10 (b) apos a errata E15 - o prefixo map: e NORMATIVO: e ele que torna a proveniencia do item legivel no DOM (item do MAP congelado x item do catalogo V3.2)",
+      "descricao": "emitir a CHAVE CRUA do MAP como data-eid no ramo sem equivalencia (comportamento pre-E15)",
+      "nota": "REDUNDANCIA DECLARADA: os cinco morrem pela MESMA assercao de C10 (b) - a forma normativa map:<chave>. Nao sao cinco propriedades independentes; sao cinco CLASSES de desvio que um autor futuro cometeria sobre a mesma linha (ui_target_v32.js:346, a mesma ancora de D010-M14). O menos redundante e D010-M23: e o unico cujo prefixo esta CERTO e cuja chave mente, e e ele que prova que a assercao pina a FORMA INTEIRA e nao so o prefixo. Registrado para que 5 KILL nao sejam lidos como 5 alineas.",
+      "supersede": "D010-E15-1",
+      "ultima_prova": {
+        "data": "2026-08-31",
+        "resultado": "KILL",
+        "registro": "tests_010_mutants.js"
+      }
+    },
+    {
+      "mutante": "D010-M22",
+      "harness": "d010 (tests_010_mutants.js)",
+      "gate": "D010-CARD4 (b)",
+      "invariante": "C10 (b) apos a errata E15 - o prefixo map: e NORMATIVO: e ele que torna a proveniencia do item legivel no DOM (item do MAP congelado x item do catalogo V3.2)",
+      "descricao": "trocar o separador do prefixo: map-<chave> em vez de map:<chave>",
+      "nota": "REDUNDANCIA DECLARADA: os cinco morrem pela MESMA assercao de C10 (b) - a forma normativa map:<chave>. Nao sao cinco propriedades independentes; sao cinco CLASSES de desvio que um autor futuro cometeria sobre a mesma linha (ui_target_v32.js:346, a mesma ancora de D010-M14). O menos redundante e D010-M23: e o unico cujo prefixo esta CERTO e cuja chave mente, e e ele que prova que a assercao pina a FORMA INTEIRA e nao so o prefixo. Registrado para que 5 KILL nao sejam lidos como 5 alineas.",
+      "supersede": "D010-E15-2",
+      "ultima_prova": {
+        "data": "2026-08-31",
+        "resultado": "KILL",
+        "registro": "tests_010_mutants.js"
+      }
+    },
+    {
+      "mutante": "D010-M23",
+      "harness": "d010 (tests_010_mutants.js)",
+      "gate": "D010-CARD4 (b)",
+      "invariante": "C10 (b) apos a errata E15 - o prefixo map: e NORMATIVO: e ele que torna a proveniencia do item legivel no DOM (item do MAP congelado x item do catalogo V3.2)",
+      "descricao": "prefixo CERTO e chave MENTIDA: map:<qid> em vez de map:<chave do MAP>",
+      "nota": "REDUNDANCIA DECLARADA: os cinco morrem pela MESMA assercao de C10 (b) - a forma normativa map:<chave>. Nao sao cinco propriedades independentes; sao cinco CLASSES de desvio que um autor futuro cometeria sobre a mesma linha (ui_target_v32.js:346, a mesma ancora de D010-M14). O menos redundante e D010-M23: e o unico cujo prefixo esta CERTO e cuja chave mente, e e ele que prova que a assercao pina a FORMA INTEIRA e nao so o prefixo. Registrado para que 5 KILL nao sejam lidos como 5 alineas.",
+      "supersede": "D010-E15-3",
+      "ultima_prova": {
+        "data": "2026-08-31",
+        "resultado": "KILL",
+        "registro": "tests_010_mutants.js"
+      }
+    },
+    {
+      "mutante": "D010-M24",
+      "harness": "d010 (tests_010_mutants.js)",
+      "gate": "D010-CARD4 (b)",
+      "invariante": "C10 (b) apos a errata E15 - o prefixo map: e NORMATIVO: e ele que torna a proveniencia do item legivel no DOM (item do MAP congelado x item do catalogo V3.2)",
+      "descricao": "trocar a caixa do prefixo: MAP:<chave>",
+      "nota": "REDUNDANCIA DECLARADA: os cinco morrem pela MESMA assercao de C10 (b) - a forma normativa map:<chave>. Nao sao cinco propriedades independentes; sao cinco CLASSES de desvio que um autor futuro cometeria sobre a mesma linha (ui_target_v32.js:346, a mesma ancora de D010-M14). O menos redundante e D010-M23: e o unico cujo prefixo esta CERTO e cuja chave mente, e e ele que prova que a assercao pina a FORMA INTEIRA e nao so o prefixo. Registrado para que 5 KILL nao sejam lidos como 5 alineas.",
+      "supersede": "D010-E15-4",
+      "ultima_prova": {
+        "data": "2026-08-31",
+        "resultado": "KILL",
+        "registro": "tests_010_mutants.js"
+      }
+    },
+    {
+      "mutante": "D010-M25",
+      "harness": "d010 (tests_010_mutants.js)",
+      "gate": "D010-CARD4 (b)",
+      "invariante": "C10 (b) apos a errata E15 - o prefixo map: e NORMATIVO: e ele que torna a proveniencia do item legivel no DOM (item do MAP congelado x item do catalogo V3.2)",
+      "descricao": "emitir o prefixo SEM chave alguma: map:",
+      "nota": "REDUNDANCIA DECLARADA: os cinco morrem pela MESMA assercao de C10 (b) - a forma normativa map:<chave>. Nao sao cinco propriedades independentes; sao cinco CLASSES de desvio que um autor futuro cometeria sobre a mesma linha (ui_target_v32.js:346, a mesma ancora de D010-M14). O menos redundante e D010-M23: e o unico cujo prefixo esta CERTO e cuja chave mente, e e ele que prova que a assercao pina a FORMA INTEIRA e nao so o prefixo. Registrado para que 5 KILL nao sejam lidos como 5 alineas.",
+      "supersede": "D010-E15-5",
+      "ultima_prova": {
+        "data": "2026-08-31",
+        "resultado": "KILL",
+        "registro": "tests_010_mutants.js"
+      }
+    },
+    {
+      "mutante": "D010-M26",
+      "harness": "d010 (tests_010_mutants.js)",
+      "gate": "D010-CARD2 (b)",
+      "invariante": "C8 - a fonte com contexto ganha, mas SERVICO do engine NAO bloqueia o MAP: a pratica com apenas servicos e em S2 de contexto continua recebendo o no a-validar, ao lado da linha do engine e no mesmo card (E2/E3 da errata)",
+      "descricao": "servico do engine passa a BLOQUEAR o MAP, como se fosse candidato (nega C8 (b))",
+      "nota": "Nasceu pela errata E17 (2026-08-30) porque a retirada de D010-M11 - equivalente por construcao - deixou D010-CARD2 SEM MUTANTE. Ataca a metade VIVA de C8: M11 atacava a precedencia de candidato, que e verdadeira por construcao; este ataca a nao-bloqueio por servico, que so e verdadeira porque o codigo a mantem. Uma linha em ui_target_v32.js:340. Universo: 3 praticas-alvo sob D010-F4 (vulnerability-management, monitoring-coverage, incident-response) com servico por hasGap, ZERO candidatos e S2 de contexto. FECHADO em 2026-08-30: KILL em D010-CARD2 (b). A primeira execucao devolveu SOBREVIVENTE por 'reprovou por motivo diferente do esperado' - e era a REGEX, nao o gate: eu havia escrito 'o `MAP`' com crases e o oraculo emite 'o MAP' sem elas. Corrigida por transcricao do literal (tests_010_vao.js:1000). Auditoria subsequente das 23 regex contra o fonte do oraculo: 22 casam estaticamente; a 23a (D010-M8) so nao casa porque a mensagem dela e interpolada em runtime, e ela ja vinha DETECTADO.",
+      "ultima_prova": {
+        "data": "2026-08-31",
+        "resultado": "KILL",
+        "registro": "tests_010_mutants.js"
+      }
+    },
+    {
+      "mutante": "D010-M27",
+      "harness": "d010 (tests_010_mutants.js)",
+      "gate": "D010-ABS1 (a)",
+      "invariante": "C6 apos a errata E18 — o aviso de ausencia cobre SO as capabilities de `baseIds` SEM payload do engine; a que tem payload continua card, porque sobre ela a frase 'a interpretacao V3.2 nao e produzida' e FALSA",
+      "descricao": "colapsar TODOS os baseIds no aviso, com ou sem payload — a direcao oposta a de D010-M8, e o comportamento de hoje (pre-correcao)",
+      "nota": "ANCORA NASCE COM A IMPLEMENTACAO, e por isso o mutante entra no harness no commit do GREEN, nao no do RED. E16 exige mutacao de fonte em ANCORA REAL de uma linha: a linha que este mutante ataca — a chamada de `baseAbsenceHTML` passando o subconjunto SEM payload, mais o map dos cards COM payload — sera escrita pelo ui-engineer em ui_v32.js:743. Hoje 'colapsar todos' nao e mutacao: e o estado do produto. Escrever ancora sintetica agora seria exatamente o que E16 proibe. A replica prevista e de UMA linha: trocar o subconjunto de volta por `baseIds` e remover o map. PODER DISCRIMINANTE JA PROVADO, sem esperar o green: a saida deste mutante e o estado atual do produto, e o gate emendado REPROVA nele — e literalmente a prova de red desta tarefa (12 PASS · 1 FAIL de 13), com (a) nomeando continuous-monitoring, incident-management e vulnerability-management como os cards COM payload que sumiram sob D010-F4. FECHADO em 2026-08-31: KILL em D010-ABS1 (a). A ancora nasceu com a implementacao da particao (ui_v32.js:766), como previsto no commit do red.",
+      "ultima_prova": {
+        "data": "2026-08-31",
+        "resultado": "KILL",
+        "registro": "tests_010_vao.js"      }
     }
   ],
   "dividas_declaradas": [
@@ -944,6 +1307,9 @@
     "D011 · D011-IDEM1 alinea (d) ('desfazer devolve o estado inicial byte a byte') — SEM MUTANTE PLAUSIVEL. Cada render reconstroi #app por innerHTML, entao nenhum estado sobrevive a um toggle por construcao e nao ha mutacao de ancora unica que produza residuo ASSIMETRICO. A alinea permanece como segunda medicao independente (o retrato pos-desfazer e comparado ao retrato INICIAL, nao ao oraculo), e o defeito que ela guarda — modulo que passe a cachear nos — hoje nao existe.",
     "D011 · D011-KEY1 alineas (a) e (b) (ordem recalculada x tabela declarada; nao-vacuidade DOM x ordem global) — sao GUARDAS DO PROPRIO JULGADOR e ficam fora da campanha por decisao, nao por esquecimento: matar as duas exige mutar tests_011_prioridade.js, e mutar o oraculo prova o oraculo, nao o produto. As duas foram provadas vermelhas na bateria negativa da Fase 4, em copia efemera: (a) morre com o vetor da fixture editado; (b) morre quando fixture E literal declarado sao uniformizados COERENTEMENTE — e (b) e o unico ponto que sobrevive a essa 'simplificacao', porque nesse caso (a) volta a concordar.",
     "D011 · C8 clausula 'CSS com prefixo proprio' — check_lint_arch.py NAO tem regra de CSS (so innerHTML, IIFE e bridges). O unico mutante de C8 (D011-M7) mede outra clausula. A cobertura de 'zero seletor alheio' para este modulo existe SO dentro do @media print, por D011-PRT1(b) / D011-M19. Ampliar o lint para CSS e do build-engineer e entra no pipeline (R10 secao 9), nunca no prompt de um agente.",
-    "D011 · D011-CON1 e D011-M9 — deferidos ao job visual do CI e ao rito do proprietario (KI-3, design-decisions.md). Executados aqui em 2026-08-31, tests_011_chromium.js terminou 0 PASS / 1 FAIL com o motivo NOMEADO (Chromium ausente) — a suite nao pula em silencio (R10 secao 2). O numero do run entra por T030/T031."
-  ]
+    "D011 · D011-CON1 e D011-M9 — deferidos ao job visual do CI e ao rito do proprietario (KI-3, design-decisions.md). Executados aqui em 2026-08-31, tests_011_chromium.js terminou 0 PASS / 1 FAIL com o motivo NOMEADO (Chromium ausente) — a suite nao pula em silencio (R10 secao 2). O numero do run entra por T030/T031.",
+    "D010-M3 e D010-M4 (demanda 010) NAO SAO EXECUTADOS - divida declarada COM CAUSA, nunca par vazio e nunca mutante sintetico. M3 remove a interrupcao `hiding=false` no no nao-permitido (ui_v32.js:193) e M4 acrescenta `banner-ok` ao conjunto de permitidos. Os dois foram medidos na W1 e estao SEM CASO nas fixtures declaradas: sob o workspace da 5.2 a varredura de `hideLegacyRecommendation` roda dentro de [data-p52-legacy-scope=\"support\"] e nao alcanca o no que eles atacam - sabotar as duas formas nao mudou veredito de gate nenhum. Nao confundir com equivalente por construcao (caso da clausula A5): estes DOIS sao mataveis, falta o cenario. Disposicao em UMA execucao, escrita na celula de C3 da spec. D010-ARB3 continua com mutante VIVO (D010-M20), como R3 §5 exige.",
+    "O 4o parametro de `prCards` (afirmaPreservacao) NUNCA e passado truthy no produto, por desenho: C13 diz que o papel nunca afirma preservacao de leitura da Camada 1, que no papel nem e impressa. Um mutante que atacasse SO o repasse desse parametro seria EQUIVALENTE POR CONSTRUCAO - nao ha entrada que o faca mudar saida - e nenhum mutante que o remova pode morrer. Registrado no mesmo padrao que a errata E1 deu a clausula A5 do predicado de arbitragem. NAO e ramo sem medicao: a propriedade em si tem mutante vivo (D010-M6 ataca `baseCardHTML` e morre em D010-INV7 (a) na tela e (c) no papel). Achado do ui-engineer em T013, aceito pelo QA em T019 - a distincao entre este caso e o de D010-M3/M4 e exatamente a que a spec §Criterios manda nao confundir.",
+    "D010-M11 (demanda 010) NAO E EXECUTADO - EQUIVALENTE POR CONSTRUCAO, nao 'sem caso nas fixtures'. EQUIVALENTE POR CONSTRUCAO - reconciliado em 2026-08-30 contra a varredura que sustenta a errata E14. RETIFICA o relato de T021, que dizia 'falta fixture': a fixture NAO PODE EXISTIR, e a diferenca importa porque 'falta fixture' e divida que alguem tenta pagar e nao consegue. CADEIA: S2-de-CONTEXTO exige capability UNICA dona do qid com landscapeEnabled true; capability dona de qid tem questionIds nao vazio; o invariante de validateConfigV32 (erra em coverage 'none' COM questionIds; 0 erros hoje, com gate vivo em tests_m42_m86.js) implica coverage != 'none'; e a UNICA rota que emite candidato sob presence UNSET e UNASSESSED_CAPABILITY, exclusiva das capabilities coverage 'none'. MEDIDO: catalogo com 25 capabilities - 13 com questionIds, ZERO delas coverage 'none'; 12 sem questionIds, TODAS coverage 'none'. Varredura adversarial de 900 sessoes com landscape todo UNSET e vetor/sinais/arquitetura/plataforma variados: 9000 observacoes (dona de qid x UNSET), 0 contraexemplos, e as classificacoes observadas nessa classe sao so CONTEXT_NOT_INFORMED / null / NEEDS_VALIDATION - UNASSESSED_CAPABILITY nao aparece. Logo temCandidato e SEMPRE falso onde tgtValidateHTML chega. Desfecho igual ao de E1/A5: a clausula FICA no predicado como defesa contra mudanca futura no engine, e NENHUM mutante a tem como alvo. CONSEQUENCIA PARA O GATE, que e o segundo fato: D010-CARD2 (a) e verdadeira por ESTADO e nao por GATE - a ausencia do no em `logs` sob D010-F2 e explicada pelo S3 de contexto, e por nada mais. Quem mede C8 e a alinea (b) - 'capability com apenas servicos e em S2-contexto CONTINUA recebendo o no' -, essa sim viva e com caso em D010-F4 (3 qids). Com M11 fora, D010-CARD2 fica SEM MUTANTE ate que se escreva o de (b): proposta medida no relatorio de T022, com ancora e replica, pendente de autorizacao (move o declarado de 25 para 26).",
+    "RAMO SEM AVISO de C6/E18 (demanda 010) — FALTA CENARIO, e o cenario e ALCANCAVEL: nao confundir com o caso de D010-M11, que era inalcancavel por invariante. Com `baseSemPayload` vazio (todo `baseIds` tem payload) `baseAbsenceHTML` devolve \"\" e o bloco nasce SEM aviso, de proposito — aviso sobre 0 capabilities seria falso. MEDIDO em 2026-08-31 que o estado e alcancavel por TRES vetores, e um deles e trivial e realista: 'incident-response em 0, os demais em 3' (um SOC maduro com uma pratica fraca) da baseIds=1, com=1, sem=0, com o bloco trazendo 1 card e ZERO aviso. CONSEQUENCIA JA TRATADA no gate: D010-ABS1 (a) e o helper do papel passaram a esperar o aviso CONDICIONALMENTE (`sem.length ? 1 : 0`) — antes disso exigiam exatamente 1 e teriam REPROVADO um estado legitimo, o que era falso positivo latente do meu proprio gate. O QUE FALTA e a FIXTURE que exercite o ramo: sem ela nenhum mutante sobre a condicionalidade pode morrer. Rota barata e ja medida (vetor acima); custo a medir antes de aplicar, porque fixture nova mexe no censo de D010-INV7 (c), que itera todas as fixtures."  ]
 }

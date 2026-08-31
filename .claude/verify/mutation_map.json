@@ -4,6 +4,22 @@
     "onda": 3
   },
   "harnesses": {
+    "d010": {
+          "cmd": "node tests_010_mutants.js",
+          "preflight": true,
+          "targets": [
+                "ui_v32.js",
+                "ui_target_v32.js",
+                "tests_010_vao.js",
+                "fixtures_010_vao.js",
+                "tests_010_mutants.js"
+          ],
+          "requires": [
+                "node",
+                "python"
+          ],
+          "_trilha": "demanda 010-recomendacao-sem-vao - T019 (wave 9), registrado no MESMO commit da criacao de tests_010_mutants.js (R10 §3 / plan.md §Waves). 24 mutantes EXECUTADOS de 27 declarados: D010-M1, D010-M2, D010-M5..D010-M27 menos D010-M11, com D010-M27 acrescido pelo ciclo de correcao da errata E18 (2026-08-31) - a ancora dele so nasceu com a particao de baseIds por payload, e escrever ancora sintetica antes disso e o que E16 proibe. No mesmo ciclo a ancora de D010-M8 apodreceu (a linha que ela citava deixou de existir) e foi retranscrita: o preflight a acusou com ocorrencias=0 e exit 1 ANTES da campanha, com D010-M26 acrescido pela errata E17 (2026-08-30) porque a retirada de M11 deixou D010-CARD2 sem mutante e criterio vivo sem mutante e criterio sem prova de poder (R3 §5); M11 foi retirado em 2026-08-30 por ser EQUIVALENTE POR CONSTRUCAO (a clausula de precedencia que ele ataca e inalcancavel; ver dividas_declaradas em mutation-matrix.json). D010-M21..M25 acrescidos pela errata E16 (2026-08-30) sobre a propriedade que E15 tornou normativa (prefixo map: no data-eid do ramo sem equivalencia); entram DEPOIS de M20 e nenhum id existente renumera (R12). Os cinco sao mutante de FONTE - mudanca de UMA linha em ui_target_v32.js:346, a mesma ancora de D010-M14 - e nao par manual: E16 dispoe que prova manual vale no dia em que e feita e nao e re-executada pela campanha - correspondencia 1:1 com M1..M20 da spec §Criterios. D010-M3 e D010-M4 NAO sao implementados: medidos SEM CASO nas fixtures declaradas (sob o workspace da 5.2 a varredura de hideLegacyRecommendation nao alcanca o no que eles atacam) e registrados como DIVIDA DECLARADA COM CAUSA em mutation-matrix.json -> dividas_declaradas; D010-ARB3 continua com mutante vivo (D010-M20), como R3 §5 exige. Divida declarada nunca vira mutante sintetico. ALVOS ALEM DOS 2 MODULOS DE PRODUTO: tests_010_vao.js e fixtures_010_vao.js entram porque sao o ORACULO e a fixture da campanha - mexer neles muda o que a campanha prova; tests_010_mutants.js entra por si. Precedente: o harness d009 ja lista tests_009_leitura.js e fixtures_009_leitura.js. Desvio declarado que ENDURECE o trigger (mais re-execucao, nunca menos). SEM chromium: nenhum gate de tests_010_vao.js mede geometria - o oraculo inteiro e jsdom. preflight:true com a leitura de --preflight em argv nasce NESTE commit (D4 da 013): check_mutation.py roda o preflight de todo harness fora de IC_SEM_PREFLIGHT, independente de trigger e de ambiente, e um d010 sem ele reprovaria IC-4 derrubando o stage inteiro mesmo com a campanha verde. O relato emite o VOCABULARIO DE TRES ESTADOS (DETECTADO/SOBREVIVENTE/NAO EXECUTADO com causa do conjunto fechado) - o d010 nasce sem a divida do d009, que declara preflight e nao emite o vocabulario (medido em T012, onde foi preciso traduzir do stdout do harness). Preflight executado em T019: 18/18 ancoras com ocorrencias == 1, exit 0. A CAMPANHA e T021, sob protocolo de arvore limpa."
+    },
     "d009": {
       "cmd": "node tests_009_mutants.js",
       "preflight": true,

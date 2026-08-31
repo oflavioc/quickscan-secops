@@ -135,7 +135,7 @@ function tgtSection(app){
     const k=tgtKOf(qid), cur0=ans[k], t=TARGET_PROFILE.overrides[qid];
     const base=(cur0===null||cur0==="NA")?`<span class="ux-mut">Baseline atual não validado — delta local n/d.</span>`
       :`${esc32(QS[k].opts[cur0].t)} · ${SCORES[cur0].toFixed(1)} → `;
-    return `<li class="ux-tgt-ov" data-qid="${esc32(qid)}"><b>${esc32(QS[k].lbl)}</b><br>${base}${esc32(QS[k].opts[t].t)} · ${SCORES[t].toFixed(1)}${(cur0!==null&&cur0!=="NA")?` <span class="ux-tgt-delta">+${(SCORES[t]-SCORES[cur0]).toFixed(1)}</span>`:""}${tgtEnablersHTML(qid,semCtx)}</li>`;}).join("");
+    return `<li class="ux-tgt-ov" data-qid="${esc32(qid)}"><b>${esc32(QS[k].lbl)}</b><br>${base}${esc32(QS[k].opts[t].t)} · ${SCORES[t].toFixed(1)}${(cur0!==null&&cur0!=="NA")?` <span class="ux-tgt-delta">+${(SCORES[t]-SCORES[cur0]).toFixed(1)}</span>`:""}${tgtEnablersHTML(qid,semCtx)}${tgtValidateHTML(qid,cmpPub)}</li>`;}).join("");
   const absNote=tgtAbsenceHTML(semCtx,true);
   sec.innerHTML = `<div class="section-title"><div class="eyebrow">Perfil atual × Cenário-alvo de maturidade</div></div>
     <div class="v32-block" id="ux-tgt-cmp">${notice}
@@ -261,6 +261,95 @@ function tgtEnablersHTML(qid, semCtx){                          /* [L] SOMENTE i
   }
   return `<div class="ux-tgt-en"><i>Possíveis habilitadores já identificados neste Quickscan:</i><div class="ux-tgt-enablers">${items.map(it=>`<span class="ux-tgt-enabler" data-eid="${esc32(it.id)}">${window.__V32UI.iconFor(it.id, it.n)}<span class="ux-tgt-enabler-name">${esc32(it.n)}</span><span class="ux-tgt-mode">${esc32(it.m)}</span></span>`).join("")}</div></div>`;
 }
+/* ==========================================================================
+   DEMANDA 010 · §4 · HABILITADOR A VALIDAR — O VÃO DE CONTEXTO PARCIAL.
+
+   Sem contexto declarado o card ficava mudo: a Camada 1 nomeia produto para o
+   mesmo gap (`MAP[qid].lv[atual].c`) e a camada V3.2 não punha nada no lugar.
+   O nó abaixo é IRMÃO de `.ux-tgt-en` — nunca a classe (R-1): `D009-UNS1` mede
+   `.ux-tgt-en` dentro do `li` da prática, e herdar a classe quebraria o gate da
+   009 sem tocar em código dele. Atributo próprio (`data-ux-enablers`), nunca
+   outro valor de `data-ux-absence`, que é o aviso único da 009.
+
+   TABELA DE EQUIVALÊNCIA — declarada, DADO, nunca derivada do nome.
+   Regra única (T004, ratificada em 2026-08-30): `k ↦ id tal que
+   name(id) === PRODUCTS[k].n`, total sobre as 11 chaves de produto do `MAP` e
+   injetora. Medida no catálogo congelado: dez chaves com exatamente um hit nos
+   registros do engine, uma com zero. Derivar equivalência por semelhança de
+   nome é proibido (C10 (e) varre este arquivo).
+   · `FortiNDR ↦ ndr-family` é o nó de FAMÍLIA, não variante: é exatamente o que
+     `resolveCandidates` emite quando a modalidade não foi declarada
+     (`engine_v32.js:456-465`); apontar `fortindr-onprem`/`fortindr-cloud`
+     afirmaria na mesma tela uma modalidade que a sessão não declarou.
+   · `FortiGuard-Service-Bundle` não corresponde a item algum de `SERVICES` (que
+     traz os serviços FortiGuard discretos): "sem equivalente V3.2", explícito.
+     O item sai com `PRODUCTS[c.p].n` e `data-eid="map:<chave>"` — prefixo
+     estável e seguro, porque nenhum id do engine contém ":" (medido).
+   ========================================================================== */
+const TGT_EQUIV = {
+  "FortiAnalyzer":            "fortianalyzer",
+  "FortiSIEM":                "fortisiem",
+  "FortiSOAR":                "fortisoar",
+  "FortiEndpoint":            "fortiendpoint",
+  "FortiRecon":               "fortirecon",
+  "FortiXDR":                 "fortixdr",
+  "FortiAI-Assist":           "fortiai-assist",
+  "SOCaaS":                   "fortiguard-socaas",
+  "FortiGuard-MDR-Service":   "fortiguard-mdr",
+  "FortiNDR":                 "ndr-family",
+  "FortiGuard-Service-Bundle": null                             /* sem equivalente V3.2 — valor explícito */
+};
+/* [D010 · §4] O nó nasce se — e SOMENTE se — as quatro condições valem:
+     (1) gate canônico de suficiência ABERTO. A decisão CHEGA como argumento
+         (`cmpPub`), calculada uma vez por render pela origem canônica: a UI
+         consome, nunca recalcula (moeda UI-009A / INV-3);
+     (2) prática em S2 de CONTEXTO — `tgtEnablerState(qid, 0)`, o predicado
+         isolado do payload: chamada com o número REAL de itens, uma prática com
+         serviço do engine cairia em S1 e serviço passaria a bloquear o `MAP`,
+         que é o oposto de C8. A função permanece byte-idêntica: muda o
+         argumento, não o corpo (R-1);
+     (3) resposta ATUAL confirmada (0..3) — nunca o nível-alvo (INV-5);
+     (4) `MAP[qid].lv[atual].c` não vazio.
+   Precedência (C8): capability com CANDIDATO do engine não recebe item do
+   `MAP` — a sessão mais bem informada nunca produz mais ruído que a menos
+   informada. Serviço NÃO bloqueia a prática; bloqueia só o item equivalente.
+   Fusão (E9): contra o conjunto EFETIVAMENTE ANEXADO neste card — candidatos e
+   serviços do engine no mesmo passe —, NUNCA contra o domínio da tabela. Item
+   cujo equivalente não está anexado SOBREVIVE, com o nome do catálogo V3.2:
+   `MAP["monitoring-coverage"].lv[0].c` traz os dois homônimos do catálogo, e
+   deduplicar pela tabela apagaria "FortiGuard MDR" do relatório — perda
+   silenciosa de conteúdo dentro da demanda cujo enunciado é que declarar
+   contexto nunca subtrai conteúdo. A fusão também não é sensível a família ou
+   variante (E14): "a validar" e "oferta a definir no aprofundamento" têm
+   remédios distintos, e fundi-las perderia a acionável.
+   Lista vazia ⇒ NENHUM nó: contêiner vazio não é publicação, é defeito (E11).
+   Ordem do catálogo preservada entre os itens que sobram. */
+function tgtValidateHTML(qid, cmpPub){
+  if (cmpPub !== true) return "";
+  if (tgtEnablerState(qid, 0) !== "S2") return "";
+  const k=tgtKOf(qid); if(k<0) return "";
+  const atual=ans[k];
+  if (typeof atual !== "number") return "";                     /* null / "NA" ⇒ nada a ancorar */
+  const cat=(((MAP[qid]||{lv:[]}).lv[atual]||{}).c)||[];
+  if (!cat.length) return "";
+  const caps=Object.keys(V32.CAPABILITIES).filter(id=>(V32.CAPABILITIES[id].questionIds||[]).includes(qid));
+  const ctx=V32.buildRecommendationContext().contexts;          /* mesma origem congelada de `tgtEnablersHTML` */
+  const anexados=[]; let temCandidato=false;
+  caps.forEach(cid=>{ const c=ctx[cid]; if(!c) return;
+    (c.candidates||[]).forEach(x=>{ temCandidato=true; anexados.push(x.itemId); });
+    (c.services||[]).forEach(s=>anexados.push(s.serviceId));});
+  if (temCandidato) return "";                                  /* [C8] a fonte com contexto ganha */
+  const items=[];
+  cat.forEach(x=>{
+    const eq=(x.p in TGT_EQUIV) ? TGT_EQUIV[x.p] : null;
+    if (eq && anexados.indexOf(eq)>=0) return;                  /* [E9] funde com o que JÁ está no card */
+    const id=eq || ("map:"+x.p);
+    const n=eq ? (((V32.OFFERINGS[eq]||V32.SERVICES[eq]||{}).name)||x.p)
+               : (((PRODUCTS[x.p]||{}).n)||x.p);
+    items.push({id, n});});
+  if (!items.length) return "";
+  return `<div class="ux-mut" data-ux-enablers="a-validar"><i>Do catálogo desta sessão, pelo gap observado nesta prática — validar aderência ao contexto do cliente antes de qualquer recomendação:</i><div class="ux-tgt-enablers">${items.map(it=>`<span class="ux-tgt-enabler" data-eid="${esc32(it.id)}">${window.__V32UI.iconFor(it.id, it.n)}<span class="ux-tgt-enabler-name">${esc32(it.n)}</span><span class="ux-tgt-mode">a validar</span></span>`).join("")}</div></div>`;
+}
 function tgtRadarOverlay(app){                                  /* [I] geometria EXATA extraída dos eixos legados */
   const svg=app.querySelector("svg.radar"); if(!svg) return;
   const old=svg.querySelector(".ux-target-shape"); if(old) old.remove();
@@ -361,7 +450,7 @@ window.__uxTargetPrintHTML = function(){
   /* [D009 · B5] mesmo passe da lista, também no papel. */
   const semCtx=[];
   const ovs=Object.keys(TARGET_PROFILE.overrides).map(qid=>{const k=tgtKOf(qid),c0=ans[k],t=TARGET_PROFILE.overrides[qid];
-    return `<div class="pr-card"><b>${esc32(QS[k].lbl)}</b><div>${(c0!==null&&c0!=="NA")?esc32(QS[k].opts[c0].t)+" → ":"<i>Baseline atual não validado</i> → "}${esc32(QS[k].opts[t].t)}</div>${tgtEnablersHTML(qid,semCtx)}</div>`;}).join("");
+    return `<div class="pr-card"><b>${esc32(QS[k].lbl)}</b><div>${(c0!==null&&c0!=="NA")?esc32(QS[k].opts[c0].t)+" → ":"<i>Baseline atual não validado</i> → "}${esc32(QS[k].opts[t].t)}</div>${tgtEnablersHTML(qid,semCtx)}${tgtValidateHTML(qid,cmpPub)}</div>`;}).join("");
   const absNote=tgtAbsenceHTML(semCtx,false);                   /* [D009 · C14] a MESMA frase da tela, sem controle */
   return `<div class="pr-sec" id="pr-target"><h2>Perfil atual × Cenário-alvo de maturidade</h2>
     <div class="pr-kpis"><div class="pr-kpi"><b>${fmt(curO)}${curO!==null?" / 5":""}</b><span>Atual · ${(cmpPub&&cur.stage)?esc32(cur.stage.pt):"n/d"}</span></div>
@@ -375,7 +464,11 @@ window.__uxTargetPrintHTML = function(){
     <table class="pr-doms"><tbody>${rows}</tbody></table>${absNote}${ovs}
     <div class="pr-card"><i>${esc32(TGT_DISCLAIMER)}</i></div></div>`;
 };
+/* [D010 · C10] a tabela de equivalência é servida como DADO pela superfície de
+   teste já registrada (`__DEV`): nenhum `window.__*` novo, e `__V32UI` não
+   cresce (R-3). O oráculo a lê e REIMPLEMENTA a checagem contra o catálogo — a
+   tabela nunca é validada contra si mesma. */
 if (window.__DEV) Object.assign(window.__DEV, {
   TARGET: TARGET_PROFILE, targetAnswer, setTarget, clearTargetProfile, computeTargetProfile,
-  tgtEffectiveVector, revalidateTargets, tgtCurrentProfile
+  tgtEffectiveVector, revalidateTargets, tgtCurrentProfile, TGT_EQUIV
 });

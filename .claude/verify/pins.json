@@ -1,7 +1,7 @@
 {
   "_meta": {
     "descricao": "Registry único de pins — fonte de identidade dos artefatos (R8). Hashes = SHA-256 dos blobs de HEAD. Alterar arquivo pinado exige regenerar este registry no MESMO PR, com motivo no commit.",
-    "gerado_de_head": "84c92a174b3c5bdc033ea44e770b137e7731ff6f",
+    "gerado_de_head": "6beddf504d10bbb94f12dfad5320efba4059cda0",
     "gerado_em": "2026-08-31",
     "exclusoes": [
       "docs_phase5/**",
@@ -121,7 +121,7 @@
     ".claude/verify/current_phase.json": "235f00d041c4a026290affb3ae3fabfb6268f75baed83ffc5d21ac5579d30733",
     ".claude/verify/env_doctor.py": "c3da72f6cbe6b1084dad68e97b23e0c7c7a4be3ec42623ac626b3e5b08a9369f",
     ".claude/verify/evidence_bridge.json": "8fbf8bca5e6710c709828f839e5f4c6ae552c5fb382429f25aae39b6ad0d291a",
-    ".claude/verify/expected_suites.json": "3a2bc1d655754194a4f04e8e7abe919676c7641b9965d1fff2a568e2fb03e610",
+    ".claude/verify/expected_suites.json": "59b3d9c0787c8b0d7222c6581deb9d17490cd6821d7b9d49f81eb533abf0f051",
     ".claude/verify/gen_evidence_bridge.py": "1cb4d6cc0ad7ae4e6a801286202c637a6cfb527475e92a84e6197449c4209cf2",
     ".claude/verify/gen_pins.py": "730043800a41b4cfbb799945dd6499df8ba1375096f5f748df01c8c2d12a407a",
     ".claude/verify/invariants.json": "b8571facafbe6098cc643886cd158f877dd702c0cba6ca5addff34fc3e10bee6",
@@ -240,6 +240,8 @@
     "synthetic_session_examples/exemplo-minimo.json": "314e4a7ba4e90aca5a0660370a97b31f82a5cc87b044e937f1a8066020c57ede",
     "tests_009_leitura.js": "4322961372c4505dd7abb2202c5a0e895f1ba6ac0c43575a8956c68ab5e28cdd",
     "tests_009_mutants.js": "e2e475698bb23743fe0f2fe71dca9f02cac9f3d4fa85077ec5a1a5d3f4b86dcc",
+    "tests_011_chromium.js": "8a35766bd889143e4d05749700d8fc82026ed703f86191a13947197ce9b6e16e",
+    "tests_011_prioridade.js": "abff5244166df618c26f1f157b564bb624014a052ff0432b23c54a8674fecf0a",
     "tests_core_mutants.js": "8a0502c2d7f34832722059435f2ccf4d7889614769526b645d4e2a720732af7e",
     "tests_icons_m46.js": "f73f96e32951507135c0b36d968fe12e9ffbc268e8ad438ea2e6c861a8b88123",
     "tests_journey_m45.js": "84d99be32e122f867dc1620cd1f49e4f3ae9795a32185cc75aa246d8682941f5",

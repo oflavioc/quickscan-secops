@@ -6,7 +6,7 @@
    CORRESPONDÊNCIA 1:1 COM A SPEC. Os ids são `D010-M1..D010-M20`, um por
    mutante `M1..M20` da spec §Critérios, mais `M21..M25` da errata E16 e `M26` da errata E17 (R10 §1 — namespace da fase corrente,
    nunca continuar numeração alheia; o `M1` global existe desde a 003).
-   EXECUTADOS: 23 de 26 DECLARADOS. Os ids `D010-M21..D010-M25` nasceram da
+   EXECUTADOS: 24 de 27 DECLARADOS. Os ids `D010-M21..D010-M25` nasceram da
    errata E16 (2026-08-30) sobre a propriedade que E15 tornou normativa — o
    prefixo `map:` —, e entram DEPOIS de `M20`: nenhum id existente renumera
    (R12). Contagem não é sagrada; ids são. Os cinco são mutante de FONTE e não
@@ -101,7 +101,7 @@ const CAUSA = {
 const naoClassificada = msg => "falha não classificada: " + msg;
 
 /* ==========================================================================
-   OS 23 MUTANTES EXECUTADOS (D010-M1..M26 menos M3/M4 e menos M11).
+   OS 24 MUTANTES EXECUTADOS (D010-M1..M27 menos M3/M4 e menos M11).
    `find`/`repl` são texto literal; `reason` é a assinatura da mensagem que o
    gate REALMENTE emite — extraída do `throw new Error(...)` do oráculo, nunca
    inventada: reprovar por motivo diferente do esperado é SOBREVIVENTE, não KILL.
@@ -143,10 +143,19 @@ const MUTANTS = [
     gate: "D010-ABS1", only: "D010-ABS1", reason: /o aviso não nomeia/ },
 
   { id: "D010-M8", file: V32JS,
-    desc: "manter os N cards de leitura base e apenas SOMAR o aviso único — a partição de E18 NÃO acontece",
-    find: '<div class="v32-block" id="v32base">${baseAbsenceHTML(baseIds, ctxs, true)}</div>',
-    repl: '<div class="v32-block" id="v32base">${baseAbsenceHTML(baseIds, ctxs, true)}${baseIds.map(id=>baseCardHTML(id, ctxs[id], "base", false)).join("")}</div>',
-    gate: "D010-ABS1", only: "D010-ABS1", reason: /#v32base ainda traz `\.v32-card` de capability SEM payload/ },   /* [E18] TRANSCRITA do literal novo: a mensagem perdeu a contagem e ganhou o qualificador */,
+    desc: "a partição de E18 NÃO acontece: TODO `baseIds` volta a ser card, com ou sem payload",
+    /* [E18] ANCORA RETRANSCRITA em 2026-08-31. A anterior citava
+       `baseAbsenceHTML(baseIds, ctxs, true)` e foi a ZERO ocorrencias quando a
+       partição entrou — a campanha teria reprovado por ANCORA PODRE, que e a
+       classe que a demanda 013 inteira existiu para caçar. Desta vez o
+       `--preflight` a pegou ANTES da campanha (contrato C1). Nao e par novo: a
+       intencao — "a partição não acontece, todos os baseIds seguem card" —
+       continua a mesma e continua matavel pela alínea (a), agora pela metade
+       'sobrando SEM payload' da igualdade de conjunto.
+       A replica troca UMA coisa: `baseComPayload` volta a ser `baseIds`. */
+    find: '<div class="v32-block" id="v32base">${baseComPayload.map(id=>baseCardHTML(id, ctxs[id], "base")).join("")}${baseAbsenceHTML(baseSemPayload, ctxs, true)}</div>',
+    repl: '<div class="v32-block" id="v32base">${baseIds.map(id=>baseCardHTML(id, ctxs[id], "base")).join("")}${baseAbsenceHTML(baseSemPayload, ctxs, true)}</div>',
+    gate: "D010-ABS1", only: "D010-ABS1", reason: /#v32base ainda traz `\.v32-card` de capability SEM payload/ },   /* [E18] TRANSCRITA do literal novo: a mensagem perdeu a contagem e ganhou o qualificador */
 
   { id: "D010-M9", file: TGTJS,
     desc: "ler MAP[qid].lv[nível-ALVO] em vez do nível ATUAL confirmado (INV-5)",
@@ -168,7 +177,7 @@ const MUTANTS = [
      2026-08-30). Ele atacava `if (temCandidato) return ""`, a clausula de
      precedencia de C8. Provado inalcancavel: S2-de-CONTEXTO exige capability
      UNICA dona do qid + landscapeEnabled, e capability dona de qid tem
-     `questionIds` nao vazio, logo `assessmentCoverage != "none"` (invariante de
+     `questionIds` não vazio, logo `assessmentCoverage != "none"` (invariante de
      `validateConfigV32`, 0 erros, com gate vivo em tests_m42_m86.js). A unica
      rota que emite candidato sob UNSET e `UNASSESSED_CAPABILITY`, exclusiva de
      capability `coverage: "none"` — que tem ZERO questionIds. Medido: catalogo
@@ -178,9 +187,9 @@ const MUTANTS = [
      `UNASSESSED_CAPABILITY` sequer aparece nessa classe. `temCandidato` e
      sempre falso onde o codigo chega. Fica na spec como clausula DEFENSIVA,
      sem mutante, no mesmo desfecho de E1/A5 — e a divida e "inalcancavel,
-     provado", nunca "falta fixture": fixture que a pague nao pode existir.
+     provado", nunca "falta fixture": fixture que a pague não pode existir.
      CONSEQUENCIA para o gate: ver a divida declarada em mutation-matrix.json —
-     D010-CARD2 (a) passa por ESTADO, e quem mede C8 e a alinea (b). */
+     D010-CARD2 (a) passa por ESTADO, e quem mede C8 e a alínea (b). */
   { id: "D010-M12", file: TGTJS,
     desc: "publicar o habilitador a validar ignorando o gate canônico de suficiência (INV-3)",
     find: 'function tgtValidateHTML(qid, cmpPub){' + NL + '  if (cmpPub !== true) return "";',
@@ -293,7 +302,22 @@ const MUTANTS = [
     find: '    (c.services||[]).forEach(s=>anexados.push(s.serviceId));});',
     repl: '    (c.services||[]).forEach(s=>{temCandidato=true; anexados.push(s.serviceId);});});',
     gate: "D010-CARD2", only: "D010-CARD2",
-    reason: /serviço do engine não pode bloquear o MAP/ }   /* SEM crases: transcrito do literal do oráculo (tests_010_vao.js:1000), não da memória da sonda */
+    reason: /serviço do engine não pode bloquear o MAP/ },
+
+  /* ── E18 · a direcao OPOSTA a de D010-M8 ──────────────────────────
+     Declarado no commit do RED com a causa "a ancora ainda não existe"; a
+     implementacao a criou (ui_v32.js:766) e o par entra agora, como previsto.
+     A saida deste mutante e EXATAMENTE o produto de antes da correção — o aviso
+     engolindo tambem as capabilities COM payload —, e por isso o seu poder
+     discriminante ja estava provado antes de existir: e a prova de red desta
+     serie (12 PASS · 1 FAIL de 13). Uma linha: o map dos cards sai e o aviso
+     volta a receber `baseIds`. */
+  { id: "D010-M27", file: V32JS,
+    desc: "colapsar TODOS os baseIds no aviso, com ou sem payload (o comportamento pré-E18)",
+    find: '<div class="v32-block" id="v32base">${baseComPayload.map(id=>baseCardHTML(id, ctxs[id], "base")).join("")}${baseAbsenceHTML(baseSemPayload, ctxs, true)}</div>',
+    repl: '<div class="v32-block" id="v32base">${baseAbsenceHTML(baseIds, ctxs, true)}</div>',
+    gate: "D010-ABS1", only: "D010-ABS1",
+    reason: /perdeu o `\.v32-card` de capability COM payload/ }   /* SEM crases: transcrito do literal do oráculo (tests_010_vao.js:1000), não da memória da sonda */
 ];
 
 const MUTABLE = Array.from(new Set(MUTANTS.map(m => m.file)));

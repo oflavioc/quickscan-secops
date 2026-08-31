@@ -103,8 +103,8 @@ function gate(fn) {
   return true;
 }
 /* forma única da falha por vacuidade: a alínea não mediu nada e diz por quê */
-function vac(alinea, motivo) {
-  throw new Error("VACUIDADE em " + alinea + " — " + motivo +
+function vac(alínea, motivo) {
+  throw new Error("VACUIDADE em " + alínea + " — " + motivo +
     " · a alínea não teria medido nada e por isso FALHA, em vez de fechar verde");
 }
 
@@ -598,12 +598,12 @@ T("D010-INV7", "C5 · a frase de preservação só existe com a leitura citada V
    ========================================================================== */
 /* [E18] PARTICAO DE `baseIds` POR PAYLOAD DO ENGINE.
    A errata E18 desfaz uma generalizacao indevida de V3: a premissa do
-   refinamento — "N cards cujo unico conteudo possivel e dizer que nao houve
-   declaracao" — e verdadeira para o card VAZIO e FALSA para o card que carrega
+   refinamento — "N cards cujo único conteúdo possível e dizer que não houve
+   declaração" — e verdadeira para o card VAZIO é FALSA para o card que carrega
    payload do engine. Medido: no pior caso (15 niveis em 0, contexto salvo com
    tudo UNSET) o engine anexa SETE servicos, e o papel perdia 6299 chars, dos
    quais 3914 (58%) eram os tres cards COM payload. A frase do aviso — "a
-   interpretacao V3.2 nao e produzida para elas" — fica FALSA sobre esses tres:
+   interpretação V3.2 não e produzida para elas" — fica FALSA sobre esses tres:
    o engine produziu, e a tela deixou de mostrar.
    O predicado le o payload do ENGINE (`frozen`), nunca o DOM: e a mesma fonte
    que `presentationOf` (ui_v32.js:650-653) consulta para atribuir `base`.
@@ -622,22 +622,65 @@ function baseSplitPayload(w) {
   return { com: base.filter(temPayload), sem: base.filter(id => !temPayload(id)), todos: base };
 }
 
+/* [E18] O PAPEL, PARTICIONADO — helper único das DUAS alíneas que o medem.
+   Achado do ui-engineer em 2026-08-31, e o mais sério da serie: `D010-ABS1` (e)
+   e `D010-PAPEL1` (b) afirmavam `#pr-sup-base` com ZERO `.v32-card`, e as duas
+   varriam so `D010-F1`, onde o conjunto COM payload e VAZIO. Medido: se o sítio
+   do papel NAO tivesse sido partido, as duas continuariam VERDES — a metade do
+   papel desta correção fecharia verde por ESTADO, nunca por GATE. E o mesmo
+   desenho que (a)/(b) receberam ao varrer F1+F4, e que o papel não recebeu.
+   Aqui a asserção vira IGUALDADE DE CONJUNTO, como na tela: os `.v32-card` de
+   `#pr-sup-base` são EXATAMENTE os COM payload (por `data-cap`), o aviso e UM
+   so, e ele nomeia exatamente os SEM payload. Medido no papel: sob D010-F1 são
+   0 cards + 1 aviso; sob D010-F4 são 3 cards + 1 aviso. */
+function papelParticionado(w, pr, fx) {
+  const split = baseSplitPayload(w);
+  const bl = pr.querySelector("#pr-sup-base");
+  const erro = m => { throw new Error(fx + ": " + m); };
+  if (!split.todos.length) return { split, vazio: true };
+  if (!bl) erro("#pr-sup-base ausente no papel havendo `baseIds` não vazio");
+  /* [E18] mesma condicionalidade da tela: sem sujeito, sem aviso */
+  const avisos = qa(bl, '[data-v32-absence="base-context"]');
+  const espera = split.sem.length ? 1 : 0;
+  if (avisos.length !== espera)
+    erro("#pr-sup-base traz " + avisos.length + " avisos de ausência (esperado " + espera +
+      " para " + split.sem.length + " capability(ies) SEM payload)");
+  if (!espera) return { split, aviso: null, bl };
+  const caps = qa(bl, ".v32-card").map(c => c.getAttribute("data-cap"));
+  const sobrando = caps.filter(x => split.com.indexOf(x) < 0);
+  const faltando = split.com.filter(x => caps.indexOf(x) < 0);
+  if (sobrando.length)
+    erro("#pr-sup-base ainda traz `.v32-card` de capability SEM payload do engine: " + JSON.stringify(sobrando) +
+      " — card cujo único conteúdo possível e a não-declaração vira o aviso (V3)");
+  if (faltando.length)
+    erro("#pr-sup-base perdeu o `.v32-card` de capability COM payload do engine: " + JSON.stringify(faltando) +
+      " — o engine PRODUZIU e o PAPEL deixou de mostrar; sobre essas o aviso de ausência seria falso (E18)");
+  const t = txt(avisos[0]);
+  const nomeados = split.com.filter(id => t.indexOf(nomeCap(w, id)) >= 0).map(id => nomeCap(w, id));
+  if (nomeados.length)
+    erro("o aviso do PAPEL nomeia capability COM payload do engine: " + JSON.stringify(nomeados) +
+      " — sobre ela a frase \"a interpretação V3.2 não e produzida\" é FALSA (E18)");
+  const faltam = split.sem.filter(id => t.indexOf(nomeCap(w, id)) < 0).map(id => nomeCap(w, id));
+  if (faltam.length) erro("o aviso do papel não nomeia os SEM payload: " + JSON.stringify(faltam));
+  return { split, aviso: avisos[0], bl };
+}
+
 T("D010-ABS1", "C6 · #v32base = aviso sobre os SEM payload + card COM payload preservado (F1 · F4)", () => gate(g => {
   /* POR QUE (a)/(b) VARREM `D010-F1` E `D010-F4`
      ==========================================================================
      Medido antes de escrever, e o resultado decidiu o desenho: sob `D010-F1` —
-     a fixture historica desta alinea — o conjunto COM payload e VAZIO (baseIds
+     a fixture histórica desta alínea — o conjunto COM payload e VAZIO (baseIds
      = 2, ambos sem servico). A metade nova de (a) ("card com payload continua
-     card") nasceria SEM SUJEITO ali, e (b) nao mudaria de valor, porque sob F1
+     card") nasceria SEM SUJEITO ali, e (b) não mudaria de valor, porque sob F1
      `sem` == `todos`. Quem tem os DOIS conjuntos e `D010-F4`: 3 COM payload
      (continuous-monitoring, incident-management, vulnerability-management) e 2
      SEM (external-exposure, network-detection), com o gate ABERTO.
-     `D010-F3` tem 1 COM e 0 SEM, e o gate FECHADO — nao serve para (b).
-     F1 permanece na varredura de proposito: e o caso em que a particao NAO tem
+     `D010-F3` tem 1 COM e 0 SEM, e o gate FECHADO — não serve para (b).
+     F1 permanece na varredura de propósito: e o caso em que a partição NAO tem
      efeito, e um render onde o comportamento novo coincide com o antigo e o
-     controle que separa "a particao funciona" de "a particao mudou tudo".
-     As alineas (c)..(f) seguem medindo SO `D010-F1`, e isso e seguro por
-     medicao e nao por sorte: com `com` vazio ali, "zero .v32-card em #v32base"
+     controle que separa "a partição funciona" de "a partição mudou tudo".
+     As alíneas (c)..(f) seguem medindo SO `D010-F1`, e isso e seguro por
+     medição e não por sorte: com `com` vazio ali, "zero .v32-card em #v32base"
      e "o aviso nomeia todos os baseIds" continuam verdadeiras depois do fix. */
   const F1 = R("D010-F1");
   exigeTelaLimpa(F1.d, "D010-ABS1");
@@ -646,12 +689,12 @@ T("D010-ABS1", "C6 · #v32base = aviso sobre os SEM payload + card COM payload p
   const RENDERS = [{ fx: "D010-F1", w: F1.w, d: F1.d }, { fx: "D010-F4", w: F4.w, d: F4.d }];
   RENDERS.forEach(r => { r.split = baseSplitPayload(r.w); });
   const w = F1.w, d = F1.d;
-  /* [E18] o aviso passa a ser sobre os SEM payload, nao sobre `baseIds` inteiro */
+  /* [E18] o aviso passa a ser sobre os SEM payload, não sobre `baseIds` inteiro */
   const esperados = RENDERS[0].split.sem;
   let aviso = null;
   /* (a) [E18] UM aviso, ZERO card SEM payload, e o card COM payload PRESERVADO.
          O conjunto de `.v32-card` de `#v32base` tem de ser EXATAMENTE `com`:
-         igualdade de conjunto, e nao duas desigualdades soltas. Ela diz de uma
+         igualdade de conjunto, e não duas desigualdades soltas. Ela diz de uma
          vez as tres coisas — nenhum card sem payload sobreviveu, nenhum card com
          payload sumiu, e nada de fora entrou. */
   const aOk = g.passo("(a) #v32base = 1 aviso + `.v32-card` EXATAMENTE nos COM payload", () => {
@@ -659,24 +702,34 @@ T("D010-ABS1", "C6 · #v32base = aviso sobre os SEM payload + card COM payload p
     RENDERS.forEach(r => {
       if (!r.split.todos.length)
         vac("(a)", "`baseIds` vazio sob " + r.fx + " — sem capability em apresentação `base` fora das " +
-          "prioridades o bloco não nasce, e o render nao mede nada");
+          "prioridades o bloco não nasce, e o render não mede nada");
       comTotal += r.split.com.length; semTotal += r.split.sem.length; medidos++;
       const base = r.d.getElementById("v32base");
       if (!base) throw new Error(r.fx + ": #v32base ausente havendo " + r.split.todos.length + " capabilities em `baseIds`");
+      /* [E18] O AVISO E CONDICIONAL AO SUJEITO. Com `sem` vazio (todo `baseIds`
+         tem payload) o produto NAO emite aviso — de propósito, porque aviso
+         sobre 0 capabilities seria falso. Exigir "exatamente 1" ali faria o
+         gate reprovar um estado LEGITIMO, e o estado é ALCANÇÁVEL: medido em
+         2026-08-31, o vetor "incident-response em 0, os demais em 3" (um SOC
+         maduro com uma pratica fraca) da baseIds=1, com=1, sem=0. Nao e o caso
+         de D010-M11: la o estado era inalcancavel por invariante; aqui e so
+         falta de fixture, e a fixture e barata. */
       const avisos = qa(base, '[data-v32-absence="base-context"]');
-      if (avisos.length !== 1)
-        throw new Error(r.fx + ": #v32base traz " + avisos.length + " nós [data-v32-absence=\"base-context\"] (esperado 1)");
+      const esperaAviso = r.split.sem.length ? 1 : 0;
+      if (avisos.length !== esperaAviso)
+        throw new Error(r.fx + ": #v32base traz " + avisos.length + " nós [data-v32-absence=\"base-context\"] " +
+          "(esperado " + esperaAviso + " para " + r.split.sem.length + " capability(ies) SEM payload)");
       const caps = qa(base, ".v32-card").map(c => c.getAttribute("data-cap"));
       const sobrando = caps.filter(x => r.split.com.indexOf(x) < 0);
       const faltando = r.split.com.filter(x => caps.indexOf(x) < 0);
       if (sobrando.length)
         throw new Error(r.fx + ": #v32base ainda traz `.v32-card` de capability SEM payload do engine: " +
-          JSON.stringify(sobrando) + " — card cujo unico conteudo possivel e a nao-declaracao vira o aviso (V3)");
+          JSON.stringify(sobrando) + " — card cujo único conteúdo possível e a não-declaração vira o aviso (V3)");
       if (faltando.length)
         throw new Error(r.fx + ": #v32base perdeu o `.v32-card` de capability COM payload do engine: " +
           JSON.stringify(faltando) + " — o engine PRODUZIU (servicos/notas/candidatos) e a tela deixou de mostrar; " +
-          "sobre essas o aviso de ausencia seria falso (E18)");
-      if (r.fx === "D010-F1") aviso = avisos[0];
+          "sobre essas o aviso de ausência seria falso (E18)");
+      if (r.fx === "D010-F1") aviso = avisos[0];   /* (c)..(f) medem F1, onde `sem` nunca e vazio */
     });
     /* NAO-VACUIDADE, nas DUAS direcoes e sobre o conjunto dos renders */
     if (!comTotal)
@@ -684,29 +737,29 @@ T("D010-ABS1", "C6 · #v32base = aviso sobre os SEM payload + card COM payload p
         "a metade \"card com payload permanece\" ficaria verdadeira por ESTADO, nunca por GATE");
     if (!semTotal)
       vac("(a)", "nenhuma capability de `baseIds` SEM payload em render algum (" + medidos + " varridos) — " +
-        "a metade \"zero card sem payload\" nao teria o que suprimir");
+        "a metade \"zero card sem payload\" não teria o que suprimir");
     g.nota("D010-ABS1 (a) · " + RENDERS.map(r => r.fx + "(com=" + r.split.com.length +
       " sem=" + r.split.sem.length + ")").join(" · "));
   });
   /* (b) declara não-informação, traz a contagem e nomeia EXATAMENTE `baseIds` */
   if (aOk) g.passo("(b) contagem e lista nominal = baseIds SEM payload (E6 + E18)", () => {
-    /* [E18] varre os DOIS renders: sob F1 `sem` == `todos` e a alinea nao muda
+    /* [E18] varre os DOIS renders: sob F1 `sem` == `todos` e a alínea não muda
        de valor; quem a torna discriminante e F4, onde `baseIds` tem 5 e `sem`
        tem 2 — um aviso que nomeie os 5 passa a REPROVAR, e e esse o ponto. */
     RENDERS.forEach(r => {
       const bl = r.d.getElementById("v32base");
       const av = bl ? qa(bl, '[data-v32-absence="base-context"]')[0] : null;
-      if (!av) throw new Error(r.fx + ": aviso de ausencia ausente em #v32base");
+      if (!av) throw new Error(r.fx + ": aviso de ausência ausente em #v32base");
       const tr = txt(av);
       if (tr.indexOf(String(r.split.sem.length)) < 0)
-        throw new Error(r.fx + ": o aviso nao traz a contagem " + r.split.sem.length +
+        throw new Error(r.fx + ": o aviso não traz a contagem " + r.split.sem.length +
           " dos SEM payload: " + JSON.stringify(tr.slice(0, 160)));
       const nomeados = r.split.com.filter(id => tr.indexOf(nomeCap(r.w, id)) >= 0).map(id => nomeCap(r.w, id));
       if (nomeados.length)
         throw new Error(r.fx + ": o aviso nomeia capability COM payload do engine: " + JSON.stringify(nomeados) +
-          " — sobre ela a frase \"a interpretacao V3.2 nao e produzida\" e FALSA, porque o engine produziu (E18)");
+          " — sobre ela a frase \"a interpretação V3.2 não e produzida\" é FALSA, porque o engine produziu (E18)");
       const faltam = r.split.sem.filter(id => tr.indexOf(nomeCap(r.w, id)) < 0).map(id => nomeCap(r.w, id));
-      if (faltam.length) throw new Error(r.fx + ": o aviso nao nomeia os SEM payload: " + JSON.stringify(faltam));
+      if (faltam.length) throw new Error(r.fx + ": o aviso não nomeia os SEM payload: " + JSON.stringify(faltam));
     });
     const t = txt(aviso);
     if (!/não\s+(foi\s+)?informad/i.test(t))
@@ -732,11 +785,11 @@ T("D010-ABS1", "C6 · #v32base = aviso sobre os SEM payload + card COM payload p
   }); else g.naoMedido("(c)", "não há aviso de ausência a ler — a alínea (a) não fechou");
   /* (d) idempotência: o mesmo censo depois de dois renders consecutivos */
   if (aOk) g.passo("(d) idempotência entre dois renders", () => {
-    /* [E18] o censo do 1o render e MEDIDO, nunca escrito: depois da particao
+    /* [E18] o censo do 1o render e MEDIDO, nunca escrito: depois da partição
        `#v32base` pode conter card COM payload, e um literal `cards: 0` aqui
-       mentiria em silencio no dia em que esta alinea olhasse outra fixture.
+       mentiria em silencio no dia em que esta alínea olhasse outra fixture.
        Sob D010-F1 o valor medido continua 0 (o conjunto COM payload e vazio
-       ali) — o que muda e a FONTE do numero, nao o numero. */
+       ali) — o que muda e a FONTE do numero, não o numero. */
     const base1 = d.getElementById("v32base");
     const censo1 = { avisos: qa(base1, '[data-v32-absence="base-context"]').length,
                      cards: qa(base1, ".v32-card").length, texto: txt(aviso) };
@@ -750,22 +803,23 @@ T("D010-ABS1", "C6 · #v32base = aviso sobre os SEM payload + card COM payload p
       throw new Error("censo mudou entre dois renders consecutivos: " + JSON.stringify(censo1) + " × " + JSON.stringify(censo2));
   }); else g.naoMedido("(d)", "sem censo inicial válido não há idempotência a comparar — a alínea (a) não fechou");
   /* (e) no papel, #pr-sup-base traz o MESMO aviso, sem controle */
-  g.passo("(e) o papel traz o mesmo aviso, sem controle", () => {
-    const P = R("D010-F1");
-    const alvos = FX.d010BaseInV32Base(P.w);
-    if (!alvos.length) vac("(e)", "`baseIds` vazio — o bloco do papel não nasceria");
-    const pr = papel(P.w, P.d);
-    const prBase = pr.querySelector("#pr-sup-base");
-    if (!prBase) throw new Error("#pr-sup-base ausente no papel havendo `baseIds` não vazio");
-    const prAvisos = qa(prBase, '[data-v32-absence="base-context"]');
-    if (prAvisos.length !== 1)
-      throw new Error("#pr-sup-base traz " + prAvisos.length + " avisos de ausência (esperado 1)");
-    if (qa(prBase, ".v32-card").length)
-      throw new Error("#pr-sup-base ainda traz " + qa(prBase, ".v32-card").length + " cards");
-    if (qa(prAvisos[0], "button, a[href], input, select").length)
-      throw new Error("o aviso do PAPEL traz controle interativo");
-    const faltando = alvos.filter(id => txt(prAvisos[0]).indexOf(nomeCap(P.w, id)) < 0).map(id => nomeCap(P.w, id));
-    if (faltando.length) throw new Error("o aviso do papel não nomeia: " + JSON.stringify(faltando));
+  g.passo("(e) o papel particionado, sem controle (F1 · F4)", () => {
+    let comTotal = 0, semTotal = 0;
+    ["D010-F1", "D010-F4"].forEach(fxId => {
+      const P = R(fxId);
+      const pr = papel(P.w, P.d);
+      const r = papelParticionado(P.w, pr, fxId);
+      if (r.vazio) vac("(e)", "`baseIds` vazio sob " + fxId + " — o bloco do papel não nasceria");
+      comTotal += r.split.com.length; semTotal += r.split.sem.length;
+      if (qa(r.aviso, "button, a[href], input, select").length)
+        throw new Error(fxId + ": o aviso do PAPEL traz controle interativo");
+    });
+    if (!comTotal)
+      vac("(e)", "nenhuma capability de `baseIds` COM payload nos renders varridos — a metade " +
+        "\"card com payload permanece no papel\" ficaria verdadeira por ESTADO, nunca por GATE");
+    if (!semTotal)
+      vac("(e)", "nenhuma capability de `baseIds` SEM payload nos renders varridos — o aviso do papel " +
+        "não teria sujeito");
   });
   /* (f) o bloco de prioridades não é alterado */
   g.passo("(f) #v32prio intocado", () => {
@@ -1516,7 +1570,7 @@ T("D010-CARD6", "C12 · o aviso único da 009 e o nó a-validar coexistem sem ó
     /* GUARDA DE AGRUPAMENTO, colada à asserção de ausência que ela protege
        (cobertura, 2026-08-30, antes do green). `cartao(d,qid).engine` é censo POR
        QID: uma `.ux-tgt-en` emitida FORA do `li.ux-tgt-ov[data-qid]` deixaria
-       "nenhuma `.ux-tgt-en`" VERDADEIRA no censo e FALSA na tela — PASS vacuoso
+       "nenhuma `.ux-tgt-en`" VERDADEIRA no censo é FALSA na tela — PASS vacuoso
        exatamente onde R-1 é medida. `d010TargetEnablers` compara o total do
        documento com a soma por qid e transforma isso em FALHA NOMEADA.
        POR QUE AGORA, e não quando "houver o que medir": sob `D010-F1` o censo de
@@ -1589,15 +1643,20 @@ T("D010-PAPEL1", "C13 · #pr-target e #pr-sup-base fecham o vão no papel, com a
         JSON.stringify(soIds(itensTela)) + " · papel=" + JSON.stringify(itensPapel));
   });
   /* (b) #pr-sup-base é o aviso único de C6 */
-  g.passo("(b) #pr-sup-base é o bloco de ausência de C6", () => {
-    if (!FX.d010BaseInV32Base(w).length)
-      vac("(b)", "`baseIds` vazio sob D010-F1 — o bloco de ausência do papel não nasceria");
-    const prBase = pr.querySelector("#pr-sup-base");
-    if (!prBase) throw new Error("#pr-sup-base ausente havendo `baseIds` não vazio");
-    const n = qa(prBase, '[data-v32-absence="base-context"]').length;
-    if (n !== 1) throw new Error("#pr-sup-base traz " + n + " avisos de ausência (esperado 1)");
-    if (qa(prBase, ".v32-card").length)
-      throw new Error("#pr-sup-base ainda traz " + qa(prBase, ".v32-card").length + " cards em vez do aviso único");
+  g.passo("(b) #pr-sup-base = cards COM payload + UM aviso sobre os SEM (F1 · F4)", () => {
+    let comTotal = 0, semTotal = 0;
+    const r1 = papelParticionado(w, pr, "D010-F1");
+    if (r1.vazio) vac("(b)", "`baseIds` vazio sob D010-F1 — o bloco de ausência do papel não nasceria");
+    comTotal += r1.split.com.length; semTotal += r1.split.sem.length;
+    const P4 = R("D010-F4");
+    const r4 = papelParticionado(P4.w, papel(P4.w, P4.d), "D010-F4");
+    if (r4.vazio) vac("(b)", "`baseIds` vazio sob D010-F4");
+    comTotal += r4.split.com.length; semTotal += r4.split.sem.length;
+    if (!comTotal) vac("(b)", "nenhuma capability COM payload nos renders varridos — a alínea seria " +
+      "verdadeira por ESTADO, nunca por GATE");
+    if (!semTotal) vac("(b)", "nenhuma capability SEM payload nos renders varridos — o aviso não teria sujeito");
+    g.nota("D010-PAPEL1 (b) · F1(com=" + r1.split.com.length + " sem=" + r1.split.sem.length +
+      ") · F4(com=" + r4.split.com.length + " sem=" + r4.split.sem.length + ")");
   });
   /* (c) a ordem pinada por P51-DOC13 permanece */
   g.passo("(c) a ordem do relatório impresso (pin de P51-DOC13) permanece", () => {

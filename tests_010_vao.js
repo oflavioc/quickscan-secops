@@ -596,27 +596,118 @@ T("D010-INV7", "C5 · a frase de preservação só existe com a leitura citada V
 /* ============================================================================
    C6 · D010-ABS1 — leitura base vira bloco de ausência
    ========================================================================== */
-T("D010-ABS1", "C6 · #v32base é UM aviso de ausência com contagem e lista nominal (D010-F1)", () => gate(g => {
-  const { w, d } = R("D010-F1");
-  exigeTelaLimpa(d, "D010-ABS1");
-  const esperados = FX.d010BaseInV32Base(w);
+/* [E18] PARTICAO DE `baseIds` POR PAYLOAD DO ENGINE.
+   A errata E18 desfaz uma generalizacao indevida de V3: a premissa do
+   refinamento — "N cards cujo unico conteudo possivel e dizer que nao houve
+   declaracao" — e verdadeira para o card VAZIO e FALSA para o card que carrega
+   payload do engine. Medido: no pior caso (15 niveis em 0, contexto salvo com
+   tudo UNSET) o engine anexa SETE servicos, e o papel perdia 6299 chars, dos
+   quais 3914 (58%) eram os tres cards COM payload. A frase do aviso — "a
+   interpretacao V3.2 nao e produzida para elas" — fica FALSA sobre esses tres:
+   o engine produziu, e a tela deixou de mostrar.
+   O predicado le o payload do ENGINE (`frozen`), nunca o DOM: e a mesma fonte
+   que `presentationOf` (ui_v32.js:650-653) consulta para atribuir `base`.
+   Cobre servicos, notas e candidatos — as tres coisas que o engine pode anexar.
+   MEDIDO nas cinco fixtures: so `services` ocorre (F3 s1 · F4 s1/s4/s1), e
+   `candidates` e ZERO por construcao sob UNSET em capability dona de qid (a
+   varredura de E14). As outras duas ficam no predicado como defesa, sem
+   mutante — mesmo desfecho de A5. */
+function baseSplitPayload(w) {
+  const res = w.__DEV.V32.buildRecommendationContext();
+  const base = FX.d010BaseInV32Base(w, res);
+  const temPayload = id => {
+    const c = res.contexts[id] || {};
+    return !!((c.services || []).length || (c.notes || []).length || (c.candidates || []).length);
+  };
+  return { com: base.filter(temPayload), sem: base.filter(id => !temPayload(id)), todos: base };
+}
+
+T("D010-ABS1", "C6 · #v32base = aviso sobre os SEM payload + card COM payload preservado (F1 · F4)", () => gate(g => {
+  /* POR QUE (a)/(b) VARREM `D010-F1` E `D010-F4`
+     ==========================================================================
+     Medido antes de escrever, e o resultado decidiu o desenho: sob `D010-F1` —
+     a fixture historica desta alinea — o conjunto COM payload e VAZIO (baseIds
+     = 2, ambos sem servico). A metade nova de (a) ("card com payload continua
+     card") nasceria SEM SUJEITO ali, e (b) nao mudaria de valor, porque sob F1
+     `sem` == `todos`. Quem tem os DOIS conjuntos e `D010-F4`: 3 COM payload
+     (continuous-monitoring, incident-management, vulnerability-management) e 2
+     SEM (external-exposure, network-detection), com o gate ABERTO.
+     `D010-F3` tem 1 COM e 0 SEM, e o gate FECHADO — nao serve para (b).
+     F1 permanece na varredura de proposito: e o caso em que a particao NAO tem
+     efeito, e um render onde o comportamento novo coincide com o antigo e o
+     controle que separa "a particao funciona" de "a particao mudou tudo".
+     As alineas (c)..(f) seguem medindo SO `D010-F1`, e isso e seguro por
+     medicao e nao por sorte: com `com` vazio ali, "zero .v32-card em #v32base"
+     e "o aviso nomeia todos os baseIds" continuam verdadeiras depois do fix. */
+  const F1 = R("D010-F1");
+  exigeTelaLimpa(F1.d, "D010-ABS1");
+  const F4 = R("D010-F4");
+  exigeTelaLimpa(F4.d, "D010-ABS1");
+  const RENDERS = [{ fx: "D010-F1", w: F1.w, d: F1.d }, { fx: "D010-F4", w: F4.w, d: F4.d }];
+  RENDERS.forEach(r => { r.split = baseSplitPayload(r.w); });
+  const w = F1.w, d = F1.d;
+  /* [E18] o aviso passa a ser sobre os SEM payload, nao sobre `baseIds` inteiro */
+  const esperados = RENDERS[0].split.sem;
   let aviso = null;
-  /* (a) exatamente 1 aviso e zero cards */
-  const aOk = g.passo("(a) #v32base = 1 aviso de ausência, 0 cards", () => {
-    if (!esperados.length)
-      vac("(a)", "`baseIds` vazio sob D010-F1 — sem capability em apresentação `base` fora das prioridades o bloco não nasce");
-    const base = d.getElementById("v32base");
-    if (!base) throw new Error("#v32base ausente havendo " + esperados.length + " capabilities em `baseIds`");
-    const avisos = qa(base, '[data-v32-absence="base-context"]');
-    const cards = qa(base, ".v32-card");
-    if (avisos.length !== 1)
-      throw new Error("#v32base traz " + avisos.length + " nós [data-v32-absence=\"base-context\"] (esperado 1)");
-    if (cards.length)
-      throw new Error("#v32base ainda traz " + cards.length + " `.v32-card` — o bloco de ausência substitui os N cards");
-    aviso = avisos[0];
+  /* (a) [E18] UM aviso, ZERO card SEM payload, e o card COM payload PRESERVADO.
+         O conjunto de `.v32-card` de `#v32base` tem de ser EXATAMENTE `com`:
+         igualdade de conjunto, e nao duas desigualdades soltas. Ela diz de uma
+         vez as tres coisas — nenhum card sem payload sobreviveu, nenhum card com
+         payload sumiu, e nada de fora entrou. */
+  const aOk = g.passo("(a) #v32base = 1 aviso + `.v32-card` EXATAMENTE nos COM payload", () => {
+    let comTotal = 0, semTotal = 0, medidos = 0;
+    RENDERS.forEach(r => {
+      if (!r.split.todos.length)
+        vac("(a)", "`baseIds` vazio sob " + r.fx + " — sem capability em apresentação `base` fora das " +
+          "prioridades o bloco não nasce, e o render nao mede nada");
+      comTotal += r.split.com.length; semTotal += r.split.sem.length; medidos++;
+      const base = r.d.getElementById("v32base");
+      if (!base) throw new Error(r.fx + ": #v32base ausente havendo " + r.split.todos.length + " capabilities em `baseIds`");
+      const avisos = qa(base, '[data-v32-absence="base-context"]');
+      if (avisos.length !== 1)
+        throw new Error(r.fx + ": #v32base traz " + avisos.length + " nós [data-v32-absence=\"base-context\"] (esperado 1)");
+      const caps = qa(base, ".v32-card").map(c => c.getAttribute("data-cap"));
+      const sobrando = caps.filter(x => r.split.com.indexOf(x) < 0);
+      const faltando = r.split.com.filter(x => caps.indexOf(x) < 0);
+      if (sobrando.length)
+        throw new Error(r.fx + ": #v32base ainda traz `.v32-card` de capability SEM payload do engine: " +
+          JSON.stringify(sobrando) + " — card cujo unico conteudo possivel e a nao-declaracao vira o aviso (V3)");
+      if (faltando.length)
+        throw new Error(r.fx + ": #v32base perdeu o `.v32-card` de capability COM payload do engine: " +
+          JSON.stringify(faltando) + " — o engine PRODUZIU (servicos/notas/candidatos) e a tela deixou de mostrar; " +
+          "sobre essas o aviso de ausencia seria falso (E18)");
+      if (r.fx === "D010-F1") aviso = avisos[0];
+    });
+    /* NAO-VACUIDADE, nas DUAS direcoes e sobre o conjunto dos renders */
+    if (!comTotal)
+      vac("(a)", "nenhuma capability de `baseIds` COM payload em render algum (" + medidos + " varridos) — " +
+        "a metade \"card com payload permanece\" ficaria verdadeira por ESTADO, nunca por GATE");
+    if (!semTotal)
+      vac("(a)", "nenhuma capability de `baseIds` SEM payload em render algum (" + medidos + " varridos) — " +
+        "a metade \"zero card sem payload\" nao teria o que suprimir");
+    g.nota("D010-ABS1 (a) · " + RENDERS.map(r => r.fx + "(com=" + r.split.com.length +
+      " sem=" + r.split.sem.length + ")").join(" · "));
   });
   /* (b) declara não-informação, traz a contagem e nomeia EXATAMENTE `baseIds` */
-  if (aOk) g.passo("(b) contagem e lista nominal = baseIds (E6)", () => {
+  if (aOk) g.passo("(b) contagem e lista nominal = baseIds SEM payload (E6 + E18)", () => {
+    /* [E18] varre os DOIS renders: sob F1 `sem` == `todos` e a alinea nao muda
+       de valor; quem a torna discriminante e F4, onde `baseIds` tem 5 e `sem`
+       tem 2 — um aviso que nomeie os 5 passa a REPROVAR, e e esse o ponto. */
+    RENDERS.forEach(r => {
+      const bl = r.d.getElementById("v32base");
+      const av = bl ? qa(bl, '[data-v32-absence="base-context"]')[0] : null;
+      if (!av) throw new Error(r.fx + ": aviso de ausencia ausente em #v32base");
+      const tr = txt(av);
+      if (tr.indexOf(String(r.split.sem.length)) < 0)
+        throw new Error(r.fx + ": o aviso nao traz a contagem " + r.split.sem.length +
+          " dos SEM payload: " + JSON.stringify(tr.slice(0, 160)));
+      const nomeados = r.split.com.filter(id => tr.indexOf(nomeCap(r.w, id)) >= 0).map(id => nomeCap(r.w, id));
+      if (nomeados.length)
+        throw new Error(r.fx + ": o aviso nomeia capability COM payload do engine: " + JSON.stringify(nomeados) +
+          " — sobre ela a frase \"a interpretacao V3.2 nao e produzida\" e FALSA, porque o engine produziu (E18)");
+      const faltam = r.split.sem.filter(id => tr.indexOf(nomeCap(r.w, id)) < 0).map(id => nomeCap(r.w, id));
+      if (faltam.length) throw new Error(r.fx + ": o aviso nao nomeia os SEM payload: " + JSON.stringify(faltam));
+    });
     const t = txt(aviso);
     if (!/não\s+(foi\s+)?informad/i.test(t))
       throw new Error("o aviso não declara que o contexto NÃO FOI INFORMADO: " + JSON.stringify(t.slice(0, 160)));
@@ -641,7 +732,14 @@ T("D010-ABS1", "C6 · #v32base é UM aviso de ausência com contagem e lista nom
   }); else g.naoMedido("(c)", "não há aviso de ausência a ler — a alínea (a) não fechou");
   /* (d) idempotência: o mesmo censo depois de dois renders consecutivos */
   if (aOk) g.passo("(d) idempotência entre dois renders", () => {
-    const censo1 = { avisos: 1, cards: 0, texto: txt(aviso) };
+    /* [E18] o censo do 1o render e MEDIDO, nunca escrito: depois da particao
+       `#v32base` pode conter card COM payload, e um literal `cards: 0` aqui
+       mentiria em silencio no dia em que esta alinea olhasse outra fixture.
+       Sob D010-F1 o valor medido continua 0 (o conjunto COM payload e vazio
+       ali) — o que muda e a FONTE do numero, nao o numero. */
+    const base1 = d.getElementById("v32base");
+    const censo1 = { avisos: qa(base1, '[data-v32-absence="base-context"]').length,
+                     cards: qa(base1, ".v32-card").length, texto: txt(aviso) };
     w.__DEV.showResults();
     const base2 = d.getElementById("v32base");
     if (!base2) throw new Error("#v32base sumiu no segundo render");

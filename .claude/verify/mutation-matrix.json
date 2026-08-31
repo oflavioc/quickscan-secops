@@ -748,13 +748,14 @@
     {
       "mutante": "D010-M8",
       "harness": "d010 (tests_010_mutants.js)",
-      "gate": "D010-ABS1",
+      "gate": "D010-ABS1 (a)",
       "invariante": "C6 - N cards viram UM aviso, nao aviso somado aos cards",
       "ultima_prova": {
         "data": "2026-08-30",
         "resultado": "KILL",
         "registro": "tests_010_mutants.js"
-      }
+      },
+      "nota": " [E18, 2026-08-31] Este par PASSA A SER a direcao (i) da particao por payload — 'a particao NAO acontece: todos os baseIds seguem card'. A assercao que o mata mudou de 'zero .v32-card' para IGUALDADE DE CONJUNTO ('.v32-card exatamente nos COM payload'), e por isso a `reason` foi retranscrita do literal novo do oraculo: a mensagem perdeu a contagem e ganhou o qualificador SEM payload. Provado por simulacao da saida no DOM antes da implementacao: morre em (a) sob D010-F1, nomeando external-exposure e network-detection como cards SEM payload que sobreviveram. Auditoria das 24 regex contra o fonte do oraculo depois da retranscricao: 24/24 casam."
     },
     {
       "mutante": "D010-M9",
@@ -1037,6 +1038,19 @@
         "data": "2026-08-30",
         "resultado": "KILL",
         "registro": "tests_010_mutants.js"
+      }
+    },
+    {
+      "mutante": "D010-M27",
+      "harness": "d010 (tests_010_mutants.js)",
+      "gate": "D010-ABS1 (a)",
+      "invariante": "C6 apos a errata E18 — o aviso de ausencia cobre SO as capabilities de `baseIds` SEM payload do engine; a que tem payload continua card, porque sobre ela a frase 'a interpretacao V3.2 nao e produzida' e FALSA",
+      "descricao": "colapsar TODOS os baseIds no aviso, com ou sem payload — a direcao oposta a de D010-M8, e o comportamento de hoje (pre-correcao)",
+      "nota": "ANCORA NASCE COM A IMPLEMENTACAO, e por isso o mutante entra no harness no commit do GREEN, nao no do RED. E16 exige mutacao de fonte em ANCORA REAL de uma linha: a linha que este mutante ataca — a chamada de `baseAbsenceHTML` passando o subconjunto SEM payload, mais o map dos cards COM payload — sera escrita pelo ui-engineer em ui_v32.js:743. Hoje 'colapsar todos' nao e mutacao: e o estado do produto. Escrever ancora sintetica agora seria exatamente o que E16 proibe. A replica prevista e de UMA linha: trocar o subconjunto de volta por `baseIds` e remover o map. PODER DISCRIMINANTE JA PROVADO, sem esperar o green: a saida deste mutante e o estado atual do produto, e o gate emendado REPROVA nele — e literalmente a prova de red desta tarefa (12 PASS · 1 FAIL de 13), com (a) nomeando continuous-monitoring, incident-management e vulnerability-management como os cards COM payload que sumiram sob D010-F4.",
+      "ultima_prova": {
+        "data": "2026-08-31",
+        "resultado": "PENDENTE - entra no harness no commit do green (ancora inexistente no red)",
+        "registro": "tests_010_vao.js"
       }
     }
   ],

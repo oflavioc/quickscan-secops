@@ -143,10 +143,10 @@ const MUTANTS = [
     gate: "D010-ABS1", only: "D010-ABS1", reason: /o aviso não nomeia/ },
 
   { id: "D010-M8", file: V32JS,
-    desc: "manter os N cards de leitura base e apenas SOMAR o aviso único",
+    desc: "manter os N cards de leitura base e apenas SOMAR o aviso único — a partição de E18 NÃO acontece",
     find: '<div class="v32-block" id="v32base">${baseAbsenceHTML(baseIds, ctxs, true)}</div>',
     repl: '<div class="v32-block" id="v32base">${baseAbsenceHTML(baseIds, ctxs, true)}${baseIds.map(id=>baseCardHTML(id, ctxs[id], "base", false)).join("")}</div>',
-    gate: "D010-ABS1", only: "D010-ABS1", reason: /#v32base ainda traz \d+ `\.v32-card`/ },
+    gate: "D010-ABS1", only: "D010-ABS1", reason: /#v32base ainda traz `\.v32-card` de capability SEM payload/ },   /* [E18] TRANSCRITA do literal novo: a mensagem perdeu a contagem e ganhou o qualificador */,
 
   { id: "D010-M9", file: TGTJS,
     desc: "ler MAP[qid].lv[nível-ALVO] em vez do nível ATUAL confirmado (INV-5)",

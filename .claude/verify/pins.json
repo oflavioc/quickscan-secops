@@ -1,8 +1,8 @@
 {
   "_meta": {
     "descricao": "Registry único de pins — fonte de identidade dos artefatos (R8). Hashes = SHA-256 dos blobs de HEAD. Alterar arquivo pinado exige regenerar este registry no MESMO PR, com motivo no commit.",
-    "gerado_de_head": "cce5652a7ca89fcfa808de085bd107462784ca69",
-    "gerado_em": "2026-08-30",
+    "gerado_de_head": "30d63bd29dedf79fdb6efd1921943c72ac14ad52",
+    "gerado_em": "2026-08-31",
     "exclusoes": [
       "docs_phase5/**",
       ".claude/project-memory/** (estado de processo — muda por fase; validado pelo stage state, não por pin)",
@@ -215,6 +215,10 @@
     "specs/009-leitura-do-relatorio/refinement.md": "6762564abc8c005dd3022fb071a9b0ba40e8e016810b894a2c9ec6b6067fe194",
     "specs/009-leitura-do-relatorio/spec.md": "0b6f386b5442f6efd23747f8f2fd99dc7d9e6480a7b2148ce74e270b564c336c",
     "specs/009-leitura-do-relatorio/tasks.md": "8913a9ff0dc659cd2de9ab8ac49f6b65ae43a9e21cfc5d8ff6c695a7317d3435",
+    "specs/011-numeracao-das-prioridades/plan.md": "4c889a6b196286e8a34f0160495200c103be332fd0c32e45eeacd559861294be",
+    "specs/011-numeracao-das-prioridades/refinement.md": "10f268af9e2e8a2c35752365232a072934f5c6dec2f25d4ed4126bd74cdf0dba",
+    "specs/011-numeracao-das-prioridades/spec.md": "537f48490c560dad7cc08d71c5b539799672116c8bf3d0d9a846a3e218efac3b",
+    "specs/011-numeracao-das-prioridades/tasks.md": "fb963dbfbbdff915bd622b0800b4c808c3d691839a0e12ab2e9afcfdb2b3fa07",
     "specs/012-status-backlog/matriz-gate-mutante.md": "a9062efbc5f2dfa185d71fe7fe8e84dd8eedefc7273b3987ea6d297d7c158947",
     "specs/012-status-backlog/plan.md": "c47539aec862ba8bcfdfb78a375ef2c92b57db0ab9c02c7d67a4341f8a265904",
     "specs/012-status-backlog/refinement.md": "1ac9926904a617dc706e7d313ece85fc15c7d7ffd3a802cb5fbb1b4bbb042d49",

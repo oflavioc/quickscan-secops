@@ -1080,14 +1080,20 @@ const D010_VACUIDADES_CONHECIDAS = [
             "equivalente eram TRÊS SOBREVIVENTES antes desta passagem — nenhum gate os matava. Morrem com a " +
             "extensão de C7 (a)/(b) a D010-F4; `data-eid` vazio, `data-eid` colidindo com id do engine e nome " +
             "fora de `PRODUCTS[c.p].n` já morriam em C10 (b).",
-    equivalenteDeclarado: "emitir o item sem equivalente com `data-eid` = a CHAVE CRUA do `MAP` " +
+    riscada_e_superada: "RISCADO pela errata E15 em 2026-08-30 — registro mantido em vez de apagado (R2 §5), " +
+            "porque a razão pela qual o mutante era equivalente explica por que hoje ele morre. O que se " +
+            "registrava: \"emitir o item sem equivalente com `data-eid` = a CHAVE CRUA do `MAP` " +
             "(`FortiGuard-Service-Bundle`, sem o prefixo `map:`) SOBREVIVE — e deve sobreviver. A spec §C10 (b) " +
-            "ratifica \"sem equivalência, com `PRODUCTS[c.p].n` e `data-eid` ESTÁVEL\"; ela não ratifica o " +
+            "ratifica «sem equivalência, com `PRODUCTS[c.p].n` e `data-eid` ESTÁVEL»; ela não ratifica o " +
             "prefixo literal. A chave crua é estável, própria e não colide com id algum do engine (medido: " +
-            "zero dos 45 ids contêm \":\"), portanto satisfaz o critério. Pinar o prefixo faria o gate exigir " +
-            "mais do que o critério ratificado — R10 §1 ao contrário. Fica registrado como EQUIVALENTE " +
-            "DECLARADO, no mesmo padrão de A5, para que ninguém escreva esse mutante de novo esperando morte. " +
-            "Se o proprietário quiser o prefixo pinado, isso é mudança de critério e sobe ao `product-owner`." }
+            "zero dos 45 ids contêm «:»), portanto satisfaz o critério. Pinar o prefixo faria o gate exigir " +
+            "mais do que o critério ratificado — R10 §1 ao contrário.\" O QUE MUDOU: não foi a medição, foi o " +
+            "CRITÉRIO. E15 tornou o prefixo `map:` NORMATIVO em C10 (b) — proveniência visível no DOM, e " +
+            "namespace preservando a não-colisão, que `validateConfigV32` não checa (T004). O mutante deixou " +
+            "de ser equivalente por passar a violar cláusula ratificada, e é `D010-CARD4` (b) quem o mata, " +
+            "com o literal TRANSCRITO da spec (`D010_PREFIXO_MAP` em tests_010_vao.js). A direção do conserto " +
+            "fica registrada porque é a regra: o critério alcança o plano, e só então o gate pina — nunca o " +
+            "gate pinando por conta própria." }
 ];
 
 /* ===================== conferência dos estados declarados ================== */

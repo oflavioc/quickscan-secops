@@ -272,6 +272,19 @@ function papel(w, d) {
 const D010_ORDEM_PAPEL = ["pr-cover", "pr-howto", "pr-maturity", "pr-prios", "pr-findings",
   "pr-landscape", "pr-interp", "pr-support", "pr-journey", "pr-target", "pr-annex"];
 
+/* Prefixo do `data-eid` do item SEM equivalente V3.2 — NORMATIVO desde a errata
+   E15 da spec (§C10 (b): "`data-eid` da forma `map:<chave do MAP>` — prefixo
+   normativo por E15, não só 'estável'"). TRANSCRITO do critério, jamais lido do
+   source de `ui_target_v32.js`: derivá-lo do módulo sob teste tornaria a
+   asserção equivalente por construção — o oráculo concordaria com qualquer
+   prefixo que o produto passasse a emitir, que é exatamente o contrário do que
+   E15 pede. Se o critério mudar, ESTE literal muda por edição explícita e a
+   divergência vira decisão (R10 §1).
+   Até E15 (2026-08-30) o critério dizia só "estável", e o gate media só isso:
+   a chave CRUA satisfazia C10 (b) e o mutante que a emitisse era EQUIVALENTE —
+   ver a nota riscada em `D010_VACUIDADES_CONHECIDAS`. */
+const D010_PREFIXO_MAP = "map:";
+
 /* ===================== frases e literais congelados ===================== */
 /* `TGT_DISCLAIMER` lido do SOURCE de `ui_target_v32.js` (`:4`) — oráculo
    externo ao runtime: se o produto reescrever o texto no DOM, o gate cai. */
@@ -754,11 +767,14 @@ T("D010-CARD1", "C7 · nó a-validar sse S2-contexto + resposta confirmada + MAP
          conferida aqui, senão "o nome bate" deixaria de identificar POSIÇÃO.
          O `data-eid` NÃO é pinado aqui, e isso é decisão medida, não descuido:
          quem o pina é `D010-CARD4` (b), que roda sobre D010-F4 e cobre TODO
-         item renderizado — nos dois ramos da identidade. Medido pelo teste de
-         subsunção: o universo que uma checagem de eid nesta alínea acrescentaria
-         são os itens de F1, e F1 não tem forma de item que F4 não tenha (os
-         quatro qids do vão estão nas duas), logo nenhum mutante de código morre
-         aqui e sobrevive lá. Até esta emenda a alínea trazia o termo
+         item renderizado — nos dois ramos da identidade, e desde a errata E15
+         também a FORMA `map:<chave>` do ramo sem equivalência. Medido pelo teste
+         de subsunção: o universo que uma checagem de eid nesta alínea
+         acrescentaria são os itens de F1, e F1 não tem forma de item que F4 não
+         tenha (os quatro qids do vão estão nas duas), logo nenhum mutante de
+         código morre aqui e sobrevive lá. A conclusão foi RE-MEDIDA depois de
+         E15, com o prefixo já pinado, e não mudou: `M-SE1` (chave crua) morre em
+         C10 (b) sob F4 e nenhuma alínea de C7 o veria primeiro. Até esta emenda a alínea trazia o termo
          `it.eid !== chave` dentro de uma CONJUNÇÃO: ele é sempre verdadeiro (o
          eid é o id equivalente ou `map:<chave>`, nunca a chave crua), portanto
          nunca decidia — a alínea media o nome e a mensagem prometia o eid. */
@@ -1133,9 +1149,23 @@ T("D010-CARD4", "C10 · tabela total sobre as 11 chaves, identidade e as DUAS di
           throw new Error(it.qid + "/" + chave + ": sem equivalente, o nome tem de ser PRODUCTS[c.p].n=" +
             JSON.stringify(FX.d010ProductName(w, chave)) + ", veio " + JSON.stringify(it.nome));
         if (!it.eid) throw new Error(it.qid + "/" + chave + ": item sem equivalente ficou sem `data-eid`");
+        /* FORMA NORMATIVA (E15). Antes desta emenda a alínea exigia só "estável
+           e sem colisão", e a CHAVE CRUA satisfazia as duas — o mutante que a
+           emitisse sobrevivia, corretamente, por equivalência ao critério. E15
+           tornou o prefixo normativo, e a razão é de produto: o prefixo carrega
+           a PROVENIÊNCIA no próprio DOM (item vindo do `MAP` congelado × item
+           vindo do catálogo V3.2), que é a distinção que a demanda inteira
+           existe para manter legível. */
+        const eidNormativo = D010_PREFIXO_MAP + chave;
+        if (it.eid !== eidNormativo)
+          throw new Error(it.qid + "/" + chave + ": `data-eid`=" + JSON.stringify(it.eid) +
+            " — sem equivalência V3.2 a forma é " + JSON.stringify(eidNormativo) +
+            " (prefixo NORMATIVO por E15). O prefixo é o que distingue, no DOM, item do `MAP` congelado " +
+            "de item do catálogo V3.2; sem ele a proveniência do item deixa de ser legível");
         if (idsEngine.indexOf(it.eid) >= 0)
           throw new Error(it.qid + "/" + chave + ": `data-eid`=" + JSON.stringify(it.eid) +
-            " COLIDE com id do engine — o item sem equivalente tem de ter id estável e próprio");
+            " COLIDE com id do engine — o namespace `" + D010_PREFIXO_MAP + "` foi invadido pelo catálogo " +
+            "e o prefixo deixou de distinguir proveniência");
       }
     });
     g.nota("D010-CARD4 (b) · itens COM equivalência: " + comEq + " · SEM equivalência: " + semEq);

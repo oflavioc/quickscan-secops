@@ -4,9 +4,16 @@
    Instrumento de MEDIÇÃO. Não tem red próprio: o aceite é 100% KILL (R10 §5).
 
    CORRESPONDÊNCIA 1:1 COM A SPEC. Os ids são `D010-M1..D010-M20`, um por
-   mutante `M1..M20` da spec §Critérios (R10 §1 — namespace da fase corrente,
+   mutante `M1..M20` da spec §Critérios, mais `M21..M25` da errata E16 (R10 §1 — namespace da fase corrente,
    nunca continuar numeração alheia; o `M1` global existe desde a 003).
-   EXECUTADOS: 18. `D010-M3` e `D010-M4` NÃO são implementados aqui — foram
+   EXECUTADOS: 23 de 25 DECLARADOS. Os ids `D010-M21..D010-M25` nasceram da
+   errata E16 (2026-08-30) sobre a propriedade que E15 tornou normativa — o
+   prefixo `map:` —, e entram DEPOIS de `M20`: nenhum id existente renumera
+   (R12). Contagem não é sagrada; ids são. Os cinco são mutante de FONTE e não
+   par manual porque a errata E16 dispõe assim: prova manual vale no dia em que
+   é feita e não é re-executada pela campanha — meses depois ela não distingue
+   "a propriedade continua guardada" de "a âncora apodreceu e ninguém viu".
+   `D010-M3` e `D010-M4` NÃO são implementados aqui — foram
    medidos SEM CASO nas fixtures declaradas (sob o workspace da 5.2 a varredura
    de `hideLegacyRecommendation` não alcança o nó que eles atacam) e entram como
    DÍVIDA DECLARADA COM CAUSA em `mutation-matrix.json → dividas_declaradas`.
@@ -94,13 +101,14 @@ const CAUSA = {
 const naoClassificada = msg => "falha não classificada: " + msg;
 
 /* ==========================================================================
-   OS 18 MUTANTES EXECUTADOS (D010-M1..M20 menos M3/M4).
+   OS 23 MUTANTES EXECUTADOS (D010-M1..M25 menos M3/M4).
    `find`/`repl` são texto literal; `reason` é a assinatura da mensagem que o
    gate REALMENTE emite — extraída do `throw new Error(...)` do oráculo, nunca
    inventada: reprovar por motivo diferente do esperado é SOBREVIVENTE, não KILL.
    ========================================================================== */
 const NL = String.fromCharCode(10);   /* LF literal, sem escape no fonte */
 const ARB_V1 = '    hideLegacyRecommendation(app, haSubstituto);   /* [010 · V1] "há substituto?" no lugar da constante `true` */';
+const ANC_EID = '    const id=eq || ("map:"+x.p);';
 const FUSAO  = '    if (eq && anexados.indexOf(eq)>=0) return;';
 
 const MUTANTS = [
@@ -216,7 +224,45 @@ const MUTANTS = [
     desc: "arbitrar o título e parar — não arrastar os blocos contíguos (apoio-block/t-list/t-details)",
     find: '    if (hiding && allowed) node.classList.toggle("v32-hidden", hide);',
     repl: '    if (hiding && allowed) node.classList.remove("v32-hidden");',
-    gate: "D010-ARB3", only: "D010-ARB3", reason: /arbitragem parcial/ }
+    gate: "D010-ARB3", only: "D010-ARB3", reason: /arbitragem parcial/ },
+  /* ── E16 · os cinco de E15 viram MUTANTE DE FONTE ────────────────────────
+     A errata E16 dispõe: propriedade derivada de E15 ganha mutante de fonte
+     sempre que a mutação for exprimível como mudança de UMA linha numa âncora
+     REAL do produto. Julgados um a um em ui_target_v32.js:346 — a MESMA âncora
+     de D010-M14 —, com `qid`, `x.p` e `eq` todos em escopo: os CINCO cabem, e
+     nenhum precisa de andaime sintético. O par manual correspondente
+     (D010-E15-1..5) fica na matriz RISCADO e apontando para cá: prova manual
+     vale no dia em que é feita e não é re-executada pela campanha.
+     REDUNDÂNCIA DECLARADA, para que 5 KILL não sejam lidos como 5 propriedades
+     independentes: os cinco morrem pela MESMA asserção de C10 (b) — a forma
+     normativa `map:<chave>`. O que cada um acrescenta é a CLASSE de desvio que
+     um autor futuro cometeria, não uma alínea nova. `M23` é o menos redundante:
+     é o único cujo prefixo está CERTO e cuja chave mente, e é ele que prova que
+     a asserção pina a forma inteira, não só o prefixo. */
+  { id: "D010-M21", file: TGTJS,
+    desc: "emitir a CHAVE CRUA do MAP como data-eid no ramo sem equivalência (o comportamento pré-E15)",
+    find: ANC_EID, repl: '    const id=eq || x.p;',
+    gate: "D010-CARD4", only: "D010-CARD4", reason: /sem equivalência V3\.2 a forma é/ },
+
+  { id: "D010-M22", file: TGTJS,
+    desc: "trocar o separador do prefixo: `map-<chave>` em vez de `map:<chave>`",
+    find: ANC_EID, repl: '    const id=eq || ("map-"+x.p);',
+    gate: "D010-CARD4", only: "D010-CARD4", reason: /sem equivalência V3\.2 a forma é/ },
+
+  { id: "D010-M23", file: TGTJS,
+    desc: "prefixo CERTO e chave MENTIDA: `map:<qid>` em vez de `map:<chave do MAP>` (troca plausível — os dois estão em escopo)",
+    find: ANC_EID, repl: '    const id=eq || ("map:"+qid);',
+    gate: "D010-CARD4", only: "D010-CARD4", reason: /sem equivalência V3\.2 a forma é/ },
+
+  { id: "D010-M24", file: TGTJS,
+    desc: "trocar a caixa do prefixo: `MAP:<chave>`",
+    find: ANC_EID, repl: '    const id=eq || ("MAP:"+x.p);',
+    gate: "D010-CARD4", only: "D010-CARD4", reason: /sem equivalência V3\.2 a forma é/ },
+
+  { id: "D010-M25", file: TGTJS,
+    desc: "emitir o prefixo SEM chave alguma: `map:`",
+    find: ANC_EID, repl: '    const id=eq || "map:";',
+    gate: "D010-CARD4", only: "D010-CARD4", reason: /sem equivalência V3\.2 a forma é/ }
 ];
 
 const MUTABLE = Array.from(new Set(MUTANTS.map(m => m.file)));

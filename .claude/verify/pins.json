@@ -1,7 +1,7 @@
 {
   "_meta": {
     "descricao": "Registry único de pins — fonte de identidade dos artefatos (R8). Hashes = SHA-256 dos blobs de HEAD. Alterar arquivo pinado exige regenerar este registry no MESMO PR, com motivo no commit.",
-    "gerado_de_head": "a7330fbea2b5bfec9403bfa8749ddde7b8f2d760",
+    "gerado_de_head": "83b6d7e9176cc4d6bfffab0ca04bf5acce9bec4a",
     "gerado_em": "2026-08-31",
     "exclusoes": [
       "docs_phase5/**",
@@ -127,11 +127,11 @@
     ".claude/verify/invariants.json": "b8571facafbe6098cc643886cd158f877dd702c0cba6ca5addff34fc3e10bee6",
     ".claude/verify/known_issues.json": "b9dd23b1a05ab09a11122aee68d555938f250223de2911de8c56079ddd742140",
     ".claude/verify/mutation-matrix.json": "76c1697a7903ee365d3743db9c3b89ccf04f35ad32288ac49dbe785db73bdb19",
-    ".claude/verify/mutation_map.json": "20470a8041156e2661d9a72c9c2fd3cbaf6c53800efb24efa31d07dedd8807da",
+    ".claude/verify/mutation_map.json": "8ad9e30ea68a867b588836cc08e4e103d9a5bf8332dfbadb8ac0022049f87373",
     ".claude/verify/pipeline.yaml": "18581a19186417522d15e30e7072e5b58e31dc16045ff253b672827288fdbf9e",
     ".claude/verify/run.sh": "b137b7a1c1bf9233b06ed8f87b04fb03150b316b59ce0b56231c28ab4e048faa",
     ".gitattributes": "37bb36fb03aa6edbf1ce9fdc3bb9cb705e0317da970df37783777795bbcdcdb9",
-    ".github/workflows/verify.yml": "14613dccba9a74fb67c80248df74d70596039fdf65fd0c445bd53321399251e1",
+    ".github/workflows/verify.yml": "27fba708e105549f93727b5b46054ceaa617849606f13a825bda85d16b58d873",
     ".gitignore": "f12379e20604234d2c80ed8486cefa9c6fc22034e89c1fa79c239e6ae0665079",
     "AGENTS.md": "267c0b98ae9f6fa4289be88e95b72393be936951625be2917ae08fe0cb3e9671",
     "CLAUDE.md": "46bc87e937d6ac560e0445f30626257d2347b6001408300230d0955bdfee9b1d",
@@ -223,6 +223,8 @@
     "specs/010-recomendacao-sem-vao/tasks.md": "39fa0a8de12e350e9462a68df715a8a646130b7fe89259d6c2d794879d26bcfa",
     "specs/011-numeracao-das-prioridades/plan.md": "4c889a6b196286e8a34f0160495200c103be332fd0c32e45eeacd559861294be",
     "specs/011-numeracao-das-prioridades/refinement.md": "10f268af9e2e8a2c35752365232a072934f5c6dec2f25d4ed4126bd74cdf0dba",
+    "specs/011-numeracao-das-prioridades/relatorio-final.md": "c63144964c5086a0809d8b0d923b592f69521d7bd4d6bbc154c24cdb12ed5c53",
+    "specs/011-numeracao-das-prioridades/spec-validate.md": "e4b63560cf550d8a4274a4710ee5806413a9a667b5c5e6a3e05a86da068c6352",
     "specs/011-numeracao-das-prioridades/spec.md": "537f48490c560dad7cc08d71c5b539799672116c8bf3d0d9a846a3e218efac3b",
     "specs/011-numeracao-das-prioridades/tasks.md": "fb963dbfbbdff915bd622b0800b4c808c3d691839a0e12ab2e9afcfdb2b3fa07",
     "specs/012-status-backlog/matriz-gate-mutante.md": "a9062efbc5f2dfa185d71fe7fe8e84dd8eedefc7273b3987ea6d297d7c158947",

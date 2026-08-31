@@ -6,7 +6,7 @@
    CORRESPONDÊNCIA 1:1 COM A SPEC. Os ids são `D010-M1..D010-M20`, um por
    mutante `M1..M20` da spec §Critérios, mais `M21..M25` da errata E16 (R10 §1 — namespace da fase corrente,
    nunca continuar numeração alheia; o `M1` global existe desde a 003).
-   EXECUTADOS: 23 de 25 DECLARADOS. Os ids `D010-M21..D010-M25` nasceram da
+   EXECUTADOS: 22 de 25 DECLARADOS. Os ids `D010-M21..D010-M25` nasceram da
    errata E16 (2026-08-30) sobre a propriedade que E15 tornou normativa — o
    prefixo `map:` —, e entram DEPOIS de `M20`: nenhum id existente renumera
    (R12). Contagem não é sagrada; ids são. Os cinco são mutante de FONTE e não
@@ -101,7 +101,7 @@ const CAUSA = {
 const naoClassificada = msg => "falha não classificada: " + msg;
 
 /* ==========================================================================
-   OS 23 MUTANTES EXECUTADOS (D010-M1..M25 menos M3/M4).
+   OS 22 MUTANTES EXECUTADOS (D010-M1..M25 menos M3/M4 e menos M11).
    `find`/`repl` são texto literal; `reason` é a assinatura da mensagem que o
    gate REALMENTE emite — extraída do `throw new Error(...)` do oráculo, nunca
    inventada: reprovar por motivo diferente do esperado é SOBREVIVENTE, não KILL.
@@ -164,12 +164,23 @@ const MUTANTS = [
     repl: '  const atual=(typeof ans[k]==="number")?ans[k]:0;',
     gate: "D010-CARD1", only: "D010-CARD1", reason: /produziu nó `a-validar`/ },
 
-  { id: "D010-M11", file: TGTJS,
-    desc: "concatenar o MAP aos candidatos do engine, sem a precedência de fonte (C8)",
-    find: '  if (temCandidato) return "";',
-    repl: '  if (false) return "";',
-    gate: "D010-CARD2", only: "D010-CARD2", reason: /recebeu nó `a-validar` tendo/ },
-
+  /* D010-M11 NAO E EXECUTADO — EQUIVALENTE POR CONSTRUCAO (reconciliacao de
+     2026-08-30). Ele atacava `if (temCandidato) return ""`, a clausula de
+     precedencia de C8. Provado inalcancavel: S2-de-CONTEXTO exige capability
+     UNICA dona do qid + landscapeEnabled, e capability dona de qid tem
+     `questionIds` nao vazio, logo `assessmentCoverage != "none"` (invariante de
+     `validateConfigV32`, 0 erros, com gate vivo em tests_m42_m86.js). A unica
+     rota que emite candidato sob UNSET e `UNASSESSED_CAPABILITY`, exclusiva de
+     capability `coverage: "none"` — que tem ZERO questionIds. Medido: catalogo
+     13 capabilities com questionIds, 0 delas com coverage "none"; 12 sem
+     questionIds, 12 com coverage "none". Varredura adversarial de 900 sessoes /
+     9000 observacoes (dona de qid x UNSET): 0 contraexemplos, e
+     `UNASSESSED_CAPABILITY` sequer aparece nessa classe. `temCandidato` e
+     sempre falso onde o codigo chega. Fica na spec como clausula DEFENSIVA,
+     sem mutante, no mesmo desfecho de E1/A5 — e a divida e "inalcancavel,
+     provado", nunca "falta fixture": fixture que a pague nao pode existir.
+     CONSEQUENCIA para o gate: ver a divida declarada em mutation-matrix.json —
+     D010-CARD2 (a) passa por ESTADO, e quem mede C8 e a alinea (b). */
   { id: "D010-M12", file: TGTJS,
     desc: "publicar o habilitador a validar ignorando o gate canônico de suficiência (INV-3)",
     find: 'function tgtValidateHTML(qid, cmpPub){' + NL + '  if (cmpPub !== true) return "";',
@@ -386,7 +397,7 @@ let BASE_HTML_SHA = null;
     } else {
       console.log("\nD010 MUTATION [tests_010_mutants.js]" + (ONLY.length ? " [PARCIAL]" : "") + ": " +
         D + "/" + SELECTED.length + " mutantes detectados pelo gate e motivo esperados" +
-        (ONLY.length ? "" : " · 2 em dívida declarada (D010-M3, D010-M4 — sem caso nas fixtures)"));
+        (ONLY.length ? "" : " · 3 em dívida declarada: D010-M3/M4 (sem caso nas fixtures) e D010-M11 (equivalente por construção)"));
       if (S > 0) console.log("  " + S + " sobrevivente(s): " +
         report.filter(r => r.estado === SOBREVIVENTE).map(r => r.id).join(", "));
     }

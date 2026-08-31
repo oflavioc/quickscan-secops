@@ -1222,6 +1222,31 @@ T("D010-CARD4", "C10 · tabela total sobre as 11 chaves, identidade e as DUAS di
         " (declarada: " + JSON.stringify(FX.D010_EQUIVALENCIA_NOME) + ") — decidir a direção antes de seguir (R10 §1)");
     const card = cartao(d, H.qid);
     if (!card.li) vac("(c)", "o cartão-alvo de " + H.qid + " não está na tela");
+    /* [E9 · direção decidida em 2026-08-30, achado de D010-M19] O nó pode ter
+       ESVAZIADO em vez de "a fixture ter perdido o caso". Os dois estados
+       chegam aqui como `card.aValidar.length === 0`, e a guarda de vacuidade
+       abaixo NÃO os distingue: ela reprovaria igual para qualquer mutação que
+       esvaziasse o nó por qualquer razão, e (c2) deixaria de separar "o nó
+       esvaziou" de "o FortiGuard MDR sumiu" — que é exatamente a perda
+       silenciosa que E9 existe para impedir.
+       MEDIDO antes de escrever (não é alínea subsumida): sob a saída de
+       D010-M19 simulada no DOM, `D010-CARD1` (a) também reprova, mas pára em
+       `D010-F1/automation` e NUNCA alcança `monitoring-coverage` — nenhum gate
+       da suíte nomeava o item perdido. O conjunto esperado sai de
+       `c7Esperado`: catálogo do nível ATUAL (engine `frozen`) menos os fundidos
+       por equivalente ANEXADO, as duas fontes lidas FORA do módulo sob teste.
+       O veredito não muda — continua FAIL —, muda a RAZÃO, que passa a ser
+       precisa e re-atribuível ao critério que a spec nomeia. */
+    const ansC = FX.d010Answers(w);
+    const idsC = JSON.parse(FX.d010Eval(w, "JSON.stringify(QS.map(function(q){return q.id;}))"));
+    const EC = c7Esperado(w, H.qid, ansC[idsC.indexOf(H.qid)]);
+    if (!card.aValidar.length && EC.esperado.length)
+      throw new Error("(c2) o nó `a-validar` de " + H.qid + " está VAZIO, e o catálogo do nível ATUAL " +
+        "esperava " + EC.esperado.length + " sobrevivente(s): " +
+        JSON.stringify(EC.esperado.map(k => FX.d010ProductName(w, k))) + " — sumiu do nó a-validar de " +
+        H.qid + " · catálogo=" + JSON.stringify(EC.cat) +
+        " · fundidos por equivalente ANEXADO=" + JSON.stringify(EC.fundidos) +
+        " — deduplicar pelo DOMÍNIO da tabela apaga do relatório conteúdo que a sessão nunca declarou (E9)");
     if (!card.engine.length || !card.aValidar.length)
       vac("(c)", "o card de " + H.qid + " não traz as DUAS fontes ao mesmo tempo (chips do engine=" +
         card.engine.length + ", itens a-validar=" + card.aValidar.length +

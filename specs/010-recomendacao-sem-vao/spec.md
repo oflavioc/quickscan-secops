@@ -240,6 +240,20 @@ Três correções de fato sobre o source entram junto.
 | **O caso que motivou** | O `M-SE9` — `data-eid="map:FortiSIEM"`, prefixo certo e **chave errada** — era sobrevivente antes de E15. Sem forma normativa o gate não distinguia "veio do `MAP`" de "veio do `MAP`, mas de outra chave". É propriedade de produto, medida, e por isso merece guarda que a campanha re-execute |
 | **Classe** | Rito de prova mais fraco que o disponível. A regra geral: **a prova mais forte que couber é a devida** — e o que não couber se declara, com a causa |
 
+### E17 · C8 (a) é verdadeira por construção — e o critério passa a dizer o que mede
+
+| | |
+|---|---|
+| **O que estava escrito** | C8: "Capability com candidato do engine **nunca** recebe item do `MAP`", com a alínea (a) sobre `logs` em `D010-F2` — redigida como se fosse asserção do gate |
+| **Fato medido, em duas camadas** | **Estática**: das 25 capabilities, **13 têm `questionIds` e nenhuma delas é `coverage: "none"`**; as 12 sem `questionIds` são **todas** `coverage: "none"`. As 10 candidatas a S2-contexto (dona única + `landscapeEnabled`) são todas `coverage: "direct"`. **Dinâmica**: varredura adversarial de 900 sessões com landscape todo UNSET — **9.000 observações (dona de qid × UNSET), 0 contraexemplos** —, e as classificações observadas nessa classe são apenas `CONTEXT_NOT_INFORMED`, `null` e `NEEDS_VALIDATION`: **`UNASSESSED_CAPABILITY` não aparece**, e ela é a única rota que carrega candidato sob UNSET |
+| **O que isso implica** | `temCandidato` é **sempre falso** onde `tgtValidateHTML` chega: capability com candidato nunca está em S2-contexto. A ausência do nó em `logs` é explicada pelo **S3**, e por nada mais. C8 (a) é verdadeira **por estado**, não por **gate** |
+| **`D010-M11` — desfecho** | **Equivalente por construção.** Sai da campanha e entra em `dividas_declaradas` pela causa certa: **"inalcançável, provado"** — nunca "falta fixture". A distinção é a que separa dívida pagável de dívida impossível: a fixture proposta **não pode existir**, e escrever "falta fixture" mandaria alguém tentar pagá-la. O id **não é reusado** (R12) |
+| **A cláusula fica** | O `if (temCandidato) return "";` permanece no predicado como **defesa**, sem mutante — desfecho de **E1**/A5. Ela não é alcançável hoje; é barata, e só pode deixar o produto mais conservador |
+| **O que C8 mede, e passa a dizer** | Quem mede C8 é a alínea **(b)**: capability com **apenas serviços** e em S2-contexto **continua** recebendo o nó — isto é, serviço do engine **não bloqueia** o `MAP`. Viva, com caso em `D010-F4` (três qids). A alínea (a) permanece no gate como **regressão de estado**, declarada como tal: ela guarda que a propriedade continue verdadeira se o catálogo mudar, e não prova a precedência |
+| **`D010-M26`** | (b) ficava sem mutante, e critério vivo sem mutante é critério sem prova de poder. Nasce `D010-M26` — mutação de **uma linha** na âncora de serviços (`forEach` que empurra `serviceId` passa a marcar `temCandidato`), atacando exatamente "serviço não bloqueia o `MAP`". Declarados **25 → 26** |
+| **A terceira vez** | Esta é a **terceira** vez nesta demanda que um critério se revela verdadeiro **por estado e não por gate** — depois de **E5** (`D010-CARD3` (b)) e de **E1** (a cláusula A5). O padrão merece o nome: *alínea cuja pré-condição nunca falha* é indistinguível de alínea que mede, até alguém escrever o mutante e ele sobreviver. **A campanha é o único instrumento que separa as duas** — e só quando distingue SOBREVIVENTE de NÃO EXECUTADO, que é o que a demanda 013 construiu |
+| **Classe** | Critério que promete asserção e entrega tautologia. Corrigido na redação, com o mutante nascendo onde a medição de fato mora |
+
 ## Critérios de aceite → gates
 
 Todo critério é um gate executável, definido AQUI (antes do plano — R3 §1).

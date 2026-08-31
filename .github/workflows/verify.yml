@@ -66,11 +66,12 @@ jobs:
           sudo apt-get update -qq && sudo apt-get install -y -qq poppler-utils
           # poppler (pdftoppm/pdftotext/pdfinfo): exigido pelo preflight canônico
           # das suítes de print — 1ª calibração falhou exatamente nisso (3 gates)
-      - name: Suítes visuais (playwright + chromium P50/P52)
+      - name: Suítes visuais (playwright + chromium P50/P52/D011)
         run: |
           npm run test:visual
           node tests_p50_chromium.js
           node tests_p52_chromium.js
+          node tests_011_chromium.js
       - name: Restaurar árvore (suítes chromium legadas regravam evidência rastreada)
         # Follow-up registrado: tests_p50_chromium reescreve docs_phase5/evidence_p50/*.json
         # como efeito colateral (achado E9; a suíte é congelada — correção é demanda própria).

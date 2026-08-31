@@ -25,8 +25,8 @@
     "notes": "DECIDIDO SOB DELEGACAO. 33 tarefas em 7 waves (2·3·5·3·3·7·10), uma tarefa por arquivo, dono unico. Serie de repins R0-R6c, comecando em R0 porque os artefatos de fase tambem sao pinados — o tech-lead achou que o baseline estava VERMELHO com 3 sem pin (as fases 0-2 commitadas sem repin, falha do orquestrador). D011-M6, que edita ui_ux_v32.js protegido, e do qa-engineer em WORKTREE EFEMERA — nunca no harness, nunca na arvore: e o ponto exato onde a 009 se queimou. A matriz de mutantes e escrita sempre pelo qa-engineer, mesmo quando o build-engineer roda o job do CI."
   },
   "red": {
-    "status": "in_progress",
-    "commit": "",
+    "status": "proven",
+    "commit": "5bf4731",
     "gates": [
       "D011-KEY2",
       "D011-ACC1",

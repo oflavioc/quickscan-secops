@@ -1,6 +1,6 @@
 {
   "demanda": "011-numeracao-das-prioridades",
-  "phase": "specify",
+  "phase": "tasks",
   "spec_dir": "specs/011-numeracao-das-prioridades",
   "branch": "feature/011-numeracao-das-prioridades",
   "brief": "Item 1 do cliente (2026-08-27): 'algumas questoes dentro das prioridades ficaram sem numeracao'. O glifo NAO e numeracao - e o atalho de teclado, e o '.' e a ausencia dele desenhada a partir do decimo item. O PO mediu TRES causas de 'numero faltando', nao uma, e concluiu que a lista NAO DEVE ser numerada: a ordem subjacente e severidade calculada pelo produto, e numerar ancoraria a escolha do negocio nela (doutrina da INV-5), colidindo com a numeracao legitima de 'Prioridade 1..3' por ordem de DECLARACAO. O defeito real e o glifo numerico ler como indice.",
@@ -8,5 +8,20 @@
     "status": "approved",
     "approved_at": "2026-08-31",
     "notes": "DECIDIDO SOB DELEGACAO de 2026-08-29. Rota aprovada: (a) desambiguar na camada UX (ui_ux_v32.js/.css), classe NAO protegida, rito NENHUM. Recusadas com o rito nomeado: Camada 1 (frozen, D2 Porta B), remapear teclas por captura (anula o congelado por fora e mata UX14), e usar '0' para o decimo (move a fronteira sem fechar o vao). A rota 'nao fazer nada e explicar' ficou desenhada e disponivel e foi recusada por duas razoes MEDIDAS: o sintoma aparece no cenario tipico (>=10 gaps) e explicar nao conserta o nome acessivel do botao. P2: existe demanda. P9: lista vazia NAO entra no escopo - defeito distinto, com cadeia pronta, vira achado registrado. P10: slug mantido (R12). Glossario: nenhum termo novo; o verbete 'Tecla de atalho (priorizacao)' da 009 confere e continua verdadeiro depois da rota (a)."
+  },
+  "specify": {
+    "status": "approved",
+    "approved_at": "2026-08-31",
+    "notes": "DECIDIDO SOB DELEGACAO de 2026-08-29. O CROSS-CHECK DERRUBOU A PREMISSA DO PROPRIO REFINAMENTO: ui_ux_v32.js e ui_ux_v32.css estao em PROTECTED (tests_p50_core.js:159 e :346), asseridos por P50-GOV1 e pinados — verdadeiro contra a §29.4, falso contra boundary.json. A autorizacao da 009 NAO cobre (e 'exclusivamente no escopo da demanda 009'). E o mesmo cross-check achou a saida na spec selada: UI-004 autoriza decoracao pos-render a partir de MODULO NOVO da fase. E o item de cross-check que o fix-finding do EA-1 acrescentou ao template — pegou na Fase 1 o que a 010 so descobriu no meio da implementacao. As tres causas separadas com veredito proprio. O criterio central foi decomposto em quatro assercoes em vez de virar 'o . sumiu'. Errata depois da Fase 2: C6 reaponta para D011-KEY1 (UX14 e TAUTOLOGICO, por DUAS razoes independentes, conferido pelo PO por leitura propria); M8 migra para C1; M11 e M12 entram; C11 fica com as duas clausulas INDIVISIVEIS, porque no papel esconder so o glifo torna a legenda FALSA — os unicos numeros que sobram sao os badges Prioridade 1..3, que SAO a ordem."
+  },
+  "plan": {
+    "status": "approved",
+    "approved_at": "2026-08-31",
+    "notes": "DECIDIDO SOB DELEGACAO. A demanda NAO para: patch-point PP-011-1, MutationObserver estreito sobre #app, com owner nomeado. Recusado o 5o wrapper de render (R9 §4 o proibe para modulo novo; o precedente AMB-1 foi aprovado NOMINALMENTE pelo proprietario, autorizacao que a delegacao nao da). Recusado estender p50AfterRender pelo custo medido: ui_p50_shell_v32.js e alvo das campanhas p50/p51/p52, as tres com requires chromium — tocá-lo jogaria o fechamento para o CI. A decisao deriva de computeFindings/businessPriority/step e a identidade de data-id, NUNCA do texto do .key (R9 §3). O bridge __D011 expoe __installed e diag() mas NAO decorate(), para que nenhum gate passe com o observador morto. Vacuo achado e fechado: check_lint_arch.py so varre ui_p5*_v32.js, entao sem estender o glob o C8 passa por ausencia de alvo e o D011-M7 sobrevive — virou tarefa da wave 1. Contraste CALCULADO pela formula do V322C_CONTRASTE, nao escolhido por paleta."
+  },
+  "tasks": {
+    "status": "approved",
+    "approved_at": "2026-08-31",
+    "notes": "DECIDIDO SOB DELEGACAO. 33 tarefas em 7 waves (2·3·5·3·3·7·10), uma tarefa por arquivo, dono unico. Serie de repins R0-R6c, comecando em R0 porque os artefatos de fase tambem sao pinados — o tech-lead achou que o baseline estava VERMELHO com 3 sem pin (as fases 0-2 commitadas sem repin, falha do orquestrador). D011-M6, que edita ui_ux_v32.js protegido, e do qa-engineer em WORKTREE EFEMERA — nunca no harness, nunca na arvore: e o ponto exato onde a 009 se queimou. A matriz de mutantes e escrita sempre pelo qa-engineer, mesmo quando o build-engineer roda o job do CI."
   }
 }

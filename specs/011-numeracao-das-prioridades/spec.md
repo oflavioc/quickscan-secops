@@ -22,17 +22,17 @@ reprove, está dito — e o poder discriminante passa a depender só do mutante.
 
 | # | Critério | Gate (id · arquivo · asserção) | Mutante previsto | Estado alcançável que o reprova |
 |---|---|---|---|---|
-| **C1** | **Todo glifo numérico exibido é um atalho que funciona.** Para cada botão cujo `.key` exibe o dígito `N`, um `keydown` de `N` alterna **exatamente aquele** botão | `D011-KEY1` · `tests_011_prioridade.js` · fixture com 15 findings; o oráculo recalcula a ordem de findings **do vetor da fixture** (severidade desc → nível asc → índice da pergunta), sem chamar `computeFindings()`; para `N=1..9`: `keydown N` adiciona o id esperado, `keydown N` de novo o remove (respeita o limite de 3) | **D011-M2** — renumerar o glifo pela posição visual pós-agrupamento | **Nenhum hoje: C1 é critério de PRESERVAÇÃO e nasce VERDE.** Dívida declarada: seu poder discriminante vem só de D011-M2, que precisa ser provado KILL antes do aceite |
+| **C1** | **Todo glifo numérico exibido é um atalho que funciona.** Para cada botão cujo `.key` exibe o dígito `N`, um `keydown` de `N` alterna **exatamente aquele** botão | `D011-KEY1` · `tests_011_prioridade.js` · fixture com 15 findings; o oráculo recalcula a ordem de findings **do vetor da fixture** (severidade desc → nível asc → índice da pergunta), sem chamar `computeFindings()`; para `N=1..9`: `keydown N` adiciona o id esperado, `keydown N` de novo o remove (respeita o limite de 3) | **D011-M2** — renumerar o glifo pela posição visual pós-agrupamento; **D011-M8** — alterar o mapeamento tecla→finding (transferido de C6 pela errata da Fase 2) | **Nenhum hoje: C1 é critério de PRESERVAÇÃO e nasce VERDE.** Dívida declarada: o poder discriminante vem só dos mutantes, que precisam ser provados KILL antes do aceite. **D011-KEY1 passa a ser o único carrasco do mapeamento tecla→finding** — o gate congelado que a spec citava para isso é constante (ver errata) |
 | **C2** | **Item sem atalho não exibe glifo.** Com `N ≥ 10` findings, os botões de índice ≥ 9 têm `.key` **sem conteúdo textual** (nem `·` nem qualquer outro caractere), e o elemento `.key` **permanece no DOM** (alinhamento) | `D011-KEY2` · idem · fixture de 15 findings: `.key.textContent.trim() === ""` para os índices 9..14, `.key` presente em 15/15 botões, e `1..9` intactos nos índices 0..8 | **D011-M1** — restaurar o `·` nos itens sem atalho | **Sim, hoje**: qualquer sessão com ≥10 gaps. Red real |
 | **C3** | **O glifo sai do nome acessível e o atalho é declarado.** Todo `.key` tem `aria-hidden="true"`; todo botão de índice < 9 tem `aria-keyshortcuts` igual ao seu dígito **inclusive quando selecionado** (o atalho continua funcionando sob `✓`); botão de índice ≥ 9 **não** tem o atributo | `D011-ACC1` · idem · texto do botão ignorando nós `aria-hidden` começa pelo rótulo da pergunta; mapa índice→`aria-keyshortcuts` conferido contra o oráculo; item selecionado mantém o atributo | **D011-M3** — remover `aria-keyshortcuts` do item selecionado (ou aplicá-lo a todos os botões) | **Sim, hoje**: nenhum dos dois atributos existe (`quickscan_...v3_1_3.html:727-728`) |
 | **C4** | **A tela declara em texto o que o número é.** Existe **exatamente uma** legenda, dentro do container da grade, com o texto canônico **"Os números são atalhos de teclado — não a ordem de prioridade."**; ela existe se e somente se há ao menos um botão na grade | `D011-LEG1` · idem · igualdade literal do texto, `length === 1`, ancestral comum com a grade; com 0 findings, `length === 0` | **D011-M5** — legenda ausente; e variante que troca o texto por afirmação de ordem | **Sim, hoje**: não existe legenda alguma |
-| **C5** | **Idempotência por reconstrução.** Após alternar uma prioridade (o que reconstrói o DOM via `render()`), a tela apresenta **uma** legenda, nenhum glifo mudo e os mesmos atributos de C3 | `D011-IDEM1` · idem · medir estado → `click` num `.opt` → medir de novo: igualdade das três propriedades e `legenda.length === 1` | **D011-M4** — aplicar o ajuste uma única vez (guarda global `__done`) | **Sim** para a implementação ingênua; **não** para o estado de produto atual (o comportamento não existe). Nasce vermelho junto de C2/C3/C4 |
-| **C6** | **A regressão congelada permanece intacta.** `tests_ux_m41.js` (UX8–UX14) e `tests_ref_m44.js` nas contagens de `expected_suites.json`; o mapeamento tecla→finding continua o do runtime congelado | Sem gate novo: stage `suites` contra `.claude/verify/expected_suites.json` | **D011-M8** — alterar o mapeamento tecla→finding; **UX14** (`tests_ux_m41.js:127`) tem de matar | **Sim**: o mutante prova que a regressão congelada tem poder discriminante sobre esta demanda |
+| **C5** | **Idempotência por reconstrução.** Após alternar uma prioridade (o que reconstrói o DOM via `render()`), a tela apresenta **uma** legenda, nenhum glifo mudo e os mesmos atributos de C3 | `D011-IDEM1` · idem · medir estado → `click` num `.opt` → medir de novo: igualdade das três propriedades e `legenda.length === 1` | **D011-M4** — aplicar o ajuste uma única vez (guarda global `__done`); **D011-M11** — **não instalar o observador**, que prova o *patch-point* e não só o efeito | **Sim** para a implementação ingênua; **não** para o estado de produto atual (o comportamento não existe). Nasce vermelho junto de C2/C3/C4 |
+| **C6** | **A regressão congelada permanece intacta.** `tests_ux_m41.js` (UX8–UX14) e `tests_ref_m44.js` nas contagens de `expected_suites.json`; o mapeamento tecla→finding continua o do runtime congelado | Contagens: sem gate novo — stage `suites` contra `.claude/verify/expected_suites.json`. **Mapeamento: `D011-KEY1`** (gate desta demanda, oráculo independente), porque o gate congelado que o afirmava é constante — ver achado | **D011-M8** — alterar o mapeamento tecla→finding; o carrasco é **`D011-KEY1`**, **não** o UX14. Medido na Fase 2: `tests_ux_m41.js:127-134` **retorna `true` para qualquer entrada** — a condição `selected[0]===firstGlobal.sort(…)[0]===selected[0]` associa à esquerda e compara **booleano com string**, sempre falsa, e o ramo verdadeiro seria `X \|\| true`, também constante. Reproduzido pelo TL fora do repositório com quatro entradas (verde real · nada selecionado · item errado · dois selecionados): `true` nas quatro | **Sim, pelo carrasco novo.** As contagens congeladas continuam sendo critério; o que caiu foi a **prova de mapeamento** que se atribuía ao UX14 |
 | **C7** | **Nenhuma superfície protegida muda sem autorização registrada.** `P50-GOV1` verde ao final (`tests_p50_core.js:396`) | Suíte existente `tests_p50_core.js` · stage `suites` + stage `baseline` (pins) | **D011-M6** — editar um byte de `ui_ux_v32.js` sem repin | **Sim, e é o risco mais provável desta demanda** (ver Portão da Fase 1) |
 | **C8** | **Higiene de módulo novo** (se a rota criar um): IIFE com guarda de instalação única, zero `innerHTML =`, CSS com prefixo próprio, ≤ 600 linhas, bridge registrado em `bridges.json` se e somente se expuser `window.__*` | stage `lint-arch` (R9) | **D011-M7** — escrever a legenda com `innerHTML =` | **Sim**: `innerHTML =` é o caminho fácil e o lint reprova |
 | **C9** | **A suíte nova entra no registro canônico no MESMO PR**, com a contagem **medida por execução**, não declarada | `.claude/verify/expected_suites.json` → chave `d011` · stage `suites` (R10 §3) | — (critério de processo) | **Sim**: PR sem a chave `d011` reprova o stage |
 | **C10** | **Contraste da legenda ≥ 4,5:1**, recalculado pela fórmula WCAG sobre as cores resolvidas, no padrão de `V322C-CON1` (`tests_p52_chromium.js:6053-6072`) | `D011-CON1` · suíte Chromium da demanda · razão medida na tela de prioridade | **D011-M9** — pintar a legenda com uma cor **calculada** para dar ~3,9:1 sobre o fundo resolvido (escolhida por medição, nunca por palpite de paleta) | **Sim** — mas **fora do agregado local** (KI-3: Chromium é CI + rito do proprietário). Ver "Declarado não mensurável" |
-| **C11** | **Condicional — impressão.** Se mantido (ver Portão): regra `@media print` **do próprio módulo novo**, escopada à grade de prioridade, some com o glifo de atalho e **preserva** o estado de seleção (`✓`/`.sel` e o badge `Prioridade N`) | `D011-PRT1` · asserção sobre o CSS do módulo (precedente de oráculo: `tests_ux_m41.js:260`) + conferência no PDF pelo rito visual | **D011-M10** — estender a regra ao `✓`/`.sel`, apagando o estado no papel | **Sim** para a regra; o **efeito** no PDF não é mensurável em jsdom — o oráculo mede a regra, não o resultado. Limitação declarada |
+| **C11** | **Condicional — impressão.** Se mantido (ver Portão): regra `@media print` **do próprio módulo novo**, escrita contra seletor **do próprio módulo** (prefixo `d011-`, nunca seletor alheio — R9 §6), que some com **duas** coisas — o glifo de atalho **e a legenda `.d011-legenda`** — e **preserva** o estado de seleção (`✓`/`.sel` e o badge `Prioridade N`) | `D011-PRT1` · asserção sobre o CSS do módulo, **duas cláusulas** (glifo e legenda), precedente de oráculo `tests_ux_m41.js:260` + conferência no PDF pelo rito visual | **D011-M10** — estender a regra ao `✓`/`.sel`, apagando o estado no papel; **D011-M12** — remover a cláusula da legenda, deixando no papel uma frase sobre números que não existem | **Sim** para as duas cláusulas; o **efeito** no PDF não é mensurável em jsdom — o oráculo mede a regra, não o resultado. Limitação declarada |
 
 ### O critério central, decomposto
 
@@ -205,17 +205,67 @@ não entra em `buildPrintReport`/`preparePrint` — não toca arquivo nem símbo
 protegido, e portanto não dispara o `STOP`. Mas a fronteira é interpretável, e
 ambiguidade de spec selada é exatamente o que gera errata.
 
-**Recomendação: manter C11 nos termos estritos acima** (regra própria, escopo
-`.ux-priolayout`, zero contato com o pipeline de print) **e registrar aqui que, se o
+**Recomendação: manter C11 nos termos estritos acima** (regra própria, seletor do
+próprio módulo, zero contato com o pipeline de print) **e registrar aqui que, se o
 TL classificar isso como semântica nova de print, C11 sai da demanda** e vira
 decisão à parte, sem bloquear C1–C10.
+
+**Errata da Fase 2 — a legenda também some no papel.** O `tech-lead` propôs
+estender a regra de print a `.d011-legenda`, porque sem glifo a frase perde o
+referente, e deixou a escolha para o PO. **Adotado — e por uma razão mais forte que
+a dele: no papel a legenda não fica só órfã, fica FALSA.** Escondido o glifo de
+atalho, os únicos números que sobrevivem na impressão são os badges
+**`Prioridade 1..3`** (`ui_ux_v32.js:176-177`, e `.prio-decl` no relatório,
+`quickscan_...v3_1_3.html:893-896`) — que **são**, exatamente, a ordem de
+prioridade. Uma frase dizendo "os números… não são a ordem de prioridade" ao lado
+dos únicos números remanescentes, que são a ordem de prioridade, inverte o efeito
+do critério C4 e contradiz a decisão P1. As duas cláusulas são, portanto,
+inseparáveis: **ou o par (glifo + legenda) some junto, ou C11 inteiro sai**.
+Nunca só o glifo.
+
+## Achado colateral, medido na Fase 2 — `UX14` não tem poder discriminante
+
+Levantado pelo `tech-lead` ao instruir a matriz de mutantes e **conferido por
+leitura própria** antes de entrar aqui.
+
+**Cadeia**: `tests_ux_m41.js:127-134` → a condição
+`selected[0]===firstGlobal.sort((a,b)=>0)[0]===selected[0]` associa à esquerda
+(`(a===b)===c`), comparando **booleano com string** → sempre falsa → o ternário cai
+sempre no ramo `: true` → **retorno constante `true`**. O ramo verdadeiro, se
+alcançável fosse, é `X || true` — **também constante**: são *duas* razões
+independentes para o mesmo defeito. A linha `:131` (`const sel=[...w.__DEV.V32?[]:[]]; /* noop */`)
+é código morto autodeclarado no mesmo gate. Reprodução do TL fora do repositório,
+quatro entradas (verde real · nada selecionado · item errado selecionado · dois
+selecionados): `true` nas quatro. **Efeito**: o gate que a suíte anuncia como "o
+atalho continua atingindo o finding global correto após regroup" **não afirma nada**
+— e nenhuma revisão o pegou porque ele está verde desde sempre.
+
+**Consequência para esta demanda**: nenhuma linha de `tests_ux_m41.js` é editada
+aqui — é **suíte congelada** (§29.4 e `frozenSuites`, `tests_p50_core.js:400-405`);
+consertá-la é decisão de outra natureza, com rito próprio. Esta spec apenas **deixa
+de se apoiar nela**: o carrasco de `D011-M8` passa a ser `D011-KEY1` (C1/C6).
+
+**Id `EA-*` não é alocado aqui** — a série está em EA-7 nesta worktree e a 010 corre
+em branch paralela que esta não enxerga (R12). Alocação e escrita são do
+`doc-writer`, depois que as irmãs chegarem à `develop`.
+
+**Padrão que já é o terceiro seguido**, e por isso vale mais que o item: `EA-7`
+(`P51-VIS1`, que a mutação não consegue mais violar) → errata **E17** da 010
+(`CARD2`, verdadeiro por construção) → agora `UX14`, numa **suíte congelada de outra
+fase**. Três demandas seguidas encontrando gate sem poder discriminante sugere que
+"o gate está verde" não é evidência de proteção — é hipótese a testar por mutante.
+Recomendação de processo, fora do escopo desta demanda: uma varredura de gates
+constantes merece demanda própria.
 
 ## Fora de escopo
 
 Herdado do refinamento, mais o que a spec exclui:
 
 - **A Camada 1 permanece apenas lida** — nenhum rito D2, nem Porta A nem Porta B.
-- **O mapeamento tecla→finding não muda** (`:1058`); UX14 é prova, não obstáculo.
+- **O mapeamento tecla→finding não muda** (`:1058`) — e quem prova isso é
+  `D011-KEY1`, não o `UX14` (ver achado acima).
+- **`tests_ux_m41.js` não é corrigida por esta demanda** — congelada; o defeito fica
+  registrado como achado, não emendado de passagem.
 - **O agrupamento por domínio não é desfeito**, e nenhum critério exige sequência
   contígua de glifos (causa 2 permanece, declarada).
 - **O `✓` do item selecionado não muda** (causa 3).

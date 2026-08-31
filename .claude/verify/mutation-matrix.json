@@ -689,6 +689,237 @@
         "resultado": "KILL — 'no caso PARCIAL o aviso declara ausência de contexto em ESCOPO DE SESSÃO'. PROVA DE DESENHO no mesmo passe: SOBREVIVEU a D009-UNS1 (PASS), como exigido — sob landscape 100% UNSET a frase global é VERDADEIRA e é esse o caso que UNS1 mede; se morresse nos dois, a cláusula estaria no gate errado",
         "registro": "campanha d009 REEXECUTADA na passagem final (2026-08-28, rodada 2, worktree exclusiva e árvore limpa): 19 KILL / 19, restauração byte a byte OK do source e do HTML gerado · o par nasceu do red commitado em d48b906 ANTES da correção; o mutante só pôde ser ancorado depois de e77b7b5 criar o ramo tgtCtxDeclaradoNaSessao(), e até lá esteve declarado como especificado-e-não-executável, nunca como cobertura existente"
       }
+    },
+    {
+      "mutante": "D011-M1",
+      "harness": "d011 (tests_011_mutants.js)",
+      "gate": "D011-KEY2 (tests_011_prioridade.js, alinea c)",
+      "invariante": "C2 — item sem atalho nao exibe glifo: o ponto medio deixa de desenhar a ausencia de atalho",
+      "ultima_prova": {
+        "data": "2026-08-31",
+        "resultado": "DETECTADO — 'D011-KEY2(c): 6 item(ns) sem atalho ainda exibem glifo'. PROVA DE DESENHO no mesmo passe: SOBREVIVEU a D011-KEY1 (PASS), como exigido — o ponto medio nao e digito e o C1 so fala de glifo NUMERICO; se KEY1 tambem reprovasse, as duas assercoes mediriam a mesma coisa e uma seria superflua",
+        "registro": "campanha d011 executada em 2026-08-31, worktree exclusiva phase5-011, em BACKGROUND (timeout em primeiro plano mata a campanha no meio e deixa mutante aplicado): 18 DETECTADO / 0 SOBREVIVENTE / 0 NAO EXECUTADO de 18 · restauracao byte a byte OK do source E do HTML gerado · porcelain e SHA-256 dos 4 arquivos identicos antes e depois. Preflight (contrato C1 da 013) declarado no mesmo commit: 18 ancoras com ocorrencias == 1, interpretador resolvido. Sintaxe das 18 replicas validada ANTES da campanha (node --check / py_compile / balanco de chaves): replica invalida vira NAO EXECUTADO disfarcado de sobrevivente."
+      }
+    },
+    {
+      "mutante": "D011-M2",
+      "harness": "d011 (tests_011_mutants.js)",
+      "gate": "D011-KEY1 (tests_011_prioridade.js, alinea c)",
+      "invariante": "C1 — o botao que exibe o glifo N e exatamente o que a tecla N alterna, pela ordem CANONICA e nao pela visual",
+      "ultima_prova": {
+        "data": "2026-08-31",
+        "resultado": "DETECTADO — 'D011-KEY1(c): o glifo 1 esta em mandate; a ordem canonica preve training'. So e matavel sob fixture MISTA: com answerAll(w,1) a ordem do DOM pos-agrupamento coincide com a global e este mutante fica EQUIVALENTE ao codigo correto (medido na Fase 4). A alinea KEY1(b) assere a divergencia justamente para que o cenario nunca volte a ser vacuo",
+        "registro": "campanha d011 executada em 2026-08-31, worktree exclusiva phase5-011, em BACKGROUND (timeout em primeiro plano mata a campanha no meio e deixa mutante aplicado): 18 DETECTADO / 0 SOBREVIVENTE / 0 NAO EXECUTADO de 18 · restauracao byte a byte OK do source E do HTML gerado · porcelain e SHA-256 dos 4 arquivos identicos antes e depois. Preflight (contrato C1 da 013) declarado no mesmo commit: 18 ancoras com ocorrencias == 1, interpretador resolvido. Sintaxe das 18 replicas validada ANTES da campanha (node --check / py_compile / balanco de chaves): replica invalida vira NAO EXECUTADO disfarcado de sobrevivente."
+      }
+    },
+    {
+      "mutante": "D011-M3",
+      "harness": "d011 (tests_011_mutants.js)",
+      "gate": "D011-ACC1 (tests_011_prioridade.js, alinea e)",
+      "invariante": "C3 — o atalho PERMANECE declarado sob o simbolo de selecao: a tecla continua alternando o item selecionado",
+      "ultima_prova": {
+        "data": "2026-08-31",
+        "resultado": "DETECTADO — 'D011-ACC1(e): o item selecionado de indice 0 perdeu o atalho declarado'",
+        "registro": "campanha d011 executada em 2026-08-31, worktree exclusiva phase5-011, em BACKGROUND (timeout em primeiro plano mata a campanha no meio e deixa mutante aplicado): 18 DETECTADO / 0 SOBREVIVENTE / 0 NAO EXECUTADO de 18 · restauracao byte a byte OK do source E do HTML gerado · porcelain e SHA-256 dos 4 arquivos identicos antes e depois. Preflight (contrato C1 da 013) declarado no mesmo commit: 18 ancoras com ocorrencias == 1, interpretador resolvido. Sintaxe das 18 replicas validada ANTES da campanha (node --check / py_compile / balanco de chaves): replica invalida vira NAO EXECUTADO disfarcado de sobrevivente."
+      }
+    },
+    {
+      "mutante": "D011-M3B",
+      "harness": "d011 (tests_011_mutants.js)",
+      "gate": "D011-ACC1 (tests_011_prioridade.js, alinea d)",
+      "invariante": "C3 — item de indice >= 9 NAO declara atalho: o atributo e ausente, nao vazio",
+      "ultima_prova": {
+        "data": "2026-08-31",
+        "resultado": "DETECTADO — 'D011-ACC1(d): 6 divergencia(s) de aria-keyshortcuts'. E a 2a variante que a spec nomeia dentro de M3 ('ou aplica-o a todos os botoes'), promovida a par proprio porque a alinea (d) nao tinha carrasco algum",
+        "registro": "campanha d011 executada em 2026-08-31, worktree exclusiva phase5-011, em BACKGROUND (timeout em primeiro plano mata a campanha no meio e deixa mutante aplicado): 18 DETECTADO / 0 SOBREVIVENTE / 0 NAO EXECUTADO de 18 · restauracao byte a byte OK do source E do HTML gerado · porcelain e SHA-256 dos 4 arquivos identicos antes e depois. Preflight (contrato C1 da 013) declarado no mesmo commit: 18 ancoras com ocorrencias == 1, interpretador resolvido. Sintaxe das 18 replicas validada ANTES da campanha (node --check / py_compile / balanco de chaves): replica invalida vira NAO EXECUTADO disfarcado de sobrevivente."
+      }
+    },
+    {
+      "mutante": "D011-M4",
+      "harness": "d011 (tests_011_mutants.js)",
+      "gate": "D011-IDEM1 (tests_011_prioridade.js, alinea c)",
+      "invariante": "C5 — idempotencia por reconstrucao: a decoracao se reaplica a cada render, sem guarda global",
+      "ultima_prova": {
+        "data": "2026-08-31",
+        "resultado": "DETECTADO — 'D011-IDEM1(c): depois do toggle o estado diverge do oraculo'",
+        "registro": "campanha d011 executada em 2026-08-31, worktree exclusiva phase5-011, em BACKGROUND (timeout em primeiro plano mata a campanha no meio e deixa mutante aplicado): 18 DETECTADO / 0 SOBREVIVENTE / 0 NAO EXECUTADO de 18 · restauracao byte a byte OK do source E do HTML gerado · porcelain e SHA-256 dos 4 arquivos identicos antes e depois. Preflight (contrato C1 da 013) declarado no mesmo commit: 18 ancoras com ocorrencias == 1, interpretador resolvido. Sintaxe das 18 replicas validada ANTES da campanha (node --check / py_compile / balanco de chaves): replica invalida vira NAO EXECUTADO disfarcado de sobrevivente."
+      }
+    },
+    {
+      "mutante": "D011-M5",
+      "harness": "d011 (tests_011_mutants.js)",
+      "gate": "D011-LEG1 (tests_011_prioridade.js, alinea b)",
+      "invariante": "C4 — existe EXATAMENTE UMA legenda com o texto canonico",
+      "ultima_prova": {
+        "data": "2026-08-31",
+        "resultado": "DETECTADO — 'D011-LEG1(b): 0 no(s) com o texto canonico da legenda (esperado 1)'",
+        "registro": "campanha d011 executada em 2026-08-31, worktree exclusiva phase5-011, em BACKGROUND (timeout em primeiro plano mata a campanha no meio e deixa mutante aplicado): 18 DETECTADO / 0 SOBREVIVENTE / 0 NAO EXECUTADO de 18 · restauracao byte a byte OK do source E do HTML gerado · porcelain e SHA-256 dos 4 arquivos identicos antes e depois. Preflight (contrato C1 da 013) declarado no mesmo commit: 18 ancoras com ocorrencias == 1, interpretador resolvido. Sintaxe das 18 replicas validada ANTES da campanha (node --check / py_compile / balanco de chaves): replica invalida vira NAO EXECUTADO disfarcado de sobrevivente."
+      }
+    },
+    {
+      "mutante": "D011-M5B",
+      "harness": "d011 (tests_011_mutants.js)",
+      "gate": "D011-LEG1 (tests_011_prioridade.js, alinea b)",
+      "invariante": "C4 — o texto e o canonico: a legenda diz que o numero NAO e a ordem, e nunca o contrario",
+      "ultima_prova": {
+        "data": "2026-08-31",
+        "resultado": "DETECTADO — 'D011-LEG1(b): 0 no(s) com o texto canonico da legenda'. 2a variante que a spec nomeia dentro de M5; morre pela mesma alinea que o M5, por um defeito DIFERENTE — mentir na frase, em vez de remove-la",
+        "registro": "campanha d011 executada em 2026-08-31, worktree exclusiva phase5-011, em BACKGROUND (timeout em primeiro plano mata a campanha no meio e deixa mutante aplicado): 18 DETECTADO / 0 SOBREVIVENTE / 0 NAO EXECUTADO de 18 · restauracao byte a byte OK do source E do HTML gerado · porcelain e SHA-256 dos 4 arquivos identicos antes e depois. Preflight (contrato C1 da 013) declarado no mesmo commit: 18 ancoras com ocorrencias == 1, interpretador resolvido. Sintaxe das 18 replicas validada ANTES da campanha (node --check / py_compile / balanco de chaves): replica invalida vira NAO EXECUTADO disfarcado de sobrevivente."
+      }
+    },
+    {
+      "mutante": "D011-M6",
+      "harness": "manual (worktree efemera) — o harness automatizado NUNCA toca PROTECTED",
+      "gate": "P50-GOV1 (tests_p50_core.js) — e, so depois do commit, o stage baseline",
+      "invariante": "C7 — nenhuma superficie protegida da secao 29.4 muda sem autorizacao registrada",
+      "ultima_prova": {
+        "data": "2026-08-31",
+        "resultado": "DETECTADO — 'P50-GOV1: protegidos alterados: ui_ux_v32.js', com UM byte trocado DENTRO DE COMENTARIO (hardcode -> hardcodz), semanticamente nulo de proposito: se o gate pega isto, pega qualquer coisa. NUANCE MEDIDA, que o plano nao registrava: com a mutacao apenas no disco o stage BASELINE PASSA (272/272 pins) — check_baseline.py compara pins.json contra BLOBS DE HEAD, nao contra a arvore. Ele so reprova depois do commit sem repin, e ai reprova mesmo: 'pin diverge: ui_ux_v32.js (registry a050401145a5 != HEAD 8d9a954f3726)', 271/272. Os dois carrascos existem, mas em MOMENTOS diferentes — quem pega a edicao no disco e o P50-GOV1, e so ele",
+        "registro": "worktree DETACHED criada e removida em 2026-08-31 (git worktree add --detach; NODE_PATH apontando para o node_modules da demanda). A arvore de phase5-011 ficou byte-identica antes e depois — porcelain conferido nas duas pontas. Precedente de forma na matriz: o par M1 da demanda 003."
+      }
+    },
+    {
+      "mutante": "D011-M7",
+      "harness": "d011 (tests_011_mutants.js)",
+      "gate": "stage lint-arch (.claude/verify/check_lint_arch.py)",
+      "invariante": "C8 — zero atribuicao innerHTML= em modulo novo (R9 secao 9)",
+      "ultima_prova": {
+        "data": "2026-08-31",
+        "resultado": "DETECTADO — '[FAIL] ui_d011_prioridade_v32.js: atribuicao .innerHTML= (proibido em modulo novo)'. So e matavel porque a wave 1 estendeu o glob do lint para ui_d0*_v32.js: sem aquela linha o C8 passaria por AUSENCIA DE ALVO e este mutante sobreviveria",
+        "registro": "campanha d011 executada em 2026-08-31, worktree exclusiva phase5-011, em BACKGROUND (timeout em primeiro plano mata a campanha no meio e deixa mutante aplicado): 18 DETECTADO / 0 SOBREVIVENTE / 0 NAO EXECUTADO de 18 · restauracao byte a byte OK do source E do HTML gerado · porcelain e SHA-256 dos 4 arquivos identicos antes e depois. Preflight (contrato C1 da 013) declarado no mesmo commit: 18 ancoras com ocorrencias == 1, interpretador resolvido. Sintaxe das 18 replicas validada ANTES da campanha (node --check / py_compile / balanco de chaves): replica invalida vira NAO EXECUTADO disfarcado de sobrevivente."
+      }
+    },
+    {
+      "mutante": "D011-M8",
+      "harness": "manual (worktree efemera) — o harness automatizado NUNCA toca PROTECTED",
+      "gate": "D011-KEY1 (tests_011_prioridade.js, alinea d)",
+      "invariante": "C1/C6 — o mapeamento tecla->finding continua o do runtime congelado",
+      "ultima_prova": {
+        "data": "2026-08-31",
+        "resultado": "DETECTADO — 'D011-KEY1(d): keydown 1 deixou selecionado [logs] (esperado [training])'. MIGROU para a raia efemera nesta wave: o sitio do mapeamento e quickscan_secops_soccmm_v3_1_3.html:1058, classe frozen — aplica-lo no harness local seria o mesmo pecado do M6. Morre TAMBEM em P50-GOV1 ('protegidos alterados: quickscan_secops_soccmm_v3_1_3.html'), mas o carrasco ATRIBUIDO e o KEY1, porque e ele que prova COMPORTAMENTO: o UX14, que a spec citava para isso, e tautologico (retorno constante true por duas razoes independentes)",
+        "registro": "worktree DETACHED criada e removida em 2026-08-31 (git worktree add --detach; NODE_PATH apontando para o node_modules da demanda). A arvore de phase5-011 ficou byte-identica antes e depois — porcelain conferido nas duas pontas. Precedente de forma na matriz: o par M1 da demanda 003."
+      }
+    },
+    {
+      "mutante": "D011-M9",
+      "harness": "job visual do CI (requires chromium)",
+      "gate": "D011-CON1 (tests_011_chromium.js)",
+      "invariante": "C10 — contraste da legenda maior ou igual ao minimo WCAG sobre as cores RESOLVIDAS",
+      "ultima_prova": {
+        "data": "2026-08-31",
+        "resultado": "DEFERIDO AO JOB VISUAL DO CI — nao executado nesta worktree por ausencia de Chromium. E KI-3 (design-decisions.md): agendamento POR DESENHO, nunca pendencia. A cor do mutante e CALCULADA para cerca de 3,9:1 sobre o fundo resolvido, nunca escolhida por palpite de paleta. Colher o numero do run em T030/T031",
+        "registro": "T030 (build-engineer executa o job) -> T031 (qa-engineer escreve o retorno nesta matriz)"
+      }
+    },
+    {
+      "mutante": "D011-M10",
+      "harness": "d011 (tests_011_mutants.js)",
+      "gate": "D011-PRT1 (tests_011_prioridade.js, alinea e)",
+      "invariante": "C11 — a regra de print PRESERVA o estado de selecao no papel (o simbolo de selecao, o .sel e o badge Prioridade N)",
+      "ultima_prova": {
+        "data": "2026-08-31",
+        "resultado": "DETECTADO — 'D011-PRT1(e): a regra de print apaga o estado de selecao no papel'. Este mutante nao menciona '.sel' em lugar nenhum: so morre porque o oraculo mede por EFEITO (Element.matches sobre os nos reais), e nao por mencao textual de seletor",
+        "registro": "campanha d011 executada em 2026-08-31, worktree exclusiva phase5-011, em BACKGROUND (timeout em primeiro plano mata a campanha no meio e deixa mutante aplicado): 18 DETECTADO / 0 SOBREVIVENTE / 0 NAO EXECUTADO de 18 · restauracao byte a byte OK do source E do HTML gerado · porcelain e SHA-256 dos 4 arquivos identicos antes e depois. Preflight (contrato C1 da 013) declarado no mesmo commit: 18 ancoras com ocorrencias == 1, interpretador resolvido. Sintaxe das 18 replicas validada ANTES da campanha (node --check / py_compile / balanco de chaves): replica invalida vira NAO EXECUTADO disfarcado de sobrevivente."
+      }
+    },
+    {
+      "mutante": "D011-M11",
+      "harness": "d011 (tests_011_mutants.js)",
+      "gate": "D011-IDEM1 (tests_011_prioridade.js, alinea b) — com contraprova em KEY2/ACC1/LEG1",
+      "invariante": "C5 e PP-011-1 — o patch-point e medido, e nao apenas o efeito",
+      "ultima_prova": {
+        "data": "2026-08-31",
+        "resultado": "DETECTADO — 'D011-IDEM1(b): estado inicial diverge do oraculo'. CONTRAPROVA no mesmo passe, e e o ponto dele: D011-KEY2, D011-ACC1 e D011-LEG1 REPROVARAM as tres, como exigido — nenhum gate D011-* chama a decoracao a mao (o bridge __D011 nao expoe decorar(), de proposito), entao observador morto derruba tudo o que e comportamento; se algum passasse, existiria caminho de teste que nao passa pelo patch-point. E SOBREVIVEU a D011-KEY1 (PASS), como exigido: KEY1 e criterio de PRESERVACAO e mede o que a Camada 1 ja fazia — modulo morto nao pode quebra-lo",
+        "registro": "campanha d011 executada em 2026-08-31, worktree exclusiva phase5-011, em BACKGROUND (timeout em primeiro plano mata a campanha no meio e deixa mutante aplicado): 18 DETECTADO / 0 SOBREVIVENTE / 0 NAO EXECUTADO de 18 · restauracao byte a byte OK do source E do HTML gerado · porcelain e SHA-256 dos 4 arquivos identicos antes e depois. Preflight (contrato C1 da 013) declarado no mesmo commit: 18 ancoras com ocorrencias == 1, interpretador resolvido. Sintaxe das 18 replicas validada ANTES da campanha (node --check / py_compile / balanco de chaves): replica invalida vira NAO EXECUTADO disfarcado de sobrevivente."
+      }
+    },
+    {
+      "mutante": "D011-M12",
+      "harness": "d011 (tests_011_mutants.js)",
+      "gate": "D011-PRT1 (tests_011_prioridade.js, alinea d)",
+      "invariante": "C11 — a legenda SOME no papel: sem o glifo que ela explica, a frase perde referente e fica FALSA ao lado dos badges Prioridade 1..3, que SAO a ordem",
+      "ultima_prova": {
+        "data": "2026-08-31",
+        "resultado": "DETECTADO — 'D011-PRT1(d): a legenda nao e alcancada por nenhuma regra de ocultacao'",
+        "registro": "campanha d011 executada em 2026-08-31, worktree exclusiva phase5-011, em BACKGROUND (timeout em primeiro plano mata a campanha no meio e deixa mutante aplicado): 18 DETECTADO / 0 SOBREVIVENTE / 0 NAO EXECUTADO de 18 · restauracao byte a byte OK do source E do HTML gerado · porcelain e SHA-256 dos 4 arquivos identicos antes e depois. Preflight (contrato C1 da 013) declarado no mesmo commit: 18 ancoras com ocorrencias == 1, interpretador resolvido. Sintaxe das 18 replicas validada ANTES da campanha (node --check / py_compile / balanco de chaves): replica invalida vira NAO EXECUTADO disfarcado de sobrevivente."
+      }
+    },
+    {
+      "mutante": "D011-M13",
+      "harness": "d011 (tests_011_mutants.js)",
+      "gate": "D011-PRT1 (tests_011_prioridade.js, alinea c)",
+      "invariante": "C11 — o glifo de atalho SOME no papel",
+      "ultima_prova": {
+        "data": "2026-08-31",
+        "resultado": "DETECTADO — 'D011-PRT1(c): o .key do item com atalho nao e alcancado por nenhuma regra de ocultacao'. Entrou nesta wave como metade simetrica do M12: a errata da Fase 2 chamou as duas clausulas de INDIVISIVEIS, e uma metade sem carrasco e a metade que apodrece. M12 e M13 morrem em alineas DIFERENTES do mesmo gate — e isso, medido, e a prova de que nenhuma das duas subsume a outra",
+        "registro": "campanha d011 executada em 2026-08-31, worktree exclusiva phase5-011, em BACKGROUND (timeout em primeiro plano mata a campanha no meio e deixa mutante aplicado): 18 DETECTADO / 0 SOBREVIVENTE / 0 NAO EXECUTADO de 18 · restauracao byte a byte OK do source E do HTML gerado · porcelain e SHA-256 dos 4 arquivos identicos antes e depois. Preflight (contrato C1 da 013) declarado no mesmo commit: 18 ancoras com ocorrencias == 1, interpretador resolvido. Sintaxe das 18 replicas validada ANTES da campanha (node --check / py_compile / balanco de chaves): replica invalida vira NAO EXECUTADO disfarcado de sobrevivente."
+      }
+    },
+    {
+      "mutante": "D011-M14",
+      "harness": "d011 (tests_011_mutants.js)",
+      "gate": "D011-ACC1 (tests_011_prioridade.js, alinea b)",
+      "invariante": "C3 — o glifo SAI do nome acessivel: todo .key carrega aria-hidden=true",
+      "ultima_prova": {
+        "data": "2026-08-31",
+        "resultado": "DETECTADO — 'D011-ACC1(b): 15/15 .key sem aria-hidden'. Par PROPOSTO nesta wave: a alinea que sustenta o nucleo do C3 (o numero nao e conteudo do botao para quem nao ve a tela) nao tinha carrasco algum",
+        "registro": "campanha d011 executada em 2026-08-31, worktree exclusiva phase5-011, em BACKGROUND (timeout em primeiro plano mata a campanha no meio e deixa mutante aplicado): 18 DETECTADO / 0 SOBREVIVENTE / 0 NAO EXECUTADO de 18 · restauracao byte a byte OK do source E do HTML gerado · porcelain e SHA-256 dos 4 arquivos identicos antes e depois. Preflight (contrato C1 da 013) declarado no mesmo commit: 18 ancoras com ocorrencias == 1, interpretador resolvido. Sintaxe das 18 replicas validada ANTES da campanha (node --check / py_compile / balanco de chaves): replica invalida vira NAO EXECUTADO disfarcado de sobrevivente."
+      }
+    },
+    {
+      "mutante": "D011-M15",
+      "harness": "d011 (tests_011_mutants.js)",
+      "gate": "D011-LEG1 (tests_011_prioridade.js, alinea c)",
+      "invariante": "C4 — a legenda vive num ancestral comum da grade INTEIRA, dentro do container",
+      "ultima_prova": {
+        "data": "2026-08-31",
+        "resultado": "DETECTADO — 'D011-LEG1(c): o container da legenda nao abrange N dos 15 botoes'. Par PROPOSTO nesta wave; o defeito modelado (ponto de montagem errado) e a edicao mais provavel de SEL_MONTAGEM",
+        "registro": "campanha d011 executada em 2026-08-31, worktree exclusiva phase5-011, em BACKGROUND (timeout em primeiro plano mata a campanha no meio e deixa mutante aplicado): 18 DETECTADO / 0 SOBREVIVENTE / 0 NAO EXECUTADO de 18 · restauracao byte a byte OK do source E do HTML gerado · porcelain e SHA-256 dos 4 arquivos identicos antes e depois. Preflight (contrato C1 da 013) declarado no mesmo commit: 18 ancoras com ocorrencias == 1, interpretador resolvido. Sintaxe das 18 replicas validada ANTES da campanha (node --check / py_compile / balanco de chaves): replica invalida vira NAO EXECUTADO disfarcado de sobrevivente."
+      }
+    },
+    {
+      "mutante": "D011-M16",
+      "harness": "d011 (tests_011_mutants.js)",
+      "gate": "D011-ACC1 (tests_011_prioridade.js, alinea c)",
+      "invariante": "C3 — nada visivel precede o rotulo da pergunta no nome acessivel do botao",
+      "ultima_prova": {
+        "data": "2026-08-31",
+        "resultado": "DETECTADO — 'D011-ACC1(c): N botoes cujo texto sem aria-hidden nao comeca pelo rotulo'. Par PROPOSTO nesta wave. A alinea (c) NAO e subsumida pela (b): um modulo pode escrever aria-hidden corretamente E ainda assim inserir conteudo visivel antes do rotulo — e este mutante e exatamente esse caso",
+        "registro": "campanha d011 executada em 2026-08-31, worktree exclusiva phase5-011, em BACKGROUND (timeout em primeiro plano mata a campanha no meio e deixa mutante aplicado): 18 DETECTADO / 0 SOBREVIVENTE / 0 NAO EXECUTADO de 18 · restauracao byte a byte OK do source E do HTML gerado · porcelain e SHA-256 dos 4 arquivos identicos antes e depois. Preflight (contrato C1 da 013) declarado no mesmo commit: 18 ancoras com ocorrencias == 1, interpretador resolvido. Sintaxe das 18 replicas validada ANTES da campanha (node --check / py_compile / balanco de chaves): replica invalida vira NAO EXECUTADO disfarcado de sobrevivente."
+      }
+    },
+    {
+      "mutante": "D011-M17",
+      "harness": "d011 (tests_011_mutants.js)",
+      "gate": "D011-LEG1 (tests_011_prioridade.js, alinea d)",
+      "invariante": "C4 — a legenda existe SE E SOMENTE SE ha ao menos um botao na grade (direcao CRIACAO)",
+      "ultima_prova": {
+        "data": "2026-08-31",
+        "resultado": "DETECTADO — 'D011-LEG1(d): 1 legenda(s) numa grade sem botao'. Par PROPOSTO nesta wave. Cobre a direcao CRIACAO do 'se e somente se'; a direcao REMOCAO fica declarada como divida, com a causa medida",
+        "registro": "campanha d011 executada em 2026-08-31, worktree exclusiva phase5-011, em BACKGROUND (timeout em primeiro plano mata a campanha no meio e deixa mutante aplicado): 18 DETECTADO / 0 SOBREVIVENTE / 0 NAO EXECUTADO de 18 · restauracao byte a byte OK do source E do HTML gerado · porcelain e SHA-256 dos 4 arquivos identicos antes e depois. Preflight (contrato C1 da 013) declarado no mesmo commit: 18 ancoras com ocorrencias == 1, interpretador resolvido. Sintaxe das 18 replicas validada ANTES da campanha (node --check / py_compile / balanco de chaves): replica invalida vira NAO EXECUTADO disfarcado de sobrevivente."
+      }
+    },
+    {
+      "mutante": "D011-M18",
+      "harness": "d011 (tests_011_mutants.js)",
+      "gate": "D011-PRT1 (tests_011_prioridade.js, alinea a)",
+      "invariante": "C11 — a regra de print CHEGA ao artefato publicado, e nao apenas ao fonte do modulo",
+      "ultima_prova": {
+        "data": "2026-08-31",
+        "resultado": "DETECTADO — 'bloco CSS do modulo ausente ou duplicado no HTML construido: 0x'. Par PROPOSTO nesta wave; e o unico que muta build_v32_html.py, e o unico que separa 'a regra existe' de 'a regra e publicada'",
+        "registro": "campanha d011 executada em 2026-08-31, worktree exclusiva phase5-011, em BACKGROUND (timeout em primeiro plano mata a campanha no meio e deixa mutante aplicado): 18 DETECTADO / 0 SOBREVIVENTE / 0 NAO EXECUTADO de 18 · restauracao byte a byte OK do source E do HTML gerado · porcelain e SHA-256 dos 4 arquivos identicos antes e depois. Preflight (contrato C1 da 013) declarado no mesmo commit: 18 ancoras com ocorrencias == 1, interpretador resolvido. Sintaxe das 18 replicas validada ANTES da campanha (node --check / py_compile / balanco de chaves): replica invalida vira NAO EXECUTADO disfarcado de sobrevivente."
+      }
+    },
+    {
+      "mutante": "D011-M19",
+      "harness": "d011 (tests_011_mutants.js)",
+      "gate": "D011-PRT1 (tests_011_prioridade.js, alinea b)",
+      "invariante": "C11 e R9 secao 6 — a regra de print e escrita contra seletor do PROPRIO modulo, com allowlist vazia",
+      "ultima_prova": {
+        "data": "2026-08-31",
+        "resultado": "DETECTADO — 'D011-PRT1(b): 1 seletor(es) fora do prefixo do modulo no @media print'. Par PROPOSTO nesta wave, e ele importa mais do que parece: check_lint_arch.py NAO tem regra de CSS, entao esta alinea e a UNICA verificacao de 'zero seletor alheio' que existe no pipeline para este modulo — e so dentro do @media print",
+        "registro": "campanha d011 executada em 2026-08-31, worktree exclusiva phase5-011, em BACKGROUND (timeout em primeiro plano mata a campanha no meio e deixa mutante aplicado): 18 DETECTADO / 0 SOBREVIVENTE / 0 NAO EXECUTADO de 18 · restauracao byte a byte OK do source E do HTML gerado · porcelain e SHA-256 dos 4 arquivos identicos antes e depois. Preflight (contrato C1 da 013) declarado no mesmo commit: 18 ancoras com ocorrencias == 1, interpretador resolvido. Sintaxe das 18 replicas validada ANTES da campanha (node --check / py_compile / balanco de chaves): replica invalida vira NAO EXECUTADO disfarcado de sobrevivente."
+      }
     }
   ],
   "dividas_declaradas": [
@@ -705,6 +936,14 @@
     "core (tests_core_mutants.js) — sem preflight declarado no mutation_map.json (T8): é a REFERÊNCIA do interpretador e ficou fora das edições da demanda 013, que escopou a correção às três harnesses defeituosas. A consequência é impressa pelo stage, nunca omitida — [DÍVIDA] core: sem preflight declarado, âncora podre só aparece na execução da campanha. Enquanto durar, os mutantes do core não têm prova de unicidade de âncora fora da campanha",
     "Borda 8 · deferimento sem contrapartida — sob MUTATION_DEFER_MISSING=1 (job verify do CI) a campanha exigida sem ambiente vira [DEFER] <harness>: exigida (alvo mudou) — delegada ao job com chromium (job visual), e o stage passa. Cadeia fechada: nada verifica que o job visual de fato executou a campanha delegada, logo um DEFER cujo job irmão falhe, seja pulado ou não rode deixa a campanha sem execução E sem FAIL. Vincular o DEFER à execução efetiva exige mexer em verify.yml e/ou em proteção de branch — fora do escopo da 013 (spec §Riscos 4), demanda própria",
     "p51/M51-01 — classificação da E3 (T022): `gate sem poder discriminante (achado EA-7)`. O par está íntegro em tudo que esta demanda pode consertar — âncora única (preflight 2026-08-29, ocorrencias == 1) e `reason` cujas três alternativas o gate ainda emite (tests_p50_chromium.js:3405/:3408/:3412) — e mesmo assim P51-VIS1 passa sob a mutação: desde c1e3649 (Fase 5.2) a composição de duas colunas da tela de pergunta é governada por ui_p52_workspace_v32.css:70-83, que vence a regra 5.1 de ui_p50_v32.css:693-702 por especificidade e por ordem de inlining (build_v32_html.py:76). O gate afirma uma propriedade que a mutação não consegue mais violar. NÃO é consertado aqui: o remédio é asserção NOVA sobre comportamento de produto (mutar o sítio 5.2 que hoje governa, e/ou gate que detecte regra 5.1 morta), que é outro trabalho e outro dono — spec §Fora de escopo e §Riscos 3. Registrado como EA-7 em .claude/BACKLOG.md; narrativa em specs/013-integridade-da-campanha/matriz-gate-mutante.md §15",
-    "P50::M51 — as provas (b) e (c) do `reason` re-derivado na E3 (rot semântica) NÃO foram executadas: P50-PR1 vive em tests_p50_chromium.js e exige Chromium, ausente na máquina da demanda 013 (CHROME_PATH vazia, cache ms-playwright inexistente; a suíte inteira devolve 23 `SKIP … NÃO EXECUTADO (browser indisponível)` e o harness classificaria `NÃO EXECUTADO · gate não pôde ser executado`, nunca SOBREVIVENTE — D1). Fecharam sem Chromium: (a) unicidade (preflight, ocorrencias == 1); (b) parcial — o FORMATO exato da mensagem, medido com o emissor `pr1DiffStyles` extraído do próprio arquivo do gate, mais quatro controles negativos (sem mutação · só M52 · só M53 · estado gate-liberado); (c) por enumeração exaustiva dos 48 `detail.push` de `pr1()` — sob M51 nenhum outro pode disparar, logo neutralizar o bloco :1140-1168 faz o mutante SOBREVIVER. O que falta é a execução em navegador real, no job `visual` do CI (D5/KI-3). Registro em specs/013-integridade-da-campanha/matriz-gate-mutante.md §15"
+    "P50::M51 — as provas (b) e (c) do `reason` re-derivado na E3 (rot semântica) NÃO foram executadas: P50-PR1 vive em tests_p50_chromium.js e exige Chromium, ausente na máquina da demanda 013 (CHROME_PATH vazia, cache ms-playwright inexistente; a suíte inteira devolve 23 `SKIP … NÃO EXECUTADO (browser indisponível)` e o harness classificaria `NÃO EXECUTADO · gate não pôde ser executado`, nunca SOBREVIVENTE — D1). Fecharam sem Chromium: (a) unicidade (preflight, ocorrencias == 1); (b) parcial — o FORMATO exato da mensagem, medido com o emissor `pr1DiffStyles` extraído do próprio arquivo do gate, mais quatro controles negativos (sem mutação · só M52 · só M53 · estado gate-liberado); (c) por enumeração exaustiva dos 48 `detail.push` de `pr1()` — sob M51 nenhum outro pode disparar, logo neutralizar o bloco :1140-1168 faz o mutante SOBREVIVER. O que falta é a execução em navegador real, no job `visual` do CI (D5/KI-3). Registro em specs/013-integridade-da-campanha/matriz-gate-mutante.md §15",
+    "D011 · RAMO attr-removido (remocao de aria-keyshortcuts) — CLASSE: falta cenario, mas o cenario e SINTETICO e NAO e pagavel em produto; ninguem deve tentar. Medido pelo qa-engineer em 2026-08-31, instrumentando o ramo dentro do HTML construido: 0 hits nas TRES fixtures reais da suite (MISTA + toggle + destoggle; zero findings; prioridade->resultados->prioridade) e 2 hits APENAS sob 'mudar respostas por __DEV sem render + cutucao de childList no #app'. Causa fechada: renderPriority reconstroi app.innerHTML a cada render, entao o atributo nunca esta presente quando o decorador roda; e o estado canonico so muda por caminho que chama render(), logo entre duas passadas sem rebuild o indice de um finding NAO PODE mudar. O OBSERVAVEL que o criterio pede (indice >= 9 nao declara atalho) TEM carrasco: D011-M3 e D011-M3B. O que fica sem mutante e o MECANISMO de remocao — e o mecanismo nao e o criterio. Mutante mirado so nele SOBREVIVERIA POR DESENHO, e por isso nao foi escrito.",
+    "D011 · RAMO remocao-legenda (sincronizarLegenda com precisa=false) — MESMA CLASSE e mesma causa: 0 hits nas tres fixtures reais, 1 hit apenas sob 'zerar os findings por __DEV sem render + cutucao'. Toda rota de produto para zero findings passa por um render que apaga #app, entao a legenda nunca sobrevive para ser removida. A direcao CRIACAO do 'se e somente se' de C4 GANHOU carrasco nesta wave (D011-M17); a direcao REMOCAO fica sem, declarada.",
+    "D011 · RAMO legenda-excedente (laco que remove legendas duplicadas) — MESMA CLASSE, e nao havia sido reportado por ninguem: medido pelo qa-engineer no mesmo passe, 1 hit apenas quando um agente EXTERNO duplica o no (nada no produto cria .d011-legenda alem do proprio modulo). O caso duplicado esta coberto pelo GATE (bateria negativa da Fase 4, cenario leg-dupla -> D011-LEG1(b)); o que fica sem mutante e o laco de auto-cura do modulo.",
+    "D011 · D011-KEY2 alinea (b) ('.key permanece no DOM em 15/15') — SEM MUTANTE PLAUSIVEL, e por isso declarada em vez de fechada a forca. O .key e criado e pertence ao owner congelado, e o modulo nao tem caminho que o remova (if (!key) continue): nenhuma mutacao de ancora unica deste modulo produz o defeito. A alinea nao e vacua — ela guarda um modulo FUTURO que passe a criar ou remover o no —, mas fechar a tabela com um carrasco inventado (key.parentNode.removeChild(key)) seria modelar um defeito que ninguem escreveria.",
+    "D011 · D011-IDEM1 alinea (d) ('desfazer devolve o estado inicial byte a byte') — SEM MUTANTE PLAUSIVEL. Cada render reconstroi #app por innerHTML, entao nenhum estado sobrevive a um toggle por construcao e nao ha mutacao de ancora unica que produza residuo ASSIMETRICO. A alinea permanece como segunda medicao independente (o retrato pos-desfazer e comparado ao retrato INICIAL, nao ao oraculo), e o defeito que ela guarda — modulo que passe a cachear nos — hoje nao existe.",
+    "D011 · D011-KEY1 alineas (a) e (b) (ordem recalculada x tabela declarada; nao-vacuidade DOM x ordem global) — sao GUARDAS DO PROPRIO JULGADOR e ficam fora da campanha por decisao, nao por esquecimento: matar as duas exige mutar tests_011_prioridade.js, e mutar o oraculo prova o oraculo, nao o produto. As duas foram provadas vermelhas na bateria negativa da Fase 4, em copia efemera: (a) morre com o vetor da fixture editado; (b) morre quando fixture E literal declarado sao uniformizados COERENTEMENTE — e (b) e o unico ponto que sobrevive a essa 'simplificacao', porque nesse caso (a) volta a concordar.",
+    "D011 · C8 clausula 'CSS com prefixo proprio' — check_lint_arch.py NAO tem regra de CSS (so innerHTML, IIFE e bridges). O unico mutante de C8 (D011-M7) mede outra clausula. A cobertura de 'zero seletor alheio' para este modulo existe SO dentro do @media print, por D011-PRT1(b) / D011-M19. Ampliar o lint para CSS e do build-engineer e entra no pipeline (R10 secao 9), nunca no prompt de um agente.",
+    "D011 · D011-CON1 e D011-M9 — deferidos ao job visual do CI e ao rito do proprietario (KI-3, design-decisions.md). Executados aqui em 2026-08-31, tests_011_chromium.js terminou 0 PASS / 1 FAIL com o motivo NOMEADO (Chromium ausente) — a suite nao pula em silencio (R10 secao 2). O numero do run entra por T030/T031."
   ]
 }

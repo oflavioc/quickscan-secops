@@ -1,6 +1,6 @@
 {
   "demanda": "010-recomendacao-sem-vao",
-  "phase": "red",
+  "phase": "implementacao",
   "spec_dir": "specs/010-recomendacao-sem-vao",
   "brief": "O vao entre as duas doutrinas de recomendacao: a Camada 1 congelada recomenda produto a partir do gap sem contexto, o engine V3.2 exige contexto declarado, e isLegacyModeV32() escolhe entre elas exigindo contexto ZERO. Contexto parcial desliga a primeira sem ligar a segunda — foi onde o cliente caiu e recebeu zero recomendacoes. Itens 4, 6 e 8 do feedback de 2026-08-27.",
   "branch": "feature/010-recomendacao-sem-vao",
@@ -62,5 +62,32 @@
     ],
     "alinea_d_c8": "NAO NASCE. Universo de (d) identico ao de (a) e com UM elemento (D010-F2/logs); (d) e estritamente mais fraca (conjuncao vs termo unico). Alinea implicada por outra, sobre universo de um: e E1. Propriedade fica so na errata E14.",
     "errata": "E14 em spec.md"
+  },
+  "implementacao": {
+    "wave_4": {
+      "status": "fechada",
+      "quando": "2026-08-30",
+      "t004": "ratificada (ver t004_equivalencia); nunca executada na wave 2, era bloqueante",
+      "t008": "ui_target_v32.js +96/-3, quatro hunks. tgtEnablerState/tgtEnablersHTML/tgtAbsenceHTML/TGT_DISCLAIMER/gateNote byte-identicos (provado por diff -U0). Zero CSS, zero bridge novo, __V32UI nao cresce, lint-arch 15 bridges 0 problemas.",
+      "t010": "rebuild do HTML. declared.m41_payload_sha256 INALTERADO (9794b267e4225d8f) - Porta B fechada.",
+      "repins": "R3 (T009, pos-T008), R4 (T011, pos-rebuild), R11 (cobertura do ramo sem equivalencia), R12 (prefixo map: normativo)",
+      "d010": "1 PASS · 12 FAIL -> 7 PASS · 6 FAIL de 13. Viraram CARD1..CARD6 e PAPEL1(a). Seguem vermelhos ARB1/ARB3/ARB4/INV7/ABS1/PAPEL1(b) - sao de ui_v32.js, wave 7. ARB2 verde (criterio de preservacao).",
+      "erratas_nascidas": "E14 (alcance da equivalencia; rota B) e E15 (prefixo map: normativo)",
+      "achados_de_cobertura_fechados": [
+        "o ramo 'sem equivalente V3.2' do tgtValidateHTML nao era percorrido por fixture alguma. Uma unica rota alcancavel no produto inteiro (incident-response@lv0); as outras 8 ocorrencias da chave estao em capabilities landscapeEnabled false, S4 por construcao. Fixture emendada + CARD1(a)/(b) estendidas a F4: tres mutantes de SOBREVIVENTE para MORTO (item sem equivalencia descartado em silencio, ordem do catalogo invertida, rotulo do modo trocado). A fixture SOZINHA nao bastava.",
+        "CARD1(a): o termo do data-eid nunca decidia (it.eid !== chave e sempre verdadeiro). Corrigir para pinar o eid recusado por subsuncao medida (CARD4(b) ja pina o eid de todo item sob F4). Termo removido, mensagem reescrita para dizer o que a alinea mede.",
+        "prefixo map: pinado em CARD4(b) apos E15 tornar o criterio normativo. Cinco mutantes de SOBREVIVENTE para MORTO, zero colateral nos outros nove. O M-SE9 (map:FortiSIEM - prefixo certo, chave errada) era sobrevivente: sem forma normativa o gate nao distinguia 'veio do MAP' de 'veio do MAP, mas de outra chave'."
+      ]
+    },
+    "t012_medicao_isolada": {
+      "status": "verde",
+      "quando": "2026-08-30",
+      "razao_da_tarefa": "um unico arquivo de produto mudou (ui_target_v32.js), entao qualquer queda de D009-* teria causa inequivoca. E o sinal que a serializacao das duas waves comprava.",
+      "suites": "8/8 exatas contra o canonico: target 30/0, journey 31/0, icons46 12/0, ux41 56/0, d009 15/0, ui31 19/0, ui32 25/0, p52layout 45/0. Zero deriva, nenhum vazamento para superficie alheia.",
+      "campanha_d009": "19 KILL de 19. DETECTADO 19 (M1, M2, M4..M20, cada um com oraculo nomeado que reprovou), SOBREVIVENTE 0, NAO EXECUTADO 0. Conjunto executado identico ao declarado em mutation-matrix.json (M3 vive no harness p52).",
+      "protocolo_arvore_limpa": "os tres passos. Campanha rodada em BACKGROUND de proposito - timeout de primeiro plano a mataria no meio e deixaria mutante aplicado, que e o custo que a 009 pagou com D009-M15. git status vazio antes e depois; as 10 identidades (9 alvos + HTML) identicas, conferidas por git hash-object POR FORA do harness em vez de acreditar no relato dele. Nenhuma restauracao foi necessaria.",
+      "ressalva_de_vocabulario": "o harness d009 NAO emite os tres estados (imprime KILL e 'SOBREVIVEU (esperado)'); a traducao para DETECTADO/SOBREVIVENTE/NAO EXECUTADO foi feita explicitamente pelo QA a partir do stdout. Ja registrado como divida no plan.md. Os dois 'SOBREVIVEU (esperado)' sao assercoes de ESPECIFICIDADE (P52-TGT1 sob M1, D009-UNS1 sob M20) provando que o gate vizinho corretamente nao dispara - nao sao mutantes vivos.",
+      "vermelhos_declarados": "p50core 61/3 (pins inline de PROTECTED, fecha em T023); Chromium ausente KI-3 (p51/p52vis/visual, fecham no CI); stage suites em janela vermelha declarada ate T017."
+    }
   }
 }

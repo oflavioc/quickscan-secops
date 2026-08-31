@@ -169,7 +169,27 @@ const PROTECTED = {
      Autorizado pela spec da demanda (§Comportamento especificado, 1 e 3), com
      red commitado antes da implementação (R3 §4).
      Identidade anterior: 6340e712c6724dff8db8d5a90212dc0ec681183fd005b95fab1a32456d15e572 */
-  "ui_v32.js": "91abdf6980fc7c710a65eaa47f437c62fd30944dd37abdcf6ef14acefa6bfe63",
+  /* DEMANDA 010 · recomendação sem vão · REPIN (2026-08-31, o SEGUNDO da série).
+     ISTO É ASSERÇÃO DE PIN, NÃO DE COMPORTAMENTO — vale palavra por palavra o que
+     o repin anterior diz logo acima: só muda o valor de identidade contra o
+     qual `P50-GOV1` e `P50-IC4` comparam o arquivo; as asserções de regra dos
+     dois permanecem byte-idênticas. Conferido ANTES de repinar, e não depois:
+     `tests_icons_m46.js` fechou 12 PASS · 0 FAIL na mesma bateria, e `P50-IC4`
+     REEXECUTA essa suíte — se a queda fosse de comportamento, ela teria caído
+     junto. As outras 13 congeladas seguem verdes no CI.
+     MOTIVO: **partição de `baseIds` por payload (errata E18)**. O bloco
+     `#v32base` deixou de colapsar TODA capability de leitura base num aviso
+     único: a que carrega payload do engine (serviços, notas ou candidatos)
+     volta a ser card, nas duas superfícies, porque sobre ela a frase "a
+     interpretação V3.2 não é produzida" era FALSA — o engine produziu e a tela
+     deixara de mostrar. A premissa do refinamento ("N cards cujo único
+     conteúdo possível é dizer que não houve declaração") continua valendo, e
+     só para o card VAZIO. Autorizado pela errata E18 sobre a spec da demanda,
+     com red commitado antes da implementação (R3 §4).
+     `ui_target_v32.js` NÃO foi repinado nesta passagem: conferido byte a byte
+     idêntico ao pin vigente — repinar por simetria seria repin sem motivo.
+     Identidade anterior: 91abdf6980fc7c710a65eaa47f437c62fd30944dd37abdcf6ef14acefa6bfe63 */
+  "ui_v32.js": "d594dafec00d11efa2c25d6fe3183f1d5177343f09c925dfcc7055b17df9bb85",
   "ui_ux_v32.js": "a050401145a5ed7af597eae01a9a23826418119769c096db168b3b177a9d3938",
   /* ERRATA DA AUDITORIA EXTERNA · §4.1.1 ("qualquer texto derivado consome a
      mesma decisão canônica de publicabilidade"). A comparação Atual × Alvo

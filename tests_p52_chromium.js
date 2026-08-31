@@ -3992,16 +3992,166 @@ async function tgt4(browser, errs) {
         "|" + JSON.stringify(window.__DEV.TARGET.overrides));
 
       const paginas = p52PdfWords(file);
-      const idxBloco = paginas.findIndex(p => /Perfil atual/.test(p.texto) && /Cen[áa]rio-alvo/.test(p.texto));
-      /* recorte do bloco: da âncora até o disclaimer metodológico */
-      let blocoTexto = "";
+      /* ── SELETOR DO BLOCO · DESAMBIGUADO (2026-08-31) ──────────────────
+         MOTIVO. O seletor anterior era `/Perfil atual/.test(t) && /Cenário-alvo/.test(t)`
+         — DUAS regex soltas, sem exigir adjacência nem a forma do título. A régua de
+         `#pr-journey` imprime "Perfil atual · Cenário-alvo" (ponto MÉDIO, não `×`)
+         para marcar onde os dois perfis caem na escala, e fica IMEDIATAMENTE antes
+         de `#pr-target`. Sob gate ABERTO ela publica o marcador do alvo e passa a
+         satisfazer as duas regex: `idxBloco` podia apontar para a página da RÉGUA,
+         e não para a do bloco. A fatia então começava na régua e — com o terminador
+         numa página posterior — corria até o fim daquela página: nunca alcançava os
+         valores por domínio, e engolia os 5–6 nomes de estágio da própria régua.
+         Sob gate FECHADO a régua não publica "Cenário-alvo" e a ambiguidade some —
+         que é por que o sintoma aparecia só num dos quadrantes de cada vez.
+
+         DEFEITO LATENTE, INDEPENDENTE DA DEMANDA 010. A ambiguidade sempre esteve
+         aqui; o que decide qual página `findIndex` devolve é onde cai a quebra, e
+         mudança de conteúdo em QUALQUER seção anterior a move. Por isso o mesmo
+         mecanismo produziu, antes da correção de conteúdo da 010, também o quadrante
+         de gate fechado. Nenhuma linha desta suíte precisou mudar para o defeito
+         existir, e nenhuma precisa mudar para ele voltar — só a paginação.
+
+         NÃO ENFRAQUECE. A asserção é a mesma, palavra por palavra: o que muda é o
+         gate passar a medir o SÍTIO que sempre quis medir. Unicidade medida no
+         papel das QUATRO fixturas deste gate (casos A/B/C/D): a forma do título
+         ocorre EXATAMENTE 1 vez no relatório inteiro em A, B e C, e ZERO em D
+         (que não tem `#pr-target`); ela nunca casa `#pr-journey` em nenhuma das
+         quatro. O desfecho "acha / não acha" é idêntico ao do seletor anterior nas
+         quatro — muda ONDE acha, e só no caso de gate aberto.
+
+         ESCOPO E AUTORIZAÇÃO. Suíte congelada (§29.4). Autorização NOMINAL do
+         proprietário em 2026-08-31, restrita a ESTA linha — o seletor de
+         `idxBloco`. Ficam FORA, registrados como achado `EA-10` para demanda
+         própria e deliberadamente NÃO tocados aqui: (i) o recorte
+         `slice(ini, fim > ini ? fim : undefined)`, que alarga o sujeito em
+         silêncio até o fim da página quando o terminador não está nela; (ii)
+         `p52PdfColorInk(file, idxBloco + 1, ...)`, que rasteriza UMA página só e
+         por isso não mede tinta do alvo quando o bloco atravessa duas. */
+      const idxBloco = paginas.findIndex(p => /Perfil atual\s*[×x]\s*Cen[áa]rio-alvo/.test(p.texto));
+      /* ── RECORTE E TINTA · O BLOCO OCUPA AS PÁGINAS QUE OCUPAR (2026-08-31) ──
+         MOTIVO · CAUSA PROVADA. `idxBloco` escolhe UMA página, e o bloco ocupa
+         DUAS. Provado por eliminação, com o papel medido: sob gate ABERTO o valor
+         do domínio 3 (`2.8`) está no offset 287 de 1412 dentro de `#pr-target`, e
+         o disclaimer metodológico — o terminador do recorte — no 1203. Se o
+         disclaimer estivesse na MESMA página, `fim` seria 1203 e a fatia cobriria
+         [0,1203), que contém 287: o valor seria achado. Como o gate reprovou por
+         não achá-lo, o disclaimer está noutra página, `fim` é -1, e a fatia já ia
+         ATÉ O FIM DA PÁGINA — logo a página termina antes do offset 287. A ordem
+         interna confirma: <h2> 0→41, `.pr-kpis` 41→124, <svg> do alvo 124→166,
+         `.pr-mut` 166→214, `table.pr-doms` (onde vive o 2.8) 214→310. Título,
+         KPIs e radar cabem; a tabela de domínios vai para a página seguinte.
+         Consequência: alargar a fatia DENTRO de uma página não muda nada. O
+         recorte passa a ser o FLUXO em ordem de documento, da página da âncora
+         até a do terminador, e só então cortado nos dois marcadores.
+
+         RETIFICAÇÃO DO `EA-10` — e do parágrafo "ESCOPO E AUTORIZAÇÃO" logo acima,
+         que ficou errado. O item (i) foi registrado como "o recorte alarga o
+         sujeito em silêncio até o fim da página". Quando isto foi escrito, esse
+         item NÃO tinha caso comprovado: o sintoma que lhe fora atribuído — nome
+         de estágio dentro do bloco sob gate fechado — era do SELETOR, que casava
+         a régua de `#pr-journey`, e sumiu quando o seletor foi desambiguado.
+
+         **ESTE PARÁGRAFO ENVELHECEU EM HORAS, E A CORREÇÃO ESTÁ ABAIXO.** O
+         `EA-10` tem DUAS metades, e as duas já estão fechadas:
+           (a) UMA página escolhida para um bloco que ocupa DUAS — a que esta
+               emenda do fluxo multi-página resolveu;
+           (b) o recorte alargando o sujeito sobre conteúdo AUTORIZADO — que
+               PASSOU a ter caso quando a emenda (a) fez a fatia cobrir o bloco
+               inteiro e engolir a lista de práticas-alvo. Ou seja: a metade que
+               eu declarei sem caso ganhou um, criado pela minha própria
+               correção, e está fechada pelo LIMITE DO NÚCLEO logo adiante.
+         Quem for ler o `EA-10` tem de encontrar as duas metades e o fato de que
+         a segunda nasceu da correção da primeira — senão reabre a demanda atrás
+         de um sintoma que já não existe, ou pior, desfaz (a) por causa de (b).
+
+         POR QUE A TINTA VEM JUNTO, E NÃO DEPOIS. `p52PdfColorInk` rasterizava só
+         `idxBloco + 1`. Hoje o controle "nenhuma tinta do alvo na página do
+         bloco" passa por MARGEM MEDIDA DE NO MÁXIMO 121 CARACTERES: o polígono
+         verde está em 124→166 e a quebra cai entre 166 e 287. Qualquer
+         deslocamento menor que isso empurra o polígono para a página seguinte e o
+         controle reprova FALSAMENTE, dizendo "nenhuma tinta" quando há — na outra
+         página. Corrigir o texto sem a tinta trocaria um falso negativo por um
+         falso positivo, com a mesma causa. A tinta passa a somar as MESMAS
+         páginas que o bloco ocupa (`idxBloco..idxFim`), e nenhuma outra: página
+         vizinha que o bloco não toca continua fora da medida. Falha de
+         rasterização em QUALQUER dessas páginas devolve `null`, preservando o
+         ramo "prova não executada" — soma parcial nunca vira veredito.
+
+         NÃO ENFRAQUECE. Medido como função pura, com o seletor já corrigido: com o
+         bloco INTEIRO numa página, a saída é BYTE A BYTE idêntica à anterior. E o
+         fluxo corta NO terminador em vez de correr até o fim da página, então em
+         nenhum cenário ele engole conteúdo vizinho.
+
+         RESSALVA REGISTRADA, NÃO CORRIGIDA (fora desta autorização). O comentário
+         de `P52_TGT_GREEN` chama `#3CB17E` de "encoding exclusivo do alvo", e
+         `ui_v32.js:796` usa o MESMO hex como cor do domínio 2 em `PR_DOM_HEX[1]`.
+         Logo a asserção de tinta pode passar por causa de uma tag de domínio na
+         mesma página: ela NÃO prova presença do alvo. Medido no papel: o verde
+         aparece em `#pr-maturity` (2x) e `#pr-target` (1x), e em nenhuma outra
+         seção. Achado próprio, alocado ao backlog pós-merge.
+
+         ESCOPO. Suíte congelada (§29.4). Autorização NOMINAL do proprietário em
+         2026-08-31, restrita a `tgt4()` e a DUAS coisas: a derivação de
+         `blocoTexto` e a chamada de `p52PdfColorInk`. As duas juntas, pela razão
+         acima. Nada mais neste arquivo. */
+      let blocoTexto = "", idxFim = idxBloco;
       if (idxBloco >= 0) {
-        const t = paginas[idxBloco].texto;
+        for (let k = idxBloco; k < paginas.length; k++)
+          if (paginas[k].texto.indexOf("A adoção de tecnologia") >= 0) { idxFim = k; break; }
+        const t = paginas.slice(idxBloco, idxFim + 1).map(p => p.texto).join(" ");
         const ini = t.indexOf("Perfil atual");
         const fim = t.indexOf("A adoção de tecnologia");
         blocoTexto = t.slice(ini, fim > ini ? fim : undefined);
+        /* ── LIMITE DO NÚCLEO (2026-08-31, 2ª emenda desta derivação) ──────
+           O fluxo multi-página consertou o caso de gate ABERTO e ABRIU o de
+           gate FECHADO — e a causa é minha: ao cobrir o bloco INTEIRO, o
+           recorte passou a incluir a LISTA DE PRÁTICAS-ALVO declaradas, que
+           é conteúdo AUTORIZADO sob gate fechado. O próprio gate já diz isso
+           na medida de acessibilidade, onde exclui `.ux-tgt-ovs` nominalmente
+           — o PDF-TEXTO nunca excluiu, e só não aparecia porque a fatia era
+           truncada pela quebra de página, por acidente.
+           MEDIDO: sob gate fechado o bloco contém "definido" no offset 1156,
+           vindo de `QS["training"].opts[2].t` = "Plano de capacitação
+           definido" — RÓTULO DE OPÇÃO, não estágio de maturidade. São SEIS os
+           rótulos de `QS` que casam `P52_ESTAGIOS` por ser case-insensitive
+           (training, incident-response, detection-lifecycle, automation,
+           logs, vulnerability-management).
+           O LIMITE É DERIVADO, não arbitrado: o núcleo da comparação termina
+           na TABELA DE DOMÍNIOS, cujo último campo é o último nome de
+           `DOM_PT` seguido das suas até 4 células (atual, seta, alvo, gap) —
+           a mesma forma que `papel.linhas` já captura. Medido nas DUAS formas
+           de texto, porque elas diferem: `pdftotext` junta palavras com
+           espaço (`words.join(" ")`) e o DOM concatena sem — 4/4 casos.
+           NÃO ENFRAQUECE: o que sai do recorte é exatamente o conteúdo que o
+           critério autoriza, e o que o gate assere sobre KPIs e tabela
+           continua dentro. Sob gate ABERTO o `2.8` do domínio 3 permanece no
+           núcleo (medido). A TINTA não encolhe junto e isso é deliberado: as
+           PÁGINAS do bloco são as mesmas, o que encolheu foi o TEXTO medido,
+           e o único verde do bloco é o polígono do radar, que está no núcleo.
+           ACHADO DE FUNDO, fora desta autorização: `P52_ESTAGIOS` casar
+           rótulo de opção é falso positivo do sensor, e este limite o contorna
+           em vez de resolvê-lo. Resolver exige mexer na ASSERÇÃO, não na
+           derivação — achado próprio. */
+        const ultDom = DOM_PT[DOM_PT.length - 1];
+        const iUlt = blocoTexto.lastIndexOf(ultDom);
+        if (iUlt >= 0) {
+          let corte = iUlt + ultDom.length;
+          for (let campo = 0; campo < 4; campo++) {
+            const m = blocoTexto.slice(corte).match(/^\s*(?:n\/d|[0-9]+[.,][0-9]+|[0-9]+|→|\+|-|—)\s*/);
+            if (!m || !m[0].length) break;
+            corte += m[0].length;
+          }
+          blocoTexto = blocoTexto.slice(0, corte);
+        }
       }
-      const tinta = idxBloco >= 0 ? p52PdfColorInk(file, idxBloco + 1, P52_TGT_GREEN, 28) : null;
+      let tinta = null;
+      for (let k = idxBloco; idxBloco >= 0 && k <= idxFim; k++) {
+        const parcial = p52PdfColorInk(file, k + 1, P52_TGT_GREEN, 28);
+        if (!parcial) { tinta = null; break; }
+        tinta = tinta ? { px: tinta.px + parcial.px, amostras: tinta.amostras + parcial.amostras,
+                          w: parcial.w, h: parcial.h } : parcial;
+      }
 
       observed[caso.id] = { oraculo: { atualSuff: or.atual.suff, alvoSuff: or.alvo.suff,
         publicavel: or.publicavel, kpiAtual: or.kpiAtual, kpiAlvo: or.kpiAlvo,

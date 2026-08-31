@@ -783,3 +783,453 @@ caso que a campanha conseguiu enxergar porque alguém foi olhar um número de
 que mutam `ui_p50_v32.css` (`M51-08`) e todos os da `p50` que mutam o mesmo
 arquivo estão sujeitos ao mesmo mecanismo, e passariam pelo preflight do mesmo
 jeito.
+
+## EA-8 — `data-eid` não é chave global no engine: `fortiai-assist` é id em `OFFERINGS` e em `SOLUTION_AREAS`
+
+**Status**: `aberto`
+
+**Aberto em**: 2026-08-31. Medido em 2026-08-30 pelo `data-engineer` na T004 da
+demanda 010 (planning-state `010-recomendacao-sem-vao.json`,
+`t004_equivalencia.achados_registrados[0]`). O id foi **reservado nominalmente**
+em `specs/010-recomendacao-sem-vao/relatorio-final.md:192`, já na `develop` — por
+isso nasce aqui como `EA-8` e não em outro número (R12: id citado não renumera).
+
+### O que o sistema faz hoje
+
+**Nada.** Não há efeito observável: a área de solução homônima não é emitida como
+enabler em superfície alguma. O achado é sobre a **premissa** que dois consumidores
+já assumem, e que o engine não garante.
+
+### Cadeia arquivo:linha → efeito
+
+- **`engine_v32.js:73`** — `SOLUTION_AREAS["fortiai-assist"]` (`entityType:
+  "solution-area"`).
+- **`engine_v32.js:184`** — `OFFERINGS["fortiai-assist"]` (`component` /
+  `embedded-capability`), que em `:188` ainda declara `solutionAreaRelations` para
+  o **homônimo**. O mesmo literal é chave nos dois catálogos.
+- **`ui_v32.js:540-548`** — `iconFor(itemId, name)` resolve por
+  `ICON_MAP_V32[itemId]`: a chave é o id **cru**, sem qualificar de que catálogo
+  ele veio.
+- **`tests_010_vao.js:1413-1419`** e **`:1433-1440`** — C10 (c1) usa `data-eid`
+  como **chave de identidade**: dois itens com o mesmo `data-eid` no mesmo card são
+  FAIL nomeando a repetição.
+- **Efeito** — `data-eid` é consumido como chave global por um resolvedor de ícone e
+  por um oráculo de deduplicação, e a globalidade **não é propriedade do engine**.
+  No dia em que um id for emitido pelas duas fontes na mesma tela, os dois
+  consumidores tratarão entidades distintas como a mesma.
+
+### Relação com o `EA-9`
+
+São o par: **este** é o fato do catálogo (o homônimo existe); o `EA-9` é a
+**ausência de checagem** que permitiria o próximo. Quem decide o remédio — e se ele
+é um gate de catálogo, um id qualificado ou nada — é o `qa-engineer` com o
+`data-engineer`; o engine é `frozen` (rito D2, hoje Porta B).
+
+## EA-9 — `validateConfigV32` não proíbe `:` em id: a segurança do prefixo `map:` é convenção medida, não invariante checada
+
+**Status**: `aberto`
+
+**Aberto em**: 2026-08-31. Medido na T004 da 010 e **escrito na errata E15** da
+própria demanda (`specs/010-recomendacao-sem-vao/spec.md:222-228`, linha "O que
+passa a valer"). Id reservado em `relatorio-final.md:193`.
+
+### Cadeia arquivo:linha → efeito
+
+- **`engine_v32.js:680`** em diante — `validateConfigV32()` confere enums, órfãos,
+  composição e duplicidade de `questionId` (`:696-697`). **Nenhuma asserção sobre a
+  forma do id** — nem alfabeto, nem unicidade global entre catálogos.
+- **`ui_target_v32.js:346`** — `const id=eq || ("map:"+x.p)`: o item sem
+  equivalência V3.2 recebe `data-eid` com o prefixo `map:`, **normativo** desde a
+  E15.
+- **A segurança do prefixo é medição**, não checagem: `t004_equivalencia.colisao_map`
+  (planning-state da 010) registra "nos 95 ids + 22 `SIGNAL_IDS`, **nenhum** id
+  contém `:`". É verdade sobre o catálogo de hoje.
+- **Modo de falha se colidir** — item vindo do `MAP` e item do catálogo com o mesmo
+  `data-eid` no mesmo card: a fusão de C10 (c1) (`tests_010_vao.js:1433-1440`)
+  **apaga um deles do card**, e o desaparecimento não tem mensagem de erro própria.
+  É a mesma superfície que o `EA-8` descreve pelo outro lado.
+
+### Remédio recomendado, e por quem
+
+O `product-owner` da 010 recomendou remédio **fora do engine**: gate de catálogo
+com **unicidade global de id** (e alfabeto de id), que é barato e **não abre Porta
+B**. Registrado como recomendação — o **nascimento do gate é do `qa-engineer`**
+(R10), e transformar isso em invariante seria do PO com ratificação do auditor
+(R1). Este registro não decide nenhum dos dois.
+
+## EA-10 — o recorte de `blocoTexto` do `P52-TGT4`: duas metades, a segunda nascida da correção da primeira
+
+**Status**: `resolvido`
+
+**Aberto em**: 2026-08-31 · **fechado no mesmo dia, dentro da demanda 010**. Id
+reservado como `aberto` em `specs/010-recomendacao-sem-vao/relatorio-final.md:194`
+— a leitura do fonte na `develop` (`86a4f1e`) mostra as **duas** metades já
+corrigidas, e é o que este registro guarda. **Não é veredito de execução**: quem
+declara o gate verde é o `qa-engineer`, pelo job `visual` do CI.
+
+### Onde está a cadeia — e por que ela não é reproduzida aqui
+
+A trilha canônica vive **dentro do próprio gate**, em `tests_p52_chromium.js`, com
+a medição que a sustenta (offsets, ordem interna do bloco, margem de 121
+caracteres). Reproduzi-la aqui criaria uma segunda fonte que apodrece separada.
+Aponta-se para as linhas:
+
+- **`tests_p52_chromium.js:4032-4066`** — o comentário `RECORTE E TINTA`, com a
+  causa provada por eliminação, e a **retificação do próprio `EA-10`** a partir de
+  `:4048`.
+- **`:4057`** — metade **(a)**: `idxBloco` escolhia **uma** página para um bloco que
+  ocupa **duas**. Corrigida pelo fluxo multi-página, `:4098-4105`; a tinta passou a
+  somar as mesmas páginas do bloco (`:4147-4155`).
+- **`:4059`** — metade **(b)**: com a fatia cobrindo o bloco inteiro, o recorte
+  passou a engolir a **lista de práticas-alvo**, que é conteúdo **autorizado** sob
+  gate fechado. Nasceu da correção de (a). Fechada pelo `LIMITE DO NÚCLEO`,
+  `:4106-4146`.
+- **`:4094-4097`** — escopo: suíte congelada (§29.4), **autorização nominal do
+  proprietário em 2026-08-31**, restrita a `tgt4()` e a duas derivações.
+
+### O aviso que não pode se perder
+
+`:4061-4066` diz, no fonte, o que este registro repete de propósito: quem ler o
+`EA-10` tem de encontrar **as duas** metades e o fato de que a segunda nasceu da
+correção da primeira — **senão desfaz (a) por causa de (b)**, ou reabre a demanda
+atrás de um sintoma que já não existe.
+
+### O que ficou de fora, e virou achado próprio
+
+Duas ressalvas registradas no mesmo comentário **não** foram corrigidas (fora da
+autorização) e têm id próprio: `EA-12` (o sensor de estágios) e `EA-13` (a tinta
+que não é exclusiva do alvo).
+
+## EA-11 — a guarda de não-vacuidade de `D010-INV7` apontava para o conjunto que a V3 esvaziou
+
+**Status**: `resolvido`
+
+**Aberto em**: 2026-08-31 · **fechado dentro da demanda 010**. Achado do
+`ui-engineer` na T013, devolvido na wave 7 (planning-state
+`010-recomendacao-sem-vao.json`, `implementacao.wave_7.achados_devolvidos[0]`), e
+reservado como `aberto` em `relatorio-final.md:195`. A leitura do fonte mostra a
+guarda **já corrigida** em `cf6dd21` (T019, 2026-08-30) — commit **ancestral** do
+que escreveu o relatório (`803113b`, 2026-08-31): **o relatório ficou
+desatualizado neste item**, e a divergência fica registrada aqui em vez de
+propagada. Confirmação por execução é do `qa-engineer`.
+
+### Cadeia arquivo:linha → efeito (histórica) e a correção
+
+- **`fixtures_010_vao.js:605-610`** — `d010BaseInV32Base()`: apresentação `base`
+  **sem** flag de prioridade — o conjunto que alimentava `#v32base`, e que a V3
+  esvaziou de cards.
+- **`tests_010_vao.js:508-524`** — a narrativa da correção, no próprio gate: a
+  guarda antiga **coincidia** com o sujeito real sob F1/F2 (2 e 2), e a coincidência
+  **já se rompe no acervo** — sob `D010-F1b` a guarda antiga vale 4 e o sujeito real
+  é **0**. Uma alínea apontada para F1b **fecharia verde sem sujeito**, com a guarda
+  satisfeita: vacuidade com aparência de medição.
+- **`tests_010_vao.js:526-531`** — `sujeitoPreservacao()` passa a derivar o sujeito
+  do **modelo** (`d010BasePresented` menos `d010BaseInV32Base`), nunca do DOM que a
+  alínea julga.
+- **`:539-541`** e **`:557-559`** — as alíneas (a) e (b) chamam `vac()` sobre o
+  sujeito **real**; sem sujeito, a alínea declara vacuidade em vez de fechar verde.
+
+### O que permanece medido, e não asserido
+
+A correspondência entre o sujeito derivado do modelo e o card que de fato emite a
+frase foi **conferida contra o DOM nas cinco fixtures** (`:523-524`: 2·F1 · 0·F1b ·
+2·F2 · 0·F3 · 2·F4). É medição, não asserção. Se isso deve virar asserção é
+decisão do `qa-engineer` (R10) — este registro não a toma. O id **não é reusado**
+em nenhuma hipótese (R12). Padrão de fundo: `EA-20`.
+
+## EA-12 — `P52_ESTAGIOS` casa rótulo de opção: falso positivo do sensor, contornado pelo recorte e não resolvido
+
+**Status**: `aberto`
+
+**Aberto em**: 2026-08-31. Declarado como "achado de fundo, fora desta
+autorização" pelo próprio gate, durante a correção do `EA-10` (demanda 010).
+
+### Cadeia arquivo:linha → efeito
+
+- **`tests_p52_chromium.js:3837`** — `const P52_ESTAGIOS =
+  /Inexistente|Inicial|Definido|Gerenciado|Otimiz/i`: o sensor de "nome de estágio
+  publicado" é uma regex **case-insensitive** sobre texto corrido.
+- **`:4114-4119`** — a medição, no fonte: sob gate fechado o bloco contém
+  `"definido"` no offset 1156, vindo de `QS["training"].opts[2].t` — **rótulo de
+  opção**, não estágio de maturidade. O comentário nomeia os **seis** rótulos de
+  `QS` que casam o sensor; a lista está lá e não é reproduzida aqui.
+- **`:4224`** — a asserção que consome: `P52_ESTAGIOS.test(blocoTexto)` →
+  `"PDF-TEXTO: nome de estágio publicado no bloco"`.
+- **`:4132-4135`** — o gate declara o que não fez: o `LIMITE DO NÚCLEO` **contorna**
+  o falso positivo (encolhendo o texto medido) e **não o resolve**; resolver exige
+  mexer na **asserção**.
+- **Efeito** — a defesa contra o falso positivo é hoje **geométrica** (o quanto o
+  recorte alcança), não semântica. Qualquer mudança de layout que traga um desses
+  seis rótulos para dentro do núcleo reprova o gate sem que nada tenha vazado.
+
+O remédio é asserção nova em suíte congelada: dono é o `qa-engineer`, e o rito é o
+da §29.4.
+
+## EA-13 — `P52_TGT_GREEN` não é cor exclusiva do alvo: o mesmo hex é o domínio 2
+
+**Status**: `aberto`
+
+**Aberto em**: 2026-08-31. Registrado como "ressalva registrada, não corrigida"
+dentro do gate, na correção do `EA-10` (demanda 010).
+
+### Cadeia arquivo:linha → efeito
+
+- **`tests_p52_chromium.js:3836`** — `const P52_TGT_GREEN = [60, 177, 126];` com o
+  comentário `#3CB17E — encoding exclusivo do alvo`.
+- **`ui_v32.js:796`** — `PR_DOM_HEX` traz `"#3CB17E"` na segunda posição: o **mesmo
+  hex** é a cor do **domínio 2** no mapa usado pelo PDF.
+- **`tests_p52_chromium.js:4227`** — asserção de vazamento: tinta > 0 na página do
+  bloco ⇒ FAIL `"px de #3CB17E (cor exclusiva do alvo)"`.
+- **`:4239`** — asserção de **controle**: sob gate aberto, tinta == 0 ⇒ FAIL
+  `"nenhuma tinta #3CB17E do alvo na página do bloco"`.
+- **Efeito** — a asserção de tinta **não prova presença do alvo**: uma tag de
+  domínio 2 na mesma página satisfaz o controle, e pode acusar vazamento onde não
+  há. O comentário estava errado sobre a exclusividade.
+- **`:4086-4092`** — a ressalva, com o que foi medido no papel: o verde aparece em
+  `#pr-maturity` (2×) e `#pr-target` (1×), e em nenhuma outra seção. A exclusividade
+  é **de estado, na sessão medida**, não do encoding.
+
+## EA-14 — no job `visual`, as campanhas de mutação rodam depois das suítes: suíte vermelha deixa o passo `skipped` e a não-medição não aparece como falha
+
+**Status**: `aberto`
+
+**Aberto em**: 2026-08-31, na leitura do CI feita pela demanda 011.
+
+### Cadeia arquivo:linha → efeito
+
+- **`.github/workflows/verify.yml:42`** — o job `verify` roda com
+  `MUTATION_DEFER_MISSING: "1"`.
+- **`.claude/verify/check_mutation.py:1291-1298`** — com essa env, campanha
+  **exigida** cujo ambiente falta sai como `[DEFER] … delegada ao job com chromium
+  (job visual)` e o stage **segue verde**. O delegado é o único que a mediria.
+- **`.claude/verify/mutation_map.json`** — `p50`, `p51` e `p52` declaram
+  `requires: ["node","python","chromium"]`: são as delegáveis.
+- **`verify.yml:69-73`** (suítes visuais) e **`:79-80`**
+  (`python .claude/verify/check_mutation.py`) são passos do **mesmo job**, nesta
+  ordem. Passo que falha aborta o job; os seguintes ficam `skipped`.
+- **Efeito** — um vermelho de suíte esconde a **não-medição** das campanhas
+  delegadas: o sinal visível é o da suíte, o `verify` já saiu verde com `[DEFER]`,
+  e **nenhum sinal diz "campanha exigida não foi medida"**. É a família que a 013
+  fechou no relato local — a distinção entre `NÃO EXECUTADO` e `SOBREVIVENTE`
+  (`EA-5`) — reaparecendo do lado do CI, onde ela ainda não existe.
+
+**Não executado**: não rodei o workflow. A cadeia acima é leitura do YAML, do
+`check_mutation.py` e do `mutation_map.json` na `develop` `86a4f1e`.
+
+## EA-15 — `run.sh` trunca a saída do stage em 30 linhas: o veredito do `mutation` chega sem motivo e parece crash
+
+**Status**: `aberto`
+
+**Aberto em**: 2026-08-31, na demanda 011. É **achado de método**: muda como se
+atribui causa (R2 §3), antes de mudar qualquer código.
+
+### Cadeia arquivo:linha → efeito
+
+- **`.claude/verify/run.sh:62-72`** — `reporta()`: no ramo FAIL (`:69`) a saída do
+  stage é impressa passada por `head -30`. O corte vale para **qualquer** stage, e é sempre
+  pelo **começo**.
+- **`.claude/verify/check_mutation.py:185`** — o bloco `---- integridade da campanha
+  (013) ----` é impresso **antes de qualquer campanha**, com as linhas `IC-*`.
+- **`check_mutation.py:1289-1305`** — as linhas por campanha (`[OK]`, `[DEFER]`,
+  `[FAIL]`, `[RUN]`) e o relato dos não-KILL (`mut_relata`, criado pela 013
+  justamente para o motivo não se perder) saem **depois** disso.
+- **duas últimas linhas do arquivo** — `----` e
+  `mutation: N campanha(s) executada(s) · M problema(s)`: o veredito é **o fim** da
+  saída.
+- **Efeito** — quem lê o pipeline vê o **começo do cabeçalho de integridade** e não
+  vê nem o veredito nem o motivo; a leitura natural é "o stage morreu". O
+  diagnóstico que a 013 construiu existe e não chega ao operador.
+
+**Remédio de método, enquanto o achado estiver aberto**: para atribuir causa,
+rodar `python .claude/verify/check_mutation.py` **direto**, e nunca concluir a
+partir da saída truncada do `run.sh`.
+
+**Não medido por execução**: o stage é `mutates: true` e esta escrita não roda
+campanha; a cadeia acima é leitura de fonte.
+
+## EA-16 — `UX14` é constante por duas razões independentes: o gate não pode reprovar
+
+**Status**: `aberto`
+
+**Aberto em**: 2026-08-31, na demanda 011 (o refinamento dela já registrava que a
+rota recusada "mata UX14"). Suíte **congelada**: registrado, **não emendado**.
+
+### O que o sistema faz quando falha
+
+**Passa.** `UX14` afirma "atalho de teclado continua atingindo o finding global
+correto após regroup" e devolve `true` em qualquer estado do produto.
+
+### Cadeia arquivo:linha → efeito
+
+- **`tests_ux_m41.js:127-134`** — o gate inteiro.
+- **`:133`** — a condição do ternário termina em
+  `selected[0]===firstGlobal.sort((a,b)=>0)[0]===selected[0]`, que **associa à
+  esquerda**: `(booleano) === string` é **sempre falso**. A condição inteira é falsa,
+  e o gate cai sempre no ramo `: true`.
+- **`:133`** — e o ramo `?`, se fosse alcançado, é `X || true` — **também constante**.
+  São **duas razões independentes**: fechar uma não desconstante o gate.
+- **`:131`** — `const sel=[...w.__DEV.V32?[]:[]]; /* noop */`: **código morto**,
+  nunca lido, com um ternário cujos dois ramos são `[]`.
+- **Efeito** — a interação que o gate encena (`key(w,d,"1")`, `:130`) **não é julgada
+  por asserção alguma**. É verde que não pode virar vermelho: o atalho pode passar a
+  atingir o finding errado sem que `UX14` mude de cor.
+
+### Escopo
+
+`tests_ux_m41.js` é suíte congelada — está na lista `frozenSuites` do próprio
+`P50-GOV1` (`tests_p50_core.js:446-449`) e sob a §29.4. Correção exige rito
+próprio e é do `qa-engineer`. Instância do padrão `EA-20`.
+
+## EA-17 — R9 §6 (CSS com prefixo do próprio módulo) não tem verificador em lugar nenhum do pipeline
+
+**Status**: `aberto`
+
+**Aberto em**: 2026-08-31, na demanda 011.
+
+### Cadeia arquivo:linha → efeito
+
+- **`.claude/verify/check_lint_arch.py:1-54`** — o lint executa **quatro**
+  checagens: pureza do engine (`:23-29`), `innerHTML=` proibido e IIFE nos módulos
+  `ui_p5*` (`:31-39`), bridges registrados (`:41-50`). **Nenhuma abre arquivo
+  `.css`.**
+- **`.claude/verify/pipeline.yaml:17-98`** — nenhum outro stage lê `.css` para
+  verificar prefixo ou allowlist; o único consumidor de `.css` sob
+  `.claude/verify/` é a campanha de mutação, que **muta** CSS sem verificá-lo.
+- **`.claude/rules/modularity.md` §6** — exige prefixo do próprio módulo e
+  allowlist revisada (FE propõe, TL aprova) para seletor alheio, com o custo do
+  contrário registrado na própria regra (E12: 178 seletores alheios estilizados).
+- **Efeito** — a alínea vale por disciplina de quem escreve. Módulo novo cujo CSS
+  estiliza seletor de outro módulo passa por **todos** os stages, e a violação só
+  aparece quando alguém lê o arquivo — que é exatamente o modo de falha que o
+  `lint-arch` existe para eliminar.
+
+Nascimento de checagem nova é do `qa-engineer` com o `tech-lead`, e entra no
+`pipeline.yaml` (R10 §9) — nunca no prompt de um agente.
+
+## EA-18 — gate que lê a árvore e gate que lê HEAD medem objetos diferentes: mutação só no disco passa no `baseline`
+
+**Status**: `aberto`
+
+**Aberto em**: 2026-08-31, na demanda 011.
+
+### Cadeia arquivo:linha → efeito
+
+- **`.claude/verify/check_baseline.py:36`** — `git show HEAD:<path>`: o stage
+  `baseline` compara o registry contra o **blob de HEAD**. É o que a R2 §2 manda
+  (medição à prova de CRLF/plataforma) — **não é defeito**.
+- **`tests_p50_core.js:58`** — `sha = p => …fs.readFileSync(p)`: mede o **disco**.
+- **`tests_p50_core.js:442-444`** — `P50-GOV1` compara esse sha do disco contra o
+  mapa `PROTECTED` (`:82-228`, pins inline legados — R8 §2).
+- **Efeito** — com a alteração **só na árvore** (o estado em que vive toda campanha
+  de mutação, todo hook e todo agente antes de commitar), o `baseline` **passa**: ele
+  mede o commit. Quem pega é **só** o `P50-GOV1`. No estado inverso — alteração
+  commitada e revertida no disco — quem pega é só o `baseline`. Cada um dos dois
+  estados é coberto por **um único** gate.
+- **Consequência de método, além do caso** — todo par futuro que toque superfície
+  protegida precisa **declarar qual objeto mede** (árvore ou HEAD); ler "os dois
+  gates passaram" como "o protegido está intacto nos dois estados" é a inferência
+  que esta cadeia proíbe.
+
+**Não executado**: a leitura é dos dois fontes. A prova canônica — mutar no disco,
+rodar os dois — é do `qa-engineer`.
+
+## EA-19 — a tela de prioridade pergunta por gaps sobre uma lista vazia quando não há finding
+
+**Status**: `aberto`
+
+**Aberto em**: 2026-08-31. Caso 5 do refinamento da demanda 011, cuja cadeia
+canônica e enquadramento de produto vivem em
+`specs/011-numeracao-das-prioridades/refinement.md:203` (caso 5) e `:287-296`
+(P9 — escopo secundário declarado). A branch `feature/011-numeracao-das-prioridades`
+**não estava mesclada** quando este registro foi escrito (PR #32 aberto).
+
+### Cadeia arquivo:linha → efeito
+
+- **`quickscan_secops_soccmm_v3_1_3.html:522-533`** — `computeFindings()` só empilha
+  finding quando `m.s > 0`; resposta em nível alto não gera nenhum, e `"NA"` vai
+  para `validate` (`:526`). **N = 0 é alcançável** — todas as confirmadas em nível
+  2/3, ou todas "A validar".
+- **`:716`** — `renderPriority()` lê `computeFindings().findings`.
+- **`:723`** — a pergunta é escrita **incondicionalmente**: "Dos gaps identificados
+  na conversa, quais mais impactam a operação ou o negócio hoje?".
+- **`:725-731`** — `.opts` é `findings.map(...).join("")`: com N = 0 o container
+  renderiza **vazio**.
+- **`:732`** — `"0 de 3 selecionadas"`; **`:738`** — a `kbd-tip` continua prometendo
+  "1–9 seleciona os primeiros itens".
+- **Efeito** — o facilitador fica, ao vivo, com uma pergunta sobre um vazio, um
+  contador e uma legenda que afirmam itens que não existem, e **sem nada que diga
+  que não há gap a priorizar**. É ausência renderizada como lista vazia.
+
+### Escopo e rito
+
+`quickscan_secops_soccmm_v3_1_3.html` é Camada 1, classe `frozen`
+(`.claude/verify/boundary.json`): qualquer rota nesse arquivo é rito D2, hoje
+Porta B. O tratamento está declarado como **escopo secundário da 011** — o rito é
+da spec dela, não deste registro.
+
+## EA-20 — o padrão que três demandas seguidas instanciaram: gate sem poder discriminante
+
+**Status**: `aberto`
+
+**Aberto em**: 2026-08-31. Não é o quarto item de uma lista: é **a família** que os
+achados abaixo instanciam, registrada porque o alvo dela não é nenhum dos três
+gates.
+
+### O que é
+
+Gate ou alínea **verde que não pode reprovar** — e não por o instrumento estar
+doente. Âncora podre (`EA-4`), ambiente ausente (`EA-6`), campanha que não roda
+(`EA-3`, `EA-14`) e número que afirma o que não mediu (`EA-5`) são doenças do
+**instrumento**. Aqui o instrumento está saudável: o que se perdeu é a
+possibilidade de a asserção ser violada — porque a propriedade mudou de camada,
+porque a pré-condição nunca falha, ou porque a expressão que a afirma é constante.
+
+### As três instâncias (cada uma com id e cadeia próprios — não reproduzidos aqui)
+
+1. **`EA-7`** (demanda 013) — `P51-VIS1` continua verde **com** a mutação `M51-01`
+   aplicada: a composição que a 5.1 declarava passou a ser governada pela 5.2.
+2. **A errata E17 da demanda 010** (`specs/010-recomendacao-sem-vao/spec.md:243-255`)
+   — C8 (a) é verdadeira **por estado, não por gate**: `temCandidato` é sempre falso
+   onde `tgtValidateHTML` chega, e `D010-M11` saiu da campanha como equivalente por
+   construção. A própria errata registra que foi a **terceira vez dentro da mesma
+   demanda** (depois de **E5** e **E1**).
+3. **`EA-16`** (demanda 011) — `UX14` devolve `true` por duas razões independentes.
+
+### Por que um id próprio, e não três defeitos
+
+Porque o alvo é o **critério de nascimento de gate** (R10, §"Nascimento de um
+gate"), não nenhum dos três gates. Os três **satisfazem** o critério como ele está
+escrito — caso positivo, negativo, adversarial, regressão, oráculo independente, e
+até mutante declarado — e ainda assim não discriminam. O que falta ao critério é a
+exigência de **prova de que a asserção pode reprovar**. Registrar as três como três
+defeitos manda consertar três gates e **deixa o quarto nascer igual**.
+
+A 010 já deu o nome ao fenômeno, e ele vale como definição de trabalho
+(`spec.md:254`): *alínea cuja pré-condição nunca falha é indistinguível de alínea
+que mede, até alguém escrever o mutante e ele sobreviver*.
+
+### A cadeia própria deste achado é uma ausência
+
+- **`.claude/verify/mutation_map.json`** + **`.claude/verify/check_mutation.py`** —
+  a campanha é o único instrumento que separa "mede" de "parece medir", e só desde
+  que a 013 distinguiu `SOBREVIVENTE` de `NÃO EXECUTADO`. Mas ela só enxerga gate
+  **para o qual alguém escreveu um par**: `UX14` não tem par (suíte congelada, fora
+  de `targets` — é o `EA-3` pelo outro lado), e `D010-M11` foi retirado como
+  equivalente por construção.
+- **`.claude/verify/pipeline.yaml:17-98`** — **nenhum stage** verifica que um gate
+  ainda pode reprovar. Não há varredura que procure a família.
+- **Efeito** — a detecção depende de alguém olhar um número (o `19/20` que abriu o
+  `EA-7`) ou reler uma expressão (o `UX14`). Os três casos foram achados por leitura
+  humana, em três demandas seguidas — o que mede a **frequência**, não a cobertura.
+
+### O que este registro recomenda, e o que ele não decide
+
+O `product-owner` e o `tech-lead` recomendaram, **cada um por sua conta**, que a
+**varredura de gates constantes** vire **demanda própria** (R4): cria comportamento
+novo, a checagem entra no `pipeline.yaml` (R10 §9), e o desenho é do `tech-lead`
+com o `qa-engineer`. **Não** é `fix-finding` — não há um defeito único a corrigir.
+
+Este registro **não decide**: se a varredura é estática (expressão constante,
+ternário morto), mutacional (par obrigatório por gate) ou mista; se algum dos três
+casos fecha; nem quando a demanda abre. Abrir a demanda é do orquestrador; o
+veredito de cada instância é do `qa-engineer`.

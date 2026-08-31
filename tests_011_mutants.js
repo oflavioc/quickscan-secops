@@ -282,6 +282,22 @@ const MUTANTS = [
     reason: /D011-PRT1\(c\): o \.key do item com atalho .* não é alcançado por nenhuma regra de ocultação/
   },
   {
+    id: "D011-M20",
+    desc: "remove a clausula do ITEM SEM ATALHO do @media print — no papel volta a sobrar a moldura vazia de `.opt .key`, marcando os itens que o cliente apontou",
+    file: MOD_CSS,
+    find: '\n  .d011-key[data-d011="mudo"]{ visibility: hidden; }',
+    repl: '\n  /* MUTANTE D011-M20: clausula do item sem atalho removida */',
+    gate: "D011-PRT1",
+    reason: /D011-PRT1\(f\): \d+\/\d+ item\(ns\) SEM ATALHO continuam visíveis no papel/,
+    /* PROVA DE DESENHO: tem de SOBREVIVER a D011-KEY2. KEY2 e a clausula de TELA
+       sobre o item sem atalho (o `.key` fica vazio); (f) e a clausula de PAPEL
+       (o `.key` some inteiro, com moldura). Se KEY2 tambem reprovasse aqui, as
+       duas mediriam a mesma coisa e uma seria superflua — e a terceira clausula
+       de print nao teria carrasco proprio, que e exatamente o buraco que este
+       mutante existe para fechar. */
+    sobrevive: { gate: "D011-KEY2" }
+  },
+  {
     id: "D011-M19",
     desc: "escreve a regra de print contra SELETOR ALHEIO (.opt .key) em vez da classe do próprio módulo — R9 §6",
     file: MOD_CSS,
@@ -514,7 +530,7 @@ if (process.argv.slice(2).indexOf("--preflight") >= 0) {
 
     console.log(estado + "  " + m.id + " · " + m.desc +
       "\n                  oráculo: " + m.gate + (nota ? " · " + nota : "") +
-      "\n                  " + (linha ? linha.slice(0, 240) : "(sem linha do oráculo)") + extra + "\n");
+      "\n                  " + (linha ? linha.slice(0, 420) : "(sem linha do oráculo)") + extra + "\n");
   }
 
   build();

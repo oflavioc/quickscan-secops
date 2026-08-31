@@ -680,6 +680,21 @@ function hasSubstituteV32(ctxRes){
     return ((c.candidates||[]).length + (c.services||[]).length + (c.notes||[]).length) > 0;
   });
 }
+/* [010 · E18] "O ENGINE PRODUZIU ALGO PARA ESTA CAPABILITY?" — helper único da
+   semântica de payload (R9 §8), lido do resultado de `buildRecommendationContext()`
+   e NUNCA do DOM: é a mesma estrutura que `presentationOf` consulta no mesmo passe.
+   As três coisas que o engine pode anexar são candidatos, serviços e notas.
+   Existe porque a premissa do refinamento — "N cards cujo único conteúdo possível é
+   dizer que não houve declaração" — é verdadeira para o card VAZIO e FALSA para o
+   card com payload: sob `CONTEXT_NOT_INFORMED` a apresentação `base` é atribuída por
+   gap, por flag de prioridade OU por `services` não vazio (`presentationOf`, abaixo),
+   e nesse terceiro caso o card carrega os nomes dos serviços, o estado de maturidade
+   e o `why`. Sobre essas, a frase do aviso ("a interpretação V3.2 não é produzida
+   para elas") seria FALSA — o engine produziu, e a tela é que deixaria de mostrar. */
+function temPayloadV32(c){
+  const x = c || {};
+  return ((x.candidates||[]).length + (x.services||[]).length + (x.notes||[]).length) > 0;
+}
 /* [010 · V3] BLOCO DE AUSÊNCIA — helper ÚNICO para as DUAS superfícies (R9 §8), no
    padrão de duas superfícies que `tgtAbsenceHTML(qids, isScreen)` já estabeleceu.
    Substitui os N cards base por UM aviso, com a contagem e a LISTA NOMINAL das
@@ -687,10 +702,12 @@ function hasSubstituteV32(ctxRes){
    aviso que não nomeia ninguém é informação perdida.
    O aviso declara NÃO-INFORMAÇÃO, nunca ausência de tecnologia (INV-2) — e não
    conclui coisa alguma sobre processo, pessoas ou governança.
-   `ids` é `baseIds`: apresentação `base` E fora de `prioCaps`. A capability de
-   prioridade com apresentação `base` é desviada para `#v32prio` ANTES daqui e lá
-   continua sendo card (V10/V15) — nomeá-la neste aviso seria declarar "contexto não
-   informado" sobre um card que a mesma tela exibe duas seções acima. */
+   `ids` é a PARTE SEM PAYLOAD de `baseIds` — apresentação `base`, fora de `prioCaps`
+   e com `temPayloadV32` falso [010 · E18]. A capability de prioridade com apresentação
+   `base` é desviada para `#v32prio` ANTES daqui e lá continua sendo card (V10/V15) —
+   nomeá-la neste aviso seria declarar "contexto não informado" sobre um card que a
+   mesma tela exibe duas seções acima; e nomear uma capability COM payload seria o
+   mesmo erro contra um card que o próprio bloco exibe uma linha acima. */
 function baseAbsenceHTML(ids, ctxs, isScreen){
   if (!ids || !ids.length) return "";
   const n = ids.length;
@@ -737,10 +754,16 @@ function buildSupportHTML(res, afirmaPreservacao){
     html += `<div class="section-title"><div class="eyebrow">${SUPPORT_TITLES[m]}</div></div>
       <div class="v32-block" id="${bid}">${ids.map(id=>capCardHTML(id,ctxs[id])).join("")}</div>`;
   });
+  /* [010 · E18] `baseIds` PARTIDO pelo payload do engine: quem tem serviço/nota/candidato
+     continua card (o conteúdo existe e é dele que a seção vive); só o card vazio — aquele
+     cujo único conteúdo possível é a não-declaração — é absorvido pelo aviso, que passa a
+     nomear apenas esses. A partição não muda quem entra no bloco, só COMO cada um aparece. */
   const baseIds = rest.filter(id => presentationOf(id, ctxs[id])==="base");
+  const baseComPayload = baseIds.filter(id => temPayloadV32(ctxs[id]));
+  const baseSemPayload = baseIds.filter(id => !temPayloadV32(ctxs[id]));
   if (baseIds.length)
     html += `<div class="section-title"><div class="eyebrow">Leitura base — contexto tecnológico não informado</div></div>
-      <div class="v32-block" id="v32base">${baseAbsenceHTML(baseIds, ctxs, true)}</div>`;   /* [010 · V3] N cards → UM aviso */
+      <div class="v32-block" id="v32base">${baseComPayload.map(id=>baseCardHTML(id, ctxs[id], "base")).join("")}${baseAbsenceHTML(baseSemPayload, ctxs, true)}</div>`;   /* [010 · E18] cards COM payload + UM aviso sobre os SEM */
   const matIds = rest.filter(id => presentationOf(id, ctxs[id])==="maturity");
   if (matIds.length)
     html += `<div class="section-title"><div class="eyebrow">Apoio baseado na maturidade</div></div>
@@ -1253,8 +1276,10 @@ function buildPrintReport(){
   [["DIRECT","pr-sup-direct"],["CONTEXTUAL","pr-sup-contextual"],["VALIDATE","pr-sup-validate"]].forEach(([m,bid])=>{
     const ids = byMode(m); if(!ids.length) return;
     h += `<h3>${SUPPORT_TITLES[m]}</h3><div id="${bid}">${prCards(ids,ctxs,"card")}</div>`;});
+  /* [010 · E18] mesma partição da tela — o papel é a MESMA decisão, em outra superfície */
   const baseIds = rest.filter(id=>presentationOf(id,ctxs[id])==="base");
-  if (baseIds.length) h += `<h3>Leitura base — contexto tecnológico não informado</h3><div id="pr-sup-base">${baseAbsenceHTML(baseIds,ctxs,false)}</div>`;   /* [010 · V3] mesmo aviso da tela, sem controle */
+  const baseComPayload = baseIds.filter(id=>temPayloadV32(ctxs[id])), baseSemPayload = baseIds.filter(id=>!temPayloadV32(ctxs[id]));
+  if (baseIds.length) h += `<h3>Leitura base — contexto tecnológico não informado</h3><div id="pr-sup-base">${prCards(baseComPayload,ctxs,"base")}${baseAbsenceHTML(baseSemPayload,ctxs,false)}</div>`;   /* [010 · E18] cards COM payload + mesmo aviso da tela, sem controle */
   const matIds = rest.filter(id=>presentationOf(id,ctxs[id])==="maturity");
   if (matIds.length) h += `<h3>Apoio baseado na maturidade</h3><div id="pr-sup-maturity">${prCards(matIds,ctxs,"maturity")}</div>`;
   h += `</div>`;

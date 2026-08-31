@@ -4,9 +4,9 @@
    Instrumento de MEDIÇÃO. Não tem red próprio: o aceite é 100% KILL (R10 §5).
 
    CORRESPONDÊNCIA 1:1 COM A SPEC. Os ids são `D010-M1..D010-M20`, um por
-   mutante `M1..M20` da spec §Critérios, mais `M21..M25` da errata E16 (R10 §1 — namespace da fase corrente,
+   mutante `M1..M20` da spec §Critérios, mais `M21..M25` da errata E16 e `M26` da errata E17 (R10 §1 — namespace da fase corrente,
    nunca continuar numeração alheia; o `M1` global existe desde a 003).
-   EXECUTADOS: 22 de 25 DECLARADOS. Os ids `D010-M21..D010-M25` nasceram da
+   EXECUTADOS: 23 de 26 DECLARADOS. Os ids `D010-M21..D010-M25` nasceram da
    errata E16 (2026-08-30) sobre a propriedade que E15 tornou normativa — o
    prefixo `map:` —, e entram DEPOIS de `M20`: nenhum id existente renumera
    (R12). Contagem não é sagrada; ids são. Os cinco são mutante de FONTE e não
@@ -101,7 +101,7 @@ const CAUSA = {
 const naoClassificada = msg => "falha não classificada: " + msg;
 
 /* ==========================================================================
-   OS 22 MUTANTES EXECUTADOS (D010-M1..M25 menos M3/M4 e menos M11).
+   OS 23 MUTANTES EXECUTADOS (D010-M1..M26 menos M3/M4 e menos M11).
    `find`/`repl` são texto literal; `reason` é a assinatura da mensagem que o
    gate REALMENTE emite — extraída do `throw new Error(...)` do oráculo, nunca
    inventada: reprovar por motivo diferente do esperado é SOBREVIVENTE, não KILL.
@@ -273,7 +273,27 @@ const MUTANTS = [
   { id: "D010-M25", file: TGTJS,
     desc: "emitir o prefixo SEM chave alguma: `map:`",
     find: ANC_EID, repl: '    const id=eq || "map:";',
-    gate: "D010-CARD4", only: "D010-CARD4", reason: /sem equivalência V3\.2 a forma é/ }
+    gate: "D010-CARD4", only: "D010-CARD4", reason: /sem equivalência V3\.2 a forma é/ },
+
+  /* ── E17 · o mutante que faltava a C8 ──────────────────────────────
+     `D010-M11` atacava a metade de C8 que é verdadeira POR CONSTRUÇÃO (a
+     precedência de candidato: `temCandidato` é inalcançável — ver a dívida
+     declarada). Retirado ele, `D010-CARD2` ficou SEM MUTANTE, e critério vivo
+     sem mutante é critério sem prova de poder (R3 §5). Quem sustenta C8 é a
+     alínea (b) — "serviço do engine NÃO bloqueia o `MAP`" —, e este mutante é
+     exatamente a negação dela: fazer o serviço ligar `temCandidato`, como o
+     candidato faz. Uma linha, na âncora real de `ui_target_v32.js:340`.
+     ALCANÇADO, ao contrário de M11: sob `D010-F4` há TRÊS práticas-alvo com
+     serviço por `hasGap`, zero candidatos e S2 de contexto
+     (`vulnerability-management`, `monitoring-coverage`, `incident-response`).
+     Medido por simulação antes de ser autorizado: morre em (b), nomeando a
+     prática e a fonte. */
+  { id: "D010-M26", file: TGTJS,
+    desc: "serviço do engine passa a BLOQUEAR o `MAP`, como se fosse candidato (nega C8 (b))",
+    find: '    (c.services||[]).forEach(s=>anexados.push(s.serviceId));});',
+    repl: '    (c.services||[]).forEach(s=>{temCandidato=true; anexados.push(s.serviceId);});});',
+    gate: "D010-CARD2", only: "D010-CARD2",
+    reason: /serviço do engine não pode bloquear o MAP/ }   /* SEM crases: transcrito do literal do oráculo (tests_010_vao.js:1000), não da memória da sonda */
 ];
 
 const MUTABLE = Array.from(new Set(MUTANTS.map(m => m.file)));

@@ -155,7 +155,21 @@ const PROTECTED = {
      `generate_icons_v32.py`. Identidade anterior (errata da auditoria externa
      sênior de frontend):
      0b30fe27ebc7fa0678b746ffe2fcd08fb1dcaf40a386ea774ffc3349f958e559 */
-  "ui_v32.js": "6340e712c6724dff8db8d5a90212dc0ec681183fd005b95fab1a32456d15e572",
+  /* DEMANDA 010 · recomendação sem vão · REPIN (T023, 2026-08-30).
+     ISTO É ASSERÇÃO DE PIN, NÃO DE COMPORTAMENTO: nenhuma alegaõ de regra desta
+     suíte congelada foi tocada — só o valor de identidade contra o qual
+     `P50-GOV1` e `P50-IC4` comparam o arquivo. As asserções de comportamento
+     de ambos permanecem byte-idênticas, e `P50-IC4` continua REEXECUTANDO a
+     suíte ICONS 4.6 — que fechou 12/12 na mesma bateria, o que é a prova de que
+     a queda era de hash e não de comportamento.
+     MOTIVO: a wave 7 da demanda 010 (T013) reescreveu a arbitragem de camada
+     em `hideLegacyRecommendation()` — o argumento deixou de ser a constante
+     `true` e passou a ser o predicado "há substituto?" — e transformou os N
+     cards de leitura base em UM aviso de ausência (`baseAbsenceHTML`).
+     Autorizado pela spec da demanda (§Comportamento especificado, 1 e 3), com
+     red commitado antes da implementação (R3 §4).
+     Identidade anterior: 6340e712c6724dff8db8d5a90212dc0ec681183fd005b95fab1a32456d15e572 */
+  "ui_v32.js": "91abdf6980fc7c710a65eaa47f437c62fd30944dd37abdcf6ef14acefa6bfe63",
   "ui_ux_v32.js": "a050401145a5ed7af597eae01a9a23826418119769c096db168b3b177a9d3938",
   /* ERRATA DA AUDITORIA EXTERNA · §4.1.1 ("qualquer texto derivado consome a
      mesma decisão canônica de publicabilidade"). A comparação Atual × Alvo
@@ -253,7 +267,19 @@ const PROTECTED = {
      `D009-UNS3`, endurecido com red commitado em `d48b906` ANTES da correção.
      Identidade anterior (primeiro repin da 009):
      fcedb7cf63d89ac20e2248a3f37026885d5c5c7ecee62f14cfa0a976ef8f584f */
-  "ui_target_v32.js": "6b882a06f7ad17c69abf8dbb11186338cf94ef859f8a8daff89c751ba4d2e9c8",
+  /* DEMANDA 010 · recomendação sem vão · REPIN (T023, 2026-08-30).
+     ISTO É ASSERÇÃO DE PIN, NÃO DE COMPORTAMENTO: `P50-SUF0` e `P50-SUF8`
+     comparam a identidade deste arquivo como guarda de superfície congelada;
+     o que eles asserem sobre suficiência permanece byte-idêntico.
+     MOTIVO: a wave 4 da demanda 010 (T008) acrescentou `tgtValidateHTML()` —
+     o habilitador "a validar", ancorado no nível ATUAL confirmado e publicado
+     só sob gate de suficiência ABERTO (INV-3 preservada, C9) — mais a tabela
+     de equivalência `TGT_EQUIV` e a fusão contra o conjunto anexado (E9).
+     `tgtEnablerState()` permanece byte-idêntica: muda o argumento, não o corpo.
+     Autorizado pela spec da demanda (§Comportamento especificado, 4), com red
+     commitado antes da implementação (R3 §4).
+     Identidade anterior: 6b882a06f7ad17c69abf8dbb11186338cf94ef859f8a8daff89c751ba4d2e9c8 */
+  "ui_target_v32.js": "81adcb219b606a444dbf046fabeee4d46c411b74a69012896f6e26c90f3c8f5c",
   "ui_refinement_v32.js": "ade18a9afd265966feb40cb9f2926e20f5ffd2534dcfe7ec602e46cc6d01132c",
   /* PHASE 5.2 · REV B (COPY-B §5.1): uma linha — o tema "mandate" da jornada
      passou a dizer "direcionamento". Nenhuma regra, score ou estrutura muda. */

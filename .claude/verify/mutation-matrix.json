@@ -1025,6 +1025,19 @@
         "resultado": "KILL",
         "registro": "tests_010_mutants.js"
       }
+    },
+    {
+      "mutante": "D010-M26",
+      "harness": "d010 (tests_010_mutants.js)",
+      "gate": "D010-CARD2 (b)",
+      "invariante": "C8 - a fonte com contexto ganha, mas SERVICO do engine NAO bloqueia o MAP: a pratica com apenas servicos e em S2 de contexto continua recebendo o no a-validar, ao lado da linha do engine e no mesmo card (E2/E3 da errata)",
+      "descricao": "servico do engine passa a BLOQUEAR o MAP, como se fosse candidato (nega C8 (b))",
+      "nota": "Nasceu pela errata E17 (2026-08-30) porque a retirada de D010-M11 - equivalente por construcao - deixou D010-CARD2 SEM MUTANTE. Ataca a metade VIVA de C8: M11 atacava a precedencia de candidato, que e verdadeira por construcao; este ataca a nao-bloqueio por servico, que so e verdadeira porque o codigo a mantem. Uma linha em ui_target_v32.js:340. Universo: 3 praticas-alvo sob D010-F4 (vulnerability-management, monitoring-coverage, incident-response) com servico por hasGap, ZERO candidatos e S2 de contexto. FECHADO em 2026-08-30: KILL em D010-CARD2 (b). A primeira execucao devolveu SOBREVIVENTE por 'reprovou por motivo diferente do esperado' - e era a REGEX, nao o gate: eu havia escrito 'o `MAP`' com crases e o oraculo emite 'o MAP' sem elas. Corrigida por transcricao do literal (tests_010_vao.js:1000). Auditoria subsequente das 23 regex contra o fonte do oraculo: 22 casam estaticamente; a 23a (D010-M8) so nao casa porque a mensagem dela e interpolada em runtime, e ela ja vinha DETECTADO.",
+      "ultima_prova": {
+        "data": "2026-08-30",
+        "resultado": "KILL",
+        "registro": "tests_010_mutants.js"
+      }
     }
   ],
   "dividas_declaradas": [

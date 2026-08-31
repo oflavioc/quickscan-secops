@@ -1,7 +1,7 @@
 {
   "_meta": {
     "descricao": "Registry único de pins — fonte de identidade dos artefatos (R8). Hashes = SHA-256 dos blobs de HEAD. Alterar arquivo pinado exige regenerar este registry no MESMO PR, com motivo no commit.",
-    "gerado_de_head": "536e437da461e72acfb227795de627456d3246eb",
+    "gerado_de_head": "99d6de9dff6fd77deb330f206ae3943973de21ae",
     "gerado_em": "2026-08-30",
     "exclusoes": [
       "docs_phase5/**",

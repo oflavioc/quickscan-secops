@@ -641,7 +641,62 @@ T("D010-ABS1", "C6 · #v32base é UM aviso de ausência com contagem e lista nom
 /* ============================================================================
    C7 · D010-CARD1 — habilitador a validar, ancorado no nível ATUAL confirmado
    ========================================================================== */
-T("D010-CARD1", "C7 · nó a-validar sse S2-contexto + resposta confirmada + MAP não vazio + gate ABERTO (D010-F1)", () => gate(g => {
+/* POR QUE (a)/(b) VARREM `D010-F1` **E** `D010-F4`, se a spec §C7 lista só F1
+   ==========================================================================
+   O critério C7 (a) é universalmente quantificado — "**toda** prática-alvo em
+   S2-contexto com resposta confirmada e `MAP` não vazio publica…" —, e `D010-F1`
+   é nomeada como a fixture onde ele é exercido, não como o limite do que ele
+   afirma. Mesma forma da varredura de `D010-ARB3` sobre F4, já registrada acima.
+
+   O QUE F1 SOZINHA NÃO ALCANÇAVA (medido por simulação da saída no DOM,
+   2026-08-30, zero byte de produto — três SOBREVIVENTES que nenhum gate matava):
+     · item do `MAP` DESCARTADO em silêncio — sob F1 todo nó tem UM item, então
+       "sumiu um item" e "o nó não nasceu" são o mesmo estado, e `D010-CARD4` (b)
+       só sabe julgar item RENDERIZADO: item que não existe não é auditado por
+       ninguém. Sob F4 há nós de DOIS itens, e a contagem passa a ter sujeito;
+     · ORDEM DO CATÁLOGO invertida — com um item por nó não há ordem que se
+       possa violar. Sob F4, `vulnerability-management` ([FortiRecon,
+       FortiEndpoint]) e `incident-response` ([FortiSOAR,
+       FortiGuard-Service-Bundle]) dão à alínea o par que ela sempre prometeu
+       medir;
+     · rótulo `.ux-tgt-mode` trocado NO ITEM SEM EQUIVALÊNCIA — (b) já media o
+       rótulo, mas o único item sem equivalência do produto inteiro vive em
+       `incident-response`, que não estava em fixture alguma.
+
+   CUSTO MEDIDO ANTES DE APLICAR: sob F4 o universo de C7 tem 7 qids contra 4 de
+   F1; o veredito do gate e o da suíte não se movem (7 PASS · 6 FAIL, linhas
+   byte a byte idênticas). O que muda é o censo impresso na nota.
+
+   A FUSÃO (E9) ENTRA COMO PRÉ-CONDIÇÃO, NÃO COMO JULGAMENTO. Sob F4 um item do
+   `MAP` cujo equivalente está ANEXADO ao card é removido do nó por regra
+   ratificada (C10 c1) — `SOCaaS` em `monitoring-coverage` é o caso. Se (a)
+   comparasse contra o catálogo cru, ela reprovaria o produto CORRETO por
+   cumprir outro critério. O conjunto esperado é então o catálogo MENOS os
+   fundidos, com as duas fontes lidas de fora do módulo sob teste: o conjunto
+   anexado vem de `buildRecommendationContext()` (engine, `frozen`) e a tabela
+   de equivalência vem de `__DEV.TGT_EQUIV` como DADO (totalidade provada por
+   C10 (a)). Quem JULGA a fusão continua sendo C10 (c1)/(c2); (a) mede
+   CONTAGEM, ORDEM e NÍVEL (INV-5). Sob F1 o conjunto fundido é VAZIO — a
+   alínea ali é a mesma de antes desta emenda, e a nota imprime o número. */
+/* Conjunto EFETIVAMENTE ANEXADO ao card pela fonte congelada, por qid. */
+function c7Anexados(w, qid) {
+  const c = w.__DEV.V32.buildRecommendationContext().contexts[FX.d010CapOf(w, qid)] || {};
+  return (c.candidates || []).map(x => x.itemId).concat((c.services || []).map(s => s.serviceId));
+}
+/* Catálogo do nível ATUAL menos os itens fundidos. Devolve também os fundidos,
+   para que a nota diga quantos foram — guarda contra a alínea passar a medir
+   uma lista vazia sem ninguém perceber. */
+function c7Esperado(w, qid, nivel) {
+  const tab = w.__DEV.TGT_EQUIV || {};
+  const anex = c7Anexados(w, qid);
+  const cat = FX.d010MapItems(w, qid, nivel);
+  const fundidos = cat.filter(k => {
+    const eq = (typeof tab[k] === "string" && tab[k]) ? tab[k] : null;
+    return eq && anex.indexOf(eq) >= 0;
+  });
+  return { cat, fundidos, esperado: cat.filter(k => fundidos.indexOf(k) < 0) };
+}
+T("D010-CARD1", "C7 · nó a-validar sse S2-contexto + resposta confirmada + MAP não vazio + gate ABERTO (F1 · F4)", () => gate(g => {
   const { w, d } = R("D010-F1");
   const nos = aValidarPorQid(d, "D010-CARD1");
   const ansv = FX.d010Answers(w);
@@ -661,42 +716,106 @@ T("D010-CARD1", "C7 · nó a-validar sse S2-contexto + resposta confirmada + MAP
       vac("(pré)", "nenhuma prática-alvo em S2-contexto com resposta confirmada e MAP não vazio sob D010-F1");
     g.nota("D010-CARD1 · universo derivado do MODELO: " + JSON.stringify(universo));
   });
-  /* (a) cada uma traz UM nó cujos itens são EXATAMENTE MAP[qid].lv[atual].c, na ordem do catálogo */
-  if (uOk) g.passo("(a) itens = MAP[qid].lv[ATUAL].c, na ordem do catálogo", () => {
-    universo.forEach(qid => {
-      const esperado = FX.d010MapItems(w, qid, ansv[qsIds.indexOf(qid)]);
-      const lista = nos[qid] || [];
-      if (lista.length !== 1)
-        throw new Error(qid + ": " + lista.length + " nós `a-validar` (esperado 1) para MAP=" + JSON.stringify(esperado));
-      const itens = itensDe(lista[0]);
-      if (itens.length !== esperado.length)
-        throw new Error(qid + ": " + itens.length + " itens no nó, MAP no nível ATUAL tem " + esperado.length +
-          " (" + JSON.stringify(esperado) + ")");
-      esperado.forEach((chave, i) => {
-        const nomeMap = FX.d010ProductName(w, chave), it = itens[i];
-        if (it.nome !== nomeMap && it.eid !== chave)
-          throw new Error(qid + " posição " + i + ": item " + JSON.stringify(it.nome + "/" + it.eid) +
-            " não corresponde à chave " + JSON.stringify(chave) + " (" + nomeMap +
-            ") — ordem do catálogo violada ou nível errado (INV-5)");
+  /* Os renders em que (a)/(b) são exercidas. F1 é o render já aberto acima; F4
+     é o único que traz nós de MAIS DE UM item e o único item sem equivalência
+     do produto. Cada render deriva o SEU universo do modelo, do mesmo jeito. */
+  const C7_RENDERS = [{ fx: "D010-F1", w, d, nos, ansv, qsIds, universo: null }];
+  const uF4 = g.passo("(pré·F4) universo de C7 sob D010-F4, com nó de 2+ itens", () => {
+    const F4 = R("D010-F4");
+    if (FX.d010ComparisonPublishable(F4.w) !== true)
+      vac("(pré·F4)", "o gate de suficiência está FECHADO sob D010-F4 — nenhuma prática poderia publicar");
+    const a4 = FX.d010Answers(F4.w);
+    const i4 = JSON.parse(FX.d010Eval(F4.w, "JSON.stringify(QS.map(function(q){return q.id;}))"));
+    const u4 = Object.keys(F4.w.__DEV.TARGET.overrides || {}).filter(qid => {
+      const k = i4.indexOf(qid);
+      return FX.d010CtxStateOf(F4.w, qid) === "S2" && typeof a4[k] === "number" &&
+        FX.d010MapItems(F4.w, qid, a4[k]).length > 0;
+    });
+    if (!u4.length) vac("(pré·F4)", "nenhuma prática-alvo em S2-contexto com resposta confirmada e MAP não vazio sob D010-F4");
+    /* NÃO-VACUIDADE ESPECÍFICA desta extensão: sem nó de 2+ itens, (a) volta a
+       não ter como medir ordem, e a varredura extra vira decoração. */
+    const multi = u4.filter(qid => c7Esperado(F4.w, qid, a4[i4.indexOf(qid)]).esperado.length > 1);
+    if (!multi.length)
+      vac("(pré·F4)", "nenhum nó `a-validar` de D010-F4 tem 2+ itens esperados — sem ele a ORDEM do catálogo " +
+        "não é mensurável em fixture alguma, e a varredura de F4 não acrescenta poder discriminante");
+    g.nota("D010-CARD1 · universo sob D010-F4: " + JSON.stringify(u4) +
+      " · com 2+ itens (onde a ORDEM é mensurável): " + JSON.stringify(multi));
+    C7_RENDERS.push({ fx: "D010-F4", w: F4.w, d: F4.d, nos: aValidarPorQid(F4.d, "D010-CARD1"),
+                      ansv: a4, qsIds: i4, universo: u4 });
+  });
+  if (!uF4) g.naoMedido("(pré·F4)", "o render de D010-F4 não pôde ser preparado — (a)/(b) medem só sob D010-F1");
+  const renders = () => C7_RENDERS.map(r => Object.assign({}, r, { universo: r.universo || universo }));
+  /* (a) cada uma traz UM nó cujos itens são o catálogo do nível ATUAL (menos os
+         fundidos), na ORDEM do catálogo.
+         A correspondência item↔chave é por NOME: a regra de equivalência
+         ratificada (T004) é identidade de nome — `name(id) === PRODUCTS[k].n` —,
+         e o item sem equivalente sai com `PRODUCTS[c.p].n`, de modo que o nome
+         é total sobre os dois ramos. A unicidade do nome entre as 11 chaves é
+         conferida aqui, senão "o nome bate" deixaria de identificar POSIÇÃO.
+         O `data-eid` NÃO é pinado aqui, e isso é decisão medida, não descuido:
+         quem o pina é `D010-CARD4` (b), que roda sobre D010-F4 e cobre TODO
+         item renderizado — nos dois ramos da identidade. Medido pelo teste de
+         subsunção: o universo que uma checagem de eid nesta alínea acrescentaria
+         são os itens de F1, e F1 não tem forma de item que F4 não tenha (os
+         quatro qids do vão estão nas duas), logo nenhum mutante de código morre
+         aqui e sobrevive lá. Até esta emenda a alínea trazia o termo
+         `it.eid !== chave` dentro de uma CONJUNÇÃO: ele é sempre verdadeiro (o
+         eid é o id equivalente ou `map:<chave>`, nunca a chave crua), portanto
+         nunca decidia — a alínea media o nome e a mensagem prometia o eid. */
+  if (uOk) g.passo("(a) itens = catálogo do nível ATUAL (menos fundidos), na ordem do catálogo", () => {
+    const nomes = FX.d010MapKeys(w).map(k => FX.d010ProductName(w, k));
+    const dup = nomes.filter((n, i) => nomes.indexOf(n) !== i);
+    if (dup.length)
+      throw new Error("duas chaves do MAP renderizam o mesmo nome " + JSON.stringify(dup) +
+        " — a correspondência item↔chave por NOME deixa de identificar posição e esta alínea precisa de outro eixo");
+    renders().forEach(R7 => {
+      R7.universo.forEach(qid => {
+        const E = c7Esperado(R7.w, qid, R7.ansv[R7.qsIds.indexOf(qid)]);
+        const esperado = E.esperado;
+        const lista = R7.nos[qid] || [];
+        if (lista.length !== 1)
+          throw new Error(R7.fx + "/" + qid + ": " + lista.length + " nós `a-validar` (esperado 1) para catálogo=" +
+            JSON.stringify(E.cat) + (E.fundidos.length ? " fundidos=" + JSON.stringify(E.fundidos) : ""));
+        const itens = itensDe(lista[0]);
+        if (itens.length !== esperado.length)
+          throw new Error(R7.fx + "/" + qid + ": " + itens.length + " itens no nó, esperado " + esperado.length +
+            " " + JSON.stringify(esperado) + " (catálogo do nível ATUAL=" + JSON.stringify(E.cat) +
+            (E.fundidos.length ? ", fundidos por equivalente anexado=" + JSON.stringify(E.fundidos) : "") +
+            ") — item subtraído do relatório, ou nível errado (INV-5)");
+        esperado.forEach((chave, i) => {
+          const nomeMap = FX.d010ProductName(R7.w, chave), it = itens[i];
+          if (it.nome !== nomeMap)
+            throw new Error(R7.fx + "/" + qid + " posição " + i + ": item " + JSON.stringify(it.nome + "/" + it.eid) +
+              " não corresponde à chave " + JSON.stringify(chave) + " (nome do catálogo: " + JSON.stringify(nomeMap) +
+              ") — ordem do catálogo violada ou nível errado (INV-5). O `data-eid` desta alínea é informativo: " +
+              "quem o pina é D010-CARD4 (b)");
+        });
       });
     });
+    g.nota("D010-CARD1 (a) · renders varridos: " + renders().map(R7 =>
+      R7.fx + "(" + R7.universo.length + " qids, fundidos=" +
+      R7.universo.reduce((n, q) => n + c7Esperado(R7.w, q, R7.ansv[R7.qsIds.indexOf(q)]).fundidos.length, 0) + ")").join(" · "));
   }); else g.naoMedido("(a)", "o universo de C7 não pôde ser derivado");
   /* (b) rótulo "a validar" e a fórmula de §UAT-07, sem "apoio direto" */
   if (uOk) g.passo("(b) rótulo 'a validar' e fórmula 'validar aderência'", () => {
-    let medidos = 0;
-    universo.forEach(qid => {
-      (nos[qid] || []).forEach(no => {
-        medidos++;
-        const modos = itensDe(no).map(x => x.modo);
-        if (!modos.length) throw new Error(qid + ": nó `a-validar` sem item algum");
-        if (modos.some(m => !/a validar/i.test(m)))
-          throw new Error(qid + ": rótulo `.ux-tgt-mode` fora de 'a validar': " + JSON.stringify(modos));
-        const t = txt(no);
-        if (!/validar aderência/i.test(t)) throw new Error(qid + ": o nó não traz a fórmula 'validar aderência' (§UAT-07)");
-        if (/apoio direto/i.test(t)) throw new Error(qid + ": o nó diz 'apoio direto' — a validar não é apoio identificado");
+    let medidos = 0, itensLidos = 0;
+    renders().forEach(R7 => {
+      R7.universo.forEach(qid => {
+        (R7.nos[qid] || []).forEach(no => {
+          medidos++;
+          const modos = itensDe(no).map(x => x.modo);
+          if (!modos.length) throw new Error(R7.fx + "/" + qid + ": nó `a-validar` sem item algum");
+          itensLidos += modos.length;
+          if (modos.some(m => !/a validar/i.test(m)))
+            throw new Error(R7.fx + "/" + qid + ": rótulo `.ux-tgt-mode` fora de 'a validar': " + JSON.stringify(modos));
+          const t = txt(no);
+          if (!/validar aderência/i.test(t)) throw new Error(R7.fx + "/" + qid + ": o nó não traz a fórmula 'validar aderência' (§UAT-07)");
+          if (/apoio direto/i.test(t)) throw new Error(R7.fx + "/" + qid + ": o nó diz 'apoio direto' — a validar não é apoio identificado");
+        });
       });
     });
     if (!medidos) vac("(b)", "nenhum nó `a-validar` publicado pelo universo de C7 — não há rótulo a ler");
+    g.nota("D010-CARD1 (b) · nós lidos: " + medidos + " · itens com rótulo conferido: " + itensLidos);
   }); else g.naoMedido("(b)", "o universo de C7 não pôde ser derivado");
   /* (c) nomeia a origem e NÃO afirma identificação pelo contexto declarado */
   if (uOk) g.passo("(c) nomeia a origem e não afirma identificação", () => {
@@ -1019,10 +1138,21 @@ T("D010-CARD4", "C10 · tabela total sobre as 11 chaves, identidade e as DUAS di
             " COLIDE com id do engine — o item sem equivalente tem de ter id estável e próprio");
       }
     });
-    g.nota("D010-CARD4 (b) · itens COM equivalência: " + comEq + " · SEM equivalência: " + semEq +
-      (semEq ? "" : " — o ramo 'sem equivalente V3.2' NÃO tem item renderizado nesta fixture: " +
-        "declarado como não medido, e coberto só pela totalidade da tabela em (a)"));
+    g.nota("D010-CARD4 (b) · itens COM equivalência: " + comEq + " · SEM equivalência: " + semEq);
     if (!comEq) vac("(b)", "nenhum item COM equivalência renderizado — o ramo principal ficaria sem caso");
+    /* GUARDA SIMÉTRICA (2026-08-30). Até esta emenda a alínea imprimia
+       "SEM equivalência: 0 — declarado como não medido" e fechava VERDE: o ramo
+       do produto que emite `PRODUCTS[c.p].n` + `data-eid` próprio era código
+       alcançável que nenhuma fixture percorria, e qualquer mutante sobre ele
+       sobrevivia por FALTA DE CASO — não por equivalência. A rota existe (é
+       única no produto: `incident-response`@lv0, ver `ramoSemEquivalencia` em
+       `D010-F4`), logo `semEq === 0` deixa de ser notícia e passa a ser
+       REGRESSÃO: alguém tirou a rota da fixture. A assimetria anterior — (b)
+       falhando por vacuidade num ramo e a tolerando no outro — era a metade que
+       faltava. */
+    if (!semEq) vac("(b)", "nenhum item SEM equivalência renderizado — o ramo 'sem equivalente V3.2' fica " +
+      "sem caso e todo mutante sobre ele sobrevive por falta de cenário; a rota declarada em " +
+      "`D010_DECLARED['D010-F4'].ramoSemEquivalencia` é a ÚNICA alcançável no produto e saiu do render");
   }); else g.naoMedido("(b)", "a tabela de equivalência não pôde ser lida — a alínea (a) não fechou");
   /* (c) as duas direções da fusão, no MESMO card */
   g.passo("(c1/c2) fusão contra o conjunto ANEXADO, nas duas direções (E9)", () => {

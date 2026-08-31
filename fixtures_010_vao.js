@@ -299,13 +299,69 @@ const D010_F3 = {
    `vulnerability-assessment` ("Vulnerability Assessment") e nó do `MAP` com
    [FortiRecon, FortiEndpoint] — nenhum nome em comum. Um mutante que
    deduplique por qualquer critério largo mexe aqui e é visto.
+
+   ==========================================================================
+   EMENDA DE 2026-08-30 (2ª) · `incident-response` — A ÚNICA ROTA DO RAMO
+   "SEM EQUIVALENTE V3.2"
+   ==========================================================================
+   `tgtValidateHTML` tem um ramo que emite o item com `PRODUCTS[c.p].n` e um
+   `data-eid` próprio quando a chave do `MAP` não tem equivalente no catálogo
+   V3.2. Até esta emenda NENHUMA das cinco fixtures o percorria, e o próprio
+   `D010-CARD4` (b) imprimia "SEM equivalência: 0 … declarado como não medido".
+   Ramo alcançável e sem caso é a classe exata que esta demanda existe para não
+   repetir — só que do lado do produto.
+
+   ALCANCE MEDIDO no catálogo congelado (sonda de 2026-08-30, não leitura):
+   `FortiGuard-Service-Bundle` é a ÚNICA das 11 chaves sem equivalente, e
+   ocorre em 9 pares (qid, nível):
+     · `mandate`@lv0/lv1, `governance`@lv0/lv1, `policies`@lv0/lv1 —
+       capability `soc-governance`, `landscapeEnabled: false` ⇒ S4;
+     · `training`@lv0/lv1 — capability `soc-skills`, idem ⇒ S4;
+     · `incident-response`@lv0 — capability `incident-management`,
+       `landscapeEnabled: true` ⇒ **S2 com presence UNSET**.
+   S4 nunca publica, por construção. Sobra UMA rota alcançável no produto
+   inteiro, e é esta. Não é escolha de conveniência: é a única que existe.
+
+   POR QUE O NÍVEL ATUAL 0 E O ALVO 1, e não outro par:
+     · `MAP["incident-response"].lv[0].c` = [FortiSOAR, FortiGuard-Service-Bundle]
+       — o MESMO nó exercita os DOIS ramos da identidade: `FortiSOAR` tem
+       equivalente (`fortisoar`, NÃO anexado aqui, logo sobrevive) e
+       `FortiGuard-Service-Bundle` não tem. Nenhuma outra fixture põe as duas
+       formas lado a lado no mesmo nó;
+     · `lv[1].c` = [FortiSOAR] é SUBCONJUNTO ESTRITO de `lv[0].c`, e o que ele
+       perde é EXATAMENTE o item sem equivalente. Um mutante INV-5 (ler o
+       nível-alvo em vez do atual) apaga aqui o único item sem equivalente do
+       produto — a forma mais discriminante disponível. Com alvo 2 ou 3 o nó
+       esvaziaria (`lv[2].c` e `lv[3].c` são vazios) e o mutante INV-5 ficaria
+       indistinguível de "o nó não nasceu por outra razão".
+
+   CUSTO MEDIDO ANTES DE APLICAR (execução, campo a campo, 2026-08-30):
+   10 dos 16 campos declarados de D010-F4 se movem — `alvos`, `estados`,
+   `estadosCtx`, `mapNivelAtual`, `mapNivelAlvo`, `basePresented`,
+   `baseInV32Base`, `servicosPorGap`, `candidatosPorAlvo` e o censo de
+   habilitadores; todos ACRÉSCIMOS de `incident-response`/`incident-management`,
+   nenhuma chave preexistente com valor alterado. NÃO se movem: `suff`,
+   `publicavel`, `confirmadas` (15), `substituto` (false), `cardsSemPayload`
+   ([]) e `titulosCongelados` — que são os campos de que dependem C1..C4.
+   Veredito da suíte antes e depois: 7 PASS · 6 FAIL, com as linhas PASS/FAIL
+   byte a byte idênticas, razões de falha incluídas. O que se move é o que
+   deveria: `D010-CARD4` (b) sai de "SEM equivalência: 0" para 1, e o universo
+   de `D010-CARD2` (b) vai de 2 para 3 qids.
+
+   `incident-response` entra em S1-payload (4 serviços por `hasGap`) e
+   S2-contexto — é a TERCEIRA leitura divergente da fixture, e por isso reforça
+   C8 (b) em vez de só acrescentar linha. Os quatro serviços
+   (`ir-readiness-subscription`, `ir-plan-development`, `ir-playbook-development`,
+   `ttx`) ficam declarados em `servicosPorGap`, e os candidatos continuam ZERO
+   — sem isso o nó não nasceria (precedência de C8).
 --------------------------------------------------------------------------- */
-const D010_ALVOS_SERVICO = { "vulnerability-management": 1, "monitoring-coverage": 2 };
+const D010_ALVOS_SERVICO = { "vulnerability-management": 1, "monitoring-coverage": 2,
+                             "incident-response": 1 };
 
 const D010_F4 = {
   id: "D010-F4",
-  name: "vão servido · alvos com serviço por hasGap e a colisão de identidade",
-  vec: d010VecVao({ "vulnerability-management": 0, "monitoring-coverage": 0 }),
+  name: "vão servido · alvos com serviço por hasGap, a colisão de identidade e o ramo sem equivalente",
+  vec: d010VecVao({ "vulnerability-management": 0, "monitoring-coverage": 0, "incident-response": 0 }),
   arch: { saasAllowed: "yes" },
   priorities: ["automation", "endpoint"],
   targets: Object.assign({}, D010_ALVOS_VAO, D010_ALVOS_SERVICO),
@@ -801,32 +857,40 @@ const D010_DECLARED = {
     landscapeDeclarada: {},
     prioridades: ["automation", "endpoint"],
     alvos: { "automation": 1, "endpoint": 2, "network-visibility": 2, "external-surface": 2,
-             "vulnerability-management": 1, "monitoring-coverage": 2 },
-    /* Os dois qids novos saem em S1 pela leitura COM itens (1 serviço cada) e
-       em S2 pela leitura de CONTEXTO (presence UNSET). Essa divergência é o
+             "vulnerability-management": 1, "monitoring-coverage": 2, "incident-response": 1 },
+    /* Os três qids novos saem em S1 pela leitura COM itens (serviços do engine)
+       e em S2 pela leitura de CONTEXTO (presence UNSET). Essa divergência é o
        ponto inteiro de C8 (b): serviço do engine não pode bloquear o nó do
        `MAP`, e é aqui que um gate que confunda as duas leituras é pego. */
     estados:    { "automation": "S2", "endpoint": "S2", "network-visibility": "S2", "external-surface": "S2",
-                  "vulnerability-management": "S1", "monitoring-coverage": "S1" },
+                  "vulnerability-management": "S1", "monitoring-coverage": "S1", "incident-response": "S1" },
     estadosCtx: { "automation": "S2", "endpoint": "S2", "network-visibility": "S2", "external-surface": "S2",
-                  "vulnerability-management": "S2", "monitoring-coverage": "S2" },
+                  "vulnerability-management": "S2", "monitoring-coverage": "S2", "incident-response": "S2" },
     mapNivelAtual: { "automation": ["FortiSOAR"], "endpoint": ["FortiEndpoint"],
                      "network-visibility": ["FortiNDR"], "external-surface": ["FortiRecon"],
                      "vulnerability-management": ["FortiRecon", "FortiEndpoint"],
-                     "monitoring-coverage": ["SOCaaS", "FortiGuard-MDR-Service"] },
-    /* `vulnerability-management` é o único par SUBCONJUNTO ESTRITO das cinco
-       fixtures; `monitoring-coverage` esvazia. As duas formas de INV-5 ficam
-       disponíveis nos dois cartões que a emenda acrescenta. */
+                     "monitoring-coverage": ["SOCaaS", "FortiGuard-MDR-Service"],
+                     "incident-response": ["FortiSOAR", "FortiGuard-Service-Bundle"] },
+    /* `vulnerability-management` e `incident-response` são os pares SUBCONJUNTO
+       ESTRITO; `monitoring-coverage` esvazia. As duas formas de INV-5 ficam
+       disponíveis, e a de `incident-response` apaga EXATAMENTE o único item sem
+       equivalente do produto — ver o cabeçalho de D010-F4. */
     mapNivelAlvo:  { "automation": ["FortiSOAR", "FortiXDR"], "endpoint": [],
                      "network-visibility": [], "external-surface": [],
-                     "vulnerability-management": ["FortiRecon"], "monitoring-coverage": [] },
-    basePresented: ["continuous-monitoring", "endpoint-detection", "external-exposure",
+                     "vulnerability-management": ["FortiRecon"], "monitoring-coverage": [],
+                     "incident-response": ["FortiSOAR"] },
+    basePresented: ["continuous-monitoring", "endpoint-detection", "external-exposure", "incident-management",
                     "network-detection", "security-automation", "vulnerability-management"],
-    baseInV32Base: ["continuous-monitoring", "external-exposure", "network-detection", "vulnerability-management"],
+    baseInV32Base: ["continuous-monitoring", "external-exposure", "incident-management",
+                    "network-detection", "vulnerability-management"],
     cardsSemPayload: [],
     /* C8 · D010-CARD2 (b), materializado: serviço por `hasGap` em capability de
-       alvo, ZERO candidatos nas duas. */
+       alvo, ZERO candidatos nas três. `incident-management` recebe QUATRO — é a
+       capability mais servida das cinco fixtures, e ainda assim o nó do `MAP`
+       nasce ao lado, que é o enunciado de C8 (b) na sua forma mais forte. */
     servicosPorGap: { "continuous-monitoring": ["fortiguard-socaas"],
+                      "incident-management": ["ir-readiness-subscription", "ir-plan-development",
+                                              "ir-playbook-development", "ttx"],
                       "vulnerability-management": ["vulnerability-assessment"] },
     /* C10 · D010-CARD4 (c): os dois alvos servidos recebem SERVIÇO e ZERO
        candidatos (o serviço está no item 13, capability a capability), e os
@@ -835,7 +899,7 @@ const D010_DECLARED = {
        (o chip `fortiguard-socaas` já emitido ANTES de T008, homônimo da chave
        `SOCaaS` do nó do `MAP` do MESMO qid) é objeto de D010-CARD4 (c1)/(c2). */
     candidatosPorAlvo: { "automation": [], "endpoint": [], "network-visibility": [], "external-surface": [],
-                         "vulnerability-management": [], "monitoring-coverage": [] },
+                         "vulnerability-management": [], "monitoring-coverage": [], "incident-response": [] },
     titulosCongelados: [{ texto: "Como a Fortinet pode apoiar nas prioridades declaradas" }],
     /* a colisão, NOMEADA — com o par de controle que a torna bidirecional */
     colisaoDeIdentidade: {
@@ -864,9 +928,10 @@ const D010_DECLARED = {
       "network-visibility":      { payload: "S2", contexto: "S2" },
       "external-surface":        { payload: "S2", contexto: "S2" },
       "vulnerability-management": { payload: "S1", contexto: "S2" },
-      "monitoring-coverage":     { payload: "S1", contexto: "S2" }
+      "monitoring-coverage":     { payload: "S1", contexto: "S2" },
+      "incident-response":       { payload: "S1", contexto: "S2" }
     },
-    leiturasDivergentes: ["monitoring-coverage", "vulnerability-management"],
+    leiturasDivergentes: ["incident-response", "monitoring-coverage", "vulnerability-management"],
     /* C10 (c) · os DOIS homônimos no MESMO card, declarados como conjunto
        TOTAL: os pares abaixo têm de ser exatamente a tabela de equivalência
        inteira do catálogo (`D010_EQUIVALENCIA_NOME`), e os dois têm de estar no
@@ -879,6 +944,22 @@ const D010_DECLARED = {
         { chaveMap: "SOCaaS", servico: "fortiguard-socaas", nome: "FortiGuard SOCaaS", anexado: true },
         { chaveMap: "FortiGuard-MDR-Service", servico: "fortiguard-mdr", nome: "FortiGuard MDR", anexado: false }
       ]
+    },
+    /* C10 (b) · A ROTA DO RAMO "SEM EQUIVALENTE V3.2", declarada como DADO.
+       Existe porque o ramo tem UMA única rota alcançável no produto inteiro
+       (ver o cabeçalho de D010-F4): se ela sair da fixture por qualquer edição,
+       o ramo volta a ser código sem caso e nenhum mutante sobre ele morre —
+       exatamente o estado que esta emenda veio desfazer. Sem esta declaração o
+       desaparecimento seria silencioso, porque `D010-CARD4` (b) só sabe julgar
+       os itens que FORAM renderizados.
+       Conferida contra o CATÁLOGO e o ENGINE (`frozen`), nunca contra o DOM: a
+       superfície é objeto de gate (linha divisória de T030). */
+    ramoSemEquivalencia: {
+      qid: "incident-response", capability: "incident-management",
+      chaveMap: "FortiGuard-Service-Bundle", nomeProduto: "Serviços FortiGuard",
+      /* o companheiro COM equivalência no MESMO nó — é ele que faz o nó medir
+         as duas formas de identidade de uma vez */
+      chaveComEquivalencia: "FortiSOAR", idEquivalente: "fortisoar"
     }
   }
 };
@@ -980,7 +1061,33 @@ const D010_VACUIDADES_CONHECIDAS = [
     consequencia: "a cláusula é guarda redundante, não load-bearing. Decisão do proprietário de 2026-08-29: " +
             "permanece no predicado como defesa contra mudança futura no engine, o texto do critério para de " +
             "lhe atribuir peso e NENHUM mutante a tem como alvo. Registro aqui para que a matriz gate↔mutante " +
-            "não ganhe de novo um mutante que nenhuma fixture pode matar." }
+            "não ganhe de novo um mutante que nenhuma fixture pode matar." },
+  { criterio: "C10 · D010-CARD4 (b) · ramo \"sem equivalente V3.2\"",
+    status: "FECHADA em 2026-08-30 pela 2ª emenda de D010-F4", fixture: "D010-F4",
+    medido: "achado do `ui-engineer` no T008, confirmado por sonda independente sobre o catálogo congelado: " +
+            "`FortiGuard-Service-Bundle` é a ÚNICA das 11 chaves sem equivalente e ocorre em 9 pares " +
+            "(qid, nível); 8 deles pertencem a `soc-governance`/`soc-skills`, ambas `landscapeEnabled: false`, " +
+            "logo S4 por construção e nunca publicam. A 9ª — `incident-response`@lv0, capability " +
+            "`incident-management`, `landscapeEnabled: true` — é a ÚNICA rota alcançável no produto inteiro, e " +
+            "nenhuma das cinco fixtures a percorria. O próprio gate imprimia a lacuna: " +
+            "\"SEM equivalência: 0 … declarado como não medido\".",
+    consequencia: "a alínea passa a ter os DOIS ramos da identidade no MESMO nó — `FortiSOAR` (equivalente " +
+            "`fortisoar`, não anexado, sobrevive) e `FortiGuard-Service-Bundle` (sem equivalente). " +
+            "`D010-CARD4` (b) ganha guarda de não-vacuidade SIMÉTRICA: `semEq === 0` passa a ser FAIL, do " +
+            "mesmo jeito que `comEq === 0` já era — senão a rota pode sair da fixture sem que nada reclame.",
+    mutantesQueMorrem: "medidos por simulação da saída no DOM (zero byte de produto): item sem equivalente " +
+            "DESCARTADO em silêncio, ordem do catálogo INVERTIDA e rótulo do modo trocado no item sem " +
+            "equivalente eram TRÊS SOBREVIVENTES antes desta passagem — nenhum gate os matava. Morrem com a " +
+            "extensão de C7 (a)/(b) a D010-F4; `data-eid` vazio, `data-eid` colidindo com id do engine e nome " +
+            "fora de `PRODUCTS[c.p].n` já morriam em C10 (b).",
+    equivalenteDeclarado: "emitir o item sem equivalente com `data-eid` = a CHAVE CRUA do `MAP` " +
+            "(`FortiGuard-Service-Bundle`, sem o prefixo `map:`) SOBREVIVE — e deve sobreviver. A spec §C10 (b) " +
+            "ratifica \"sem equivalência, com `PRODUCTS[c.p].n` e `data-eid` ESTÁVEL\"; ela não ratifica o " +
+            "prefixo literal. A chave crua é estável, própria e não colide com id algum do engine (medido: " +
+            "zero dos 45 ids contêm \":\"), portanto satisfaz o critério. Pinar o prefixo faria o gate exigir " +
+            "mais do que o critério ratificado — R10 §1 ao contrário. Fica registrado como EQUIVALENTE " +
+            "DECLARADO, no mesmo padrão de A5, para que ninguém escreva esse mutante de novo esperando morte. " +
+            "Se o proprietário quiser o prefixo pinado, isso é mudança de critério e sobe ao `product-owner`." }
 ];
 
 /* ===================== conferência dos estados declarados ================== */
@@ -995,7 +1102,7 @@ const _eqL = (a, b) => a.slice().sort().join("|") === b.slice().sort().join("|")
 const D010_DECLARACOES_OBRIGATORIAS = {
   "D010-F3": ["gateSuficiencia", "diferencialC9"],
   "D010-F4": ["gateSuficiencia", "diferencialC9", "leiturasPorQid", "leiturasDivergentes",
-              "colisaoDeIdentidade", "homonimosNoCard"]
+              "colisaoDeIdentidade", "homonimosNoCard", "ramoSemEquivalencia"]
 };
 
 /* Confere, sobre um runtime JÁ com a fixture aplicada, TODO o estado declarado.
@@ -1359,6 +1466,57 @@ function d010AssertFixtureStates(w, fx) {
     if (comServico !== 1)
       fail("homônimos com serviço anexado = " + comServico + " (esperado exatamente 1) — sem um anexado e um livre " +
            "o card de " + H.qid + " perde uma das duas direções da fusão");
+  }
+
+  /* 17 · a ROTA do ramo "sem equivalente V3.2" continua alcançável nesta
+          fixture. Conferida sobre o CATÁLOGO e o ENGINE, jamais sobre o DOM —
+          o que a tela faz com a rota é objeto de D010-CARD1 (a)/(b) e
+          D010-CARD4 (b). Aqui se prova só que o CASO existe: sem esta guarda,
+          uma edição de vetor ou de alvo devolveria o ramo à condição de código
+          sem caso e o gate voltaria a imprimir "SEM equivalência: 0" como se
+          fosse notícia velha, em vez de regressão. */
+  if (dec.ramoSemEquivalencia) {
+    const S = dec.ramoSemEquivalencia;
+    if (d010CapOf(w, S.qid) !== S.capability)
+      fail("ramo sem equivalência: qid " + S.qid + " pertence a " + d010CapOf(w, S.qid) +
+           ", declarado " + S.capability);
+    const V32C = V.CAPABILITIES[S.capability] || {};
+    if (V32C.landscapeEnabled !== true)
+      fail("ramo sem equivalência: " + S.capability + " tem landscapeEnabled=" + V32C.landscapeEnabled +
+           " — com `false` a prática é S4 por construção e a rota NÃO é alcançável");
+    if (d010CtxStateOf(w, S.qid) !== "S2")
+      fail("ramo sem equivalência: " + S.qid + " em " + d010CtxStateOf(w, S.qid) +
+           " de contexto (esperado S2) — fora de S2 o nó a-validar não nasce e o ramo fica sem caso");
+    const noNoS = d010MapItems(w, S.qid, ansNow[K(S.qid)]);
+    if (noNoS.indexOf(S.chaveMap) < 0)
+      fail("ramo sem equivalência: " + S.chaveMap + " fora de MAP[" + S.qid + "].lv[atual].c = " +
+           JSON.stringify(noNoS) + " — a única rota alcançável do ramo saiu da fixture");
+    if (noNoS.indexOf(S.chaveComEquivalencia) < 0)
+      fail("ramo sem equivalência: o companheiro COM equivalência " + S.chaveComEquivalencia +
+           " saiu de MAP[" + S.qid + "].lv[atual].c = " + JSON.stringify(noNoS) +
+           " — o nó deixa de medir as DUAS formas de identidade de uma vez");
+    if (d010ProductName(w, S.chaveMap) !== S.nomeProduto)
+      fail("ramo sem equivalência: PRODUCTS[" + S.chaveMap + "].n = " +
+           JSON.stringify(d010ProductName(w, S.chaveMap)) + ", declarado " + JSON.stringify(S.nomeProduto));
+    /* a chave declarada é MESMO a sem equivalente, e a companheira MESMO tem
+       equivalente — lido da tabela servida como dado, nunca presumido */
+    const TAB = w.__DEV.TGT_EQUIV || {};
+    if (!(S.chaveMap in TAB) || (typeof TAB[S.chaveMap] === "string" && TAB[S.chaveMap]))
+      fail("ramo sem equivalência: TGT_EQUIV[" + S.chaveMap + "] = " + JSON.stringify(TAB[S.chaveMap]) +
+           " — a chave declarada como SEM equivalente passou a ter equivalente, e a rota mudou de ramo");
+    if (TAB[S.chaveComEquivalencia] !== S.idEquivalente)
+      fail("ramo sem equivalência: TGT_EQUIV[" + S.chaveComEquivalencia + "] = " +
+           JSON.stringify(TAB[S.chaveComEquivalencia]) + ", declarado " + JSON.stringify(S.idEquivalente));
+    /* o equivalente do companheiro NÃO pode estar anexado, senão ele funde (E9)
+       e o nó volta a ter uma só forma de identidade */
+    const anexS = (svcs[S.capability] || []);
+    const candS = ((res.contexts[S.capability] || {}).candidates || []).map(x => x.itemId);
+    if (candS.length)
+      fail("ramo sem equivalência: " + S.capability + " tem candidatos " + JSON.stringify(candS) +
+           " — pela precedência de C8 o nó do `MAP` não nasce e a rota fica inalcançável");
+    if (anexS.concat(candS).indexOf(S.idEquivalente) >= 0)
+      fail("ramo sem equivalência: " + S.idEquivalente + " passou a estar ANEXADO a " + S.capability +
+           " — o companheiro COM equivalência funde e o nó perde uma das duas formas de identidade");
   }
 
   return true;

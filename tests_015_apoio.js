@@ -51,19 +51,41 @@
    estados ali é ruído, e nenhuma fixture é inventada para dar aparência de
    cobertura. São: TIT1 (a)(b)(c)(d)(e) · ANC1 (a)(b)(d) · HOWTO1 (a)(b)(c)(e).
 
-   DIVERGÊNCIA MEDIDA CONTRA A TABELA DA SPEC, registrada aqui e reportada ao
-   orquestrador — a spec classifica `TIT1(h)` como "discriminante real por
-   estado do DOM" e afirma que `M18` "derruba `U15` junto". MEDIDO em
-   2026-08-31 nesta worktree: FALSO para a metade de runtime. O
-   `.section-title` de `#v32prio` vive em `#v32support` < `#v32panel`, e
-   `hideLegacyRecommendation` (`ui_v32.js:178-193`) só varre FILHOS DIRETOS do
-   escopo de apoio e RETORNA em `#v32panel` — o nó é inalcançável pelo ocultador
-   em qualquer estado. Simulação direta de `M18` sobre o HTML construído: zero
-   diferença observável (`.v32-hidden` do nó, censo de ocultos e `noOverreach`
-   de `U15` idênticos). Consequência aplicada abaixo: (h) é PARTIDA em duas —
-   (h1) pertinência às TRÊS cópias da lista, que `M18` mata de fato, e (h2) o
-   observável de runtime, mantido como CLÁUSULA DEFENSIVA INALCANÇÁVEL POR
-   CONSTRUÇÃO e declarada SEM MUTANTE, mesma classe de `GOV1(d)`.
+   AS QUATRO DIVERGÊNCIAS DO RED, e como a ERRATA E2 as resolveu. Foram medidas
+   contra a spec no red (`8396a4c`) e DEVOLVIDAS, não acomodadas; em duas a spec
+   se emendou (R10 §1). Nenhum gate foi afrouxado.
+
+   E2.1 · `TIT1(h)` era meio-inerte, e a frase "`M18` derruba `U15` junto" era
+   FALSA. Duas razões, e a segunda é mais forte que a medição que a levantou:
+     (i) RUNTIME — `hideLegacyRecommendation` (`ui_v32.js:178-193`) varre FILHOS
+         DIRETOS do escopo e RETORNA em `#v32panel`; o `.section-title` de
+         `#v32prio` é NETO (`#v32panel > #v32support > .section-title`), logo
+         nunca é visitado. Simulação direta de `M18` no HTML construído: zero
+         diferença observável (`.v32-hidden` do nó, censo de ocultos e o
+         `noOverreach` de `U15`, todos idênticos);
+     (ii) ORÁCULO — `U15` NÃO LÊ a lista do produto: usa cópia HARDCODED
+         (`tests_ui_m31.js:279-280`), de onde saem `inHideRendered` e
+         `noOverreach`. Ainda que o runtime mudasse, mutar o array do produto
+         não teria como alcançar `U15`.
+   Consequência aplicada: (h) é PARTIDA em (h1) pertinência — o que `M18` mata,
+   e seu único carrasco — e (h2) runtime, mantida SEM MUTANTE como CLÁUSULA
+   SENTINELA. Ver o bloco de (h2) para a distinção, que NÃO é cosmética.
+
+   E2.2 · `M15` mata `(b)`, não `(b)` e `(d)`: numa entrega ADITIVA o nó novo
+   compensa o texto suprimido. Adotada a FORMA AMPLA (suprimir as opções dos
+   QUATRO qids, queda medida de ~1.100 chars), que mata as duas. Na forma
+   estreita `(d)` ficaria sem carrasco. O limite do instrumento está escrito na
+   própria alínea `(d)`.
+
+   E2.3 · `M14` nascia SOBREVIVENTE — nenhum dos sete estados exercitava
+   `presentationOf === null`. O caso entrou como estado próprio `E8`, e o
+   conjunto de `data-cap` NÃO é declarado no assert da fixture, porque
+   declará-lo preemptaria `NOSUB1(a)`: fixture declara estado, gate declara
+   expectativa; quem escreve os dois no mesmo lugar não tem oráculo, tem eco.
+
+   E2.4 · `N40`/`N41` NÃO alcançam o papel (o relatório é filho de `body`, fora
+   de `#app` — medido). A metade-papel de `(g)` deixa de ser redundância com o
+   acervo congelado e vira OBRIGAÇÃO NOVA, com carrasco próprio: `M19`.
 
    ==========================================================================
    O QUE ESTA SUÍTE NÃO FAZ
@@ -373,10 +395,23 @@ T("D015-TIT1", "C1 · o título de #v32prio nomeia a leitura (tela e papel), com
       throw new Error("o eyebrow contém a oração guardada por U1/U2/U7 — quebraria suíte congelada, não este gate");
   });
 
-  /* (g) UNICIDADE — dois escopos DISJUNTOS (o assert da fixture prova a
-     disjunção). O precedente é vivo: `N40`/`N41` (`tests_journey_m45.js:220-231`)
-     já reprovam duplicata por igualdade trimada. */
-  g.passo("(g) [E1] o eyebrow é único em `#app .eyebrow,#app h3` e o <h3> é único em `#v32-print-report`", () => {
+  /* (g) UNICIDADE — DUAS METADES, com escopos DISJUNTOS (o assert da fixture
+     prova a disjunção) e com PODER DISCRIMINANTE MUITO DIFERENTE. A distinção
+     é da errata E2 §E2.4 e está aqui porque ela decide o valor da alínea:
+
+       METADE TELA (`#app .eyebrow, #app h3`) — carrasco `M17`. É PROVA FRACA,
+       e fica declarado: `N40` (`tests_journey_m45.js:220-224`) exige unicidade
+       por igualdade trimada NO MESMO ESCOPO, logo mataria `M17` também.
+       Mutante que morre em dois lugares não demonstra poder do gate NOVO.
+
+       METADE PAPEL (`#v32-print-report`) — carrasco `M19`, e é o ÚNICO.
+       MEDIDO: `N41` (`:225-237`) tem escopo `#pr-journey`, IRMÃO de
+       `#pr-support`, com ZERO `<h3>` dentro, e casa `<h2>` por regex sobre
+       `pj.innerHTML`; `N40` varre `#app`, e o relatório impresso é filho de
+       `body`. NENHUM gate congelado alcança o `<h3>` novo. Sem `M19` esta
+       metade seria verde sem poder de reprovar — a família que esta jornada
+       já catalogou. */
+  g.passo("(g) [E1] o eyebrow é único em `#app .eyebrow,#app h3` (metade TELA) e o <h3> é único em `#v32-print-report` (metade PAPEL)", () => {
     if (!okF) return vac("(g)", "sem sujeito medido em (f)");
     comSujeito.forEach(e => {
       const c = censo("HEAD", e);
@@ -384,12 +419,12 @@ T("D015-TIT1", "C1 · o título de #v32prio nomeia a leitura (tela e papel), com
         throw new Error(e + ": #v32-print-report está DENTRO de #app — os dois escopos deixaram de ser disjuntos");
       const nTela = c.appTitulos.filter(t => t === c.eyebrow).length;
       if (nTela !== 1)
-        throw new Error(e + ": o eyebrow " + JSON.stringify(c.eyebrow) + " aparece " + nTela +
+        throw new Error("(g) metade TELA · " + e + ": o eyebrow " + JSON.stringify(c.eyebrow) + " aparece " + nTela +
           "x em `#app .eyebrow,#app h3` (esperado exatamente 1)");
       const nPapel = c.papelTitulos.filter(t => t === c.h3PrioTexto).length;
       if (nPapel !== 1)
-        throw new Error(e + ": o título " + JSON.stringify(c.h3PrioTexto) + " aparece " + nPapel +
-          "x entre os títulos de #v32-print-report (esperado exatamente 1)");
+        throw new Error("(g) metade PAPEL · " + e + ": o título " + JSON.stringify(c.h3PrioTexto) + " aparece " + nPapel +
+          "x entre os títulos de #v32-print-report (esperado exatamente 1) — metade SEM cobertura congelada");
     });
   });
 
@@ -405,19 +440,33 @@ T("D015-TIT1", "C1 · o título de #v32prio nomeia a leitura (tela e papel), com
     g.nota("três cópias conferidas: " + copias.map(c => c.fonte + " (" + c.itens.length + " itens)").join(" · "));
   });
 
-  /* (h2) CLÁUSULA DEFENSIVA INALCANÇÁVEL POR CONSTRUÇÃO, SEM MUTANTE.
-     Medido em 2026-08-31: `hideLegacyRecommendation` varre só filhos DIRETOS
-     do escopo de apoio e retorna em `#v32panel`; o `.section-title` de
-     `#v32prio` vive dentro de `#v32panel > #v32support`, logo nenhum estado o
-     alcança. Fica porque é o OBSERVÁVEL da propriedade e passaria a ter
-     estado alcançável no dia em que o escopo do ocultador mudar — que é
-     exatamente quando alguém precisa saber. Não é código morto: é a classe
-     "cláusula defensiva declarada" já registrada em `design-decisions.md`. */
-  g.passo("(h2) o nó do eyebrow nunca recebe `.v32-hidden` em E1..E7 [cláusula defensiva, sem mutante]", () => {
+  /* (h2) CLÁUSULA SENTINELA, SEM MUTANTE — e NÃO a classe da 010.
+     ------------------------------------------------------------------------
+     A distinção é da errata E2 §E2.1 e é OPERACIONAL, não cosmética:
+
+       · "cláusula defensiva inalcançável por construção" (classe da 010,
+         registrada em `design-decisions.md`, e onde `GOV1(d)` mora) é a
+         asserção que NENHUMA mudança pode tornar falsa — só pode deixar o
+         produto mais conservador. O que ela diz ao leitor é NÃO REPORTE;
+       · CLÁUSULA SENTINELA é falsificável, e o GATILHO TEM NOME. O que ela diz
+         ao leitor é REAVALIE QUANDO O GATILHO DISPARAR.
+
+     Arquivar uma como a outra mata a alínea de abandono.
+
+     GATILHO NOMEADO desta sentinela: mudança do ESCOPO DE VARREDURA de
+     `hideLegacyRecommendation`. Hoje o nó é neto de `#v32panel` e a varredura
+     só visita filhos diretos, retornando naquele container — por isso nenhum
+     estado a falsifica. Mas o escopo JÁ FOI ALTERADO UMA VEZ: a 5.2 o moveu de
+     `section.screen` para a seção de apoio (`ui_v32.js:171-177`). Um título
+     dentro de `HIDE_EYEBROWS` é bomba armada para a próxima vez que alguém
+     mexer nisso — e é (h1), no fonte, que a desarma. */
+  g.passo("(h2) o nó do eyebrow nunca recebe `.v32-hidden` em E1..E8 [cláusula SENTINELA, sem mutante]", () => {
     if (!okF) return vac("(h2)", "sem sujeito medido em (f)");
     const sujos = comSujeito.filter(e => { const c = censo("HEAD", e); return c.eyebrowOculto || c.tituloEyebrowOculto; });
     if (sujos.length) throw new Error("o título do bloco V3.2 foi ocultado em: " + sujos.join(","));
-    g.nota("(h2) inalcançável por construção — declarada SEM mutante (ver cabeçalho); estados varridos: " + comSujeito.join(","));
+    g.nota("(h2) SENTINELA — sem mutante, mas FALSIFICÁVEL; gatilho nomeado: mudança do escopo de varredura de " +
+      "hideLegacyRecommendation (já alterado uma vez pela 5.2). NÃO arquivar como a classe da 010. Estados varridos: " +
+      comSujeito.join(","));
   });
 }));
 
@@ -660,7 +709,7 @@ function exigeAncora(g, alinea) {
 const conj = a => (a === null ? null : a.slice().sort());
 const igual = (a, b) => JSON.stringify(conj(a)) === JSON.stringify(conj(b));
 
-T("D015-NOSUB1", "C5 · nada foi removido em E1..E7 contra a âncora imutável " + D015_ANCORA_COMMIT.slice(0, 7), () => gate(g => {
+T("D015-NOSUB1", "C5 · nada foi removido em E1..E8 contra a âncora imutável " + D015_ANCORA_COMMIT.slice(0, 7), () => gate(g => {
   if (!exigeAncora(g, "(âncora)")) return;
   g.nota("âncora conferida: " + ANCORA.spec + " · " + ANCORA.bytes + " bytes · sha256 " + ANCORA.sha.slice(0, 16) + "…");
 
@@ -695,7 +744,20 @@ T("D015-NOSUB1", "C5 · nada foi removido em E1..E7 contra a âncora imutável "
       if (!igual(A[k], H[k]))
         erros.push("(c) " + e + " " + nome + ": âncora=" + JSON.stringify(conj(A[k])) + " ≠ HEAD=" + JSON.stringify(conj(H[k])));
     });
-    /* (d) comprimentos de #pr-support e #pr-findings NÃO DIMINUEM */
+    /* (d) comprimentos de #pr-support e #pr-findings NÃO DIMINUEM.
+       ---------------------------------------------------------------------
+       [E2 §E2.2] ESTA ALÍNEA É REDE, NÃO GUARDA, e o limite fica escrito aqui
+       para que ninguém a cite como prova de que nada sumiu: numa entrega
+       ADITIVA ela NÃO DETECTA SUBTRAÇÃO MENOR QUE A PRÓPRIA ADIÇÃO — o texto
+       novo compensa o texto removido e o saldo continua não negativo. MEDIDO:
+       `M15` na forma estreita (suprimir as opções de UM qid) removeu conteúdo
+       real e (d) NÃO disparou; só a forma AMPLA (os QUATRO qids, queda de
+       ~1.100 chars em `#pr-findings`) a faz reprovar.
+
+       É o ESPELHO DA E18 DA 010: lá a contagem de caracteres REVELOU uma
+       subtração de 31%; aqui ela pode MASCARAR uma. As guardas de
+       não-subtração são (a), (b) e (c), que comparam CONJUNTOS e apanham a
+       perda de UM item; (d) só apanha o grosseiro. */
     [["#pr-support", "lenSupport"], ["#pr-findings", "lenFindings"]].forEach(([nome, k]) => {
       if (A[k] === null) return;                        /* nasceu no HEAD: aditivo, legítimo */
       if (H[k] === null) { erros.push("(d) " + e + " " + nome + ": existia na âncora e SUMIU no HEAD"); return; }
@@ -735,7 +797,7 @@ T("D015-NOSUB1", "C5 · nada foi removido em E1..E7 contra a âncora imutável "
     g.nota("(d) medido em " + medido.d.join(", "));
   });
 
-  g.passo("(a)(b)(c)(d) nenhum conjunto encolheu em E1..E7", () => {
+  g.passo("(a)(b)(c)(d) nenhum conjunto encolheu em E1..E8", () => {
     if (erros.length) throw new Error(erros.length + " remoção(ões) detectada(s) · " + erros.join("  ⟂  "));
   });
 }));
@@ -749,7 +811,7 @@ T("D015-NOSUB1", "C5 · nada foi removido em E1..E7 contra a âncora imutável "
    declaração de C2 para o card-alvo), que roda em worktree efêmera (T022)
    porque muta arquivo `PROTECTED` — o harness automatizado nunca o toca.
    `#pr-target` é lido do HTML CONSTRUÍDO: ler não é tocar. */
-T("D015-GOV1", "C6 · #pr-target byte-idêntico à âncora em E1..E7 — ui_target_v32.js intocado, provado pelo produto", () => gate(g => {
+T("D015-GOV1", "C6 · #pr-target byte-idêntico à âncora em E1..E8 — ui_target_v32.js intocado, provado pelo produto", () => gate(g => {
   if (!exigeAncora(g, "(âncora)")) return;
 
   const comAlvo = [], semAlvo = [], erros = [];

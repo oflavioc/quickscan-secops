@@ -123,24 +123,17 @@ const D015_E3 = {
    controle de `D015-ANC1(c)`: sem ele, só o ramo "não declarado" teria caso e
    `M5` (emitir a ancoragem apenas em um ramo) sobreviveria.
 
-   E4 CARREGA TAMBÉM O CARD NEUTRO DE PRIORIDADE, e não por elegância: a spec
-   nomeia QUATRO estados do bloco `#v32prio` que `D015-NOSUB1(a)` promete
-   preservar — card completo, card com serviços, card de encaminhamento e
-   CARD NEUTRO. Medido em 2026-08-31: nos sete estados originais NENHUMA
-   capability de prioridade caía em `presentationOf === null`, de modo que o
-   mutante `M14` (tirar a cláusula `businessPriority.flag` do filtro de
-   `prioCaps`) não removia nada e SOBREVIVIA — alínea sem carrasco. A varredura
-   de 120 combinações achou o caso: `external-exposure` com `presence` PRESENT
-   e o qid `external-surface` respondido em 2 e declarado prioridade entra em
-   `#v32prio` SÓ pela cláusula da flag. É o par de controle de `M14`.
+   O CARD NEUTRO DE PRIORIDADE NÃO MORA AQUI. Na primeira escrita eu o enfiei
+   nesta fixture; a errata E2 (§E2.3) o promoveu a estado próprio — `E8` —,
+   porque é a borda C5 do refinamento e misturá-lo com "contexto completo"
+   apagaria a identidade dos dois. E4 volta a ser só o ramo declarado.
 -------------------------------------------------------------------------- */
 const D015_E4 = {
-  id: "E4", nome: "contexto completo · quatro gaps no ramo declarado + card neutro de prioridade",
-  vec: d015Vec, priorities: ["automation", "logs", "external-surface"], targets: D015_ALVOS,
+  id: "E4", nome: "contexto completo · quatro gaps no ramo declarado",
+  vec: d015Vec, priorities: ["automation", "logs"], targets: D015_ALVOS,
   presence: {
     "detection-engineering": "PRESENT", "security-analytics": "PRESENT",
-    "security-automation": "PRESENT", "vulnerability-management": "PRESENT",
-    "external-exposure": "PRESENT"
+    "security-automation": "PRESENT", "vulnerability-management": "PRESENT"
   },
   arch: { saasAllowed: "yes" },
   estado: {
@@ -199,11 +192,55 @@ const D015_E7 = {
   }
 };
 
+/* --------------------------------------------------------------------------
+   E8 · prioridade declarada SEM gap — `presentationOf === null` e o card
+   `neutralPrioCardHTML` [E2 §E2.3]
+   --------------------------------------------------------------------------
+   É a borda C5 do refinamento, levantada na Fase 0 pelo `product-owner` e não
+   levada à tabela E1–E7; entra aqui creditada à varredura que a encontrou.
+
+   POR QUE ELA É NECESSÁRIA, e não decorativa: dos sete estados originais
+   NENHUM tinha capability de prioridade caindo em `presentationOf === null` —
+   todas entravam em `prioCaps` por mérito próprio. O mutante `M14` (tirar a
+   cláusula `businessPriority.flag` do filtro) não removia nada e nascia
+   **SOBREVIVENTE**: `D015-NOSUB1(a)` prometia preservar os QUATRO estados do
+   bloco e nunca via o quarto. Varredura de 120 combinações
+   (capability × presence × nível) achou o caso: `external-exposure` com
+   `presence` PRESENT e `external-surface` respondido em 2 — sem gap, logo sem
+   a terceira cláusula de `presentationOf` — entra em `#v32prio` SÓ pela flag.
+
+   O conjunto de `data-cap` NÃO é declarado no `estado` desta fixture, e isso é
+   deliberado: declará-lo faria o assert reprovar antes de `D015-NOSUB1(a)`,
+   e a alínea conferiria a fixture contra a própria declaração. Fixture declara
+   estado; gate declara expectativa (E2 §E2.3).
+
+   POR QUE HÁ UMA SEGUNDA PRIORIDADE (`automation`), e ela não é enfeite:
+   MEDIDO na bateria negativa — com `external-surface` sozinha, `M14` esvazia
+   `prioCaps` por completo, `#v32prio` deixa de ser emitido, e o assert desta
+   fixture (que declara `v32prio: true`) reprova ANTES de qualquer gate. Os
+   CINCO gates caem juntos: detecção incidental, não kill, e matriz poluída.
+   `automation` é capability de gap, entra em `prioCaps` por mérito próprio e
+   SOBREVIVE a `M14` — então o bloco continua existindo e só o CONJUNTO encolhe,
+   que é exatamente o que `D015-NOSUB1(a)` mede. Mutante isolante exige estado
+   com sobrevivente.
+-------------------------------------------------------------------------- */
+const D015_E8 = {
+  id: "E8", nome: "prioridade declarada sem gap · card neutro (presentationOf === null) + sobrevivente",
+  vec: d015Vec, priorities: ["external-surface", "automation"], targets: D015_ALVOS,
+  presence: { "external-exposure": "PRESENT" }, arch: { saasAllowed: "yes" },
+  estado: {
+    legado: false, v32prio: true, v32support: true, camada1Visivel: true,
+    gapSupportQids: ["detection-lifecycle", "automation", "logs", "vulnerability-management"],
+    ramos: ["NDECL", "NDECL", "NDECL", "NDECL"],
+    prTarget: true, suficiencia: true, prSupport: true, prFindings: true
+  }
+};
+
 const D015_FIXTURES = {
   "E1": D015_E1, "E2": D015_E2, "E3": D015_E3, "E4": D015_E4,
-  "E5": D015_E5, "E6": D015_E6, "E7": D015_E7
+  "E5": D015_E5, "E6": D015_E6, "E7": D015_E7, "E8": D015_E8
 };
-const D015_ESTADOS = ["E1", "E2", "E3", "E4", "E5", "E6", "E7"];
+const D015_ESTADOS = ["E1", "E2", "E3", "E4", "E5", "E6", "E7", "E8"];
 
 /* ===================== aplicação sobre o runtime real ===================== */
 

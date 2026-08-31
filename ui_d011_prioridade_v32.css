@@ -23,7 +23,12 @@
    `1 / -1` faz a frase ocupar a faixa inteira acima da grade e da coluna-resumo,
    sem deslocar nenhuma das duas e sem entrar como célula da grade.
    `var(--muted)` é TOKEN da Camada 1 consumido como token (não é seletor
-   alheio): 8,17:1 sobre `--surface` na tela e 10,86:1 no papel. `--faint`
+   alheio). PREVISTO na Fase 2, por calculo sobre os tokens: 8,17:1 na tela e
+   10,86:1 no papel. MEDIDO por D011-CON1 no job visual do CI (2026-08-31,
+   run 33426062475), sobre as cores resolvidas em navegador real: 8,82:1 na
+   tela, contra o minimo 4,5:1. A divergencia entre previsto e medido e
+   esperada — o calculo usa o token, o gate usa a cor efetiva —, e o numero
+   citavel e o MEDIDO. `--faint`
    daria 4,92:1 — passa, mas sem folga, e por isso não é a escolha.
    O juiz do contraste continua sendo D011-CON1 sobre as cores resolvidas. */
 .d011-legenda{

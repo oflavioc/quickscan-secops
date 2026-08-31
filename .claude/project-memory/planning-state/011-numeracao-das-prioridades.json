@@ -1,0 +1,12 @@
+{
+  "demanda": "011-numeracao-das-prioridades",
+  "phase": "specify",
+  "spec_dir": "specs/011-numeracao-das-prioridades",
+  "branch": "feature/011-numeracao-das-prioridades",
+  "brief": "Item 1 do cliente (2026-08-27): 'algumas questoes dentro das prioridades ficaram sem numeracao'. O glifo NAO e numeracao - e o atalho de teclado, e o '.' e a ausencia dele desenhada a partir do decimo item. O PO mediu TRES causas de 'numero faltando', nao uma, e concluiu que a lista NAO DEVE ser numerada: a ordem subjacente e severidade calculada pelo produto, e numerar ancoraria a escolha do negocio nela (doutrina da INV-5), colidindo com a numeracao legitima de 'Prioridade 1..3' por ordem de DECLARACAO. O defeito real e o glifo numerico ler como indice.",
+  "refinement": {
+    "status": "approved",
+    "approved_at": "2026-08-31",
+    "notes": "DECIDIDO SOB DELEGACAO de 2026-08-29. Rota aprovada: (a) desambiguar na camada UX (ui_ux_v32.js/.css), classe NAO protegida, rito NENHUM. Recusadas com o rito nomeado: Camada 1 (frozen, D2 Porta B), remapear teclas por captura (anula o congelado por fora e mata UX14), e usar '0' para o decimo (move a fronteira sem fechar o vao). A rota 'nao fazer nada e explicar' ficou desenhada e disponivel e foi recusada por duas razoes MEDIDAS: o sintoma aparece no cenario tipico (>=10 gaps) e explicar nao conserta o nome acessivel do botao. P2: existe demanda. P9: lista vazia NAO entra no escopo - defeito distinto, com cadeia pronta, vira achado registrado. P10: slug mantido (R12). Glossario: nenhum termo novo; o verbete 'Tecla de atalho (priorizacao)' da 009 confere e continua verdadeiro depois da rota (a)."
+  }
+}

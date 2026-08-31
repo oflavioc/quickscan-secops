@@ -1,6 +1,6 @@
 {
   "demanda": "011-numeracao-das-prioridades",
-  "phase": "tasks",
+  "phase": "red",
   "spec_dir": "specs/011-numeracao-das-prioridades",
   "branch": "feature/011-numeracao-das-prioridades",
   "brief": "Item 1 do cliente (2026-08-27): 'algumas questoes dentro das prioridades ficaram sem numeracao'. O glifo NAO e numeracao - e o atalho de teclado, e o '.' e a ausencia dele desenhada a partir do decimo item. O PO mediu TRES causas de 'numero faltando', nao uma, e concluiu que a lista NAO DEVE ser numerada: a ordem subjacente e severidade calculada pelo produto, e numerar ancoraria a escolha do negocio nela (doutrina da INV-5), colidindo com a numeracao legitima de 'Prioridade 1..3' por ordem de DECLARACAO. O defeito real e o glifo numerico ler como indice.",
@@ -23,5 +23,17 @@
     "status": "approved",
     "approved_at": "2026-08-31",
     "notes": "DECIDIDO SOB DELEGACAO. 33 tarefas em 7 waves (2·3·5·3·3·7·10), uma tarefa por arquivo, dono unico. Serie de repins R0-R6c, comecando em R0 porque os artefatos de fase tambem sao pinados — o tech-lead achou que o baseline estava VERMELHO com 3 sem pin (as fases 0-2 commitadas sem repin, falha do orquestrador). D011-M6, que edita ui_ux_v32.js protegido, e do qa-engineer em WORKTREE EFEMERA — nunca no harness, nunca na arvore: e o ponto exato onde a 009 se queimou. A matriz de mutantes e escrita sempre pelo qa-engineer, mesmo quando o build-engineer roda o job do CI."
+  },
+  "red": {
+    "status": "in_progress",
+    "commit": "",
+    "gates": [
+      "D011-KEY2",
+      "D011-ACC1",
+      "D011-LEG1",
+      "D011-IDEM1",
+      "D011-PRT1"
+    ],
+    "notes": "RED MEDIDO E NAO COMMITADO (o qa-engineer nao commita nesta demanda; o commit e o repin R2 sao do orquestrador). Execucao real de tests_011_prioridade.js em 2026-08-31, arvore limpa, node 24.19 / jsdom 30.0.1: 1 PASS - 5 FAIL de 6. VERMELHOS, com o motivo nomeado: D011-KEY2 (6 itens sem atalho ainda exibem '.'), D011-ACC1 (15/15 .key sem aria-hidden), D011-LEG1 (0 nos com o texto canonico da legenda), D011-IDEM1 (glifos/atalhos/aria-hidden/legenda divergem do oraculo), D011-PRT1 (bloco CSS do modulo ausente no HTML construido). VERDE DECLARADO: D011-KEY1 nasce VERDE por ser criterio de PRESERVACAO (a divida esta escrita na linha de C1 da spec) - e o poder discriminante dele foi PROVADO agora, em copia efemera fora da arvore, contra 4 mutacoes: D011-M8 no SITIO REAL (findings[n-1] -> findings[n], Camada 1) morre em KEY1(d); D011-M2 (renumerar pela posicao visual) morre em KEY1(c); fixture uniformizada morre em KEY1(a); fixture+literal uniformizados coerentemente morrem em KEY1(b). NAO EXECUTADO, declarado: D011-CON1 (tests_011_chromium.js) - sem Chromium nesta worktree (KI-3); a suite terminou 0 PASS - 1 FAIL com o motivo nomeado, nunca em SKIP silencioso. REGRESSAO CONGELADA INTACTA na mesma execucao do stage suites: ux41 56/0, ref 28/0, p50core 64/0 (P50-GOV1), p52layout 45/0, d009 15/0, engine 105/0 - o unico vermelho e d011, por projeto. PENDENCIA DO ORQUESTRADOR: apos o commit do vermelho, trocar red.status para 'proven' e preencher red.commit com o SHA; check_tdd.py so valida quando status == 'proven' e exige que o commit exista (git cat-file)."
   }
 }

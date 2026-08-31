@@ -1,7 +1,7 @@
 {
   "_meta": {
     "descricao": "Registry único de pins — fonte de identidade dos artefatos (R8). Hashes = SHA-256 dos blobs de HEAD. Alterar arquivo pinado exige regenerar este registry no MESMO PR, com motivo no commit.",
-    "gerado_de_head": "0a814dbde6d19e936b6fbd86423142becddddcd5",
+    "gerado_de_head": "b37c8e857b47e8fbd7a3c94bdef4fffa2174d65e",
     "gerado_em": "2026-08-31",
     "exclusoes": [
       "docs_phase5/**",
@@ -142,7 +142,7 @@
     "README.md": "0058d8d3691f67a7c93b992df910abf96a35a83fe779883a761e122599f21314",
     "SESSION_SCHEMA_V32.md": "9f74a849c3181c62f3d36d05a312987d8939e98bad8a0715f836da179e54a6f0",
     "USER_GUIDE.md": "f7d7158f459c4d342b6a1975a2a3bb111d705ebba6dcef1d42a4f96fc9a6846a",
-    "build_v32_html.py": "b7724e247a43bb497e5ab08612b0b9e4974952acf2515b76f2cac8798221c84d",
+    "build_v32_html.py": "2f28b80b2986cce2105a458927b57932163bf268160be8ac09c1da622a3e0980",
     "docs/CHANGELOG_v32.md": "07179356cc66f5ae53a5058da0988590074e84be882f53cf523d8936ea4eef5f",
     "docs/PHASE_5_KICKOFF.md": "c1a8d44b8e4a463465b12bf24cb8926be55fefbaa819b6db8cc22ee599ef3dda",
     "docs/VISUAL_GATES_V32.md": "bea9e7b91625121c91d4cff519c57ceb49703847bb67f7ec001a7f9c2951c45a",
@@ -186,7 +186,7 @@
     "playwright.config.js": "9661deed970d595c62bc924708e1eb0b6d09c1c7db60176972819f1ea15b5dcf",
     "prototypes/.gitkeep": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
     "quickscan_secops_soccmm_v3_1_3.html": "d329049147950a5b2a40b2735c3d4bd9a89177fed439efbcb58df01bdeb7ae82",
-    "quickscan_secops_soccmm_v3_2_dev.html": "dc33d91280398be37b71759d345f27e94e2adf19e722f5e78bc657e6cd1693e9",
+    "quickscan_secops_soccmm_v3_2_dev.html": "d9a2148f1307aa1c68c7d37293a718a080d2aa9077a18ed50aa311668c159d22",
     "session_roundtrip_report.md": "ffe0d30411cc086681a44fa8d69e1066a0bf26173f15dd8580286787056cf4f8",
     "specs/.gitkeep": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
     "specs/003-marcador-duplicado/fix-finding-registry.md": "dce0be8376f543678b9b214fd2e03e0efbda9f45cd978b909d0cc5208fa456a2",

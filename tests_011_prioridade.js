@@ -521,7 +521,7 @@ T("D011-IDEM1",
   });
 
 T("D011-PRT1",
-  "C11 · a regra @media print do módulo esconde DUAS coisas (glifo de atalho e legenda), preserva o estado de seleção e não usa seletor alheio — medido por Element.matches sobre os nós reais",
+  "C11 · no papel, NENHUM .d011-key que não seja `estado` fica visível (glifo de atalho E item sem atalho), a legenda some junto, o estado de seleção sobrevive e nenhum seletor é alheio — medido por Element.matches sobre os nós reais",
   async function () {
     const bloco = blocoCssDoModulo();
     const prints = blocosMediaPrint(bloco);
@@ -584,6 +584,48 @@ T("D011-PRT1",
     });
     if (vitimas.length)
       throw new Error("D011-PRT1(e): a regra de print apaga o estado de seleção no papel: " + vitimas.join(" · "));
+
+    /* (f) O ITEM SEM ATALHO TAMBÉM SOME — a cláusula que faltava, e a razão dela.
+       `visibility:hidden` apaga o elemento INTEIRO, inclusive a borda herdada de
+       `.opt .key` (`quickscan_…v3_1_3.html:68-69`: `border:1px solid var(--line)`,
+       e `--line` vira `#c9c9c9` dentro do `@media print`, `:205`). Um seletor que
+       casasse SÓ `data-d011="atalho"` deixaria o item MUDO imprimir uma moldura
+       vazia — marca visível exatamente nos itens que o cliente apontou como "sem
+       numeração", e sem a legenda para explicá-los, porque a legenda some por
+       desenho na alínea (d). É a troca de categoria que a demanda existe para
+       desfazer, sobrevivendo na superfície onde ninguém pode corrigi-la lendo.
+
+       A asserção é por EFEITO e vale para QUALQUER forma do seletor — regra
+       própria para `"mudo"`, ou `:not([data-d011="estado"])`. Quem escolhe a
+       forma é o `ui-engineer`; o que se exige é o efeito.
+
+       Os nós vêm do ORÁCULO (índice canônico ≥ 9 e não selecionado), não do
+       atributo: um módulo que parasse de marcar `"mudo"` não escaparia por aqui.
+       A varredura de fechamento logo abaixo cobre o resto — inclusive um quarto
+       valor de marcador que ninguém previu. Juntas, (c) e (f) equivalem a "no
+       papel, nenhum `.d011-key` que não seja `estado` fica visível". */
+    const selSet = new Set(selecionados(c.d));
+    const mudos = c.ordem
+      .map(function (id, i) { return { id: id, i: i }; })
+      .filter(function (e) { return e.i >= LIMITE_ATALHOS && !selSet.has(e.id); })
+      .map(function (e) { return { id: e.id, key: keyDe(botaoDe(c.d, e.id)) }; });
+    if (!mudos.length)
+      throw new Error("D011-PRT1(nv): nenhum item sem atalho e não selecionado no cenário — a cláusula (f) seria vazia");
+    const visiveis = mudos.filter(function (e) { return !casa(e.key).length; });
+    if (visiveis.length)
+      throw new Error("D011-PRT1(f): " + visiveis.length + "/" + mudos.length +
+        " item(ns) SEM ATALHO continuam visíveis no papel (" + visiveis.slice(0, 3).map(function (e) { return e.id; }).join(", ") +
+        ") — o .key some, mas a MOLDURA de `.opt .key` fica, marcando justamente os itens que o cliente apontou," +
+        " e a legenda que os explicaria some por desenho. Regras de ocultação vigentes: " + JSON.stringify(oculta));
+
+    /* fechamento: todo `.d011-key` da grade ou é `estado` ou é ocultado. Fecha o
+       buraco de um marcador NOVO, que nem (c) nem (f) alcançariam pelo nome. */
+    const sobras = Array.prototype.filter.call(c.d.querySelectorAll(".d011-key"), function (k) {
+      return k.getAttribute("data-d011") !== "estado" && !casa(k).length;
+    });
+    if (sobras.length)
+      throw new Error("D011-PRT1(f): " + sobras.length + " .d011-key que não são `estado` sobrevivem à impressão — marcadores: " +
+        JSON.stringify(Array.from(new Set(sobras.map(function (k) { return k.getAttribute("data-d011"); })))));
     return true;
   });
 

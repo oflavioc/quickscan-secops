@@ -5,9 +5,9 @@
 
 Rotas aprovadas no portão de 2026-08-31: **S3** (retitular o bloco V3.2 pela
 função, nas duas superfícies) · **T3** (declarar a relação entre as curadorias) ·
-**P14** (fechar o resíduo `C × I` que a 010 declarou e nunca escreveu). Duas
-ratificações do proprietário governam tudo abaixo: **nada é removido** e **o
-sufixo "· contexto V3.2" fica**.
+~~**P14** (fechar o resíduo `C × I` que a 010 declarou e nunca escreveu)~~ —
+**P14 derrubado pela errata E1**, ver abaixo. Duas ratificações do proprietário
+governam tudo: **nada é removido** e **o sufixo "· contexto V3.2" fica**.
 
 ## Objetivo
 
@@ -15,6 +15,60 @@ Fazer cada superfície de apoio do relatório dizer o que entrega e de onde vem,
 remover um byte de conteúdo — atacando a *redundância de promessa* entre os dois
 títulos adjacentes e a divergência silenciosa entre as três *curadorias de
 habilitadores*.
+
+---
+
+## Errata E1 — 2026-08-31 · o C4 caiu
+
+**Decisão:** o critério **C4** (declarar o resíduo `C × I` na tela) e o gate
+`D015-RES1` **saem do escopo**. Decidido pelo orquestrador sob a delegação do
+proprietário, sobre a recomendação que esta própria spec pôs na mesa em
+§"Superfície 5 · `#v32panel`".
+
+**A razão, que é o que tem valor para quem ler depois.** C4 acrescentaria texto a
+uma tela que o cliente já chamou de carregada — no item cuja ressalva literal é
+*"a não ser que isso torne a tela muito poluída"* — e o faria numa seção (Contexto
+tecnológico) que passaria a falar de outras duas (Cenário-alvo e Formas de apoio).
+Arquitetura de informação fraca, adotada só porque era a única superfície de tela
+que `ui_v32.js` possui: o host **certo** — dentro das duas superfícies que
+efetivamente duplicam — está fora de alcance, porque uma é `ui_target_v32.js`
+(não autorizado) e a outra é a Camada 1 (`frozen`). Pagar poluição por um remédio
+no lugar errado é pior do que declarar o resíduo e esperar o host certo.
+
+**O C4 não é apagado.** Foi escrito, medido e derrubado por razão de produto; o
+texto original permanece citável abaixo, marcado **DERRUBADO (E1)**. É a R2 §5
+aplicada a critério e não a achado: decisão registrada permanece.
+
+**Consequências mecânicas — medidas pelo `tech-lead`, registradas aqui para que o
+`spec-validate` não classifique o C4 como "faltando":**
+
+1. **`renderBlocks` fica intocada.** Os dois ramos (`ui_v32.js:236-243` e
+   `:294-304`) não recebem nó novo; o veredito `haSubstituto` (`:253`) segue
+   servindo só à arbitragem e à frase do card base, como a 010 o deixou.
+2. **Restam CINCO critérios**: C1, C2, C3, C5, C6. A numeração **não é
+   reaproveitada** — não existe "novo C4".
+3. **`M11`, `M12` e `M13` são aposentados, sem reuso de id** (R12: id citado nunca
+   renumera). Inclui `M13`, cuja marca **"não sei"** na guarda de tautologia deixa
+   de existir junto com a alínea que ele atacava — a dúvida não migra para outro
+   critério nem vira dívida órfã.
+4. **O resíduo `C × I` volta a ficar aberto e declarado**, e continua no backlog,
+   que é onde pertence. Não é dívida desta demanda: é achado com host conhecido e
+   bloqueado por boundary.
+5. **Nenhum outro critério muda por causa do C4** — C1, C2, C3, C5 e C6 não
+   dependiam dele.
+
+**Emenda de instrumento, no mesmo passe (independente do C4).** A estimativa de
+orçamento do `#pr-howto` que eu carregava (~540 chars) estava errada **por
+métrica, não por conta**: o `tech-lead` mediu **585 crus** e **544 normalizados** —
+duas medidas de duas suítes, e a que **reprova primeiro é a crua**. Folga real
+para o 7º item: **~308 caracteres visíveis**, não ~360. `C3(b)` foi emendada para
+nomear as duas métricas e as duas suítes. A alínea original ("`txt(#pr-howto).length
+≤ 900`") media a métrica certa **por acaso** — `txt` é `textContent` puro, que é a
+crua; o erro estava em eu comparar esse limite com uma estimativa normalizada.
+
+**Restrições incorporadas no mesmo passe.** Três constatações do `tech-lead`
+entraram como alíneas ou regressões nomeadas de C1 — **nenhuma contradiz critério
+desta spec**; ver §"Restrições da Fase 2 incorporadas".
 
 ## Autorização nominal §29.4 — registro
 
@@ -45,10 +99,10 @@ antes do plano (R3 §1), e é escrito pelo `qa-engineer` — nunca pelo implemen
 
 | # | Critério | Gate (id · asserção) | Mutante previsto |
 |---|---|---|---|
-| **C1** | **O título do bloco de prioridades V3.2 deixa de prometer apoio e passa a nomear a leitura que entrega** — porque a promessa é falsa em 2 dos 4 estados do bloco (refinamento, M3). Vale nas **duas** superfícies, com a assimetria do sufixo declarada em C1(d) | **`D015-TIT1`** · (a) o eyebrow de `#v32prio` **não contém** `/apoi(o\|ar\|a)/i`; (b) **contém** a substring exata `· contexto V3.2`; (c) o `<h3>` que precede `#pr-sup-prio` no papel tem **oração principal idêntica** à do eyebrow após remover o sufixo; (d) o `<h3>` do papel **não** contém o sufixo; (e) o eyebrow ≠ e não é substring do título congelado `"Como a Fortinet pode apoiar nas prioridades declaradas"`; (f) **não-vacuidade**: `#v32prio` e `#pr-sup-prio` existem nas fixtures usadas, e a alínea nomeia o estado se não existirem | **M1** restaurar o literal antigo do eyebrow ⇒ (a) morre · **M2** apagar o sufixo ⇒ (b) morre · **M3** editar só a tela ⇒ (c) morre · **M4** copiar o sufixo para o papel ⇒ (d) morre |
+| **C1** | **O título do bloco de prioridades V3.2 deixa de prometer apoio e passa a nomear a leitura que entrega** — porque a promessa é falsa em 2 dos 4 estados do bloco (refinamento, M3). Vale nas **duas** superfícies, com a assimetria do sufixo declarada em C1(d) | **`D015-TIT1`** · (a) o eyebrow de `#v32prio` **não contém** `/apoi(o\|ar\|a)/i`; (b) **contém** a substring exata `· contexto V3.2`; (c) o `<h3>` que precede `#pr-sup-prio` no papel tem **oração principal idêntica** à do eyebrow após remover o sufixo; (d) o `<h3>` do papel **não** contém o sufixo; (e) o eyebrow ≠ e não é substring do título congelado `"Como a Fortinet pode apoiar nas prioridades declaradas"`; (f) **não-vacuidade**: `#v32prio` e `#pr-sup-prio` existem nas fixtures usadas, e a alínea nomeia o estado se não existirem; **(g) [E1] unicidade** — o texto trimado do eyebrow é **único** entre `#app .eyebrow, #app h3`, e o do `<h3>` do papel é único em `#v32-print-report`; **(h) [E1] fora das listas de ocultação** — o texto do eyebrow não pertence a `HIDE_EYEBROWS` (`ui_v32.js:109-110`) nem às suas duas cópias de oráculo, e o nó **nunca** recebe `.v32-hidden` em nenhum dos estados E1–E7 | **M1** restaurar o literal antigo do eyebrow ⇒ (a) morre · **M2** apagar o sufixo ⇒ (b) morre · **M3** editar só a tela ⇒ (c) morre · **M4** copiar o sufixo para o papel ⇒ (d) morre · **M17** [E1] dar ao eyebrow o texto exato de um título já existente ⇒ (g) morre · **M18** [E1] acrescentar o eyebrow a `HIDE_EYEBROWS` ⇒ (h) morre, e `U15` cai junto |
 | **C2** | **O bloco de apoio junto do gap declara a própria ancoragem** — que a lista parte da *capability* do gap, não do nível respondido. É a metade alcançável de T3 com `ui_v32.js` (a outra metade vive em arquivo não autorizado; ver "Resíduo declarado") | **`D015-ANC1`** · (a) todo `[data-pr-gap-support]` traz **exatamente 1** nó `[data-pr-gap-fonte]`, atributo **próprio** (nunca outro valor de `data-pr-gap-why`, que `P51-REC1` já mede); (b) o texto casa a **propriedade** — ancoragem por capability **e** negação explícita de ancoragem por nível — por duas expressões independentes, nunca pela frase inteira; (c) presente nos **dois** ramos de `qsGapSupportHTML` (contexto declarado e não declarado), medido em duas fixtures; (d) o nó **não** nomeia produto (`!/Forti[A-Z]/`) nem repete a lista; (e) **não-vacuidade**: o conjunto de `[data-pr-gap-support]` é não vazio e a contagem é a esperada em cada fixture, declarada no gate | **M5** emitir só no ramo "não declarado" ⇒ (c) morre · **M6** trocar o texto por afirmação de ancoragem por nível ⇒ (b) morre · **M7** reusar `data-pr-gap-why` em vez do atributo próprio ⇒ (a) morre |
-| **C3** | **A regra geral entra na caixa "Como interpretar este relatório"** — um 7º item, **estático**, dizendo que o relatório pode apresentar mais de uma lista de possibilidades para o mesmo gap, que elas partem de catálogos e ancoragens diferentes, e que **não se somam** como recomendação | **`D015-HOWTO1`** · (a) `#pr-howto li` = **7**, dentro da faixa 5–8 que `P51-DOC12` (`tests_p50_core.js:3825-3826`) e o gate de PDF (`tests_p50_chromium.js:3595`) exigem; (b) `txt(#pr-howto).length ≤ 900`, com o valor **medido antes e depois** registrado no gate (limite em `:3828` e `:3597`); (c) o novo item casa a propriedade (duas expressões: "mais de uma lista" + "não se somam"), nunca a frase; (d) a caixa continua **estática** — `outerHTML` idêntico entre duas sessões de dados diferentes; (e) os 6 conteúdos exigidos por `P51-DOC12:3831-3837` continuam casando | **M8** tornar o item função da sessão ⇒ (d) morre · **M9** remover o item ⇒ (a) e (c) morrem · **M10** escrever o item longo o bastante para estourar 900 ⇒ (b) morre |
-| **C4** | **O resíduo `C × I` é declarado na tela, e só onde ele existe** — quando a leitura congelada da Camada 1 está visível, uma linha diz que o cenário-alvo pode listar os mesmos itens porque as duas partem do mesmo catálogo congelado, ancorados de formas diferentes | **`D015-RES1`** · (a) com a Camada 1 **visível** (estados E1 e E2), `#v32panel` traz **exatamente 1** `[data-v32-relacao="catalogo-unico"]`; (b) com a Camada 1 **oculta** (estado E3), o nó **não existe** — contraprova que impede a linha de virar decoração permanente; (c) o texto é **condicional** ("onde houver prática-alvo declarada") e **não afirma** a existência do cenário-alvo — asserção: ausência de `/o cenário-alvo (traz\|lista\|apresenta)/i` sem antecedente condicional; (d) o nó não nomeia produto e a contagem de `.v32-decl-row` consumida por `p52ContextSummary` fica **inalterada**; (e) **não-vacuidade**: em E1 e E2 o gate mede que a Camada 1 está de fato visível — nenhum título de `HIDE_EYEBROWS` com `.v32-hidden` | **M11** emitir incondicionalmente ⇒ (b) morre · **M12** nunca emitir ⇒ (a) morre · **M13** trocar a frase condicional por afirmativa ⇒ (c) morre |
+| **C3** | **A regra geral entra na caixa "Como interpretar este relatório"** — um 7º item, **estático**, dizendo que o relatório pode apresentar mais de uma lista de possibilidades para o mesmo gap, que elas partem de catálogos e ancoragens diferentes, e que **não se somam** como recomendação | **`D015-HOWTO1`** · (a) `#pr-howto li` = **7**, dentro da faixa 5–8 que `P51-DOC12` (`tests_p50_core.js:3825-3826`) e o gate de PDF (`tests_p50_chromium.js:3595`) exigem; (b) **[emendada em E1]** as **duas** métricas sob o mesmo limite de 900, cada uma nomeada com a sua suíte: **crua** — `txt(#pr-howto).length`, que é `textContent` puro, medida por `P51-DOC12` (`tests_p50_core.js:3827-3828`), **hoje 585**, e é a que **reprova primeiro**; **normalizada** — `.replace(/\s+/g," ").trim().length`, medida pelo gate de PDF (`tests_p50_chromium.js:3570-3571`, `:3597`), **hoje 544**. Orçamento do 7º item: **≤ 308 caracteres visíveis**. As duas medidas ficam registradas no gate, antes e depois; (c) o novo item casa a propriedade (duas expressões: "mais de uma lista" + "não se somam"), nunca a frase; (d) a caixa continua **estática** — `outerHTML` idêntico entre duas sessões de dados diferentes; (e) os 6 conteúdos exigidos por `P51-DOC12:3831-3837` continuam casando | **M8** tornar o item função da sessão ⇒ (d) morre · **M9** remover o item ⇒ (a) e (c) morrem · **M10** escrever o item longo o bastante para estourar 900 ⇒ (b) morre |
+| ~~**C4**~~ **DERRUBADO (E1)** | ~~**O resíduo `C × I` é declarado na tela, e só onde ele existe** — quando a leitura congelada da Camada 1 está visível, uma linha diz que o cenário-alvo pode listar os mesmos itens porque as duas partem do mesmo catálogo congelado, ancorados de formas diferentes~~ · **Razão da queda em E1**: acrescentaria texto à tela que o cliente chamou de carregada, num host que não é o certo | ~~**`D015-RES1`** · (a) com a Camada 1 **visível** (estados E1 e E2), `#v32panel` traz **exatamente 1** `[data-v32-relacao="catalogo-unico"]`; (b) com a Camada 1 **oculta** (estado E3), o nó **não existe**; (c) o texto é **condicional** e **não afirma** a existência do cenário-alvo; (d) o nó não nomeia produto e a contagem de `.v32-decl-row` fica inalterada; (e) **não-vacuidade**: em E1 e E2 a Camada 1 está de fato visível~~ · **gate não é escrito** | ~~**M11** · **M12** · **M13**~~ — **aposentados, ids não reusados** (R12) |
 | **C5** | **Nada é removido** — a ratificação do proprietário, como asserção. É o instrumento que a 010 só construiu depois da reprovação (E18) | **`D015-NOSUB1`** · contra **âncora de commit imutável + SHA** (R10 §5, nunca `HEAD:`), nos estados E1–E7: (a) o conjunto de `data-cap` de `#v32prio` é **idêntico**; (b) o conjunto de nomes em `[data-pr-gap-opt]` é **idêntico**; (c) os conjuntos de `data-cap` de `#pr-sup-prio`, `#pr-sup-base` e `#pr-sup-maturity` são **idênticos**; (d) `txt(#pr-support).length` e `txt(#pr-findings).length` **não diminuem**; (e) **não-vacuidade**: cada conjunto comparado é não vazio em ao menos uma fixture, nomeada no gate | **M14** colapsar em aviso o card de prioridade sem payload (a rota S4, recusada) ⇒ (a) morre · **M15** suprimir o `pr-gapsup` do qid que é prática-alvo (rota T5, recusada) ⇒ (b) e (d) morrem |
 | **C6** | **A autorização não foi excedida** — `ui_target_v32.js` intocado, provado pelo **produto**, não só pelo hash | **`D015-GOV1`** · (a) `#pr-target` **byte-idêntico** entre a âncora imutável e HEAD, nos estados E1–E7 — inclui `.ux-tgt-en`, `[data-ux-enablers="a-validar"]` e `[data-ux-absence="target-enablers"]`; (b) o conjunto de `data-eid` do card-alvo é idêntico; (c) **não-vacuidade**: ao menos uma fixture com `#pr-target` presente e com `[data-ux-enablers]` não vazio, nomeada no gate; (d) o gate **nomeia** o estado E6 (sem cenário-alvo) como o caso em que `#pr-target` legitimamente não existe, e não o confunde com regressão | **M16** mover a declaração de C2 para o card-alvo ⇒ (a) morre — é o mutante que guarda a boundary, não o comportamento |
 
@@ -67,12 +121,85 @@ escrito.
 | `D015-ANC1` (e) | **Sim** — E6/E7 e sessões sem gap nos 4 qids esvaziam o conjunto | É a guarda que impede (a)–(d) de fecharem verdes sobre conjunto vazio |
 | `D015-HOWTO1` (a)(b)(c)(e) | **Não, por sessão** — a caixa é estática por exigência de `P51-DOC12` | Discriminante é M8–M10 |
 | `D015-HOWTO1` (d) | **Sim** — basta o item passar a depender de `ans`/`suff` | Único ponto do C3 com discriminante de estado |
-| `D015-RES1` (a)(b)(e) | **Sim** — E1/E2 × E3 são estados distintos e alcançáveis por construção (`hasSubstituteV32`) | Critério com discriminante real; é o mais forte da spec |
-| `D015-RES1` (c) | **Não sei.** A asserção é uma regex de ausência sobre texto constante; se a frase for reescrita mantendo a condicionalidade, a regex pode passar a não medir nada | **Declarado como incerto.** O `qa-engineer` decide na Fase 4 se M13 morre de fato; se não morrer, a alínea vira dívida com causa, nunca é afrouxada (R10 §1) |
+| `D015-TIT1` (g) **[E1]** | **Sim** — basta o eyebrow receber o texto exato de um título já existente; M17 o prova. E o precedente é vivo: `N40`/`N41` (`tests_journey_m45.js:220-231`) já reprovam duplicata de `"Leitura executiva"` por igualdade trimada | Discriminante real por estado do DOM, não por literal |
+| `D015-TIT1` (h) **[E1]** | **Sim** — M18 o prova, e derruba `U15` (`tests_ui_m31.js:277-288`) junto | Discriminante real; é a alínea que impede a arbitragem de passar a ocultar o bloco novo |
+| ~~`D015-RES1` (a)(b)(e)~~ | ~~**Sim** — E1/E2 × E3 são estados distintos e alcançáveis~~ | **APOSENTADO (E1)** — o gate não é escrito |
+| ~~`D015-RES1` (c)~~ | ~~**Não sei.** Regex de ausência sobre texto constante~~ | **APOSENTADO (E1).** A marca "não sei" **deixa de existir junto com a alínea**: não migra para outro critério nem vira dívida órfã. `M13` aposentado, id não reusado |
 | `D015-NOSUB1` (a)–(d) | **Sim** — qualquer remoção reprova; M14/M15 são as duas remoções que o portão recusou | Discriminante real |
 | `D015-NOSUB1` (e) | **Sim** — fixture mal escolhida esvazia o conjunto | Guarda contra a vacuidade que a 010 encontrou em 4 alíneas (errata `a43d6f4`) |
 | `D015-GOV1` (a)(b) | **Sim** — M16 o prova, e qualquer edição de `ui_target_v32.js` reprova | Discriminante real |
 | `D015-GOV1` (d) | **Não** — é uma cláusula defensiva sobre E6 | **Cláusula inalcançável por construção, declarada, sem mutante** — classe já registrada em `design-decisions.md` §Candidatas pela 010. Não reportar como código morto |
+
+---
+
+## Restrições da Fase 2 incorporadas — veredito **[E1]**
+
+O `tech-lead` mediu três restrições que esta spec não podia conhecer. **Nenhuma
+contradiz critério desta spec**; duas viraram alínea nova, uma virou regressão
+nomeada. Conferidas por leitura nesta escrita, com `arquivo:linha`.
+
+### R-1 · A substring `"Como a Fortinet pode apoiar"` é guardada por três asserções congeladas
+
+| Gate | Arquivo:linha | O que exige |
+|---|---|---|
+| `U1` | `tests_ui_m31.js:38-39` | em modo legado, **existe** `.section-title .eyebrow` cujo texto **contém** a substring e **não** está oculto |
+| `U2` | `tests_ui_m31.js:60-62` | com contexto declarado e substituto, **TODO** `.section-title` cujo texto contém a substring tem `.v32-hidden` |
+| `U7` | `tests_ui_m31.js:137-139` | após "Limpar contexto tecnológico", **TODOS** eles voltam visíveis |
+
+**Veredito: não contradiz — subsume parte de `C1(a)` e a estende.** A restrição é
+por `.includes()` sobre **todo** `.section-title` do documento, não por igualdade
+e não só sobre o eyebrow de `#v32prio`. É de fato **mais forte em escopo e em
+consequência**: um eyebrow V3.2 que contivesse a substring nunca receberia
+`.v32-hidden` — `hideLegacyRecommendation` pula `#v32panel` (`ui_v32.js:181`) — e
+o `every()` de `U2` reprovaria **suíte congelada**, não o gate novo.
+
+**`C1(a)` continua necessária e não vira redundante.** Ela proíbe a família
+`/apoi(o|ar|a)/i`, que inclui o literal **atual** — `"Apoio nas prioridades
+declaradas · contexto V3.2"` — e esse literal **não** contém a substring de R-1.
+Sem `C1(a)`, `M1` (restaurar o literal antigo) sobreviveria. As duas se somam:
+R-1 entra como **regressão nomeada** de C1 (`U1`/`U2`/`U7` verdes, sem edição),
+não como alínea duplicada — oráculo repetido é ruído, não segurança.
+
+### R-2 · Unicidade de título
+
+`N40` (`tests_journey_m45.js:220-225`) exige **exatamente uma** `"Leitura
+executiva"` entre `#app .eyebrow, #app h3`, por **igualdade de texto trimado**;
+`N41` (`:226-231`) repete a propriedade no print.
+
+**Veredito: não contradiz, mas acrescenta obrigação que eu não tinha escrito.**
+Virou **`C1(g)`**, com o mutante **`M17`**. Nota de risco medida: o literal
+candidato `"Leitura das prioridades declaradas · contexto V3.2"` **não** colide
+com `"Leitura executiva"`, mas abre uma família de títulos começados por
+"Leitura" — e a unicidade é por igualdade **exata**, não por prefixo. O par
+tela/papel também não colide entre si, porque o `<h3>` do papel não leva o sufixo
+(`C1(d)`) **e** vive em `#v32-print-report`, fora de `#app`. **A ser confirmado
+por execução:** o escopo exato de `N41` no print — declarado como pendência do
+`qa-engineer`, não presumido aqui.
+
+### R-3 · O eyebrow tem de continuar fora das listas de ocultação
+
+São **três** cópias da mesma lista: o produto (`HIDE_EYEBROWS`,
+`ui_v32.js:109-110`), o oráculo de `U15` (`tests_ui_m31.js:279-280`) e a fixture
+da 010 (`FX.D010_HIDE_EYEBROWS`, consumida por `censoCamada1`,
+`tests_010_vao.js:166`). E `U15` traz a cláusula `noOverreach`
+(`tests_ui_m31.js:284-285`): **todo** `.section-title` com `.v32-hidden` tem de
+estar na lista — ou seja, ocultar o bloco novo reprovaria por excesso.
+
+**Veredito: não contradiz; reforça.** Virou **`C1(h)`**, com o mutante **`M18`**.
+Consequência de processo registrada: as três cópias são um **achado de
+duplicação de dado** (a mesma lista em três lugares, sem dono único) — vai para o
+backlog, não para o escopo desta demanda.
+
+### R-4 · O título entra no payload de evidência pinado
+
+`P52-SUP3` coleta os textos dos `.section-title` de `#v32support` em `blocos` e os
+grava em `P52-SUP3-cards.json` via `evidence(...)`
+(`tests_p52_chromium.js:1593-1594`, `:1608`).
+
+**Veredito: não é restrição de produto — é de operação.** Nenhum critério muda.
+Mudar o eyebrow muda o payload de evidência, e isso exige o rito de promoção
+(R11 §2) e/ou repin do artefato **no mesmo PR**. Entra em DEPENDÊNCIAS do
+`build-engineer`/`qa-engineer`, não em critério de aceite.
 
 ---
 
@@ -87,7 +214,7 @@ Reuso de `D010-F1`…`F4` onde couber é decisão da Fase 2; o que a spec exige 
 |---|---|---|
 | **E1** | Legado puro — nada declarado (`isLegacyModeV32()` verdadeiro) | Camada 1 visível, `#v32support` inexistente. É onde o resíduo `C × I` nasce e onde `#v32prio` **não tem sujeito** |
 | **E2** | Vão de contexto parcial **sem** substituto | Camada 1 visível **e** `#v32prio` presente — o pior caso da redundância de promessa, e o estado do cliente pós-010 |
-| **E3** | Vão **com** substituto | Camada 1 oculta — a contraprova de `D015-RES1(b)` |
+| **E3** | Vão **com** substituto | Camada 1 oculta. ~~Contraprova de `D015-RES1(b)`~~ **[E1]** — o motivo original caiu com o C4; **permanece obrigatório** por `C1(h)` (o eyebrow nunca recebe `.v32-hidden` justamente no estado em que a arbitragem oculta) e por `C5`/`C6` |
 | **E4** | Contexto completo, prioridade com gap | `#v32prio` com card cheio: o estado em que o título tem de continuar verdadeiro |
 | **E5** | Sem prioridades declaradas | `#v32prio` não nasce; a Camada 1 troca para "Como a Fortinet pode apoiar agora". Sujeito ausente, nomeado |
 | **E6** | Sem cenário-alvo declarado | `#pr-target` não existe (`ui_target_v32.js:426`). Guarda de `D015-GOV1(d)` |
@@ -142,24 +269,30 @@ Um 7º item, **estático**, com a regra geral. É a superfície canônica de "co
 ler" e já promete ao leitor que "as recomendações são possibilidades" — a regra
 nova é a continuação natural, e entra sem criar bloco novo em nenhuma tela.
 
-### Superfície 5 · `#v32panel` — tela (`ui_v32.js:238-243` e `:294-304`)
+### ~~Superfície 5 · `#v32panel` — tela~~ · **DERRUBADA (E1)**
 
-Uma linha, `[data-v32-relacao="catalogo-unico"]`, emitida **apenas quando a
-leitura congelada da Camada 1 está visível** — nos dois ramos de `renderBlocks`.
-Predicado: `legacy || !haSubstituto`, calculado **uma vez por render**, do mesmo
-veredito que a 010 já usa (`:253`). Sem estado novo, sem cache, sem leitura de
-DOM alheio.
+> Texto original preservado para trilha. **Não implementar.**
+>
+> ~~Uma linha, `[data-v32-relacao="catalogo-unico"]`, emitida **apenas quando a
+> leitura congelada da Camada 1 está visível** — nos dois ramos de `renderBlocks`.
+> Predicado: `legacy || !haSubstituto`, calculado uma vez por render, do mesmo
+> veredito que a 010 já usa (`:253`). Sem estado novo, sem cache, sem leitura de
+> DOM alheio.~~
+>
+> ~~**O trade-off, escrito porque o cliente o nomeou.** O item 8 termina com "a não
+> ser que isso torne a tela muito poluída". Esta linha acrescenta texto a uma tela
+> que o cliente já achou carregada, e o faz numa seção (Contexto tecnológico) que
+> fala sobre outras duas — arquitetura de informação fraca, adotada porque é a
+> única superfície de tela que `ui_v32.js` possui. O host certo seria dentro das
+> duas superfícies que efetivamente duplicam, e as duas estão fora do alcance. Se
+> o proprietário julgar a linha ruído, **C4 cai** e o resíduo volta a ficar aberto
+> e declarado — o que é resultado legítimo, pela doutrina ratificada em P5 do
+> refinamento.~~
 
-**O trade-off, escrito porque o cliente o nomeou.** O item 8 termina com *"a não
-ser que isso torne a tela muito poluída"*. Esta linha **acrescenta texto a uma
-tela que o cliente já achou carregada**, e o faz numa seção (Contexto tecnológico)
-que fala sobre outras duas (Cenário-alvo e Formas de apoio) — arquitetura de
-informação fraca, adotada porque é a única superfície de tela que `ui_v32.js`
-possui. O host **certo** seria dentro das duas superfícies que efetivamente
-duplicam, e as duas estão fora do alcance: uma é `ui_target_v32.js` (não
-autorizado), a outra é a Camada 1 (`frozen`). Se o proprietário julgar a linha
-ruído, **C4 cai** e o resíduo volta a ficar aberto e declarado — o que é resultado
-legítimo, pela doutrina ratificada em P5 do refinamento.
+**O que de fato aconteceu:** o trade-off acima foi decidido contra a linha, em
+2026-08-31 (errata E1). `renderBlocks` fica **intocada** e a tela desta demanda
+muda em **um único ponto** — o eyebrow de `#v32prio` (Superfície 1). Todo o resto
+da entrega é papel.
 
 ---
 
@@ -171,18 +304,21 @@ novo.** Tudo vive dentro do IIFE de `ui_v32.js` (`:8`).
 | Item | Shape | Owner do estado (R9 §5) | Consumidores |
 |---|---|---|---|
 | `[data-pr-gap-fonte]` | nó de texto dentro de `[data-pr-gap-support]` | **nenhum estado novo** — função pura de `f.id` e do literal | `D015-ANC1`; leitor do PDF |
-| `[data-v32-relacao="catalogo-unico"]` | nó de texto dentro de `#v32panel` | **nenhum estado novo** — função do veredito `haSubstituto`, já calculado por `renderBlocks` e já owner de `ui_v32.js` | `D015-RES1`; leitor da tela |
+| ~~`[data-v32-relacao="catalogo-unico"]`~~ | ~~nó de texto dentro de `#v32panel`~~ | — | **APOSENTADO (E1)** — o atributo **não nasce**; `renderBlocks` fica intocada e nenhum nó novo entra na tela |
 | 7º `<li>` de `#pr-howto` | literal estático | **nenhum** | `D015-HOWTO1`, `P51-DOC12` |
 
 **Serialização (INV-8):** nada acima entra na sessão; tudo recomputa no import.
 
-**Acoplamento recusado, com a razão.** Condicionar a linha de C4 à existência de
-prática-alvo exigiria ler `TARGET_PROFILE` ou chamar `tgtHasOverrides()` — símbolos
-de `ui_target_v32.js`, que não é IIFE (`:1-11`) e portanto os expõe no escopo
-global. **Recusado**: seria acoplamento inter-módulo novo fora de bridge (R9 §3),
-para dentro do arquivo que esta demanda está proibida de tocar. O remédio é o
-**fraseado condicional** de C4(c), que torna a linha verdadeira sem consultar o
-estado alheio.
+**Acoplamento recusado, com a razão — mantido como trilha após E1.** Condicionar a
+linha do (hoje derrubado) C4 à existência de prática-alvo exigiria ler
+`TARGET_PROFILE` ou chamar `tgtHasOverrides()` — símbolos de `ui_target_v32.js`,
+que **não é IIFE** (`:1-11`) e portanto os expõe no escopo global, enquanto
+`ui_v32.js` é IIFE (`:8`) mas resolve globais livremente. Ou seja: era
+tecnicamente possível ler o estado do módulo **não autorizado** de dentro do
+autorizado, sem tocar nele. **Recusado** — é acoplamento inter-módulo fora de
+bridge (R9 §3) para dentro do arquivo vedado: contrabando de boundary.
+A recusa vale para qualquer critério futuro desta demanda, não só para o C4, e é
+por isso que fica escrita mesmo com o C4 fora.
 
 ---
 
@@ -195,7 +331,7 @@ não der para medir sem inspeção humana, declare"*.
 |---|---|---|
 | Que a relação entre as curadorias foi **declarada** | Presença do nó, no estado certo, com atributo próprio, casando **duas expressões independentes** sobre a propriedade (ancoragem por capability × por nível), sem nomear produto e sem afirmar o que a sessão não sustenta | **Se o leitor entende.** Nenhum gate mede compreensão |
 | Que os títulos deixaram de competir | Ausência do token de promessa no eyebrow, presença do sufixo, paridade de oração principal entre tela e papel, distinção do título congelado | **Se a redação escolhida é boa.** O gate impede o título falso; não produz o título bom |
-| Que a tela não ficou poluída | Nada | **Integralmente humano.** É julgamento do proprietário sobre tela/PDF real — e é a ressalva que o próprio cliente escreveu |
+| Que a tela não ficou poluída | Nada | **Integralmente humano.** É julgamento do proprietário sobre tela/PDF real — e é a ressalva que o próprio cliente escreveu. **Exercido em 2026-08-31**: foi exatamente este julgamento que derrubou o C4 (errata E1) — a prova de que a coluna "o que fica fora" não é decorativa |
 
 **Consequência de processo:** a Fase 6 desta demanda **não fecha só com gate
 verde**. O aceite de intenção precisa de leitura humana da redação e do PDF real.
@@ -329,6 +465,11 @@ Herdado do refinamento (itens 1–14) e, adicionalmente:
 1. **Editar `ui_target_v32.js`** — não autorizado. Consequência aceita: a metade
    simétrica de T3 (o card-alvo declarando a própria ancoragem) **não é entregue**
    nesta demanda. Fica como resíduo declarado, não como omissão.
+1-bis. **[E1] Declarar o resíduo `C × I` na tela** — critério C4, derrubado em
+   2026-08-31. `renderBlocks` fica intocada e **nenhum nó novo entra na tela**; a
+   única mudança de tela desta demanda é o eyebrow de `#v32prio`. O resíduo
+   permanece **aberto e declarado no backlog**, com host conhecido e bloqueado por
+   boundary.
 2. **Editar qualquer suíte congelada** — inclusive `tests_p50_core.js`,
    `tests_ui_m32.js`, `tests_ui_m332.js` e `tests_p50_chromium.js`, que são
    regressão obrigatória e permanecem verdes **sem alteração**. Única escrita: o
@@ -360,3 +501,5 @@ critério de aceite:
 | Evidência de tela do estado **C2**/E2, pós-E18 | `qa-engineer` | idem |
 | Os 4 achados `EA-*` (curadorias divergentes · `P51-REC1` promete "sem duplicação" e não mede · dois nomes para a mesma capability · `neutralPrioCardHTML` sob capability madura) | `doc-writer`, **depois** de conferir a `develop` | `refinement.md` P13 |
 | **Achado novo desta escrita:** "prioridade declarada nunca desaparece" é invariante de fato **sem âncora normativa escrita** — vive só em gates e comentário de código | `doc-writer` (id) · `product-owner` (redação) | esta spec, §Cross-check |
+| **[E1] Resíduo `C × I`** — card-alvo e `apoio-block` lendo o mesmo `MAP` em duas seções da tela, sem texto que explique. Declarado pela 010 (caso C1 do refinamento dela), **não fechado** por ela nem por esta demanda. Host certo bloqueado: `ui_target_v32.js` (não autorizado) e Camada 1 (`frozen`) | `doc-writer` (id) | backlog — **aberto**, não é dívida desta demanda |
+| **[E1] Achado novo:** `HIDE_EYEBROWS` existe em **três** cópias sem dono único — produto (`ui_v32.js:109-110`), oráculo de `U15` (`tests_ui_m31.js:279-280`) e fixture da 010 (`FX.D010_HIDE_EYEBROWS`) | `doc-writer` (id) · `qa-engineer` (confirmação) | backlog |

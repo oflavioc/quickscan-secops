@@ -689,6 +689,264 @@
         "resultado": "KILL — 'no caso PARCIAL o aviso declara ausência de contexto em ESCOPO DE SESSÃO'. PROVA DE DESENHO no mesmo passe: SOBREVIVEU a D009-UNS1 (PASS), como exigido — sob landscape 100% UNSET a frase global é VERDADEIRA e é esse o caso que UNS1 mede; se morresse nos dois, a cláusula estaria no gate errado",
         "registro": "campanha d009 REEXECUTADA na passagem final (2026-08-28, rodada 2, worktree exclusiva e árvore limpa): 19 KILL / 19, restauração byte a byte OK do source e do HTML gerado · o par nasceu do red commitado em d48b906 ANTES da correção; o mutante só pôde ser ancorado depois de e77b7b5 criar o ramo tgtCtxDeclaradoNaSessao(), e até lá esteve declarado como especificado-e-não-executável, nunca como cobertura existente"
       }
+    },
+    {
+      "mutante": "D010-M1",
+      "harness": "d010 (tests_010_mutants.js)",
+      "gate": "D010-ARB1",
+      "invariante": "INV-9 / C1 - sem substituto a Camada 1 congelada permanece VISIVEL",
+      "ultima_prova": {
+        "data": "2026-08-30",
+        "resultado": "PENDENTE - campanha e T021 (T019 entrega o harness; preflight 18/18 ancoras com ocorrencias == 1, exit 0)",
+        "registro": "tests_010_mutants.js"
+      }
+    },
+    {
+      "mutante": "D010-M2",
+      "harness": "d010 (tests_010_mutants.js)",
+      "gate": "D010-ARB2",
+      "invariante": "C2 - havendo substituto a supressao vigente e preservada",
+      "ultima_prova": {
+        "data": "2026-08-30",
+        "resultado": "PENDENTE - campanha e T021 (T019 entrega o harness; preflight 18/18 ancoras com ocorrencias == 1, exit 0)",
+        "registro": "tests_010_mutants.js"
+      }
+    },
+    {
+      "mutante": "D010-M5",
+      "harness": "d010 (tests_010_mutants.js)",
+      "gate": "D010-ARB4",
+      "invariante": "C4 - o ramo !hasPrio segue a MESMA arbitragem",
+      "ultima_prova": {
+        "data": "2026-08-30",
+        "resultado": "PENDENTE - campanha e T021 (T019 entrega o harness; preflight 18/18 ancoras com ocorrencias == 1, exit 0)",
+        "registro": "tests_010_mutants.js"
+      }
+    },
+    {
+      "mutante": "D010-M6",
+      "harness": "d010 (tests_010_mutants.js)",
+      "gate": "D010-INV7",
+      "invariante": "INV-7 - nenhuma superficie afirma preservacao de leitura oculta",
+      "ultima_prova": {
+        "data": "2026-08-30",
+        "resultado": "PENDENTE - campanha e T021 (T019 entrega o harness; preflight 18/18 ancoras com ocorrencias == 1, exit 0)",
+        "registro": "tests_010_mutants.js"
+      }
+    },
+    {
+      "mutante": "D010-M7",
+      "harness": "d010 (tests_010_mutants.js)",
+      "gate": "D010-ABS1",
+      "invariante": "C6 - o aviso de ausencia traz contagem E lista nominal",
+      "ultima_prova": {
+        "data": "2026-08-30",
+        "resultado": "PENDENTE - campanha e T021 (T019 entrega o harness; preflight 18/18 ancoras com ocorrencias == 1, exit 0)",
+        "registro": "tests_010_mutants.js"
+      }
+    },
+    {
+      "mutante": "D010-M8",
+      "harness": "d010 (tests_010_mutants.js)",
+      "gate": "D010-ABS1",
+      "invariante": "C6 - N cards viram UM aviso, nao aviso somado aos cards",
+      "ultima_prova": {
+        "data": "2026-08-30",
+        "resultado": "PENDENTE - campanha e T021 (T019 entrega o harness; preflight 18/18 ancoras com ocorrencias == 1, exit 0)",
+        "registro": "tests_010_mutants.js"
+      }
+    },
+    {
+      "mutante": "D010-M9",
+      "harness": "d010 (tests_010_mutants.js)",
+      "gate": "D010-CARD1",
+      "invariante": "INV-5 - o habilitador ancora no nivel ATUAL confirmado, nunca no alvo",
+      "ultima_prova": {
+        "data": "2026-08-30",
+        "resultado": "PENDENTE - campanha e T021 (T019 entrega o harness; preflight 18/18 ancoras com ocorrencias == 1, exit 0)",
+        "registro": "tests_010_mutants.js"
+      }
+    },
+    {
+      "mutante": "D010-M10",
+      "harness": "d010 (tests_010_mutants.js)",
+      "gate": "D010-CARD1",
+      "invariante": "INV-2 - resposta nao confirmada (null/NA) nao ancora habilitador",
+      "ultima_prova": {
+        "data": "2026-08-30",
+        "resultado": "PENDENTE - campanha e T021 (T019 entrega o harness; preflight 18/18 ancoras com ocorrencias == 1, exit 0)",
+        "registro": "tests_010_mutants.js"
+      }
+    },
+    {
+      "mutante": "D010-M11",
+      "harness": "d010 (tests_010_mutants.js)",
+      "gate": "D010-CARD2",
+      "invariante": "C8 - precedencia de fonte: candidato do engine bloqueia o MAP",
+      "ultima_prova": {
+        "data": "2026-08-30",
+        "resultado": "PENDENTE - campanha e T021 (T019 entrega o harness; preflight 18/18 ancoras com ocorrencias == 1, exit 0)",
+        "registro": "tests_010_mutants.js"
+      }
+    },
+    {
+      "mutante": "D010-M12",
+      "harness": "d010 (tests_010_mutants.js)",
+      "gate": "D010-CARD3",
+      "invariante": "INV-3 - sob gate de suficiencia FECHADO nada e publicado",
+      "ultima_prova": {
+        "data": "2026-08-30",
+        "resultado": "PENDENTE - campanha e T021 (T019 entrega o harness; preflight 18/18 ancoras com ocorrencias == 1, exit 0)",
+        "registro": "tests_010_mutants.js"
+      }
+    },
+    {
+      "mutante": "D010-M13",
+      "harness": "d010 (tests_010_mutants.js)",
+      "gate": "D010-CARD4",
+      "invariante": "C10 - a tabela de equivalencia e TOTAL sobre as 11 chaves do MAP",
+      "ultima_prova": {
+        "data": "2026-08-30",
+        "resultado": "PENDENTE - campanha e T021 (T019 entrega o harness; preflight 18/18 ancoras com ocorrencias == 1, exit 0)",
+        "registro": "tests_010_mutants.js"
+      }
+    },
+    {
+      "mutante": "D010-M14",
+      "harness": "d010 (tests_010_mutants.js)",
+      "gate": "D010-CARD4",
+      "invariante": "C10 - item com equivalencia sai com o id equivalente, nunca a chave crua",
+      "ultima_prova": {
+        "data": "2026-08-30",
+        "resultado": "PENDENTE - campanha e T021 (T019 entrega o harness; preflight 18/18 ancoras com ocorrencias == 1, exit 0)",
+        "registro": "tests_010_mutants.js"
+      }
+    },
+    {
+      "mutante": "D010-M15",
+      "harness": "d010 (tests_010_mutants.js)",
+      "gate": "D010-CARD5",
+      "invariante": "INV-4 / C11 - o disclaimer vem DEPOIS dos habilitadores, na mesma superficie",
+      "ultima_prova": {
+        "data": "2026-08-30",
+        "resultado": "PENDENTE - campanha e T021 (T019 entrega o harness; preflight 18/18 ancoras com ocorrencias == 1, exit 0)",
+        "registro": "tests_010_mutants.js"
+      }
+    },
+    {
+      "mutante": "D010-M16",
+      "harness": "d010 (tests_010_mutants.js)",
+      "gate": "D010-CARD6",
+      "invariante": "R-1 - o no a-validar e IRMAO de .ux-tgt-en, nunca a classe (prova cruzada com D009-UNS1)",
+      "ultima_prova": {
+        "data": "2026-08-30",
+        "resultado": "PENDENTE - campanha e T021 (T019 entrega o harness; preflight 18/18 ancoras com ocorrencias == 1, exit 0)",
+        "registro": "tests_010_mutants.js"
+      }
+    },
+    {
+      "mutante": "D010-M17",
+      "harness": "d010 (tests_010_mutants.js)",
+      "gate": "D010-PAPEL1",
+      "invariante": "C13 - o vao fecha nas DUAS superficies; papel nao e opcional",
+      "ultima_prova": {
+        "data": "2026-08-30",
+        "resultado": "PENDENTE - campanha e T021 (T019 entrega o harness; preflight 18/18 ancoras com ocorrencias == 1, exit 0)",
+        "registro": "tests_010_mutants.js"
+      }
+    },
+    {
+      "mutante": "D010-M18",
+      "harness": "d010 (tests_010_mutants.js)",
+      "gate": "D010-CARD4",
+      "invariante": "E9 - a fusao olha o conjunto ANEXADO (direcao 'deduplica de menos')",
+      "ultima_prova": {
+        "data": "2026-08-30",
+        "resultado": "PENDENTE - campanha e T021 (T019 entrega o harness; preflight 18/18 ancoras com ocorrencias == 1, exit 0)",
+        "registro": "tests_010_mutants.js"
+      }
+    },
+    {
+      "mutante": "D010-M19",
+      "harness": "d010 (tests_010_mutants.js)",
+      "gate": "D010-CARD4",
+      "invariante": "E9 - a fusao NAO olha o dominio da tabela (direcao 'deduplica demais')",
+      "ultima_prova": {
+        "data": "2026-08-30",
+        "resultado": "PENDENTE - campanha e T021 (T019 entrega o harness; preflight 18/18 ancoras com ocorrencias == 1, exit 0)",
+        "registro": "tests_010_mutants.js"
+      }
+    },
+    {
+      "mutante": "D010-M20",
+      "harness": "d010 (tests_010_mutants.js)",
+      "gate": "D010-ARB3",
+      "invariante": "C3 - arbitragem tudo-ou-nada: titulo e blocos contiguos, nunca um terceiro conjunto",
+      "ultima_prova": {
+        "data": "2026-08-30",
+        "resultado": "PENDENTE - campanha e T021 (T019 entrega o harness; preflight 18/18 ancoras com ocorrencias == 1, exit 0)",
+        "registro": "tests_010_mutants.js"
+      }
+    },
+    {
+      "mutante": "D010-E15-1",
+      "harness": "manual (simulacao da saida no DOM, zero byte de produto)",
+      "gate": "D010-CARD4 (b)",
+      "invariante": "C10 (b) apos a errata E15 - o prefixo `map:` e NORMATIVO: e ele que torna a proveniencia do item legivel no DOM (item do MAP congelado x item do catalogo V3.2)",
+      "descricao": "emitir a chave CRUA do MAP como data-eid no ramo sem equivalencia",
+      "ultima_prova": {
+        "data": "2026-08-30",
+        "resultado": "KILL - provado em T014 (wave 4) por simulacao da saida do mutante no DOM, depois do render e antes do julgamento, com controle sem sabotagem e comparacao contra o juiz pre-errata (commit b21f4e3), onde os CINCO eram SOBREVIVENTES. NAO e mutante de campanha: a spec declara M1..M20 e o harness executa 18 em 1:1 com ela. Promover qualquer um a mutante de fonte e barato (o de chave crua e `const id=eq || x.p;` sobre a MESMA ancora ja usada por D010-M14) mas move o numero DECLARADO de executados de 18 para 19 em plan.md §Waves e no cabecalho do harness - decisao do coordenador/PO, nao do QA.",
+        "registro": "specs/010-recomendacao-sem-vao/spec.md"
+      }
+    },
+    {
+      "mutante": "D010-E15-2",
+      "harness": "manual (simulacao da saida no DOM, zero byte de produto)",
+      "gate": "D010-CARD4 (b)",
+      "invariante": "C10 (b) apos a errata E15 - o prefixo `map:` e NORMATIVO: e ele que torna a proveniencia do item legivel no DOM (item do MAP congelado x item do catalogo V3.2)",
+      "descricao": "emitir `map-<chave>` (separador trocado) no ramo sem equivalencia",
+      "ultima_prova": {
+        "data": "2026-08-30",
+        "resultado": "KILL - provado em T014 (wave 4) por simulacao da saida do mutante no DOM, depois do render e antes do julgamento, com controle sem sabotagem e comparacao contra o juiz pre-errata (commit b21f4e3), onde os CINCO eram SOBREVIVENTES. NAO e mutante de campanha: a spec declara M1..M20 e o harness executa 18 em 1:1 com ela. Promover qualquer um a mutante de fonte e barato (o de chave crua e `const id=eq || x.p;` sobre a MESMA ancora ja usada por D010-M14) mas move o numero DECLARADO de executados de 18 para 19 em plan.md §Waves e no cabecalho do harness - decisao do coordenador/PO, nao do QA.",
+        "registro": "specs/010-recomendacao-sem-vao/spec.md"
+      }
+    },
+    {
+      "mutante": "D010-E15-3",
+      "harness": "manual (simulacao da saida no DOM, zero byte de produto)",
+      "gate": "D010-CARD4 (b)",
+      "invariante": "C10 (b) apos a errata E15 - o prefixo `map:` e NORMATIVO: e ele que torna a proveniencia do item legivel no DOM (item do MAP congelado x item do catalogo V3.2)",
+      "descricao": "emitir `map:<chave errada>` - prefixo certo, proveniencia mentida",
+      "ultima_prova": {
+        "data": "2026-08-30",
+        "resultado": "KILL - provado em T014 (wave 4) por simulacao da saida do mutante no DOM, depois do render e antes do julgamento, com controle sem sabotagem e comparacao contra o juiz pre-errata (commit b21f4e3), onde os CINCO eram SOBREVIVENTES. NAO e mutante de campanha: a spec declara M1..M20 e o harness executa 18 em 1:1 com ela. Promover qualquer um a mutante de fonte e barato (o de chave crua e `const id=eq || x.p;` sobre a MESMA ancora ja usada por D010-M14) mas move o numero DECLARADO de executados de 18 para 19 em plan.md §Waves e no cabecalho do harness - decisao do coordenador/PO, nao do QA.",
+        "registro": "specs/010-recomendacao-sem-vao/spec.md"
+      }
+    },
+    {
+      "mutante": "D010-E15-4",
+      "harness": "manual (simulacao da saida no DOM, zero byte de produto)",
+      "gate": "D010-CARD4 (b)",
+      "invariante": "C10 (b) apos a errata E15 - o prefixo `map:` e NORMATIVO: e ele que torna a proveniencia do item legivel no DOM (item do MAP congelado x item do catalogo V3.2)",
+      "descricao": "emitir `MAP:<chave>` (caixa trocada no prefixo)",
+      "ultima_prova": {
+        "data": "2026-08-30",
+        "resultado": "KILL - provado em T014 (wave 4) por simulacao da saida do mutante no DOM, depois do render e antes do julgamento, com controle sem sabotagem e comparacao contra o juiz pre-errata (commit b21f4e3), onde os CINCO eram SOBREVIVENTES. NAO e mutante de campanha: a spec declara M1..M20 e o harness executa 18 em 1:1 com ela. Promover qualquer um a mutante de fonte e barato (o de chave crua e `const id=eq || x.p;` sobre a MESMA ancora ja usada por D010-M14) mas move o numero DECLARADO de executados de 18 para 19 em plan.md §Waves e no cabecalho do harness - decisao do coordenador/PO, nao do QA.",
+        "registro": "specs/010-recomendacao-sem-vao/spec.md"
+      }
+    },
+    {
+      "mutante": "D010-E15-5",
+      "harness": "manual (simulacao da saida no DOM, zero byte de produto)",
+      "gate": "D010-CARD4 (b)",
+      "invariante": "C10 (b) apos a errata E15 - o prefixo `map:` e NORMATIVO: e ele que torna a proveniencia do item legivel no DOM (item do MAP congelado x item do catalogo V3.2)",
+      "descricao": "emitir `map:` sem chave alguma",
+      "ultima_prova": {
+        "data": "2026-08-30",
+        "resultado": "KILL - provado em T014 (wave 4) por simulacao da saida do mutante no DOM, depois do render e antes do julgamento, com controle sem sabotagem e comparacao contra o juiz pre-errata (commit b21f4e3), onde os CINCO eram SOBREVIVENTES. NAO e mutante de campanha: a spec declara M1..M20 e o harness executa 18 em 1:1 com ela. Promover qualquer um a mutante de fonte e barato (o de chave crua e `const id=eq || x.p;` sobre a MESMA ancora ja usada por D010-M14) mas move o numero DECLARADO de executados de 18 para 19 em plan.md §Waves e no cabecalho do harness - decisao do coordenador/PO, nao do QA.",
+        "registro": "specs/010-recomendacao-sem-vao/spec.md"
+      }
     }
   ],
   "dividas_declaradas": [
@@ -705,6 +963,8 @@
     "core (tests_core_mutants.js) — sem preflight declarado no mutation_map.json (T8): é a REFERÊNCIA do interpretador e ficou fora das edições da demanda 013, que escopou a correção às três harnesses defeituosas. A consequência é impressa pelo stage, nunca omitida — [DÍVIDA] core: sem preflight declarado, âncora podre só aparece na execução da campanha. Enquanto durar, os mutantes do core não têm prova de unicidade de âncora fora da campanha",
     "Borda 8 · deferimento sem contrapartida — sob MUTATION_DEFER_MISSING=1 (job verify do CI) a campanha exigida sem ambiente vira [DEFER] <harness>: exigida (alvo mudou) — delegada ao job com chromium (job visual), e o stage passa. Cadeia fechada: nada verifica que o job visual de fato executou a campanha delegada, logo um DEFER cujo job irmão falhe, seja pulado ou não rode deixa a campanha sem execução E sem FAIL. Vincular o DEFER à execução efetiva exige mexer em verify.yml e/ou em proteção de branch — fora do escopo da 013 (spec §Riscos 4), demanda própria",
     "p51/M51-01 — classificação da E3 (T022): `gate sem poder discriminante (achado EA-7)`. O par está íntegro em tudo que esta demanda pode consertar — âncora única (preflight 2026-08-29, ocorrencias == 1) e `reason` cujas três alternativas o gate ainda emite (tests_p50_chromium.js:3405/:3408/:3412) — e mesmo assim P51-VIS1 passa sob a mutação: desde c1e3649 (Fase 5.2) a composição de duas colunas da tela de pergunta é governada por ui_p52_workspace_v32.css:70-83, que vence a regra 5.1 de ui_p50_v32.css:693-702 por especificidade e por ordem de inlining (build_v32_html.py:76). O gate afirma uma propriedade que a mutação não consegue mais violar. NÃO é consertado aqui: o remédio é asserção NOVA sobre comportamento de produto (mutar o sítio 5.2 que hoje governa, e/ou gate que detecte regra 5.1 morta), que é outro trabalho e outro dono — spec §Fora de escopo e §Riscos 3. Registrado como EA-7 em .claude/BACKLOG.md; narrativa em specs/013-integridade-da-campanha/matriz-gate-mutante.md §15",
-    "P50::M51 — as provas (b) e (c) do `reason` re-derivado na E3 (rot semântica) NÃO foram executadas: P50-PR1 vive em tests_p50_chromium.js e exige Chromium, ausente na máquina da demanda 013 (CHROME_PATH vazia, cache ms-playwright inexistente; a suíte inteira devolve 23 `SKIP … NÃO EXECUTADO (browser indisponível)` e o harness classificaria `NÃO EXECUTADO · gate não pôde ser executado`, nunca SOBREVIVENTE — D1). Fecharam sem Chromium: (a) unicidade (preflight, ocorrencias == 1); (b) parcial — o FORMATO exato da mensagem, medido com o emissor `pr1DiffStyles` extraído do próprio arquivo do gate, mais quatro controles negativos (sem mutação · só M52 · só M53 · estado gate-liberado); (c) por enumeração exaustiva dos 48 `detail.push` de `pr1()` — sob M51 nenhum outro pode disparar, logo neutralizar o bloco :1140-1168 faz o mutante SOBREVIVER. O que falta é a execução em navegador real, no job `visual` do CI (D5/KI-3). Registro em specs/013-integridade-da-campanha/matriz-gate-mutante.md §15"
+    "P50::M51 — as provas (b) e (c) do `reason` re-derivado na E3 (rot semântica) NÃO foram executadas: P50-PR1 vive em tests_p50_chromium.js e exige Chromium, ausente na máquina da demanda 013 (CHROME_PATH vazia, cache ms-playwright inexistente; a suíte inteira devolve 23 `SKIP … NÃO EXECUTADO (browser indisponível)` e o harness classificaria `NÃO EXECUTADO · gate não pôde ser executado`, nunca SOBREVIVENTE — D1). Fecharam sem Chromium: (a) unicidade (preflight, ocorrencias == 1); (b) parcial — o FORMATO exato da mensagem, medido com o emissor `pr1DiffStyles` extraído do próprio arquivo do gate, mais quatro controles negativos (sem mutação · só M52 · só M53 · estado gate-liberado); (c) por enumeração exaustiva dos 48 `detail.push` de `pr1()` — sob M51 nenhum outro pode disparar, logo neutralizar o bloco :1140-1168 faz o mutante SOBREVIVER. O que falta é a execução em navegador real, no job `visual` do CI (D5/KI-3). Registro em specs/013-integridade-da-campanha/matriz-gate-mutante.md §15",
+    "D010-M3 e D010-M4 (demanda 010) NAO SAO EXECUTADOS - divida declarada COM CAUSA, nunca par vazio e nunca mutante sintetico. M3 remove a interrupcao `hiding=false` no no nao-permitido (ui_v32.js:193) e M4 acrescenta `banner-ok` ao conjunto de permitidos. Os dois foram medidos na W1 e estao SEM CASO nas fixtures declaradas: sob o workspace da 5.2 a varredura de `hideLegacyRecommendation` roda dentro de [data-p52-legacy-scope=\"support\"] e nao alcanca o no que eles atacam - sabotar as duas formas nao mudou veredito de gate nenhum. Nao confundir com equivalente por construcao (caso da clausula A5): estes DOIS sao mataveis, falta o cenario. Disposicao em UMA execucao, escrita na celula de C3 da spec. D010-ARB3 continua com mutante VIVO (D010-M20), como R3 §5 exige.",
+    "O 4o parametro de `prCards` (afirmaPreservacao) NUNCA e passado truthy no produto, por desenho: C13 diz que o papel nunca afirma preservacao de leitura da Camada 1, que no papel nem e impressa. Um mutante que atacasse SO o repasse desse parametro seria EQUIVALENTE POR CONSTRUCAO - nao ha entrada que o faca mudar saida - e nenhum mutante que o remova pode morrer. Registrado no mesmo padrao que a errata E1 deu a clausula A5 do predicado de arbitragem. NAO e ramo sem medicao: a propriedade em si tem mutante vivo (D010-M6 ataca `baseCardHTML` e morre em D010-INV7 (a) na tela e (c) no papel). Achado do ui-engineer em T013, aceito pelo QA em T019 - a distincao entre este caso e o de D010-M3/M4 e exatamente a que a spec §Criterios manda nao confundir."
   ]
 }

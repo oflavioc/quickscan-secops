@@ -506,6 +506,29 @@ T("D010-ARB4", "C4 · o ramo !hasPrio ('apoiar agora') segue a mesma arbitragem 
 /* ============================================================================
    C5 · D010-INV7 — nenhuma superfície afirma preservação de leitura oculta
    ========================================================================== */
+/* SUJEITO da frase de preservação — quem PODE carregá-la nesta tela.
+   Achado do `ui-engineer` em T013, medido e confirmado em T019: as alíneas (a) e
+   (b) guardavam a não-vacuidade com `d010BaseInV32Base`, que é o conjunto que
+   alimentava `#v32base`. Depois de V3 (T013) `#v32base` é UM aviso de ausência e
+   NÃO tem `.v32-card` — medido: ZERO cards em `#v32base` nas CINCO fixtures.
+   Quem emite a frase é `baseCardHTML`, alcançado por `renderCap` só para a
+   capability de apresentação `base` que está DENTRO de `#v32prio` (a de
+   prioridade, desviada para lá por V10/V15 e que lá continua sendo card).
+   A guarda antiga não era falsa por acaso — ela dava 2 sob F1 e F2, o mesmo
+   número do sujeito real, e por isso as alíneas discriminam HOJE. Mas a
+   coincidência já se rompe no acervo: sob `D010-F1b` a guarda antiga vale 4 e o
+   sujeito real é 0. Uma alínea apontada para F1b fecharia VERDE sem sujeito, com
+   a guarda satisfeita — que é vacuidade com aparência de medição.
+   Derivado do MODELO (`basePresented` menos `baseInV32Base`), nunca do DOM: o
+   DOM é o que a alínea julga, e guarda lida do julgado não guarda nada.
+   Conferido contra o DOM nas cinco fixtures: 2·F1 · 0·F1b · 2·F2 · 0·F3 · 2·F4,
+   idêntico à contagem de `.v32-card` de apresentação `base` em `#v32prio`. */
+function sujeitoPreservacao(w) {
+  const res = w.__DEV.V32.buildRecommendationContext();
+  const base = FX.d010BasePresented(w, res);
+  const fora = FX.d010BaseInV32Base(w, res);
+  return base.filter(id => fora.indexOf(id) < 0);
+}
 T("D010-INV7", "C5 · a frase de preservação só existe com a leitura citada VISÍVEL", () => gate(g => {
   const F2 = R("D010-F2");
   exigeTelaLimpa(F2.d, "D010-INV7");
@@ -513,8 +536,12 @@ T("D010-INV7", "C5 · a frase de preservação só existe com a leitura citada V
   exigeTelaLimpa(F1.d, "D010-INV7");
   /* (a) sob D010-F2 (congelado oculto) a tela não pode afirmar preservação */
   g.passo("(a) congelado OCULTO ⇒ a tela não afirma preservação", () => {
-    if (!FX.d010BaseInV32Base(F2.w).length)
-      vac("(a)", "nenhuma capability de apresentação `base` fora das prioridades sob D010-F2 — a frase não teria onde nascer");
+    const sujA = sujeitoPreservacao(F2.w);
+    g.nota("D010-INV7 (a) · sujeitos que PODEM carregar a frase sob D010-F2 (base dentro de #v32prio): " +
+      JSON.stringify(sujA) + " · cards em #v32base: " + F2.d.querySelectorAll("#v32base .v32-card").length);
+    if (!sujA.length)
+      vac("(a)", "nenhuma capability de apresentação `base` DENTRO de #v32prio sob D010-F2 — nenhum card " +
+        "poderia emitir a frase, e a alínea mediria a ausência de um sujeito que não existe");
     const titulos = censoCamada1(F2.d).filter(x => x.tipo === "titulo");
     if (!titulos.length) vac("(a)", "nenhum título de Camada 1 sob D010-F2");
     if (!titulos.every(x => x.oculto))
@@ -524,8 +551,10 @@ T("D010-INV7", "C5 · a frase de preservação só existe com a leitura citada V
   });
   /* (b) sob D010-F1: se a afirmação existir, a leitura citada está visível no MESMO render */
   g.passo("(b) afirmação ⇒ leitura citada visível no mesmo render", () => {
-    if (!FX.d010BaseInV32Base(F1.w).length)
-      vac("(b)", "nenhuma capability de apresentação `base` fora das prioridades sob D010-F1");
+    const sujB = sujeitoPreservacao(F1.w);
+    if (!sujB.length)
+      vac("(b)", "nenhuma capability de apresentação `base` DENTRO de #v32prio sob D010-F1 — sem sujeito " +
+        "a implicação 'afirma ⇒ leitura visível' é verdadeira por vácuo");
     const censo = censoCamada1(F1.d);
     if (!censo.length) vac("(b)", "nenhum nó de Camada 1 presente sob D010-F1");
     const afirma = RE_PRESERVADA.test(F1.d.querySelector("section.screen").textContent || "");

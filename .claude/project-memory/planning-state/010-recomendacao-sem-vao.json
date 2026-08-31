@@ -1,6 +1,6 @@
 {
   "demanda": "010-recomendacao-sem-vao",
-  "phase": "implementacao",
+  "phase": "implement",
   "spec_dir": "specs/010-recomendacao-sem-vao",
   "brief": "O vao entre as duas doutrinas de recomendacao: a Camada 1 congelada recomenda produto a partir do gap sem contexto, o engine V3.2 exige contexto declarado, e isLegacyModeV32() escolhe entre elas exigindo contexto ZERO. Contexto parcial desliga a primeira sem ligar a segunda — foi onde o cliente caiu e recebeu zero recomendacoes. Itens 4, 6 e 8 do feedback de 2026-08-27.",
   "branch": "feature/010-recomendacao-sem-vao",
@@ -88,6 +88,21 @@
       "protocolo_arvore_limpa": "os tres passos. Campanha rodada em BACKGROUND de proposito - timeout de primeiro plano a mataria no meio e deixaria mutante aplicado, que e o custo que a 009 pagou com D009-M15. git status vazio antes e depois; as 10 identidades (9 alvos + HTML) identicas, conferidas por git hash-object POR FORA do harness em vez de acreditar no relato dele. Nenhuma restauracao foi necessaria.",
       "ressalva_de_vocabulario": "o harness d009 NAO emite os tres estados (imprime KILL e 'SOBREVIVEU (esperado)'); a traducao para DETECTADO/SOBREVIVENTE/NAO EXECUTADO foi feita explicitamente pelo QA a partir do stdout. Ja registrado como divida no plan.md. Os dois 'SOBREVIVEU (esperado)' sao assercoes de ESPECIFICIDADE (P52-TGT1 sob M1, D009-UNS1 sob M20) provando que o gate vizinho corretamente nao dispara - nao sao mutantes vivos.",
       "vermelhos_declarados": "p50core 61/3 (pins inline de PROTECTED, fecha em T023); Chromium ausente KI-3 (p51/p52vis/visual, fecham no CI); stage suites em janela vermelha declarada ate T017."
+    },
+    "wave_7": {
+      "status": "fechada",
+      "quando": "2026-08-30",
+      "t013": "ui_v32.js +91/-12. hasSubstituteV32(ctxRes) puro no lugar da constante true; baseAbsenceHTML como helper unico das duas superficies; 4o parametro afirmaPreservacao com default falsy (o papel passa false sempre); __DEV.hasSubstitute. Byte-identicos conferidos: HIDE_EYEBROWS, a regra da varredura :164-194 INCLUSIVE a interrupcao hiding=false que U15 mede por alcance, presentationOf e o ramo legado. Primeiro hunk em :246.",
+      "t015": "segundo rebuild. m41_payload_sha256 INALTERADO (9794b267e4225d8f) - Porta B fechada depois dos dois modulos.",
+      "repins": "R5 (T014, pos-T013), R6 (T016, pos-rebuild)",
+      "d010": "7 PASS · 6 FAIL -> 13 PASS · 0 FAIL de 13, medido POS-REBUILD (autoritativo). D010-ARB2 permaneceu verde.",
+      "sanidade_dos_ramos": "5 mutantes aplicados EM MEMORIA (a campanha e T021): M1 -> ARB1(b); M2 -> ARB2(a) COM ARB1 PASS, como a spec preve; M6 -> INV7(a)+(c); M7 -> ABS1(b); M8 -> ABS1(a).",
+      "congeladas": "ui31 19/0, ui32 25/0, ui33 11/0, ui332 23/0, ui333 26/0, ux41 56/0, target 30/0, ref 28/0, journey 31/0, icons46 12/0, engine 105/0, p52layout 45/0, d009 15/0, unset 12/0 (+1 nao executado, UG13 exige Chromium, dentro do intervalo declarado). U1, U2, U7, U15, V10, V15-V17 e P1 verdes.",
+      "p50core": "60 PASS · 4 FAIL. Aos tres de T008 soma-se P50-IC4, que pina ui_v32.js - o que costuma ficar de fora da lista escrita. De pin, nao de regressao: icons46 deu 12/12 na mesma bateria. Fecha em T023.",
+      "achados_devolvidos": [
+        "D010-INV7(a)/(b): a precondicao de nao-vacuidade aponta para d010BaseInV32Base, o conjunto que alimentava #v32base. Depois de V3, #v32base nao tem mais card que possa carregar a frase - o unico sujeito na tela e o card de apresentacao base dentro de #v32prio. As alineas DISCRIMINAM hoje (M6 morre em (a), medido), mas baseIds pode ser nao vazio com #v32prio sem card base, e ai (a) fecharia verde sem sujeito com a guarda satisfeita. Decisao do gate e do qa-engineer.",
+        "o 4o parametro de prCards nunca e passado truthy no produto, por desenho (C13: o papel nunca afirma preservacao). Nao e ramo sem medicao - M6 ataca baseCardHTML e morre em INV7(c), que e o papel -, mas um mutante que atacasse SO o repasse de prCards seria equivalente por construcao. Sugerido registrar como equivalente declarado na matriz, no padrao que E1 deu a clausula A5."
+      ]
     }
   }
 }

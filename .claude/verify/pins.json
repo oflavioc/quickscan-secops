@@ -1,7 +1,7 @@
 {
   "_meta": {
     "descricao": "Registry único de pins — fonte de identidade dos artefatos (R8). Hashes = SHA-256 dos blobs de HEAD. Alterar arquivo pinado exige regenerar este registry no MESMO PR, com motivo no commit.",
-    "gerado_de_head": "ca4fb8c6891dc67b74cea21748d9454ec3453875",
+    "gerado_de_head": "86eaaa44f8a7253071736959b2bed40d904ff05a",
     "gerado_em": "2026-08-30",
     "exclusoes": [
       "docs_phase5/**",
@@ -149,7 +149,7 @@
     "docs/screenshot_audit_43.md": "4bbdbb4b25f884347e4089205c0fe466f05a01cce7c0687844c5679426ef8aca",
     "engine_v32.js": "9a4a2e674389a115a56c0bce9785ad0f90651546e31d264a947998e2bb5d247a",
     "fixtures_009_leitura.js": "c5d10e056a2d7aa1383e1c2ce3050f094c24de6a23cf7f63afc44efea86475ef",
-    "fixtures_010_vao.js": "5c3f65eb5b621fc0d453db05727d81fbecc6144995512edbe17dbfd44666558d",
+    "fixtures_010_vao.js": "ceaa9a665f9a847b64cc34c49e199900fc8960942439e623b0a9ce031f742c4e",
     "fixtures_p50.js": "08610c8f92238eefb82a07ec57cb1ab9cdbb626cad1c9483d278e26ed572443f",
     "fixtures_p52.js": "6830420e7acae5860b18c72ddba208c76cabe1b770d61132fe7f5db684a22b60",
     "generate_icons_v32.py": "e4fc59576cd3817c8c84c7c46dc5f8a6fe33d5786467cbefd0de3557c536cb0a",
@@ -241,7 +241,7 @@
     "synthetic_session_examples/exemplo-minimo.json": "314e4a7ba4e90aca5a0660370a97b31f82a5cc87b044e937f1a8066020c57ede",
     "tests_009_leitura.js": "4322961372c4505dd7abb2202c5a0e895f1ba6ac0c43575a8956c68ab5e28cdd",
     "tests_009_mutants.js": "e2e475698bb23743fe0f2fe71dca9f02cac9f3d4fa85077ec5a1a5d3f4b86dcc",
-    "tests_010_vao.js": "b27c4ff1bcbd847df618bb7aa5374cdc2caf6c0372860da31f968672bf7c08c4",
+    "tests_010_vao.js": "a386132a5be106f0d51738b8e87846db6f6971373763ca1097750ede7d9555e9",
     "tests_core_mutants.js": "8a0502c2d7f34832722059435f2ccf4d7889614769526b645d4e2a720732af7e",
     "tests_icons_m46.js": "f73f96e32951507135c0b36d968fe12e9ffbc268e8ad438ea2e6c861a8b88123",
     "tests_journey_m45.js": "84d99be32e122f867dc1620cd1f49e4f3ae9795a32185cc75aa246d8682941f5",

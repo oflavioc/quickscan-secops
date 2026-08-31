@@ -5528,6 +5528,13 @@ function renderBlocks(app){
   } else {
     lastCtx = V32.buildRecommendationContext();   /* [3.1.1-D] sem cache stale: reflete respostas/prioridades atuais */
     const ctxs = lastCtx.contexts;
+    /* [010 · V1] ARBITRAGEM DE CAMADA — calculada UMA vez por render, aqui, e
+       repassada como argumento a quem decide (a ocultação da Camada 1) e a quem
+       fala sobre ela (a frase do card base). Antes desta demanda o argumento de
+       `hideLegacyRecommendation` era a constante `true`: declarar QUALQUER
+       contexto ocultava a recomendação congelada, mesmo quando a camada V3.2 não
+       tinha nada para pôr no lugar — o "vão de contexto parcial" (spec §1). */
+    const haSubstituto = hasSubstituteV32(lastCtx);
     const declared = Object.keys(V32.TECH_LANDSCAPE)
       .filter(id => V32.TECH_LANDSCAPE[id].presence !== "UNSET")
       .map(id => {
@@ -5558,7 +5565,7 @@ function renderBlocks(app){
           <span class="v32-class">${esc(CLASS_LABELS[c.classification]||c.classification)}</span>
           <span class="v32-neutral">${esc(NEUTRAL_TEXT[c.classification]||"")}${extra}</span></div>`;
       }).join("");
-    hideLegacyRecommendation(app, true);
+    hideLegacyRecommendation(app, haSubstituto);   /* [010 · V1] "há substituto?" no lugar da constante `true` */
     const sigsOn = V32.SIGNAL_IDS.filter(k=>V32.SESSION_SIGNALS[k]===true);
     const fgt = (V32.PLATFORM_CONTEXT.declaredPlatforms||[]).find(x=>x&&x.platform==="fortigate");
     const sigBlock = sigsOn.length ? `<div class="section-title"><div class="eyebrow">Requisitos e preocupações declarados</div></div>
@@ -5573,7 +5580,7 @@ function renderBlocks(app){
       <div class="v32-block" id="v32decl">${declared || '<div class="v32-neutral">Nenhuma capability declarada.</div>'}</div>
       <div class="section-title"><div class="eyebrow">Interpretação do contexto</div></div>
       <div class="v32-block" id="v32interp">${interp || '<div class="v32-neutral">Sem itens a interpretar.</div>'}</div>
-      <div id="v32support">${buildSupportHTML(lastCtx)}</div>
+      <div id="v32support">${buildSupportHTML(lastCtx, !haSubstituto)}</div>
       <div class="v32-cta-box">
         <button class="btn2" id="v32cta" aria-expanded="false">Editar contexto tecnológico</button>
         <button class="btn2" id="v32clear">Limpar contexto tecnológico</button>
@@ -5892,11 +5899,25 @@ function capCardHTML(id, c){
     ${(V32.TECH_LANDSCAPE[id]&&V32.TECH_LANDSCAPE[id].declaredDriver&&V32.TECH_LANDSCAPE[id].declaredDriver.note)?`<div class="v32-scopenote v32-driver"><i>Motivo declarado:</i> ${esc32(V32.TECH_LANDSCAPE[id].declaredDriver.note)}</div>`:""}
     ${validateBody}${notes}${whyHTML}</div>`;
 }
-function baseCardHTML(id, c, kind){
+/* [010 · INV-7] O QUARTO PARÂMETRO `afirmaPreservacao` — e por que o default é falsy
+   ---------------------------------------------------------------------------------
+   Até esta demanda o card base afirmava "Leitura V3.1.3 preservada" SEMPRE, e a
+   arbitragem de camada ocultava a leitura citada no mesmo render: a tela afirmava
+   preservar o que ela mesma escondia (INV-7). A frase passa a ser função do MESMO
+   veredito da arbitragem, calculado uma vez por render em `renderBlocks`.
+   O default é falsy DE PROPÓSITO: sítio que esquecer de repassar o veredito deixa
+   de afirmar a preservação — nunca passa a afirmá-la à toa. O papel nunca passa
+   `true`, porque a Camada 1 nunca é impressa (spec §5/C13).
+   A segunda oração ("nenhum produto é inferido sem contexto") é preservada em
+   TODAS as variantes: é a promessa que o produto faz ao leitor, pinada por `V10`. */
+function baseCardHTML(id, c, kind, afirmaPreservacao){
   const svcs = (c.services||[]).map(serviceHTML).join("");
+  const mstate = esc32(MSTATE_LABELS[(c.maturity||{}).state]||"");
   const neutral = kind==="maturity"
     ? "Apoio baseado na maturidade — Landscape tecnológico não se aplica a esta capability."
-    : `Leitura V3.1.3 preservada (maturidade: ${esc32(MSTATE_LABELS[(c.maturity||{}).state]||"")}). Informe o contexto desta capability para interpretação V3.2 — nenhum produto é inferido sem contexto.`;
+    : afirmaPreservacao
+      ? `Leitura V3.1.3 preservada (maturidade: ${mstate}). Informe o contexto desta capability para interpretação V3.2 — nenhum produto é inferido sem contexto.`
+      : `Leitura de maturidade: ${mstate}. Informe o contexto desta capability para interpretação V3.2 — nenhum produto é inferido sem contexto.`;
   return `<div class="v32-card" data-cap="${escAttr(id)}">
     <div class="v32-card-head"><strong>${esc32(V32.CAPABILITIES[id].name)}</strong>
       <span class="v32-class">${esc32(kind==="maturity" ? "Apoio baseado na maturidade" : CLASS_LABELS.CONTEXT_NOT_INFORMED)}</span>
@@ -5916,6 +5937,54 @@ function presentationOf(id, c){
     return V32.CAPABILITIES[id].landscapeEnabled ? "base" : "maturity";
   return null;
 }
+/* [010 · V1] "Há substituto?" — predicado PURO da spec §1, sobre `ctxRes.contexts`.
+   Sem cache, sem campo, sem atributo DOM: é função da MESMA estrutura que a tela já
+   consome no mesmo passe, logo nada é serializado (INV-8) e nenhum estado novo nasce.
+   Três cláusulas:
+     1. apresentação `card` — só quem vira card é candidato a substituir a leitura
+        congelada; `base`/`maturity`/`null` nunca substituem nada;
+     2. classificação ≠ CONTEXT_NOT_INFORMED — cláusula DEFENSIVA, não load-bearing:
+        `CONTEXT_NOT_INFORMED` ⇒ supportMode "LEGACY-LABELLED", que `presentationOf`
+        nunca promove a `card`, então a cláusula 1 já exclui o caso. Fica porque é ela
+        que impediria um serviço anexado por `hasGap` sob `UNSET` de desligar a Camada 1
+        sem substituir nada, se `presentationOf` um dia mudar (spec §1 e errata E1);
+     3. payload não vazio — esta É a que carrega o peso: `presentationOf` devolve `card`
+        INCONDICIONALMENTE para supportMode "VALIDATE", e uma capability em
+        NEEDS_VALIDATION por resposta "não sei" produz card VAZIO, que não substitui
+        recomendação nenhuma.
+   O predicado é de SESSÃO — resíduo declarado em C3 do refinamento: sessão assimétrica
+   oculta a Camada 1 e deixa a capability sem contexto muda na seção de apoio; o resíduo
+   é fechado no card-alvo e sinalizado no bloco de ausência, não escondido. */
+function hasSubstituteV32(ctxRes){
+  const ctxs = (ctxRes && ctxRes.contexts) || {};
+  return Object.keys(ctxs).some(id => {
+    const c = ctxs[id];
+    if (presentationOf(id, c) !== "card") return false;
+    if (c.classification==="CONTEXT_NOT_INFORMED") return false;
+    return ((c.candidates||[]).length + (c.services||[]).length + (c.notes||[]).length) > 0;
+  });
+}
+/* [010 · V3] BLOCO DE AUSÊNCIA — helper ÚNICO para as DUAS superfícies (R9 §8), no
+   padrão de duas superfícies que `tgtAbsenceHTML(qids, isScreen)` já estabeleceu.
+   Substitui os N cards base por UM aviso, com a contagem e a LISTA NOMINAL das
+   capabilities afetadas: N cards que repetem a mesma não-informação são ruído; um
+   aviso que não nomeia ninguém é informação perdida.
+   O aviso declara NÃO-INFORMAÇÃO, nunca ausência de tecnologia (INV-2) — e não
+   conclui coisa alguma sobre processo, pessoas ou governança.
+   `ids` é `baseIds`: apresentação `base` E fora de `prioCaps`. A capability de
+   prioridade com apresentação `base` é desviada para `#v32prio` ANTES daqui e lá
+   continua sendo card (V10/V15) — nomeá-la neste aviso seria declarar "contexto não
+   informado" sobre um card que a mesma tela exibe duas seções acima. */
+function baseAbsenceHTML(ids, ctxs, isScreen){
+  if (!ids || !ids.length) return "";
+  const n = ids.length;
+  const nomes = ids.map(id => esc32(V32.CAPABILITIES[id].name)).join("; ");
+  const texto = `O contexto tecnológico não foi informado para ${n} ${n===1?"capability":"capabilities"}: ${nomes}. `
+    + `Sem essa informação a interpretação V3.2 não é produzida para ${n===1?"ela":"elas"} — nenhum produto é inferido sem contexto.`;
+  return isScreen
+    ? `<div class="v32-neutral" data-v32-absence="base-context">${texto}</div>`
+    : `<div class="pr-card" data-v32-absence="base-context"><div class="pr-mut">${texto}</div></div>`;
+}
 function neutralPrioCardHTML(id, c){
   /* [3.2.3-B] prioridade NUNCA desaparece: card neutro, zero produto inventado */
   return `<div class="v32-card" data-cap="${escAttr(id)}">
@@ -5925,11 +5994,13 @@ function neutralPrioCardHTML(id, c){
     <div class="v32-neutral">Não há oferta direta mapeada para esta capability nesta etapa — nenhum produto é inferido. A prioridade permanece registrada para o aprofundamento.</div>
     ${whyHTMLOf(id, c)}</div>`;
 }
-function renderCap(id, c, pres){
+function renderCap(id, c, pres, afirmaPreservacao){
   if (pres===null) return neutralPrioCardHTML(id, c);
-  return pres==="card" ? capCardHTML(id,c) : baseCardHTML(id,c,pres);
+  return pres==="card" ? capCardHTML(id,c) : baseCardHTML(id,c,pres,afirmaPreservacao);
 }
-function buildSupportHTML(res){
+/* `afirmaPreservacao` = veredito da arbitragem do MESMO render (`!haSubstituto`),
+   repassado por `renderBlocks`. Omitido ⇒ falsy ⇒ não afirma (spec §3). */
+function buildSupportHTML(res, afirmaPreservacao){
   const ctxs = res.contexts;
   /* [3.2.2-A] priority-first REAL: vale para TODOS os supportModes/apresentações */
   const prioOrder = [];
@@ -5943,7 +6014,7 @@ function buildSupportHTML(res){
   let html = "";
   if (prioCaps.length)
     html += `<div class="section-title"><div class="eyebrow">Apoio nas prioridades declaradas · contexto V3.2</div></div>
-      <div class="v32-block" id="v32prio">${prioCaps.map(id=>renderCap(id, ctxs[id], presentationOf(id, ctxs[id]))).join("")}</div>`;
+      <div class="v32-block" id="v32prio">${prioCaps.map(id=>renderCap(id, ctxs[id], presentationOf(id, ctxs[id]), afirmaPreservacao)).join("")}</div>`;
   const byMode = m => rest.filter(id => presentationOf(id, ctxs[id])==="card" && ctxs[id].supportMode===m);
   [["DIRECT","v32direct"],["CONTEXTUAL","v32contextual"],["VALIDATE","v32validate"]].forEach(([m,bid])=>{
     const ids = byMode(m); if(!ids.length) return;
@@ -5953,7 +6024,7 @@ function buildSupportHTML(res){
   const baseIds = rest.filter(id => presentationOf(id, ctxs[id])==="base");
   if (baseIds.length)
     html += `<div class="section-title"><div class="eyebrow">Leitura base — contexto tecnológico não informado</div></div>
-      <div class="v32-block" id="v32base">${baseIds.map(id=>baseCardHTML(id, ctxs[id], "base")).join("")}</div>`;
+      <div class="v32-block" id="v32base">${baseAbsenceHTML(baseIds, ctxs, true)}</div>`;   /* [010 · V3] N cards → UM aviso */
   const matIds = rest.filter(id => presentationOf(id, ctxs[id])==="maturity");
   if (matIds.length)
     html += `<div class="section-title"><div class="eyebrow">Apoio baseado na maturidade</div></div>
@@ -6017,10 +6088,13 @@ function prWhy(id, c){
   const inner = whyHTMLOf(id, c).replace(/<\/?details[^>]*>/g,"").replace(/<summary>[\s\S]*?<\/summary>/,"");
   return `<div class="pr-why"><div class="pr-why-t">Por que apareceu</div>${inner}</div>`;
 }
-function prCards(ids, ctxs, pres){
+/* O papel NUNCA afirma preservação: a Camada 1 não é impressa (spec §5/C13), então
+   `afirmaPreservacao` fica falsy em todos os sítios de `buildPrintReport`. O parâmetro
+   existe para que essa escolha seja explícita no contrato, e não implícita no esquecimento. */
+function prCards(ids, ctxs, pres, afirmaPreservacao){
   return ids.map(id=>{
     const c = ctxs[id];
-    const body = (pres==="card") ? capCardHTML(id,c) : baseCardHTML(id,c,pres===null?"maturity":pres);
+    const body = (pres==="card") ? capCardHTML(id,c) : baseCardHTML(id,c,pres===null?"maturity":pres,afirmaPreservacao);
     /* substitui o <details> do why por versão sempre visível */
     return body.replace(/<details class="v32-why">[\s\S]*?<\/details>/, prWhy(id,c));
   }).join("");
@@ -6464,7 +6538,7 @@ function buildPrintReport(){
     const ids = byMode(m); if(!ids.length) return;
     h += `<h3>${SUPPORT_TITLES[m]}</h3><div id="${bid}">${prCards(ids,ctxs,"card")}</div>`;});
   const baseIds = rest.filter(id=>presentationOf(id,ctxs[id])==="base");
-  if (baseIds.length) h += `<h3>Leitura base — contexto tecnológico não informado</h3><div id="pr-sup-base">${prCards(baseIds,ctxs,"base")}</div>`;
+  if (baseIds.length) h += `<h3>Leitura base — contexto tecnológico não informado</h3><div id="pr-sup-base">${baseAbsenceHTML(baseIds,ctxs,false)}</div>`;   /* [010 · V3] mesmo aviso da tela, sem controle */
   const matIds = rest.filter(id=>presentationOf(id,ctxs[id])==="maturity");
   if (matIds.length) h += `<h3>Apoio baseado na maturidade</h3><div id="pr-sup-maturity">${prCards(matIds,ctxs,"maturity")}</div>`;
   h += `</div>`;
@@ -6577,6 +6651,11 @@ window.__DEV = {
   showResults: () => { step = RESULTS_STEP; render(); },
   legacySnapshot,
   ctx: () => lastCtx,
+  /* [010 · V1] o predicado de arbitragem exposto como DADO DE TESTE (R-3: `__DEV` já é
+     bridge registrado; nenhum `window.__*` novo, e `__V32UI` não cresce). Nenhum oráculo
+     desta demanda o consome para julgar — quem lê o produto para julgar o produto não
+     julga nada; `d010HasSubstitute` reimplementa a spec §1 na fixture. */
+  hasSubstitute: res => hasSubstituteV32(res || lastCtx || V32.buildRecommendationContext()),
   qLabel,
   preparePrint, finishPrint, buildPrintReport, safePrint, fullStateJSON, commercialHTML,
   setNote: (k,txt)=>{ if (typeof notes!=="undefined") notes[k]=txt; },

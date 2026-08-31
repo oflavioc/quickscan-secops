@@ -3992,7 +3992,43 @@ async function tgt4(browser, errs) {
         "|" + JSON.stringify(window.__DEV.TARGET.overrides));
 
       const paginas = p52PdfWords(file);
-      const idxBloco = paginas.findIndex(p => /Perfil atual/.test(p.texto) && /Cen[áa]rio-alvo/.test(p.texto));
+      /* ── SELETOR DO BLOCO · DESAMBIGUADO (2026-08-31) ──────────────────
+         MOTIVO. O seletor anterior era `/Perfil atual/.test(t) && /Cenário-alvo/.test(t)`
+         — DUAS regex soltas, sem exigir adjacência nem a forma do título. A régua de
+         `#pr-journey` imprime "Perfil atual · Cenário-alvo" (ponto MÉDIO, não `×`)
+         para marcar onde os dois perfis caem na escala, e fica IMEDIATAMENTE antes
+         de `#pr-target`. Sob gate ABERTO ela publica o marcador do alvo e passa a
+         satisfazer as duas regex: `idxBloco` podia apontar para a página da RÉGUA,
+         e não para a do bloco. A fatia então começava na régua e — com o terminador
+         numa página posterior — corria até o fim daquela página: nunca alcançava os
+         valores por domínio, e engolia os 5–6 nomes de estágio da própria régua.
+         Sob gate FECHADO a régua não publica "Cenário-alvo" e a ambiguidade some —
+         que é por que o sintoma aparecia só num dos quadrantes de cada vez.
+
+         DEFEITO LATENTE, INDEPENDENTE DA DEMANDA 010. A ambiguidade sempre esteve
+         aqui; o que decide qual página `findIndex` devolve é onde cai a quebra, e
+         mudança de conteúdo em QUALQUER seção anterior a move. Por isso o mesmo
+         mecanismo produziu, antes da correção de conteúdo da 010, também o quadrante
+         de gate fechado. Nenhuma linha desta suíte precisou mudar para o defeito
+         existir, e nenhuma precisa mudar para ele voltar — só a paginação.
+
+         NÃO ENFRAQUECE. A asserção é a mesma, palavra por palavra: o que muda é o
+         gate passar a medir o SÍTIO que sempre quis medir. Unicidade medida no
+         papel das QUATRO fixturas deste gate (casos A/B/C/D): a forma do título
+         ocorre EXATAMENTE 1 vez no relatório inteiro em A, B e C, e ZERO em D
+         (que não tem `#pr-target`); ela nunca casa `#pr-journey` em nenhuma das
+         quatro. O desfecho "acha / não acha" é idêntico ao do seletor anterior nas
+         quatro — muda ONDE acha, e só no caso de gate aberto.
+
+         ESCOPO E AUTORIZAÇÃO. Suíte congelada (§29.4). Autorização NOMINAL do
+         proprietário em 2026-08-31, restrita a ESTA linha — o seletor de
+         `idxBloco`. Ficam FORA, registrados como achado `EA-10` para demanda
+         própria e deliberadamente NÃO tocados aqui: (i) o recorte
+         `slice(ini, fim > ini ? fim : undefined)`, que alarga o sujeito em
+         silêncio até o fim da página quando o terminador não está nela; (ii)
+         `p52PdfColorInk(file, idxBloco + 1, ...)`, que rasteriza UMA página só e
+         por isso não mede tinta do alvo quando o bloco atravessa duas. */
+      const idxBloco = paginas.findIndex(p => /Perfil atual\s*[×x]\s*Cen[áa]rio-alvo/.test(p.texto));
       /* recorte do bloco: da âncora até o disclaimer metodológico */
       let blocoTexto = "";
       if (idxBloco >= 0) {

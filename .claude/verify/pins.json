@@ -1,7 +1,7 @@
 {
   "_meta": {
     "descricao": "Registry único de pins — fonte de identidade dos artefatos (R8). Hashes = SHA-256 dos blobs de HEAD. Alterar arquivo pinado exige regenerar este registry no MESMO PR, com motivo no commit.",
-    "gerado_de_head": "7265432fdc19f0920aff0855ea1aa587e7b5f41d",
+    "gerado_de_head": "de30308757f6181c5878c7274c8b45c5d07ef145",
     "gerado_em": "2026-08-31",
     "exclusoes": [
       "docs_phase5/**",
@@ -188,7 +188,7 @@
     "playwright.config.js": "9661deed970d595c62bc924708e1eb0b6d09c1c7db60176972819f1ea15b5dcf",
     "prototypes/.gitkeep": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
     "quickscan_secops_soccmm_v3_1_3.html": "d329049147950a5b2a40b2735c3d4bd9a89177fed439efbcb58df01bdeb7ae82",
-    "quickscan_secops_soccmm_v3_2_dev.html": "74ed75415d737df16c6448c05956b7b8e214690dd8d4bc2b3075994a45a55ae0",
+    "quickscan_secops_soccmm_v3_2_dev.html": "5c6904edfe19c72eda624b8ec7daaefbe74006950ae5976230b0d886b4d492c1",
     "session_roundtrip_report.md": "ffe0d30411cc086681a44fa8d69e1066a0bf26173f15dd8580286787056cf4f8",
     "specs/.gitkeep": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
     "specs/003-marcador-duplicado/fix-finding-registry.md": "dce0be8376f543678b9b214fd2e03e0efbda9f45cd978b909d0cc5208fa456a2",
@@ -302,7 +302,7 @@
     "ui_ux_v32.css": "8afbd55f97a3abd10a0a217925807a92161506be7c3ef3a8ff0303a75ebabbf3",
     "ui_ux_v32.js": "a050401145a5ed7af597eae01a9a23826418119769c096db168b3b177a9d3938",
     "ui_v32.css": "acb0eba165ef25e6b97475430e9b042a9b39038be2b9882ec5b3c67a730faa6f",
-    "ui_v32.js": "d594dafec00d11efa2c25d6fe3183f1d5177343f09c925dfcc7055b17df9bb85",
+    "ui_v32.js": "9d31fef96e952b37a14d2ad07c616e368d36af7231c4a1896c72d8ac524972b6",
     "v3_1_3_functional_snapshot.json": "0abeaa7cc3a7e270fde015791a93bfbdb580803a915871e12811585c99555435"
   }
 }

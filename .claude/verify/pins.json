@@ -1,7 +1,7 @@
 {
   "_meta": {
     "descricao": "Registry único de pins — fonte de identidade dos artefatos (R8). Hashes = SHA-256 dos blobs de HEAD. Alterar arquivo pinado exige regenerar este registry no MESMO PR, com motivo no commit.",
-    "gerado_de_head": "f14f1eb33535b0c8528178bbd21828361175af8e",
+    "gerado_de_head": "11a462de8f88133afe5e111c5034bfb7172f8e4f",
     "gerado_em": "2026-09-01",
     "exclusoes": [
       "docs_phase5/**",
@@ -121,7 +121,7 @@
     ".claude/verify/current_phase.json": "235f00d041c4a026290affb3ae3fabfb6268f75baed83ffc5d21ac5579d30733",
     ".claude/verify/env_doctor.py": "c3da72f6cbe6b1084dad68e97b23e0c7c7a4be3ec42623ac626b3e5b08a9369f",
     ".claude/verify/evidence_bridge.json": "8fbf8bca5e6710c709828f839e5f4c6ae552c5fb382429f25aae39b6ad0d291a",
-    ".claude/verify/expected_suites.json": "693bf7218b61a5a1997b56db5e2019cd9223f00931b4f97293668ddf178cebb0",
+    ".claude/verify/expected_suites.json": "45cb218bec171c820648115f14558f04800139e2391c80f80c22814d0fbf732d",
     ".claude/verify/gen_evidence_bridge.py": "1cb4d6cc0ad7ae4e6a801286202c637a6cfb527475e92a84e6197449c4209cf2",
     ".claude/verify/gen_pins.py": "730043800a41b4cfbb799945dd6499df8ba1375096f5f748df01c8c2d12a407a",
     ".claude/verify/invariants.json": "b8571facafbe6098cc643886cd158f877dd702c0cba6ca5addff34fc3e10bee6",
@@ -129,6 +129,7 @@
     ".claude/verify/mutation-matrix.json": "76c1697a7903ee365d3743db9c3b89ccf04f35ad32288ac49dbe785db73bdb19",
     ".claude/verify/mutation_map.json": "8ad9e30ea68a867b588836cc08e4e103d9a5bf8332dfbadb8ac0022049f87373",
     ".claude/verify/pipeline.yaml": "18581a19186417522d15e30e7072e5b58e31dc16045ff253b672827288fdbf9e",
+    ".claude/verify/regra_morta.json": "c01a8eb328417bc4b22343b82facbf44156abbca809558862d76920874f898e1",
     ".claude/verify/run.sh": "b137b7a1c1bf9233b06ed8f87b04fb03150b316b59ce0b56231c28ab4e048faa",
     ".gitattributes": "37bb36fb03aa6edbf1ce9fdc3bb9cb705e0317da970df37783777795bbcdcdb9",
     ".github/workflows/verify.yml": "27fba708e105549f93727b5b46054ceaa617849606f13a825bda85d16b58d873",
@@ -150,6 +151,7 @@
     "engine_v32.js": "9a4a2e674389a115a56c0bce9785ad0f90651546e31d264a947998e2bb5d247a",
     "fixtures_009_leitura.js": "c5d10e056a2d7aa1383e1c2ce3050f094c24de6a23cf7f63afc44efea86475ef",
     "fixtures_010_vao.js": "3830b51ff872c6f173f545798efaaa773a5a5b149a0a24973aa02e3876a5e043",
+    "fixtures_014_regra_morta.js": "a8853c5cabc1b7f18fcfc09d1247366e5dafa8e6203f05d04ec00ff16c75b8f8",
     "fixtures_p50.js": "08610c8f92238eefb82a07ec57cb1ab9cdbb626cad1c9483d278e26ed572443f",
     "fixtures_p52.js": "6830420e7acae5860b18c72ddba208c76cabe1b770d61132fe7f5db684a22b60",
     "generate_icons_v32.py": "e4fc59576cd3817c8c84c7c46dc5f8a6fe33d5786467cbefd0de3557c536cb0a",
@@ -257,6 +259,7 @@
     "tests_011_chromium.js": "8a35766bd889143e4d05749700d8fc82026ed703f86191a13947197ce9b6e16e",
     "tests_011_mutants.js": "3bc7983c08ede245bf2d29204244ddc9defbe110633b8f78558bb5cb3508fbae",
     "tests_011_prioridade.js": "b8fce56a38f2e9ac18fdbddcc76b278ab2e84eaa5eaea82495a8dd868982c7b6",
+    "tests_014_regra_morta.js": "d7e5c6fabb06641ed23678e8a128ff17578849755d2be4c0ee5404ab928a1a90",
     "tests_core_mutants.js": "8a0502c2d7f34832722059435f2ccf4d7889614769526b645d4e2a720732af7e",
     "tests_icons_m46.js": "f73f96e32951507135c0b36d968fe12e9ffbc268e8ad438ea2e6c861a8b88123",
     "tests_journey_m45.js": "84d99be32e122f867dc1620cd1f49e4f3ae9795a32185cc75aa246d8682941f5",

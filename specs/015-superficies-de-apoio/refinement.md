@@ -99,18 +99,33 @@ produto pede (declarar contexto). O único card redundante é o quarto da lista 
 ele é precisamente a classe que a E18 já colapsou em `#v32base`, e que **não pode**
 ser colapsada aqui (M4).
 
-**M4 · A remoção pedida no 6a custa seis gates congelados em três suítes, e uma
-propriedade de produto.** Medido no source:
+**M4 · A remoção pedida no 6a custa OITO gates congelados, em QUATRO suítes, e uma
+propriedade de produto.** Medido no source — **um id por linha**, para que o número
+seja contável na tabela e não dependa desta frase:
 
-| Gate | Suíte | O que exige de `#v32prio` / `#pr-sup-prio` |
-|---|---|---|
-| `V10` | `tests_ui_m32.js:142-152` | card de `security-analytics` **dentro de `#v32prio`**, com "prioridade declarada" e "nenhum produto é inferido sem contexto" |
-| `V15 (A)` | `tests_ui_m32.js:197-209` | priority-first: a priorizada em `#v32prio`, antes das demais, e **não** duplicada em `#v32base` |
-| `V21 (B)` | `tests_ui_m32.js:259-271` | card em `#v32prio` com whitespace, sem "aquisição candidata" |
-| `V22 (B/C)` | `tests_ui_m32.js:272-283` | idem, contraprova |
-| `P5`, `P7` | `tests_ui_m332.js:90-95`, `:102-107` | **no papel**, `#pr-sup-prio` na ordem declarada e nomeando FortiSIEM |
-| `D010-ABS1 (f)` | `tests_010_vao.js:825-831` | `#v32prio` nunca recebe bloco de ausência e nunca fica sem `.v32-card` |
-| `P52-SUP3` | `tests_p52_chromium.js:1593-1606` | ≥ 2 `.section-title` em `#v32support` — *"as variantes de apoio deixaram de ser distinguidas por função"* |
+| # | Gate | Suíte | O que exige de `#v32prio` / `#pr-sup-prio` |
+|---|---|---|---|
+| 1 | `V10` | `tests_ui_m32.js:142-152` | card de `security-analytics` **dentro de `#v32prio`**, com "prioridade declarada" e "nenhum produto é inferido sem contexto" |
+| 2 | `V15 (A)` | `tests_ui_m32.js:197-209` | priority-first: a priorizada em `#v32prio`, antes das demais, e **não** duplicada em `#v32base` |
+| 3 | `V21 (B)` | `tests_ui_m32.js:259-271` | card em `#v32prio` com whitespace, sem "aquisição candidata" |
+| 4 | `V22 (B/C)` | `tests_ui_m32.js:272-283` | idem, contraprova |
+| 5 | `P5` | `tests_ui_m332.js:90-95` | **no papel**, `#pr-sup-prio` na ordem declarada |
+| 6 | `P7` | `tests_ui_m332.js:102-107` | **no papel**, `#pr-sup-prio` nomeando FortiSIEM |
+| 7 | `D010-ABS1` alínea (f) | `tests_010_vao.js:825-831` | `#v32prio` nunca recebe bloco de ausência e nunca fica sem `.v32-card` |
+| 8 | `P52-SUP3` | `tests_p52_chromium.js:1593-1606` | ≥ 2 `.section-title` em `#v32support` — *"as variantes de apoio deixaram de ser distinguidas por função"* |
+
+> **Errata de contagem — 2026-09-01.** Esta prosa dizia ~~"seis gates congelados em
+> três suítes"~~ e estava errada nos **dois** números; o `brief` do planning-state
+> dizia "sete gates em quatro suítes", certo nas suítes e errado nos gates — ele
+> contou **linhas**, e a linha 5/6 carregava dois ids (`P5`, `P7`) na mesma célula.
+> O valor correto é **8 ids em 4 suítes**. A tabela foi partida em um id por linha
+> para que o número seja **derivável do artefato**, nunca reafirmado em prosa —
+> que é como ele driftou. Levantado pelo `doc-writer`.
+
+**Duas leituras que o número sozinho esconde:** o item 7 é **uma alínea** de um
+gate, não o gate inteiro; e o item 8 é **Chromium** (KI-3), logo das quatro suítes
+uma **não roda no agregado local** — fecha no job `visual` do CI. Quem for orçar a
+remoção pelo número precisa das duas ressalvas.
 
 Por trás dos gates há uma **propriedade**, não um detalhe de teste: *prioridade
 declarada nunca desaparece do resultado* (3.2.2-A / 3.2.3-B, comentários em

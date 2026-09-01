@@ -187,14 +187,51 @@ Eu deixei o escopo de `N41` como "a confirmar". **Confirmado: `N41` não impõe
 restrição alguma ao `<h3>` novo**, e `N40` também não alcança o papel — o
 relatório impresso é filho de `body` (`ui_v32.js:786-789`), fora de `#app`.
 
-**Direção: a metade-papel de `C1(g)` deixa de ser redundância com o acervo e vira
-obrigação nova — e por isso precisa de mutante próprio.** `M17` ataca a metade de
-**tela**, onde `N40` também mataria: mutante que morre em dois lugares é prova
-fraca do poder do gate novo. A metade de **papel não tinha carrasco algum**.
-Nasce **`M19`** — duplicar no papel o título de outra seção —, único mutante que
-prova o poder discriminante de `(g)` onde não há cobertura congelada. Sem `M19`,
-`(g)` entra na família "gate verde que não pode reprovar" que esta jornada já
-catalogou.
+~~**Direção: a metade-papel de `C1(g)` deixa de ser redundância com o acervo e
+vira obrigação nova — e por isso precisa de mutante próprio.** `M17` ataca a
+metade de **tela**, onde `N40` também mataria: mutante que morre em dois lugares
+é prova fraca do poder do gate novo. A metade de **papel não tinha carrasco
+algum**.~~ Nasce **`M19`** — duplicar no papel o título de outra seção.
+
+#### Emenda E3 — 2026-09-01 · a razão estava errada; a conclusão ficou mais forte
+
+**A frase "`N40` também mataria [`M17`]" é FALSA, e fica riscada com a razão**
+(R2 §5). Medido pelo `qa-engineer`, conferido por leitura nesta escrita: o cenário
+de `N40` (`tests_journey_m45.js:220-224`) é `boot()` + `answerAll` +
+`showResults()`, **sem salvar landscape** — logo `isLegacyModeV32()` é verdadeiro,
+`renderBlocks` toma o ramo legado (`ui_v32.js:236-243`) e **`#v32prio` não nasce**.
+`N40` não enxerga aquele eyebrow **em forma alguma**. Sob as **duas** formas do
+mutante, `journey` fechou **31/0**.
+
+**E `p52layout` também não o vê:** varre **filhos diretos**, e o nó é **neto**
+(`#v32panel > #v32support > .section-title`) — exatamente a inalcançabilidade
+estrutural que sustenta a cláusula sentinela `C1(h2)` (E2.1). Duas alíneas desta
+spec, uma que assere e outra que se abstém, apoiam-se **no mesmo fato do DOM**.
+
+**O que passa a valer:**
+
+1. **As DUAS metades de `C1(g)` — tela e papel — são obrigação exclusiva de
+   `D015-TIT1`, sem cobertura congelada.** Derivei `M19` julgando descoberta só a
+   metade-papel; **as duas** estavam. A conclusão da E2.4 não cai: **fica mais
+   forte**, e o gate novo é a única proteção de unicidade de título nas duas
+   superfícies.
+2. **`M17` é o carrasco da metade-tela pela razão certa** — não "apesar de `N40`",
+   mas **porque nada mais alcança aquele nó**. A qualificação "prova fraca" sai:
+   ela nascia de um carrasco concorrente que não existe.
+3. **A forma literal que escrevi para o `M17` não isola.** Trocar o texto do
+   eyebrow pelo de outro título **leva junto o sufixo ratificado**, e o gate
+   reprova primeiro por `(b)`. **Detecção incidental não é kill**: o par morreria
+   com a razão errada e `(g)` continuaria sem prova. A forma adotada ataca a mesma
+   propriedade **emitindo o `section-title` duas vezes** — o literal fica intacto,
+   `(b)` permanece satisfeita, e dispara **só** a alínea certa.
+4. **`M19` permanece**, agora como carrasco da metade-**papel**, pela mesma regra
+   de isolamento.
+
+**A lição de método, porque é maior que o caso:** *um mutante só prova o poder de
+uma alínea se aquela alínea for a que reprova primeiro.* Escrever a mutação sem
+verificar qual alínea dispara produz par que morre pela razão errada e alínea que
+segue sem carrasco — a família "gate verde que não pode reprovar" que esta jornada
+já catalogou quatro vezes.
 
 ### O que E2 NÃO muda
 
@@ -212,7 +249,7 @@ antes do plano (R3 §1), e é escrito pelo `qa-engineer` — nunca pelo implemen
 
 | # | Critério | Gate (id · asserção) | Mutante previsto |
 |---|---|---|---|
-| **C1** | **O título do bloco de prioridades V3.2 deixa de prometer apoio e passa a nomear a leitura que entrega** — porque a promessa é falsa em 2 dos 4 estados do bloco (refinamento, M3). Vale nas **duas** superfícies, com a assimetria do sufixo declarada em C1(d) | **`D015-TIT1`** · (a) o eyebrow de `#v32prio` **não contém** `/apoi(o\|ar\|a)/i`; (b) **contém** a substring exata `· contexto V3.2`; (c) o `<h3>` que precede `#pr-sup-prio` no papel tem **oração principal idêntica** à do eyebrow após remover o sufixo; (d) o `<h3>` do papel **não** contém o sufixo; (e) o eyebrow ≠ e não é substring do título congelado `"Como a Fortinet pode apoiar nas prioridades declaradas"`; (f) **não-vacuidade**: `#v32prio` e `#pr-sup-prio` existem nas fixtures usadas, e a alínea nomeia o estado se não existirem; **(g) [E1] unicidade** — o texto trimado do eyebrow é **único** entre `#app .eyebrow, #app h3`, e o do `<h3>` do papel é único em `#v32-print-report`; **(h1) [E2 · partida] pertinência** — o texto do eyebrow não pertence a `HIDE_EYEBROWS` (`ui_v32.js:109-110`) nem às suas duas cópias; asserção sobre o **fonte**; **(h2) [E2 · cláusula sentinela, sem mutante]** — o nó **nunca** recebe `.v32-hidden` em E1–E8; gatilho de falsificação nomeado: mudança do escopo de varredura de `hideLegacyRecommendation` | **M1** restaurar o literal antigo do eyebrow ⇒ (a) morre · **M2** apagar o sufixo ⇒ (b) morre · **M3** editar só a tela ⇒ (c) morre · **M4** copiar o sufixo para o papel ⇒ (d) morre · **M17** [E1] dar ao eyebrow o texto exato de um título já existente **na tela** ⇒ (g) morre — *prova fraca: `N40` também mataria* · **M18** [E1, reatribuído em E2] pôr o eyebrow em `HIDE_EYEBROWS` ⇒ **(h1)** morre — ~~e `U15` cai junto~~ **falso, ver E2.1** · **M19** [E2] duplicar **no papel** o título de outra seção ⇒ (g) morre — **único carrasco da metade sem cobertura congelada** |
+| **C1** | **O título do bloco de prioridades V3.2 deixa de prometer apoio e passa a nomear a leitura que entrega** — porque a promessa é falsa em 2 dos 4 estados do bloco (refinamento, M3). Vale nas **duas** superfícies, com a assimetria do sufixo declarada em C1(d) | **`D015-TIT1`** · (a) o eyebrow de `#v32prio` **não contém** `/apoi(o\|ar\|a)/i`; (b) **contém** a substring exata `· contexto V3.2`; (c) o `<h3>` que precede `#pr-sup-prio` no papel tem **oração principal idêntica** à do eyebrow após remover o sufixo; (d) o `<h3>` do papel **não** contém o sufixo; (e) o eyebrow ≠ e não é substring do título congelado `"Como a Fortinet pode apoiar nas prioridades declaradas"`; (f) **não-vacuidade**: `#v32prio` e `#pr-sup-prio` existem nas fixtures usadas, e a alínea nomeia o estado se não existirem; **(g) [E1] unicidade** — o texto trimado do eyebrow é **único** entre `#app .eyebrow, #app h3`, e o do `<h3>` do papel é único em `#v32-print-report`; **(h1) [E2 · partida] pertinência** — o texto do eyebrow não pertence a `HIDE_EYEBROWS` (`ui_v32.js:109-110`) nem às suas duas cópias; asserção sobre o **fonte**; **(h2) [E2 · cláusula sentinela, sem mutante]** — o nó **nunca** recebe `.v32-hidden` em E1–E8; gatilho de falsificação nomeado: mudança do escopo de varredura de `hideLegacyRecommendation` | **M1** restaurar o literal antigo do eyebrow ⇒ (a) morre · **M2** apagar o sufixo ⇒ (b) morre · **M3** editar só a tela ⇒ (c) morre · **M4** copiar o sufixo para o papel ⇒ (d) morre · **M17** [E1, corrigido em E3] **emitir o `section-title` da tela duas vezes** ⇒ (g) morre, e **só** (g) — a forma literal que eu havia escrito (trocar o texto pelo de outro título) ~~levaria junto o sufixo e reprovaria por (b)~~: detecção incidental não é kill. ~~*prova fraca: `N40` também mataria*~~ — **falso, ver E3** · **M18** [E1, reatribuído em E2] pôr o eyebrow em `HIDE_EYEBROWS` ⇒ **(h1)** morre — ~~e `U15` cai junto~~ **falso, ver E2.1** · **M19** [E2] duplicar **no papel** o título de outra seção ⇒ (g) morre — **único carrasco da metade sem cobertura congelada** |
 | **C2** | **O bloco de apoio junto do gap declara a própria ancoragem** — que a lista parte da *capability* do gap, não do nível respondido. É a metade alcançável de T3 com `ui_v32.js` (a outra metade vive em arquivo não autorizado; ver "Resíduo declarado") | **`D015-ANC1`** · (a) todo `[data-pr-gap-support]` traz **exatamente 1** nó `[data-pr-gap-fonte]`, atributo **próprio** (nunca outro valor de `data-pr-gap-why`, que `P51-REC1` já mede); (b) o texto casa a **propriedade** — ancoragem por capability **e** negação explícita de ancoragem por nível — por duas expressões independentes, nunca pela frase inteira; (c) presente nos **dois** ramos de `qsGapSupportHTML` (contexto declarado e não declarado), medido em duas fixtures; (d) o nó **não** nomeia produto (`!/Forti[A-Z]/`) nem repete a lista; (e) **não-vacuidade**: o conjunto de `[data-pr-gap-support]` é não vazio e a contagem é a esperada em cada fixture, declarada no gate | **M5** emitir só no ramo "não declarado" ⇒ (c) morre · **M6** trocar o texto por afirmação de ancoragem por nível ⇒ (b) morre · **M7** reusar `data-pr-gap-why` em vez do atributo próprio ⇒ (a) morre |
 | **C3** | **A regra geral entra na caixa "Como interpretar este relatório"** — um 7º item, **estático**, dizendo que o relatório pode apresentar mais de uma lista de possibilidades para o mesmo gap, que elas partem de catálogos e ancoragens diferentes, e que **não se somam** como recomendação | **`D015-HOWTO1`** · (a) `#pr-howto li` = **7**, dentro da faixa 5–8 que `P51-DOC12` (`tests_p50_core.js:3825-3826`) e o gate de PDF (`tests_p50_chromium.js:3595`) exigem; (b) **[emendada em E1]** as **duas** métricas sob o mesmo limite de 900, cada uma nomeada com a sua suíte: **crua** — `txt(#pr-howto).length`, que é `textContent` puro, medida por `P51-DOC12` (`tests_p50_core.js:3827-3828`), **hoje 585**, e é a que **reprova primeiro**; **normalizada** — `.replace(/\s+/g," ").trim().length`, medida pelo gate de PDF (`tests_p50_chromium.js:3570-3571`, `:3597`), **hoje 544**. Orçamento do 7º item: **≤ 308 caracteres visíveis**. As duas medidas ficam registradas no gate, antes e depois; (c) o novo item casa a propriedade (duas expressões: "mais de uma lista" + "não se somam"), nunca a frase; (d) a caixa continua **estática** — `outerHTML` idêntico entre duas sessões de dados diferentes; (e) os 6 conteúdos exigidos por `P51-DOC12:3831-3837` continuam casando | **M8** tornar o item função da sessão ⇒ (d) morre · **M9** remover o item ⇒ (a) e (c) morrem · **M10** escrever o item longo o bastante para estourar 900 ⇒ (b) morre |
 | ~~**C4**~~ **DERRUBADO (E1)** | ~~**O resíduo `C × I` é declarado na tela, e só onde ele existe** — quando a leitura congelada da Camada 1 está visível, uma linha diz que o cenário-alvo pode listar os mesmos itens porque as duas partem do mesmo catálogo congelado, ancorados de formas diferentes~~ · **Razão da queda em E1**: acrescentaria texto à tela que o cliente chamou de carregada, num host que não é o certo | ~~**`D015-RES1`** · (a) com a Camada 1 **visível** (estados E1 e E2), `#v32panel` traz **exatamente 1** `[data-v32-relacao="catalogo-unico"]`; (b) com a Camada 1 **oculta** (estado E3), o nó **não existe**; (c) o texto é **condicional** e **não afirma** a existência do cenário-alvo; (d) o nó não nomeia produto e a contagem de `.v32-decl-row` fica inalterada; (e) **não-vacuidade**: em E1 e E2 a Camada 1 está de fato visível~~ · **gate não é escrito** | ~~**M11** · **M12** · **M13**~~ — **aposentados, ids não reusados** (R12) |
@@ -234,8 +271,8 @@ escrito.
 | `D015-ANC1` (e) | **Sim** — E6/E7 e sessões sem gap nos 4 qids esvaziam o conjunto | É a guarda que impede (a)–(d) de fecharem verdes sobre conjunto vazio |
 | `D015-HOWTO1` (a)(b)(c)(e) | **Não, por sessão** — a caixa é estática por exigência de `P51-DOC12` | Discriminante é M8–M10 |
 | `D015-HOWTO1` (d) | **Sim** — basta o item passar a depender de `ans`/`suff` | Único ponto do C3 com discriminante de estado |
-| `D015-TIT1` (g) · metade **tela** | **Sim** — M17 o prova. Mas **`N40` também mataria M17**: a alínea passa sem que isso prove poder próprio | Prova fraca, declarada. O poder de (g) vem de M19 |
-| `D015-TIT1` (g) · metade **papel** **[E2]** | **Sim** — M19 o prova, e é o **único** que o prova: medido que `N40`/`N41` **não alcançam o papel** (o relatório é filho de `body`, fora de `#app`) | **Obrigação nova, não redundância com o acervo.** Sem M19, (g) seria gate verde sem poder de reprovar |
+| `D015-TIT1` (g) · metade **tela** **[corrigido em E3]** | **Sim** — M17 o prova, **e é o único que o prova**: `N40` roda em modo legado, onde `#v32prio` **não nasce** (`tests_journey_m45.js:220-224`), e `p52layout` varre filhos diretos, sendo o nó **neto** | ~~Prova fraca~~ — **obrigação exclusiva deste gate**. Exige a forma de mutante que **isola** (emitir o título duas vezes), não a que troca o literal |
+| `D015-TIT1` (g) · metade **papel** **[E2]** | **Sim** — M19 o prova, e é o **único** que o prova: `N40`/`N41` **não alcançam o papel** (o relatório é filho de `body`, fora de `#app`) | **Obrigação nova, não redundância com o acervo.** Sem M19, (g) seria gate verde sem poder de reprovar |
 | `D015-TIT1` (h1) **[E2]** | **Sim** — M18 o prova, e é o único carrasco dele | Asserção sobre o **fonte**, no precedente do `/Forti[A-Z]/` de `P52-REC1` |
 | `D015-TIT1` (h2) **[E2]** | **Não, no estado atual** — a varredura nunca visita o nó (`ui_v32.js:181`) | **Cláusula sentinela, sem mutante.** NÃO é a classe da 010 (inalcançável por construção): é falsificável, e o **gatilho tem nome** — mudança do escopo de varredura, que já ocorreu uma vez (`ui_v32.js:171-177`). Reavaliar quando o gatilho disparar; não arquivar como "não reporte" |
 | ~~`D015-RES1` (a)(b)(e)~~ | ~~**Sim** — E1/E2 × E3 são estados distintos e alcançáveis~~ | **APOSENTADO (E1)** — o gate não é escrito |
@@ -295,6 +332,12 @@ escopo de `N41` foi medido pelo `qa-engineer`: **não impõe restrição alguma 
 de `body` (`ui_v32.js:786-789`), fora de `#app`. Logo a unicidade de título **no
 papel não tem cobertura congelada**: `C1(g)` não é redundância com o acervo, é a
 **única proteção**. Foi o que obrigou a criar `M19` (E2.4).
+
+**[E3] E a tela está igualmente descoberta.** `N40` roda em **modo legado**, onde
+`#v32prio` não nasce, e `p52layout` não alcança um **neto**. Portanto **nenhuma**
+das duas metades de `C1(g)` tem cobertura congelada — a restrição R-2, que entrou
+nesta spec como "o acervo já guarda isso", é na verdade **um precedente de forma**
+(como se assere unicidade), não uma cobertura. Reclassificada.
 
 ### R-3 · O eyebrow tem de continuar fora das listas de ocultação
 

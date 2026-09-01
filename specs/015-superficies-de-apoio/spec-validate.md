@@ -8,6 +8,9 @@
 > **Este registro não emite veredito de PASS/FAIL**: cada linha cita o que foi
 > executado ou lido. Quem decide gate é o `qa-engineer`; quem decide gap de
 > classe `spec-errada` é o usuário, no chat (R4).
+> **ADENDO DE 2026-09-01 no fim do arquivo: o gap G2 fechou** (`5724fbd`) e o
+> score foi revisto para **35 de 36**. Os itens **7**, **8**, **23**, **25** e
+> **27** desta tabela leem-se com o adendo.
 
 ## Método
 
@@ -175,3 +178,70 @@ razão:
   `qa-engineer`**.
 - Fechados G1 e G2, o score volta a ser medido **por execução**, não por
   releitura — e é o `qa-engineer` quem o declara.
+
+---
+
+## Adendo — iteração 2, 2026-09-01 · HEAD `643a0a6`
+
+Registro do que mudou depois da 1ª edição. **Continua sem emitir veredito**: os
+números abaixo são de execução própria ou de log de CI citado.
+
+### G2 · FECHADO
+
+`M17` e `M18` entraram no harness `d015` (`5724fbd`). Conferido no HEAD atual:
+
+- `tests_015_mutants.js` tem **15** entradas de mutante;
+- `mutation-matrix.json` tem **16 pares** `D015-*` (15 do harness + `M16` manual),
+  os dois novos com `ultima_prova.resultado` **KILL**, data 2026-09-01;
+- execução própria de `node tests_015_mutants.js`: **15/15 DETECTADOS**,
+  `não-KILL: nenhum`, restauração source e html **byte a byte OK**, exit 0;
+- `node tests_015_apoio.js` segue **5 PASS · 0 FAIL de 5**; `check_baseline.py`
+  fecha **292/292 · 0 divergentes · 0 sem pin**;
+- a dívida da cláusula sentinela — que **afirmava** um carrasco nunca executado —
+  foi corrigida na própria entrada de `dividas_declaradas`.
+
+**A direção que este registro recomendou foi seguida para `M18` e superada para
+`M17`**, com uma razão melhor que a minha: `dividas_declaradas` é para mutante que
+**não pode** rodar; `M17` tinha caso e rodava em segundos, então declará-lo dívida
+seria *usar a gaveta errada para esconder trabalho barato*. Fica como **critério
+de classificação**, não como preferência de estilo.
+
+**E a medição corrigiu a spec em dois pontos** (errata E3, `7a6a572`): a forma
+literal do `M17` **não isolava** — o gate reprovava antes por `(b)`, porque o
+sufixo ratificado sumia junto, e **detecção incidental não é kill** —; e a frase
+*"`N40` também mataria"* é **falsa**: o cenário de `N40` é modo legado, onde o
+bloco não nasce. Consequência: **as duas metades de `C1(g)` são obrigação
+exclusiva deste gate**, o que **reforça** a conclusão da E2.4.
+
+### G1 · ABERTO, e mais distante do executado
+
+O `tasks.md` não é tocado desde `b2ec1c4`. Hoje diverge em: **12 mutantes** (são
+15) · **13 pares** (são 16) · matriz prevista sem `M17`/`M18`/`M19` · série de
+repins **R2–R12** contra a executada **R0–R12**, com significados diferentes.
+Classe **spec-errada**, **exige decisão do usuário** (R4). Recomendação
+inalterada: errata mínima, sem renumerar tarefas.
+
+### Itens que o adendo revisa
+
+| Item | Antes | Agora |
+|---|---|---|
+| 7 · `C1(g)` | conforme, com remissão ao G2 | **conforme**, sem remissão |
+| 8 · `C1(h1)` | conforme, com remissão ao G2 | **conforme**, sem remissão |
+| 23 · mutantes previstos × executados | **GAP · G2** | **conforme** — 15 no harness, 16 pares, 15/15 KILL |
+| 25 · R-2 unicidade | conforme, com ressalva sobre o carrasco da metade-tela | **conforme** — a ressalva caiu com a E3: `M17` é o carrasco pela razão certa, porque nada mais alcança o nó |
+| 27 · R-4 payload de `P52-SUP3` | pendência declarada (CI) | **fechado no run `33464353689`** (head `9c88ac8`, job `visual` **success**): `p52chromium` **55 PASS · 0 FAIL de 55**, `p50chromium` **27 PASS · 0 FAIL de 27**, campanhas `p51` **19/20** (o não-KILL é a exceção nominal **KI-4**, achado `EA-7`) e `p52` **107/107**, agregado `mutation: 6 campanha(s) · 0 problema(s)`. Os bytes de produto são **idênticos** entre aquele head e o atual, medido. O run do head atual (`33468032409`) tem `verify` **success** e `visual` em curso |
+
+### Score revisto
+
+**35 de 36 itens conformes — 97%.** Resta **um** gap, o **G1**, de classe
+`spec-errada`, cuja resolução é decisão do usuário e **não** se resolve
+afrouxando gate (R10 §1).
+
+### Achado de registro, novo neste adendo
+
+**A nota do par `D015-M19` ainda carrega a frase que a E3 refutou** — *"a metade
+de TELA, atacada por M17, é PROVA FRACA … N40 mataria M17 também"* —,
+contradizendo, **no mesmo arquivo**, a nota do par `D015-M17` e a spec emendada.
+Refutação registrada tem de ficar **riscada com a razão** (R2 §5), e esta está
+viva num registro consultável. A matriz é do `qa-engineer`: aqui fica registrado,
+não corrigido.

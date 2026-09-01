@@ -1269,6 +1269,133 @@
         "resultado": "DETECTADO — 'D011-PRT1(f): 6/6 item(ns) SEM ATALHO continuam visiveis no papel'. ARMADO na forma B, no literal que esta matriz ja deixara pronto: find '\n  .d011-key[data-d011=\"mudo\"]{ visibility: hidden; }'. PROVA DE DESENHO no mesmo passe: SOBREVIVEU a D011-KEY2 (PASS), como exigido — KEY2 e a clausula de TELA sobre o item sem atalho (o .key fica textualmente vazio) e (f) e a de PAPEL (o .key some inteiro, com a moldura); se KEY2 tambem reprovasse, as duas mediriam a mesma coisa. SIMETRIA COMPLETA das clausulas de print, medida no mesmo log: M19 morre em (b), M13 em (c), M12 em (d), M10 em (e), M20 em (f) e M18 na ausencia do bloco (a) — SEIS mutantes, SEIS alineas distintas, nenhuma subsumindo a outra",
         "registro": "campanha d011 REEXECUTADA INTEGRAL apos a correcao (2026-08-31, worktree exclusiva phase5-011, background, arvore limpa): 19 DETECTADO / 0 SOBREVIVENTE / 0 NAO EXECUTADO de 19 - restauracao byte a byte OK do source E do HTML gerado - porcelain e SHA-256 dos 4 arquivos de produto identicos antes e depois. Preflight: 19 ancoras com ocorrencias == 1, incluindo M10/M13/M19 intactas (a forma B nao as quebra, ao contrario da forma A, que teria levado as tres a ocorrencias=0 e reprovado o IC-4). Sintaxe das 19 replicas validada antes da campanha. O par nasceu do RED commitado ANTES da correcao e so pode ser ancorado depois que o fix criou o sitio — ate la esteve declarado como especificado-e-nao-executavel, nunca como cobertura existente (precedente D009-M20)"
       }
+    },
+    {
+      "mutante": "D014-M1",
+      "harness": "d014 (tests_014_mutants.js)",
+      "gate": "D014-CASC1 (tests_014_regra_morta.js, alínea C1(d))",
+      "invariante": "C1 — importância é a PRIMEIRA régua da cascata: !important em camada anterior vence declaração normal posterior",
+      "descricao": "vence() ignora a importância — o cenário (d) sai 'morta'",
+      "ultima_prova": {
+        "data": "2026-09-01",
+        "resultado": "KILL",
+        "registro": "campanha d014 executada em 2026-09-01 sob árvore limpa (worktree phase5-014, após o commit de T060): 9 DETECTADO / 0 SOBREVIVENTE / 0 NÃO EXECUTADO de 9 · restauração byte a byte OK · porcelain dos alvos limpo · preflight 9/9 âncoras com ocorrencias == 1. O reason pina a CONTAGEM ('1 alínea(s) reprovada(s)') além da alínea: matar pela alínea errada é sobrevivente disfarçado"
+      }
+    },
+    {
+      "mutante": "D014-M2",
+      "harness": "d014 (tests_014_mutants.js)",
+      "gate": "D014-CASC1 (tests_014_regra_morta.js, alíneas C1(a) e C1(c))",
+      "invariante": "C1 — especificidade decide antes da ordem de inlining; ordem é a TERCEIRA régua, nunca a primeira",
+      "descricao": "vence() decide só por ordem — (a) vira 'viva' e (c) vira 'morta'; a contagem pinada em 2 prova que (b)/(d)/(e) seguem certos",
+      "ultima_prova": {
+        "data": "2026-09-01",
+        "resultado": "KILL",
+        "registro": "campanha d014 de 2026-09-01 (árvore limpa): 9/9 DETECTADO — bloco de D014-CASC1 com '2 alínea(s) reprovada(s)' nomeando C1(a) e C1(c)"
+      }
+    },
+    {
+      "mutante": "D014-M3",
+      "harness": "d014 (tests_014_mutants.js)",
+      "gate": "D014-CASC1 (tests_014_regra_morta.js, alínea C1(b))",
+      "invariante": "C1/E5 — contexto de mídia é equivalência SEMÂNTICA (conjunção das condições ancestrais, por valor), nunca textual",
+      "descricao": "contextoEfetivo() acumula o texto cru — a mesma condição escrita de dois jeitos (bloco único × aninhada) deixa de competir e (b) sai 'indecidivel' em vez de 'morta'; é o defeito que faria o único caso morto do repositório escapar",
+      "ultima_prova": {
+        "data": "2026-09-01",
+        "resultado": "KILL",
+        "registro": "campanha d014 de 2026-09-01 (árvore limpa): 9/9 DETECTADO — '1 alínea(s) reprovada(s)' com C1(b) obtido 'indecidivel'"
+      }
+    },
+    {
+      "mutante": "D014-M4",
+      "harness": "d014 (tests_014_mutants.js)",
+      "gate": "D014-VARR1 (tests_014_regra_morta.js, alínea C2(zero))",
+      "invariante": "C2 — a varredura sobre a árvore real acusa regra morta nova, pelo VEREDITO (par mortas/indecidíveis), nunca pelo censo",
+      "descricao": "troca censo-neutra em ui_p50_v32.css (1 longhand → 1 longhand, fora de @media) planta `html #ux-target .ux-tgt-row select option` — dominadora por prefixo VÁCUO + especificidade sobre a declaração de :792 que p51/M51-08 ataca. É a forma do M51-01 recriada ao vivo. A forma literal da célula C2 ('acrescentar declaração') foi medida e recusada: adição muda o censo pinado (E6) e mataria por C2(cen) — 'a folha mudou' —, não por 'há regra morta'; e um mutante de CSS do próprio d014 cuja declaração introduzida nascesse morta deixaria D014-VARR1 permanentemente vermelho na árvore limpa (a varredura avalia a folha mutada EM MEMÓRIA a partir do preflight). Desvio de forma declarado; a propriedade provada é a da célula",
+      "ultima_prova": {
+        "data": "2026-09-01",
+        "resultado": "KILL",
+        "registro": "campanha d014 de 2026-09-01 (árvore limpa): 9/9 DETECTADO — C2(zero) com 'mortas: p51/M51-08'. Medição prévia com o instrumento real (2026-09-01, aplicar→varrer→restaurar): censo_ok true, mortas = [p51/M51-08 · background-color · 'perde em todo o alcance … prefixo VÁCUO [html]'], indecidíveis 20 (inalterados), restauração byte a byte OK"
+      }
+    },
+    {
+      "mutante": "D014-M5",
+      "harness": "d014 (tests_014_mutants.js)",
+      "gate": "D014-DISC1 (tests_014_regra_morta.js, bateria negativa de C3(b))",
+      "invariante": "C3(b) — curinga, campo vazio ou não-texto NÃO excluem; alínea de C3 que deixa de poder falhar é pega pela bateria",
+      "descricao": "julgarExclusoes aceita curinga (shape do IC-9.1). O carrasco é D014-DISC1, não D014-EXC1, por decisão registrada: o mutante enfraquece o JULGADOR, e um julgador enfraquecido continua verde sobre o registro real, que é são (não há curinga em regra_morta.json para ele engolir); quem tem estado alcançável de falha é a bateria negativa, que nomeia 'a alínea C3(b) NÃO reprovou com o defeito injetado'. O critério medido é o C3 da spec; o carrasco executável é DISC1",
+      "ultima_prova": {
+        "data": "2026-09-01",
+        "resultado": "KILL",
+        "registro": "campanha d014 de 2026-09-01 (árvore limpa): 9/9 DETECTADO — bateria[19] nomeando C3(b)"
+      }
+    },
+    {
+      "mutante": "D014-M6",
+      "harness": "d014 (tests_014_mutants.js)",
+      "gate": "D014-DISC1 (tests_014_regra_morta.js, bateria negativa de C3(c))",
+      "invariante": "C3(c) — exclusão que nomeia mutante inexistente reprova (oráculo: preflight, resolvido no disco); exclusão órfã é permissão permanente disfarçada",
+      "descricao": "julgarExclusoes deixa de conferir a existência do mutante nomeado (orfas = []). Mesmo desenho de D014-M5: o registro real não tem exclusão órfã, então quem mata é a bateria negativa de D014-DISC1",
+      "ultima_prova": {
+        "data": "2026-09-01",
+        "resultado": "KILL",
+        "registro": "campanha d014 de 2026-09-01 (árvore limpa): 9/9 DETECTADO — bateria[20] nomeando C3(c), mais 'alínea(s) sem entrada na bateria negativa' para a mesma C3(c) (o caso deixa de cobrir a alínea quando não reprova)"
+      }
+    },
+    {
+      "mutante": "D014-M7",
+      "harness": "d014 (tests_014_mutants.js)",
+      "gate": "D014-COB1 (tests_014_regra_morta.js)",
+      "invariante": "C5 — a cobertura da varredura é DERIVADA de build_v32_html.py; folha que o builder injeta e a varredura não consegue ler reprova ALTO, nomeando a folha — nunca silêncio",
+      "descricao": "acrescenta folha nova ao builder sem tocar a varredura, com UMA âncora contígua (o contrato C1 tem UM find): constante `D014CSS`, `open()` e o identificador na linha de injeção nascem juntos no repl. A folha `ui_d014_m7_fantasma.css` não existe no disco DE PROPÓSITO: a varredura, que segue o builder por derivação, tem de recusar com ENOENT nomeando a folha — varrer por baixo seria o EA-7 de novo",
+      "ultima_prova": {
+        "data": "2026-09-01",
+        "resultado": "KILL",
+        "registro": "campanha d014 de 2026-09-01 (árvore limpa): 9/9 DETECTADO — FAIL D014-COB1 com ENOENT citando ui_d014_m7_fantasma.css (o kill colateral em VARR1/IND1/CEN1 existe e não é o medido: o oráculo é o bloco do gate atribuído)"
+      }
+    },
+    {
+      "mutante": "D014-M8",
+      "harness": "d014 (tests_014_mutants.js)",
+      "gate": "D014-IND1 (tests_014_regra_morta.js, alíneas C6(sint) e C6(cont-sint))",
+      "invariante": "C6/E9 — o que a varredura não decide é nomeado e contado; o pin SINTÉTICO (veredito + razão do caso f) é o carrasco de hoje, enquanto a contagem da árvore aguarda o fecho do achado 014-P52-RA8",
+      "descricao": "classificarDeclaracao descarta a dúvida em silêncio — (f) sai 'viva'. As alíneas da árvore (nome/cons/cont-arvore) seguem conservadas com lista vazia; sem o pin sintético da E9 este mutante SOBREVIVERIA — é a prova de que a E9 fechou um buraco real",
+      "ultima_prova": {
+        "data": "2026-09-01",
+        "resultado": "KILL",
+        "registro": "campanha d014 de 2026-09-01 (árvore limpa): 9/9 DETECTADO — '2 alínea(s) reprovada(s)' nomeando C6(sint) (obtido 'viva') e C6(cont-sint) (pin de veredito+razão)"
+      }
+    },
+    {
+      "mutante": "D014-M9",
+      "harness": "d014 (tests_014_mutants.js)",
+      "gate": "D014-CASC1 (tests_014_regra_morta.js, alínea C1(e))",
+      "invariante": "C1(e)/E5 — prefixar RESTRINGE: a vencedora prefixada por composto não-vácuo casa um subconjunto e a perdedora segue decidindo fora dele; só o prefixo vácuo (html/body/:root) mata",
+      "descricao": "ehVacuo() devolve true para todo composto — (e) sai 'morta'. A contagem pinada em 1 é a prova de desenho: (a) — prefixo `html`, vácuo de verdade — continua 'morta' e continua passando; o mutante prova que prefixar restringe e que a vencedora prefixada NÃO mata o original, e que só a vacuidade separa os dois casos reais (M51-01 × M51-08)",
+      "ultima_prova": {
+        "data": "2026-09-01",
+        "resultado": "KILL",
+        "registro": "campanha d014 de 2026-09-01 (árvore limpa): 9/9 DETECTADO — '1 alínea(s) reprovada(s)' com C1(e) obtido 'morta'"
+      }
+    },
+    {
+      "mutante": "D014-M10",
+      "harness": "d014vis (tests_014_mutants_visual.js)",
+      "gate": "P52-LAY2 (tests_p52_chromium.js:231 — gate existente; suíte INVOCADA, nunca editada)",
+      "invariante": "C4 — a linha que DECIDE a composição da tela de pergunta (ui_p52_workspace_v32.css:77, a vencedora da cascata sobre o antigo sítio do M51-01) tem carrasco",
+      "descricao": "grid-template-columns: minmax(0, 1fr) clamp(320px, 23vw, 440px) → minmax(0, 1fr). SUBSTITUIÇÃO NOMINAL do M51-01 aposentado (wave 5, T050): o par devolve poder discriminante à propriedade que ficou órfã quando a 5.2 passou a governar a composição. Motivo esperado: 'a pergunta não está à esquerda do mapa' | 'as colunas se sobrepõem' | 'colunas desalinhadas no topo' (célula C4 da spec)",
+      "ancora": {
+        "arquivo": "ui_p52_workspace_v32.css",
+        "ocorrencias": 1,
+        "verificada_em": "2026-09-01 — preflight d014vis (C1), exit 0, 1/1 âncora com ocorrencias == 1"
+      },
+      "ultima_prova": {
+        "data": "2026-09-01",
+        "resultado": "NÃO EXECUTADO",
+        "causa": "ambiente sem chromium",
+        "registro": "harness executado localmente em 2026-09-01: aborta ANTES de mutar (nenhum arquivo tocado) e emite NÃO EXECUTADO com a causa do conjunto fechado. Execução canônica: job `visual` do CI (KI-3, design-decisions.md), que roda check_mutation.py com Chromium — T081 fecha este par com o resultado e a referência da execução. Prova de restauração sob falha no meio (2026-09-01, CHROME_PATH sintético apontando para binário não-navegador): mutou, reconstruiu, o gate morreu sem emitir linha, e o finally restaurou folha E artefato byte a byte com porcelain limpo — a rota de restauração não depende do sucesso do gate",
+        "nota": "A morte por P52-LAY2 é RACIOCINADA (spec §Não mensurável, item 2: com uma coluna #app e #p50-shell empilham e m.app.l >= m.shell.l passa a valer), não executada. Se o job visual mostrar SOBREVIVENTE, o achado é do desenho do par e reabre a análise — nunca se afrouxa o reason (R10 §1)"
+      }
     }
   ],
   "dividas_declaradas": [

@@ -95,7 +95,7 @@ const CAUSA = {
 const naoClassificada = msg => "falha não classificada: " + msg;
 
 /* ==========================================================================
-   OS 13 MUTANTES EXECUTADOS — M1..M10, M14, M15 (forma AMPLA) e M19.
+   OS 15 MUTANTES EXECUTADOS — M1..M10, M14, M15 (forma AMPLA), M17, M18 e M19.
    `find`/`repl` são texto literal; `reason` é a assinatura da mensagem que o
    gate REALMENTE emite, transcrita do `throw new Error(...)` do oráculo
    (`tests_015_apoio.js`), nunca inventada.
@@ -112,6 +112,9 @@ const FONTE_NDECL = NL + '      <div class="pr-gapsup-why" data-pr-gap-fonte>' +
 const FONTE_DECL  = NL + '    <div class="pr-gapsup-why" data-pr-gap-fonte>' + FONTE_TXT + '</div>';
 const LI7_TXT = 'O relatório pode trazer <b>mais de uma lista</b> de possibilidades para o mesmo gap: elas partem de catálogos e ancoragens diferentes e <b>não se somam</b> como recomendação.';
 const LI7 = '<li>' + LI7_TXT + '</li>';
+/* M17/M18: os dois sitios de titulo/lista que a errata E1 nomeou. */
+const SECTION_TITLE = '<div class="section-title">' + EYEBROW + '</div>';
+const HIDE_ABRE = 'const HIDE_EYEBROWS = ["Como a Fortinet pode apoiar nas prioridades declaradas",';
 const UL_NDECL = '<ul class="pr-gapsup-list">${m.opts.map(';
 const FILTRO_PRIO = 'const prioCaps = prioOrder.filter(id => presentationOf(id, ctxs[id]) !== null ||' + NL +
                     '    (ctxs[id] && ctxs[id].businessPriority && ctxs[id].businessPriority.flag));';
@@ -196,7 +199,42 @@ const MUTANTS = [
     desc: "duplicar NO PAPEL o título de outra seção — o único carrasco da metade sem cobertura congelada",
     find: H3_BASE,
     repl: H3_BASE + H3_PRIO,
-    gate: "D015-TIT1", only: "D015-TIT1", reason: /\(g\) metade PAPEL/ }
+    gate: "D015-TIT1", only: "D015-TIT1", reason: /\(g\) metade PAPEL/ },
+
+  /* M17 · a metade de TELA de (g). FORMA MEDIDA, e a medicao contradiz a spec
+     em DOIS pontos, os dois registrados no par da matriz:
+       (i) a forma LITERAL da errata E1 ("dar ao eyebrow o texto exato de um
+           titulo ja existente") NAO isola: pondo o eyebrow em 'Leitura
+           executiva' o gate reprova por (b) — o sufixo ratificado some junto —,
+           e (b) e a PRIMEIRA razao emitida. Deteccao incidental nao e kill;
+       (ii) a mesma errata chama M17 de PROVA FRACA porque 'N40 tambem mataria'.
+           FALSO, medido: o cenario de N40 (tests_journey_m45.js:220-224) e
+           LEGADO — `isLegacyModeV32()` true, `#v32prio` NAO nasce —, entao N40
+           nao enxerga este eyebrow em forma nenhuma. As DUAS metades de (g)
+           sao obrigacao deste gate, sem cobertura congelada.
+     Esta forma ataca a MESMA propriedade — o texto trimado do eyebrow e unico
+     entre `#app .eyebrow, #app h3` — emitindo o titulo duas vezes, e isola:
+     so (g) dispara, e p52layout/journey/ui31 seguem verdes. p52layout nao a
+     enxerga porque varre `:scope > .section-title` (filhos DIRETOS da secao de
+     apoio) e este no e neto, dentro de `#v32panel > #v32support`. */
+  { id: "D015-M17", file: V32JS,
+    desc: "o eyebrow deixa de ser unico na tela (o section-title e emitido duas vezes)",
+    find: SECTION_TITLE,
+    repl: SECTION_TITLE + SECTION_TITLE,
+    gate: "D015-TIT1", only: "D015-TIT1", reason: /\(g\) metade TELA/ },
+
+  /* M18 · o UNICO carrasco de (h1), e por isso o mais caro de nao ter tido:
+     a clausula SENTINELA (h2) so se sustenta porque (h1) tem carrasco. Mutacao
+     de fonte trivial: o eyebrow novo entra em HIDE_EYEBROWS (ui_v32.js:109-110).
+     NAO produz observavel de runtime — medido: `hideLegacyRecommendation` varre
+     filhos DIRETOS e retorna em `#v32panel`, e `U15` le uma copia HARDCODED da
+     lista — e e exatamente por isso que (h1) assere sobre o FONTE. */
+  { id: "D015-M18", file: V32JS,
+    desc: "por o eyebrow em HIDE_EYEBROWS (bomba armada para a proxima mudanca de escopo da varredura)",
+    find: HIDE_ABRE,
+    repl: 'const HIDE_EYEBROWS = ["Leitura das prioridades declaradas · contexto V3.2",'
+          + '"Como a Fortinet pode apoiar nas prioridades declaradas",',
+    gate: "D015-TIT1", only: "D015-TIT1", reason: /ENTROU na lista de ocultação/ }
 ];
 
 const MUTABLE = Array.from(new Set(MUTANTS.map(m => m.file)));

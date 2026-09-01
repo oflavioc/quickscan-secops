@@ -113,6 +113,27 @@
         "docs_phase5/evidence_p52/P52-mutation.json"
       ]
     },
+    "d014": {
+      "cmd": "node tests_014_mutants.js",
+      "preflight": true,
+      "targets": [
+        "ui_v32.css",
+        "ui_ux_v32.css",
+        "ui_p50_v32.css",
+        "ui_p52_workspace_v32.css",
+        "ui_d011_prioridade_v32.css",
+        "build_v32_html.py",
+        "tests_014_regra_morta.js",
+        "tests_014_mutants.js",
+        ".claude/verify/regra_morta.js",
+        ".claude/verify/regra_morta_seletor.js"
+      ],
+      "requires": [
+        "node",
+        "python"
+      ],
+      "_trilha": "demanda 014-gate-sem-poder-discriminante · T060 (wave 6), registrada no MESMO commit da criacao de tests_014_mutants.js (D4 da 013: a chave `preflight` sem o modo em argv derrubaria IC-4 e o stage inteiro mesmo com a campanha verde — o harness le `--preflight` desde o nascimento). 9 mutantes: D014-M1..D014-M9. SEM chromium: nenhum gate de tests_014_regra_morta.js mede geometria — e o ponto da demanda (o par que exige navegador e D014-M10, harness d014vis). SEM rebuild: a varredura le folhas-FONTE e o fonte do builder; nada consome o HTML construido — python fica em requires porque o contrato C1/C4 exige o interpretador RESOLVIDO e coerente com o que o stage declara. ALVOS ALEM DOS 8 QUE A SPEC NOMEIA (5 folhas CSS + builder + suite + harness): .claude/verify/regra_morta.js e .claude/verify/regra_morta_seletor.js entram porque sao o que D014-M1/M2/M3/M8/M9 MUTAM — campanha que nao re-executa quando o proprio arquivo mutado muda e o EA-7 em miniatura, construido dentro do remedio. Desvio declarado que ENDURECE o trigger (mais re-execucao, nunca menos; precedente d009/d010/d011). regra_morta.json NAO entra: a campanha nao o muta, e a spec fixa os alvos — a lacuna 'editar o registro nao re-dispara d014' fica dita aqui, nao escondida. Preflight executado em T060: 9/9 ancoras com ocorrencias == 1, exit 0. Campanha executada sob arvore limpa apos o commit (adianta T071); vocabulario de tres estados (DETECTADO/SOBREVIVENTE/NAO EXECUTADO com causa do conjunto fechado)."
+    },
     "d011": {
       "cmd": "node tests_011_mutants.js",
       "preflight": true,

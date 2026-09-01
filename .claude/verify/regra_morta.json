@@ -1,0 +1,113 @@
+{
+  "_meta": {
+    "descricao": "Registro canônico da varredura de regra morta por cascata — demanda 014-gate-sem-poder-discriminante. Três conteúdos, um arquivo: as exclusões nominais (autorais), a contagem de indecidíveis e o censo de parse (medidos). Consumido por tests_014_regra_morta.js (D014-EXC1, D014-IND1, D014-CEN1). Owner: qa-engineer.",
+    "demanda": "014-gate-sem-poder-discriminante",
+    "onda": 1,
+
+    "decisao_onde_vive_o_censo": "MESMO ARQUIVO das exclusões, chave `censo`, e não arquivo próprio. Razão: o veredito 'zero regras mortas' só é legível junto das duas coisas que o qualificam — o que a varredura DEIXOU DE VER (exclusoes) e o que ela PROVOU TER LIDO (censo). Separá-los em dois arquivos permitiria ler o verde sem o qualificador, que é exatamente a leitura que a errata E6 existe para impedir. Um arquivo, um owner, um repin. Decisão do qa-engineer na wave 1 (a spec §Contratos deixou-a em aberto).",
+
+    "o_que_e_autoral_e_o_que_e_medido": {
+      "autoral": ["exclusoes"],
+      "medido_por_execucao": ["censo", "indecidiveis.contagem"],
+      "regra": "Número medido NUNCA é rebaixado para caber no verde (R10 §1). Divergência entre o medido e o pinado é decisão de direção — o parser degradou, ou a folha mudou? —, jamais afrouxamento da asserção."
+    },
+
+    "regra_de_contagem_do_censo": {
+      "regras": "nós CSSStyleRule alcançáveis por travessia RECURSIVA da árvore de cssRules, INCLUSIVE os aninhados dentro de outro CSSStyleRule (CSS aninhado).",
+      "declaracoes": "soma de `rule.style.length` sobre TODO CSSStyleRule contado — é a contagem do CSSOM, com shorthands já expandidos em longhands (`padding` conta 5, `background` literal conta 11).",
+      "media": "nós CSSMediaRule alcançáveis, contando os aninhados.",
+      "regras_com_importante": "CSSStyleRule com ao menos uma declaração cuja `getPropertyPriority()` é 'important'.",
+      "importante_texto": "declarações `prop: valor !important` casadas no FONTE, depois de remover comentários — oráculo INDEPENDENTE do CSSOM.",
+      "importante_com_var": "subconjunto de `importante_texto` cujo valor contém `var(` — sentinela da limitação de parser abaixo.",
+      "outras": "inventário de at-rules que não são style nem media (CSSPageRule, CSSKeyframesRule, CSSKeyframeRule). Existe para que o desaparecimento silencioso de uma at-rule também reprove.",
+      "por_que_esta_regra_e_declarada": "O primeiro contador desta demanda devolveu 0 a 4 regras para cinco folhas — recursão que engolia as regras de CSS aninhado. Foi falha SILENCIOSA E VERDE: um scanner assim responde 'zero regras mortas' sem ter lido nada. A regra de contagem vive escrita aqui para que 'o censo diverge' seja sempre uma pergunta respondível, nunca um mistério."
+    },
+
+    "divergencia_registrada_do_censo": {
+      "folha": "ui_v32.css",
+      "medicao_tech_lead_fase_2": { "regras": 158, "declaracoes": 1175 },
+      "medicao_qa_wave_1": { "regras": 157, "declaracoes": 1170 },
+      "causa_isolada": "`@page { margin: 14mm; }`, aninhado em @media print, que o CSSOM expõe como CSSPageRule com style.length == 5. A medição do tech-lead o contou como regra de estilo; esta regra de contagem não conta — declaração de contexto de PÁGINA não compete na cascata de elemento que a varredura decide.",
+      "disposicao": "vale a contagem declarada acima (157/1170), e o @page permanece contado em `outras`. A medição anterior fica registrada, não apagada (R2 §5). Se a wave 4 medir 158/1175, a causa já está nomeada e a conversa é sobre a convenção, não sobre um mistério."
+    },
+
+    "limitacao_parser": {
+      "parser": "CSSOM do jsdom 30.0.1 (dependência declarada, errata E4)",
+      "defeito_medido": "a prioridade `!important` é DESCARTADA quando o valor usa `var(...)`: `background:var(--accent) !important` volta com getPropertyPriority() === \"\". Medido em 2026-09-01 com o parser declarado.",
+      "efeito_potencial": "declaração importante lida como normal ⇒ vencedora errada ⇒ veredito de cascata errado, em silêncio.",
+      "alcance_hoje": "NENHUM. Medido: das 41 declarações `!important` das cinco folhas injetadas (+3 na camada 0), ZERO usam var(). Por isso é sentinela, não achado.",
+      "sentinela": "`censo[].importante_com_var` pinado em 0 em toda folha. Gatilho nomeado: a PRIMEIRA declaração `!important` com valor `var(...)` que entrar em qualquer folha faz o censo divergir e reprova ANTES do veredito. Ação exigida no dia do gatilho: reavaliar o parser da errata E4 (ou declarar a exceção com a razão) — nunca rebaixar o pin."
+    },
+
+    "vocabulario_fechado_de_motivo": ["oraculo-de-fonte", "fallback-declarado"],
+
+    "vocabulario_fechado_de_razao_indecidivel": [
+      "gramatica-de-seletor-recusada",
+      "combinador-nao-descendente-no-prefixo",
+      "contexto-de-midia-nao-relacionado",
+      "caixa-de-seletor-divergente"
+    ],
+    "por_que_a_razao_tem_vocabulario": "Indecidível sem razão nomeada é 'provavelmente viva' com outro nome — o silêncio que C6 existe para matar. O vocabulário vive AQUI, no registro canônico, e não no corpo do gate (R10 §3): o instrumento o lê, a suíte o confere, e ampliá-lo é ato explícito. Deriva do plan §Normalização de seletor (6) e §Contexto de mídia (4).",
+
+    "auto_exclusao_e_r10_10": "Scanner de padrão proibido tem auto-exclusão nominal, e a exclusão é sempre IMPRESSA (R10 §2/§10). Aqui a auto-exclusão é NOMINAL por par (harness, mutante) — nunca por curinga, nunca por prefixo de path. Exclusão que não resolve no preflight reprova (C3-c): exclusão órfã é permissão permanente disfarçada."
+  },
+
+  "exclusoes": [
+    {
+      "harness": "p50",
+      "mutante": "M8",
+      "motivo": "oraculo-de-fonte",
+      "gate": "P50-COR1",
+      "propriedade_afirmada": "nenhum módulo novo da 5.0 declara hex literal de cor — em especial os cinco hexes de domínio — e o CSS novo consome o token congelado --dom-accent (tests_p50_core.js:2500-2513; origem normativa em specs/PHASE_5_0_REV_B.md:1594, 'zero hex de domínio')",
+      "arquivos_lidos": [
+        "ui_p50_shell_v32.js",
+        "ui_p50_suff_v32.js",
+        "ui_p50_results_v32.js",
+        "ui_p50_v32.css"
+      ],
+      "cegueira": "Nenhuma cegueira de cascata, e a razão é que a propriedade afirmada é de FONTE, no sentido estrito: o gate enuncia a ausência de um literal no TEXTO dos módulos que ele lê, não a cor que a tela mostra. Folha posterior não pode reintroduzir um hex dentro de ui_p50_v32.css. O oráculo lê exatamente o artefato sobre o qual a propriedade é enunciada — é o caso em que 'o oráculo é de fonte' basta sozinho."
+    },
+    {
+      "harness": "d009",
+      "mutante": "D009-M5",
+      "motivo": "oraculo-de-fonte",
+      "gate": "D009-DOM1",
+      "propriedade_afirmada": "ao menos uma regra de .jn-dom declara font-weight — o canal NÃO-CROMÁTICO da marcação de domínio na narrativa, para que a cor nunca seja o único portador do significado (tests_009_leitura.js:335-340)",
+      "arquivos_lidos": ["ui_ux_v32.css"],
+      "cegueira": "REAL, e por isso impressa. O gate afirma uma propriedade de RENDERIZAÇÃO (o canal não-cromático existe na tela) lendo UM único arquivo. Uma folha posterior que declarasse `font-weight:normal` em `.jn-dom` mataria o canal, e o gate NÃO notaria — ele continuaria achando a regra de ui_ux_v32.css e passando. Medido em 2026-09-01: `.jn-dom` ocorre 12× em ui_ux_v32.css (linhas 249-271) e ZERO vezes em ui_v32.css, ui_p50_v32.css, ui_p52_workspace_v32.css e ui_d011_prioridade_v32.css — logo NÃO HÁ DEFEITO hoje. Registro de cegueira, não achado. E a cegueira NÃO é fechada por esta demanda: a varredura vigia declarações que MUTANTES tocam, e este mutante está excluído — nenhum carrasco olha para .jn-dom sob cascata. Excluir sem dizer o que se deixa de ver é a doença que esta demanda combate, aplicada a ela mesma; dizer é o mínimo, e o remédio é achado de outro dono."
+    }
+  ],
+
+  "indecidiveis": {
+    "contagem": null,
+    "fixado_em": null,
+    "fonte": null,
+    "vacuidade_declarada": null,
+    "_nota": "`contagem: null` significa NÃO FIXADO e reprova D014-IND1 por desenho — a contagem da árvore real só é mensurável com o instrumento (.claude/verify/regra_morta.js, wave 4) e é fixada POR EXECUÇÃO na T070. Se a medição der ZERO, a T070 grava 0 em `contagem` e a razão em `vacuidade_declarada`, nunca apaga a alínea (R2 §5). O critério C6 NÃO depende deste número: quem o carrega é o caso sintético (f) de fixtures_014_regra_morta.js, que é indecidível por contrato e independe da árvore.",
+    "medicao_pre_instrumento": {
+      "data": "2026-09-01",
+      "o_que_e": "LIMITE INFERIOR, medido sem o classificador, só com o que independe dele. Não é a contagem de C6 — a contagem é por COMPETIÇÃO, e competição exige o classificador.",
+      "gramatica_recusada": {
+        "criterio": ":is( · :where( · :not( · :has( · :nth-*(seletor) · ::part · ::slotted",
+        "regras": 5,
+        "declaracoes": 10,
+        "por_folha": { "ui_v32.css": 0, "ui_ux_v32.css": 1, "ui_p50_v32.css": 0, "ui_p52_workspace_v32.css": 4, "ui_d011_prioridade_v32.css": 0 },
+        "declaracoes_com_propriedade_tambem_declarada_em_outra_folha": 6
+      },
+      "contextos_de_midia_distintos": 25,
+      "leitura": "Há pelo menos 6 declarações de gramática recusada cuja propriedade também é declarada em outra folha — candidatas reais a indecidível. E há 25 condições de mídia distintas, com faixas sobrepostas que não são identidade nem contenção por TIPO (ex.: `(min-width:1200px)` × `screen and (min-width:1180px)`), que é a segunda fonte de indecidível. O critério de recusa por combinador não-descendente (`>`, `+`, `~`) no prefixo NÃO está nesta medição e só aumentaria o número. Conclusão registrada: a alínea da árvore real de C6 é MUITO provavelmente não-vacuosa, e mesmo assim não é ela que sustenta o critério."
+    }
+  },
+
+  "censo": [
+    { "camada": 0, "folha": "quickscan_secops_soccmm_v3_1_3.html#style", "regras": 171, "declaracoes": 905, "media": 3, "regras_com_importante": 2, "importante_texto": 3, "importante_com_var": 0, "outras": { "CSSKeyframesRule": 1, "CSSKeyframeRule": 2 } },
+    { "camada": 1, "folha": "ui_v32.css", "regras": 157, "declaracoes": 1170, "media": 11, "regras_com_importante": 8, "importante_texto": 9, "importante_com_var": 0, "outras": { "CSSPageRule": 1 } },
+    { "camada": 2, "folha": "ui_ux_v32.css", "regras": 194, "declaracoes": 804, "media": 20, "regras_com_importante": 6, "importante_texto": 6, "importante_com_var": 0, "outras": {} },
+    { "camada": 3, "folha": "ui_p50_v32.css", "regras": 219, "declaracoes": 1130, "media": 11, "regras_com_importante": 4, "importante_texto": 4, "importante_com_var": 0, "outras": {} },
+    { "camada": 4, "folha": "ui_p52_workspace_v32.css", "regras": 526, "declaracoes": 2097, "media": 47, "regras_com_importante": 12, "importante_texto": 21, "importante_com_var": 0, "outras": { "CSSKeyframesRule": 2, "CSSKeyframeRule": 4 } },
+    { "camada": 5, "folha": "ui_d011_prioridade_v32.css", "regras": 4, "declaracoes": 12, "media": 1, "regras_com_importante": 0, "importante_texto": 0, "importante_com_var": 0, "outras": {} }
+  ],
+
+  "censo_fixado_em": "2026-09-01",
+  "censo_fonte": "qa-engineer, wave 1 — CSSOM do jsdom 30.0.1 sobre os blobs da árvore limpa de feature/014-gate-sem-poder-discriminante. Re-medido POR EXECUÇÃO na T070 com o instrumento real; divergência é decisão de direção, nunca rebaixamento (R10 §1)."
+}

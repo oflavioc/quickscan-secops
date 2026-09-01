@@ -34,7 +34,7 @@ O que justifica a demanda é a **exposição permanente**, não o número de hoj
 > mudou. Toda folha CSS futura entra **depois** de `ui_p50_v32.css`
 > (`build_v32_html.py:80`) e nasce fora dos alvos das campanhas antigas.
 
-## Duas medições que refutam recomendações — inclusive a minha
+## Três medições que refutam recomendações — duas delas minhas
 
 Registrado porque refutação some quando não se escreve (R2 §5).
 
@@ -56,20 +56,33 @@ mutante nenhum**. Dos 36 mutantes de CSS da `p52`, o único que toca aquele bloc
 é `P52-M2`, e ele ataca a cláusula do **rodapé** (`:88`), não a das colunas. O
 buraco não é gate ausente: é **carrasco ausente sobre a linha que decide**.
 
+**3. A minha, de novo — desta vez a citação do carrasco da `KI-4`.** Escrevi que
+o carrasco eram `IC-9.3` e `IC-9.4` cenário ii. **`IC-9.4` não serve.** Conferido
+no fonte: `IC-9.4` (`check_mutation.py:948-977`) é a **auto-prova do mecanismo**,
+com sonda **sintética** (`IC9_SONDA_*`) e função pura — não mede a `KI-4` real. E
+`mut_perdao` itera os **blocos da campanha**: aposentado o `M51-01`, o id some da
+saída, não há bloco, e o cenário ii **não dispara**. Quem morde depois da
+aposentadoria é `IC-9.2` (`:895`, o objeto da exceção existe no harness). Errata
+**E2**. Registro a correção porque foi a segunda vez, nesta demanda, que citei um
+gate por leitura de comentário em vez de leitura da expressão — é literalmente o
+erro que a demanda combate.
+
 ## Critérios de aceite → gates
 
 Todo critério é um gate executável, definido AQUI (R3 §1). Suíte:
-`tests_014_regra_morta.js`. Harness: `tests_014_mutants.js`. Namespace `D014-*`.
+`tests_014_regra_morta.js`. Harnesses: `tests_014_mutants.js` (`d014`) e
+`tests_014_mutants_visual.js` (`d014vis`) — a partição é a errata **E1**.
+Namespace `D014-*`.
 
 | # | Critério | Gate (id · arquivo · asserção) | Mutante previsto |
 |---|---|---|---|
-| C1 | O classificador de cascata acerta os quatro cenários canônicos, **incluindo os dois cuja resposta correta é "viva"** | `D014-CASC1` · `tests_014_regra_morta.js` · sobre folhas **sintéticas** (fixtures próprias, fora da árvore de produto): (a) morta por especificidade; (b) morta por ordem de inlining com especificidade empatada; (c) **viva** — camada posterior declara a mesma propriedade no mesmo elemento com especificidade **menor**; (d) **viva** — `!important` em camada **anterior** vence declaração normal posterior | `D014-M1` ignorar `!important` → (d) vira "morta" · `D014-M2` decidir só por ordem → (a)/(c) erram · `D014-M3` ignorar contexto de mídia → (b) erra |
-| C2 | A varredura, sobre a **árvore real**, enumera os mutantes de CSS de **todas** as campanhas pelo preflight e acusa **zero** regras mortas | `D014-VARR1` · `tests_014_regra_morta.js` · população lida de `--preflight` de cada harness (nunca dos pares da matriz); saída: 0 mortas, com a lista dos avaliados e dos excluídos | `D014-M4` acrescenta a `ui_p50_v32.css` uma declaração que `ui_p52_workspace_v32.css` já sobrepõe (regra morta nova, na árvore) → a varredura **tem** de acusá-la |
+| C1 | O classificador de cascata acerta os **cinco** cenários canônicos, **incluindo os três cuja resposta correta é "viva"** — alínea (e) por **E5** | `D014-CASC1` · `tests_014_regra_morta.js` · sobre folhas **sintéticas** (fixtures próprias, fora da árvore de produto): (a) morta por especificidade; (b) morta por ordem de inlining com especificidade empatada; (c) **viva** — camada posterior declara a mesma propriedade no mesmo elemento com especificidade **menor**; (d) **viva** — `!important` em camada **anterior** vence normal posterior; **(e) viva por prefixo NÃO-VÁCUO** — a vencedora é a perdedora prefixada por composto que **restringe** (id/classe/atributo), logo a perdedora segue decidindo fora do subconjunto | `D014-M1` ignorar `!important` → (d) vira "morta" · `D014-M2` decidir só por ordem → (a)/(c) erram · `D014-M3` normalizar contexto de mídia por **texto** → (b) e o caso real erram · **`D014-M9`** tratar todo prefixo como vácuo → (e) vira "morta" |
+| C2 | A varredura, sobre a **árvore real**, enumera os mutantes de CSS de **todas** as campanhas pelo preflight — **população E âncora** (`find`/`repl`, por **E3**) — e acusa **zero** regras mortas, sobre **censo de parse pinado** (**E6**) | `D014-VARR1` · `tests_014_regra_morta.js` · população e âncora lidas de `--preflight` (nunca dos pares da matriz); o censo de regras/declarações por folha é conferido contra o registro **antes** do veredito; saída: 0 mortas, com a lista dos avaliados e dos excluídos | `D014-M4` acrescenta a `ui_p50_v32.css` uma declaração que `ui_p52_workspace_v32.css` já sobrepõe (regra morta nova, na árvore) → a varredura **tem** de acusá-la |
 | C3 | A auto-exclusão nominal tem dentes e **não é passe livre** | `D014-EXC1` · `tests_014_regra_morta.js` · (a) motivo do vocabulário fechado `oraculo-de-fonte` \| `fallback-declarado`; (b) curinga, campo vazio ou não-texto **não excluem**; (c) exclusão que nomeia mutante inexistente **reprova** (oráculo: preflight); (d) exclusão `oraculo-de-fonte` registra **qual propriedade** o oráculo afirma e **quais arquivos** ele lê | `D014-M5` aceitar curinga (shape do `IC-9.1`) · `D014-M6` deixar de conferir a existência do mutante nomeado |
-| C4 | A linha que **decide** a composição da tela de pergunta ganha carrasco | `P52-LAY2` (**gate existente**, `tests_p52_chromium.js:231` — suíte **não editada**, só invocada) · mutação de `ui_p52_workspace_v32.css:77` para uma coluna | `D014-M10` · `grid-template-columns: minmax(0, 1fr) clamp(320px, 23vw, 440px)` → `minmax(0, 1fr)`; motivo esperado `/a pergunta não está à esquerda do mapa\|as colunas se sobrepõem\|colunas desalinhadas no topo/` |
+| C4 | A linha que **decide** a composição da tela de pergunta ganha carrasco | `P52-LAY2` (**gate existente**, `tests_p52_chromium.js:231` — suíte **não editada**, só invocada) · mutação de `ui_p52_workspace_v32.css:77` para uma coluna · harness **`d014vis`** (`tests_014_mutants_visual.js`), separado por **E1** | `D014-M10` · `grid-template-columns: minmax(0, 1fr) clamp(320px, 23vw, 440px)` → `minmax(0, 1fr)`; motivo esperado `/a pergunta não está à esquerda do mapa\|as colunas se sobrepõem\|colunas desalinhadas no topo/` |
 | C5 | A cobertura da varredura é **derivada do builder**, não digitada | `D014-COB1` · `tests_014_regra_morta.js` · a lista e a **ordem** das folhas injetadas saem de `build_v32_html.py`; folha injetada pelo builder e não lida pela varredura reprova; a ordem observada casa com a declarada em `specs/PHASE_5_0_REV_B.md:1606` | `D014-M7` acrescentar uma folha ao builder sem tocar a varredura (precedente: `D011-M18` muta `build_v32_html.py`) |
 | C6 | O que a varredura **não** decide é nomeado e contado — nunca engolido | `D014-IND1` · `tests_014_regra_morta.js` · declaração cuja competição não cai na relação decidível sai em lista **nomeada e contada**; a contagem vive em registro canônico e divergência reprova; SKIP silencioso é FAIL (R10 §2) | `D014-M8` descartar silenciosamente o indecidível → a contagem muda |
-| C7 | A `KI-4` fecha **no mesmo PR** | **Sem gate novo** — `IC-9.3` (registro volta a `KILL`) e `IC-9.4` cenário ii (execução volta a `DETECTADO`) já são o carrasco, nas duas direções (`check_mutation.py:557-585`) | — (criar gate aqui duplicaria o carrasco) |
+| C7 | A `KI-4` fecha **no mesmo PR** | **Sem gate novo** — o carrasco é **`IC-9.2`** (`check_mutation.py:895` · o objeto da exceção existe no harness) e **`IC-9.3`** (`:912` · não obsoleta, pelo registro). Corrigido por **E2** | — (criar gate aqui duplicaria o juiz) |
 
 ### Guarda de tautologia, alínea por alínea
 
@@ -82,6 +95,7 @@ falha?** Onde não sei, está escrito.
 | C1 (b) | classificador que resolva empate pelo arquivo errado | `D014-M2` |
 | **C1 (c)** | classificador que responda "morta" sempre que houver concorrente posterior | **é o shape do `M51-08`, medido: `(1,1,2)` da 5.1 vence `(0,1,2)` da 5.2.** Sem esta alínea, um classificador que respondesse "morta" para tudo passaria em (a) e (b) |
 | **C1 (d)** | classificador que trate ordem antes de importância | `!important` medido: 38 ocorrências em 5 folhas + 2 na Camada 1 |
+| **C1 (e)** | classificador que trate **todo** prefixo como vácuo — passa em (a)–(d) e **erra o único caso morto do repositório** | é a alínea que separa os dois casos reais: `M51-01` perde para um prefixo **`html`** (vácuo → morta) e `M51-08` vence com prefixo **`#ux-target`** (restringe → viva). `D014-M9` |
 | C2 | **hoje falha**: a árvore real tem 1 regra morta. É o **red** desta demanda | medido no refinamento |
 | C3 (b) | exceção com curinga passando a perdoar | precedente vivo: `IC-9.1` reprova exatamente isso |
 | C3 (c) | exclusão órfã sobrevivendo à remoção do mutante | preflight resolve no disco |
@@ -116,15 +130,39 @@ seletores — indecidível na prática sem DOM. Um scanner que fingisse decidir 
 o defeito que a demanda combate. Então o predicado é **estreito e declarado**:
 
 **Duas declarações competem** quando têm a **mesma propriedade**, o **mesmo
-contexto de mídia** (normalizado), e seletores ligados por uma relação
-**decidível**: idênticos, ou um obtido do outro por **prefixação de compostos**
-(`body[…] .wrap` × `html body[…] .wrap`; `.ux-tgt-row select option` ×
+contexto de mídia** e seletores ligados por uma relação **decidível**: idênticos,
+ou um obtido do outro por **prefixação de compostos** (`body[…] .wrap` ×
+`html body[…] .wrap`; `.ux-tgt-row select option` ×
 `#ux-target .ux-tgt-row select option`). Essas duas formas cobrem os dois casos
 reais medidos — o `M51-01` e o `M51-08`.
 
-**Vencedora** = importância (`!important`) → especificidade
-(`@bramus/specificity`, já em `node_modules`) → ordem de inlining derivada do
-builder. Nessa ordem, sempre.
+**Contexto de mídia: equivalência SEMÂNTICA, nunca textual** (E5). Medido: a
+regra da 5.1 vive em `ui_p50_v32.css:692` — `@media screen and (min-width:1180px)`,
+um bloco só. A que a mata vive em `ui_p52_workspace_v32.css:74` —
+`@media (min-width: 1180px)` **aninhado** dentro do `@media screen` de `:16`.
+Mesma condição, escrita de dois jeitos, com espaçamento diferente e aninhamento
+diferente. **Um normalizador textual devolveria "sem competição" e portanto
+"viva" para o único caso morto do repositório.** A condição efetiva é a
+**conjunção** das condições ancestrais, comparada por valor.
+
+**Prefixo vácuo — a regra que inverte o veredito** (E5). Prefixar **restringe**:
+se a vencedora `W` é a perdedora `L` prefixada, `W` casa um **subconjunto** do
+que `L` casa, e `L` continua decidindo **fora** dele — `L` está **viva**. A
+exceção é o prefixo **vácuo**, cujos compostos casam todo elemento do documento:
+**`html`, `body`, `:root`, e só**. Aí o subconjunto é o conjunto e `L` não decide
+em lugar nenhum — **morta**.
+
+É exatamente o que separa os dois casos reais, e por isso o predicado ingênuo
+("prefixou e venceu ⇒ matou") e o principiológico ("prefixar restringe ⇒ nunca
+mata") **erram cada um a metade**:
+
+| caso | vencedora | prefixo | vácuo? | veredito |
+|---|---|---|---|---|
+| `M51-01` | 5.2 `html body[…] .wrap` | `html` | **sim** | a declaração da 5.1 está **morta** |
+| `M51-08` | 5.1 `#ux-target .ux-tgt-row select option` | `#ux-target` | **não** | a declaração mutada é a **vencedora** → **viva** |
+
+**Vencedora** = importância (`!important`) → especificidade → ordem de inlining
+derivada do builder. Nessa ordem, sempre.
 
 **Regra morta** = toda declaração que a mutação altera ou acrescenta **perde** a
 cascata em **todos** os contextos em que compete, e **em nenhum** contexto ela é
@@ -172,12 +210,29 @@ O par `D014-M10`/`P52-LAY2` **exige Chromium** e é deferido ao job `visual`
 
 ## Contratos
 
-- **`d014` em `.claude/verify/mutation_map.json`**: `cmd`, `preflight: true`
-  declarado **no mesmo commit** em que `tests_014_mutants.js` passa a ler
-  `--preflight` em argv (D4 da 013 — a guarda de fonte de `check_mutation.py`
-  recusa a chave sem o modo). `targets`: `ui_p52_workspace_v32.css`,
-  `build_v32_html.py`, `tests_014_regra_morta.js`, `tests_014_mutants.js`.
-  `requires`: `[node, python, chromium]`.
+- **Contrato `C1` do preflight, estendido (E3)**: o objeto emitido por
+  `--preflight` passa a carregar, **para mutante de CSS**, os campos `find` e
+  `repl` além de `{id, arquivo, ocorrencias, estado}`. Extensão **aditiva**, nos
+  **cinco** harnesses que têm mutante de CSS (`p50`, `p51`, `p52`, `d009`,
+  `d011`). Sem ela a varredura não sabe **qual declaração** a mutação altera —
+  e o critério, como estava escrito, pedia o impossível.
+- **Dois harnesses em `.claude/verify/mutation_map.json` (E1)**, cada um com
+  `preflight: true` declarado **no mesmo commit** em que o respectivo harness
+  passa a ler `--preflight` em argv (D4 da 013 — a guarda de fonte de
+  `check_mutation.py` recusa a chave sem o modo):
+  - **`d014`** — `node tests_014_mutants.js`, `requires: [node, python]`,
+    `D014-M1…M9`. Alvos: as **cinco** folhas CSS injetadas + `build_v32_html.py`
+    + `tests_014_regra_morta.js` + `tests_014_mutants.js`.
+  - **`d014vis`** — `node tests_014_mutants_visual.js`,
+    `requires: [node, python, chromium]`, `D014-M10`. Alvos:
+    `ui_p52_workspace_v32.css` + o próprio harness. Deferido ao job `visual`
+    (KI-3), **automatizado** — o job já executa `check_mutation.py`.
+- **Parser e especificidade (E4)**: o parser é o **CSSOM do `jsdom`**, dependência
+  **declarada** (`package.json → dependencies.jsdom`); a especificidade é
+  calculada **internamente**, sem dependência nova.
+- **Censo de parse pinado (E6)**: registro de regras e declarações **por folha**,
+  conferido **antes** de qualquer veredito. Parser ou contador que degrade em
+  silêncio reprova aqui, e não passa como "zero regras mortas".
 - **Registro de exclusões nominais**: arquivo próprio, legível por máquina, com
   `harness` · `mutante` · `motivo` (vocabulário fechado) · `propriedade_afirmada`
   · `arquivos_lidos`. Owner: `qa-engineer`. Nunca prosa.
@@ -262,6 +317,115 @@ O par `D014-M10`/`P52-LAY2` **exige Chromium** e é deferido ao job `visual`
 5. **Se `M51-08`, `M51`, `M52` e `M53` sobreviverão à próxima folha CSS.** Hoje
    estão vivos por especificidade e por ausência de concorrente. É precisamente o
    que C2 passa a vigiar em toda mudança — mas o veredito de hoje não é promessa.
+6. **A fidelidade do CSSOM do jsdom sobre as cinco folhas reais** (E4). Não a
+   medi: aceito a medição do `tech-lead` de que o jsdom parseia com fidelidade, e
+   **não** a converto em premissa silenciosa — quem a sustenta em toda execução é
+   o censo pinado do E6. Se o parser perder regra, o censo reprova **antes** do
+   veredito. Primeira medição do censo: Fase 4, `qa-engineer`.
+
+## Errata E1–E6 — medições do `tech-lead` nas Fases 2/3
+
+**Delegação registrada**: `tech-lead`, Fases 2 e 3, aprovadas pelo proprietário
+no chat em **2026-09-01**; erratas escritas pelo `product-owner` no mesmo dia,
+**antes da wave 1** — o red não pode nascer contra critério que a medição já
+derrubou. **Nenhuma delas toca invariante de R1 nem arquivo de classe protegida**
+(cross-check §Boundary permanece válido: `frozen` segue com quatro paths, nenhum
+desta demanda). Cada entrada preserva o que valia (R2 §5: refutação registrada
+permanece).
+
+---
+
+### E1 · O harness se parte em dois
+
+**Antes**: um harness `d014`, com `requires: [node, python, chromium]`.
+**Fato medido**: com Chromium no `requires`, o stage `mutation` fica **vermelho
+localmente em todo commit** da demanda — e `D014-M1…M8`, que não precisam de
+navegador, só rodariam no CI. É o estado que o planning-state da 013 já registrava
+para `p50`/`p51`/`p52`.
+**O que passa a valer**: **`d014`** (`[node, python]`, `D014-M1…M9`) e
+**`d014vis`** (`[node, python, chromium]`, `D014-M10`). Precedente: a 011 defere
+`D011-M9` ao job `visual`; aqui a deferição é **automatizada**, porque o job já
+executa `check_mutation.py`.
+**Por que importa ao produto**: era a demanda reproduzindo o defeito que combate
+— empurrar a prova para o job caro é exatamente como o `EA-7` ficou escondido.
+
+### E2 · O carrasco da `KI-4` já existe, e não é o que eu citei
+
+**Antes**: C7 citava `IC-9.3` e `IC-9.4` cenário ii.
+**Fato medido**: `IC-9.4` (`check_mutation.py:948-977`) é **auto-prova do
+mecanismo**, com sonda sintética e função pura; e `mut_perdao` itera os blocos da
+campanha — aposentado o `M51-01`, o id some da saída e o cenário ii **não
+dispara**.
+**O que passa a valer**: o carrasco é **`IC-9.2`** (`:895` · o objeto da exceção
+existe no harness) e **`IC-9.3`** (`:912` · não obsoleta, pelo registro).
+Continua valendo, e reforçado: **gate novo aqui duplicaria o juiz**.
+
+### E3 · A âncora entra no contrato `C1`
+
+**Antes**: C2 dizia "população lida do preflight".
+**Fato medido**: o preflight emite `{id, arquivo, ocorrencias, estado}` e **não
+carrega a âncora**. Sem `find`/`repl`, a varredura não sabe **qual declaração** a
+mutação altera — o critério pedia o impossível.
+**O que passa a valer**: extensão **aditiva** do contrato `C1` nos **cinco**
+harnesses com mutante de CSS (`p50`, `p51`, `p52`, `d009`, `d011`): `find` e
+`repl` no objeto emitido. A população **e** a âncora vêm da mesma fonte única —
+o harness que as possui —, nunca de um registro paralelo.
+
+### E4 · O parser é o jsdom; a especificidade é interna
+
+**Antes**: `@bramus/specificity`, "já em `node_modules`".
+**Fato medido**: está no `node_modules` **só como transitiva** do jsdom e
+**ausente do `package.json`** — depender dela seria dependência implícita, que a
+R7 §4 proíbe. Declará-la editaria `package.json`/`package-lock.json`, cujas
+edições são nominalmente limitadas por `specs/PHASE_5_0_REV_B.md:1607-1608`.
+**O que passa a valer**: parser = **CSSOM do `jsdom`** (dependência declarada,
+`30.0.1`); especificidade **calculada internamente**. Sem dependência nova.
+**Acoplamento que registro**: esta escolha só é segura **porque existe o E6** —
+se o CSSOM do jsdom perder regras, quem denuncia é o censo pinado, não o
+silêncio.
+
+### E5 · Prefixo vácuo — a alínea que inverte o veredito
+
+**Antes**: o predicado tratava "prefixação de compostos" como uma relação só.
+**Fato medido**: prefixar **restringe** — a vencedora prefixada casa um
+subconjunto, e a perdedora continua decidindo fora dele. **Salvo** quando os
+compostos extras casam todo elemento: `html`, `body`, `:root`, e só. É o que
+separa os dois casos reais do repositório: `M51-01` perde para prefixo **`html`**
+(vácuo → **morta**); `M51-08` vence com prefixo **`#ux-target`** (restringe →
+**viva**).
+**O que passa a valer**: **alínea (e)** em C1, com mutante próprio **`D014-M9`**,
+e a regra de vacuidade escrita em §Comportamento. **Reforço do contexto de
+mídia**: a equivalência é **semântica**, nunca textual — a condição da 5.1
+(`ui_p50_v32.css:692`, bloco único) e a da 5.2 (`ui_p52_workspace_v32.css:74`,
+aninhada em `:16`) são a mesma condição escrita de dois jeitos.
+**Por que é a errata mais importante das seis**: sem (e), um classificador que
+ignora vacuidade **passa em (a)–(d) e ainda erra o veredito do único caso morto
+do repositório**. O C1 sai **mais forte**, não mais fraco — ganha a âncora (E3),
+ganha a alínea, e passa a **distinguir** os dois casos reais em vez de tratá-los
+como um.
+
+### E6 · Censo de parse pinado — a doença cometida no instrumento
+
+**Antes**: C2 media "zero regras mortas" sem provar que havia o que ler.
+**Fato medido, e a origem importa**: o primeiro contador do `tech-lead` devolveu
+**0 a 4 regras para cinco folhas**, por recursão que engolia as regras de CSS
+aninhado. Ele quase concluiu que o parser não servia; bissectou e achou no
+**contador**. Foi **falha silenciosa e verde** — a doença desta demanda,
+cometida no instrumento desta demanda.
+**O que passa a valer**: **censo de parse pinado por folha** (regras e
+declarações), conferido **antes** do veredito; divergência reprova e a contagem
+**nunca** é rebaixada para caber no verde (R10 §1).
+**Por que importa ao produto**: sem o censo, "zero regras mortas" é
+vacuosamente verdadeiro para um parser que lê pouco — e a varredura inteira vira
+o `UX14` do `EA-16`: verde que não pode virar vermelho.
+
+---
+
+**Efeito líquido nos critérios**: C1 ganha alínea (e) e o mutante `D014-M9`
+(5 cenários, 4 mutantes); C2 ganha âncora e censo; C4 muda de harness; C7 troca
+a citação do carrasco. **Nenhum critério foi enfraquecido e nenhum foi removido**
+— a única asserção retirada é a citação errada de `IC-9.4`, substituída pela
+correta.
 
 ## Fora de escopo
 
@@ -281,6 +445,12 @@ Herdado do refinamento, mais o que esta spec exclui:
 - **Expandir `mutation-matrix.json` por par** em `p50`/`p52` — T13 da 013.
 - **Reordenar folhas no builder** — `specs/PHASE_5_0_REV_B.md:1606` é âncora
   normativa de fase selada.
+- **Acrescentar dependência a `package.json` / `package-lock.json`** (E4).
+  Conferido na spec selada: `:1607` autoriza **somente** os scripts nominais e a
+  devDependency `@axe-core/playwright@4.13.0`, com *"nenhuma dependência de
+  runtime"*; `:1608` limita o lock ao delta daquela devDependency. Declarar
+  `@bramus/specificity` excederia a permissão nominal — a especificidade é
+  calculada internamente.
 - **Editar `tests_p52_chromium.js`, `tests_p50_chromium.js` ou qualquer suíte de
   fase selada.** `P52-LAY2` é **invocado**, nunca alterado.
 - **Qualquer toque em `engine_v32.js` ou na Camada 1** — nada aqui chega perto do

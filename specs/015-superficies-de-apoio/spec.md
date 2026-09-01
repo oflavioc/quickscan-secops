@@ -82,6 +82,30 @@ existe para provar que ele não foi tocado. Se a Fase 2 concluir que ele é
 necessário, o rito é **PARAR e devolver ao orquestrador**, que reabre a pergunta
 com o proprietário — nunca assumir cobertura por analogia com a 009 ou a 010.
 
+### §29.6 · print/render — a pergunta que atravessou quatro fases, e a resposta
+
+**Pergunta levantada na Fase 1** e repetida em DEPENDÊNCIAS nas Fases 1, 2, 4 e 5:
+a autorização nominal **por arquivo** cobre o caminho de impressão dentro dele, ou
+a §29.6 (`specs/PHASE_5_0_REV_B.md:1631-1636`, *"não recebe autorização
+implícita"*) exige palavra própria para o papel?
+
+**Resposta do proprietário, 2026-08-31: a autorização nominal por arquivo COBRE o
+caminho de impressão dentro dele.** Escolhida entre três opções apresentadas, com
+o precedente desta sessão citado — a demanda **010** alterou `#pr-sup-base` e
+`prCards` sob autorização de `ui_v32.js`, e os registros de aceitação a trataram
+como coberta.
+
+**Forma como veio, registrada porque importa para a trilha:** a resposta foi dada
+ao orquestrador e ficou em mensagem de commit e em prompt de delegação — **não
+chegou ao `product-owner`**, que por isso a citou como pendente em quatro
+relatórios seguidos. A citação estava correta *de onde ele olhava*; a lacuna foi
+de propagação, não de rito. Fica escrita aqui para deixar de ser memória de
+conversa e virar registro consultável (R2 §1: o que não foi executado — ou
+respondido — é declarado, nunca omitido).
+
+**Alcance:** vale para `ui_v32.js` **nesta demanda**. Não amplia a §29.6 para outro
+arquivo, outra demanda, nem para superfície de print fora do arquivo autorizado.
+
 Consequência mecânica: `ui_v32.js` é pinado por **dois** gates —
 `P50-GOV1` (mapa `PROTECTED`, `tests_p50_core.js:192`) e `P50-IC4` — e o registry
 `.claude/verify/pins.json:300` carrega a mesma identidade

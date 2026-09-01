@@ -144,10 +144,13 @@ const VEREDITO_CANONICO = { a: "morta", b: "morta", c: "viva", d: "viva", e: "vi
 const VEREDITO_INDECIDIVEL = { f: "indecidivel" };
 const VOCABULARIO_VEREDITO = ["morta", "viva", "indecidivel"];
 
-/* spec.md §Justificativa, linha "imune por oráculo — o gate lê fonte, não
-   renderização | 2 | M8 (P50-COR1) · D009-M5 (D009-DOM1)". Duas, e só duas.
-   Uma terceira exclusão exige mudança de spec — é isto que dá dentes a C3. */
-const PARES_DECLARADOS = ["p50/M8", "d009/D009-M5"];
+/* Conjunto NOMINAL FECHADO das exclusões, literal da spec. Duas vêm de
+   §Justificativa ("imune por oráculo — o gate lê fonte, não renderização | 2 |
+   M8 (P50-COR1) · D009-M5 (D009-DOM1)"); a terceira foi ratificada pela errata
+   **E7** (`p52/P52-RA8`, motivo `achado-aberto`). Uma QUARTA exige mudança de
+   spec — é isto que dá dentes a C3, e é o que impede que `achado-aberto` vire
+   a gaveta onde todo caso incômodo é despejado. */
+const PARES_DECLARADOS = ["p50/M8", "d009/D009-M5", "p52/P52-RA8"];
 
 /* specs/PHASE_5_0_REV_B.md:1606 — âncora normativa de fase selada. A cláusula
    declara a ORDEM (ui_ux_v32.css antes de ui_p50_v32.css); nunca quem vence a
@@ -270,13 +273,23 @@ function julgarVarredura(rel, pref) {
     (r.mortas === null ? "null" : JSON.stringify(r.mortas && r.mortas.length)) +
     " — veredito só existe com censo conferido; censo reprovado exige mortas=null"));
 
-  /* (zero) o veredito. É O RED DESTA DEMANDA: medido no refinamento, a árvore
-     real acusa 1 regra morta hoje (`p51/M51-01`). */
-  out.push(A("C2(zero)", !!r && Array.isArray(r.mortas) && r.mortas.length === 0,
+  /* (zero) O VEREDITO É UM PAR — (mortas, indecidíveis) —, nunca um número só
+     (errata E9). "Zero mortas" significa *zero entre as DECIDÍVEIS*; medido em
+     2026-09-01, 29% da população (14 de 49 mutantes) tem parte indecidível, de
+     modo que a frase sem a segunda metade afirma mais do que se mediu. Por isso
+     um relatório que traga `mortas: []` mas não traga a lista de indecidíveis
+     REPROVA aqui: não é veredito, é meia-frase. */
+  const mortasZero = Array.isArray(r && r.mortas) && r.mortas.length === 0;
+  const parCompleto = Array.isArray(r && r.indecidiveis);
+  out.push(A("C2(zero)", !!r && mortasZero && parCompleto,
     !r ? semInstr :
-    "regras mortas acusadas: " + (Array.isArray(r.mortas)
-      ? r.mortas.length + " → " + r.mortas.map(m => m.harness + "/" + m.id).join(", ")
-      : JSON.stringify(r.mortas))));
+    "veredito (mortas, indecidíveis) = (" +
+    (Array.isArray(r.mortas) ? r.mortas.length : JSON.stringify(r.mortas)) + ", " +
+    (Array.isArray(r.indecidiveis) ? r.indecidiveis.length : JSON.stringify(r.indecidiveis)) + ")" +
+    (Array.isArray(r.mortas) && r.mortas.length
+      ? " · mortas: " + r.mortas.map(m => m.harness + "/" + m.id).join(", ")
+      : "") +
+    " — o veredito é o PAR; sem a segunda metade a frase afirma mais do que se mediu (E9)"));
 
   /* (cob) conservação no nível do mutante, contra a população do ORÁCULO
      INDEPENDENTE: cada um cai em exatamente um balde. Nada some, nada conta
@@ -305,7 +318,7 @@ function julgarVarredura(rel, pref) {
 
 /* C3 — a auto-exclusão tem dentes. `paresEsperados` é parâmetro para que a
    bateria negativa possa exercer (a)–(d) sem derrubar (*) por tabela. */
-function julgarExclusoes(reg, populacao, paresEsperados, vocabulario) {
+function julgarExclusoes(reg, populacao, paresEsperados, vocabulario, paresDaMatriz) {
   const out = [];
   const ex = (reg && Array.isArray(reg.exclusoes)) ? reg.exclusoes : null;
   const voc = vocabulario || [];
@@ -339,18 +352,65 @@ function julgarExclusoes(reg, populacao, paresEsperados, vocabulario) {
     "exclusão nomeia mutante que o preflight não declara: " +
     orfas.map(chave).join(", ") + " — exclusão órfã é permissão permanente disfarçada"));
 
-  /* (d) `oraculo-de-fonte` registra o que afirma, o que lê e o que NÃO VÊ.
-     A cegueira é exigência da spec §"A alínea em que quase escorreguei". */
-  const incompletas = (ex || []).filter(e => e && e.motivo === "oraculo-de-fonte" && !(
+  /* (d) a exclusão registra o que AFIRMA, o que LÊ e o que NÃO VÊ. A cegueira
+     é exigência da spec §"A alínea em que quase escorreguei"; vale para os dois
+     motivos que fazem afirmação sobre um objeto que a varredura deixa de olhar. */
+  const COM_CEGUEIRA = ["oraculo-de-fonte", "achado-aberto"];
+  const incompletas = (ex || []).filter(e => e && COM_CEGUEIRA.indexOf(e.motivo) >= 0 && !(
     typeof e.gate === "string" && e.gate.length &&
     typeof e.propriedade_afirmada === "string" && e.propriedade_afirmada.length &&
     Array.isArray(e.arquivos_lidos) && e.arquivos_lidos.length &&
     e.arquivos_lidos.every(a => typeof a === "string" && a.length) &&
     typeof e.cegueira === "string" && e.cegueira.length));
   out.push(A("C3(d)", !!ex && incompletas.length === 0,
-    "exclusão `oraculo-de-fonte` sem gate, propriedade_afirmada, arquivos_lidos ou " +
-    "cegueira: " + incompletas.map(chave).join(", ") +
+    "exclusão " + JSON.stringify(COM_CEGUEIRA) + " sem gate, propriedade_afirmada, " +
+    "arquivos_lidos ou cegueira: " + incompletas.map(chave).join(", ") +
     " — excluir sem dizer o que se deixa de ver é a doença que esta demanda combate"));
+
+  /* (e) `achado-aberto` — a exclusão de CAUSA NÃO FECHADA (errata E7). Não é
+     passe livre e não é adiamento: exige DONO (gate), ID e PRAZO, e o prazo é
+     AUTO-EXECUTÁVEL contra a matriz — a exceção morre com a razão que a criou,
+     no padrão da KI-4. Duas cláusulas que não existem em nenhuma outra alínea:
+
+       · MARCADOR NÃO PODE SER SILENCIOSO. `achado_id_alocado: false` obriga
+         `achado_id_pendencia` escrita — id de backlog depende da `develop`, que
+         uma worktree de feature não enxerga (R14), e um marcador sem a pendência
+         declarada é exatamente a âncora podre que esta demanda combate.
+       · PRAZO VENCIDO REPROVA. Se o evento declarado JÁ OCORREU, a exceção
+         devia ter saído: o gate reprova em vez de esperar boa vontade. É o que
+         separa "prazo" de "intenção". */
+  const abertas = (ex || []).filter(e => e && e.motivo === "achado-aberto");
+  const CHAVES_EVENTO = ["registro", "condicao", "harness", "mutante"];
+  const ruinsAA = [];
+  abertas.forEach(e => {
+    const faltam = [];
+    if (typeof e.achado_id !== "string" || !e.achado_id.trim()) faltam.push("achado_id");
+    if (typeof e.achado_id_alocado !== "boolean") faltam.push("achado_id_alocado (booleano)");
+    if (e.achado_id_alocado === false &&
+        (typeof e.achado_id_pendencia !== "string" || !e.achado_id_pendencia.trim()))
+      faltam.push("achado_id_pendencia — marcador silencioso não passa");
+    if (typeof e.remocao_prevista !== "string" || !e.remocao_prevista.trim())
+      faltam.push("remocao_prevista");
+    const ev = e.evento_de_remocao;
+    if (!ev || typeof ev !== "object" ||
+        CHAVES_EVENTO.some(k => typeof ev[k] !== "string" || !ev[k].trim()))
+      faltam.push("evento_de_remocao {" + CHAVES_EVENTO.join(",") + "}");
+    else {
+      const ocorreu = (paresDaMatriz || []).some(p =>
+        String(p && p.mutante).trim() === ev.mutante.trim() &&
+        new RegExp("^\\s*" + ev.harness.trim().replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + "\\b")
+          .test(String((p && p.harness) || "")));
+      if (ocorreu)
+        faltam.push("PRAZO VENCIDO — o evento declarado já ocorreu (par " + ev.harness + "/" +
+                    ev.mutante + " existe em " + ev.registro + "); a exceção tinha de ter saído");
+    }
+    if (faltam.length) ruinsAA.push(chave(e) + ": " + faltam.join("; "));
+  });
+  out.push(A("C3(e)", !!ex && ruinsAA.length === 0,
+    "exclusão `achado-aberto` sem dono, id, prazo ou com prazo vencido:\n    " +
+    ruinsAA.join("\n    ") +
+    "\n  — `achado-aberto` não é gaveta: a asserção de C2 é idêntica, o que muda é que o " +
+    "objeto excluído passa a ter dono, id e prazo (E7)"));
 
   return out;
 }
@@ -388,16 +448,17 @@ function julgarCobertura(observadas, doBuilder, subsequenciaSelada) {
 }
 
 /* C6 — o que a varredura NÃO decide é nomeado e contado. */
-function julgarIndecidiveis(rel, respostaSintetica, contagemPinada, vocabularioRazao) {
+function julgarIndecidiveis(rel, respostaSintetica, regIndecidiveis, vocabularioRazao, paresDaMatriz) {
   const out = [];
   const r = rel || {};
   const lista = Array.isArray(r.indecidiveis) ? r.indecidiveis : null;
 
   /* (sint) a guarda que NÃO depende do número da árvore. É ela que carrega o
      critério se a árvore real não tiver indecidível nenhum. */
-  out.push(A("C6(sint)", respostaSintetica === VEREDITO_INDECIDIVEL.f,
+  const sint = respostaSintetica || {};
+  out.push(A("C6(sint)", sint.veredito === VEREDITO_INDECIDIVEL.f,
     "caso sintético (f) " + FX.CASOS.f.titulo + " → esperado " +
-    JSON.stringify(VEREDITO_INDECIDIVEL.f) + ", obtido " + JSON.stringify(respostaSintetica)));
+    JSON.stringify(VEREDITO_INDECIDIVEL.f) + ", obtido " + JSON.stringify(sint.veredito)));
 
   /* (nome) indecidível sem razão nomeada é "provavelmente viva" com outro nome. */
   const anonimas = (lista || []).filter(x => !(x &&
@@ -419,15 +480,56 @@ function julgarIndecidiveis(rel, respostaSintetica, contagemPinada, vocabularioR
     "; soma de indecidíveis dos avaliados = " + somaInd + " × lista nomeada = " +
     (lista ? lista.length : "sem lista")));
 
-  /* (cont) a contagem vive no registro canônico. `null` é NÃO FIXADO e reprova
-     — é parte do red, e a T070 a fixa POR EXECUÇÃO. */
-  out.push(A("C6(cont)",
-    Number.isInteger(contagemPinada) && contagemPinada >= 0 && !!lista &&
-      contagemPinada === lista.length,
-    "contagem pinada em regra_morta.json → indecidiveis.contagem = " +
-    JSON.stringify(contagemPinada) + " × observada = " +
-    (lista ? lista.length : "sem lista") +
-    " (null significa NÃO FIXADO e reprova por desenho)"));
+  /* (cont-sint) O PIN QUE TEM DENTES HOJE (errata E9). Não é a CONTAGEM: com
+     seis fixtures e C1 asserindo cinco vereditos um a um, qualquer agregado
+     sobre elas é determinado pelas alíneas que já existem — alínea que não pode
+     falhar sozinha não mede nada. Medido também que `classificar()` reporta só
+     o PRIMEIRO concorrente indecidível, então nem contagem por caso é
+     observável. O que NINGUÉM assere é a RAZÃO: um instrumento que classifique
+     (f) como indecidível pelo motivo ERRADO passa em C6(sint) e em toda C1.
+     Estado de falha exclusivo desta alínea: veredito certo, razão errada. */
+  const pinSint = (regIndecidiveis || {}).sintetico || null;
+  const razaoOk = !!pinSint && vocabularioRazao.indexOf(pinSint.razao) >= 0;
+  out.push(A("C6(cont-sint)",
+    !!pinSint && razaoOk && pinSint.caso === "f" &&
+      sint.veredito === pinSint.veredito && sint.razao === pinSint.razao,
+    !pinSint ? "regra_morta.json → indecidiveis.sintetico AUSENTE — C6 ficaria sem pin nenhum"
+      : (!razaoOk ? "razão pinada " + JSON.stringify(pinSint.razao) + " fora do vocabulário " +
+                    JSON.stringify(vocabularioRazao)
+         : "sintético (" + pinSint.caso + "): pinado (" + JSON.stringify(pinSint.veredito) + ", " +
+           JSON.stringify(pinSint.razao) + ") × observado (" + JSON.stringify(sint.veredito) +
+           ", " + JSON.stringify(sint.razao) + ")")));
+
+  /* (cont-arvore) A CONTAGEM DA ÁRVORE, com o segundo prazo. Ou é inteiro e
+     casa com o observado, ou é uma PENDÊNCIA BEM-FORMADA — mesma doutrina de
+     C3(e), pelo mesmo motivo: vermelho crônico é remédio pior que a doença
+     (o MANIFEST 74/74 "sempre vermelho, logo nunca rodado", EA-5). `null` seco,
+     sem motivo/id/prazo, continua reprovando. */
+  const arv = (regIndecidiveis || {}).arvore || null;
+  let contOk = false, contMsg = "regra_morta.json → indecidiveis.arvore AUSENTE";
+  if (arv && Number.isInteger(arv.contagem) && arv.contagem >= 0) {
+    contOk = !!lista && arv.contagem === lista.length;
+    contMsg = "contagem pinada = " + arv.contagem + " × observada = " +
+              (lista ? lista.length : "sem lista");
+  } else if (arv) {
+    const ev = arv.evento_de_remocao;
+    const bemFormada = arv.motivo === "achado-aberto" &&
+      typeof arv.achado_id === "string" && arv.achado_id.trim().length > 0 &&
+      typeof arv.remocao_prevista === "string" && arv.remocao_prevista.trim().length > 0 &&
+      !!ev && typeof ev === "object" &&
+      ["registro", "condicao", "harness", "mutante"].every(k => typeof ev[k] === "string" && ev[k].trim());
+    const vencido = bemFormada && (paresDaMatriz || []).some(p =>
+      String(p && p.mutante).trim() === ev.mutante.trim() &&
+      new RegExp("^\\s*" + ev.harness.trim().replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + "\\b")
+        .test(String((p && p.harness) || "")));
+    contOk = bemFormada && !vencido;
+    contMsg = "contagem da árvore NÃO FIXADA e " +
+      (!bemFormada ? "SEM pendência bem-formada (exige motivo `achado-aberto`, achado_id, " +
+                     "remocao_prevista e evento_de_remocao) — `null` seco não passa"
+        : "PRAZO VENCIDO: o evento já ocorreu, a contagem tinha de ter sido fixada") +
+      " · observado hoje = " + (lista ? lista.length : "sem lista");
+  }
+  out.push(A("C6(cont-arvore)", contOk, contMsg));
 
   return out;
 }
@@ -569,6 +671,22 @@ function classificarFixtures(ids) {
   return out;
 }
 
+/* Classificação CRUA de um caso sintético: devolve o objeto inteiro, porque
+   C6(cont-sint) julga veredito E razão. Exceção vira veredito inválido nomeado,
+   nunca silêncio. */
+function classificarCru(id) {
+  const c = FX.CASOS[id];
+  try { return instrumento().classificar({ camadas: c.camadas, alvo: c.alvo }); }
+  catch (e) { return { veredito: "EXCEÇÃO: " + String((e && e.message) || e) }; }
+}
+
+/* Pares da matriz — oráculo do PRAZO auto-executável de C3(e) e C6(cont-arvore). */
+function paresDaMatriz() {
+  try { return JSON.parse(fs.readFileSync(path.join(HERE, ".claude", "verify",
+                                                    "mutation-matrix.json"), "utf8")).pares || []; }
+  catch (e) { return []; }
+}
+
 /* ═══════════════════════════════════════════════════════════════════════════
    OS GATES
    ═══════════════════════════════════════════════════════════════════════════ */
@@ -602,7 +720,7 @@ T("D014-EXC1", "a auto-exclusão nominal tem dentes e não é passe livre: vocab
     throw new Error("preflight indisponível em " + JSON.stringify(pref.erros) +
       " — C3(c) não pode ser medida sem o oráculo; FAIL nomeado, nunca SKIP");
   const voc = (reg._meta || {}).vocabulario_fechado_de_motivo || [];
-  exigir(julgarExclusoes(reg, pref.populacao, PARES_DECLARADOS, voc));
+  exigir(julgarExclusoes(reg, pref.populacao, PARES_DECLARADOS, voc, paresDaMatriz()));
 });
 
 /* ── C5 · D014-COB1 ───────────────────────────────────────────────────────── */
@@ -630,9 +748,9 @@ T("D014-IND1", "o que a varredura não decide é nomeado e contado — nunca eng
   const rm = instrumento();
   const reg = lerJSON(REG_PATH);
   const rel = rm.varrerArvore({ raiz: HERE, exclusoes: reg.exclusoes });
-  const sint = classificarFixtures(FX.INDECIDIVEL).f;
+  const sint = classificarCru("f");
   const voc = (reg._meta || {}).vocabulario_fechado_de_razao_indecidivel || [];
-  exigir(julgarIndecidiveis(rel, sint, (reg.indecidiveis || {}).contagem, voc));
+  exigir(julgarIndecidiveis(rel, sint, reg.indecidiveis, voc, paresDaMatriz()));
 });
 
 /* ── E6 · D014-CEN1 ───────────────────────────────────────────────────────── */
@@ -683,16 +801,37 @@ const REL_SADIO = {
   indecidiveis: [{ harness: "hx", id: "X1", folha: "a.css", seletor: ".s", propriedade: "color", razao: "gramatica-de-seletor-recusada" }],
   folhas: ["a.css", "b.css"]
 };
-const VOC_MOTIVO = ["oraculo-de-fonte", "fallback-declarado"];
+const VOC_MOTIVO = ["oraculo-de-fonte", "fallback-declarado", "achado-aberto"];
 const VOC_RAZAO = ["gramatica-de-seletor-recusada", "combinador-nao-descendente-no-prefixo",
                    "contexto-de-midia-nao-relacionado", "caixa-de-seletor-divergente"];
+const EVT_SADIO = { registro: "m.json", condicao: "par passa a existir", harness: "hx", mutante: "X1" };
+/* Duas exclusões, uma de cada motivo com cegueira: assim o CONTROLE VERDE de
+   C3(d) e C3(e) passa com SUJEITO REAL, e não por vacuidade (lista sem entrada
+   do motivo faria a alínea passar sem medir nada). */
 const EXC_SADIA = {
-  exclusoes: [{
-    harness: "hx", mutante: "X2", motivo: "oraculo-de-fonte", gate: "G1",
-    propriedade_afirmada: "p", arquivos_lidos: ["z.css"], cegueira: "c"
-  }]
+  exclusoes: [
+    { harness: "hx", mutante: "X2", motivo: "oraculo-de-fonte", gate: "G1",
+      propriedade_afirmada: "p", arquivos_lidos: ["z.css"], cegueira: "c" },
+    { harness: "hx", mutante: "X1", motivo: "achado-aberto", gate: "G2",
+      propriedade_afirmada: "p2", arquivos_lidos: ["w.css"], cegueira: "c2",
+      achado_id: "sint-X1", achado_id_alocado: false, achado_id_pendencia: "pend",
+      remocao_prevista: "veredito de G2", evento_de_remocao: EVT_SADIO }
+  ]
+};
+const SINT_SADIO = { veredito: "indecidivel", razao: "gramatica-de-seletor-recusada" };
+const IND_SADIO = {
+  sintetico: { caso: "f", veredito: "indecidivel", razao: "gramatica-de-seletor-recusada" },
+  arvore: { contagem: 1 }
+};
+/* pendência bem-formada: é o estado REAL do registro enquanto o achado
+   `014-P52-RA8` estiver aberto, e o controle verde tem de alcançá-lo. */
+const IND_PEND = {
+  sintetico: IND_SADIO.sintetico,
+  arvore: { contagem: null, motivo: "achado-aberto", achado_id: "sint-A",
+            remocao_prevista: "quando o achado fechar", evento_de_remocao: EVT_SADIO }
 };
 const CENSO_SADIO = REL_SADIO.censo;
+const PARES_SINT = ["hx/X1", "hx/X2"];
 
 /* clona e aplica um defeito pontual */
 const mud = (o, f) => { const c = JSON.parse(JSON.stringify(o)); f(c); return c; };
@@ -700,10 +839,11 @@ const mud = (o, f) => { const c = JSON.parse(JSON.stringify(o)); f(c); return c;
 const CONTROLES_VERDES = [
   ["julgarCascata", () => julgarCascata({ a: "morta", b: "morta", c: "viva", d: "viva", e: "viva" })],
   ["julgarVarredura", () => julgarVarredura(REL_SADIO, PREF_SADIO)],
-  ["julgarExclusoes", () => julgarExclusoes(EXC_SADIA, POP_SINT, ["hx/X2"], VOC_MOTIVO)],
+  ["julgarExclusoes", () => julgarExclusoes(EXC_SADIA, POP_SINT, ["hx/X2", "hx/X1"], VOC_MOTIVO, [])],
   ["julgarCobertura", () => julgarCobertura(["u.css", "ui_ux_v32.css", "ui_p50_v32.css"],
                                             ["u.css", "ui_ux_v32.css", "ui_p50_v32.css"], SUBSEQUENCIA_SELADA)],
-  ["julgarIndecidiveis", () => julgarIndecidiveis(REL_SADIO, "indecidivel", 1, VOC_RAZAO)],
+  ["julgarIndecidiveis", () => julgarIndecidiveis(REL_SADIO, SINT_SADIO, IND_SADIO, VOC_RAZAO, [])],
+  ["julgarIndecidiveis/pendência", () => julgarIndecidiveis(REL_SADIO, SINT_SADIO, IND_PEND, VOC_RAZAO, [])],
   ["julgarCenso", () => julgarCenso(CENSO_SADIO, CENSO_SADIO)]
 ];
 
@@ -751,22 +891,36 @@ const BATERIA = [
 
   /* ── C3 ── */
   { alinea: "C3(*)", exato: true,
-    run: () => julgarExclusoes(EXC_SADIA, POP_SINT, ["hx/X1", "hx/X2"], VOC_MOTIVO) },
+    run: () => julgarExclusoes(EXC_SADIA, POP_SINT, ["hx/X1"], VOC_MOTIVO, []) },
   { alinea: "C3(a)", exato: true,
     run: () => julgarExclusoes(mud(EXC_SADIA, r => { r.exclusoes[0].motivo = "porque o oráculo é de fonte"; }),
-                               POP_SINT, ["hx/X2"], VOC_MOTIVO) },
+                               POP_SINT, PARES_SINT, VOC_MOTIVO, []) },
   { alinea: "C3(b)", exato: false, colateral: "C3(c), porque curinga por definição não resolve no preflight",
     run: () => julgarExclusoes(mud(EXC_SADIA, r => { r.exclusoes[0].mutante = "X*"; }),
-                               POP_SINT, ["hx/X*"], VOC_MOTIVO) },
+                               POP_SINT, ["hx/X*", "hx/X1"], VOC_MOTIVO, []) },
   { alinea: "C3(c)", exato: true,
     run: () => julgarExclusoes(mud(EXC_SADIA, r => { r.exclusoes[0].mutante = "X999"; }),
-                               POP_SINT, ["hx/X999"], VOC_MOTIVO) },
+                               POP_SINT, ["hx/X999", "hx/X1"], VOC_MOTIVO, []) },
   { alinea: "C3(d)", exato: true,
     run: () => julgarExclusoes(mud(EXC_SADIA, r => { delete r.exclusoes[0].cegueira; }),
-                               POP_SINT, ["hx/X2"], VOC_MOTIVO) },
+                               POP_SINT, PARES_SINT, VOC_MOTIVO, []) },
   { alinea: "C3(d)", exato: true,
     run: () => julgarExclusoes(mud(EXC_SADIA, r => { r.exclusoes[0].arquivos_lidos = []; }),
-                               POP_SINT, ["hx/X2"], VOC_MOTIVO) },
+                               POP_SINT, PARES_SINT, VOC_MOTIVO, []) },
+  /* C3(e) · marcador silencioso: `achado_id_alocado: false` sem a pendência
+     escrita. É o caso que a 014 vive de verdade — id de backlog depende da
+     `develop`, invisível à worktree de feature. */
+  { alinea: "C3(e)", exato: true,
+    run: () => julgarExclusoes(mud(EXC_SADIA, r => { delete r.exclusoes[1].achado_id_pendencia; }),
+                               POP_SINT, PARES_SINT, VOC_MOTIVO, []) },
+  { alinea: "C3(e)", exato: true,
+    run: () => julgarExclusoes(mud(EXC_SADIA, r => { delete r.exclusoes[1].evento_de_remocao; }),
+                               POP_SINT, PARES_SINT, VOC_MOTIVO, []) },
+  /* C3(e) · PRAZO VENCIDO: o par declarado no evento passa a existir na matriz
+     e a exceção continua lá. É a cláusula que separa prazo de intenção. */
+  { alinea: "C3(e)", exato: true,
+    run: () => julgarExclusoes(EXC_SADIA, POP_SINT, PARES_SINT, VOC_MOTIVO,
+                               [{ mutante: "X1", harness: "hx (t.js)" }]) },
 
   /* ── C5 ── */
   { alinea: "C5(*)", exato: false, colateral: "C5(spec), porque lista vazia não contém a subsequência",
@@ -785,21 +939,42 @@ const BATERIA = [
                                ["ui_p50_v32.css", "ui_ux_v32.css"], SUBSEQUENCIA_SELADA) },
 
   /* ── C6 ── */
-  { alinea: "C6(sint)", exato: true,
-    run: () => julgarIndecidiveis(REL_SADIO, "viva", 1, VOC_RAZAO) },
+  { alinea: "C6(sint)", exato: false, colateral: "C6(cont-sint), porque o veredito pinado também deixa de casar",
+    run: () => julgarIndecidiveis(REL_SADIO, { veredito: "viva" }, IND_SADIO, VOC_RAZAO, []) },
   { alinea: "C6(nome)", exato: true,
     run: () => julgarIndecidiveis(mud(REL_SADIO, r => { delete r.indecidiveis[0].razao; }),
-                                  "indecidivel", 1, VOC_RAZAO) },
+                                  SINT_SADIO, IND_SADIO, VOC_RAZAO, []) },
   { alinea: "C6(cons)", exato: true,
     run: () => julgarIndecidiveis(mud(REL_SADIO, r => { r.avaliados[0].declaracoes = 3; }),
-                                  "indecidivel", 1, VOC_RAZAO) },
-  { alinea: "C6(cons)", exato: false, colateral: "C6(cont), porque a lista encolhe e a contagem pinada deixa de casar",
+                                  SINT_SADIO, IND_SADIO, VOC_RAZAO, []) },
+  { alinea: "C6(cons)", exato: false, colateral: "C6(cont-arvore), porque a lista encolhe e a contagem pinada deixa de casar",
     run: () => julgarIndecidiveis(mud(REL_SADIO, r => { r.indecidiveis = []; }),
-                                  "indecidivel", 1, VOC_RAZAO) },
-  { alinea: "C6(cont)", exato: true,
-    run: () => julgarIndecidiveis(REL_SADIO, "indecidivel", null, VOC_RAZAO) },
-  { alinea: "C6(cont)", exato: true,
-    run: () => julgarIndecidiveis(REL_SADIO, "indecidivel", 5, VOC_RAZAO) },
+                                  SINT_SADIO, IND_SADIO, VOC_RAZAO, []) },
+  /* C6(cont-sint) · O ESTADO DE FALHA EXCLUSIVO desta alínea: veredito CERTO,
+     razão ERRADA. Nenhuma outra alínea da suíte o pega — C6(sint) só olha o
+     veredito, e C1 nem chega ao caso (f). */
+  { alinea: "C6(cont-sint)", exato: true,
+    run: () => julgarIndecidiveis(REL_SADIO,
+                                  { veredito: "indecidivel", razao: "contexto-de-midia-nao-relacionado" },
+                                  IND_SADIO, VOC_RAZAO, []) },
+  { alinea: "C6(cont-sint)", exato: true,
+    run: () => julgarIndecidiveis(REL_SADIO, SINT_SADIO,
+                                  { sintetico: null, arvore: { contagem: 1 } }, VOC_RAZAO, []) },
+  /* C6(cont-arvore) · inteiro que não casa */
+  { alinea: "C6(cont-arvore)", exato: true,
+    run: () => julgarIndecidiveis(REL_SADIO, SINT_SADIO,
+                                  { sintetico: IND_SADIO.sintetico, arvore: { contagem: 5 } },
+                                  VOC_RAZAO, []) },
+  /* C6(cont-arvore) · `null` SECO: sem motivo, sem id, sem prazo. É o que
+     separa "pendência declarada" de "esquecimento". */
+  { alinea: "C6(cont-arvore)", exato: true,
+    run: () => julgarIndecidiveis(REL_SADIO, SINT_SADIO,
+                                  { sintetico: IND_SADIO.sintetico, arvore: { contagem: null } },
+                                  VOC_RAZAO, []) },
+  /* C6(cont-arvore) · PRAZO VENCIDO: o evento ocorreu e a contagem continua nula. */
+  { alinea: "C6(cont-arvore)", exato: true,
+    run: () => julgarIndecidiveis(REL_SADIO, SINT_SADIO, IND_PEND, VOC_RAZAO,
+                                  [{ mutante: "X1", harness: "hx (t.js)" }]) },
 
   /* ── E6 ── */
   { alinea: "CEN(folhas)", exato: true,
@@ -820,12 +995,16 @@ const BATERIA = [
 /* Censo DECLARADO das alíneas desta suíte, para que a própria D014-DISC1 não
    possa passar vacuosamente: com `CONTROLES_VERDES` vazio, `todas` sairia vazio
    e a checagem de cobertura passaria sem medir nada. Quebra por alínea:
-   C1 6 (*,a..e) · C2 7 (pref,pop,anc,cen,zero,cob,auto) · C3 5 (*,a..d) ·
-   C5 4 (*,lista,ordem,spec) · C6 4 (sint,nome,cons,cont) · CEN 3
-   (folhas,valores,nao-vac). Alínea nova exige entrada na bateria E bump aqui —
-   é a forçante de propósito. */
-const JULGADORES_ESPERADOS = 6;
-const ALINEAS_ESPERADAS = 29;
+   C1 6 (*,a..e) · C2 7 (pref,pop,anc,cen,zero,cob,auto) · C3 6 (*,a..e) ·
+   C5 4 (*,lista,ordem,spec) · C6 5 (sint,nome,cons,cont-sint,cont-arvore) ·
+   CEN 3 (folhas,valores,nao-vac). Alínea nova exige entrada na bateria E bump
+   aqui — é a forçante de propósito. Wave 5 (erratas E7/E9): C3 ganhou (e) e
+   C6(cont) virou dois prazos, 29 → 31. Os CONTROLES são 7 e não 6 porque
+   `julgarIndecidiveis` tem DOIS estados verdes legítimos — contagem fixada e
+   pendência bem-formada — e um controle que só alcançasse o primeiro deixaria
+   a rota da pendência sem prova de que ela pode passar. */
+const JULGADORES_ESPERADOS = 7;
+const ALINEAS_ESPERADAS = 31;
 
 T("D014-DISC1", "poder discriminante: toda alínea desta suíte tem estado alcançável de falha (bateria negativa) e estado alcançável de passagem (controle verde)", () => {
   const problemas = [];

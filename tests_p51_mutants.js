@@ -122,13 +122,23 @@ const CAUSA = {
 const naoClassificada = msg => "falha não classificada: " + msg;
 
 const MUTANTS = [
-  { id: "M51-01", desc: "layout desktop volta a empilhar mapa e pergunta",
-    file: F.css, gate: "P51-VIS1", cmd: "node tests_p50_chromium.js",
-    reason: /se sobrep|empilhamento|faixa central/i,
-    find: `    grid-template-columns:minmax(0,1fr) 340px;
-    grid-template-areas:"main side";`,
-    repl: `    grid-template-columns:minmax(0,1fr);
-    grid-template-areas:"side" "main";` },
+  /* [014/T050] M51-01 APOSENTADO em 2026-09-01 (demanda 014-gate-sem-poder-discriminante).
+     Motivo: gate sem poder discriminante (achado EA-7). O par estava íntegro em
+     tudo que se pode conferir sem navegador — âncora única (preflight C1,
+     ocorrencias == 1) e `reason` com as três alternativas ainda emitidas por
+     tests_p50_chromium.js:3405/:3408/:3412 — e mesmo assim P51-VIS1 rodava e
+     PASSAVA sob a mutação. Causa medida por cascata e agora também pela
+     varredura da 014: desde c1e3649 a composição da tela de pergunta é
+     governada por ui_p52_workspace_v32.css:74-77, cujo seletor é o desta camada
+     prefixado por `html` — prefixo VÁCUO, que casa todo elemento —, e a
+     declaração que M51-01 mutava não decide mais nada em contexto nenhum.
+     SUBSTITUIÇÃO NOMINAL: `D014-M10` (tests_014_mutants_visual.js, harness
+     `d014vis`), que muta a linha VENCEDORA — `grid-template-columns` de
+     ui_p52_workspace_v32.css:77 — e morre em P52-LAY2, gate existente de suíte
+     INVOCADA e nunca editada. Trilha completa: mutation-matrix.json →
+     dividas_declaradas; a KI-4 que perdoava este sobrevivente sai no MESMO
+     commit (IC-9.2 reprova exceção a fantasma).
+     Identidade anterior do bloco: id M51-01 · file F.css · gate P51-VIS1. */
 
   { id: "M51-02", desc: "reintroduz um segundo botão de evidência focável",
     file: F.shell, gate: "P51-UX1", cmd: "node tests_p50_core.js", only: "P51-UX1",

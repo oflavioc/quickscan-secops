@@ -189,7 +189,34 @@ const PROTECTED = {
      `ui_target_v32.js` NÃO foi repinado nesta passagem: conferido byte a byte
      idêntico ao pin vigente — repinar por simetria seria repin sem motivo.
      Identidade anterior: 91abdf6980fc7c710a65eaa47f437c62fd30944dd37abdcf6ef14acefa6bfe63 */
-  "ui_v32.js": "d594dafec00d11efa2c25d6fe3183f1d5177343f09c925dfcc7055b17df9bb85",
+  /* DEMANDA 015 · superfícies de apoio · REPIN (2026-08-31, o TERCEIRO da série).
+     ISTO É ASSERÇÃO DE PIN, NÃO DE COMPORTAMENTO — vale palavra por palavra o
+     que os dois repins acima dizem: só muda o valor de identidade contra o qual
+     `P50-GOV1` e `P50-IC4` comparam o arquivo; nenhuma asserção de regra dos
+     dois é tocada, nenhum gate nasce ou morre, e `frozenSuites` segue intacto.
+     MOTIVO: **retitulação pela função e declaração de ancoragem (demanda 015)**.
+     Quatro sítios em `ui_v32.js`, todos aditivos ou de texto: o eyebrow de
+     `#v32prio` e o `<h3>` de `#pr-sup-prio` deixam de PROMETER apoio e passam a
+     nomear a leitura que o bloco entrega (o sufixo `· contexto V3.2` fica só na
+     tela, por ratificação do proprietário); cada `[data-pr-gap-support]` ganha
+     um `[data-pr-gap-fonte]` irmão declarando que a lista parte da capability
+     do gap e não do nível respondido; e a caixa "Como interpretar" ganha um 7º
+     item estático com a regra de que listas concorrentes não se somam.
+     NADA FOI REMOVIDO — `D015-NOSUB1` prova isso contra âncora de commit
+     imutável, e `D015-GOV1` prova que `ui_target_v32.js` ficou intocado.
+     Autorização nominal §29.4 do proprietário, no chat, em 2026-08-31, POR
+     ARQUIVO (`ui_v32.js`) e válida só para a 015; red commitado antes da
+     implementação (R3 §4).
+     CONFERIDO ANTES DE REPINAR, e não depois: as 15 entradas de `PROTECTED`
+     foram medidas uma a uma contra o disco e **só `ui_v32.js` divergiu** — as
+     outras 14, inclusive `ui_target_v32.js`, `ui_v32.css` e `engine_v32.js`,
+     saíram byte-idênticas ao pin vigente e NÃO são repinadas: repinar por
+     simetria seria repin sem motivo. As três fontes de identidade concordam no
+     valor novo (disco normalizado LF, `pins.json → files/ui_v32.js` e
+     `git show HEAD:ui_v32.js`), e `declared.m41_payload_sha256` permanece
+     `9794b267…4365b` — Porta B fechada.
+     Identidade anterior: d594dafec00d11efa2c25d6fe3183f1d5177343f09c925dfcc7055b17df9bb85 */
+  "ui_v32.js": "9d31fef96e952b37a14d2ad07c616e368d36af7231c4a1896c72d8ac524972b6",
   "ui_ux_v32.js": "a050401145a5ed7af597eae01a9a23826418119769c096db168b3b177a9d3938",
   /* ERRATA DA AUDITORIA EXTERNA · §4.1.1 ("qualquer texto derivado consome a
      mesma decisão canônica de publicabilidade"). A comparação Atual × Alvo

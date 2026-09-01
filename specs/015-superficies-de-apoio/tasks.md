@@ -183,3 +183,29 @@ sobreviver, `D015-GOV1` não está provando que a autorização não foi excedid
    roteia ao `doc-writer` (id) e ao `product-owner` (redação), **depois** de
    conferir a `develop`, e põe `.claude/BACKLOG.md` fora de escopo. Criar tarefa
    seria ampliar o plano aprovado.
+
+---
+
+## Errata — o que a execução mudou neste artefato
+
+Decidida pelo orquestrador sob a delegação do proprietário de 2026-08-29, e
+escrita **sem renumerar tarefa alguma** (R12): id é permanente, contagem não é.
+
+Este `tasks.md` foi escrito **antes** das erratas **E1**, **E2** e **E3** da
+spec, e a execução o ultrapassou em quatro pontos. Deixá-lo como está faria o
+próximo leitor herdar os números errados — que é exatamente o custo que a
+demanda mediu no `667` de um commit imutável.
+
+| O que o artefato diz | O que a execução mediu |
+|---|---|
+| "12 mutantes" | **15** no harness `d015` (`M1`–`M10`, `M14`, `M15` ampla, `M17`, `M18`, `M19`) |
+| "13 pares" | **16** — os 15 acima mais `M16`, que roda em worktree efêmera |
+| matriz prevista sem `M17`/`M18`/`M19` | os três existem: `M19` nasceu da **E2** e `M17`/`M18` do gap que o `spec-validate` achou |
+| série de repins `R2`–`R12` | executada **`R0`–`R12`** — a série começa em `R0` porque artefato de fase também é pinado, lição da 011 |
+| `D015-RES1` como gate a escrever | **não foi escrito**: o `C4` caiu pela **E1**, e os mutantes `M11`–`M13` estão **aposentados com causa, ids não reusados** |
+
+**O que NÃO muda**: nenhuma tarefa foi renumerada, nenhuma foi removida, e a
+tipagem e os donos permanecem. O único desvio de dono está registrado no
+`relatorio-final.md` — o repin inline de `PROTECTED`, que o T013 atribui ao
+`build-engineer` e que foi executado pelo `qa-engineer` sob exceção nominal do
+orquestrador, com a mitigação nomeada.

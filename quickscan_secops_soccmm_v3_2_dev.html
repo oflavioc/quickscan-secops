@@ -6124,7 +6124,7 @@ function buildSupportHTML(res, afirmaPreservacao){
   const rest = Object.keys(ctxs).filter(id => !prioCaps.includes(id));
   let html = "";
   if (prioCaps.length)
-    html += `<div class="section-title"><div class="eyebrow">Apoio nas prioridades declaradas · contexto V3.2</div></div>
+    html += `<div class="section-title"><div class="eyebrow">Leitura das prioridades declaradas · contexto V3.2</div></div>
       <div class="v32-block" id="v32prio">${prioCaps.map(id=>renderCap(id, ctxs[id], presentationOf(id, ctxs[id]), afirmaPreservacao)).join("")}</div>`;
   const byMode = m => rest.filter(id => presentationOf(id, ctxs[id])==="card" && ctxs[id].supportMode===m);
   [["DIRECT","v32direct"],["CONTEXTUAL","v32contextual"],["VALIDATE","v32validate"]].forEach(([m,bid])=>{
@@ -6467,12 +6467,14 @@ function qsGapSupportHTML(f){
     return `<div class="pr-gapsup" data-pr-gap-support data-pr-gap-qid="${escAttr(f.id)}"><div class="pr-gapsup-h">Possíveis caminhos de apoio</div>
       ${cabec}
       <div class="pr-gapsup-why" data-pr-gap-why>Contexto tecnológico não declarado para esta capability: as opções abaixo exigem <b>validar aderência</b> antes de qualquer recomendação.</div>
+      <div class="pr-gapsup-why" data-pr-gap-fonte>Esta lista parte da <b>capability</b> associada ao gap, não do nível respondido na pergunta — por isso pode não coincidir com outras listas deste relatório.</div>
       <ul class="pr-gapsup-list">${m.opts.map(o=>`<li data-pr-gap-opt><b>${esc32(o.n)}</b> — <span class="pr-mut">${esc32(o.w)}; validar aderência ao contexto do cliente.</span></li>`).join("")}</ul></div>`;
   }
   const estado = PRESENCE_LABELS[L.presence] || L.presence;
   return `<div class="pr-gapsup" data-pr-gap-support data-pr-gap-qid="${escAttr(f.id)}"><div class="pr-gapsup-h">Possíveis caminhos de apoio</div>
     ${cabec}
     <div class="pr-gapsup-why" data-pr-gap-why>Apareceu porque o gap acima foi observado e o contexto declarado para esta capability é <b>${esc32(estado)}</b>. As opções são caminhos possíveis, a validar — não são requisito nem compra recomendada.</div>
+    <div class="pr-gapsup-why" data-pr-gap-fonte>Esta lista parte da <b>capability</b> associada ao gap, não do nível respondido na pergunta — por isso pode não coincidir com outras listas deste relatório.</div>
     <ul class="pr-gapsup-list">${m.opts.map(o=>`<li data-pr-gap-opt><b>${esc32(o.n)}</b> — <span class="pr-mut">${esc32(o.w)}.</span></li>`).join("")}</ul></div>`;
 }
 
@@ -6495,6 +6497,7 @@ function qsHowToReadHTML(){
       <li><b>n/d</b> significa <b>não avaliado</b>, nunca zero; zero confirmado é um resultado medido.</li>
       <li>O <b>cenário-alvo</b> é um estado desejado e declarado, não previsão nem compromisso.</li>
       <li>As <b>recomendações são possibilidades</b> condicionadas ao contexto informado, sujeitas a validação.</li>
+      <li>O relatório pode trazer <b>mais de uma lista</b> de possibilidades para o mesmo gap: elas partem de catálogos e ancoragens diferentes e <b>não se somam</b> como recomendação.</li>
     </ul></div>`;
 }
 
@@ -6650,7 +6653,7 @@ function buildPrintReport(){
   const rest = Object.keys(ctxs).filter(id=>!prioCaps.includes(id));
   const byMode = m => rest.filter(id=>presentationOf(id,ctxs[id])==="card" && ctxs[id].supportMode===m);
   h += `<div class="pr-sec" id="pr-support"><h2>Como a Fortinet pode apoiar — contexto declarado</h2>`;
-  if (prioCaps.length) h += `<h3>Apoio nas prioridades declaradas</h3><div id="pr-sup-prio">${prCards(prioCaps.map(x=>x),ctxs,null) && prioCaps.map(id=>{const p=presentationOf(id,ctxs[id]);const b=(p==="card")?capCardHTML(id,ctxs[id]):(p===null?neutralPrioCardHTML(id,ctxs[id]):baseCardHTML(id,ctxs[id],p));return b.replace(/<details class="v32-why">[\s\S]*?<\/details>/,prWhy(id,ctxs[id]));}).join("")}</div>`;
+  if (prioCaps.length) h += `<h3>Leitura das prioridades declaradas</h3><div id="pr-sup-prio">${prCards(prioCaps.map(x=>x),ctxs,null) && prioCaps.map(id=>{const p=presentationOf(id,ctxs[id]);const b=(p==="card")?capCardHTML(id,ctxs[id]):(p===null?neutralPrioCardHTML(id,ctxs[id]):baseCardHTML(id,ctxs[id],p));return b.replace(/<details class="v32-why">[\s\S]*?<\/details>/,prWhy(id,ctxs[id]));}).join("")}</div>`;
   [["DIRECT","pr-sup-direct"],["CONTEXTUAL","pr-sup-contextual"],["VALIDATE","pr-sup-validate"]].forEach(([m,bid])=>{
     const ids = byMode(m); if(!ids.length) return;
     h += `<h3>${SUPPORT_TITLES[m]}</h3><div id="${bid}">${prCards(ids,ctxs,"card")}</div>`;});

@@ -1,7 +1,7 @@
 {
   "_meta": {
     "descricao": "Registry único de pins — fonte de identidade dos artefatos (R8). Hashes = SHA-256 dos blobs de HEAD. Alterar arquivo pinado exige regenerar este registry no MESMO PR, com motivo no commit.",
-    "gerado_de_head": "f7da992a46d5e442f03909308883fd3e71aaaa4b",
+    "gerado_de_head": "8b4aff3d5d1ea4f033720f8602a9d239e8efdeca",
     "gerado_em": "2026-09-01",
     "exclusoes": [
       "docs_phase5/**",
@@ -126,7 +126,7 @@
     ".claude/verify/gen_pins.py": "730043800a41b4cfbb799945dd6499df8ba1375096f5f748df01c8c2d12a407a",
     ".claude/verify/invariants.json": "b8571facafbe6098cc643886cd158f877dd702c0cba6ca5addff34fc3e10bee6",
     ".claude/verify/known_issues.json": "b9dd23b1a05ab09a11122aee68d555938f250223de2911de8c56079ddd742140",
-    ".claude/verify/mutation-matrix.json": "075c99fdd76096f9dc924e157947c838c01219d83b42f6c89ef4a41189c0fa62",
+    ".claude/verify/mutation-matrix.json": "6ae2132d0586fa4142bc7c40739d2e3be7258f4eefc3c7000d7ac1b5957c8e50",
     ".claude/verify/mutation_map.json": "e2917f896ee8ac6c8cbb807f2b2cc529ff200c3c446856fea6c83c8a91fbdc54",
     ".claude/verify/pipeline.yaml": "18581a19186417522d15e30e7072e5b58e31dc16045ff253b672827288fdbf9e",
     ".claude/verify/run.sh": "b137b7a1c1bf9233b06ed8f87b04fb03150b316b59ce0b56231c28ab4e048faa",
@@ -260,7 +260,7 @@
     "tests_011_chromium.js": "8a35766bd889143e4d05749700d8fc82026ed703f86191a13947197ce9b6e16e",
     "tests_011_mutants.js": "3bc7983c08ede245bf2d29204244ddc9defbe110633b8f78558bb5cb3508fbae",
     "tests_011_prioridade.js": "b8fce56a38f2e9ac18fdbddcc76b278ab2e84eaa5eaea82495a8dd868982c7b6",
-    "tests_015_apoio.js": "cc56938b20f5f5bf09e98eff924c9adbfe8f9cdec1e50546c0dd3af6fe9573a3",
+    "tests_015_apoio.js": "e4cfbdb52d3379b21b9a63b60e552ff5662a5f2b92662e8fb2bd0793da4c9719",
     "tests_015_mutants.js": "47c4b5325fa1990cfa9e753cd28e94af538239190d37623cb7afcff99b5ee20a",
     "tests_core_mutants.js": "8a0502c2d7f34832722059435f2ccf4d7889614769526b645d4e2a720732af7e",
     "tests_icons_m46.js": "f73f96e32951507135c0b36d968fe12e9ffbc268e8ad438ea2e6c861a8b88123",

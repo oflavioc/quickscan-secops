@@ -77,11 +77,11 @@ Namespace `D014-*`.
 | # | Critério | Gate (id · arquivo · asserção) | Mutante previsto |
 |---|---|---|---|
 | C1 | O classificador de cascata acerta os **cinco** cenários canônicos, **incluindo os três cuja resposta correta é "viva"** — alínea (e) por **E5** | `D014-CASC1` · `tests_014_regra_morta.js` · sobre folhas **sintéticas** (fixtures próprias, fora da árvore de produto): (a) morta por especificidade; (b) morta por ordem de inlining com especificidade empatada; (c) **viva** — camada posterior declara a mesma propriedade no mesmo elemento com especificidade **menor**; (d) **viva** — `!important` em camada **anterior** vence normal posterior; **(e) viva por prefixo NÃO-VÁCUO** — a vencedora é a perdedora prefixada por composto que **restringe** (id/classe/atributo), logo a perdedora segue decidindo fora do subconjunto | `D014-M1` ignorar `!important` → (d) vira "morta" · `D014-M2` decidir só por ordem → (a)/(c) erram · `D014-M3` normalizar contexto de mídia por **texto** → (b) e o caso real erram · **`D014-M9`** tratar todo prefixo como vácuo → (e) vira "morta" |
-| C2 | A varredura, sobre a **árvore real**, enumera os mutantes de CSS de **todas** as campanhas pelo preflight — **população E âncora** (`find`/`repl`, por **E3**) — e acusa **zero** regras mortas, sobre **censo de parse pinado** (**E6**) | `D014-VARR1` · `tests_014_regra_morta.js` · população e âncora lidas de `--preflight` (nunca dos pares da matriz); o censo de regras/declarações por folha é conferido contra o registro **antes** do veredito; o veredito é sempre o **par (mortas, indecidíveis)**, nunca um número só (**E9**); saída: 0 mortas, com a lista dos avaliados e dos excluídos | `D014-M4` acrescenta a `ui_p50_v32.css` uma declaração que `ui_p52_workspace_v32.css` já sobrepõe (regra morta nova, na árvore) → a varredura **tem** de acusá-la |
-| C3 | A auto-exclusão nominal tem dentes e **não é passe livre** | `D014-EXC1` · `tests_014_regra_morta.js` · (a) motivo do vocabulário fechado `oraculo-de-fonte` \| `fallback-declarado` \| **`achado-aberto`** (por **E7**); (b) curinga, campo vazio ou não-texto **não excluem**; (c) exclusão que nomeia mutante inexistente **reprova** (oráculo: preflight); (d) exclusão `oraculo-de-fonte` registra **qual propriedade** o oráculo afirma e **quais arquivos** ele lê; **(e) exclusão `achado-aberto` exige `achado` (id do backlog) E `remocao_prevista`** — sem os dois, não exclui | `D014-M5` aceitar curinga (shape do `IC-9.1`) · `D014-M6` deixar de conferir a existência do mutante nomeado |
+| C2 | A varredura, sobre a **árvore real**, enumera os mutantes de CSS de **todas** as campanhas pelo preflight — **população E âncora** (`find`/`repl`, por **E3**) — e acusa **zero** regras mortas, sobre **censo de parse pinado** (**E6**) | `D014-VARR1` · `tests_014_regra_morta.js` · população e âncora lidas de `--preflight` (nunca dos pares da matriz); o censo de regras/declarações por folha é conferido contra o registro **antes** do veredito; o veredito é sempre o **par (mortas, indecidíveis)**, nunca um número só (**E9**); saída: 0 mortas, com a lista dos avaliados e dos excluídos | `D014-M4` planta em `ui_p50_v32.css` uma regra morta nova, na árvore → a varredura **tem** de acusá-la pelo **veredito** — forma executável por **E10**: troca censo-neutra que planta dominadora de prefixo vácuo; a adição literal morreria pelo censo (E6), não pela detecção |
+| C3 | A auto-exclusão nominal tem dentes e **não é passe livre** | `D014-EXC1` · `tests_014_regra_morta.js` · (a) motivo do vocabulário fechado `oraculo-de-fonte` \| `fallback-declarado` \| **`achado-aberto`** (por **E7**); (b) curinga, campo vazio ou não-texto **não excluem**; (c) exclusão que nomeia mutante inexistente **reprova** (oráculo: preflight); (d) exclusão `oraculo-de-fonte` registra **qual propriedade** o oráculo afirma e **quais arquivos** ele lê; **(e) exclusão `achado-aberto` exige `achado` (id do backlog) E `remocao_prevista`** — sem os dois, não exclui | `D014-M5` aceitar curinga (shape do `IC-9.1`) · `D014-M6` deixar de conferir a existência do mutante nomeado — carrasco executável dos dois: `D014-DISC1`, por **E11** (julgador enfraquecido fica verde sobre registro são) |
 | C4 | A linha que **decide** a composição da tela de pergunta ganha carrasco | `P52-LAY2` (**gate existente**, `tests_p52_chromium.js:231` — suíte **não editada**, só invocada) · mutação de `ui_p52_workspace_v32.css:77` para uma coluna · harness **`d014vis`** (`tests_014_mutants_visual.js`), separado por **E1** | `D014-M10` · `grid-template-columns: minmax(0, 1fr) clamp(320px, 23vw, 440px)` → `minmax(0, 1fr)`; motivo esperado `/a pergunta não está à esquerda do mapa\|as colunas se sobrepõem\|colunas desalinhadas no topo/` |
 | C5 | A cobertura da varredura é **derivada do builder**, não digitada | `D014-COB1` · `tests_014_regra_morta.js` · a lista e a **ordem** das folhas injetadas saem de `build_v32_html.py`; folha injetada pelo builder e não lida pela varredura reprova; a ordem observada casa com a declarada em `specs/PHASE_5_0_REV_B.md:1606` | `D014-M7` acrescentar uma folha ao builder sem tocar a varredura (precedente: `D011-M18` muta `build_v32_html.py`) |
-| C6 | O que a varredura **não** decide é nomeado e contado — nunca engolido | `D014-IND1` · `tests_014_regra_morta.js` · declaração cuja competição não cai na relação decidível sai em lista **nomeada e contada**; SKIP silencioso é FAIL (R10 §2). **Duas contagens, dois prazos** (**E9**): a **sintética** é pinada **agora** e é o oráculo de `D014-M8`; a da **árvore real** entra no registro quando o achado da E7 fechar | `D014-M8` descartar silenciosamente o indecidível → a contagem **sintética** muda |
+| C6 | O que a varredura **não** decide é nomeado e contado — nunca engolido | `D014-IND1` · `tests_014_regra_morta.js` · declaração cuja competição não cai na relação decidível sai em lista **nomeada e contada**; SKIP silencioso é FAIL (R10 §2). **Duas contagens, dois prazos** (**E9**): a **sintética** é pinada **agora** — na forma **veredito+razão** do caso (f), por **E12** — e é o oráculo de `D014-M8`; a da **árvore real** entra no registro quando o achado da E7 fechar | `D014-M8` descartar silenciosamente o indecidível → a contagem **sintética** muda |
 | C7 | A `KI-4` fecha **no mesmo PR** | **Sem gate novo** — o carrasco é **`IC-9.2`** (`check_mutation.py:895` · o objeto da exceção existe no harness) e **`IC-9.3`** (`:912` · não obsoleta, pelo registro). Corrigido por **E2** | — (criar gate aqui duplicaria o juiz) |
 
 ### Guarda de tautologia, alínea por alínea
@@ -545,6 +545,103 @@ contrato `C1` passa de **cinco** para **seis** harnesses, derivados do registro.
 **Nenhum critério foi enfraquecido e nenhum foi removido** — as únicas asserções
 retiradas são a citação errada de `IC-9.4` e a minha lista digitada de cinco
 harnesses, ambas substituídas por versões mais duras.
+
+## Errata E10–E12 — a arbitragem da validação (T082)
+
+**Delegação registrada**: `qa-engineer`, wave 8 (skill `spec-validate`),
+**2026-09-01**. As três registram desvios de FORMA que a wave 6 declarou na
+`mutation-matrix.json` e nos cabeçalhos dos harnesses **à espera de arbitragem**
+— nunca acomodados em silêncio. Arbitragem: **conforme com errata** nos três.
+Cada kill citado abaixo foi **reproduzido por execução na validação** (mutação
+aplicada à mão, suíte executada diretamente, restauração conferida por
+porcelain), não lido de registro. Nenhuma toca invariante de R1, nenhuma muda
+asserção de gate — o que muda é a **forma declarada do mutante** e o **local
+declarado do kill**, para que a matriz gate↔mutante da spec não sugira carrasco
+que não existe (o perigo de leitura nomeado pela E7).
+
+---
+
+### E10 · A forma de `D014-M4` — o kill tem de vir do veredito, não do censo
+
+**Antes**: a célula C2 previa *"acrescenta a `ui_p50_v32.css` uma declaração que
+`ui_p52_workspace_v32.css` já sobrepõe"*.
+**Fato medido** (wave 6, antes de escrever; reproduzido na validação): duas
+causas independentes recusam a forma literal. (i) Sob o **censo pinado (E6)** —
+que esta mesma spec exige conferido ANTES do veredito — qualquer adição muda a
+contagem da folha e o mutante morre por `C2(cen)`: *"a folha mudou"*. Mutante
+morto pelo pré-emptor não prova a alínea atribuída — provaria só que o censo
+vigia bytes, que já é a prova de `D014-CEN1`. (ii) Com a extensão **E3**, os
+mutantes de CSS do próprio `d014` entram na **população da varredura**, avaliada
+em memória sobre a árvore **limpa**; um mutante cuja declaração introduzida
+nascesse morta deixaria `D014-VARR1` permanentemente vermelho — a demanda
+reproduzindo o vermelho crônico que a E7 recusou.
+**O que passa a valer**: `D014-M4` é **troca censo-neutra** (1 regra de 1
+longhand → 1 regra de 1 longhand, fora de `@media`) que planta
+`html #ux-target .ux-tgt-row select option` — dominadora por **prefixo vácuo** +
+especificidade — sobre a declaração de `ui_p50_v32.css:792` que `p51/M51-08`
+ataca. A declaração **introduzida** é viva na árvore limpa (conferido por
+execução); com a mutação aplicada, quem morre é a declaração-alvo de um mutante
+**já existente** na população. Kill reproduzido na validação: FAIL `D014-VARR1`
+com **exatamente 1 alínea** — `C2(zero)`, veredito `(1, 20)`,
+`mortas: p51/M51-08` — e `D014-CEN1` **verde sob a mutação** (censo-neutralidade
+provada, indecidíveis inalterados).
+**Por que importa**: é a forma do `M51-01` — o caso que originou a demanda —
+recriada ao vivo. A propriedade da célula (*a varredura acusa regra morta nova
+na árvore*) é provada; a forma literal não a provaria.
+
+### E11 · O carrasco de `D014-M5`/`D014-M6` é `D014-DISC1`, não `D014-EXC1`
+
+**Antes**: a linha C3 da tabela, lida por associação de colunas, sugere que
+`D014-EXC1` mata `D014-M5`/`D014-M6`.
+**Fato medido** (reproduzido na validação): os dois mutam o **julgador**
+(`julgarExclusoes`). Sobre o registro real — que é **são**: não há curinga nem
+exclusão órfã em `regra_morta.json` para o julgador mutado engolir — o julgador
+enfraquecido devolve as mesmas respostas e `D014-EXC1` permanece **PASS** (sob
+`D014-M5`, medido: `D014-EXC1` verde). Se o carrasco declarado fosse `D014-EXC1`,
+os dois mutantes seriam **SOBREVIVENTES** por construção. Quem tem estado
+alcançável de falha é a **bateria negativa** de `D014-DISC1`, que alimenta o
+mesmo julgador com dado defeituoso e exige a reprovação **pelo nome**: FAIL
+`D014-DISC1` — *"bateria[19]: a alínea C3(b) NÃO reprovou com o defeito
+injetado"* (e o censo de alíneas acusa `C3(b)` sem cobertura).
+**O que passa a valer**: o critério medido é **C3**; o carrasco executável de
+`D014-M5`/`D014-M6` é **`D014-DISC1`**. É a regra geral desta suíte para mutante
+de julgador: o kill vive onde o dado defeituoso é alcançável — e a matriz que
+sugerisse `D014-EXC1` cometeria o perigo de leitura da E7 (carrasco anunciado
+para uma propriedade que ele não pode medir).
+
+### E12 · O pin sintético de C6 é veredito+razão, não contagem
+
+**Antes**: a E9 dizia *"a **contagem** sintética é pinada agora"*.
+**Fato medido** (wave 5, registrado em `regra_morta.json →
+indecidiveis.sintetico.por_que_a_razao_e_o_pin`): uma contagem sobre as seis
+fixtures é **determinada** pelas alíneas de C1 que já asserem os cinco vereditos
+um a um — alínea que não pode falhar sozinha não mede nada, que é a doença desta
+demanda dentro do próprio remédio. E `classificar()` reporta só o **primeiro**
+concorrente indecidível, então nem contagem por caso é observável. O que ninguém
+assere é a **razão**: um instrumento que classificasse (f) como indecidível pelo
+motivo errado passaria em `C6(sint)` e em toda C1.
+**O que passa a valer**: o pin sintético é o par **(veredito, razão)** do caso
+(f) — `("indecidivel", "contexto-de-midia-nao-relacionado")` —, com estado de
+falha **exclusivo** (veredito certo, razão errada) exercido pela bateria. Segue
+sendo o oráculo de `D014-M8` (kill registrado com as duas alíneas: `C6(sint)` +
+`C6(cont-sint)`); a contagem da **árvore** mantém o segundo prazo da E9,
+inalterado. Quem "restaurar" uma contagem sintética por fidelidade à letra da E9
+estará criando a alínea vacuosa que a medição recusou.
+
+---
+
+**Efeito líquido**: nenhuma asserção de gate muda; nenhum critério é
+enfraquecido ou removido. A matriz gate↔mutante da spec passa a dizer o que a
+campanha executada prova: 9/9 DETECTADO no `d014` com os kills nos gates aqui
+declarados, cada par reproduzível pela forma registrada. O terceiro desvio
+declarado da wave 6 — `d014.targets` com `regra_morta.js` e
+`regra_morta_seletor.js` além dos 8 alvos que §Contratos nomeia — foi arbitrado
+**conforme sem errata**: a lista da spec é piso, o desvio **endurece** o trigger
+(campanha que não re-executa quando o próprio arquivo mutado muda seria o EA-7
+dentro do remédio) e segue o precedente registrado três vezes na casa
+(`d009`/`d010`/`d011`); a lacuna residual — editar `regra_morta.json` não
+re-dispara `d014` — permanece dita na trilha do `mutation_map.json`, coberta
+pelo stage `regra-morta`, que roda em todo pipeline.
 
 ## Fora de escopo
 

@@ -77,11 +77,11 @@ Namespace `D014-*`.
 | # | Critério | Gate (id · arquivo · asserção) | Mutante previsto |
 |---|---|---|---|
 | C1 | O classificador de cascata acerta os **cinco** cenários canônicos, **incluindo os três cuja resposta correta é "viva"** — alínea (e) por **E5** | `D014-CASC1` · `tests_014_regra_morta.js` · sobre folhas **sintéticas** (fixtures próprias, fora da árvore de produto): (a) morta por especificidade; (b) morta por ordem de inlining com especificidade empatada; (c) **viva** — camada posterior declara a mesma propriedade no mesmo elemento com especificidade **menor**; (d) **viva** — `!important` em camada **anterior** vence normal posterior; **(e) viva por prefixo NÃO-VÁCUO** — a vencedora é a perdedora prefixada por composto que **restringe** (id/classe/atributo), logo a perdedora segue decidindo fora do subconjunto | `D014-M1` ignorar `!important` → (d) vira "morta" · `D014-M2` decidir só por ordem → (a)/(c) erram · `D014-M3` normalizar contexto de mídia por **texto** → (b) e o caso real erram · **`D014-M9`** tratar todo prefixo como vácuo → (e) vira "morta" |
-| C2 | A varredura, sobre a **árvore real**, enumera os mutantes de CSS de **todas** as campanhas pelo preflight — **população E âncora** (`find`/`repl`, por **E3**) — e acusa **zero** regras mortas, sobre **censo de parse pinado** (**E6**) | `D014-VARR1` · `tests_014_regra_morta.js` · população e âncora lidas de `--preflight` (nunca dos pares da matriz); o censo de regras/declarações por folha é conferido contra o registro **antes** do veredito; saída: 0 mortas, com a lista dos avaliados e dos excluídos | `D014-M4` acrescenta a `ui_p50_v32.css` uma declaração que `ui_p52_workspace_v32.css` já sobrepõe (regra morta nova, na árvore) → a varredura **tem** de acusá-la |
-| C3 | A auto-exclusão nominal tem dentes e **não é passe livre** | `D014-EXC1` · `tests_014_regra_morta.js` · (a) motivo do vocabulário fechado `oraculo-de-fonte` \| `fallback-declarado`; (b) curinga, campo vazio ou não-texto **não excluem**; (c) exclusão que nomeia mutante inexistente **reprova** (oráculo: preflight); (d) exclusão `oraculo-de-fonte` registra **qual propriedade** o oráculo afirma e **quais arquivos** ele lê | `D014-M5` aceitar curinga (shape do `IC-9.1`) · `D014-M6` deixar de conferir a existência do mutante nomeado |
+| C2 | A varredura, sobre a **árvore real**, enumera os mutantes de CSS de **todas** as campanhas pelo preflight — **população E âncora** (`find`/`repl`, por **E3**) — e acusa **zero** regras mortas, sobre **censo de parse pinado** (**E6**) | `D014-VARR1` · `tests_014_regra_morta.js` · população e âncora lidas de `--preflight` (nunca dos pares da matriz); o censo de regras/declarações por folha é conferido contra o registro **antes** do veredito; o veredito é sempre o **par (mortas, indecidíveis)**, nunca um número só (**E9**); saída: 0 mortas, com a lista dos avaliados e dos excluídos | `D014-M4` acrescenta a `ui_p50_v32.css` uma declaração que `ui_p52_workspace_v32.css` já sobrepõe (regra morta nova, na árvore) → a varredura **tem** de acusá-la |
+| C3 | A auto-exclusão nominal tem dentes e **não é passe livre** | `D014-EXC1` · `tests_014_regra_morta.js` · (a) motivo do vocabulário fechado `oraculo-de-fonte` \| `fallback-declarado` \| **`achado-aberto`** (por **E7**); (b) curinga, campo vazio ou não-texto **não excluem**; (c) exclusão que nomeia mutante inexistente **reprova** (oráculo: preflight); (d) exclusão `oraculo-de-fonte` registra **qual propriedade** o oráculo afirma e **quais arquivos** ele lê; **(e) exclusão `achado-aberto` exige `achado` (id do backlog) E `remocao_prevista`** — sem os dois, não exclui | `D014-M5` aceitar curinga (shape do `IC-9.1`) · `D014-M6` deixar de conferir a existência do mutante nomeado |
 | C4 | A linha que **decide** a composição da tela de pergunta ganha carrasco | `P52-LAY2` (**gate existente**, `tests_p52_chromium.js:231` — suíte **não editada**, só invocada) · mutação de `ui_p52_workspace_v32.css:77` para uma coluna · harness **`d014vis`** (`tests_014_mutants_visual.js`), separado por **E1** | `D014-M10` · `grid-template-columns: minmax(0, 1fr) clamp(320px, 23vw, 440px)` → `minmax(0, 1fr)`; motivo esperado `/a pergunta não está à esquerda do mapa\|as colunas se sobrepõem\|colunas desalinhadas no topo/` |
 | C5 | A cobertura da varredura é **derivada do builder**, não digitada | `D014-COB1` · `tests_014_regra_morta.js` · a lista e a **ordem** das folhas injetadas saem de `build_v32_html.py`; folha injetada pelo builder e não lida pela varredura reprova; a ordem observada casa com a declarada em `specs/PHASE_5_0_REV_B.md:1606` | `D014-M7` acrescentar uma folha ao builder sem tocar a varredura (precedente: `D011-M18` muta `build_v32_html.py`) |
-| C6 | O que a varredura **não** decide é nomeado e contado — nunca engolido | `D014-IND1` · `tests_014_regra_morta.js` · declaração cuja competição não cai na relação decidível sai em lista **nomeada e contada**; a contagem vive em registro canônico e divergência reprova; SKIP silencioso é FAIL (R10 §2) | `D014-M8` descartar silenciosamente o indecidível → a contagem muda |
+| C6 | O que a varredura **não** decide é nomeado e contado — nunca engolido | `D014-IND1` · `tests_014_regra_morta.js` · declaração cuja competição não cai na relação decidível sai em lista **nomeada e contada**; SKIP silencioso é FAIL (R10 §2). **Duas contagens, dois prazos** (**E9**): a **sintética** é pinada **agora** e é o oráculo de `D014-M8`; a da **árvore real** entra no registro quando o achado da E7 fechar | `D014-M8` descartar silenciosamente o indecidível → a contagem **sintética** muda |
 | C7 | A `KI-4` fecha **no mesmo PR** | **Sem gate novo** — o carrasco é **`IC-9.2`** (`check_mutation.py:895` · o objeto da exceção existe no harness) e **`IC-9.3`** (`:912` · não obsoleta, pelo registro). Corrigido por **E2** | — (criar gate aqui duplicaria o juiz) |
 
 ### Guarda de tautologia, alínea por alínea
@@ -102,7 +102,8 @@ falha?** Onde não sei, está escrito.
 | **C3 (d)** | exclusão que não registra o que o oráculo lê | ver §"A alínea em que quase escorreguei" |
 | C4 | mutação da linha vencedora sem gate que a pegue | `P52-LAY2:206-207` compara as caixas de `#app` e `#p50-shell`; com uma coluna elas empilham e `m.app.l >= m.shell.l` passa a ser verdadeiro → `detail` cresce → FAIL. **Raciocinado, não executado** — exige Chromium (§Não mensurável, item 2) |
 | C5 | folha nova entrando no build sem a varredura saber | é literalmente o que aconteceu com a folha da 011 (`build_v32_html.py:76` → `:80`) |
-| **C6** | **NÃO SEI se a alínea sobre a árvore real é não-vacuosa** — se hoje o conjunto indecidível for **vazio**, ela não mede nada | ver §Não mensurável, item 1. Guarda obrigatória: C6 tem **também** um caso indecidível **sintético**, para que a alínea não dependa do número da árvore |
+| **C6** | ~~**NÃO SEI se a alínea sobre a árvore real é não-vacuosa**~~ — **MEDIDO em 2026-09-01: 20 indecidíveis em 14 mutantes**, contra a estimativa pré-instrumento de ≥6. A alínea tem sujeito | a guarda do caso sintético **permanece**, e agora com outra função: é o oráculo pinável enquanto a árvore se mexe (E9). A estimativa de ≥6 errou por 3× — é a razão pela qual ela nunca foi critério |
+| **C3 (e)** | exclusão `achado-aberto` sem id de achado ou sem prazo passando a perdoar | é a cláusula 2 do `IC-9` aplicada aqui: *exceção sem prazo vira permissão permanente* (`known_issues.json → _meta`) |
 
 ### A alínea em que quase escorreguei (C3-d)
 
@@ -213,9 +214,13 @@ O par `D014-M10`/`P52-LAY2` **exige Chromium** e é deferido ao job `visual`
 - **Contrato `C1` do preflight, estendido (E3)**: o objeto emitido por
   `--preflight` passa a carregar, **para mutante de CSS**, os campos `find` e
   `repl` além de `{id, arquivo, ocorrencias, estado}`. Extensão **aditiva**, nos
-  **cinco** harnesses que têm mutante de CSS (`p50`, `p51`, `p52`, `d009`,
-  `d011`). Sem ela a varredura não sabe **qual declaração** a mutação altera —
-  e o critério, como estava escrito, pedia o impossível.
+  ~~**cinco** harnesses que têm mutante de CSS~~ → **E8: os SEIS que declaram
+  `preflight` em `mutation_map.json`** (`p50`, `p51`, `p52`, `d009`, `d010`,
+  `d011`), derivados do **registro**, não de lista digitada. `core` fica fora
+  **por não declarar preflight** — dívida já registrada na matriz —, e a ausência
+  é **impressa** com a razão, nunca omitida. Sem a extensão, a varredura não sabe
+  **qual declaração** a mutação altera — e o critério, como estava escrito, pedia
+  o impossível.
 - **Dois harnesses em `.claude/verify/mutation_map.json` (E1)**, cada um com
   `preflight: true` declarado **no mesmo commit** em que o respectivo harness
   passa a ler `--preflight` em argv (D4 da 013 — a guarda de fonte de
@@ -421,11 +426,125 @@ o `UX14` do `EA-16`: verde que não pode virar vermelho.
 
 ---
 
+## Errata E7–E9 — a primeira execução da varredura sobre a árvore real
+
+**Delegação registrada**: `qa-engineer`, wave 3, **2026-09-01** (repin R7, árvore
+limpa). Primeira execução do instrumento sobre a árvore. Nenhuma toca invariante
+de R1 nem arquivo de classe protegida.
+
+---
+
+### E7 · Acusou 2, não 1 — e o segundo tem outro dono
+
+**Antes**: C2 previa **um** achado (`M51-01`), e §Não mensurável item 4 reservava
+a sobreposição intra-arquivo como *"achado novo, se aparecer"*.
+**Fato medido, conferido no fonte por mim**: `p52/P52-RA8`
+(`tests_p52_mutants.js:398-406`) **insere** `.icon-tile
+img[data-p52-icon="SOCaaS"] { --p52-icon-scale: 0.70 }` logo após
+`ui_p52_workspace_v32.css:1350`. A folha **já declara** o mesmo seletor em
+**`:1357`** com `1.006`. Seletor idêntico, especificidade idêntica, mesmo
+contexto de mídia → desempate por **ordem** → **a inserida perde**. O valor
+computado de SOCaaS é idêntico com e sem mutação. A metade MDR (que **altera**
+`:1350`) é efetiva; **a metade SOCaaS é inerte**, e o `desc` promete *"reduzir
+SOCaaS **e** MDR"*.
+
+**A distinção que decide o dono, e ela é do produto**: no `M51-01`, a regra morta
+está **na folha do produto** — o artefato publicado carrega declaração que não
+decide nada. Em `P52-RA8`, **a folha está sã; quem escreve a regra morta é o
+mutante**. Não é o mesmo defeito, não é o mesmo dono, não é o mesmo remédio.
+
+**Classe nova, e ela não existe no glossário**: `P52-RA8` não é *sobrevivente*
+(o gate morre — a `p52` fechou 107/107), não é *não executado*, não é *âncora
+podre*, não é *equivalente por construção*. É **mutante parcialmente inerte** —
+a mutação aplica, o gate reprova, e **parte** da mutação não pode influenciar
+veredito nenhum. O perigo é de leitura: a matriz sugere que a propriedade
+"SOCaaS não reduz abaixo do limite óptico" tem carrasco. **Não tem.**
+
+**O que passa a valer** — direção **(b)**, e a razão é de rito, não de custo:
+
+1. **Achado de backlog** com id permanente, alocado pelo `doc-writer` contra a
+   `develop`. Cadeia fechada acima. Registrar também que a casa **já tinha o
+   princípio escrito**: `tests_p52_mutants.js:860-863` exige que o asset mutado
+   seja *"um dos EFETIVAMENTE renderizados pela fixture … senão o mutante seria
+   invisível por ausência, não por acerto"*. `P52-RA8` é a variante **por ordem**
+   do mesmo princípio, 460 linhas acima.
+2. **NÃO corrigir o mutante nesta demanda.** Três razões, em ordem de peso:
+   - **A causa ainda não está fechada** (R2 §3: causa antes de culpa). Com metade
+     da mutação inerte, **não se sabe se `P52-ICON2` ainda morre**. Se morrer, o
+     par é válido com `desc` que promete demais. **Se sobreviver, é um segundo
+     par sem poder discriminante** — o defeito do `EA-7` noutra fase, e aí o
+     remédio é outro. Escolher remédio antes do diagnóstico é o erro que esta
+     demanda existe para não repetir.
+   - **Há uma terceira saída que ninguém nomeou**: talvez o certo não seja mover
+     a inserção, e sim **partir `P52-RA8` em dois mutantes**, um por asset — um
+     mutante que ataca dois assets pela mesma âncora não diz qual alínea do gate
+     morreu. Precedente da casa: `D011-M12`/`M13`, metades simétricas, com a
+     razão escrita. Isso é **desenho de campanha**, do `qa-engineer` com o
+     `tech-lead`.
+   - **Simetria com a 013.** A 013 mediu o `M51-01`, **parou** e abriu achado, e é
+     por isso que esta demanda existe. Consertar de passagem um par da 5.2 aqui
+     seria cometer, em espelho, o erro que a 013 recusou.
+3. **`C2(zero)` NÃO fica vermelha.** Fica **verde com a exceção impressa**, pelo
+   motivo `achado-aberto` de C3(a)/(e), com `achado` (id) e `remocao_prevista` =
+   *"veredito do `qa-engineer` sobre `P52-ICON2` no job `visual`, com a mutação
+   parcial"* — **prazo por evento, não por data**, como a `KI-4`. Isso **não é
+   enfraquecer o gate** (R10 §1): a asserção é idêntica, e o que muda é que o
+   objeto excluído tem **dono, id e prazo**. Vermelho crônico teria custo pior e
+   já documentado nesta casa: o `MANIFEST` 74/74 *"sempre vermelho, logo nunca
+   rodado"* (`EA-5`). **Gate que ninguém lê não protege nada.**
+
+**Por que importa ao produto**: é a primeira prova de que a varredura tem poder
+discriminante **além do caso para o qual foi feita**. Ela achou, numa campanha
+que fechou **107/107**, meio mutante que ninguém sabia ser decorativo. O `C2`
+deixou de ser um gate escrito para um caso conhecido.
+
+### E8 · A cobertura vem do registro, não da minha lista — aval dado
+
+**Antes**: a spec nomeava **cinco** harnesses (`p50`, `p51`, `p52`, `d009`,
+`d011`) — os que têm mutante de CSS **hoje**.
+**Fato medido**: a extensão foi aos **seis** que declaram `preflight`. O `d010`
+não tem mutante de CSS hoje; no dia em que tiver, o preflight dele não emitiria
+`find`/`repl` e o mutante sumiria da população ou cairia em indecidível.
+**O que passa a valer**: **aval dado, e o desvio corrige um defeito meu — não
+relaxa a spec.** Meu "cinco" era **lista digitada**; é o **gatilho cego em
+miniatura**, um nível abaixo, e contradizia meu próprio `C5`, que exige que a
+lista de folhas venha do builder e não de digitação. Aplicar o princípio às
+folhas e não aos harnesses seria incoerência. Custo aceito: uma campanha local a
+mais, `[node, python]`, sem Chromium. **`core` fica fora por não declarar
+preflight** — dívida já registrada — e a ausência é **impressa** com a razão; se
+ganhar preflight, entra sozinho, porque a fonte é o registro.
+
+### E9 · O veredito é um par, e o pin tem dois prazos
+
+**Antes**: C2 dizia "zero regras mortas"; C6 mandava pinar a contagem.
+**Fato medido**: **20 indecidíveis em 14 mutantes** (29% dos 49 têm parte
+indecidível), contra a estimativa pré-instrumento de ≥6.
+**O que passa a valer**:
+- **O veredito de C2 é sempre o par (mortas, indecidíveis)**, nunca um número só.
+  "Zero mortas" significa *zero entre as decidíveis* — com 29% da população
+  parcialmente fora, dizer só "zero" afirmaria mais do que se mediu.
+- **O 20 NÃO é pinado agora — ratificado.** O achado da E7 está aberto; se o
+  mutante mudar, o conjunto avaliado muda, e pinar contra árvore em movimento
+  ensina que pin é cerimônia. O `qa-engineer` conferiu que aposentar `M51-01`
+  sozinho **não altera** o 20.
+- **E C6 não fica sem dentes no intervalo**: a contagem **sintética** é pinada
+  **agora** e é o oráculo de `D014-M8`; a da árvore real entra quando o achado
+  fechar. O gate tem carrasco hoje e ganha a medição da árvore quando a árvore
+  parar de se mexer.
+**Por que importa**: a estimativa de ≥6 errou por 3×. É a razão pela qual ela
+nunca foi critério — **número que um gate cobra se mede com o instrumento do
+gate**, nunca se estima.
+
+---
+
 **Efeito líquido nos critérios**: C1 ganha alínea (e) e o mutante `D014-M9`
-(5 cenários, 4 mutantes); C2 ganha âncora e censo; C4 muda de harness; C7 troca
-a citação do carrasco. **Nenhum critério foi enfraquecido e nenhum foi removido**
-— a única asserção retirada é a citação errada de `IC-9.4`, substituída pela
-correta.
+(5 cenários, 4 mutantes); C2 ganha âncora, censo e **veredito em par**; C3 ganha
+o motivo `achado-aberto` e a alínea (e); C4 muda de harness; C6 ganha **duas
+contagens com dois prazos**; C7 troca a citação do carrasco; a extensão do
+contrato `C1` passa de **cinco** para **seis** harnesses, derivados do registro.
+**Nenhum critério foi enfraquecido e nenhum foi removido** — as únicas asserções
+retiradas são a citação errada de `IC-9.4` e a minha lista digitada de cinco
+harnesses, ambas substituídas por versões mais duras.
 
 ## Fora de escopo
 
@@ -445,6 +564,10 @@ Herdado do refinamento, mais o que esta spec exclui:
 - **Expandir `mutation-matrix.json` por par** em `p50`/`p52` — T13 da 013.
 - **Reordenar folhas no builder** — `specs/PHASE_5_0_REV_B.md:1606` é âncora
   normativa de fase selada.
+- **Corrigir `P52-RA8`** (E7). O achado é registrado, o mutante é excluído por
+  `achado-aberto` com prazo, e o remédio — mover a inserção, alterar a regra de
+  `:1357`, ou **partir o mutante em dois** — é do `qa-engineer` com o
+  `tech-lead`, depois do veredito de `P52-ICON2` no job `visual`.
 - **Acrescentar dependência a `package.json` / `package-lock.json`** (E4).
   Conferido na spec selada: `:1607` autoriza **somente** os scripts nominais e a
   devDependency `@axe-core/playwright@4.13.0`, com *"nenhuma dependência de

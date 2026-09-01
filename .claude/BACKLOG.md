@@ -263,6 +263,39 @@ EA-5, EA-6, EA-7). `gen_pins.py` **não foi rodado** neste passo — o repin do
 registry (`.claude/templates/spec.md` e `.claude/BACKLOG.md` são pinados,
 R8 §1) é do `build-engineer`, no mesmo PR.
 
+### Instância adicional observada, mesma propriedade (demanda 014, 2026-09-01)
+
+`specs/014-gate-sem-poder-discriminante/refinement.md:47-53` e
+`specs/014-gate-sem-poder-discriminante/spec.md:299-305` (branch
+`feature/014-gate-sem-poder-discriminante`, **não mesclada**) registraram uma
+nova divergência de leitura, com **outro par de documentos e outros
+arquivos**: `docs_phase5/RECONCILIACAO_BOUNDARY_5_1_5_2.md` afirma que
+`ui_p50_v32.css`, `tests_p50_chromium.js` e `tests_p51_mutants.js` estão
+"protegidos por `boundary.json`" (tocados pelas fases 5.1/5.2 seladas), e
+`.claude/verify/boundary.json → frozen` **não os lista** (lista só
+`engine_v32.js`, a Camada 1, o harness M41 e o snapshot — 4 entradas,
+conferido por leitura em 2026-09-01).
+
+**Verificado nesta sessão, contra `pins.json`**: os três arquivos citados
+**estão pinados** — `ui_p50_v32.css`, `tests_p50_chromium.js` e
+`tests_p51_mutants.js` ocorrem em `.claude/verify/pins.json` (grep direto, 3/3
+presentes). Ou seja: é **exatamente a mesma propriedade** já fechada acima na
+Face B — a proteção real destes três é de **identidade** (regime de pins, R8),
+não de **proibição** (`boundary.json` + D2), e
+`docs_phase5/RECONCILIACAO_BOUNDARY_5_1_5_2.md` continua sendo lido contra o
+regime que o supera (Disposição §2, citada acima), nunca editado (é registro
+selado — R13, linha "Fases 5.0–5.2 seladas").
+
+**Por isso não abre id novo**: a 014 cogitou tratar isto como achado próprio
+(`spec.md:299-305`, "Pela regra do template isso é achado de backlog"), mas a
+conferência contra `pins.json` mostra que não há propriedade nova — é a Face B
+deste `EA-1`, com outra lista de arquivos. Registrado aqui, e não em id
+próprio, para não desgastar a confiança nos achados reais com a reabertura do
+que já está `resolvido` (R13). Se uma leitura futura encontrar um arquivo
+citado por `RECONCILIACAO_BOUNDARY_5_1_5_2.md` como "protegido por
+`boundary.json`" e que **não** esteja em `pins.json` — aí sim a Face B reabre,
+porque a proteção alegada deixaria de ter qualquer sustentação executável.
+
 ## EA-2 — A seção `waivers` reporta um waiver TDD que não existe
 
 **Status**: `resolvido`
@@ -1233,3 +1266,146 @@ Este registro **não decide**: se a varredura é estática (expressão constante
 ternário morto), mutacional (par obrigatório por gate) ou mista; se algum dos três
 casos fecha; nem quando a demanda abre. Abrir a demanda é do orquestrador; o
 veredito de cada instância é do `qa-engineer`.
+
+> **Nota de numeração (2026-09-01)**: esta cópia de `.claude/BACKLOG.md`, na
+> branch `feature/014-gate-sem-poder-discriminante`, diverge de
+> `origin/develop` antes da demanda **015** mesclar (PR mesclado, commit visível
+> em `origin/develop`), que alocou `EA-21`…`EA-31` — não presentes aqui.
+> Conferido por `git show origin/develop:.claude/BACKLOG.md` em 2026-09-01: o
+> maior id em qualquer branch (`develop` e todo `feature/*`/`fix/*` remoto) é
+> `EA-31`. Os dois achados abaixo continuam a série a partir de `EA-32`, sem
+> colisão. A reconciliação textual das duas cópias (`EA-21`…`EA-31` que faltam
+> aqui) é automática no merge do PR desta demanda para `develop` — **não** é
+> renumeração, é a mesma série vista de duas branches (R12, R14).
+
+## EA-32 — mutante `P52-RA8` ataca dois assets pela mesma âncora; a metade `SOCaaS` é inerte por ordem de cascata
+
+**Status**: `aberto`
+
+**Aberto em**: 2026-09-01. Achado da demanda 014 (wave 5), classe nomeada pela
+errata E7 do `qa-engineer`: **mutante-parcialmente-inerte**
+(`.claude/verify/regra_morta.json → exclusoes[2].cegueira` e
+`.classes_de_achado`) — id permanente alocado pelo `doc-writer` contra
+`origin/develop` em 2026-09-01, substituindo o marcador provisório
+`014-P52-RA8` nas duas posições do registro (`exclusoes[2]` e
+`indecidiveis.arvore`).
+
+### Cadeia arquivo:linha → efeito
+
+- `tests_p52_mutants.js:398-406` — o mutante `P52-RA8` (gate-alvo `P52-ICON2`)
+  altera **duas** declarações pela mesma âncora textual: `--p52-icon-scale` de
+  `FortiGuard-MDR-Service` (`ui_p52_workspace_v32.css:1350`, de `1.053` para
+  `0.70`) **e** insere logo abaixo uma regra nova,
+  `.icon-tile img[data-p52-icon="SOCaaS"] { --p52-icon-scale: 0.70; }`.
+- `ui_p52_workspace_v32.css:1357` — a folha **já** declara
+  `.icon-tile img[data-p52-icon="SOCaaS"] { --p52-icon-scale: 1.006; }`, mesma
+  especificidade e mesmo contexto de mídia da regra inserida. A regra
+  **inserida pelo mutante** perde por **ordem de cascata** (a última
+  declaração de mesmo peso vence, e `:1357` vem depois da inserção). O valor
+  computado de `SOCaaS` é **idêntico** com e sem a mutação — a metade `SOCaaS`
+  não pode influenciar veredito algum.
+- **Efeito**: o `desc` do mutante ("reduzir SOCaaS e MDR abaixo do limite
+  óptico") promete duas propriedades atacadas; só uma é efetiva. A folha está
+  **sã** — não há regra morta nela. Quem escreve a regra morta é o **mutante**.
+
+### Por que não é `EA-20` nem `EA-7`
+
+`EA-20` é a família de gate **saudável, mas sem poder de reprovar**
+(pré-condição que nunca falha, expressão constante). Aqui o gate **morre** —
+`P52-ICON2` reprova com a mutação aplicada, porque a metade `MDR` é efetiva. O
+que está comprometido é **parte** da mutação, não a capacidade do gate de
+reprovar. `EA-7` (`P51-VIS1`/`M51-01`) é o contraponto que decide o dono: lá a
+regra morta estava **na folha do produto**; aqui a folha é sã e a regra morta
+nasce **no mutante**. Mesmo sintoma de superfície (regra CSS que perde por
+ordem/especificidade), dono e remédio diferentes.
+
+### O que não se sabe, e por isso o remédio não foi escolhido
+
+Não se sabe se `P52-ICON2` ainda mata com **só** a metade `MDR` da mutação — a
+resposta depende do veredito do job `visual` do CI **sob a mutação parcial**,
+em execução no momento deste registro. Se `P52-ICON2` matar mesmo sem a metade
+`SOCaaS`, o par é válido com um `desc` que promete demais (remédio possível:
+corrigir a descrição, ou dividir o mutante). Se sobreviver, é um **segundo**
+par sem poder discriminante — entraria na família `EA-20` — e o achado cresce.
+
+### As três saídas nomeadas (nenhuma escolhida aqui)
+
+1. Mover a regra inserida para depois de `:1357` (faria a metade `SOCaaS`
+   vencer por ordem — mas alteraria o alvo real do mutante).
+2. Alterar a regra existente em `:1357` em vez de inserir uma nova.
+3. **(product-owner)** Partir `P52-RA8` em dois mutantes, um por asset — o
+   precedente é o das metades simétricas `D011-M12`/`D011-M13`: mutante que
+   ataca dois assets pela mesma âncora não diz qual alínea do gate morreu.
+
+### Evento de remoção (auto-executável, já registrado)
+
+`.claude/verify/regra_morta.json → exclusoes[2].evento_de_remocao`: a exceção
+morre no dia em que existir um par `(p52*, P52-RA8)` em
+`.claude/verify/mutation-matrix.json → pares` — é assim que o veredito do job
+`visual` volta e fecha esta exceção. `remocao_prevista` (ambas as posições do
+registro) já cita `EA-32`.
+
+### O que este registro não decide
+
+O veredito de `P52-ICON2` sob a mutação parcial (`qa-engineer`, job `visual` em
+curso); qual das três saídas se aplica (`tech-lead` desenha, `product-owner`
+confirma); se a família `EA-20` ganha membro novo (condicionado ao veredito
+acima).
+
+## EA-33 — demandas mescladas na `develop` com o planning-state parado antes de `done`
+
+**Status**: `aberto`
+
+**Aberto em**: 2026-09-01. Observado pelo orquestrador durante a demanda 014.
+Instância nova da família **`EA-31`** ("o registro da prova não é comparado
+com a execução da prova") — id próprio, porque o alvo é outro par
+registro/execução: aqui é **fase da demanda** × **histórico do git**, não
+prova de mutante. `EA-31` vive em `origin/develop`, ausente desta cópia local
+de `BACKLOG.md` (ver nota de numeração acima) — a inclusão desta instância na
+lista de `EA-31` é `DEPENDÊNCIA` para quem reconciliar o merge.
+
+### Cadeia arquivo:linha → efeito
+
+- `.claude/project-memory/planning-state/009-leitura-do-relatorio.json` —
+  `phase: "validate"`, `validate.status: "awaiting_approval"`, `pr_url:
+  "https://github.com/oflavioc/quickscan-secops/pull/24"`. O commit de merge
+  `4092463` ("Merge pull request #24…") está em `origin/develop` desde
+  2026-08-30 (`git log --merges`, conferido em 2026-09-01).
+  `specs/009-leitura-do-relatorio/relatorio-final.md` **não existe** em
+  `origin/develop`.
+- `.claude/project-memory/planning-state/013-integridade-da-campanha.json` —
+  `phase: "validate"`, `validate.status: "in_progress"`, `pr_url: null`. O
+  commit de merge `2426582` ("Merge pull request #29…") está em
+  `origin/develop` desde 2026-08-30.
+  `specs/013-integridade-da-campanha/relatorio-final.md` **não existe** em
+  `origin/develop`.
+- `.claude/verify/check_state.py:48-53` — a única cláusula que compara `phase`
+  com algo externo ao próprio arquivo é `:52-53`, e ela só reprova `phase ==
+  "done"` sem `pr_url`. **Nenhuma cláusula** verifica a direção oposta: uma
+  branch cujo commit de merge já está no histórico de `develop` com a demanda
+  ainda em `validate`.
+- `.claude/hooks/state-eval.sh:59-67` — a cada prompt, todo planning-state com
+  `phase != "done"` entra em `ativos` e é impresso em `[demanda]`. Efeito
+  medido: **duas demandas já entregues** (`009`, `013`) continuam anunciadas
+  como em voo desde 2026-08-30 — o mesmo mecanismo de erosão de confiança que
+  motivou a R10 §2 (SKIP silencioso) e a própria `EA-31`.
+
+### Por que é `EA-31`, com id próprio
+
+`EA-31` já nomeia a família: instrumento e prova saudáveis, o que diverge é o
+**registro** delas. As três instâncias já nomeadas (`EA-28`, `EA-29`, `EA-30`)
+são sobre **prova de mutante**. Esta é sobre **estado de demanda** — o par
+descasado é `planning-state.phase` × "o commit de merge está no histórico de
+`develop`" —, mecanismo diferente, mesma forma de falha: **nada compara os
+dois lados**. Ganha id próprio pela mesma razão que `EA-30` ganhou dentro de
+`EA-20` ("para não reescrever este corpo — números citados nunca renumeram,
+R12") e referencia a família.
+
+### O que este registro não decide
+
+Se o remédio é um stage novo (comparar `pr_url`/commit de merge contra o
+histórico de `develop`), uma cláusula em `check_state.py`, ou rito de
+fechamento manual da Fase 6; se `009` e `013` precisam, retroativamente, de
+`relatorio-final.md` e aceite de intenção registrado, ou se o merge já
+consumado é aceito como fato encerrado; abrir demanda é do orquestrador (R4); o
+veredito é do `qa-engineer` com o `product-owner`.

@@ -93,9 +93,9 @@
       "mutante": "P52-RA8",
       "motivo": "achado-aberto",
       "gate": "P52-ICON2",
-      "achado_id": "014-P52-RA8",
-      "achado_id_alocado": false,
-      "achado_id_pendencia": "MARCADOR do namespace da demanda, nao id de backlog. O id permanente (EA-N) e alocado pelo doc-writer contra a develop, que esta worktree nao enxerga (R14: branches paralelas nao se veem). Escolha registrada do qa-engineer: marcador AGORA + id depois, e NUNCA marcador sozinho - o que impede o apodrecimento nao e o formato do id, e o evento_de_remocao auto-executavel. Esperar o id bloquearia a wave 5, que e indivisivel. O marcador NAO finge ser EA-N: achado_id_alocado false o declara, e a alinea C3(e) exige esta pendencia escrita - marcador silencioso reprova.",
+      "achado_id": "EA-32",
+      "achado_id_alocado": true,
+      "achado_id_pendencia": "RESOLVIDA em 2026-09-01 pelo doc-writer: id permanente EA-32 alocado contra origin/develop (fetch em 2026-09-01; `.claude/BACKLOG.md` da develop conferido ate EA-31, nenhum EA-32/EA-33 alocado por demanda paralela - todas as branches feature/* e fix/* estao mescladas em develop, exceto esta). Registrado em `.claude/BACKLOG.md` desta worktree (entrada `## EA-32`), a levar no merge do PR (R14). Razao original da escolha do qa-engineer preservada abaixo, sem apagar (R2 secao 5): MARCADOR do namespace da demanda, nao id de backlog. O id permanente (EA-N) e alocado pelo doc-writer contra a develop, que esta worktree nao enxerga (R14: branches paralelas nao se veem). Escolha registrada do qa-engineer: marcador AGORA + id depois, e NUNCA marcador sozinho - o que impede o apodrecimento nao e o formato do id, e o evento_de_remocao auto-executavel. Esperar o id bloquearia a wave 5, que e indivisivel. O marcador NAO finge ser EA-N: achado_id_alocado false o declara, e a alinea C3(e) exige esta pendencia escrita - marcador silencioso reprova.",
       "propriedade_afirmada": "P52-ICON2 afirma que os assets do mosaico ficam dentro do limite optico de altura aparente. P52-RA8 ataca DOIS assets pela mesma ancora (tests_p52_mutants.js:398-406) e so UM e efetivo.",
       "arquivos_lidos": [
         "ui_p52_workspace_v32.css"
@@ -132,8 +132,9 @@
         "populacao_antes_da_aposentadoria": 49
       },
       "motivo": "achado-aberto",
-      "achado_id": "014-P52-RA8",
-      "remocao_prevista": "Fixar POR EXECUCAO (T070) quando o achado 014-P52-RA8 fechar e a arvore parar de se mexer.",
+      "achado_id": "EA-32",
+      "achado_id_pendencia_nota": "Id permanente EA-32 alocado pelo doc-writer contra origin/develop em 2026-09-01 (mesma alocacao da entrada `exclusoes[2]` acima, mesmo achado); marcador `014-P52-RA8` que aqui vivia substituido, sem apagar o motivo original (R2 secao 5): esta posicao nao carregava achado_id_alocado/achado_id_pendencia proprios (so achado_id), por isso a substituicao e so do valor.",
+      "remocao_prevista": "Fixar POR EXECUCAO (T070) quando o achado EA-32 fechar e a arvore parar de se mexer.",
       "evento_de_remocao": {
         "registro": ".claude/verify/mutation-matrix.json",
         "condicao": "par com mutante == P52-RA8 e harness comecando por p52 passa a existir em `pares`",

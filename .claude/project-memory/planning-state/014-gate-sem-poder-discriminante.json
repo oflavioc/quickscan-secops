@@ -31,13 +31,16 @@
     "status": "proven",
     "commit": "71b4347",
     "gates": [
-      "D014-VARR1",
-      "D014-ANC1",
-      "D014-CENSO1",
       "D014-CASC1",
-      "D014-IND1"
+      "D014-VARR1",
+      "D014-EXC1",
+      "D014-COB1",
+      "D014-IND1",
+      "D014-CEN1",
+      "D014-DISC1"
     ],
-    "notes": "2 PASS · 5 FAIL de 7. Vermelho SUBSTANTIVO: 49 de 49 mutantes de CSS sem ancora, nomeados um a um. Nasceram verdes D014-EXC1 (nao depende do instrumento) e D014-DISC1 (6 controles verdes, 38 casos, 29 de 29 alineas cobertas). ACHADO NO PARSER: o CSSOM descarta !important quando o valor e var(), e o censo nao ve isso — zero de 41 na arvore, virou sentinela com oraculo TEXTUAL. E obrigou a corrigir uma fixture que teria sido vacuosa. A bateria pegou o autor DUAS vezes, uma delas VACUIDADE DENTRO DA GUARDA DE VACUIDADE."
+    "notes": "2 PASS · 5 FAIL de 7. Vermelho SUBSTANTIVO: 49 de 49 mutantes de CSS sem ancora, nomeados um a um. Nasceram verdes D014-EXC1 (nao depende do instrumento) e D014-DISC1 (6 controles verdes, 38 casos, 29 de 29 alineas cobertas). ACHADO NO PARSER: o CSSOM descarta !important quando o valor e var(), e o censo nao ve isso — zero de 41 na arvore, virou sentinela com oraculo TEXTUAL. E obrigou a corrigir uma fixture que teria sido vacuosa. A bateria pegou o autor DUAS vezes, uma delas VACUIDADE DENTRO DA GUARDA DE VACUIDADE.",
+    "gates_correcao": "Corrigido em 2026-09-01, achado do spec-validate (T082): a lista citava D014-ANC1 e D014-CENSO1, ids que NUNCA existiram - os 7 ids do commit red 71b4347 ja eram os finais. Lista anterior, preservada porque registro errado apagado nao ensina nada (R2 §5): D014-VARR1, D014-ANC1, D014-CENSO1, D014-CASC1, D014-IND1"
   },
   "implement": {
     "waves_fechadas": "1 a 6",

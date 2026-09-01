@@ -56,6 +56,12 @@ stages:
     parallel: true
     mutates: false
     heavy: false
+  regra-morta:
+    desc: "Regra morta por cascata: nenhum mutante de CSS ataca declaração que perde em todos os contextos; indecidíveis nomeados e contados"
+    run: node tests_014_regra_morta.js
+    parallel: true
+    mutates: false
+    heavy: false
   state:
     desc: "planning-state de demandas em curso válido contra o schema; fases pós-red exigem red provado ou waiver"
     run: python .claude/verify/check_state.py

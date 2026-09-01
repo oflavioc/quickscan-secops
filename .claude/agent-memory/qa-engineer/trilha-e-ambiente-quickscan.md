@@ -10,7 +10,11 @@ nunca presumidos nem inventados:
 
 1. **Chromium ausente.** `playwright.chromium.executablePath()` resolve para o
    cache local do Playwright e o binário **não existe** (conferido por
-   `fs.existsSync` em 2026-08-28); `CHROME_PATH` vazio.
+   `fs.existsSync` em 2026-08-28); `CHROME_PATH` vazio. Reconfirmado em
+   2026-08-30 na worktree `phase5-010`, e desta vez **pela via barata**:
+   `python .claude/verify/env_doctor.py` já emite
+   "[WARN] Chromium indisponível (sem CHROME_PATH e sem cache ms-playwright)" —
+   é o env-doctor que nomeia o ambiente ausente, não uma sonda minha.
    *Descreva o caminho, nunca o cole:* em 2026-08-28 o `compliance-audit`
    reprovou o PR #24 com "caminho absoluto em governança" porque o literal
    dessa resolução — com nome de usuário — tinha ficado em

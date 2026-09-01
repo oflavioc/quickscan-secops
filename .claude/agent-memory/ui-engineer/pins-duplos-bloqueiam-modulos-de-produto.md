@@ -33,7 +33,41 @@ cada um pina um conjunto próprio. Tocar **só** `ui_ux_v32.css` derruba
 ui_ux_v32.css"); `SUF0`, `SUF8` e `IC4` seguem verdes. Reporte o gate que a sua
 medição realmente mostrou, não a lista inteira.
 
+**Confirmado na 010 · T008 (2026-08-30):** tocar **só** `ui_target_v32.js` deu
+exatamente **`61 PASS · 3 FAIL de 64`** — `P50-GOV1` ("protegidos alterados:
+ui_target_v32.js"), `P50-SUF0` ("ui_target_v32.js alterado") e `P50-SUF8`
+("deixou de ser byte-idêntico"). `P50-IC4` **verde**: ele pina `ui_v32.js`, não
+este módulo. A tríade é estável entre demandas — é a contagem a citar na entrega.
+
+**Confirmado na 010 · T013 (2026-08-30) — os dois módulos juntos:** com
+`ui_target_v32.js` (T008) **e** `ui_v32.js` (T013) no mesmo diff, `p50core` dá
+**`60 PASS · 4 FAIL de 64`**: a tríade acima **mais** `P50-IC4`
+("ui_v32.js alterado"), com `icons46` **12/12 verde** na mesma execução — a prova
+de que `IC4` cai pela alínea (a) de pin, nunca pela regressão de ícone (c). O
+vermelho declarado da demanda ("61/3") vale para o estado de T008; ao entregar o
+segundo módulo, cite **60/4** e nomeie o gate que a sua execução acrescentou.
+
+**Atualização 010 · pós-repin inline (2026-08-31):** o commit `760883b`
+("o repin dos pins inline") reancorou parte do mapa `PROTECTED`, e a contagem
+**mudou**: no HEAD `d6d667a` da 010, `p50core` dá **62 PASS · 2 FAIL** —
+só `P50-GOV1` e `P50-IC4`, ambos citando `ui_v32.js`; `SUF0`/`SUF8` voltaram ao
+verde. Esse vermelho **já existe no HEAD, sem diff nenhum**: rodar a suíte sem
+splice e com splice deu o MESMO 62/2, com as mesmas duas linhas — é essa
+execução dupla, e não a memória, que prova a não-atribuição. Sempre medir as
+duas antes de citar contagem: a tríade "estável entre demandas" registrada acima
+deixou de valer depois do repin.
+
 **Registro da 009 (2026-08-28):** a seção "Autorização nominal §29.4" do
 `spec.md` lista, na linha *Consequência*, só `P50-GOV1`, `P50-SUF0` e `P50-SUF8`
 como gates a voltar ao verde após o repin — **`P50-IC4` ficou de fora**. Quem
 repinar precisa incluí-lo, senão `p50core` não fecha 64/0.
+
+**Confirmado na 015 · T011 (2026-08-31), e o contraste com a 010 importa:** na
+worktree `phase5-015`, `p50core` no **HEAD limpo** dá **64 PASS · 0 FAIL** —
+o vermelho pré-existente que a 010 media NÃO existe aqui. Tocar **só**
+`ui_v32.js` leva a **62 PASS · 2 FAIL**: `P50-GOV1` ("protegidos alterados:
+ui_v32.js") e `P50-IC4` ("ui_v32.js alterado"), com `icons46` **12/12 verde**
+na mesma execução. Logo os dois FAIL **são atribuíveis ao meu diff** e fecham
+com o repin inline + `gen_pins.py` do `build-engineer` — não repita a fórmula
+"já existia no HEAD" sem medir: **rodar o controle com `git show HEAD:<mod> >
+<mod>`, medir, e restaurar conferindo sha256** é o que separa os dois casos.

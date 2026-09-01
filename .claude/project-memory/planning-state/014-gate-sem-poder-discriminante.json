@@ -1,0 +1,15 @@
+{
+  "demanda": "014-gate-sem-poder-discriminante",
+  "phase": "specify",
+  "spec_dir": "specs/014-gate-sem-poder-discriminante",
+  "branch": "feature/014-gate-sem-poder-discriminante",
+  "brief": "Achado EA-7: o gate P51-VIS1 afirma propriedade que a mutacao nao consegue mais violar. O PROPRIETARIO DECIDIU EM 2026-08-30 QUE VIRA DEMANDA PROPRIA. E O REFINAMENTO DERRUBOU A PREMISSA: sao 1 caso em 42, nao uma familia — 36 imunes por estrutura, 1 imune por oraculo (lint de fonte), 4 vivos. O contraexemplo e o mais instrutivo: o mutante que a suspeita apontava como irmao esta VIVO, porque o seletor antigo tem um id e vence o novo. A suspeita acertou o mecanismo e errou a instancia.",
+  "achado_real": "A CAUSA ESTA UM NIVEL ABAIXO DA CASCATA: o arquivo que mata o mutante NAO ESTA nos targets da campanha. Quando o commit da 5.2 escreveu a regra vencedora, o gatilho por path NAO RE-EXECUTOU a campanha, porque o alvo declarado nao mudara. EM UMA FRASE: O GATILHO VIGIA O QUE A CAMPANHA MUTA, NUNCA O QUE DECIDE O RESULTADO. Toda folha CSS futura entra depois e nasce fora dos targets das campanhas antigas — exposicao PERMANENTE, independente do numero de casos de hoje. E isso, nao o saneamento, que justifica a demanda.",
+  "refinement": {
+    "status": "approved",
+    "approved_at": "2026-09-01",
+    "notes": "DECIDIDO SOB DELEGACAO de 2026-08-29. Rito: NENHUM arquivo envolvido e frozen e a suite do gate nao esta nas congeladas de P50-GOV1 nem no mapa PROTECTED — nao ha D2, e rito comum mais repin. Isso separa esta demanda do EA-16, cujo gate ESTA congelado. Rotas: varredura estatica de regra morta mais assercao nova sobre produto; reancorar no sitio da 5.2 CONTRAINDICADA, porque o glossario so admite reancoragem quando a propriedade continua no mesmo dono e aqui ela mudou de camada. FRONTEIRA COM O EA-20 desenhada para nao dividir a solucao ao meio: a 014 fica com regra morta por cascata, instrumento estatico, e NAO altera a R10; o EA-20 fica com pre-condicao que nunca falha e expressao constante, e com a alteracao da regra. A checagem desta demanda NAO pode chamar-se 'varredura de gates sem poder discriminante'. P3 APROVADO: estender a varredura a d009/d011/core — o d009 muta a folha mais antiga, com TRES camadas posteriores, e e o alvo mais exposto do repositorio; ficou fora do recorte do enunciado e excluí-lo deixaria o maior buraco aberto. P5: o achado das tres provas vencidas vira EA proprio, id alocado pelo doc-writer. P6 aprovado: corrigir a citacao de linha desatualizada em tres lugares, porque a folha da 011 entrou no meio do inlining.",
+    "achados_colaterais": "TRES PROVAS DE DISCRIMINANCIA VENCIDAS: uma campanha agregada como 'historica', um par sem KILL pos-correcao, e um mutante com ultima_prova nove dias mais velha que a execucao que o cobriu.",
+    "ki_4": "A demanda NAO PODE ENCERRAR sem remover a excecao nominal KI-4 ou re-declarar prazo — o IC-9.3 reprova nas duas direcoes, e a remocao da excecao e a devolucao do poder discriminante sao o MESMO PR."
+  }
+}

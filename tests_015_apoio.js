@@ -399,12 +399,20 @@ T("D015-TIT1", "C1 · o título de #v32prio nomeia a leitura (tela e papel), com
      prova a disjunção) e com PODER DISCRIMINANTE MUITO DIFERENTE. A distinção
      é da errata E2 §E2.4 e está aqui porque ela decide o valor da alínea:
 
-       METADE TELA (`#app .eyebrow, #app h3`) — carrasco `M17`. É PROVA FRACA,
-       e fica declarado: `N40` (`tests_journey_m45.js:220-224`) exige unicidade
-       por igualdade trimada NO MESMO ESCOPO, logo mataria `M17` também.
-       Mutante que morre em dois lugares não demonstra poder do gate NOVO.
+       METADE TELA (`#app .eyebrow, #app h3`) — carrasco `M17`, e é o ÚNICO.
+       ~~É PROVA FRACA, e fica declarado: `N40` (`tests_journey_m45.js:220-224`)
+       exige unicidade por igualdade trimada NO MESMO ESCOPO, logo mataria `M17`
+       também. Mutante que morre em dois lugares não demonstra poder do gate
+       NOVO.~~ REFUTADO PELA ERRATA E3 (2026-09-01), riscado e não apagado
+       (R2 §5). MEDIDO: o cenário de `N40` é MODO LEGADO — `isLegacyModeV32()`
+       verdadeiro, `#v32prio` NÃO nasce —, logo `N40` não alcança este nó em
+       forma nenhuma; sob as DUAS formas de `M17` a suíte `journey` fechou 31/0.
+       O erro de método foi deduzir cobertura pelo ESCOPO DO SELETOR (`#app`
+       contém o nó) esquecendo a FIXTURE: cobertura é escopo ∩ estado. E
+       `p52layout` também não a vê — varre `:scope > .section-title`, filhos
+       DIRETOS da seção de apoio, e este nó é neto de `#v32panel`.
 
-       METADE PAPEL (`#v32-print-report`) — carrasco `M19`, e é o ÚNICO.
+       METADE PAPEL (`#v32-print-report`) — carrasco `M19`, e também o ÚNICO.
        MEDIDO: `N41` (`:225-237`) tem escopo `#pr-journey`, IRMÃO de
        `#pr-support`, com ZERO `<h3>` dentro, e casa `<h2>` por regex sobre
        `pj.innerHTML`; `N40` varre `#app`, e o relatório impresso é filho de

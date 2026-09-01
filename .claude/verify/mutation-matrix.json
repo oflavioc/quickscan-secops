@@ -950,9 +950,10 @@
       "gate": "D010-ARB1",
       "invariante": "INV-9 / C1 - sem substituto a Camada 1 congelada permanece VISIVEL",
       "ultima_prova": {
-        "data": "2026-08-31",
+        "data": "2026-09-01",
         "resultado": "KILL",
-        "registro": "tests_010_mutants.js"
+        "registro": "tests_010_mutants.js",
+        "nota": "Campanha `d010` REEXECUTADA em 2026-09-01 pelo qa-engineer da demanda 015, porque ui_v32.js e ui_target_v32.js sao alvos declarados dela: 24/24 mutantes DETECTADOS pelo gate E pelo motivo esperados, restauracao byte a byte OK do fonte E do HTML, com as tres dividas declaradas intactas (D010-M3/M4 sem caso nas fixtures, D010-M11 equivalente por construcao). Data anterior deste par: 2026-08-31. PROVENIENCIA: execucao local nesta worktree, medida por este agente — nao e o resultado do CI reportado por terceiro. "
       }
     },
     {
@@ -961,9 +962,10 @@
       "gate": "D010-ARB2",
       "invariante": "C2 - havendo substituto a supressao vigente e preservada",
       "ultima_prova": {
-        "data": "2026-08-31",
+        "data": "2026-09-01",
         "resultado": "KILL",
-        "registro": "tests_010_mutants.js"
+        "registro": "tests_010_mutants.js",
+        "nota": "Campanha `d010` REEXECUTADA em 2026-09-01 pelo qa-engineer da demanda 015, porque ui_v32.js e ui_target_v32.js sao alvos declarados dela: 24/24 mutantes DETECTADOS pelo gate E pelo motivo esperados, restauracao byte a byte OK do fonte E do HTML, com as tres dividas declaradas intactas (D010-M3/M4 sem caso nas fixtures, D010-M11 equivalente por construcao). Data anterior deste par: 2026-08-31. PROVENIENCIA: execucao local nesta worktree, medida por este agente — nao e o resultado do CI reportado por terceiro. "
       }
     },
     {
@@ -972,9 +974,10 @@
       "gate": "D010-ARB4",
       "invariante": "C4 - o ramo !hasPrio segue a MESMA arbitragem",
       "ultima_prova": {
-        "data": "2026-08-31",
+        "data": "2026-09-01",
         "resultado": "KILL",
-        "registro": "tests_010_mutants.js"
+        "registro": "tests_010_mutants.js",
+        "nota": "Campanha `d010` REEXECUTADA em 2026-09-01 pelo qa-engineer da demanda 015, porque ui_v32.js e ui_target_v32.js sao alvos declarados dela: 24/24 mutantes DETECTADOS pelo gate E pelo motivo esperados, restauracao byte a byte OK do fonte E do HTML, com as tres dividas declaradas intactas (D010-M3/M4 sem caso nas fixtures, D010-M11 equivalente por construcao). Data anterior deste par: 2026-08-31. PROVENIENCIA: execucao local nesta worktree, medida por este agente — nao e o resultado do CI reportado por terceiro. "
       }
     },
     {
@@ -983,9 +986,10 @@
       "gate": "D010-INV7",
       "invariante": "INV-7 - nenhuma superficie afirma preservacao de leitura oculta",
       "ultima_prova": {
-        "data": "2026-08-31",
+        "data": "2026-09-01",
         "resultado": "KILL",
-        "registro": "tests_010_mutants.js"
+        "registro": "tests_010_mutants.js",
+        "nota": "Campanha `d010` REEXECUTADA em 2026-09-01 pelo qa-engineer da demanda 015, porque ui_v32.js e ui_target_v32.js sao alvos declarados dela: 24/24 mutantes DETECTADOS pelo gate E pelo motivo esperados, restauracao byte a byte OK do fonte E do HTML, com as tres dividas declaradas intactas (D010-M3/M4 sem caso nas fixtures, D010-M11 equivalente por construcao). Data anterior deste par: 2026-08-31. PROVENIENCIA: execucao local nesta worktree, medida por este agente — nao e o resultado do CI reportado por terceiro. "
       }
     },
     {
@@ -994,9 +998,10 @@
       "gate": "D010-ABS1",
       "invariante": "C6 - o aviso de ausencia traz contagem E lista nominal",
       "ultima_prova": {
-        "data": "2026-08-31",
+        "data": "2026-09-01",
         "resultado": "KILL",
-        "registro": "tests_010_mutants.js"
+        "registro": "tests_010_mutants.js",
+        "nota": "Campanha `d010` REEXECUTADA em 2026-09-01 pelo qa-engineer da demanda 015, porque ui_v32.js e ui_target_v32.js sao alvos declarados dela: 24/24 mutantes DETECTADOS pelo gate E pelo motivo esperados, restauracao byte a byte OK do fonte E do HTML, com as tres dividas declaradas intactas (D010-M3/M4 sem caso nas fixtures, D010-M11 equivalente por construcao). Data anterior deste par: 2026-08-31. PROVENIENCIA: execucao local nesta worktree, medida por este agente — nao e o resultado do CI reportado por terceiro. "
       }
     },
     {
@@ -1005,9 +1010,10 @@
       "gate": "D010-ABS1 (a)",
       "invariante": "C6 - N cards viram UM aviso, nao aviso somado aos cards",
       "ultima_prova": {
-        "data": "2026-08-31",
+        "data": "2026-09-01",
         "resultado": "KILL",
-        "registro": "tests_010_mutants.js"
+        "registro": "tests_010_mutants.js",
+        "nota": "Campanha `d010` REEXECUTADA em 2026-09-01 pelo qa-engineer da demanda 015, porque ui_v32.js e ui_target_v32.js sao alvos declarados dela: 24/24 mutantes DETECTADOS pelo gate E pelo motivo esperados, restauracao byte a byte OK do fonte E do HTML, com as tres dividas declaradas intactas (D010-M3/M4 sem caso nas fixtures, D010-M11 equivalente por construcao). Data anterior deste par: 2026-08-31. PROVENIENCIA: execucao local nesta worktree, medida por este agente — nao e o resultado do CI reportado por terceiro. "
       },
       "nota": " [E18, 2026-08-31] Este par PASSA A SER a direcao (i) da particao por payload — 'a particao NAO acontece: todos os baseIds seguem card'. A assercao que o mata mudou de 'zero .v32-card' para IGUALDADE DE CONJUNTO ('.v32-card exatamente nos COM payload'), e por isso a `reason` foi retranscrita do literal novo do oraculo: a mensagem perdeu a contagem e ganhou o qualificador SEM payload. Provado por simulacao da saida no DOM antes da implementacao: morre em (a) sob D010-F1, nomeando external-exposure e network-detection como cards SEM payload que sobreviveram. Auditoria das 24 regex contra o fonte do oraculo depois da retranscricao: 24/24 casam. [2026-08-31] ANCORA RETRANSCRITA: a anterior foi a ZERO ocorrencias quando a particao entrou, e o --preflight a pegou ANTES da campanha — provado em copia efemera com a ancora antiga restaurada: 'nao_executavel D010-M8 · ocorrencias=0 · ancora nao encontrada', exit 1. E a classe que a demanda 013 existiu para cacar, e desta vez o instrumento funcionou."
     },
@@ -1017,9 +1023,10 @@
       "gate": "D010-CARD1",
       "invariante": "INV-5 - o habilitador ancora no nivel ATUAL confirmado, nunca no alvo",
       "ultima_prova": {
-        "data": "2026-08-31",
+        "data": "2026-09-01",
         "resultado": "KILL",
-        "registro": "tests_010_mutants.js"
+        "registro": "tests_010_mutants.js",
+        "nota": "Campanha `d010` REEXECUTADA em 2026-09-01 pelo qa-engineer da demanda 015, porque ui_v32.js e ui_target_v32.js sao alvos declarados dela: 24/24 mutantes DETECTADOS pelo gate E pelo motivo esperados, restauracao byte a byte OK do fonte E do HTML, com as tres dividas declaradas intactas (D010-M3/M4 sem caso nas fixtures, D010-M11 equivalente por construcao). Data anterior deste par: 2026-08-31. PROVENIENCIA: execucao local nesta worktree, medida por este agente — nao e o resultado do CI reportado por terceiro. "
       }
     },
     {
@@ -1028,9 +1035,10 @@
       "gate": "D010-CARD1",
       "invariante": "INV-2 - resposta nao confirmada (null/NA) nao ancora habilitador",
       "ultima_prova": {
-        "data": "2026-08-31",
+        "data": "2026-09-01",
         "resultado": "KILL",
-        "registro": "tests_010_mutants.js"
+        "registro": "tests_010_mutants.js",
+        "nota": "Campanha `d010` REEXECUTADA em 2026-09-01 pelo qa-engineer da demanda 015, porque ui_v32.js e ui_target_v32.js sao alvos declarados dela: 24/24 mutantes DETECTADOS pelo gate E pelo motivo esperados, restauracao byte a byte OK do fonte E do HTML, com as tres dividas declaradas intactas (D010-M3/M4 sem caso nas fixtures, D010-M11 equivalente por construcao). Data anterior deste par: 2026-08-31. PROVENIENCIA: execucao local nesta worktree, medida por este agente — nao e o resultado do CI reportado por terceiro. "
       }
     },
     {
@@ -1039,9 +1047,10 @@
       "gate": "D010-CARD2",
       "invariante": "C8 - precedencia de fonte: candidato do engine bloqueia o MAP",
       "ultima_prova": {
-        "data": "2026-08-30",
+        "data": "2026-09-01",
         "resultado": "EQUIVALENTE POR CONSTRUCAO - nao executado",
-        "registro": "tests_010_mutants.js"
+        "registro": "tests_010_mutants.js",
+        "nota": "Campanha `d010` REEXECUTADA em 2026-09-01 pelo qa-engineer da demanda 015, porque ui_v32.js e ui_target_v32.js sao alvos declarados dela: 24/24 mutantes DETECTADOS pelo gate E pelo motivo esperados, restauracao byte a byte OK do fonte E do HTML, com as tres dividas declaradas intactas (D010-M3/M4 sem caso nas fixtures, D010-M11 equivalente por construcao). Data anterior deste par: 2026-08-30. PROVENIENCIA: execucao local nesta worktree, medida por este agente — nao e o resultado do CI reportado por terceiro. "
       },
       "classificacao": "equivalente declarado (clausula inalcancavel)",
       "achado": "EQUIVALENTE POR CONSTRUCAO - reconciliado em 2026-08-30 contra a varredura que sustenta a errata E14. RETIFICA o relato de T021, que dizia 'falta fixture': a fixture NAO PODE EXISTIR, e a diferenca importa porque 'falta fixture' e divida que alguem tenta pagar e nao consegue. CADEIA: S2-de-CONTEXTO exige capability UNICA dona do qid com landscapeEnabled true; capability dona de qid tem questionIds nao vazio; o invariante de validateConfigV32 (erra em coverage 'none' COM questionIds; 0 erros hoje, com gate vivo em tests_m42_m86.js) implica coverage != 'none'; e a UNICA rota que emite candidato sob presence UNSET e UNASSESSED_CAPABILITY, exclusiva das capabilities coverage 'none'. MEDIDO: catalogo com 25 capabilities - 13 com questionIds, ZERO delas coverage 'none'; 12 sem questionIds, TODAS coverage 'none'. Varredura adversarial de 900 sessoes com landscape todo UNSET e vetor/sinais/arquitetura/plataforma variados: 9000 observacoes (dona de qid x UNSET), 0 contraexemplos, e as classificacoes observadas nessa classe sao so CONTEXT_NOT_INFORMED / null / NEEDS_VALIDATION - UNASSESSED_CAPABILITY nao aparece. Logo temCandidato e SEMPRE falso onde tgtValidateHTML chega. Desfecho igual ao de E1/A5: a clausula FICA no predicado como defesa contra mudanca futura no engine, e NENHUM mutante a tem como alvo. CONSEQUENCIA PARA O GATE, que e o segundo fato: D010-CARD2 (a) e verdadeira por ESTADO e nao por GATE - a ausencia do no em `logs` sob D010-F2 e explicada pelo S3 de contexto, e por nada mais. Quem mede C8 e a alinea (b) - 'capability com apenas servicos e em S2-contexto CONTINUA recebendo o no' -, essa sim viva e com caso em D010-F4 (3 qids). Com M11 fora, D010-CARD2 fica SEM MUTANTE ate que se escreva o de (b): proposta medida no relatorio de T022, com ancora e replica, pendente de autorizacao (move o declarado de 25 para 26)."
@@ -1052,9 +1061,10 @@
       "gate": "D010-CARD3",
       "invariante": "INV-3 - sob gate de suficiencia FECHADO nada e publicado",
       "ultima_prova": {
-        "data": "2026-08-31",
+        "data": "2026-09-01",
         "resultado": "KILL",
-        "registro": "tests_010_mutants.js"
+        "registro": "tests_010_mutants.js",
+        "nota": "Campanha `d010` REEXECUTADA em 2026-09-01 pelo qa-engineer da demanda 015, porque ui_v32.js e ui_target_v32.js sao alvos declarados dela: 24/24 mutantes DETECTADOS pelo gate E pelo motivo esperados, restauracao byte a byte OK do fonte E do HTML, com as tres dividas declaradas intactas (D010-M3/M4 sem caso nas fixtures, D010-M11 equivalente por construcao). Data anterior deste par: 2026-08-31. PROVENIENCIA: execucao local nesta worktree, medida por este agente — nao e o resultado do CI reportado por terceiro. "
       }
     },
     {
@@ -1063,9 +1073,10 @@
       "gate": "D010-CARD4",
       "invariante": "C10 - a tabela de equivalencia e TOTAL sobre as 11 chaves do MAP",
       "ultima_prova": {
-        "data": "2026-08-31",
+        "data": "2026-09-01",
         "resultado": "KILL",
-        "registro": "tests_010_mutants.js"
+        "registro": "tests_010_mutants.js",
+        "nota": "Campanha `d010` REEXECUTADA em 2026-09-01 pelo qa-engineer da demanda 015, porque ui_v32.js e ui_target_v32.js sao alvos declarados dela: 24/24 mutantes DETECTADOS pelo gate E pelo motivo esperados, restauracao byte a byte OK do fonte E do HTML, com as tres dividas declaradas intactas (D010-M3/M4 sem caso nas fixtures, D010-M11 equivalente por construcao). Data anterior deste par: 2026-08-31. PROVENIENCIA: execucao local nesta worktree, medida por este agente — nao e o resultado do CI reportado por terceiro. "
       }
     },
     {
@@ -1074,9 +1085,10 @@
       "gate": "D010-CARD4",
       "invariante": "C10 - item com equivalencia sai com o id equivalente, nunca a chave crua",
       "ultima_prova": {
-        "data": "2026-08-31",
+        "data": "2026-09-01",
         "resultado": "KILL",
-        "registro": "tests_010_mutants.js"
+        "registro": "tests_010_mutants.js",
+        "nota": "Campanha `d010` REEXECUTADA em 2026-09-01 pelo qa-engineer da demanda 015, porque ui_v32.js e ui_target_v32.js sao alvos declarados dela: 24/24 mutantes DETECTADOS pelo gate E pelo motivo esperados, restauracao byte a byte OK do fonte E do HTML, com as tres dividas declaradas intactas (D010-M3/M4 sem caso nas fixtures, D010-M11 equivalente por construcao). Data anterior deste par: 2026-08-31. PROVENIENCIA: execucao local nesta worktree, medida por este agente — nao e o resultado do CI reportado por terceiro. "
       }
     },
     {
@@ -1085,9 +1097,10 @@
       "gate": "D010-CARD5",
       "invariante": "INV-4 / C11 - o disclaimer vem DEPOIS dos habilitadores, na mesma superficie",
       "ultima_prova": {
-        "data": "2026-08-31",
+        "data": "2026-09-01",
         "resultado": "KILL",
-        "registro": "tests_010_mutants.js"
+        "registro": "tests_010_mutants.js",
+        "nota": "Campanha `d010` REEXECUTADA em 2026-09-01 pelo qa-engineer da demanda 015, porque ui_v32.js e ui_target_v32.js sao alvos declarados dela: 24/24 mutantes DETECTADOS pelo gate E pelo motivo esperados, restauracao byte a byte OK do fonte E do HTML, com as tres dividas declaradas intactas (D010-M3/M4 sem caso nas fixtures, D010-M11 equivalente por construcao). Data anterior deste par: 2026-08-31. PROVENIENCIA: execucao local nesta worktree, medida por este agente — nao e o resultado do CI reportado por terceiro. "
       }
     },
     {
@@ -1096,9 +1109,10 @@
       "gate": "D010-CARD6",
       "invariante": "R-1 - o no a-validar e IRMAO de .ux-tgt-en, nunca a classe (prova cruzada com D009-UNS1)",
       "ultima_prova": {
-        "data": "2026-08-31",
+        "data": "2026-09-01",
         "resultado": "KILL",
-        "registro": "tests_010_mutants.js"
+        "registro": "tests_010_mutants.js",
+        "nota": "Campanha `d010` REEXECUTADA em 2026-09-01 pelo qa-engineer da demanda 015, porque ui_v32.js e ui_target_v32.js sao alvos declarados dela: 24/24 mutantes DETECTADOS pelo gate E pelo motivo esperados, restauracao byte a byte OK do fonte E do HTML, com as tres dividas declaradas intactas (D010-M3/M4 sem caso nas fixtures, D010-M11 equivalente por construcao). Data anterior deste par: 2026-08-31. PROVENIENCIA: execucao local nesta worktree, medida por este agente — nao e o resultado do CI reportado por terceiro. "
       }
     },
     {
@@ -1107,9 +1121,10 @@
       "gate": "D010-PAPEL1",
       "invariante": "C13 - o vao fecha nas DUAS superficies; papel nao e opcional",
       "ultima_prova": {
-        "data": "2026-08-31",
+        "data": "2026-09-01",
         "resultado": "KILL",
-        "registro": "tests_010_mutants.js"
+        "registro": "tests_010_mutants.js",
+        "nota": "Campanha `d010` REEXECUTADA em 2026-09-01 pelo qa-engineer da demanda 015, porque ui_v32.js e ui_target_v32.js sao alvos declarados dela: 24/24 mutantes DETECTADOS pelo gate E pelo motivo esperados, restauracao byte a byte OK do fonte E do HTML, com as tres dividas declaradas intactas (D010-M3/M4 sem caso nas fixtures, D010-M11 equivalente por construcao). Data anterior deste par: 2026-08-31. PROVENIENCIA: execucao local nesta worktree, medida por este agente — nao e o resultado do CI reportado por terceiro. "
       }
     },
     {
@@ -1118,9 +1133,10 @@
       "gate": "D010-CARD4",
       "invariante": "E9 - a fusao olha o conjunto ANEXADO (direcao 'deduplica de menos')",
       "ultima_prova": {
-        "data": "2026-08-31",
+        "data": "2026-09-01",
         "resultado": "KILL",
-        "registro": "tests_010_mutants.js"
+        "registro": "tests_010_mutants.js",
+        "nota": "Campanha `d010` REEXECUTADA em 2026-09-01 pelo qa-engineer da demanda 015, porque ui_v32.js e ui_target_v32.js sao alvos declarados dela: 24/24 mutantes DETECTADOS pelo gate E pelo motivo esperados, restauracao byte a byte OK do fonte E do HTML, com as tres dividas declaradas intactas (D010-M3/M4 sem caso nas fixtures, D010-M11 equivalente por construcao). Data anterior deste par: 2026-08-31. PROVENIENCIA: execucao local nesta worktree, medida por este agente — nao e o resultado do CI reportado por terceiro. "
       }
     },
     {
@@ -1129,9 +1145,10 @@
       "gate": "D010-CARD4",
       "invariante": "E9 - a fusao NAO olha o dominio da tabela (direcao 'deduplica demais')",
       "ultima_prova": {
-        "data": "2026-08-31",
+        "data": "2026-09-01",
         "resultado": "KILL",
-        "registro": "tests_010_mutants.js"
+        "registro": "tests_010_mutants.js",
+        "nota": "Campanha `d010` REEXECUTADA em 2026-09-01 pelo qa-engineer da demanda 015, porque ui_v32.js e ui_target_v32.js sao alvos declarados dela: 24/24 mutantes DETECTADOS pelo gate E pelo motivo esperados, restauracao byte a byte OK do fonte E do HTML, com as tres dividas declaradas intactas (D010-M3/M4 sem caso nas fixtures, D010-M11 equivalente por construcao). Data anterior deste par: 2026-08-31. PROVENIENCIA: execucao local nesta worktree, medida por este agente — nao e o resultado do CI reportado por terceiro. "
       },
       "achado": "KILL - fechado em 2026-08-30 depois da emenda de C10 (c) decidida pelo coordenador. ANTES: o gate reprovava, mas por VACUIDADE em (b) e (c), NUNCA pela assercao (c2) que a spec lhe atribui - a linha real (913 chars) nao continha nem '(c2)' nem 'FortiGuard MDR'. Causa: os dois homonimos do card tem equivalente, entao deduplicar pelo dominio esvazia o no inteiro e a guarda de nao-vacuidade dispara antes do laco por par. DIRECAO ESCOLHIDA: nem alargar o `reason` (petrificaria atribuicao que a medicao contradiz) nem corrigir a spec (enfraqueceria o gate: a vacuidade dispara igual para qualquer mutacao que esvazie o no). O gate passou a NOMEAR o item perdido antes de ceder a vacuidade, quando o no esta vazio E o catalogo do nivel ATUAL, ja descontada a fusao legitima, esperava sobrevivente. MEDIDO que nao e alinea subsumida: sob a saida de M19, D010-CARD1 (a) tambem reprova mas para em D010-F1/automation e nunca alcanca monitoring-coverage - nenhum gate da suite nomeava o item. Bateria negativa de 4 casos: controle PASS; saida de M19 e no removido inteiro dao '(c2) ... [\"FortiGuard MDR\"] sumiu'; e o CONTROLE INVERTIDO (chips do engine removidos, no intacto) continua dando VACUIDADE - a emenda nao engoliu o caminho legitimo."
     },
@@ -1141,9 +1158,10 @@
       "gate": "D010-ARB3",
       "invariante": "C3 - arbitragem tudo-ou-nada: titulo e blocos contiguos, nunca um terceiro conjunto",
       "ultima_prova": {
-        "data": "2026-08-31",
+        "data": "2026-09-01",
         "resultado": "KILL",
-        "registro": "tests_010_mutants.js"
+        "registro": "tests_010_mutants.js",
+        "nota": "Campanha `d010` REEXECUTADA em 2026-09-01 pelo qa-engineer da demanda 015, porque ui_v32.js e ui_target_v32.js sao alvos declarados dela: 24/24 mutantes DETECTADOS pelo gate E pelo motivo esperados, restauracao byte a byte OK do fonte E do HTML, com as tres dividas declaradas intactas (D010-M3/M4 sem caso nas fixtures, D010-M11 equivalente por construcao). Data anterior deste par: 2026-08-31. PROVENIENCIA: execucao local nesta worktree, medida por este agente — nao e o resultado do CI reportado por terceiro. "
       }
     },
     {
@@ -1220,9 +1238,10 @@
       "nota": "REDUNDANCIA DECLARADA: os cinco morrem pela MESMA assercao de C10 (b) - a forma normativa map:<chave>. Nao sao cinco propriedades independentes; sao cinco CLASSES de desvio que um autor futuro cometeria sobre a mesma linha (ui_target_v32.js:346, a mesma ancora de D010-M14). O menos redundante e D010-M23: e o unico cujo prefixo esta CERTO e cuja chave mente, e e ele que prova que a assercao pina a FORMA INTEIRA e nao so o prefixo. Registrado para que 5 KILL nao sejam lidos como 5 alineas.",
       "supersede": "D010-E15-1",
       "ultima_prova": {
-        "data": "2026-08-31",
+        "data": "2026-09-01",
         "resultado": "KILL",
-        "registro": "tests_010_mutants.js"
+        "registro": "tests_010_mutants.js",
+        "nota": "Campanha `d010` REEXECUTADA em 2026-09-01 pelo qa-engineer da demanda 015, porque ui_v32.js e ui_target_v32.js sao alvos declarados dela: 24/24 mutantes DETECTADOS pelo gate E pelo motivo esperados, restauracao byte a byte OK do fonte E do HTML, com as tres dividas declaradas intactas (D010-M3/M4 sem caso nas fixtures, D010-M11 equivalente por construcao). Data anterior deste par: 2026-08-31. PROVENIENCIA: execucao local nesta worktree, medida por este agente — nao e o resultado do CI reportado por terceiro. "
       }
     },
     {
@@ -1234,9 +1253,10 @@
       "nota": "REDUNDANCIA DECLARADA: os cinco morrem pela MESMA assercao de C10 (b) - a forma normativa map:<chave>. Nao sao cinco propriedades independentes; sao cinco CLASSES de desvio que um autor futuro cometeria sobre a mesma linha (ui_target_v32.js:346, a mesma ancora de D010-M14). O menos redundante e D010-M23: e o unico cujo prefixo esta CERTO e cuja chave mente, e e ele que prova que a assercao pina a FORMA INTEIRA e nao so o prefixo. Registrado para que 5 KILL nao sejam lidos como 5 alineas.",
       "supersede": "D010-E15-2",
       "ultima_prova": {
-        "data": "2026-08-31",
+        "data": "2026-09-01",
         "resultado": "KILL",
-        "registro": "tests_010_mutants.js"
+        "registro": "tests_010_mutants.js",
+        "nota": "Campanha `d010` REEXECUTADA em 2026-09-01 pelo qa-engineer da demanda 015, porque ui_v32.js e ui_target_v32.js sao alvos declarados dela: 24/24 mutantes DETECTADOS pelo gate E pelo motivo esperados, restauracao byte a byte OK do fonte E do HTML, com as tres dividas declaradas intactas (D010-M3/M4 sem caso nas fixtures, D010-M11 equivalente por construcao). Data anterior deste par: 2026-08-31. PROVENIENCIA: execucao local nesta worktree, medida por este agente — nao e o resultado do CI reportado por terceiro. "
       }
     },
     {
@@ -1248,9 +1268,10 @@
       "nota": "REDUNDANCIA DECLARADA: os cinco morrem pela MESMA assercao de C10 (b) - a forma normativa map:<chave>. Nao sao cinco propriedades independentes; sao cinco CLASSES de desvio que um autor futuro cometeria sobre a mesma linha (ui_target_v32.js:346, a mesma ancora de D010-M14). O menos redundante e D010-M23: e o unico cujo prefixo esta CERTO e cuja chave mente, e e ele que prova que a assercao pina a FORMA INTEIRA e nao so o prefixo. Registrado para que 5 KILL nao sejam lidos como 5 alineas.",
       "supersede": "D010-E15-3",
       "ultima_prova": {
-        "data": "2026-08-31",
+        "data": "2026-09-01",
         "resultado": "KILL",
-        "registro": "tests_010_mutants.js"
+        "registro": "tests_010_mutants.js",
+        "nota": "Campanha `d010` REEXECUTADA em 2026-09-01 pelo qa-engineer da demanda 015, porque ui_v32.js e ui_target_v32.js sao alvos declarados dela: 24/24 mutantes DETECTADOS pelo gate E pelo motivo esperados, restauracao byte a byte OK do fonte E do HTML, com as tres dividas declaradas intactas (D010-M3/M4 sem caso nas fixtures, D010-M11 equivalente por construcao). Data anterior deste par: 2026-08-31. PROVENIENCIA: execucao local nesta worktree, medida por este agente — nao e o resultado do CI reportado por terceiro. "
       }
     },
     {
@@ -1262,9 +1283,10 @@
       "nota": "REDUNDANCIA DECLARADA: os cinco morrem pela MESMA assercao de C10 (b) - a forma normativa map:<chave>. Nao sao cinco propriedades independentes; sao cinco CLASSES de desvio que um autor futuro cometeria sobre a mesma linha (ui_target_v32.js:346, a mesma ancora de D010-M14). O menos redundante e D010-M23: e o unico cujo prefixo esta CERTO e cuja chave mente, e e ele que prova que a assercao pina a FORMA INTEIRA e nao so o prefixo. Registrado para que 5 KILL nao sejam lidos como 5 alineas.",
       "supersede": "D010-E15-4",
       "ultima_prova": {
-        "data": "2026-08-31",
+        "data": "2026-09-01",
         "resultado": "KILL",
-        "registro": "tests_010_mutants.js"
+        "registro": "tests_010_mutants.js",
+        "nota": "Campanha `d010` REEXECUTADA em 2026-09-01 pelo qa-engineer da demanda 015, porque ui_v32.js e ui_target_v32.js sao alvos declarados dela: 24/24 mutantes DETECTADOS pelo gate E pelo motivo esperados, restauracao byte a byte OK do fonte E do HTML, com as tres dividas declaradas intactas (D010-M3/M4 sem caso nas fixtures, D010-M11 equivalente por construcao). Data anterior deste par: 2026-08-31. PROVENIENCIA: execucao local nesta worktree, medida por este agente — nao e o resultado do CI reportado por terceiro. "
       }
     },
     {
@@ -1276,9 +1298,10 @@
       "nota": "REDUNDANCIA DECLARADA: os cinco morrem pela MESMA assercao de C10 (b) - a forma normativa map:<chave>. Nao sao cinco propriedades independentes; sao cinco CLASSES de desvio que um autor futuro cometeria sobre a mesma linha (ui_target_v32.js:346, a mesma ancora de D010-M14). O menos redundante e D010-M23: e o unico cujo prefixo esta CERTO e cuja chave mente, e e ele que prova que a assercao pina a FORMA INTEIRA e nao so o prefixo. Registrado para que 5 KILL nao sejam lidos como 5 alineas.",
       "supersede": "D010-E15-5",
       "ultima_prova": {
-        "data": "2026-08-31",
+        "data": "2026-09-01",
         "resultado": "KILL",
-        "registro": "tests_010_mutants.js"
+        "registro": "tests_010_mutants.js",
+        "nota": "Campanha `d010` REEXECUTADA em 2026-09-01 pelo qa-engineer da demanda 015, porque ui_v32.js e ui_target_v32.js sao alvos declarados dela: 24/24 mutantes DETECTADOS pelo gate E pelo motivo esperados, restauracao byte a byte OK do fonte E do HTML, com as tres dividas declaradas intactas (D010-M3/M4 sem caso nas fixtures, D010-M11 equivalente por construcao). Data anterior deste par: 2026-08-31. PROVENIENCIA: execucao local nesta worktree, medida por este agente — nao e o resultado do CI reportado por terceiro. "
       }
     },
     {
@@ -1289,9 +1312,10 @@
       "descricao": "servico do engine passa a BLOQUEAR o MAP, como se fosse candidato (nega C8 (b))",
       "nota": "Nasceu pela errata E17 (2026-08-30) porque a retirada de D010-M11 - equivalente por construcao - deixou D010-CARD2 SEM MUTANTE. Ataca a metade VIVA de C8: M11 atacava a precedencia de candidato, que e verdadeira por construcao; este ataca a nao-bloqueio por servico, que so e verdadeira porque o codigo a mantem. Uma linha em ui_target_v32.js:340. Universo: 3 praticas-alvo sob D010-F4 (vulnerability-management, monitoring-coverage, incident-response) com servico por hasGap, ZERO candidatos e S2 de contexto. FECHADO em 2026-08-30: KILL em D010-CARD2 (b). A primeira execucao devolveu SOBREVIVENTE por 'reprovou por motivo diferente do esperado' - e era a REGEX, nao o gate: eu havia escrito 'o `MAP`' com crases e o oraculo emite 'o MAP' sem elas. Corrigida por transcricao do literal (tests_010_vao.js:1000). Auditoria subsequente das 23 regex contra o fonte do oraculo: 22 casam estaticamente; a 23a (D010-M8) so nao casa porque a mensagem dela e interpolada em runtime, e ela ja vinha DETECTADO.",
       "ultima_prova": {
-        "data": "2026-08-31",
+        "data": "2026-09-01",
         "resultado": "KILL",
-        "registro": "tests_010_mutants.js"
+        "registro": "tests_010_mutants.js",
+        "nota": "Campanha `d010` REEXECUTADA em 2026-09-01 pelo qa-engineer da demanda 015, porque ui_v32.js e ui_target_v32.js sao alvos declarados dela: 24/24 mutantes DETECTADOS pelo gate E pelo motivo esperados, restauracao byte a byte OK do fonte E do HTML, com as tres dividas declaradas intactas (D010-M3/M4 sem caso nas fixtures, D010-M11 equivalente por construcao). Data anterior deste par: 2026-08-31. PROVENIENCIA: execucao local nesta worktree, medida por este agente — nao e o resultado do CI reportado por terceiro. "
       }
     },
     {
@@ -1302,9 +1326,10 @@
       "descricao": "colapsar TODOS os baseIds no aviso, com ou sem payload — a direcao oposta a de D010-M8, e o comportamento de hoje (pre-correcao)",
       "nota": "ANCORA NASCE COM A IMPLEMENTACAO, e por isso o mutante entra no harness no commit do GREEN, nao no do RED. E16 exige mutacao de fonte em ANCORA REAL de uma linha: a linha que este mutante ataca — a chamada de `baseAbsenceHTML` passando o subconjunto SEM payload, mais o map dos cards COM payload — sera escrita pelo ui-engineer em ui_v32.js:743. Hoje 'colapsar todos' nao e mutacao: e o estado do produto. Escrever ancora sintetica agora seria exatamente o que E16 proibe. A replica prevista e de UMA linha: trocar o subconjunto de volta por `baseIds` e remover o map. PODER DISCRIMINANTE JA PROVADO, sem esperar o green: a saida deste mutante e o estado atual do produto, e o gate emendado REPROVA nele — e literalmente a prova de red desta tarefa (12 PASS · 1 FAIL de 13), com (a) nomeando continuous-monitoring, incident-management e vulnerability-management como os cards COM payload que sumiram sob D010-F4. FECHADO em 2026-08-31: KILL em D010-ABS1 (a). A ancora nasceu com a implementacao da particao (ui_v32.js:766), como previsto no commit do red.",
       "ultima_prova": {
-        "data": "2026-08-31",
+        "data": "2026-09-01",
         "resultado": "KILL",
-        "registro": "tests_010_vao.js"
+        "registro": "tests_010_vao.js",
+        "nota": "Campanha `d010` REEXECUTADA em 2026-09-01 pelo qa-engineer da demanda 015, porque ui_v32.js e ui_target_v32.js sao alvos declarados dela: 24/24 mutantes DETECTADOS pelo gate E pelo motivo esperados, restauracao byte a byte OK do fonte E do HTML, com as tres dividas declaradas intactas (D010-M3/M4 sem caso nas fixtures, D010-M11 equivalente por construcao). Data anterior deste par: 2026-08-31. PROVENIENCIA: execucao local nesta worktree, medida por este agente — nao e o resultado do CI reportado por terceiro. "
       }
     },
     {
@@ -1471,7 +1496,7 @@
         "data": "2026-09-01",
         "resultado": "KILL",
         "registro": "specs/015-superficies-de-apoio/ (campanha d015 · tests_015_mutants.js)",
-        "nota": "Reexecutado em 2026-09-01 na campanha de 15 mutantes (15/15 DETECTADOS). Demanda 015 · duplicar NO PAPEL o titulo de outra secao. Campanha d015 executada em 2026-08-31 com arvore limpa: 13/13 DETECTADOS pelo gate E pelo motivo esperados, restauracao byte a byte provada por SHA-256 do fonte E do HTML. NASCEU NA ERRATA E2 §E2.4, e e o UNICO carrasco desta metade. MEDIDO que nenhum gate congelado alcanca o <h3> novo: N41 tem escopo #pr-journey — irmao de #pr-support, com ZERO <h3> dentro — e casa <h2> por regex sobre pj.innerHTML; N40 varre #app, e o relatorio impresso e filho de body. A metade de TELA, atacada por M17, e PROVA FRACA e esta declarada como tal: N40 mataria M17 tambem, e mutante que morre em dois lugares nao demonstra poder do gate NOVO. FORMA: DUPLICA o titulo, nao renomeia — renomear encurtava #pr-support em 14 chars e derrubava D015-NOSUB1(d) junto, kill incidental num gate alheio."
+        "nota": "Reexecutado em 2026-09-01 na campanha de 15 mutantes (15/15 DETECTADOS). Demanda 015 · duplicar NO PAPEL o titulo de outra secao. Campanha d015 executada em 2026-08-31 com arvore limpa: 13/13 DETECTADOS pelo gate E pelo motivo esperados, restauracao byte a byte provada por SHA-256 do fonte E do HTML. NASCEU NA ERRATA E2 §E2.4, e e o UNICO carrasco desta metade. MEDIDO que nenhum gate congelado alcanca o <h3> novo: N41 tem escopo #pr-journey — irmao de #pr-support, com ZERO <h3> dentro — e casa <h2> por regex sobre pj.innerHTML; N40 varre #app, e o relatorio impresso e filho de body. ~~A metade de TELA, atacada por M17, e PROVA FRACA e esta declarada como tal: N40 mataria M17 tambem, e mutante que morre em dois lugares nao demonstra poder do gate NOVO.~~ REFUTADO PELA ERRATA E3 (2026-09-01), riscado e nao apagado (R2 §5). A frase foi MEDIDA e e falsa: o cenario de N40 (tests_journey_m45.js:220-224) e MODO LEGADO — `isLegacyModeV32()` verdadeiro e `#v32prio` NAO nasce —, entao N40 nao alcanca aquele no em forma nenhuma; sob as DUAS formas de M17 a suite journey fechou 31/0. O erro de metodo foi deduzir cobertura pelo ESCOPO DO SELETOR (`#app .eyebrow, #app h3` contem o no) esquecendo a FIXTURE: cobertura e escopo INTERSECAO estado. O QUE PASSA A VALER: as DUAS metades de C1(g) sao obrigacao EXCLUSIVA deste gate, sem cobertura congelada — a de PAPEL por M19 (este par) e a de TELA por M17 (par vizinho). M17 e o carrasco da metade-tela NAO 'apesar de N40', mas porque NADA MAIS alcanca aquele no: N40 nao renderiza `#v32prio`, e p52layout varre `:scope > .section-title` (filhos DIRETOS da secao de apoio) enquanto o no e neto, dentro de `#v32panel > #v32support`. Isso REFORCA a conclusao de E2.4 que motivou M19, em vez de enfraquece-la. Coerencia conferida NESTE arquivo: a nota do par D015-M17 diz o mesmo, e a spec emendada tambem. FORMA: DUPLICA o titulo, nao renomeia — renomear encurtava #pr-support em 14 chars e derrubava D015-NOSUB1(d) junto, kill incidental num gate alheio."
       }
     },
     {

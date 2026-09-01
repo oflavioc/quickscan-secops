@@ -1,7 +1,7 @@
 {
   "_meta": {
     "descricao": "Registry único de pins — fonte de identidade dos artefatos (R8). Hashes = SHA-256 dos blobs de HEAD. Alterar arquivo pinado exige regenerar este registry no MESMO PR, com motivo no commit.",
-    "gerado_de_head": "7a6a5725fa92ffcef5000cfc8801eb2899385d32",
+    "gerado_de_head": "bf4ecb5ca49a35ee4a9d97e26672c62a116e0955",
     "gerado_em": "2026-09-01",
     "exclusoes": [
       "docs_phase5/**",
@@ -247,7 +247,7 @@
     "specs/015-superficies-de-apoio/refinement.md": "f4f10df01bd98e8be5ba81d5dc751cecc1c57ad1f2af40bea51bea4150dcdcfd",
     "specs/015-superficies-de-apoio/relatorio-final.md": "8798c291817327e5d96ba9009ee2d95a60bf4d44ddaf4563838832739517bbf1",
     "specs/015-superficies-de-apoio/spec-validate.md": "3d358badaef605dceffc09442e7a10e426110019a669a92048097f946f3b480a",
-    "specs/015-superficies-de-apoio/spec.md": "7640f15fff49564644ac606e4b037d3c64020188b6b0fa307b58a60ef6ebaadc",
+    "specs/015-superficies-de-apoio/spec.md": "9df2687fb93fd01b206a9e56febe177bb96195cf3da31341b451d83e426eadfa",
     "specs/015-superficies-de-apoio/tasks.md": "245fe0bd54042437330fef97b0f4db357cc9aa2d52e08d0a7d6b912939f8a2c0",
     "specs/PHASE_5_0_REV_A.md": "22e729174c6a3c5dd620da5330b03eb96d9eb6fc6e64eba097c2bde55eb0a510",
     "specs/PHASE_5_0_REV_B.md": "4f1583c733df62a9452aa7b218d962e40d781bb8d30dfc3179ad6e1ef004619b",

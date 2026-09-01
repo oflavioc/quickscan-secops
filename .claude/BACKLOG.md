@@ -1233,3 +1233,404 @@ Este registro **não decide**: se a varredura é estática (expressão constante
 ternário morto), mutacional (par obrigatório por gate) ou mista; se algum dos três
 casos fecha; nem quando a demanda abre. Abrir a demanda é do orquestrador; o
 veredito de cada instância é do `qa-engineer`.
+
+**Espécie registrada depois** (2026-09-01): **`EA-28`** — mutante que existiu, foi
+executado e **saiu do registro**. Não é falta de mutante: é falta de par na matriz
+e de gatilho que o re-execute. Ganhou id próprio para não reescrever este corpo
+(números citados nunca renumeram, R12), e referencia esta família.
+
+## EA-21 — duas curadorias divergentes para o mesmo gap, no mesmo PDF
+
+**Status**: `aberto`
+
+**Aberto em**: 2026-09-01. Levantado pela demanda 015 e **reservado em prosa** por
+ela antes do merge do PR #34
+(`specs/015-superficies-de-apoio/relatorio-final.md:548`) — o id já era permanente
+quando este registro foi escrito.
+
+### Cadeia arquivo:linha → efeito
+
+- **`ui_v32.js:1034-1066`** — `QS_GAP_SUPPORT`: curadoria indexada por
+  **capability**, sem nível.
+- **`quickscan_secops_soccmm_v3_1_3.html:420-467`** — `MAP`: curadoria indexada
+  por **qid × nível**.
+- **A medição das combinações alcançáveis vive em
+  `specs/015-superficies-de-apoio/refinement.md` §M5** — em **3 das 7**, nenhuma
+  lista contém a outra. Não reproduzida aqui de propósito: número copiado para um
+  segundo lugar apodrece separado do que o mediu.
+- **Efeito** — o mesmo gap chega ao leitor do relatório impresso com dois
+  conjuntos de produtos, sem texto que diga qual responde a quê.
+
+### Escopo e rito
+
+`MAP` é Camada 1, classe `frozen` (`.claude/verify/boundary.json`) → rito D2, hoje
+Porta B. `QS_GAP_SUPPORT` vive em `ui_v32.js` (camada 5.x, editável). **Qual
+curadoria é canônica é decisão de produto — `product-owner`**; este registro não a
+toma.
+
+## EA-22 — `P51-REC1` promete "sem duplicação" no nome e não compara `pr-gapsup` com superfície alguma
+
+**Status**: `aberto`
+
+**Aberto em**: 2026-09-01. Reservado em prosa pela 015 (`relatorio-final.md:549`).
+**Pendente de confirmação por execução** — o veredito é do `qa-engineer`, nunca
+deste registro.
+
+### Cadeia arquivo:linha → efeito
+
+- **`tests_p50_core.js:3363`** — o gate nasce com a promessa no próprio título:
+  *"recomendações acionáveis junto do gap, sem overclaim nem duplicação"*.
+- **`tests_p50_core.js:3363-3411`** — o corpo assere: capability canônica lida do
+  `MAP` para aquele qid, opções da tabela presentes, e a âncora normativa externa
+  (§UAT-07 da Phase 5.1). **Nenhuma asserção compara `pr-gapsup` com outra
+  superfície do mesmo relatório.**
+- **`ui_v32.js:1029-1030`** — o cabeçalho normativo do módulo repete a promessa (o
+  bloco final de apoio existe para as capabilities sem gap correspondente,
+  **sem duplicar o mesmo card**).
+- **Efeito** — a propriedade "sem duplicação" está escrita em dois registros
+  consultáveis e medida em nenhum; quem lê o nome do gate acredita que ela é
+  coberta.
+
+### O que este registro não decide
+
+Se o gate reprova ou passa, e se a promessa deve virar asserção ou sair do título:
+`qa-engineer` (execução) e `tech-lead` (desenho). Instância de fronteira da
+família `EA-31`.
+
+## EA-23 — a mesma capability sob dois nomes no mesmo relatório
+
+**Status**: `aberto`
+
+**Aberto em**: 2026-09-01. Reservado em prosa pela 015 (`relatorio-final.md:550`).
+
+### Cadeia arquivo:linha → efeito
+
+- **`quickscan_secops_soccmm_v3_1_3.html:448`** — `MAP["logs"].cap` = *"Análise
+  centralizada, correlação e retenção de eventos"*.
+- **`engine_v32.js:49`** — `"security-analytics"` = *"Analytics de segurança
+  (SIEM/data lake)"*.
+- **Efeito** — o leitor encontra dois nomes para a mesma capability dentro do
+  mesmo documento, sem sinônimo declarado em lugar nenhum.
+
+### Escopo e rito
+
+Fechar do lado do `MAP` é Camada 1 `frozen` → rito D2, hoje Porta B — **é por isso
+que isto é achado e não demanda**. A reconciliação de vocabulário (qual nome é
+canônico, e se o outro vira sinônimo no `CONTEXT.md`) é do `product-owner`.
+
+## EA-24 — o card neutro culpa o mapeamento quando a causa é ausência de gap
+
+**Status**: `aberto`
+
+**Aberto em**: 2026-09-01. Reservado em prosa pela 015 (`relatorio-final.md:551`).
+**Pendente de confirmação por execução** (`qa-engineer`).
+
+### Cadeia arquivo:linha → efeito
+
+- **`ui_v32.js:645`** — `presentationOf(id, c)` devolve `null` quando não há
+  contexto/gap que sustente apresentação.
+- **`ui_v32.js:721`** — `neutralPrioCardHTML(id, c)` é a rota do card sem produto.
+- **`ui_v32.js:727`** — o texto emitido atribui a causa ao **mapeamento** ("Não há
+  oferta direta mapeada para esta capability nesta etapa"), inclusive quando a
+  causa é **não haver gap** — capability madura.
+- **Efeito** — a tela e o papel dizem ao facilitador que falta oferta, quando o
+  que falta é problema; a leitura induzida é de lacuna de catálogo.
+
+### O que este registro não decide
+
+Quais estados alcançáveis produzem cada causa (medida do `qa-engineer`) e qual
+texto substitui (`product-owner` com `ui-engineer`).
+
+## EA-25 — "prioridade declarada nunca desaparece" é invariante de fato sem âncora normativa
+
+**Status**: `aberto`
+
+**Aberto em**: 2026-09-01. Reservado em prosa pela 015 (`relatorio-final.md:552`).
+
+### Cadeia arquivo:linha → efeito
+
+- **`ui_v32.js:722`**, **`:738`**, **`:745`** — a propriedade vive em **comentário
+  de código** (`[3.2.3-B] prioridade NUNCA desaparece`, `[3.2.2-A] priority-first
+  REAL`, `[3.2.3-B] sem exceção`).
+- Ela é **medida** por gates de várias fases (`V10`/`V15`/`V21`/`V22`/`P5`/`P7`/
+  `D010-ABS1`, conforme `specs/015-superficies-de-apoio/spec.md` §Cross-check).
+- **Ausente** de `.claude/rules/product-invariants.md` (INV-1…INV-10) e de
+  `.claude/verify/invariants.json` — conferido por busca em 2026-09-01: zero
+  ocorrência.
+- **Efeito** — uma propriedade que sete gates protegem não tem dono normativo:
+  quem quiser mudá-la não encontra a regra que a proíbe, e cada gate parece uma
+  escolha local. É o inverso do `EA-22`: aqui a execução garante **mais** do que o
+  registro afirma.
+
+### Fora do meu domínio, nomeado
+
+**Redação ou promoção a invariante é do `product-owner`** (R1: só o PO propõe, só
+o auditor ratifica). Este registro apenas mede a ausência.
+
+## EA-26 — resíduo `C × I`: card-alvo e `apoio-block` lendo o mesmo `MAP` em duas seções, sem texto que explique
+
+**Status**: `aberto`
+
+**Aberto em**: 2026-09-01. Reservado em prosa pela 015 (`relatorio-final.md:553`).
+Declarado pela demanda **010** e **não fechado** por ela nem pela 015.
+
+### Cadeia arquivo:linha → efeito
+
+- A cadeia canônica vive em `specs/015-superficies-de-apoio/spec.md` §E1 e
+  §"Referenciado, não absorvido" — apontada, não reproduzida.
+- **Host bloqueado**: o lugar certo de tratar é `ui_target_v32.js`, **não
+  autorizado** por spec vigente alguma, e o `MAP` é Camada 1 `frozen`.
+- **Efeito** — a mesma informação aparece em duas seções do relatório com origem
+  idêntica e sem frase que distinga os papéis; duas demandas passaram ao lado
+  porque nenhuma tinha o host no escopo.
+
+### O que este registro não decide
+
+Qual host recebe o tratamento e sob que rito (D2 Porta B, ou spec que autorize
+`ui_target_v32.js`): `tech-lead` propõe, orquestrador delega, usuário autoriza.
+
+## EA-27 — `HIDE_EYEBROWS` existe em três cópias sem dono único
+
+**Status**: `aberto`
+
+**Aberto em**: 2026-09-01. Reservado em prosa pela 015 (`relatorio-final.md:554`).
+**Efeito medido, não hipotético.**
+
+### Cadeia arquivo:linha → efeito
+
+- **produto** — `ui_v32.js:109-110`.
+- **oráculo de `U15`** — `tests_ui_m31.js:279-280` (a lista literal, de novo,
+  dentro do teste).
+- **fixture da 010** — `fixtures_010_vao.js:675-676` (`D010_HIDE_EYEBROWS`).
+- **Efeito medido** — mutar o array **do produto não alcança `U15`**, porque o
+  oráculo lê a própria cópia. Foi isso que fez `M18` **parecer** ter dois carrascos
+  e ter um só; a medição está no par `D015-M18` de
+  `.claude/verify/mutation-matrix.json` e na errata **E2.1** de
+  `specs/015-superficies-de-apoio/spec.md`.
+- **Regra em jogo** — R9 §5 (dono do estado) e R9 §8 (helper único por semântica):
+  três cópias, nenhum dono.
+
+### O que este registro não decide
+
+Se a unificação é bridge, helper ou import de fixture, e se cabe em `fix-finding`
+ou em demanda: `tech-lead` com `core-engineer`; o veredito sobre o poder do oráculo
+é do `qa-engineer`.
+
+## EA-28 — prova que existiu e saiu do registro: mutante declarado carrasco, provado só em bateria efêmera
+
+**Status**: `aberto`
+
+**Aberto em**: 2026-09-01. Espécie **nova** da família `EA-20` — id próprio porque
+o corpo do `EA-20` descreve outra ausência (falta de mutante) e não se reescreve
+por evento posterior (R12). A instância que a revelou **já está fechada**; o que
+fica aberto é a classe.
+
+### O que é
+
+Mutante **declarado carrasco na spec**, executado de verdade uma vez, cuja prova
+morava num registro **substituído** — sem par na matriz e **sem gatilho de path**
+que a re-executasse. O gate segue verde e o registro segue afirmando prova; o que
+sustenta a afirmação é o histórico do git.
+
+**Critério de trabalho, formulado pela 015**: *prova que não tem par na matriz e
+não tem trigger que a re-execute não é prova — é lembrança.*
+
+### Cadeia arquivo:linha → efeito
+
+- **`specs/015-superficies-de-apoio/spec.md:276`** — `C1` declara `M17` e `M18`
+  carrascos, `M18` como **único** de `(h1)`.
+- A bateria negativa da Fase 4 registrou **15/15 incluindo os dois**, num `_trilha`
+  de `.claude/verify/expected_suites.json` **substituído** pelo `_trilha` da
+  contagem fixada em **`351de95`** — a prova passou a viver só no histórico do git.
+- **`specs/015-superficies-de-apoio/spec-validate.md:67`** — o gap **G2**: os dois
+  **não estavam no harness, não tinham par na matriz e não constavam de
+  `dividas_declaradas`**. Achado por **leitura**, na Fase 6, não por gate.
+- **A cadeia própria é uma ausência** — `.claude/verify/check_mutation.py:376-433`:
+  `IC-5`/`IC-6` comparam harness ↔ matriz **nominalmente à `p51`**, por decisão
+  registrada; **nenhuma cláusula** compara *mutante declarado em spec* com *par na
+  matriz* para os demais harnesses, e `.claude/verify/mutation_map.json` só
+  re-executa quem tem `targets`.
+- **Efeito** — o registro de dívida chegou a **afirmar que `M18` era o único
+  carrasco de `(h1)`**: alegação de prova que a campanha nunca executou.
+
+### A instância está fechada; a classe não
+
+`M17` e `M18` entraram no harness em **`5724fbd`** (campanha **15/15**, zero
+sobreviventes) com repin em **`5ede3fe`**, e hoje
+`mutation_map.json → harnesses.d015` traz `targets` e `preflight: true` — conferido
+no HEAD deste registro. **Nada impede o próximo caso**: nenhum gate compara spec
+com harness.
+
+### Fora do meu domínio, nomeado
+
+O veredito sobre cobertura e o desenho da checagem são do `qa-engineer` (com o
+`tech-lead`); a checagem, se nascer, entra no `pipeline.yaml` (R10 §9), nunca em
+prompt de agente.
+
+## EA-29 — afirmação refutada que sobreviveu em três superfícies, e a pior delas era o comentário do gate
+
+**Status**: `resolvido`
+
+**Aberto em**: 2026-09-01, já com a correção citável — registrado porque a **lição
+é de propagação**, e ela permanece válida com as três ocorrências riscadas.
+
+### Cadeia arquivo:linha → efeito
+
+- **`specs/015-superficies-de-apoio/spec.md:222`** e **`:276`** — a errata **E3**
+  riscou a afirmação (*"a metade de TELA, atacada por `M17`, é prova fraca …
+  `N40` mataria `M17` também"*) **na spec**. Primeira correção — e ela **não
+  alcançou as cópias**.
+- **`.claude/verify/mutation-matrix.json:1499`** — a nota do par **`D015-M19`**
+  seguia afirmando o refutado e **contradizia, no mesmo arquivo**, a nota do par
+  vizinho `D015-M17` (`:1511`).
+- **`tests_015_apoio.js:403`** — a frase estava viva no **comentário do próprio
+  gate**: o lugar onde o próximo leitor olha **primeiro**, antes da matriz e antes
+  da spec.
+- **Efeito enquanto durou** — dois registros consultáveis afirmavam o oposto da
+  spec emendada, e um deles contradizia o vizinho dentro do mesmo arquivo.
+  Refutação registrada tem de ficar **riscada com a razão** (R2 §5) — em **todas**
+  as superfícies, não na primeira encontrada.
+
+### O que foi feito
+
+Commit **`8b4aff3`** (demanda 015): as duas ocorrências riscadas com a razão, nunca
+apagadas, e **censo por string em oito arquivos** — matriz, mapa, registro de
+suítes, spec, tasks, relatório e os dois arquivos de teste. Sobrevivem três
+ocorrências, **todas em contexto de refutação**; zero afirmações vivas. Conferido
+por leitura no HEAD deste registro.
+
+### A lição, que é o motivo de o achado existir
+
+**Corrigir uma refutação é varredura, não edição** — por string, não por memória —
+e o alvo de maior risco é o **comentário do gate**, porque é o primeiro que se lê e
+o último que se revisa. A ausência que sobra (nada no pipeline procura cópias vivas
+de uma afirmação já riscada) está registrada como perna da família **`EA-31`**, não
+aqui.
+
+## EA-30 — três provas de discriminância vencidas no registro da campanha
+
+**Status**: `aberto`
+
+**Aberto em**: 2026-09-01. Levantado pelo `product-owner` na **Fase 0 da demanda
+014** (`specs/014-gate-sem-poder-discriminante/refinement.md` §6, branch
+`feature/014-gate-sem-poder-discriminante`, commit `ec77053`, **não mesclada**),
+**sem id alocado** — por desenho: branches paralelas não se enxergam. O PO
+recomendou achado próprio, fora da 014 (mesmo arquivo, §P5 item 1); **a decisão de
+a 014 absorver ou não é do orquestrador**.
+
+**Vocabulário**: *prova de discriminância vencida* — par cuja última prova de KILL
+foi medida em árvore anterior a uma mudança que pode ter tirado o poder do gate, e
+que não foi re-executada desde então. Definido no glossário do refinamento da 014;
+**ainda não está no `CONTEXT.md`** (conferido em 2026-09-01) — glossário é do
+`product-owner`.
+
+### Cadeia arquivo:linha → efeito
+
+Linhas medidas **no HEAD deste registro**; o refinamento da 014 citava `:55-63` e
+`:209-225`, deslocadas porque a matriz foi reescrita em `8b4aff3` — a própria
+deriva de citação é sintoma da família `EA-31`.
+
+- **`.claude/verify/mutation-matrix.json:57-67`** — a `p50` inteira é **uma linha
+  agregada**, com `ultima_prova.data: "histórica (fases 5.0.x)"` (`:63`). A
+  execução real de **2026-08-29** (`52/53`, com o não-KILL `P50::M51`) está em
+  `specs/013-integridade-da-campanha/matriz-gate-mutante.md:1070-1076` e **não no
+  registro**.
+- **`.claude/verify/mutation-matrix.json:1553`** — `P50::M51` **sem KILL
+  pós-correção**: a 013 re-derivou o `reason` e registrou a prova (b) como
+  **parcial** e a (c) por **enumeração estática**, com a execução em navegador
+  deferida ao job `visual`. E o run de 2026-08-31 **não exigiu a `p50`** — `:7`:
+  *"[OK] p50: nenhum alvo mudou desde a base — campanha não exigida"*.
+- **`.claude/verify/mutation-matrix.json:211-229`** — `M51-08` com
+  `ultima_prova.data: "2026-08-22"` (`:217`), **nove dias** mais velha que a
+  execução de 2026-08-31 que o cobriu (run `33389017967`, registrado em `:7`).
+  **Medido por mim em 2026-09-01, e o caso é maior que o citado**: são **16** pares
+  `p51` com data `2026-08-22` e **4** com `2026-08-29`, sob uma campanha `p51`
+  executada em 2026-08-31.
+- **A ausência** — `.claude/verify/check_mutation.py:376-433`: `IC-5`/`IC-6` são
+  nominais à `p51` e comparam **conjuntos**, não **datas**; nenhuma cláusula
+  compara `ultima_prova.data` com a data da execução que cobriu o par, e linha
+  agregada não tem data por par para comparar.
+- **Efeito** — o registro afirma discriminância medida em árvore que já mudou, e a
+  leitura humana não distingue "provado ontem" de "provado em outra fase".
+
+### O que este registro não decide
+
+O veredito de cada uma das três (e do conjunto `p51`) é do `qa-engineer`; se o
+remédio é campo, cláusula `IC-*` nova ou re-execução, é desenho do `tech-lead` com
+o QA; abrir demanda é do orquestrador (R4).
+
+## EA-31 — a terceira família: o registro da prova não é comparado com a execução da prova
+
+**Status**: `aberto`
+
+**Aberto em**: 2026-09-01. Como o `EA-20`, **não é o próximo item de uma lista**: é
+a família que os achados abaixo instanciam, registrada porque o alvo dela não é
+nenhum gate nem nenhum instrumento.
+
+### O que é, e como se distingue das duas famílias já nomeadas
+
+O backlog já separava dois eixos: **instrumento doente** — âncora podre (`EA-4`),
+ambiente ausente (`EA-6`), campanha que não roda (`EA-3`, `EA-14`), número que
+afirma o que não mediu (`EA-5`), veredito truncado (`EA-15`), waiver inexistente
+(`EA-2`) — e **gate saudável sem poder discriminante** (`EA-20`).
+
+Esta é a terceira: **instrumento saudável e prova real — o que diverge é o registro
+dela.** A afirmação escrita (spec, matriz, comentário de gate, título de gate,
+`ultima_prova`) e a execução que a sustentaria **não são comparadas por nada**; a
+divergência só aparece quando um humano lê os dois lados.
+
+### As instâncias (cada uma com id e cadeia próprios — não reproduzidos aqui)
+
+1. **`EA-28`** — prova que existiu e **saiu do registro** (`M17`/`M18`: a spec
+   declarava carrasco, a campanha não executava).
+2. **`EA-29`** — afirmação **refutada** que sobreviveu em duas cópias depois de a
+   spec ser emendada, uma delas no comentário do gate.
+3. **`EA-30`** — prova registrada com **data e agregação anteriores** à execução
+   que a cobriu.
+
+**Casos de fronteira, nomeados com a razão** (não os conto como membros, mas eles
+mostram as duas direções da mesma falha): **`EA-22`** — o registro promete **mais**
+do que a execução mede (o nome do gate diz "sem duplicação"); **`EA-25`** — a
+execução garante **mais** do que o registro afirma (sete gates protegem uma
+propriedade que nenhuma regra escreve).
+
+**Adjacente, não membro**: **`EA-27`** — três cópias literais de `HIDE_EYEBROWS`
+produzem exatamente essa divergência, mas em **código**, não em registro. Vale
+citar junto porque o remédio (dono único) é da mesma natureza.
+
+### A cadeia própria desta família é uma ausência
+
+- **`.claude/verify/pipeline.yaml`** — **nenhum stage** compara registro com
+  execução: nem spec ↔ harness, nem `ultima_prova` ↔ data de execução, nem
+  ocorrências vivas de uma afirmação já riscada.
+- **`.claude/verify/check_mutation.py:376-433`** — o mais perto que existe:
+  `IC-5`/`IC-6` comparam harness ↔ matriz, **nominalmente à `p51`**, por conjunto e
+  não por data.
+- **R2 §1** (todo PASS cita execução) e **R2 §5** (refutação permanece riscada)
+  **não têm verificador algum** — a mesma forma de dívida que o `EA-17` registrou
+  para a R9 §6.
+- **Efeito** — as três instâncias foram achadas por **três atos humanos
+  diferentes** (o `spec-validate` da 015, o censo por string do `qa-engineer`, a
+  varredura de registro do `product-owner` na Fase 0 da 014). **Nenhuma** por
+  máquina.
+
+### O contra-argumento, escrito para poder ser cobrado
+
+As três nasceram na **mesma janela**: revisão de registro (Fase 6 da 015, Fase 0 da
+014). Quem revisa registro acha defeito de registro — o **viés de amostragem é
+real**, e a frequência observada nesta leva **não** mede a frequência no
+repositório. O que sustenta a família mesmo assim: (i) **origens independentes**,
+três agentes e três métodos; (ii) o mecanismo é **verificável agora**, sem
+estatística — não existe comparador de registro no pipeline; (iii) as três
+sobreviveram a gates verdes.
+
+**Gatilho de falsificação, declarado**: se uma varredura de registro (ou a próxima
+demanda que revise campanha) **não achar instância fora destas três**, esta família
+é artefato da janela de leitura, e este achado deve ser **riscado com a razão**
+(R2 §5), não apagado.
+
+### O que este registro não decide
+
+Se o remédio é gate, campo obrigatório de registro, ou rito de escrita; se vira
+demanda própria (R4 — do orquestrador); o veredito de cada instância
+(`qa-engineer`); e o vocabulário que entra no `CONTEXT.md` (`product-owner`).

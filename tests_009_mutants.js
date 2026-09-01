@@ -447,6 +447,18 @@ function preflight(sel) {
                 estado: n === 1 ? "ok" : "nao_executavel" };
     if (n === 0) e.causa = CAUSA.ausente;
     else if (n > 1) e.causa = CAUSA.ambigua;
+    /* [014/E3] Extensão ADITIVA do contrato C1 (demanda 014-gate-sem-poder-discriminante,
+       errata E3): mutante cujo arquivo é `.css` carrega também a ÂNCORA
+       (`find`/`repl`). Sem ela a varredura de regra morta sabe QUAIS mutantes
+       existem mas não QUAL declaração cada um altera — e "zero regras mortas"
+       vira vácuo, não veredito (medido antes desta extensão: 49 de 49 avaliados
+       sem âncora). Só para `.css`, por decisão registrada: campo de contrato sem
+       consumidor apodrece, e os outros 169 mutantes não têm quem leia a deles.
+       ADITIVA de verdade: `check_mutation.py` valida apenas as chaves
+       obrigatórias de C1 (IC-4, :320-323), então nenhum consumidor existente
+       quebra. O preflight segue sendo contrato — não muta, não reconstrói, não
+       roda gate, não escreve: só acrescenta duas chaves ao objeto de stdout. */
+    if (/\.css$/i.test(e.arquivo)) { e.find = m.find; e.repl = m.repl; }
     dados.mutantes.push(e);
   }
   process.stdout.write(JSON.stringify(dados) + "\n");

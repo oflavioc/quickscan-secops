@@ -1,6 +1,6 @@
 {
   "demanda": "014-gate-sem-poder-discriminante",
-  "phase": "red",
+  "phase": "implement",
   "spec_dir": "specs/014-gate-sem-poder-discriminante",
   "branch": "feature/014-gate-sem-poder-discriminante",
   "brief": "Achado EA-7: o gate P51-VIS1 afirma propriedade que a mutacao nao consegue mais violar. O PROPRIETARIO DECIDIU EM 2026-08-30 QUE VIRA DEMANDA PROPRIA. E O REFINAMENTO DERRUBOU A PREMISSA: sao 1 caso em 42, nao uma familia — 36 imunes por estrutura, 1 imune por oraculo (lint de fonte), 4 vivos. O contraexemplo e o mais instrutivo: o mutante que a suspeita apontava como irmao esta VIVO, porque o seletor antigo tem um id e vence o novo. A suspeita acertou o mecanismo e errou a instancia.",
@@ -38,5 +38,18 @@
       "D014-IND1"
     ],
     "notes": "2 PASS · 5 FAIL de 7. Vermelho SUBSTANTIVO: 49 de 49 mutantes de CSS sem ancora, nomeados um a um. Nasceram verdes D014-EXC1 (nao depende do instrumento) e D014-DISC1 (6 controles verdes, 38 casos, 29 de 29 alineas cobertas). ACHADO NO PARSER: o CSSOM descarta !important quando o valor e var(), e o censo nao ve isso — zero de 41 na arvore, virou sentinela com oraculo TEXTUAL. E obrigou a corrigir uma fixture que teria sido vacuosa. A bateria pegou o autor DUAS vezes, uma delas VACUIDADE DENTRO DA GUARDA DE VACUIDADE."
+  },
+  "implement": {
+    "waves_fechadas": "1 a 6",
+    "wave6": "T060/T061/T062 - harness d014 (D014-M1..M9) e d014vis (D014-M10), cada entrada do mutation_map.json no MESMO commit do seu harness (D4 da 013). Campanha d014 sob arvore limpa: 9 DETECTADO de 9. Par D014-M10 x P52-LAY2 nasce NAO EXECUTADO com causa ambiente sem chromium, fecha em T081 no job visual.",
+    "desvios_declarados_para_o_spec_validate": [
+      "D014-M4 nao e a forma literal da celula C2: adicao muda o censo pinado (E6) e mataria por C2(cen) - 'a folha mudou' - e nao por 'ha regra morta'. Forma executavel: troca censo-neutra plantando dominadora de prefixo vacuo sobre a declaracao que p51/M51-08 ataca. Medido antes de escrito.",
+      "D014-M5/M6 morrem em D014-DISC1 (bateria negativa), nao em D014-EXC1 como a celula C3 sugere: julgador enfraquecido continua verde sobre registro sao.",
+      "d014.targets inclui regra_morta.js e regra_morta_seletor.js alem dos 8 da spec - sao o que M1/M2/M3/M8/M9 mutam. Desvio que ENDURECE o trigger (precedente d009/d010/d011)."
+    ],
+    "commits_wave6": [
+      "40f8b89 (T060 atomico)",
+      "7c93899 (T061+T062)"
+    ]
   }
 }

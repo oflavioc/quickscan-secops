@@ -1,7 +1,7 @@
 {
   "_meta": {
     "descricao": "Registry único de pins — fonte de identidade dos artefatos (R8). Hashes = SHA-256 dos blobs de HEAD. Alterar arquivo pinado exige regenerar este registry no MESMO PR, com motivo no commit.",
-    "gerado_de_head": "af8dfd96e28dd6882b5497978c7522265c085654",
+    "gerado_de_head": "d3b002d77711c9d069d401f5a6b3bb7943a3a530",
     "gerado_em": "2026-09-01",
     "exclusoes": [
       "docs_phase5/**",
@@ -248,7 +248,7 @@
     "specs/013-integridade-da-campanha/tasks.md": "5153fbed842845d4264eb1f74cb5a68bc2631fe4ffc5670c0da8e6d0c2a7b8c2",
     "specs/014-gate-sem-poder-discriminante/plan.md": "0a61aee4f6a28191069374192c3ae67976d4549cc03e856f3ea41469dcafb2c4",
     "specs/014-gate-sem-poder-discriminante/refinement.md": "0b0fed08a437a5fb69f9cda16d1d7cee361eae27536d95d08b33a0362ffb549b",
-    "specs/014-gate-sem-poder-discriminante/spec.md": "95bf8f519b4de664981adb51688cd14138954b1585a7d0bfb6f4bb967e68004b",
+    "specs/014-gate-sem-poder-discriminante/spec.md": "495d2ce75872adc591e1e93728c7cf6a1cce6735462f22bf0de28867d505f483",
     "specs/014-gate-sem-poder-discriminante/tasks.md": "5c25757d29217c2c19271e15bc018fd8d46e3ecab160b73430796609bdc8aa0d",
     "specs/PHASE_5_0_REV_A.md": "22e729174c6a3c5dd620da5330b03eb96d9eb6fc6e64eba097c2bde55eb0a510",
     "specs/PHASE_5_0_REV_B.md": "4f1583c733df62a9452aa7b218d962e40d781bb8d30dfc3179ad6e1ef004619b",

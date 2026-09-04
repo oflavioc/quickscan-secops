@@ -79,3 +79,18 @@ jobs:
         run: git checkout -- docs_phase5/ 2>/dev/null || true
       - name: Campanhas de mutação com Chromium (deferidas pelo job verify)
         run: python .claude/verify/check_mutation.py
+
+  fecho:
+    # E1 da spec 016: check PRÓPRIO, não passo do `verify`. Um `verify` vermelho a
+    # demanda inteira ensina que vermelho é normal (EA-5); este check vermelho diz
+    # algo verdadeiro: "a demanda ainda não fechou". Sem `needs:` e sem `if:` —
+    # fora de PR de demanda ele RODA e responde `NÃO JULGADO (<motivo>)` (R10 §2).
+    # Direção pós-merge (stage `fecho` do pipeline.yaml) roda no job `verify`.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+      - name: Fecho da demanda antes do merge (D016-PR1 — P16.a)
+        run: python .claude/verify/check_fecho.py --pr

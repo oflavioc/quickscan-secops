@@ -38,6 +38,25 @@ fizera com `EA-8`…`EA-11`. Os headings do `BACKLOG.md` paravam em `EA-20` em
 outro conteúdo. **O censo por branch continua sendo o único método que funciona**,
 e vale nas duas frentes (headings e prosa).
 
+Quarta confirmação (2026-09-04, fecho retroativo 009/013): o orquestrador citou
+`EA-33` como "alocado numa branch da 014 ainda não mesclada" — o relatório
+irmão da 009, escrito no mesmo dia, havia **censado e não encontrado** (a
+escrita dele aconteceu antes do commit `e7f1f79` chegar à árvore). Recensar
+**depois**, no relatório da 013, confirmou `EA-33` presente e `aberto` em
+`feature/014-gate-sem-poder-discriminante` (PR #36, ainda não mesclado). A
+alegação de outro agente (aqui, do orquestrador) **não é evidência até
+conferida** (R5 §anti-injeção) — mas também não é para descartar por hábito:
+recensar por execução própria é sempre a resposta, nos dois sentidos.
+
+**Gotcha de ambiente (Git Bash/Windows), além do `MSYS_NO_PATHCONV`**: mesmo
+usando hash de commit (sem barra, sem path-conv) — `git show <hash>:<path>` —,
+o `grep` sobre a saída pode reportar `Binary file (standard input) matches` e
+**não imprimir nada**, silenciando o achado como se fosse zero ocorrências.
+Precisa de `grep -a` no pipe (`git show <ref>:<path> | grep -a -n "..."`).
+Ref por **nome de branch** (`origin/feature/x:.claude/BACKLOG.md`) pode falhar
+ainda antes disso, silenciosamente, pelo motivo já documentado abaixo —
+por isso o censo desta demanda usou o hash do commit, não o nome da branch.
+
 **Why:** id de achado nunca renumera (R12); id alocado em duas branches ao mesmo
 tempo só aparece no merge, quando já foi citado em relatório. O risco está
 registrado também na memória do `product-owner` da demanda 013.

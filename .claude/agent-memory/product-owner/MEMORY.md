@@ -14,3 +14,4 @@
 - [Fecho retroativo da 013](project_013_fecho_retroativo.md) — mesclada com wave 9 incompleta; fase ficou em validate; tripwire KI-4 desarmada pela 014 sem disparar
 - [Fecho da 014 e pendências](project_014_fecho_e_pendencias.md) — aceite condicionado ao run visual; glossário do refinamento só entrou na Fase 6: conferir em todo aceite
 - [Aceite segundo passe da 011](project_011_aceite_segundo_passe.md) — mesclada sem aceite (EA-33); "d011 19/19" nunca cobre D011-M9; relatório congelado num SHA anterior ao merge
+- [Errata de spec sob delegação](project_errata_de_spec_sob_delegacao.md) — fórmula literal + subsunção escrita; id pelo gap (nunca E<n>); inline + seção única; regra de composição

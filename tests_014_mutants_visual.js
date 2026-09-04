@@ -2,13 +2,29 @@
    CAMPANHA DE MUTAÇÃO VISUAL · DEMANDA 014 — gate sem poder discriminante
    harness `d014vis` · T061 (wave 6) · dono: qa-engineer
    ============================================================================
-   UM mutante, e é o fecho da demanda: `D014-M10` muta a LINHA VENCEDORA da
-   composição da tela de pergunta — `grid-template-columns` de
-   ui_p52_workspace_v32.css:77, a declaração que mata o antigo sítio do
-   `M51-01` (aposentado na wave 5 com substituição nominal para cá). O carrasco
-   é `P52-LAY2` (tests_p52_chromium.js:231), gate EXISTENTE de suíte INVOCADA E
-   NUNCA EDITADA — a autorização §29.4 daquele arquivo era da demanda 010 e não
-   se transfere; aqui só se executa.
+   UM mutante, e é o fecho da demanda: `D014-M10` muta a COLOCAÇÃO que decide
+   a composição da tela de pergunta na camada que hoje a governa —
+   `body[data-uxscreen="question"] .wrap > #p50-shell { grid-column: 2 }` de
+   ui_p52_workspace_v32.css:86 (5.2) vira `grid-column: 1`: o mapa cai na MESMA
+   célula da pergunta (linha 3, coluna 1). É a substituição nominal do `M51-01`
+   (aposentado na wave 5). O carrasco é `P52-LAY2` (tests_p52_chromium.js:231),
+   gate EXISTENTE de suíte INVOCADA E NUNCA EDITADA — a autorização §29.4
+   daquele arquivo era da demanda 010 e não se transfere; aqui só se executa.
+
+   REANCORADO pela errata E13 (2026-09-04). A forma anterior — `:77`,
+   `grid-template-columns: minmax(0, 1fr) clamp(320px, 23vw, 440px)` →
+   `minmax(0, 1fr)`, "uma coluna" — foi medida SOBREVIVENTE no job `visual`
+   (run 33516136516, workflow_dispatch sobre 5cf7c82, 2026-09-01). Causa,
+   MEDIDA e não raciocinada: tirar o 2º track NÃO tira a 2ª coluna.
+   `grid-template-areas:"main side"` da 5.1 (ui_p50_v32.css:697, mesmo
+   breakpoint, VIVA — a própria varredura desta demanda a classificou assim)
+   mantém a grade explícita em duas colunas e a não dimensionada cai em
+   `grid-auto-columns: auto`; e mesmo sem as áreas, a colocação explícita
+   `grid-column: 2` cria track implícito. P52-LAY2 mede esquerda, sobreposição,
+   topo e rodapé — nunca largura de coluna — e a largura da coluna 2 era a
+   única coisa que aquela mutação alterava (320→301px em 1280). Colocação
+   explícita nunca empilha. A forma velha NÃO renasce (R2 §5): a refutação
+   está no par da mutation-matrix.json e na E13.
 
    Partição E1 da spec: este harness exige Chromium (`requires: [node, python,
    chromium]`) e fecha no job `visual` do CI (KI-3, design-decisions.md) — o
@@ -39,7 +55,10 @@
    fixou (célula C4): a pergunta não está à esquerda do mapa · as colunas se
    sobrepõem · colunas desalinhadas no topo. O runner do p52 imprime o detalhe
    NA MESMA linha do FAIL, então a linha basta — reprovar por outro motivo é
-   SOBREVIVENTE, não kill.
+   SOBREVIVENTE, não kill. No NÃO-KILL a nota do bloco carrega a SONDA
+   DIAGNÓSTICA (E13): é a única parte da saída deste harness que
+   check_mutation.py ecoa no log do CI além das duas últimas linhas — ver
+   `sondar()`.
 
    `--preflight` (argv) — D4 da 013, no MESMO commit da entrada `d014vis` no
    mutation_map.json. Não muta, não reconstrói, não executa gate, não abre
@@ -47,7 +66,12 @@
    (contrato C1 exige o interpretador; IC-4 roda o preflight em ambiente sem
    navegador). Emite `find`/`repl` (mutante de CSS — extensão E3): é por eles
    que a varredura de regra morta avalia a declaração que este mutante altera
-   (VIVA na árvore limpa — ela é a vencedora; conferido antes do commit).
+   (`grid-column` em `body[data-uxscreen="question"] .wrap > #p50-shell`: para
+   a varredura é INDECIDÍVEL — `gramatica-de-seletor-recusada`, o combinador
+   `>` está fora da relação decidível (C6/E9) — e entra NOMEADA E CONTADA na
+   lista da árvore (20 → 21 indecidíveis, 14 → 15 mutantes; contagem não
+   pinada, E9), nunca engolida. A vida desta declaração é provada pelo KILL
+   medido, não pela varredura. Medido com o instrumento em 2026-09-04, E13.)
    ========================================================================== */
 "use strict";
 
@@ -114,10 +138,10 @@ const naoClassificada = msg => "falha não classificada: " + msg;
    ========================================================================== */
 const MUTANTS = [
   { id: "D014-M10", file: CSS, gate: "P52-LAY2",
-    desc: "a linha vencedora da composição perde a segunda coluna: grid-template-columns vira minmax(0, 1fr)",
+    desc: "no desktop o mapa deixa de ficar ao lado da pergunta: #p50-shell vai para a coluna 1 e ocupa a mesma célula de #app",
     reason: /a pergunta não está à esquerda do mapa|as colunas se sobrepõem|colunas desalinhadas no topo/,
-    find: "      grid-template-columns: minmax(0, 1fr) clamp(320px, 23vw, 440px);",
-    repl: "      grid-template-columns: minmax(0, 1fr);   /* MUTANTE D014-M10: uma coluna */" }
+    find: '    body[data-uxscreen="question"] .wrap > #p50-shell { grid-column: 2; grid-row: 3; min-width: 0; }',
+    repl: '    body[data-uxscreen="question"] .wrap > #p50-shell { grid-column: 1; grid-row: 3; min-width: 0; }   /* MUTANTE D014-M10: mesma célula que #app */' }
 ];
 
 const BASE_CSS_SHA = sha(CSS);
@@ -150,6 +174,58 @@ function gateLine(out, gateId) {
 }
 
 function ocorrencias(m) { return fs.readFileSync(m.file, "utf8").split(m.find).length - 1; }
+
+/* ── sonda diagnóstica do NÃO-KILL (E13) ──────────────────────────────────────
+   check_mutation.py (mut_ler/mut_relata) ecoa no log do CI apenas as duas
+   últimas linhas do harness e o bloco `<ESTADO>  <id> · <desc>` + `gate
+   esperado: … · <nota>`; a linha crua do gate e o `baseline:` NUNCA chegam lá
+   — o SOBREVIVENTE do run 33516136516 exigiu uma worktree efêmera com
+   navegador só para descobrir a causa. A nota passa a levar: sha e contagem do
+   `repl` no HTML construído sob mutação (a mutação chegou ao artefato que o
+   navegador abriu?), a linha crua do gate, e a geometria da grade em 1280
+   após a MESMA navegação do gate (toQuestion(3)). Falha da sonda vira texto
+   na nota; nunca muda o veredito, nunca escreve nada (R7 §3). Só roda no
+   não-KILL: o DETECTADO não precisa de diagnóstico. */
+function resolveBrowser() {                       /* mesma ordem de tests_p52_chromium.js */
+  const explicit = process.env.CHROME_PATH;
+  const local = "/opt/google/chrome/chrome";
+  if (explicit) return { executablePath: explicit };
+  if (fs.existsSync(local)) return { executablePath: local };
+  return {};
+}
+async function sondar(m, linha) {
+  const partes = [];
+  try {
+    const html = fs.readFileSync(HTML, "utf8");
+    partes.push("html(mutado) sha256=" + sha(HTML).slice(0, 16) + " · repl no artefato=" + (html.split(m.repl).length - 1) + "x");
+  } catch (e) { partes.push("html(mutado): ilegível (" + String((e && e.message) || e).slice(0, 60) + ")"); }
+  partes.push("linha do gate: " + (linha ? String(linha).slice(0, 160) : "(nenhuma)"));
+  let browser = null;
+  try {
+    const { chromium } = require("playwright");
+    const qids = require("./fixtures_p50.js").P50_QIDS;
+    browser = await chromium.launch(Object.assign({ args: ["--no-sandbox", "--disable-dev-shm-usage"] }, resolveBrowser()));
+    const pg = await browser.newPage({ viewport: { width: 1280, height: 800 } });
+    await pg.goto("file://" + HTML);
+    await pg.evaluate(([ids, k]) => {
+      window.__DEV.setArq(0); ids.forEach(id => window.__DEV.setAnswerById(id, 1)); window.__DEV.gotoStep(k);
+    }, [qids, 3]);
+    await pg.waitForTimeout(160);
+    partes.push(await pg.evaluate(() => {
+      const box = e => { if (!e) return "ausente"; const r = e.getBoundingClientRect();
+        return "[" + Math.round(r.left) + "," + Math.round(r.right) + "]"; };
+      const w = document.querySelector(".wrap"); const cs = getComputedStyle(w);
+      return "1280: display=" + cs.display + " · grid-template-columns=" + cs.gridTemplateColumns +
+        " · grid-template-areas=" + cs.gridTemplateAreas + " · #app=" + box(document.getElementById("app")) +
+        " · #p50-shell=" + box(document.getElementById("p50-shell")) + " · footer=" + box(document.querySelector(".wrap > footer"));
+    }));
+  } catch (e) {
+    partes.push("sonda 1280: falhou (" + String((e && e.message) || e).slice(0, 100) + ")");
+  } finally {
+    if (browser) { try { await browser.close(); } catch (e) { /* já fechado */ } }
+  }
+  return partes.join(" · ");
+}
 
 /* ── modo preflight (argv, D4) · contrato C1 + extensão E3 ────────────────── */
 function preflight(sel) {
@@ -191,7 +267,7 @@ if (process.argv.slice(2).indexOf("--preflight") >= 0) {
   process.exit(preflight(MUTANTS));
 }
 
-(() => {
+(async () => {
   const report = [];
   let D = 0, S = 0, U = 0;
 
@@ -295,6 +371,8 @@ if (process.argv.slice(2).indexOf("--preflight") >= 0) {
             estado = (reprovou && motivo) ? DETECTADO : SOBREVIVENTE;
             if (!reprovou) nota = "o gate esperado NÃO reprovou — sem poder discriminante";
             else if (!motivo) nota = "reprovou por motivo DIFERENTE dos três da célula C4";
+            /* a sonda lê o artefato AINDA mutado — antes do finally restaurar */
+            if (estado === SOBREVIVENTE) nota += " · " + await sondar(m, linha);
           }
         }
       }

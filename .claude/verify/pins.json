@@ -1,7 +1,7 @@
 {
   "_meta": {
     "descricao": "Registry único de pins — fonte de identidade dos artefatos (R8). Hashes = SHA-256 dos blobs de HEAD. Alterar arquivo pinado exige regenerar este registry no MESMO PR, com motivo no commit.",
-    "gerado_de_head": "3e20057a39c30a5089a437717bcb5db131d01b55",
+    "gerado_de_head": "d80c7edbacfff8f80b4380e24aba7ec4869b7cc7",
     "gerado_em": "2026-09-04",
     "exclusoes": [
       "docs_phase5/**",
@@ -187,6 +187,7 @@
     ".claude/templates/tasks.md": "08ce20d1d62483d632d79916c1a456a1e5fdd1cb25397561cd4a290fa21e1d15",
     ".claude/verify/boundary.json": "559b2bd35a38e00d66cad7b447c38c423c42b0a5ae92a24a8643bedb391affe4",
     ".claude/verify/branch_protection.json": "fa167fcc6be2d69565a39ca49927f37bfef753ca20caaac50e9282cb7e4b7f26",
+    ".claude/verify/branch_protection.py": "d54c1d05a77f4cc2e7ad20383d9ca4dd4f051c1df56b13017896f792ac8ba78f",
     ".claude/verify/bridges.json": "2c81fc304f1faef67e42bc33c3e02fe5461907fe1d877a1bc103f0fe6396d9c9",
     ".claude/verify/check_baseline.py": "66e0c2c6f678a84ace076e38a474fb6c1a0d92f504c03da3145c2bf5d487c2f7",
     ".claude/verify/check_boundary.py": "2441e32e6bd5477d4a9bec027345d74be26b7e260de245e49dfe5d6b0d853633",
@@ -207,6 +208,7 @@
     ".claude/verify/evidence_bridge.json": "8fbf8bca5e6710c709828f839e5f4c6ae552c5fb382429f25aae39b6ad0d291a",
     ".claude/verify/expected_suites.json": "aa4244c3586a1343fd2621bab594b012d47ea4a143f7121006daa67330a2117a",
     ".claude/verify/fecho.json": "fb923998966c2c0536087681ae97cca66b7ae1eebffe2a48c0d95f84c6d70086",
+    ".claude/verify/fecho.py": "ff913440b7d1dc9d324ed7d6cde31bea03c0f7bc52e1686c9752784225a65b3e",
     ".claude/verify/fixtures_016/fecho/F1.json": "d688b5bdb9d972d021aa5d9991144b8879daf8e5061d88c5733017b03d1a3bc8",
     ".claude/verify/fixtures_016/fecho/F10.json": "2cf1894cb898ba608d9b44830c275ca45010df1173aad842306f6a6e98ebe8c2",
     ".claude/verify/fixtures_016/fecho/F11.json": "ce55d97ae471b5d1d27eb9cb23eb22c00daec665dfa2e733bf8bec36183a32b5",

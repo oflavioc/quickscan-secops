@@ -38,7 +38,8 @@ todo modo — e a árvore não é julgada por julgador que reprovou na sonda.
 
 GUARDA DE CENSO DA LEITURA (Fase 6 · iteração de correção do spec-validate, J1,
 2026-09-04): a sonda prova o JULGADOR puro; o LEITOR de histórico não tem sonda.
-Medido em clone efêmero de HEAD 76fd9dc: um `ler_merges` que devolva lista vazia
+Medido em clone efêmero de d130a04 (os arquivos julgados são byte-idênticos aos
+de 76fd9dc, HEAD do spec-validate): um `ler_merges` que devolva lista vazia
 com metadados sãos (origin/develop presente, piso na cadeia) deixava a árvore
 VERDE — exit 0, 0 problema(s), as `done` CONFORME por ancestralidade, "até o
 piso, inclusive: 0" impresso e não comparado — e D016-M19 sobrevivia sob esse

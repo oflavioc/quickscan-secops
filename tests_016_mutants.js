@@ -255,8 +255,9 @@ const MUTANTS = [
     espera: { divergem: [{ id: "F7", campos: { veredito: "FECHO PENDENTE DECLARADO", codigo: null } }] } },
 
   /* Fase 6 (spec-validate G3): C4(e) tinha instrumento e não tinha carrasco —
-     com a cláusula removida a sonda de 33 seguia 33 · 0 (medido em clone de HEAD
-     76fd9dc). F24 (prazo '30/09/2026') é o caso; este é o mutante que ela mata. */
+     com a cláusula removida a sonda de 33 seguia 33 · 0 (medido em clone de
+     d130a04, fecho.py idêntico ao de 76fd9dc). F24 (prazo '30/09/2026') é o
+     caso; este é o mutante que ela mata. */
   { id: "D016-M31", gate: "D016-FEC4", modo: SONDA_FECHO,
     desc: "prazo fora de AAAA-MM-DD é aceito — a cláusula de formato de _valvula é desligada (C4 e)",
     edicoes: [{ file: F.fecho,

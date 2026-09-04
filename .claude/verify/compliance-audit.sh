@@ -71,10 +71,14 @@ fi
 # gate (política T7); esta seção só relata o que ele devolveu.
 if secao branch-protection; then
   BP_STDOUT=$("$PYBIN" .claude/verify/check_branch_protection.py --json 2>/dev/null)
-  BP_OUT=$(printf '%s' "$BP_STDOUT" | "$PYBIN" - <<'PY'
-import json, sys
+  # BP_JSON via ambiente, não pipe: `"$PYBIN" -` já usa o heredoc como PROGRAMA
+  # lido do stdin — um pipe concorrente para o mesmo stdin nunca chegaria a
+  # sys.stdin.read() dentro do script (o heredoc vence).
+  BP_OUT=$(BP_JSON="$BP_STDOUT" "$PYBIN" - <<'PY'
+import json, os, sys
+sys.stdout.reconfigure(encoding="utf-8")  # R7 §2: stdout UTF-8 explícito, mesmo byte em qualquer SO
 
-raw = sys.stdin.read()
+raw = os.environ.get("BP_JSON", "")
 try:
     d = json.loads(raw)
 except Exception as e:

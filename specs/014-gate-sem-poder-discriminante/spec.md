@@ -79,7 +79,7 @@ Namespace `D014-*`.
 | C1 | O classificador de cascata acerta os **cinco** cenários canônicos, **incluindo os três cuja resposta correta é "viva"** — alínea (e) por **E5** | `D014-CASC1` · `tests_014_regra_morta.js` · sobre folhas **sintéticas** (fixtures próprias, fora da árvore de produto): (a) morta por especificidade; (b) morta por ordem de inlining com especificidade empatada; (c) **viva** — camada posterior declara a mesma propriedade no mesmo elemento com especificidade **menor**; (d) **viva** — `!important` em camada **anterior** vence normal posterior; **(e) viva por prefixo NÃO-VÁCUO** — a vencedora é a perdedora prefixada por composto que **restringe** (id/classe/atributo), logo a perdedora segue decidindo fora do subconjunto | `D014-M1` ignorar `!important` → (d) vira "morta" · `D014-M2` decidir só por ordem → (a)/(c) erram · `D014-M3` normalizar contexto de mídia por **texto** → (b) e o caso real erram · **`D014-M9`** tratar todo prefixo como vácuo → (e) vira "morta" |
 | C2 | A varredura, sobre a **árvore real**, enumera os mutantes de CSS de **todas** as campanhas pelo preflight — **população E âncora** (`find`/`repl`, por **E3**) — e acusa **zero** regras mortas, sobre **censo de parse pinado** (**E6**) | `D014-VARR1` · `tests_014_regra_morta.js` · população e âncora lidas de `--preflight` (nunca dos pares da matriz); o censo de regras/declarações por folha é conferido contra o registro **antes** do veredito; o veredito é sempre o **par (mortas, indecidíveis)**, nunca um número só (**E9**); saída: 0 mortas, com a lista dos avaliados e dos excluídos | `D014-M4` planta em `ui_p50_v32.css` uma regra morta nova, na árvore → a varredura **tem** de acusá-la pelo **veredito** — forma executável por **E10**: troca censo-neutra que planta dominadora de prefixo vácuo; a adição literal morreria pelo censo (E6), não pela detecção |
 | C3 | A auto-exclusão nominal tem dentes e **não é passe livre** | `D014-EXC1` · `tests_014_regra_morta.js` · (a) motivo do vocabulário fechado `oraculo-de-fonte` \| `fallback-declarado` \| **`achado-aberto`** (por **E7**); (b) curinga, campo vazio ou não-texto **não excluem**; (c) exclusão que nomeia mutante inexistente **reprova** (oráculo: preflight); (d) exclusão `oraculo-de-fonte` registra **qual propriedade** o oráculo afirma e **quais arquivos** ele lê; **(e) exclusão `achado-aberto` exige `achado` (id do backlog) E `remocao_prevista`** — sem os dois, não exclui | `D014-M5` aceitar curinga (shape do `IC-9.1`) · `D014-M6` deixar de conferir a existência do mutante nomeado — carrasco executável dos dois: `D014-DISC1`, por **E11** (julgador enfraquecido fica verde sobre registro são) |
-| C4 | A linha que **decide** a composição da tela de pergunta ganha carrasco | `P52-LAY2` (**gate existente**, `tests_p52_chromium.js:231` — suíte **não editada**, só invocada) · mutação de `ui_p52_workspace_v32.css:77` para uma coluna · harness **`d014vis`** (`tests_014_mutants_visual.js`), separado por **E1** | `D014-M10` · `grid-template-columns: minmax(0, 1fr) clamp(320px, 23vw, 440px)` → `minmax(0, 1fr)`; motivo esperado `/a pergunta não está à esquerda do mapa\|as colunas se sobrepõem\|colunas desalinhadas no topo/` |
+| C4 | A colocação que **decide** a composição da tela de pergunta ganha carrasco | `P52-LAY2` (**gate existente**, `tests_p52_chromium.js:231` — suíte **não editada**, só invocada) · mutação de `ui_p52_workspace_v32.css:86` — `#p50-shell` para a coluna 1, a mesma célula de `#app` (**E13**; a forma anterior, `:77` "para uma coluna", foi medida **SOBREVIVENTE** no job `visual`) · harness **`d014vis`** (`tests_014_mutants_visual.js`), separado por **E1** | `D014-M10` · `body[data-uxscreen="question"] .wrap > #p50-shell { grid-column: 2; … }` → `grid-column: 1` (**E13**); motivo esperado, **inalterado**: `/a pergunta não está à esquerda do mapa\|as colunas se sobrepõem\|colunas desalinhadas no topo/` |
 | C5 | A cobertura da varredura é **derivada do builder**, não digitada | `D014-COB1` · `tests_014_regra_morta.js` · a lista e a **ordem** das folhas injetadas saem de `build_v32_html.py`; folha injetada pelo builder e não lida pela varredura reprova; a ordem observada casa com a declarada em `specs/PHASE_5_0_REV_B.md:1606` | `D014-M7` acrescentar uma folha ao builder sem tocar a varredura (precedente: `D011-M18` muta `build_v32_html.py`) |
 | C6 | O que a varredura **não** decide é nomeado e contado — nunca engolido | `D014-IND1` · `tests_014_regra_morta.js` · declaração cuja competição não cai na relação decidível sai em lista **nomeada e contada**; SKIP silencioso é FAIL (R10 §2). **Duas contagens, dois prazos** (**E9**): a **sintética** é pinada **agora** — na forma **veredito+razão** do caso (f), por **E12** — e é o oráculo de `D014-M8`; a da **árvore real** entra no registro quando o achado da E7 fechar | `D014-M8` descartar silenciosamente o indecidível → a contagem **sintética** muda |
 | C7 | A `KI-4` fecha **no mesmo PR** | **Sem gate novo** — o carrasco é **`IC-9.2`** (`check_mutation.py:895` · o objeto da exceção existe no harness) e **`IC-9.3`** (`:912` · não obsoleta, pelo registro). Corrigido por **E2** | — (criar gate aqui duplicaria o juiz) |
@@ -100,7 +100,7 @@ falha?** Onde não sei, está escrito.
 | C3 (b) | exceção com curinga passando a perdoar | precedente vivo: `IC-9.1` reprova exatamente isso |
 | C3 (c) | exclusão órfã sobrevivendo à remoção do mutante | preflight resolve no disco |
 | **C3 (d)** | exclusão que não registra o que o oráculo lê | ver §"A alínea em que quase escorreguei" |
-| C4 | mutação da linha vencedora sem gate que a pegue | `P52-LAY2:206-207` compara as caixas de `#app` e `#p50-shell`; com uma coluna elas empilham e `m.app.l >= m.shell.l` passa a ser verdadeiro → `detail` cresce → FAIL. **Raciocinado, não executado** — exige Chromium (§Não mensurável, item 2) |
+| C4 | mutação da colocação vencedora sem gate que a pegue | `P52-LAY2:206-207` compara as caixas de `#app` e `#p50-shell`; com `#p50-shell` em `grid-column: 1` os dois ocupam a **mesma célula** (linha 3, coluna 1) → `m.app.l >= m.shell.l` e `m.app.r > m.shell.l + 2` → `detail` cresce → FAIL com dois dos três motivos. **Medido em 2026-09-04** (E13), reprodução não-canônica, 5/5 viewports largas; fecho canônico no job `visual`. ~~A forma anterior (`:77`, "uma coluna") empilharia `#app` e `#p50-shell`~~ — **falso**: colocação explícita nunca empilha, e `grid-template-areas:"main side"` da 5.1 mantém a grade em duas colunas (E13) |
 | C5 | folha nova entrando no build sem a varredura saber | é literalmente o que aconteceu com a folha da 011 (`build_v32_html.py:76` → `:80`) |
 | **C6** | ~~**NÃO SEI se a alínea sobre a árvore real é não-vacuosa**~~ — **MEDIDO em 2026-09-01: 20 indecidíveis em 14 mutantes**, contra a estimativa pré-instrumento de ≥6. A alínea tem sujeito | a guarda do caso sintético **permanece**, e agora com outra função: é o oráculo pinável enquanto a árvore se mexe (E9). A estimativa de ≥6 errou por 3× — é a razão pela qual ela nunca foi critério |
 | **C3 (e)** | exclusão `achado-aberto` sem id de achado ou sem prazo passando a perdoar | é a cláusula 2 do `IC-9` aplicada aqui: *exceção sem prazo vira permissão permanente* (`known_issues.json → _meta`) |
@@ -310,10 +310,18 @@ O par `D014-M10`/`P52-LAY2` **exige Chromium** e é deferido ao job `visual`
    fora da relação decidível: depende do normalizador, que ainda não existe. Se
    der **zero**, a alínea da árvore real é vacuosa. **Guarda já na spec**: C6 tem
    caso indecidível **sintético** obrigatório. **Medição: Fase 4, `qa-engineer`.**
-2. **A morte de `D014-M10` por `P52-LAY2`.** Raciocinada sobre
+2. ~~**A morte de `D014-M10` por `P52-LAY2`.** Raciocinada sobre
    `tests_p52_chromium.js:206-207` (com uma coluna, `#app` e `#p50-shell`
    empilham e `m.app.l >= m.shell.l` passa a valer). **Não executada** — exige
-   Chromium, ausente nesta máquina. Fecha no job `visual`.
+   Chromium, ausente nesta máquina. Fecha no job `visual`.~~ **Corrigido pela
+   E13 (2026-09-04)**: o raciocínio era CSS errado — colocação explícita nunca
+   empilha, e `grid-template-areas:"main side"` da 5.1 (`ui_p50_v32.css:697`,
+   mesmo breakpoint) mantém a grade explícita em duas colunas seja qual for
+   `grid-template-columns`; a forma `:77` foi medida **SOBREVIVENTE** no job
+   `visual` (run 33516136516). A forma reancorada (`:86`, `grid-column: 2 → 1`)
+   foi medida **DETECTADO** em reprodução **não-canônica** (Chrome estável
+   local). O que segue não mensurável aqui é só a **contagem canônica**: fecha
+   no job `visual`.
 3. **Execução de qualquer suíte ou campanha.** Não rodei nenhuma: não é meu
    papel. Todo número desta spec vem de leitura da árvore ou de registro citado.
 4. **Sobreposição intra-arquivo** (regra posterior anulando outra da **mesma**
@@ -642,6 +650,101 @@ dentro do remédio) e segue o precedente registrado três vezes na casa
 (`d009`/`d010`/`d011`); a lacuna residual — editar `regra_morta.json` não
 re-dispara `d014` — permanece dita na trilha do `mutation_map.json`, coberta
 pelo stage `regra-morta`, que roda em todo pipeline.
+
+## Errata E13 — o carrasco que, medido, não media (T081)
+
+**Delegação registrada**: `qa-engineer`, T081 — diagnóstico do não-KILL do job
+`visual` e reancoragem pela rota (A), aprovada pelo orquestrador em
+**2026-09-04**. Nenhuma asserção de gate muda; `tests_p52_chromium.js` segue
+**invocado, nunca editado**; o `reason` do par é o mesmo. O que muda é a
+**forma do mutante** — e as três frases desta spec que afirmavam CSS errado.
+
+---
+
+### E13 · `D014-M10` reancorado: colocação explícita nunca empilha
+
+**Antes**: a célula C4, a linha C4 da guarda de tautologia e o item 2 de §Não
+mensurável diziam que mutar `ui_p52_workspace_v32.css:77`
+(`grid-template-columns: minmax(0, 1fr) clamp(320px, 23vw, 440px)` →
+`minmax(0, 1fr)`) deixaria a tela de pergunta com **uma coluna**, `#app` e
+`#p50-shell` **empilhariam**, e `m.app.l >= m.shell.l` faria `P52-LAY2`
+reprovar. **Raciocinado, não executado.**
+
+**Fato medido** — job `visual` do CI, run 33516136516 (`workflow_dispatch`
+sobre `5cf7c82`, 2026-09-01; os arquivos do ciclo são byte-idênticos até
+`a65c19d`): `SOBREVIVENTE D014-M10 · gate P52-LAY2 · o gate esperado NÃO
+reprovou — sem poder discriminante`. Diagnóstico por reprodução em 2026-09-04
+(Chrome estável local via `CHROME_PATH`, Playwright 1.62.1, worktree efêmera em
+`5cf7c82`, removida — **não-canônico**, declarado):
+
+1. **A mutação chegou ao artefato.** O HTML construído sob mutação traz o
+   marcador do mutante 1×, com SHA-256 diferente do base; o gate abre
+   exatamente esse arquivo (`tests_p52_chromium.js:24-25` ↔
+   `build_v32_html.py:29`). O harness íntegro reproduziu o veredito do CI com
+   a linha crua `PASS P52-LAY2`. Falha de ciclo: **excluída**.
+2. **Tirar o segundo track não tira a segunda coluna.**
+   `grid-template-areas:"main side"` (`ui_p50_v32.css:697`, camada 5.1,
+   **mesmo breakpoint** `min-width:1180px`, commit `4aa1f12` de 2026-08-22)
+   segue **viva** — a varredura desta demanda a classificou assim, "por
+   ausência de concorrente", e a spec não ligou o fato à morte raciocinada.
+   Área nomeada define grade explícita de duas colunas **independentemente
+   de** `grid-template-columns`; a coluna não dimensionada cai em
+   `grid-auto-columns: auto`. Medido em 1280 após `toQuestion(3)`:
+   `grid-template-columns` resolvido `842.266px 320px` na base →
+   `861.469px 300.797px` sob a mutação; `grid-template-areas` segue
+   `"main side"`; o rodapé `1 / -1` segue com a largura útil inteira; os
+   quatro predicados de `P52-LAY2` continuam verdadeiros em
+   1280/1440/1920/2560/3440. A única coisa que a mutação alterava era a
+   **largura da coluna 2** — que o gate não mede.
+3. **Mesmo sem as áreas, colocação explícita nunca empilha.** Variante de
+   controle com `grid-template-areas: none` acrescentado: `#p50-shell {
+   grid-column: 2 }` (`:86`) cria **track implícito** — pergunta e mapa
+   continuam lado a lado e só o rodapé encolhe para a coluna 1 (`-1` conta a
+   grade **explícita**): `P52-LAY2` reprova por *"rodapé com 861px de 1193px
+   úteis"*, motivo **fora** do `reason` → SOBREVIVENTE do mesmo jeito.
+4. **O gate tem poder discriminante sobre a propriedade certa.** Variante
+   `#p50-shell { grid-column: 2 }` → `grid-column: 1`: `#app` e `#p50-shell`
+   ocupam a **mesma célula** (linha 3, coluna 1) e `P52-LAY2` reprova em todas
+   as viewports largas com *"a pergunta não está à esquerda do mapa · as
+   colunas se sobrepõem"* — dois dos três motivos da célula C4. O harness
+   íntegro, só com `find`/`repl` trocados: **DETECTADO 1/1**.
+5. **O instrumento não errou — não vê isso.** `regra_morta.js` responde
+   **viva** para a declaração da forma `:77` (`censo_ok`, zero mortas) — e
+   mesmo assim o gate não a via: é por declaração e por cascata; interação
+   entre propriedades (`areas` × `columns`) e layout estão fora do que ele
+   mede. *Declaração viva* não implica *mutação observável pelo gate* —
+   achado repassado ao `doc-writer` para id permanente, fora desta errata.
+   Para a forma `:86` a resposta é **indecidível**
+   (`gramatica-de-seletor-recusada`: o combinador `>` de
+   `.wrap > #p50-shell` está fora da relação decidível — C6/E9), nomeada e
+   contada: a lista da árvore passa de 20 indecidíveis em 14 mutantes para
+   **21 em 15**, contagem **não pinada** (E9, segundo prazo); `mortas` segue
+   0 e `tests_014_regra_morta.js` segue 7/7. A vida desta declaração é
+   provada pelo **kill medido**, não pela varredura.
+
+**Datação** (`git log -S`): áreas da 5.1 `4aa1f12` (2026-08-22) → regra da 5.2
+`c1e3649` (2026-08-24) → mutante `7c93899` (2026-09-01). O par **nasceu sem
+faca**; não apodreceu — distinto do `EA-30` (prova de discriminância vencida).
+
+**O que passa a valer**: `D014-M10` muta `ui_p52_workspace_v32.css:86` —
+`body[data-uxscreen="question"] .wrap > #p50-shell { grid-column: 2; … }` →
+`grid-column: 1` — no **mesmo arquivo, mesmo bloco `@media`, mesma camada
+5.2**; o `desc` afirma a propriedade que a mutação viola e que `P52-LAY2` mede
+(*no desktop o mapa e a pergunta ficam lado a lado*); o `reason` é o mesmo. O
+par **renasce** em `mutation-matrix.json` com `resultado: "NÃO EXECUTADO"` e
+causa `ambiente sem chromium` — o fecho canônico é o job `visual` (T081
+reaberta), nunca a reprodução local. A forma `:77` fica registrada como
+**refutada, com a causa** (R2 §5), no par e aqui, para que não renasça. No
+não-KILL, a nota do bloco do harness passa a carregar a **sonda diagnóstica**
+(SHA-256 e contagem do `repl` no HTML sob mutação, linha crua do gate,
+`grid-template-columns`/`grid-template-areas` resolvidos e caixas em 1280) —
+a única parte da saída que `check_mutation.py` ecoa no log do CI além das duas
+últimas linhas. A justificativa da T050 — *a propriedade é medida pelo par
+`D014-M10`/`P52-LAY2`* — era **falsa** na forma `:77` e passa a ser
+verdadeira; aposentadoria de `M51-01` e remoção da `KI-4` permanecem.
+**Vedado**: afrouxar o `reason`, trocar o gate por um que passe, editar
+`tests_p52_chromium.js` (rota B) ou converter o par em dívida — o mesmo
+conjunto que a E7 e a R10 §1/§2 já vedavam.
 
 ## Fora de escopo
 

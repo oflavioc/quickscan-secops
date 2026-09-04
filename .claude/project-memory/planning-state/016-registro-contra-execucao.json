@@ -1,9 +1,29 @@
 {
   "demanda": "016-registro-contra-execucao",
-  "phase": "refinement",
+  "phase": "specify",
   "spec_dir": "specs/016-registro-contra-execucao",
   "branch": "feature/016-registro-contra-execucao",
   "brief": "Vigiar o registro contra a execucao. Duas instancias da MESMA propriedade ausente, ambas com id permanente: EA-33 - demanda mesclada na develop com a Fase 6 aberta nao e reprovada por gate nenhum (check_state.py:52-53 exige pr_url em done, mas nada exige que branch mesclada CHEGUE a done; cinco instancias, a quinta criada pelo orquestrador no mesmo ciclo em que o achado foi aberto) - e EA-14/borda 8 - sob MUTATION_DEFER_MISSING=1 a campanha exigida sem ambiente vira [DEFER] e o stage passa, mas NADA verifica que o job irmao executou a campanha delegada: um DEFER cujo job falhe, seja pulado ou nao rode deixa a campanha SEM EXECUCAO e SEM FAIL. A spec da 013 registrou a borda 8 como demanda propria (spec 013 §Riscos 4: vincular o DEFER a execucao efetiva exige mexer em verify.yml e/ou em protecao de branch).",
   "achado_real": "EA-33 e EA-14 no .claude/BACKLOG.md, ambos abertos. Custo medido: o ciclo de 2026-09-01 a 2026-09-04 gastou um dia de trabalho retroativo fechando quatro demandas mescladas com a Fase 6 aberta (009, 010, 011, 013 - a 011 sem aceite nenhum, com a divida DECLARADA no proprio relatorio-final e ninguem a recolheu), e duas demandas seguidas precisaram ir ao log do CI A MAO para saber se um deferimento tinha fechado.",
-  "autorizacao": "Usuario no chat, 2026-09-04: 'Prossiga com a EA-33 e a borda 8'. Recomendacao do orquestrador aceita."
+  "autorizacao": "Usuario no chat, 2026-09-04: 'Prossiga com a EA-33 e a borda 8'. Recomendacao do orquestrador aceita.",
+  "refinement": {
+    "status": "approved",
+    "data": "2026-09-04",
+    "artefato": "specs/016-registro-contra-execucao/refinement.md",
+    "medicoes": "specs/016-registro-contra-execucao/medicoes-fase0.md",
+    "propriedade": "P16 - o merge e o vencimento de toda promessa feita a verificacao. P16.a phase do planning-state x historico do git; P16.b [DEFER] x execucao. Propriedade de PROCESSO (R4/R14/R10 §2), NAO invariante de produto - fica fora de invariants.json."
+  },
+  "portao_fase0": {
+    "aprovacao": "Usuario no chat, 2026-09-04, por AskUserQuestion. Duas respostas literais: rota da borda 8 = 'Tornar verify e visual obrigatorios'; portao = 'Aprovado, com minhas recomendacoes nas demais'.",
+    "P1_rota_da_borda_8": "PROTECAO DE BRANCH. Nao e R-b1 (levar Chromium ao verify) nem R-b2 (recibo+reconcile). A medicao do build-engineer derrubou R-b1 pelo custo: as campanhas dominam por DUAS ordens de grandeza - 42 a 55 min contra 28-35 s de instalacao -, logo o verify cresceria ~45 min por PR. E revelou o credor real: develop NAO TEM check obrigatorio nenhum hoje (so ruleset com deletion + non_fast_forward), o que explica por dado os 65 segundos entre o job fechar e o merge acontecer no PR #29.",
+    "P2": "Usuario configura verify e visual como checks obrigatorios na develop, mais 'require branches to be up to date'. Ato dele, fora do repositorio.",
+    "P3": "Valvula fecho_pendente {motivo, dono, prazo} ENTRA - senao a recusa correta da 013 vira vermelho cronico (EA-5) e a alternativa seria mover a done para calar o gate, que e o carimbo que a 013 combate. Padrao ja ratificado do IC-9.",
+    "P4": "Exclusao nominal IMPRESSA para 003, 009 e 010, com fonte citada, sem prazo - foram fechadas antes de o gate existir (R13). Escrita retroativa de spec-validate.md de 009/010 fica opcional, fora desta demanda.",
+    "P5": "UMA demanda. A condicao do PO era P1 = R-b1; a rota escolhida nao e nenhuma das duas dele, e nao ha red que so se prove no CI, entao a razao de partir em duas cai.",
+    "P6": "Os tres termos do §Vocabulario entram no CONTEXT.md no mesmo PR (pinado -> gen_pins). 'promessa de execucao' e 'deferimento vencido' ficam de fora - sob a rota escolhida a promessa continua existindo, mas quem a cobra e a protecao de branch.",
+    "P7": "A frase da skill (SKILL.md:66, 'done so com PR aberto e CI verde') passa a 'done com a Fase 6 completa e o PR aberto; CI verde e condicao do merge', com linha em sdd.md. Sem isso ha impasse: o check pre-merge exigiria done e o done exigiria CI verde.",
+    "P8": "Estado terminal para demanda abandonada NAO entra - nao e EA-33 (nao ha merge). Candidata registrada para o doc-writer com a cadeia state-eval.sh:58-67.",
+    "P9": "Clausula git->registro ENTRA com PISO no SHA do merge desta demanda. Censo do build-engineer: 6 demandas mescladas com phase != done no commit do merge (009, 010, 011, 013, 014, 015); feature/006 nao existe."
+  },
+  "ideia_para_a_spec": "A rota escolhida move a cobranca para FORA do repositorio - e o repositorio inteiro e construido sobre 'regra que a maquina nao sustenta e prosa' (R6, achado E2). Entao a spec deve incluir um gate que verifique a PROPRIA protecao de branch: uma secao no compliance-audit que consulta a API e reprova se verify/visual nao forem checks obrigatorios na develop. Sem ele, a configuracao pode ser desfeita em silencio e ninguem sabe - o mesmo defeito, um nivel acima. O build-engineer ja mediu que o token TEM permissao para ler (4 chamadas com resposta de conteudo, nenhum 403)."
 }

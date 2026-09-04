@@ -1,0 +1,9 @@
+{
+  "demanda": "016-registro-contra-execucao",
+  "phase": "refinement",
+  "spec_dir": "specs/016-registro-contra-execucao",
+  "branch": "feature/016-registro-contra-execucao",
+  "brief": "Vigiar o registro contra a execucao. Duas instancias da MESMA propriedade ausente, ambas com id permanente: EA-33 - demanda mesclada na develop com a Fase 6 aberta nao e reprovada por gate nenhum (check_state.py:52-53 exige pr_url em done, mas nada exige que branch mesclada CHEGUE a done; cinco instancias, a quinta criada pelo orquestrador no mesmo ciclo em que o achado foi aberto) - e EA-14/borda 8 - sob MUTATION_DEFER_MISSING=1 a campanha exigida sem ambiente vira [DEFER] e o stage passa, mas NADA verifica que o job irmao executou a campanha delegada: um DEFER cujo job falhe, seja pulado ou nao rode deixa a campanha SEM EXECUCAO e SEM FAIL. A spec da 013 registrou a borda 8 como demanda propria (spec 013 §Riscos 4: vincular o DEFER a execucao efetiva exige mexer em verify.yml e/ou em protecao de branch).",
+  "achado_real": "EA-33 e EA-14 no .claude/BACKLOG.md, ambos abertos. Custo medido: o ciclo de 2026-09-01 a 2026-09-04 gastou um dia de trabalho retroativo fechando quatro demandas mescladas com a Fase 6 aberta (009, 010, 011, 013 - a 011 sem aceite nenhum, com a divida DECLARADA no proprio relatorio-final e ninguem a recolheu), e duas demandas seguidas precisaram ir ao log do CI A MAO para saber se um deferimento tinha fechado.",
+  "autorizacao": "Usuario no chat, 2026-09-04: 'Prossiga com a EA-33 e a borda 8'. Recomendacao do orquestrador aceita."
+}

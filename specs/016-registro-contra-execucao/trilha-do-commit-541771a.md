@@ -62,3 +62,40 @@ no Windows).
 **razão** do vermelho, não pela cor. Foi assim que o defeito apareceu — e é a
 mesma disciplina que a demanda 014 nomeou ao provar que um mutante pode morrer
 pelo motivo errado.
+
+---
+
+## Segunda ocorrência — `d130a04`, e por que isso muda a conclusão
+
+O commit **`d130a04`** (`doc(016): errata E4 — citação trocada entre E5 e EA-5`)
+carrega **também**: o schema do planning-state (**G1**, `data-engineer`),
+`design-decisions.md` e o ADR 0001 (**G2**, `doc-writer`), e o `spec-validate.md`
+que estava não rastreado.
+
+Mesma causa, mesmo turno de trabalho, **quatro horas depois** de o erro anterior
+ter sido registrado neste arquivo: `git add -A` numa worktree onde agentes
+escrevem em paralelo.
+
+### O que isso ensina, e é mais do que o primeiro caso
+
+Uma ocorrência é deslize. **Duas, depois de a primeira ter sido escrita e
+commitada, é processo defeituoso** — e o defeito não é a falta de atenção: é o
+comando. `git add -A` numa worktree compartilhada **não pode** ser usado com
+segurança, porque o orquestrador não controla o instante em que cada agente
+grava. Registrar o erro não o impede; só a mudança de comando impede.
+
+**Regra operacional que passa a valer**: enquanto houver delegação ativa na
+worktree, o orquestrador commita **por caminho nominal**, nunca com `-A`. O `-A`
+volta a ser seguro só quando nenhum agente está em voo — e o `gen_pins.py`, que
+exige árvore limpa, já é o sinal natural desse momento.
+
+### Por que, de novo, o histórico não foi reescrito
+
+As mesmas razões do primeiro caso, mais uma: a segunda ocorrência **é a
+evidência** de que registrar não bastava. Apagá-la deixaria só a primeira, e a
+primeira sozinha lê como acidente. As duas juntas leem como o que são — e é
+por isso que a regra acima existe.
+
+O paralelo com o produto é exato: a demanda 014 mostrou que **gate que promete e
+não mede** cria falsa segurança. Um registro de erro que não muda o
+comportamento é a mesma coisa, aplicada a processo.

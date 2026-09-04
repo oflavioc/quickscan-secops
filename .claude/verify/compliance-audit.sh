@@ -4,7 +4,8 @@
 #   bash .claude/verify/compliance-audit.sh            # todas as seções
 #   bash .claude/verify/compliance-audit.sh --rule=X   # uma seção
 #
-# Seções: hooks, deny, invariantes, suites, paths, known-issues, waivers, backlog
+# Seções: hooks, deny, branch-protection, invariantes, suites, paths,
+#         known-issues, waivers, backlog
 #
 # Diferente do run.sh (que verifica artefatos), isto audita o CUMPRIMENTO das
 # regras — inclusive da própria configuração: a referência que inspirou esta
@@ -17,10 +18,11 @@ PYBIN=python3; command -v python3 >/dev/null 2>&1 || PYBIN=python
 FILTRO=""
 for arg in "$@"; do case "$arg" in --rule=*) FILTRO="${arg#--rule=}";; esac; done
 
-PASS=0; FAIL=0
+PASS=0; FAIL=0; WARN=0
 secao() { [ -z "$FILTRO" ] || [ "$FILTRO" = "$1" ]; }
 ok()    { PASS=$((PASS+1)); echo "[PASS] $1"; }
 falha() { FAIL=$((FAIL+1)); echo "[FAIL] $1"; shift; printf '%s\n' "$@" | sed 's/^/       /'; }
+aviso() { WARN=$((WARN+1)); echo "[WARN] $1"; shift; printf '%s\n' "$@" | sed 's/^/       /'; }
 
 # ---------------------------------------------------------------- hooks
 if secao hooks; then
@@ -56,6 +58,78 @@ PY
 )
   if [ -z "$MISS" ]; then ok "permissions.deny cobre TODOS os paths do boundary.json (Edit+Write)"
   else falha "boundary sem deny correspondente:" "$MISS"; fi
+fi
+
+# ------------------------------------------------------ branch-protection
+# D016-PROT1 (T042, R6/E2): a proteção de `develop` no GitHub é DADO, não
+# prosa — pode ser desfeita em silêncio no painel. Este bloco NÃO decide:
+# chama o gate `check_branch_protection.py --json` (dono: qa-engineer;
+# instrumento `branch_protection.py`: build-engineer) e roteia pela chave
+# `severidade` do JSON (PASS/FAIL/WARN) — nunca por regex sobre a prosa que
+# o próprio gate imprime em stderr. Rede ausente/sem permissão vira WARN
+# aqui em ambiente local e FAIL sob GITHUB_ACTIONS — decisão já tomada pelo
+# gate (política T7); esta seção só relata o que ele devolveu.
+if secao branch-protection; then
+  BP_STDOUT=$("$PYBIN" .claude/verify/check_branch_protection.py --json 2>/dev/null)
+  BP_OUT=$(printf '%s' "$BP_STDOUT" | "$PYBIN" - <<'PY'
+import json, sys
+
+raw = sys.stdin.read()
+try:
+    d = json.loads(raw)
+except Exception as e:
+    print("FAIL")
+    print(f"check_branch_protection.py --json não devolveu JSON válido: {type(e).__name__}: {e}")
+    raise SystemExit
+
+SEVS = {"PASS", "FAIL", "WARN"}
+sev = d.get("severidade")
+if sev not in SEVS:
+    print("FAIL")
+    print(f"severidade fora do vocabulário PASS/FAIL/WARN: {sev!r}")
+    raise SystemExit
+
+sonda = d.get("sonda") or {}
+vivo = d.get("vivo")
+if not sonda.get("ok", False):
+    instr = (sonda.get("instrumento") or {})
+    print(sev)
+    print("sonda D016-PROT1 não bateu (%s divergência(s), %s falha(s) de guarda, instrumento presente: %s) "
+          "— API não consultada (C7)"
+          % (sonda.get("falhas", "?"), len(sonda.get("guarda") or []), instr.get("presente")))
+    raise SystemExit
+
+if vivo is None:
+    print(sev)
+    print("classificação ao vivo indisponível: " + str(d.get("erro")))
+    raise SystemExit
+
+v = vivo.get("veredito")
+faltam = vivo.get("faltam") or []
+mecanismo = vivo.get("mecanismo")
+if v == "PROTEGIDA":
+    linha = "develop PROTEGIDA · %s · checks obrigatórios: %s" % (
+        mecanismo, ", ".join(vivo.get("contextos") or []))
+elif v == "DESPROTEGIDA":
+    linha = "develop DESPROTEGIDA · faltam: %s · mecanismo lido: %s" % (", ".join(faltam), mecanismo)
+else:
+    causa, detalhe = vivo.get("causa"), vivo.get("causa_detalhe")
+    linha = "branch-protection: %s (%s%s)" % (v, causa, (": " + detalhe) if detalhe else "")
+avisos = vivo.get("avisos") or []
+if avisos:
+    linha += " · avisos: " + " | ".join(avisos)
+print(sev)
+print(linha)
+PY
+)
+  BP_SEV=$(printf '%s\n' "$BP_OUT" | sed -n '1p')
+  BP_MSG=$(printf '%s\n' "$BP_OUT" | sed -n '2p')
+  case "$BP_SEV" in
+    PASS) ok "branch-protection: $BP_MSG";;
+    WARN) aviso "branch-protection: $BP_MSG";;
+    FAIL) falha "branch-protection:" "$BP_MSG";;
+    *)    falha "branch-protection: saída inesperada do parser (gate ou wrapper quebrado)" "$BP_OUT";;
+  esac
 fi
 
 # ----------------------------------------------------------- invariantes
@@ -208,29 +282,103 @@ PY
     ok "regra-morta: $RM_N exceção(ões) nominal(is), todas com dono e remoção prevista:"
     printf '%s\n' "$RM_LISTA" | sed 's/^/       /'
   fi
+
+  # TERCEIRA fonte de exceção nominal: `fecho.json → excluidas_por_r13`
+  # (demanda 016, T042). Shape próprio, de novo — identifica por CHAVE
+  # (slug da demanda), não por `id`/par (harness, mutante). ESTRUTURAL por
+  # desenho (fases seladas sob o processo antigo não ganham spec-validate.md
+  # retroativo por mandato — R13): sem prazo, `fonte` obrigatória. A
+  # auditoria LISTA e cobra `fonte`; o gate FEC3 (`check_fecho.py`, via
+  # `fecho.py`) já julga se a exclusão é obsoleta/malformada — não duplica.
+  FR=$("$PYBIN" - <<'PY'
+import json, sys
+sys.stdout.reconfigure(encoding="utf-8")  # R7 §2
+P = ".claude/verify/fecho.json"
+
+def corta(s, n):
+    s = " ".join((s or "").split())
+    return s if len(s) <= n else s[:n - 1] + "…"
+
+try:
+    d = json.load(open(P, encoding="utf-8"))
+except FileNotFoundError:
+    print("AUSENTE " + P)
+    raise SystemExit
+except Exception as e:
+    print("FALHA %s ilegível para o parser de exceções: %s" % (P, type(e).__name__))
+    raise SystemExit
+
+excl = d.get("excluidas_por_r13")
+if not isinstance(excl, dict):
+    print("FALHA %s: `excluidas_por_r13` ausente ou não é objeto — leitura sem sujeito não mede nada" % P)
+    raise SystemExit
+if not excl:
+    print("FALHA %s: `excluidas_por_r13` não declara exceção alguma — leitura sem sujeito não mede nada" % P)
+    raise SystemExit
+
+for demanda in sorted(excl):
+    e = excl[demanda]
+    if not isinstance(e, dict):
+        print("FALHA excluidas_por_r13/%s: entrada que não é objeto" % demanda)
+        continue
+    fonte = (e.get("fonte") or "").strip()
+    artefatos = e.get("artefatos_ausentes") or []
+    if not fonte:
+        print("FALHA excluidas_por_r13/%s: sem `fonte` (exceção estrutural sem dono declarado)" % demanda)
+        continue
+    print("LISTA %s · artefatos ausentes: %s · fonte: %s"
+          % (demanda, ", ".join(artefatos) if artefatos else "(nenhum)", corta(fonte, 110)))
+PY
+)
+  FR_FALHA=$(printf '%s\n' "$FR" | sed -n 's/^FALHA //p')
+  FR_LISTA=$(printf '%s\n' "$FR" | sed -n 's/^LISTA //p')
+  FR_AUSENTE=$(printf '%s\n' "$FR" | sed -n 's/^AUSENTE //p')
+  if [ -z "$FR_LISTA" ]; then FR_N=0; else FR_N=$(printf '%s\n' "$FR_LISTA" | grep -c ''); fi
+  if [ -n "$FR_FALHA" ]; then
+    falha "fecho.json/excluidas_por_r13: exceção estrutural SEM fonte:" "$FR_FALHA"
+  elif [ -n "$FR_AUSENTE" ]; then
+    falha "fecho.json: registro de exceções (excluidas_por_r13) ausente — a auditoria ficaria cega:" "$FR_AUSENTE"
+  else
+    ok "fecho.json/excluidas_por_r13: $FR_N exceção(ões) estrutural(is), todas com fonte:"
+    printf '%s\n' "$FR_LISTA" | sed 's/^/       /'
+  fi
 fi
 
 # ---------------------------------------------------------------- waivers
 if secao waivers; then
   if [ -d ".claude/project-memory/planning-state" ]; then
     # EA-2: casar a CHAVE JSON estruturada, nunca substring em prosa (grep -l
-    # listava planning-state cujo brief apenas mencionava "tdd_waivers")
+    # listava planning-state cujo brief apenas mencionava "tdd_waivers").
+    # `fecho_pendente` (demanda 016, P3/T5) é a MESMA classe de válvula —
+    # rastro, não obstáculo — e entra ao lado de `tdd_waiver` pela chave.
     W=$("$PYBIN" - <<'PY'
 import glob, json, os, sys
 sys.stdout.reconfigure(encoding="utf-8")  # R7 §2
 for p in sorted(glob.glob(".claude/project-memory/planning-state/*.json")):
+    rel = p.replace(os.sep, "/")
     try:
         d = json.load(open(p, encoding="utf-8"))
-        if isinstance(d, dict) and "tdd_waiver" in d:
-            print(p.replace(os.sep, "/"))
     except Exception as e:  # ilegível não é pulado em silêncio (R10 §2) — entra na lista de revisão
-        print(p.replace(os.sep, "/") + f" (ilegível para o parser de waivers: {type(e).__name__})")
+        print(rel + f" (ilegível para o parser de waivers: {type(e).__name__})")
+        continue
+    if not isinstance(d, dict):
+        continue
+    if "tdd_waiver" in d:
+        print(f"tdd_waiver · {rel}")
+    fp = d.get("fecho_pendente")
+    if isinstance(fp, dict):
+        motivo = fp.get("motivo") or "?"
+        dono = fp.get("dono") or "?"
+        prazo = fp.get("prazo") or "?"
+        print(f"fecho_pendente · {rel} · motivo: {motivo} · dono: {dono} · prazo: {prazo}")
+    elif fp is not None:
+        print(f"fecho_pendente · {rel} (forma inesperada: {type(fp).__name__}, não objeto)")
 PY
 )
-    if [ -z "$W" ]; then ok "waivers TDD: nenhum ativo"
-    else ok "waivers TDD ativos (listados para revisão):"; printf '%s\n' "$W" | sed 's/^/       /'; fi
+    if [ -z "$W" ]; then ok "waivers (tdd_waiver + fecho_pendente): nenhum ativo"
+    else ok "waivers (tdd_waiver + fecho_pendente) ativos (listados para revisão):"; printf '%s\n' "$W" | sed 's/^/       /'; fi
   else
-    ok "waivers TDD: máquina SDD ainda não instalada (Onda 2) — nada a listar"
+    ok "waivers: máquina SDD ainda não instalada (Onda 2) — nada a listar"
   fi
 fi
 
@@ -308,5 +456,5 @@ PY
 fi
 
 echo "----"
-echo "compliance: $PASS PASS · $FAIL FAIL"
+echo "compliance: $PASS PASS · $FAIL FAIL · $WARN WARN"
 exit "$FAIL"

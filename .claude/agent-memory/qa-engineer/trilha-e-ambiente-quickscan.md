@@ -49,6 +49,15 @@ nunca presumidos nem inventados:
    Isso **não** é dispensa de declarar: um `MODULE_NOT_FOUND` lido às pressas
    vira "gate não pôde ser executado" e se confunde com ambiente de verdade
    ausente (foi o que aconteceu na primeira sonda de `M51-03`).
+   **Receita confirmada em 2026-09-04 (fecho da 014):** worktree efêmera
+   **no scratchpad** (`git worktree add --detach <scratchpad>/wt HEAD`), sem
+   `node_modules`, com `export NODE_PATH=/c/Projetos/…/phase5-009/node_modules`
+   no Git Bash — a forma `/c/…` funcionou (o MSYS converte a variável ao
+   lançar o `node`; a forma `C:/…` continua sendo a segura fora do Git Bash).
+   Ali rodaram a suíte `d014`, a campanha `d014` (25 s, 9/9) e
+   `check_mutation.py` (recusa árvore suja — sabotagens vão por commit
+   efêmero + `reset --hard`). Ao fim: `git worktree remove` + `prune`, e
+   conferir `git worktree list` no clone.
 3. **Desvio de trilha.** As definições dos agentes pinam `model: fable`/`max`;
    as execuções vêm ocorrendo em **Opus** por indisponibilidade de créditos —
    confirmado de novo em 2026-08-29 (T002 da demanda 013, worktree

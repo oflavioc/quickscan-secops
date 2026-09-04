@@ -1,6 +1,6 @@
 {
   "demanda": "016-registro-contra-execucao",
-  "phase": "specify",
+  "phase": "tasks",
   "spec_dir": "specs/016-registro-contra-execucao",
   "branch": "feature/016-registro-contra-execucao",
   "brief": "Vigiar o registro contra a execucao. Duas instancias da MESMA propriedade ausente, ambas com id permanente: EA-33 - demanda mesclada na develop com a Fase 6 aberta nao e reprovada por gate nenhum (check_state.py:52-53 exige pr_url em done, mas nada exige que branch mesclada CHEGUE a done; cinco instancias, a quinta criada pelo orquestrador no mesmo ciclo em que o achado foi aberto) - e EA-14/borda 8 - sob MUTATION_DEFER_MISSING=1 a campanha exigida sem ambiente vira [DEFER] e o stage passa, mas NADA verifica que o job irmao executou a campanha delegada: um DEFER cujo job falhe, seja pulado ou nao rode deixa a campanha SEM EXECUCAO e SEM FAIL. A spec da 013 registrou a borda 8 como demanda propria (spec 013 §Riscos 4: vincular o DEFER a execucao efetiva exige mexer em verify.yml e/ou em protecao de branch).",
@@ -25,5 +25,21 @@
     "P8": "Estado terminal para demanda abandonada NAO entra - nao e EA-33 (nao ha merge). Candidata registrada para o doc-writer com a cadeia state-eval.sh:58-67.",
     "P9": "Clausula git->registro ENTRA com PISO no SHA do merge desta demanda. Censo do build-engineer: 6 demandas mescladas com phase != done no commit do merge (009, 010, 011, 013, 014, 015); feature/006 nao existe."
   },
-  "ideia_para_a_spec": "A rota escolhida move a cobranca para FORA do repositorio - e o repositorio inteiro e construido sobre 'regra que a maquina nao sustenta e prosa' (R6, achado E2). Entao a spec deve incluir um gate que verifique a PROPRIA protecao de branch: uma secao no compliance-audit que consulta a API e reprova se verify/visual nao forem checks obrigatorios na develop. Sem ele, a configuracao pode ser desfeita em silencio e ninguem sabe - o mesmo defeito, um nivel acima. O build-engineer ja mediu que o token TEM permissao para ler (4 chamadas com resposta de conteudo, nenhum 403)."
+  "ideia_para_a_spec": "A rota escolhida move a cobranca para FORA do repositorio - e o repositorio inteiro e construido sobre 'regra que a maquina nao sustenta e prosa' (R6, achado E2). Entao a spec deve incluir um gate que verifique a PROPRIA protecao de branch: uma secao no compliance-audit que consulta a API e reprova se verify/visual nao forem checks obrigatorios na develop. Sem ele, a configuracao pode ser desfeita em silencio e ninguem sabe - o mesmo defeito, um nivel acima. O build-engineer ja mediu que o token TEM permissao para ler (4 chamadas com resposta de conteudo, nenhum 403).",
+  "specify": {
+    "status": "approved",
+    "data": "2026-09-04",
+    "artefato": "specs/016-registro-contra-execucao/spec.md",
+    "portao": "Usuario no chat por AskUserQuestion: 'Aprovada, com as demais interpretacoes'. Contrariou T8-b do tech-lead: o check pre-merge ganha JOB PROPRIO chamado 'fecho', nao passo dentro do verify. Razao: verify vermelho durante toda a demanda ensina que vermelho e normal, e vermelho normal deixa de ser lido - mecanismo exato do EA-5. Um check 'fecho' vermelho diz algo verdadeiro e util. Custo aceito: TRES checks obrigatorios na develop.",
+    "aprovadas_como_propostas": "T2 (piso no merge-base 921977c, nao o SHA do proprio merge da 016 - R14 impediria grava-lo sem PR extra), T4 (prazo contra a data do commit, nao o relogio - R7 §6), T7 (WARN nomeado local / FAIL no CI, precedente EB-5 do check_evidence_bridge).",
+    "erratas": "E1 (job proprio fecho, tres checks, sonda de PROT1 de 8 para 9 casos) e E2 (achado de leitura do proprio TL: a prova de carga de C1(a) nao acusaria nada - 222edd5 e anterior ao piso 921977c na first-parent, entao responderia ANTERIOR AO PISO; o piso recua para 6dad53d na copia efemera)."
+  },
+  "plan": {
+    "status": "approved",
+    "data": "2026-09-04",
+    "artefato": "specs/016-registro-contra-execucao/plan.md",
+    "portao": "Usuario no chat, 2026-09-04: 'Prossiga com as tarefas da 016'.",
+    "desenho": "Job fecho roda em TODO evento, sem needs/if, checkout raso; imprime NAO JULGADO com motivo em push/dispatch/chore. Stage fecho local paralelo, heavy false, ZERO REDE por construcao - a rede fica so em branch_protection.py sob T7. Cada script partido em gate (qa-engineer) x instrumento (core/build-engineer) para manter R3 §2 por arquivo. fecho_pendente fora dos pins (estado por evento); fecho.json e branch_protection.json dentro (regua e expectativa de identidade). Sonda em fixtures_016 so com entradas, esperados pinados nos registros, cinco guardas. Waves 0-7; P2 entre a wave 4 e a 7.",
+    "medicoes_que_mudaram_o_desenho": "check_mutation.py:1287 casa targets por pertinencia EXATA - a notacao fixtures_016/** nao casa nada, entao as 35 fixtures vao listadas uma a uma. check_suites.py:50-51 registra harness pelo mutation_map.json - harness e entrada no mesmo commit (D4 da 013)."
+  }
 }

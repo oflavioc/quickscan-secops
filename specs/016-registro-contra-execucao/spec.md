@@ -24,7 +24,8 @@ desta spec e **não se reabrem aqui**. Em particular:
   cobra é o merge esperar o job `visual`.
 - **P2** — o usuário configura `verify` e `visual` como checks obrigatórios em
   `develop`, mais *require branches to be up to date*. Ato dele, fora do
-  repositório.
+  repositório. **(E1)** No portão da Fase 1 o próprio usuário estendeu P2 a
+  **três** checks — `verify`, `visual` e **`fecho`** (ver §Errata, E1).
 
 **O problema que esta spec existe para resolver, e que a Fase 0 não tinha**: a
 rota escolhida põe a cobrança **fora do repositório**. Este repositório nasceu
@@ -61,9 +62,9 @@ curta; o que exige medição futura está marcado.
 | **T3** | **Julgador puro + sonda em toda execução, com contagem pinada.** A função que decide (`julgar(estados, merges, existe, data_do_commit, piso, exclusoes) → vereditos`) **não lê git, disco, rede nem relógio**; a leitura é separada. Toda execução do gate roda antes uma **bateria sintética** (fixtures em arquivo próprio, veredito esperado por caso em `fecho.json → sonda.casos`) e reprova se qualquer caso divergir **ou se o total de casos ≠ pinado**. Mesmo desenho para `D016-PROT1` (respostas de API enlatadas). | Padrão da casa (IC-9.4/IC-10 da 013; `D014-DISC1` da 014): é o que torna o red **provável localmente**, dá aos mutantes um carrasco executável, e impede que o julgador fique mudo em silêncio (a contagem pinada é o censo da E6 da 014 aplicado à sonda). A sonda prova o **mecanismo**; a árvore real prova o **estado** — as duas rodam no mesmo stage, e a distinção fica escrita para ninguém citar uma como a outra. |
 | **T4** | **Prazo do `fecho_pendente` comparado à data do commit julgado** (`git log -1 --format=%cI HEAD`, dia ISO), **não ao relógio**. Vencido ⇔ `prazo < data_do_commit`. | R7 §6: relógio não entra em artefato verificado. Comparar ao relógio produziria um vermelho que aparece numa terça sem diff nenhum e some ao re-executar commit antigo — veredito não reprodutível. Comparar ao commit torna o veredito **função pura do repositório**: o próximo commit posterior ao prazo paga a dívida, e re-executar qualquer commit dá sempre o mesmo resultado. Alternativa por evento (como `evento_de_remocao` da 014) foi considerada: o evento natural (Fase 6 completa) é a própria resolução, não um prazo — não impede a exceção permanente, que é o que P3 quer impedir. |
 | **T5** | **A válvula só vale depois do merge.** `fecho_pendente` é aceito (impresso, sem reprovar) **somente** em demanda **mesclada** com `phase != done`. Em demanda `done` → FAIL (obsoleta). Em demanda **não mesclada** → FAIL ("válvula antes do vencimento"). **O check pré-merge não a honra**: pré-merge, só `done` passa. | É a letra do glossário (P6: *"exceção nominal gravada no planning-state de uma demanda **mesclada** sem fecho"*; `_Evitar_: done provisório, exceção de merge`). Se o pré-merge honrasse a válvula, ela viraria licença para mesclar sem fecho — o "done provisório" que a 013 combateu. Sem circularidade: a válvula é escrita **depois** da violação, por PR próprio (`chore/*`, fora da população), e a partir daí a direção pós-merge a lista em vez de reprovar. |
-| **T6** | **`D016-PROT1` lê dois endpoints e classifica em três vereditos.** Fontes: `GET /repos/{o}/{r}/rules/branches/{ref}` (rulesets ativos **agregados** para o ref) e `GET /repos/{o}/{r}/branches/{ref}` (`protection` da proteção clássica). Veredito **`PROTEGIDA`** sse os contextos `verify` **e** `visual` são obrigatórios por pelo menos um dos mecanismos **e** *up to date* está ligado (`strict_required_status_checks_policy: true` no ruleset); **`DESPROTEGIDA`** (FAIL em qualquer ambiente, nomeando o que falta) quando determinável e não cumprido; **`NÃO DETERMINÁVEL (<causa>)`** quando rede/permissão/identificação do repositório impedem a leitura. Token: `GITHUB_TOKEN` (CI) → `gh auth token` (rito local) → sem token (repositório público) — **a fonte do token é impressa, o token nunca**. Repositório: `GITHUB_REPOSITORY` ou `git remote get-url origin`. Expectativa em **dado**: `.claude/verify/branch_protection.json`. | Medido pelo `tech-lead` em 2026-09-04 (`gh api`, token de usuário): `/rules/branches/develop` devolve **exatamente** `[deletion, non_fast_forward]` do ruleset 21381133; `/branches/develop` devolve `protected: true` com `protection.enabled: false` e `enforcement_level: "off"` — a armadilha do `protected: true` que só o par de campos desfaz (mutante `D016-M15`). O endpoint agregado é o que o `GITHUB_TOKEN` alcança com `metadata: read` (permissão que todo token de Actions tem) — **a confirmar por execução no primeiro run do PR** (§Não mensurável 1); o clássico é legível sem autenticação em repositório público, como a §Medição 2 já mostrou. Os nomes dos contextos são os **nomes dos jobs** (`verify`, `visual`), conferidos no run 33869337902. |
+| **T6** | **`D016-PROT1` lê dois endpoints e classifica em três vereditos.** Fontes: `GET /repos/{o}/{r}/rules/branches/{ref}` (rulesets ativos **agregados** para o ref) e `GET /repos/{o}/{r}/branches/{ref}` (`protection` da proteção clássica). Veredito **`PROTEGIDA`** sse os contextos `verify`, `visual` **e** `fecho` (E1) são obrigatórios por pelo menos um dos mecanismos **e** *up to date* está ligado (`strict_required_status_checks_policy: true` no ruleset); **`DESPROTEGIDA`** (FAIL em qualquer ambiente, nomeando o que falta) quando determinável e não cumprido; **`NÃO DETERMINÁVEL (<causa>)`** quando rede/permissão/identificação do repositório impedem a leitura. Token: `GITHUB_TOKEN` (CI) → `gh auth token` (rito local) → sem token (repositório público) — **a fonte do token é impressa, o token nunca**. Repositório: `GITHUB_REPOSITORY` ou `git remote get-url origin`. Expectativa em **dado**: `.claude/verify/branch_protection.json`. | Medido pelo `tech-lead` em 2026-09-04 (`gh api`, token de usuário): `/rules/branches/develop` devolve **exatamente** `[deletion, non_fast_forward]` do ruleset 21381133; `/branches/develop` devolve `protected: true` com `protection.enabled: false` e `enforcement_level: "off"` — a armadilha do `protected: true` que só o par de campos desfaz (mutante `D016-M15`). O endpoint agregado é o que o `GITHUB_TOKEN` alcança com `metadata: read` (permissão que todo token de Actions tem) — **a confirmar por execução no primeiro run do PR** (§Não mensurável 1); o clássico é legível sem autenticação em repositório público, como a §Medição 2 já mostrou. Os nomes dos contextos são os **nomes dos jobs** (`verify`, `visual`), conferidos no run 33869337902; `fecho` é o id do job novo, sem `name:`, logo o contexto é o id (E1). |
 | **T7** | **Política de não-determinabilidade de `D016-PROT1`: local → `[WARN]` nomeado com a causa e a instrução; CI (`GITHUB_ACTIONS`) → `[FAIL]`.** Exceção única e permanente, declarada: sob proteção **clássica**, `strict` só é legível com `administration: read` (que o token de Actions não tem) — o gate imprime `up-to-date: não determinável (classic)` como `[WARN]` em qualquer ambiente e a linha de PASS diz o que mediu e o que não. | R10 §2: SKIP silencioso é FAIL; WARN **nomeado** não é SKIP. Precedente literal: política EB-5 do `check_evidence_bridge.py:32-36` (rede inalcançável → WARN local / FAIL no CI; 404 e adulteração → FAIL em todo lugar). O CI é onde a cobrança tem de ser determinável — se o token não lê, o remédio é `permissions:` no workflow ou um secret decidido pelo proprietário, nunca um WARN que vira permissão. A exceção do `strict` clássico é limitação do **mecanismo** do GitHub, não do ambiente; declará-la é mais honesto do que reprovar para sempre (EA-5) ou fingir que mediu. O proprietário **já usa ruleset** (`MyRuleSet`); a recomendação é configurar P2 **no ruleset**, onde tudo é legível. |
-| **T8** | **Onde cada coisa vive**: (a) direção pós-merge (C1–C4) → **stage novo `fecho`** em `pipeline.yaml`, `parallel: true`, `heavy: false`, `mutates: false` — roda no `run.sh`, no hook Stop (`--light`) e nos dois jobs do CI; (b) check pré-merge (C5) → **passo próprio no job `verify`** de `verify.yml`, depois do `compliance-audit`, sem `if:` (o script nomeia o contexto e sai 0 fora de PR); (c) `D016-PROT1` (C6) → **seção `branch-protection` do `compliance-audit.sh`**, não stage — roda no CI e no rito manual, **não** no hook Stop a cada turno. | (a) R10 §9: checagem nova entra no pipeline; um stage próprio mantém `check_state.py`/`check_tdd.py` byte-idênticos (um módulo por delegação) e dá ao veredito nome próprio na saída do `run.sh`. (b) O refinamento fixa que o pré-merge **não pode viver em `run.sh`** (o QA precisa do pipeline verde para escrever o `spec-validate`, que precede o `done`); passo próprio torna o FAIL **distinguível** de falha de produto pelo nome do passo, e **não estende P2** — um job próprio exigiria um terceiro check obrigatório, decisão que o usuário não tomou. O custo aceito: entre a abertura do PR e o commit do `done`, o check `verify` do PR fica vermelho **por desenho e com nome** (borda 6). (c) Chamada de rede a cada turno seria custo sem valor; o `compliance-audit` já é o lugar que "audita a própria configuração" (cabeçalho do script), e é executado em todo run do CI (`verify.yml:43-44`). |
+| **T8** | **Onde cada coisa vive**: (a) direção pós-merge (C1–C4) → **stage novo `fecho`** em `pipeline.yaml`, `parallel: true`, `heavy: false`, `mutates: false` — roda no `run.sh`, no hook Stop (`--light`) e nos dois jobs do CI; (b) check pré-merge (C5) → **job próprio `fecho`** em `verify.yml` (E1 — a spec propunha passo no job `verify`; o usuário decidiu job próprio no portão da Fase 1), sem `needs:` e sem `if:` (o script nomeia o contexto e sai 0 fora de PR — passa, não pula); (c) `D016-PROT1` (C6) → **seção `branch-protection` do `compliance-audit.sh`**, não stage — roda no CI e no rito manual, **não** no hook Stop a cada turno. | (a) R10 §9: checagem nova entra no pipeline; um stage próprio mantém `check_state.py`/`check_tdd.py` byte-idênticos (um módulo por delegação) e dá ao veredito nome próprio na saída do `run.sh`. (b) O refinamento fixa que o pré-merge **não pode viver em `run.sh`** (o QA precisa do pipeline verde para escrever o `spec-validate`, que precede o `done`). **(E1)** Job próprio, pela razão que decidiu: um `verify` vermelho durante toda a demanda **ensina que vermelho é normal**, e vermelho normal deixa de ser lido — o mecanismo exato do `EA-5`; um check `fecho` vermelho diz algo verdadeiro e útil (*a demanda ainda não fechou*) e o `verify` continua significando *o código está são* — conflatar os dois destrói os dois sinais. P2 passa a três checks (o usuário tomou a decisão que a redação original dizia não tomada). O custo aceito: entre a abertura do PR e o commit do `done`, o check **`fecho`** do PR fica vermelho **por desenho e com nome** (borda 6); o `verify` fica verde. (c) Chamada de rede a cada turno seria custo sem valor; o `compliance-audit` já é o lugar que "audita a própria configuração" (cabeçalho do script), e é executado em todo run do CI (`verify.yml:43-44`). |
 | **T9** | **Nada muda em `check_state.py`, `check_tdd.py`, `check_mutation.py`, `verify.yml:42` (`MUTATION_DEFER_MISSING`) nem na spec 013.** A cláusula C4 da 013 (*"`MUTATION_DEFER_MISSING` permanece com a semântica atual, intocada"*) **continua literalmente verdadeira**. A dívida "Borda 8" de `mutation-matrix.json → dividas_declaradas` ganha **desfecho anexado** (R2 §5: o registro permanece, com a razão), nunca é apagada. | Sob a rota P1 a promessa continua existindo; o que muda é que o credor (job `visual` obrigatório no merge) passa a existir e a ser **auditado** por `D016-PROT1`. Não há errata na 013: T7/C4/borda 8 eram **restrições de escopo** dela, e a própria spec devolveu o fechamento como "demanda própria" (Risco 4) — esta é essa demanda. Menos arquivos pinados tocados, menos repin, nenhuma campanha existente disparada (nenhum arquivo editado é `target` de harness algum). |
 | **T10** | **Vocabulário fechado de vereditos, impresso por demanda/merge**: `CONFORME` · `MESCLADA SEM FECHO` · `FECHO PENDENTE DECLARADO` · `EM VOO` · `ANTERIOR AO PISO` · `FORA DA POPULAÇÃO` · `NÃO DETERMINÁVEL`; pré-merge: `LIBERADO` · `FECHO PENDENTE` · `NÃO JULGADO (<motivo>)`; proteção: `PROTEGIDA` · `DESPROTEGIDA` · `NÃO DETERMINÁVEL (<causa>)`. Todo `NÃO DETERMINÁVEL` e todo `NÃO JULGADO` carregam causa/motivo não vazio. | Conjunto fechado + escape nomeado é o padrão de T4 da 013 (três estados da campanha): impede que uma causa nova volte como rótulo ambíguo, e dá à sonda um enum para comparar em vez de regex sobre prosa PT-BR (R10 §6). |
 
@@ -85,8 +86,8 @@ Scripts: `.claude/verify/check_fecho.py` (C1–C5, C7) e
 | **C2** | **Direção git→registro com piso (R-a2, P9).** Todo merge first-parent em `origin/develop` **posterior ao piso** cuja mensagem nomeia `feature/NNN-*` tem planning-state `NNN` existente e em `done` (ou `fecho_pendente` válido). Branches fora do padrão (`chore/*`, `fix/*`, `hotfix/*`, `feat/*` históricas) e integrações de `main` são `FORA DA POPULAÇÃO`; o critério de população é **impresso uma vez** por execução; "N merges anteriores ao piso" é impresso | `D016-FEC2` · `check_fecho.py` · stage `fecho` · (a) `feature/NNN-*` após o piso **sem** planning-state `NNN` ⇒ FAIL ("demanda fora da máquina", R4 §Violação); (b) com planning-state `!= done` ⇒ cai em C1 (mesmo veredito, não duplicado); (c) merge após o piso **sem** o formato `Merge pull request #N from …` e que **não** seja integração de `main` (`Merge remote-tracking branch 'origin/main' into develop` / `Merge branch 'main' into develop` / mensagem iniciada por `merge: integra`) ⇒ FAIL nomeado ("merge em `develop` fora de PR após o piso", R14); (d) piso ausente do `fecho.json` ou não é SHA de 40 hex existente no repositório (`git cat-file -e`) ⇒ FAIL | `D016-M3` — tratar `feature/*` sem planning-state como `FORA DA POPULAÇÃO` → o caso sintético "feature/017 sem estado" passa · `D016-M4` — engolir merge sem formato de PR após o piso → o caso "merge manual após o piso" passa |
 | **C3** | **`done` ⇒ artefatos em disco (R-a4, P4), com exclusão nominal R13 que é carga.** Toda demanda `done` tem `spec_dir/relatorio-final.md` **e** `spec_dir/spec-validate.md`; **003** (ambos), **009** e **010** (`spec-validate.md`) ficam excluídas por `fecho.json → excluidas_por_r13`, cada uma com `artefatos_ausentes` nomeados e `fonte` citada, **impressas** a cada execução, sem prazo (P4) | `D016-FEC3` · `check_fecho.py` · stage `fecho` · (a) `done` sem um dos dois artefatos e sem exclusão ⇒ FAIL nomeando o artefato; (b) exclusão que nomeia artefato **que existe** ⇒ FAIL ("exclusão obsoleta — remova a entrada"; direção do IC-9.3/KI-4); (c) exclusão sem `fonte` ou com `artefatos_ausentes` vazio/curinga ⇒ FAIL (não exclui); (d) **prova de carga registrada** em `fecho.json → _meta.prova_de_carga`: com as três exclusões retiradas, a varredura acusa **003 (2 artefatos), 009 (1), 010 (1)** — medida por execução na Fase 4, como a 014 fez com `achado-aberto` | `D016-M5` — conferir só `relatorio-final.md` → o caso "done com relatório e sem spec-validate" passa · `D016-M6` — exclusão obsoleta não reprova → o caso "excluída cujo artefato existe" passa |
 | **C4** | **Válvula `fecho_pendente {motivo, dono, prazo}` (R-a5, P3).** Válida sse os três campos são não vazios, `prazo` é dia ISO `AAAA-MM-DD` e `prazo ≥ data_do_commit` (T4), **e** a demanda está mesclada com `phase != done` (T5). Válida ⇒ `FECHO PENDENTE DECLARADO`, impressa com dono e prazo, não reprova; listada pelo `compliance-audit` (seção `waivers`) ao lado dos `tdd_waiver` | `D016-FEC4` · `check_fecho.py` · stage `fecho` · (a) campo ausente/vazio ⇒ FAIL; (b) `prazo < data_do_commit` ⇒ FAIL ("vencida"); (c) em demanda `done` ⇒ FAIL ("obsoleta"); (d) em demanda **não mesclada** ⇒ FAIL ("válvula antes do vencimento"); (e) `prazo` fora do formato ⇒ FAIL (não é data, não é válvula) | `D016-M7` — aceitar sem `prazo` (ou sem `dono`) → o caso "válvula sem prazo" passa · `D016-M8` — não comparar `prazo` com a data do commit → o caso "válvula vencida" passa |
-| **C5** | **Check pré-merge (R-a3).** Em contexto de PR para `develop` cuja `GITHUB_HEAD_REF` casa `feature/NNN-*`: planning-state `NNN` existe, está em `done`, os dois artefatos de C3 existem (ou a demanda está em `excluidas_por_r13`) e **não** há `fecho_pendente` (T5). Fora desse contexto: `NÃO JULGADO (<motivo>)`, exit 0, motivo impresso | `D016-PR1` · `check_fecho.py --pr` (parâmetros `--head`/`--base` só na sonda; ao vivo lê `GITHUB_HEAD_REF`/`GITHUB_BASE_REF`) · passo próprio no job `verify` de `verify.yml` (T8) · (a) `done` + artefatos ⇒ `LIBERADO`; (b) `phase != done` ⇒ FAIL `FECHO PENDENTE da demanda NNN (fase X) — merge bloqueado até done`; (c) planning-state ausente ⇒ FAIL ("demanda fora da máquina"); (d) `done` **com** `fecho_pendente` ⇒ FAIL; (e) head fora do padrão ⇒ `NÃO JULGADO (fora da população)`; (f) base ≠ `develop` ⇒ `NÃO JULGADO (release/main, R14)`; (g) sem base (push/dispatch) ⇒ `NÃO JULGADO (evento sem base)` | `D016-M9` — aceitar `validate` como fecho → o caso "PR em validate" libera · `D016-M10` — honrar a válvula pré-merge → o caso "done com fecho_pendente" libera · `D016-M11` — planning-state ausente libera |
-| **C6** | **A proteção de branch é dado, não prosa (P16.b).** `develop` exige, por ruleset ou proteção clássica ativa, os checks **`verify` e `visual`** e *up to date*; a expectativa vive em `branch_protection.json`; a configuração ao vivo é lida da API a cada auditoria e a divergência reprova | `D016-PROT1` · `check_branch_protection.py` · seção **`branch-protection`** do `compliance-audit.sh` · (a) determinável e conforme ⇒ `PROTEGIDA`, PASS, imprimindo mecanismo (`ruleset <id>` / `classic`), contextos e `strict`; (b) determinável e faltando contexto ou `strict` ⇒ `DESPROTEGIDA`, FAIL em **qualquer** ambiente, nomeando o que falta; (c) `protected: true` com `protection.enabled: false` ou `enforcement_level: "off"` e ruleset sem `required_status_checks` ⇒ `DESPROTEGIDA` (é o estado **de hoje**, medido); (d) `NÃO DETERMINÁVEL (rede | permissão <status> | repositório não identificado)` ⇒ local `[WARN]` nomeado com instrução, CI `[FAIL]` (T7); (e) `strict` sob classic ⇒ `[WARN]` permanente declarado (T7); (f) as demais regras encontradas (`deletion`, `non_fast_forward`, `pull_request.allowed_merge_methods`, `required_linear_history`) são **impressas**, não julgadas | `D016-M12` — tratar `NÃO DETERMINÁVEL` como `PROTEGIDA` → a fixture `http_403` passa · `D016-M13` — ignorar `strict` → a fixture `strict_false` passa · `D016-M14` — um contexto basta → a fixture `sem_visual` passa · `D016-M15` — `protected: true` basta → a fixture `hoje` (a resposta real de 2026-09-04) passa |
+| **C5** | **Check pré-merge (R-a3).** Em contexto de PR para `develop` cuja `GITHUB_HEAD_REF` casa `feature/NNN-*`: planning-state `NNN` existe, está em `done`, os dois artefatos de C3 existem (ou a demanda está em `excluidas_por_r13`) e **não** há `fecho_pendente` (T5). Fora desse contexto: `NÃO JULGADO (<motivo>)`, exit 0, motivo impresso | `D016-PR1` · `check_fecho.py --pr` (parâmetros `--head`/`--base` só na sonda; ao vivo lê `GITHUB_HEAD_REF`/`GITHUB_BASE_REF`) · job próprio **`fecho`** em `verify.yml` (T8 b, E1) · (a) `done` + artefatos ⇒ `LIBERADO`; (b) `phase != done` ⇒ FAIL `FECHO PENDENTE da demanda NNN (fase X) — merge bloqueado até done`; (c) planning-state ausente ⇒ FAIL ("demanda fora da máquina"); (d) `done` **com** `fecho_pendente` ⇒ FAIL; (e) head fora do padrão ⇒ `NÃO JULGADO (fora da população)`; (f) base ≠ `develop` ⇒ `NÃO JULGADO (release/main, R14)`; (g) sem base (push/dispatch) ⇒ `NÃO JULGADO (evento sem base)` | `D016-M9` — aceitar `validate` como fecho → o caso "PR em validate" libera · `D016-M10` — honrar a válvula pré-merge → o caso "done com fecho_pendente" libera · `D016-M11` — planning-state ausente libera |
+| **C6** | **A proteção de branch é dado, não prosa (P16.b).** `develop` exige, por ruleset ou proteção clássica ativa, os checks **`verify`, `visual` e `fecho`** (E1) e *up to date*; a expectativa vive em `branch_protection.json`; a configuração ao vivo é lida da API a cada auditoria e a divergência reprova | `D016-PROT1` · `check_branch_protection.py` · seção **`branch-protection`** do `compliance-audit.sh` · (a) determinável e conforme ⇒ `PROTEGIDA`, PASS, imprimindo mecanismo (`ruleset <id>` / `classic`), contextos e `strict`; (b) determinável e faltando contexto ou `strict` ⇒ `DESPROTEGIDA`, FAIL em **qualquer** ambiente, nomeando o que falta; (c) `protected: true` com `protection.enabled: false` ou `enforcement_level: "off"` e ruleset sem `required_status_checks` ⇒ `DESPROTEGIDA` (é o estado **de hoje**, medido); (d) `NÃO DETERMINÁVEL (rede | permissão <status> | repositório não identificado)` ⇒ local `[WARN]` nomeado com instrução, CI `[FAIL]` (T7); (e) `strict` sob classic ⇒ `[WARN]` permanente declarado (T7); (f) as demais regras encontradas (`deletion`, `non_fast_forward`, `pull_request.allowed_merge_methods`, `required_linear_history`) são **impressas**, não julgadas | `D016-M12` — tratar `NÃO DETERMINÁVEL` como `PROTEGIDA` → a fixture `http_403` passa · `D016-M13` — ignorar `strict` → a fixture `strict_false` passa · `D016-M14` — um contexto basta → a fixture `sem_visual` passa · (E1) mutante que aceite **dois** dos três contextos → a fixture `sem_fecho` passa (id alocado pelo `qa-engineer` na Fase 4, nunca reutilizando `M1`–`M16`) · `D016-M15` — `protected: true` basta → a fixture `hoje` (a resposta real de 2026-09-04) passa |
 | **C7** | **O julgador não pode ficar mudo.** Toda execução de `check_fecho.py` e de `check_branch_protection.py` roda a sonda sintética antes da árvore real; o total de casos executados é comparado ao **pinado** (`fecho.json → sonda.total`, `branch_protection.json → sonda.total`) e cada veredito ao esperado; divergência ou total diferente ⇒ FAIL nomeando o caso | `D016-FEC1`…`D016-PROT1` (alínea comum, sem gate próprio — é a pré-condição de não-vacuidade dos seis) · `--sonda` emite **JSON em stdout** `{casos:[{id, esperado, obtido, ok}], total, falhas}`; texto humano em stderr | `D016-M16` — desligar a sonda (laço vazio) → `total: 0 ≠ pinado`, acusado pelo stage **e** pelo harness, que pina o censo de casos |
 | **C8** | **Frase da skill e da R4 (P7).** `done` deixa de exigir "CI verde": passa a exigir **Fase 6 completa (1 e 2 da skill, com `spec-validate.md` e `relatorio-final.md` em disco) + PR aberto**; "CI verde" vira condição do **merge**, cobrada pela proteção de branch; `sdd.md` ganha a linha "o merge em `develop` espera o `done`" | **Sem gate executável** — critério de documento, conferido por leitura no `spec-validate` (`.claude/skills/new-demand/SKILL.md:66`; `.claude/rules/sdd.md`, tabela Fase 6 e §Gates de fase). **O que o torna verdade por máquina são C5 e C6** — a frase descreve o que os gates cobram, não o contrário | — (prosa) |
 | **C9** | **Glossário (P6).** Os três termos de `refinement.md` §Vocabulário — *Fecho de demanda*, *Demanda mesclada sem fecho*, *Fecho pendente declarado* — entram em `CONTEXT.md` §Estrutura (processo) no mesmo PR; *promessa de execução* e *deferimento vencido* **não** entram | **Sem gate** — leitura no `spec-validate`. Ajuste de redação permitido ao `product-owner`: "vencida" passa a significar "prazo anterior à data do commit julgado" (T4) | — |
@@ -103,7 +104,7 @@ real de `D016-PROT1`**.
 
 | alínea | estado alcançável de falha | como sei |
 |---|---|---|
-| C1 (a) | demanda mesclada por PR com fase parada | **é o `EA-33`**: 6 de 10 merges de demanda entraram assim (§Medição 3). Hoje não há instância viva; a sonda carrega o caso, e a **prova de carga** da Fase 4 põe uma cópia de `015` em `validate` numa worktree efêmera e mede a acusação (`oráculo: mensagem #34`) |
+| C1 (a) | demanda mesclada por PR com fase parada | **é o `EA-33`**: 6 de 10 merges de demanda entraram assim (§Medição 3). Hoje não há instância viva; a sonda carrega o caso, e a **prova de carga** da Fase 4 põe uma cópia de `015` em `validate` numa worktree efêmera **com o piso recuado para `6dad53d`** (merge da Onda 4, §Medição 3) e mede a acusação (`oráculo: mensagem #34`) — **(E2)** sem recuar o piso a cópia responde `ANTERIOR AO PISO` (o merge da 015, `222edd5`, é anterior a `921977c`); com o piso vigente e 0 merges após ele, C1(a) é **verde por vácuo na árvore**, como C4 |
 | C1 (b) | merge verdadeiro com mensagem manual | dois existem antes do piso (`3542f9f`, `9fdb2b9`), ambos integração de `main` — o caso sintético usa a mesma forma com branch de demanda |
 | C1 (c)/(d) | contagem "em voo"/"anterior ao piso" errada | a sonda pina o veredito **por caso**, não só o FAIL: um julgador que reprovasse "anterior ao piso" seria acusado tanto quanto um que perdoasse "posterior" (`D016-M2`) |
 | C1 (e) | `origin/develop` ausente | reprodutível: `git update-ref -d refs/remotes/origin/develop` numa cópia efêmera; **não** é caso da sonda (é I/O), é caso da bateria adversarial da Fase 4 |
@@ -153,14 +154,27 @@ Exit `1` sse `F > 0`. Um FAIL de forma (`branch` ausente, piso inválido,
 apenas o sujeito que o produziu — os demais são julgados (falha de um não cala
 os outros). O stage **não escreve nada** (R7 §3).
 
-### Superfície 2 — passo pré-merge (`check_fecho.py --pr`)
+### Superfície 2 — job `fecho`, o check pré-merge (`check_fecho.py --pr`) — E1
 
-No job `verify`, depois de `compliance-audit`:
+Job **próprio** em `verify.yml` (E1): sem `needs:` (um `verify` vermelho não o
+pula), sem `if:` (roda em todo evento do workflow e responde `NÃO JULGADO` fora
+de PR — passa, não pula), sem `npm ci`; **checkout raso basta** — o julgador
+pré-merge lê só a árvore e o ambiente, nunca histórico nem `origin/develop`:
 
 ```yaml
-- name: Fecho da demanda antes do merge (D016-PR1 — P16.a)
-  run: python .claude/verify/check_fecho.py --pr
+  fecho:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+      - name: Fecho da demanda antes do merge (D016-PR1 — P16.a)
+        run: python .claude/verify/check_fecho.py --pr
 ```
+
+O contexto que a proteção de branch exige chama-se **`fecho`** (id do job, sem
+`name:` — como `verify` e `visual`).
 
 Lê `GITHUB_BASE_REF`/`GITHUB_HEAD_REF`. Imprime uma linha e sai:
 
@@ -173,17 +187,17 @@ ao vivo, esses parâmetros **não são aceitos** (evita "liberar" um PR por
 argumento errado).
 
 **Consequência aceita e declarada (borda 6)**: entre a abertura do PR e o push
-do commit que grava `done`, o check `verify` do PR fica **vermelho neste passo**,
-com o nome do passo dizendo por quê. O pipeline `run.sh` (passo anterior) e o
-local do QA continuam verdes. Depois de P2, esse vermelho **impede o merge** —
+do commit que grava `done`, o check **`fecho`** do PR fica **vermelho**, com o
+nome do check dizendo por quê (E1). O check `verify` (pipeline `run.sh` +
+`compliance-audit`) e o local do QA continuam verdes. Depois de P2, esse vermelho **impede o merge** —
 é o único mecanismo desta demanda que **previne** em vez de acusar.
 
 ### Superfície 3 — seção `branch-protection` do `compliance-audit.sh`
 
 ```
-[PASS] branch-protection: develop PROTEGIDA · ruleset 21381133 · checks obrigatórios: verify, visual · up-to-date: sim · token: GITHUB_TOKEN
+[PASS] branch-protection: develop PROTEGIDA · ruleset 21381133 · checks obrigatórios: verify, visual, fecho · up-to-date: sim · token: GITHUB_TOKEN
        outras regras ativas: deletion · non_fast_forward · pull_request.allowed_merge_methods=[merge, squash, rebase]
-[FAIL] branch-protection: develop DESPROTEGIDA · faltam: visual (check obrigatório), up-to-date · mecanismo lido: ruleset 21381133 (deletion, non_fast_forward) + classic enabled=false
+[FAIL] branch-protection: develop DESPROTEGIDA · faltam: visual, fecho (checks obrigatórios), up-to-date · mecanismo lido: ruleset 21381133 (deletion, non_fast_forward) + classic enabled=false
 [WARN] branch-protection: NÃO DETERMINÁVEL (rede inalcançável: <causa>) — rito: gh auth login && bash .claude/verify/compliance-audit.sh --rule=branch-protection
 ```
 
@@ -216,14 +230,14 @@ Redações propostas, para o `doc-writer`/`product-owner` ajustarem sem mudar o
 sentido:
 
 - `SKILL.md:66` → *"merge é do usuário, **e só depois do `done`** (check
-  pré-merge `D016-PR1`, obrigatório na proteção de `develop`). Planning-state
+  pré-merge **`fecho`**, `D016-PR1`, obrigatório na proteção de `develop` — E1). Planning-state
   `done` com a Fase 6 completa (1 e 2 acima, com `spec-validate.md` e
   `relatorio-final.md` em disco) e o PR aberto. **CI verde é condição do merge**,
   cobrada pela proteção de branch (`D016-PROT1`) — não do `done`."*
 - `sdd.md`, §Gates de fase, novo item: *"**Fecho**: `done` exige Fase 6 completa
   + PR aberto, sempre **antes** do merge; o merge em `develop` espera o `done`
-  (stage `fecho`, `check_fecho.py --pr`) e o CI verde (checks obrigatórios
-  `verify`/`visual`, auditados por `D016-PROT1`). Demanda mesclada sem fecho é
+  (check `fecho`, `check_fecho.py --pr` — E1) e o CI verde (checks obrigatórios
+  `verify`/`visual`/`fecho`, auditados por `D016-PROT1`). Demanda mesclada sem fecho é
   violação (R4 §Violação): fecho retroativo ou fecho pendente declarado."*
 - `CONTEXT.md`: os três verbetes do refinamento §Vocabulário, com o ajuste de T4.
 - `design-decisions.md`: linha KI-3 e nova linha confirmada (C10-d).
@@ -244,12 +258,12 @@ rodado). Estado no commit desta spec, verificado por leitura e `git`:
 
 | gate | hoje | dentes (o que acusaria sem a válvula) |
 |---|---|---|
-| `D016-FEC1` | verde — 10/10 `done` | prova de carga em cópia (015 → `validate`) na Fase 4 |
+| `D016-FEC1` | verde — 10/10 `done`; **0 merges após o piso** (vácuo na árvore, declarado — E2) | prova de carga em cópia (015 → `validate`, **piso recuado para `6dad53d`** — E2) na Fase 4 |
 | `D016-FEC2` | verde — **0 merges após o piso** (`origin/develop` == piso) | sem o piso: 6 merges de Onda / 5 branches sem planning-state |
 | `D016-FEC3` | verde — 3 exclusões | sem exclusões: 003 (2), 009 (1), 010 (1) |
 | `D016-FEC4` | verde por vácuo | 5 casos da sonda |
-| `D016-PR1` | **vermelho no PR da 016 até o `done`** — por desenho, com nome, e é o **red ao vivo** desta demanda | — |
-| `D016-PROT1` | **vermelho ao vivo** (`DESPROTEGIDA`, medido em 2026-09-04) | fecha por **um** ato, do proprietário (P2), **antes do merge deste PR** |
+| `D016-PR1` | **vermelho no PR da 016 até o `done`** — no check **`fecho`** (E1), por desenho, com nome, e é o **red ao vivo** desta demanda; o check `verify` fica verde | — |
+| `D016-PROT1` | **vermelho ao vivo** (`DESPROTEGIDA`, medido em 2026-09-04) | fecha por **um** ato, do proprietário (P2, três contextos — E1), **antes do merge deste PR** |
 
 `D016-PROT1` vermelho não é `EA-5`: tem **dono** (proprietário), **evento único
 de fecho** (P2), **prazo** (antes do merge desta demanda — sem P2 o PR não deve
@@ -285,7 +299,8 @@ Bordas **novas** desta rota, sem número no refinamento:
 
 | caso | tratamento |
 |---|---|
-| `workflow_dispatch` sem `inputs.visual` (o job `visual` não roda) | irrelevante para o merge: check obrigatório que **não reportou** no head SHA do PR bloqueia o merge; o `pull_request` do PR sempre dispara os dois jobs |
+| `workflow_dispatch` sem `inputs.visual` (o job `visual` não roda) | irrelevante para o merge: check obrigatório que **não reportou** no head SHA do PR bloqueia o merge; o `pull_request` do PR sempre dispara os **três** jobs (E1) |
+| push direto em `develop`/`main`, `workflow_dispatch`, PR de `chore/*`/`fix/*` (E1) | o job `fecho` **roda e passa** com `NÃO JULGADO (<motivo>)` impresso — nunca é pulado por `if:` nem por `needs:` (R10 §2): check que não reporta bloqueia; check que pula em silêncio não diz nada |
 | P2 configurada por proteção **clássica** em vez de ruleset | contextos legíveis; `strict` **não** (T7 e) — `[WARN]` permanente; a spec recomenda ruleset |
 | merge por admin com *bypass* | `D016-PROT1` não lê a lista de bypass nem o audit log (§NÃO mede, 2); `D016-FEC1` acusa **depois**; a válvula é a saída honesta |
 | `GITHUB_TOKEN` sem permissão para `/rules/branches` no CI | `[FAIL]` no CI até o proprietário ajustar `permissions:`/secret — **medido no primeiro run do PR**, com plano B nomeado em §Não mensurável 1 |
@@ -341,7 +356,8 @@ pagar o custo de gate que promete mais do que entrega.
     sempre, sem sinal próprio.
 12. **Runs de `workflow_dispatch`** e qualquer coisa fora do evento
     `pull_request` para `develop`: o pré-merge só julga PR; a proteção só cobra
-    merge.
+    merge. O job `fecho` **roda** nesses eventos e responde
+    `NÃO JULGADO (<motivo>)` (E1) — presença sem julgamento, nunca silêncio.
 
 ---
 
@@ -419,23 +435,24 @@ julgador recebe tudo por parâmetro (T3).
 
 ```json
 {
-  "_meta": { "descricao": "Expectativa de proteção de develop (demanda 016, P16.b, decisão P2 do portão). Dado, não prosa (R6): D016-PROT1 compara a API com isto a cada compliance-audit." },
+  "_meta": { "descricao": "Expectativa de proteção de develop (demanda 016, P16.b, decisão P2 do portão da Fase 0, estendida a três checks no portão da Fase 1 — errata E1). Dado, não prosa (R6): D016-PROT1 compara a API com isto a cada compliance-audit." },
   "repo": "oflavioc/quickscan-secops",
   "ref": "develop",
-  "checks_obrigatorios": ["verify", "visual"],
+  "checks_obrigatorios": ["verify", "visual", "fecho"],
   "up_to_date": true,
-  "sonda": { "fixtures": ".claude/verify/fixtures_016/protecao/", "total": 8, "casos": [ { "id": "hoje", "esperado": "DESPROTEGIDA" } ] }
+  "sonda": { "fixtures": ".claude/verify/fixtures_016/protecao/", "total": 9, "casos": [ { "id": "hoje", "esperado": "DESPROTEGIDA" } ] }
 }
 ```
 
 Casos: **hoje** (as duas respostas reais de 2026-09-04) → `DESPROTEGIDA` ·
-**esperado_ruleset** (`required_status_checks` com `verify`+`visual`, `strict`
-true) → `PROTEGIDA` · **sem_visual** → `DESPROTEGIDA` · **strict_false** →
+**esperado_ruleset** (`required_status_checks` com `verify`+`visual`+`fecho`,
+`strict` true) → `PROTEGIDA` · **sem_visual** → `DESPROTEGIDA` · **sem_fecho**
+(`verify`+`visual`, sem o terceiro — E1) → `DESPROTEGIDA` · **strict_false** →
 `DESPROTEGIDA` · **classic_off** (`protected: true`, `enabled: false`) →
 `DESPROTEGIDA` · **classic_on** (`enforcement_level: everyone`, contextos
 certos, ruleset vazio) → `PROTEGIDA` + WARN `strict` · **http_403** →
 `NÃO DETERMINÁVEL (permissão 403)` · **sem_rede** → `NÃO DETERMINÁVEL (rede)`.
-Total **8**.
+Total **9** (E1: era 8; `sem_fecho` é o negativo do terceiro contexto).
 
 ### CLI dos dois scripts
 
@@ -462,7 +479,7 @@ regex sobre prosa. Pares entram em `mutation-matrix.json → pares` no mesmo PR.
 |---|---|
 | `.claude/verify/check_fecho.py` · `check_branch_protection.py` · `fecho.json` · `branch_protection.json` · `fixtures_016/**` · `tests_016_mutants.js` | **novos** |
 | `.claude/verify/pipeline.yaml` | stage `fecho` (T8 a) |
-| `.github/workflows/verify.yml` | passo pré-merge no job `verify` (T8 b); **`:42` intocada** |
+| `.github/workflows/verify.yml` | job próprio **`fecho`** (T8 b, E1); jobs `verify`/`visual` e **`:42` intocados** |
 | `.claude/verify/compliance-audit.sh` | seção `branch-protection`; `aviso()`; `known-issues` lista `excluidas_por_r13`; `waivers` lista `fecho_pendente` |
 | `.claude/templates/planning-state.schema.json` | `branch` obrigatório; `fecho_pendente` |
 | `.claude/verify/mutation_map.json` · `mutation-matrix.json` | harness `d016`; pares; desfecho da dívida "Borda 8" |
@@ -553,8 +570,8 @@ portão** — sem ele a spec não perde nada.
     divergência a registrar nesta demanda.
 - [x] **R4/R14 — coerência do fluxo, sem impasse.** P7 remove a circularidade:
   `done` ← Fase 6 + PR aberto (sem CI); merge ← `done` (C5) + CI verde (C6).
-  O `done` é commitado no PR depois de aberto → push → `verify` reexecuta →
-  `LIBERADO`. "Merge é do usuário" (R14) não muda — muda **quando** ele pode.
+  O `done` é commitado no PR depois de aberto → push → o check `fecho`
+  reexecuta → `LIBERADO` (E1). "Merge é do usuário" (R14) não muda — muda **quando** ele pode.
   "Proibido squash" (R14) ganha, no §NÃO mede 3, a recomendação de virar
   configuração.
 - [x] **R10 — as dez proibições.** §1 nada enfraquecido (as exclusões são carga
@@ -638,3 +655,48 @@ Herdado do refinamento, mais o que esta spec exclui:
   critério.
 - **Qualquer byte de produto.**
 - **Errata na spec 013**: não há o que emendar (T9).
+
+---
+
+## Errata — portão da Fase 1 (2026-09-04)
+
+**Trilha de auditoria.** O portão da Fase 1 foi aprovado pelo usuário no chat em
+2026-09-04 com **uma decisão que contraria a proposta T8-b** desta spec e três
+que a confirmam (**T2** — piso no merge-base `921977c`, não o SHA do próprio
+merge; **T4** — prazo contra a data do commit, não o relógio; **T7** — WARN
+nomeado local / FAIL no CI, precedente EB-5). **E1** registra a decisão contrária.
+**E2** é precisão de procedimento encontrada por leitura na Fase 2 (tech-lead,
+sob a delegação vigente): não muda critério, não renumera id, e só torna
+executável uma prova que a spec já prometia — não exige ratificação. Nenhuma
+asserção enfraquece; nenhuma boundary se amplia; nenhum veredito de gate alheio
+muda. As células amendadas levam a marca `(E1)`/`(E2)`; a redação original de
+cada uma está preservada abaixo (R2 §5).
+
+| Campo | Registro |
+|---|---|
+| **Quem decidiu** | E1: o usuário, no chat. E2: tech-lead, sob delegação, por leitura e execução (`git log --first-parent`) |
+| **Quando** | 2026-09-04 |
+| **Onde** | Portão da Fase 1 (E1); Fase 2, ao escrever o `plan.md` (E2) |
+| **Alcance** | E1: T8(b); P2 (estendida pelo próprio usuário); T6; C5 (lugar do gate); C6 (três contextos; sonda 8 → 9); §Superfície 2; amostras de §Superfície 3; redações de `SKILL.md`/`sdd.md` em §Superfície 5; §Nascimento (linhas `D016-PR1`/`D016-PROT1`); bordas novas; §NÃO mede 12; §Contratos `branch_protection.json`; tabela de arquivos; cross-check R4/R14. E2: §Guarda de tautologia C1(a) e §Nascimento linha `D016-FEC1` |
+| **O que NÃO é reaberto** | P1, P3–P9 do portão da Fase 0; T1–T5, T7, T9, T10; T8(a) (stage `fecho` no `pipeline.yaml`) e T8(c) (`D016-PROT1` no `compliance-audit`); C1–C4, C7–C10; as asserções de `D016-PR1` (só o **lugar** muda); todos os ids `D016-*`, `F*`, `P*`; o piso; a política EB-5. `EA-5` é citado como razão, não reaberto como achado |
+
+### E1 · T8(b) — o check pré-merge vive em job próprio `fecho`, e a `develop` passa a exigir três checks
+
+| Campo | Registro |
+|---|---|
+| **O que estava escrito** | T8(b): *"check pré-merge (C5) → **passo próprio no job `verify`** de `verify.yml`, depois do `compliance-audit`, sem `if:` (o script nomeia o contexto e sai 0 fora de PR)"*, justificado por *"passo próprio torna o FAIL **distinguível** de falha de produto pelo nome do passo, e **não estende P2** — um job próprio exigiria um terceiro check obrigatório, decisão que o usuário não tomou. O custo aceito: entre a abertura do PR e o commit do `done`, o check `verify` do PR fica vermelho **por desenho e com nome** (borda 6)"*. P2: *"o usuário configura `verify` e `visual` como checks obrigatórios"*. T6: *"sse os contextos `verify` **e** `visual` são obrigatórios"*. C6: *"os checks **`verify` e `visual`** e *up to date*"*. §Superfície 2: *"No job `verify`, depois de `compliance-audit`"* + um passo `- name: Fecho da demanda antes do merge`. `branch_protection.json`: `"checks_obrigatorios": ["verify", "visual"]`, sonda `"total": 8` |
+| **Por que mudou — o argumento que decide** | Um `verify` vermelho durante toda a demanda **ensina que vermelho é normal**, e vermelho normal deixa de ser lido. É o mecanismo exato do `EA-5` — o MANIFEST que estava sempre vermelho e por isso nunca era rodado. Um check chamado `fecho`, vermelho, diz algo **verdadeiro e útil**: *a demanda ainda não fechou*. O `verify` continua significando *o código está são*; conflatar os dois destrói os dois sinais. A redação original evitava um terceiro check para não tomar decisão que não era da spec — o usuário **tomou a decisão** no portão |
+| **O que passa a valer** | (i) `verify.yml` ganha o job **`fecho`** (id = contexto), sem `needs:`, sem `if:`, checkout raso, um passo: `python .claude/verify/check_fecho.py --pr`. Em `push`, `workflow_dispatch` e PR fora da população o job **roda e passa** com `NÃO JULGADO (<motivo>)` — nunca pula em silêncio (R10 §2). (ii) P2 = **três** checks obrigatórios em `develop` — `verify`, `visual`, `fecho` — mais *up to date*. (iii) `branch_protection.json → checks_obrigatorios: ["verify","visual","fecho"]`; a sonda ganha o caso **`sem_fecho`** → `DESPROTEGIDA` (total **9**), o negativo do terceiro contexto: sem ele, um julgador que exigisse só dois contextos sobreviveria à sonda. O mutante correspondente ganha id alocado pelo `qa-engineer` na Fase 4 (≥ `D016-M17`, sem reutilizar). (iv) Borda 6: o vermelho até o `done` vive no check **`fecho`**; o `verify` fica verde. (v) O nome coincide com o do stage `fecho` do `pipeline.yaml` **de propósito**: uma propriedade (P16.a), duas direções — pós-merge no pipeline, pré-merge no check |
+| **Custo aceito pelo usuário** | Três checks obrigatórios em vez de dois; um job a mais por run (sem `npm ci`, sem node — segundos, a medir no primeiro run); o check `fecho` do PR da 016 vermelho até o `done`, com nome |
+| **Onde o gate já afirma isso** | Ainda em lugar nenhum (Fase 1 → 2). As asserções de `D016-PR1` são as mesmas — muda o **lugar**; `D016-PROT1` ganha um contexto na expectativa e um caso na sonda |
+| **Classe** | Decisão do portão que contraria a proposta da spec; **fortalece** (mais um check obrigatório, mais um negativo na sonda); nenhum critério cai; nenhum id renumera |
+
+### E2 · A prova de carga de C1(a) precisa recuar o piso — senão não acusa nada
+
+| Campo | Registro |
+|---|---|
+| **O que estava escrito** | §Guarda de tautologia, C1(a): *"a **prova de carga** da Fase 4 põe uma cópia de `015` em `validate` numa worktree efêmera e mede a acusação (`oráculo: mensagem #34`)"*; §Nascimento, `D016-FEC1`: *"prova de carga em cópia (015 → `validate`) na Fase 4"* |
+| **Fato medido** | O merge da 015 (`222edd5`, 2026-09-01) é **anterior ao piso** `921977c` (2026-09-04) na first-parent de `origin/develop` (posições 6 e 1). C1(d) manda contar merge anterior ao piso como `ANTERIOR AO PISO`, não julgado. Logo a cópia descrita responderia `ANTERIOR AO PISO` e a "prova de carga" não acusaria ninguém — uma prova que não pode falhar é carimbo, o que a 013 e a 014 combateram |
+| **O que passa a valer** | A cópia efêmera recua **também** `fecho.json → piso` para `6dad53d` (merge da Onda 4, PR #15, posição 45 — o "piso sugerido pelos dados" da §Medição 3: posterior a toda Onda, anterior a toda demanda real) **e** põe 015 em `validate`: `D016-FEC1` acusa **015** por `oráculo: mensagem #34` e **nada mais** (as outras nove estão `done`); restaurado o piso, o mesmo estado responde `ANTERIOR AO PISO`. Registrado em `fecho.json → _meta.prova_de_carga.fec1`. Declarado: com o piso vigente e 0 merges após ele, C1(a) é **verde por vácuo na árvore** hoje — como C4 — e a não-vacuidade vem da sonda (F1, F2, F19) e desta prova |
+| **Onde o gate já afirma isso** | Lugar nenhum ainda; o `plan.md` propõe automatizá-la no harness `d016` como mutante de árvore (dois arquivos mutados com restauração por SHA) |
+| **Classe** | Precisão de procedimento; **fortalece**; sem mudança de critério, id ou contagem de gate |

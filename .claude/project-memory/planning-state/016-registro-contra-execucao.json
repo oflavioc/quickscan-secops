@@ -50,5 +50,18 @@
     "forma": "33 tarefas em 8 waves (0-7) mais a wave P2. Nenhuma do tipo fix. 14-15 repins previstos, UM por commit de conteudo - a 008 previu um e precisou de tres, a 014 precisou de dezesseis.",
     "resposta_ao_alerta_do_orquestrador": "Secao 'O estado do mundo que reprova cada gate' lista, por gate, o estado + a tarefa que o produz + a que o mede. Nenhum gate ficou sem estado produzivel. VACUO DECLARADO: D016-FEC4 nao tem valvula na arvore de hoje; o estado e fabricado por T060(e) e (h) mais a sonda F6-F10.",
     "duas_medicoes_que_mudaram_o_desenho": "O R0 ja foi consumido em 9e3fb0c, logo T001 e R0b. E check_tdd.py:55-56 imprime cada divida como {d}: o desfecho da Borda 8 tem de ser SUFIXO DA STRING, nao objeto. Tambem medido: 'sem o piso' nao pode ser piso ausente (cai em C2 d) - o mutante usa o PISO ZERO, a raiz e5ccd429."
+  },
+  "red": {
+    "status": "proven",
+    "commit": "d1ae3c76af7389bbd58f0039e9d923afcfb66f87",
+    "gates": [
+      "D016-FEC1",
+      "D016-FEC2",
+      "D016-FEC3",
+      "D016-FEC4",
+      "D016-PR1",
+      "D016-PROT1"
+    ],
+    "notes": "Red executado e commitado em 2026-09-04 (qa-engineer) com os INSTRUMENTOS AUSENTES (fecho.py e branch_protection.py nao existem ate a wave 3): check_fecho.py --sonda = 33 divergencias nomeadas (23 pos + 10 pre), exit 1; check_branch_protection.py --sonda = 9 divergencias, exit 1; --pr com GITHUB_HEAD_REF=feature/016-registro-contra-execucao/GITHUB_BASE_REF=develop = FAIL (arvore nao julgada por julgador que reprovou na propria sonda, C7), exit 1; gates nus idem; --head/--base ao vivo e --fixture sob GITHUB_ACTIONS recusados com exit 2. NENHUM gate nasce verde. DECLARADO: quando o instrumento existir, FEC1/FEC2/FEC4 serao verdes POR VACUO na arvore (0 merges first-parent apos o piso 921977c; nenhuma valvula existe) e FEC3 verde por TRES EXCLUSOES QUE CARREGAM (003 2 artefatos, 009 1, 010 1 - medido em disco); os dentes vem da sonda e dos mutantes de arvore M18-M27 da wave 5. SONDA: 33 casos (os 26 da spec + F20/F21/F22/F23/P8/P9/P10, um por alinea que nao tinha estado de reprovacao - C2 d, C1 e pura, C3 c, C5 a, T5) e 9 casos de protecao; cada caso pina veredito + oraculo + codigo (vocabulario fechado de 16) + total de problemas (pos) e veredito + codigo (pre); protecao pina veredito, causa, faltam e as severidades local e CI. PODER DISCRIMINANTE DO PROPRIO GATE provado em copia efemera com stubs constantes: so F5/F16/P1/P9 e hoje/classic_off ficam ok; enum incompleto, excecao do julgador, fixture removida, caso sem fixture, codigo fora do vocabulario e laco vazio (D016-M16, ancora unica no gate) todos NOMEADOS. MEDICAO INDEPENDENTE por git: piso vigente 0 merges apos; 6dad53d 24 apos (9 com estado, 0 sem - a posicao do piso, #15, nao e julgada); piso zero e5ccd429 (raiz, commit NAO-merge, posicao 66) 6 merges / 5 branches sem estado. Saidas integrais e a matriz gate<->mutante prevista (M17 alocado para 'dois contextos bastam', E1; M18-M27 de arvore) em specs/016-registro-contra-execucao/red-016.md. run.sh --light: 10 PASS · 1 FAIL - o FAIL e o baseline acusando os arquivos novos sem pin ate os repins R1a/R2 do build-engineer (R8 §1). Contrato do instrumento fixado no docstring dos dois gates (R3 §3)."
   }
 }

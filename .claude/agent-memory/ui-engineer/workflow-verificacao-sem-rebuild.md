@@ -29,3 +29,20 @@ não achou, o wrapper aborta em vez de medir um HTML velho. Marcadores do módul
 de alvo: `V32_TARGET_BEGIN`/`_END`. Cuidado com dois detalhes de ambiente: rodar
 o wrapper de fora do repo exige `NODE_PATH=<repo>/node_modules` (senão `jsdom`
 não resolve) e `process.chdir(<repo>)`.
+
+**Variante para MÓDULO NOVO** (011, wave 3): não há bloco a substituir — o splice
+INSERE, reproduzindo a posição que o builder usará (JS depois de
+`V32_P52_WORKSPACE_END`, CSS depois de `V32_P52CSS_END`), e a fidelidade se prova
+por (a) cada âncora existir exatamente 1×, (b) o HTML ainda não conter o marcador
+do módulo novo — se contiver, o wrapper aborta em vez de duplicar.
+
+**O mesmo wrapper mede cobertura de ramo do próprio diff** — é a forma de cumprir
+[[feedback-gate-verde-por-razao-errada]] medindo em vez de deduzir: aplicar
+`String.replace` na cópia EM MEMÓRIA do módulo, injetando `console.log("COB:<nome>")`
+em cada ramo, e rodar a suíte real; `jsdom` encaminha o console da página para o
+stdout do node, então basta `grep -c "^COB:"`. Dois cuidados que custaram uma
+medição errada: (1) o log tem de ficar **dentro** do ramo (`if (!x) { log; return; }`),
+porque marcar antes do `if` conta o **check**, não o ramo tomado — a primeira
+medição da 011 leu 585 "guardas alcançadas" que na verdade eram 0; (2) o
+`console.log` de instrumentação nunca entra no arquivo entregue, senão o
+`lint-arch` e a campanha de mutação passam a julgar código de sonda.

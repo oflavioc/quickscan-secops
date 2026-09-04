@@ -1,6 +1,6 @@
 {
   "demanda": "015-superficies-de-apoio",
-  "phase": "validate",
+  "phase": "done",
   "spec_dir": "specs/015-superficies-de-apoio",
   "branch": "feature/015-superficies-de-apoio",
   "brief": "Itens 6a e 8 do cliente (2026-08-27), reunidos porque sao a mesma decisao: quantas superficies de apoio o relatorio tem e quem nomeia produto em cada uma. AS DUAS LEITURAS LITERAIS CAEM, por medicao: remover o bloco do 6a subtrairia TRES estados unicos no relatorio e custaria sete gates em quatro suites; e suprimir qualquer uma das duas listas do papel subtrai conteudo em TRES das sete combinacoes qid x nivel alcancaveis (perde FortiAI-Assist, perde FortiXDR, troca FortiEndpoint por FortiClient). O que o cliente sentiu e real e a causa e outra: dois titulos adjacentes com quatro palavras em comum, e TRES curadorias que se contradizem sem que a tela diga que existem.",
@@ -36,6 +36,12 @@
     "notes": "2 PASS · 3 FAIL de 5. D015-NOSUB1 e D015-GOV1 nascem VERDES por desenho: sao criterios de PRESERVACAO, e no red a ancora imutavel e o HEAD sao o MESMO BLOB, logo sao tautologicos neste instante. O discriminante vem de M14/M15 e M16, e a divida esta escrita no _trilha e no corpo do gate. Tres divergencias medidas contra a spec, devolvidas ao product-owner e nao acomodadas: C1(h) e MEIO-INERTE (o titulo vive fora do alcance da varredura; mutante simulado deu ZERO diferenca observavel, e a frase da spec sobre derrubar o gate congelado e FALSA por medicao); M15 mata (b) e nao (d); M14 nascia SOBREVIVENTE ate uma varredura de 120 combinacoes achar o caso. N41 NAO alcanca o h3 novo — a unicidade de titulo no papel nao tem cobertura congelada, e o gate desta demanda a carrega sozinho. REDE REANCORADO em 2026-08-31: o red anterior (8396a4c) deixou de corresponder aos arquivos em disco — a suite e a fixture foram emendadas depois dele pela errata E2 (M19 armado, M14 e M19 corrigidos, as duas classes separadas). O VEREDITO e identico (2 PASS · 3 FAIL de 5) mas o ARTEFATO nao, e red.commit que cita um red diferente do que roda e red inauditavel (E3). Achado e devolvido pelo proprio qa-engineer."
   },
   "pr_url": "https://github.com/oflavioc/quickscan-secops/pull/34",
+  "validate": {
+    "status": "done",
+    "conformance": "35 de 36 conformes (skill spec-validate, specs/015-superficies-de-apoio/spec-validate.md:12 — score revisto na segunda rodada, apos os itens 7, 8, 23 e 25 serem reexaminados). Campanhas na mesma execucao: d015 13/13, d010 24/24, d009 19/19, core 3/3, zero sobreviventes.",
+    "aceite_po": "NAO ENCONTREI OBJECAO, com a medicao que o sustenta: na tela, texto novo e zero — todo o texto novo foi para o papel, que e onde o defeito das listas divergentes existe. Registrado em validacao.aceite_po.",
+    "nota": "Este bloco `validate` foi escrito no fecho retroativo de 2026-09-01 e NAO acrescenta juizo novo: ele espelha, no formato que check_tdd.py:37 cobra, o que ja estava em `validacao` e no spec-validate.md. A demanda usa a chave `validacao` (PT); o gate le `validate` (EN). Ver validacao.fecho_retroativo e o achado EA-33."
+  },
   "implementacao": {
     "sitios": "quatro em ui_v32.js, um dono, um diff. Titulo retitulado nas duas superficies (sufixo so na tela); declaracao de ancoragem nos DOIS ramos de qsGapSupportHTML; setimo item no bloco de leitura.",
     "orcamento": "medido nas DUAS metricas, e a vinculante e a crua: 752 crus e 705 normalizados contra o teto de 900. O item novo custa 160. FOLGA REAL 148, nao 233 — o numero 667 que eu anunciei no commit de30308 NAO REPRODUZ, e aquele commit e imutavel.",
@@ -51,6 +57,7 @@
     "spec_validate": "34 de 36 na iteracao 1. G2 FECHADO: M17 e M18 eram declarados carrascos na spec e NAO ESTAVAM no harness — provados so na bateria efemera da Fase 4, cujo registro foi substituido. Prova que vive so na bateria efemera EVAPORA. G1 aberto: o tasks.md e anterior as erratas.",
     "aceite_po": "NAO ENCONTREI OBJECAO. E com a medicao que sustenta: NA TELA, TEXTO NOVO E ZERO — todo o texto novo foi para o papel, que e onde o defeito das listas divergentes existe. So ficou disponivel porque o C4 caiu.",
     "residuos": "tres, nenhum bloqueante: a declaracao e incondicional enquanto a divergencia que ela explica e condicional (consequencia declarada da autorizacao estreita); 'nivel respondido' e vocabulario nosso; e a frase local avisa que as listas divergem sem avisar que nao se somam.",
-    "rito_visual": "duas perguntas FORMULADAS, nao 'esta bom?' — uma sobre o no de ancoragem no PDF real, outra devolvendo o item 6a ao autor da queixa."
+    "rito_visual": "duas perguntas FORMULADAS, nao 'esta bom?' — uma sobre o no de ancoragem no PDF real, outra devolvendo o item 6a ao autor da queixa.",
+    "fecho_retroativo": "FECHO RETROATIVO em 2026-09-01. Mesclada na develop (PR #34) com phase=validate; o achado permanente do padrao e EA-33. Esta transicao NAO fabrica aceite: o aceite de intencao do product-owner ja estava neste mesmo arquivo, em validacao.aceite_po — 'NAO ENCONTREI OBJECAO', com a medicao que o sustenta (na tela, texto novo e zero; todo o texto novo foi para o papel, que e onde o defeito das listas divergentes existe). relatorio-final.md e spec-validate.md existem. Faltava exclusivamente mover a fase. Nada do texto anterior foi apagado (R2 §5)."
   }
 }

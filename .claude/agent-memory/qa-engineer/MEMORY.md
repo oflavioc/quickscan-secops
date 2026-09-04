@@ -5,15 +5,58 @@
 - [Armadilha: oráculo de texto × copyMap](armadilha-oraculo-de-texto-copymap.md) — sem aplicar `__P52.copyMap()`, asserção negativa de tela vira PASS vacuoso
 - [`core` colapsa crash em sobrevivente](core-colapsa-crash-em-sobrevivente.md) — sem `node_modules` a campanha core devolve 3 falsos sobreviventes; não tem NÃO EXECUTADO
 - [Saída real de harness sem campanha](saida-real-de-harness-sem-campanha.md) — `MUTATION_PY` inexistente rende 53/20/107 blocos reais em segundos, sem mutar nem Chromium
-- [Trilha e ambiente](trilha-e-ambiente-quickscan.md) — Chromium não existe nesta worktree; agentes pinados em `fable` rodam em Opus
+- [Trilha e ambiente](trilha-e-ambiente-quickscan.md) — sem Chromium do Playwright, mas Chrome local via `CHROME_PATH` reproduz o job visual (não-canônico); heredoc longo falha no Bash tool: use a ferramenta de escrita
 - [Perdão sobre leitura parcial](perdao-sobre-leitura-parcial.md) — tolerância aplicada a uma leitura incompleta vira abrangente por acidente; as duas classes de mutante de fiação
 - [Defeito de mecanismo × cláusula nova](defeito-de-mecanismo-x-clausula-nova.md) — se a mudança só faz cumprir cláusula já ratificada, não escale: escreva o red
 - [Exceção que morre com a razão](excecao-que-morre-com-a-razao.md) — prazo auto-executável contra a matriz, sonda sintética, e o gate que não pode passar a exigir a exceção
 - [Sonda de fiação sem Chromium](sonda-de-fiacao-sem-chromium.md) — harness sintético que responde a C1 faz o laço de campanha executar; sem ela a fiação vai crua para o CI
 - [Cenário sem mutante é cenário não medido](cenario-sem-mutante-e-cenario-nao-medido.md) — audite a matriz pelo lado do gate: cenário que não mata ninguém pode ser vácuo
+- [Cláusula inerte e a sonda de variantes](clausula-inerte-e-a-sonda-de-variantes.md) — meça o predicado COM e SEM cada cláusula; cláusula que nunca vira o valor não tem mutante matável
+- [Julgador que concorda com a fixture](julgador-que-concorda-com-a-fixture.md) — assert que compara runtime × objeto da fixture é cego a edições da fixture; compare contra a tabela declarada
+- [Estado congelado fora da `window`](estado-congelado-fora-da-window.md) — `MAP`/`PRODUCTS`/`QS`/`ans` só existem via `w.eval`; a restrição que cita `w.MAP` não é executável
 - [Janela §29.4: cláusulas cegas](janela-29-4-clausulas-cegas.md) — vermelho por identidade interrompe o gate; nomeie o que deixou de ser medido
 - [Medir o red do próprio julgador](medir-red-do-proprio-julgador.md) — o stage recusa árvore suja; a efêmera é o único lugar onde o gate se mede antes do commit
 - [Poder discriminante de IC-2 × IC-8](poder-discriminante-ic2-e-ic8.md) — IC-2 mede só a direção negativa; o dual `have→False` só morre no job `visual`
 - [Preflight prova unicidade, não sítio](preflight-prova-unicidade-nao-sitio.md) — `ocorrencias == 1` no sítio errado mata pelo motivo errado, e isso é SOBREVIVENTE
 - [Prova (c) em camadas](prova-c-em-camadas.md) — neutralizar uma asserção só devolve um falso "morre de qualquer jeito"; vá ao bloco inteiro
 - [Triagem de âncora ambígua](triagem-de-ancora-ambigua.md) — gate que varre o arquivo não discrimina sítio; quem responde é `git log -S` e a camada de baixo
+- [Par de controle em cenario de dedup](par-de-controle-em-cenario-de-dedup.md) — sem o homônimo que NÃO deve fundir no mesmo nó, só morre a direção "deduplica de menos"
+- [Julgador de HEAD contra runtime atual](julgador-de-head-contra-runtime-atual.md) — o juiz antigo julga o runtime novo, a suíte inteira via `require.cache`; emenda subtrativa exige o controle invertido
+- [Bateria negativa que mata a si mesma](bateria-negativa-que-mata-a-si-mesma.md) — runner que conta qualquer throw como rejeição conta o próprio `TypeError`; exija a mensagem do juiz
+- [Vacuidade com folga no limiar](vacuidade-com-folga-no-limiar.md) — "não fechável por fixture" quase sempre ignora a folga do limiar; peça o número antes de acreditar
+- [Declaração opcional some em silêncio](declaracao-opcional-some-em-silencio.md) — `if (dec.bloco)` apaga a asserção junto com a declaração; lista de obrigatórios + amarra entre campos
+- [Fixture que pina o pré-fix](fixture-que-pina-o-pre-fix.md) — assert que declara saída de módulo aborta todo gate antes da 1ª alínea; a linha divisória é o diff da demanda (resolvido em T030)
+- ["Publicou" é nó COM item](publicou-e-no-com-item.md) — alínea que só conta o nó fecha verde contra uma casca vazia; o controle de não-vacuidade é o mais exposto
+- [Escopo 5.2 esvazia a varredura](escopo-p52-esvazia-a-varredura.md) — sob `[data-p52-legacy-scope]` M3/M4 ficam sem caso e as âncoras de não-transbordo estão fora do alcance
+- [Red não testemunha: conte alíneas](red-nao-testemunha-conte-alineas.md) — em janela vermelha o veredito não prova cobertura nova; compare alíneas vermelhas EMENDADO × HEAD
+- [Vacuidade que expira no green](vacuidade-que-expira-no-green.md) — "a guarda ali é vacuosa" é medida do pré-fix; peça o censo pós-fix antes de dispensar a cobertura
+- [Universo de tamanho um](universo-de-tamanho-um.md) — cense onde a alínea PROPOSTA pode falhar; universo igual ao da existente (ou conjunção mais fraca) = alínea que não nasce
+- [UNSET com candidato existe](unset-com-candidato-existe.md) — 788 contraexemplos por `UNASSESSED_CAPABILITY`; o enunciado só é verdadeiro com o qualificador de capability dona de qid
+- [Sobrevivente por lacuna × equivalente por spec](sobrevivente-por-lacuna-x-equivalente-por-spec.md) — a spec ratifica a propriedade, não o formato; fortalecer o gate por conta própria é R10 §1 ao contrário
+- [Nó de um item esconde contagem e ordem](no-de-um-item-esconde-contagem-e-ordem.md) — degenerescência de FORMA, não de tamanho: "exatamente X, na ordem" precisa de nó com 2+ itens
+- [Repl inválido vira NÃO EXECUTADO](repl-invalido-vira-nao-executado.md) — valide a sintaxe de cada réplica e a regex de `reason` antes da campanha; preflight só mede a âncora
+- [Guarda de vacuidade pré-empta a alínea](guarda-de-vacuidade-preempta-a-alinea.md) — mutante que apaga o sujeito faz o gate reprovar por vacuidade, nunca pela alínea atribuída
+- [O comparador é a base do PR](comparador-e-a-base-do-pr.md) — medir contra o commit anterior à wave suspeita esconde a wave culpada; separe os casos antes de atribuir causa comum
+- [Prova por eliminação sem instrumento](prova-por-eliminacao-sem-instrumento.md) — o gate calcula e não imprime; elimine sobre offsets e teste o código real extraído do arquivo
+- [Controle verde na bateria negativa](controle-verde-na-bateria-negativa.md) — sem cenário que ALCANCE o verde, gate constante-vermelho passa por gate correto
+- [Fixture uniforme colapsa a ordem](fixture-uniforme-colapsa-a-ordem.md) — `answerAll(w,1)` iguala DOM e ordem global na tela de prioridade; o mutante de renumeração vira equivalente
+- [Baseline só vê o commit](baseline-so-ve-o-commit.md) — mutante em arquivo protegido no disco passa pelo stage baseline; quem pega a edição é o P50-GOV1
+- [Ramo morto: instrumente antes de classificar](ramo-morto-instrumente-antes-de-classificar.md) — zero hits tem três classes; a pergunta que decide o mutante é se o observável já tem carrasco
+- [Enumerar por nome deixa o terceiro estado](enumerar-por-nome-deixa-o-terceiro-estado.md) — alínea que cita marcador herda o ponto cego do seletor; feche com varredura anônima sobre o conjunto
+- [Escopo do varredor torna cláusula inerte](escopo-do-varredor-torna-clausula-inerte.md) — nó fora da travessia nunca recebe a classe; parta a alínea em estática (mata) e defensiva (declara)
+- [Mutante pré-emptado pelo julgador de estado](mutante-preemptado-pelo-julgador-de-estado.md) — assert de fixture e censo de (e) roubam o kill; escreva o mutante na forma isolante
+- [Sentinela não é cláusula defensiva](sentinela-nao-e-clausula-defensiva.md) — alínea que não falha hoje tem duas classes; sentinela tem gatilho nomeado e pede reavaliação, não silêncio
+- [Mutante que morre em dois lugares](mutante-que-morre-em-dois-lugares.md) — se um gate congelado também o mata, não prova o gate novo; parta a alínea pela cobertura
+- [Número de orçamento que não reproduz](numero-de-orcamento-que-nao-reproduz.md) — reconcilie antes+item+estrutural antes de gravar; gate verde não protege o ledger
+- [Bateria efêmera não é registro](bateria-efemera-nao-e-registro.md) — mutante provado só no scratchpad evapora; censo pelo lado da spec fecha a lacuna
+- [Parser declarado tem cegueira medida](parser-declarado-tem-cegueira-medida.md) — jsdom perde `!important` com `var()`; censo de volume não vê, sentinela com gatilho vê
+- [Divergência de censo tem causa isolável](divergencia-de-censo-tem-causa-isolavel.md) — 158/1175 × 157/1170 era o `@page`; pine a regra de contagem junto do número
+- [Oráculo independente do instrumento](oraculo-independente-do-instrumento.md) — população vinda do julgado é círculo; e a alínea de conjunto declarado é a testemunha da fiação
+- [Mutante aditivo nasce morto](mutante-aditivo-nasce-morto.md) — insere regra para seletor que já existe abaixo na mesma folha; metade do mutante é inerte
+- [Número esperado diferente do medido](numero-esperado-diferente-do-medido.md) — isole a causa e procure a pré-classificação na spec; reporte e pare, nunca calibre
+- [Verde com exceção impressa](verde-com-excecao-impressa.md) — vermelho crônico é pior (EA-5); asserção idêntica + dono/id/prazo auto-executável, e a exceção tem de ser carga
+- [Mutante de árvore sob censo pinado](mutante-de-arvore-sob-censo-pinado.md) — adição mata pelo censo, não pelo veredito; troca censo-neutra é a forma isolante; harness novo entra na própria população
+- [Arbitragem de desvio declarado](arbitragem-de-desvio-declarado.md) — reproduza o kill à mão, exija o gate "sugerido" VERDE sob o mutante; errata quando a spec promete o que não há
+- [Grade implícita neutraliza mutante de coluna](grade-implicita-neutraliza-mutante-de-coluna.md) — tirar o track não tira a coluna (areas herdadas / grid-column:2); meça o observável do gate sob a mutação, nunca raciocine
+- [Reprodução não-canônica por shim](reproducao-nao-canonica-por-shim.md) — suíte que chama `chromium.launch()` sem `executablePath` roda no Chrome local via `node -r shim`; controle tem de bater o número do CI
+- [Exit do stage não é exit do laço](exit-do-stage-nao-e-exit-do-laco.md) — cláusula "exit 0" de IC-2 contradiz T6; mede-se o processo inteiro e a classe é spec-errada, nunca afrouxar IC-4

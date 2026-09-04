@@ -24,3 +24,9 @@ o loop de substituição no próprio gate (nunca chamando `applyCopy` do módulo
 teste — o precedente público é o mesmo que a spec da 009 cita em C8). Lado
 PAPEL: compare com a string crua. Vale tanto para asserções positivas quanto —
 principalmente — para as negativas. Ver [[trilha-e-ambiente-quickscan]].
+
+**Reincidência (011, 2026-08-31)**: `D011-ACC1` comparou `QS[k].lbl` cru com o
+texto do botão e nasceu **constante vermelho**. Nenhuma execução do red o teria
+denunciado — quem pegou foi o cenário de CONTROLE da bateria negativa
+([[controle-verde-na-bateria-negativa]]). A pergunta a fazer antes de rodar
+qualquer gate de texto de tela: *já apliquei o `copyMap()`?*

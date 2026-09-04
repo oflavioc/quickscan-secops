@@ -109,13 +109,15 @@ IC-7 é o stage `baseline`; IC-8 é a execução da campanha, canônica no job
 | # | Critério | Gate (id · arquivo · asserção) | Mutante previsto |
 |---|---|---|---|
 | **IC-1** | **Portabilidade estrutural, por propriedade e não por lista**: nenhum harness de mutação invoca interpretador por nome fixo em comando, e **nenhum `cmd` de mutante começa com prefixo de variável de ambiente** — vale para todo harness declarado em `mutation_map.json`, hoje e depois. A resolução é a de T1, com o caminho do script entre aspas | `mutation` · `check_mutation.py` (seção de integridade, roda antes do trigger) · varredura de **todo** harness do mapa (hoje 4): zero literal de comando casando `"python3? `; zero `cmd` casando `^[A-Za-z_][A-Za-z0-9_]*=` — a classe **inclui dígitos**, senão `P50_ONLY=` escapa (foi exatamente esse erro de classe que produziu a medição errada corrigida na §Correção de fato); **auto-exclusão nominal** (R10 §10) de `check_mutation.py` e desta spec, por path literal | **M-IC1**: restaurar `execSync("python3 build_v32_html.py"…)` em qualquer harness → FAIL nomeando arquivo e linha. **M-IC2**: devolver um `cmd: "P50_ONLY=… node …"` a **qualquer** mutante de **qualquer** harness → FAIL nomeando harness e mutante. **Red natural e medido**: hoje são **46** ocorrências (20 na `p51` + 26 na `p50`) |
-| **IC-2** | **Requisito declarado que reprova**: com o interpretador ausente, a campanha exigida **não roda e é nomeada** — `FAIL` local, `DEFER` nomeado sob `MUTATION_DEFER_MISSING=1` (comportamento de `check_mutation.py:69-75` preservado). Com o interpretador presente, nada muda | `mutation` · `check_mutation.py` · execução adversarial `MUTATION_PY=py-inexistente python .claude/verify/check_mutation.py --all` ⇒ exit ≠ 0 e `[FAIL] <harness>: … ambiente sem python`; a mesma execução com `MUTATION_DEFER_MISSING=1` ⇒ `[DEFER]` nomeado, exit 0; execução normal ⇒ inalterada | **M-IC3**: `have("python") → True` incondicional (`check_mutation.py:30-31`, o **estado de hoje**) → a execução adversarial deixa de reprovar. É o **red natural** deste gate |
+| **IC-2** | **Requisito declarado que reprova**: com o interpretador ausente, a campanha exigida **não roda e é nomeada** — `FAIL` local, `DEFER` nomeado sob `MUTATION_DEFER_MISSING=1` (comportamento de `check_mutation.py:69-75` preservado). Com o interpretador presente, nada muda | `mutation` · `check_mutation.py` · execução adversarial `MUTATION_PY=py-inexistente python .claude/verify/check_mutation.py --all` ⇒ exit ≠ 0 e `[FAIL] <harness>: … ambiente sem python`; a mesma execução com `MUTATION_DEFER_MISSING=1` ⇒ `[DEFER]` nomeado no laço de trigger **e** exit do stage ≠ 0 por IC-4 (`preflight não resolveu o interpretador`) enquanto o interpretador não resolver; execução normal ⇒ inalterada. *(Errata G1 de 2026-09-01: a redação original dizia "⇒ `[DEFER]` nomeado, exit 0" — contradizia T6 ("exit 0 sse interpretador resolvido") e a linha "Interpretador ausente" da tabela de cenários desta mesma spec; a implementação seguiu a cláusula mais forte. A env delega campanhas, não o preflight. Ver §Erratas da Fase 6.)* | **M-IC3**: `have("python") → True` incondicional (`check_mutation.py:30-31`, o **estado de hoje**) → a execução adversarial deixa de reprovar. É o **red natural** deste gate |
 | **IC-3** | **Três estados com causa nomeada, e nenhum número não medido**: relatório com `DETECTADO`/`SOBREVIVENTE`/`NÃO EXECUTADO`+causa; com `U > 0` não há razão `D/T` impressa e o exit é ≠ 0; abortando no preflight **nada é mutado** (árvore limpa) | `mutation` · as três harnesses, em **worktree efêmera** · (a) `MUTATION_PY=py-inexistente node tests_pXX_mutants.js` ⇒ `NÃO EXECUTADO · interpretador ausente` para todos, sem razão `D/T`, exit ≠ 0, `git status --porcelain` vazio; (b) uma âncora corrompida na cópia ⇒ `NÃO EXECUTADO · âncora não encontrada` nomeando o mutante | **M-IC4**: reintroduzir o `run()` que engole a exceção (`tests_p51_mutants.js:186-187`, `code:-1`) e rotula `NÃO DETECTADO` (`:209`) → o cenário (a) volta a imprimir veredito e razão → morto pelos dois cenários |
 | **IC-4** | **Âncora única, provada antes de mutar**: para todo mutante de harness com preflight, `ocorrencias == 1` no arquivo-alvo; `0` ⇒ `âncora não encontrada`, `≥2` ⇒ `âncora ambígua`; ambos reprovam o stage, nomeando mutante, arquivo e contagem | `mutation` · `check_mutation.py` + `<cmd> --preflight` de cada harness · JSON com `mutantes[].ocorrencias`; stage FAIL se qualquer `!= 1`. Cobre os 20 da `p51`, os 53 da `p50` e os da `p52` | **M-IC5**: apontar a `find` de `M51-18` para `const overall = suff && scored.length ? Math.round(…)` — texto **idêntico** em `ui_v32.js:131` (`legacySnapshot`) e `:1026` (relatório) → `âncora ambígua (n=2)`. É a prova executável da borda 4 e a **contraprova da reancoragem ingênua** |
 | **IC-5** | **Matriz da P51 verdadeira**: todo mutante declarado pelo harness `p51` tem **um par** em `mutation-matrix.json`; par com `ultima_prova.resultado != "KILL"` tem `classificacao` do vocabulário fechado; `ultima_prova.registro` aponta para **arquivo existente**; mutante aposentado **não** está nos pares e **está** em `dividas_declaradas` com razão | `mutation` · `check_mutation.py` (asserção **nominal à `p51`**) + `check_tdd.py` (estrutura dos pares, gate existente) · conjunto de ids do preflight ≡ conjunto de `mutante` dos pares `p51`; caminhos de `registro` resolvidos no disco | **M-IC6**: remover um par (ou devolver a linha agregada `"campanhas P51 (múltiplos)"`, `mutation-matrix.json:62-72`) → FAIL `mutante sem par na matriz`. **M-IC7**: `registro` apontando para caminho inexistente → FAIL |
 | **IC-6** | **Alvo declarado verdadeiro (`p51`, nominal)**: `mutation_map.json → harnesses.p51.targets` ≡ arquivos que o harness realmente muta **∪** `{tests_p51_mutants.js}` | `mutation` · `check_mutation.py` · comparação de conjuntos entre `targets` e `arquivos_mutados` do preflight da `p51`; divergência em qualquer direção ⇒ FAIL nomeando o excedente e o faltante | **M-IC8**: remover `USER_GUIDE.md` dos `targets` (o **estado de hoje**, causa direta do apodrecimento de `M51-20`) → FAIL `alvo mutado ausente de targets`. **M-IC9**: devolver `ui_session_v32.js` → FAIL `alvo declarado que o harness não muta`. **Red natural** |
 | **IC-7** | **Identidade coerente e produto byte-intacto**: `gen_pins.py` no mesmo PR cobrindo todo arquivo pinado alterado (R8 §1); zero rastreado-sem-pin; engine, Camada 1, HTML gerado, módulos `ui_*` e `USER_GUIDE.md` byte-idênticos ao base `077282f` | `baseline` · `check_baseline.py` · 0 divergência, exit 0. Reforço: `build` (HTML reproduzido byte a byte), `P50-GOV1` (`tests_p50_core.js:231`, protegidos byte-a-byte) e `git diff --stat 077282f..HEAD` sem nenhum path de produto | — (gates existentes; o esquecimento **é** o FAIL do stage — R8 §1) |
 | **IC-8** | **Campanha `p51` conclui e as quatro reancoradas morrem pelo gate e motivo esperados**: zero `NÃO EXECUTADO`, zero `SOBREVIVENTE` entre `M51-03`/`M51-16`/`M51-18`/`M51-20`, cada uma com a linha `FAIL <gate esperado>` casando o `reason` | campanha `p51` · `node tests_p51_mutants.js` no job `visual` do CI (requer Chromium: `P51-VIS1`/`VIS2`/`PDF1` usam `tests_p50_chromium.js`) · saída por mutante + exit 0. Fora do CI, o relato honesto é `NÃO EXECUTADO` nomeado — nunca um número | **Os quatro mutantes de hoje são o red natural**: com as âncoras como estão, a campanha reporta `NÃO EXECUTADO · âncora não encontrada` para as quatro. Prova (c) de T9 por âncora: neutralizada a asserção do gate em worktree efêmera, o mutante **sobrevive** — sem isso a morte é coincidência |
+| **IC-9** *(addendum de 2026-08-30 — linha inserida pela Errata G2 de 2026-09-01; ratificação nominal do proprietário, ver §Erratas da Fase 6)* | **Exceção nominal de mutante sobrevivente — nominal, com prazo, impressa, e que morre com a própria razão**: toda entrada `lint == "mutation-sobrevivente"` de `known_issues.json` nomeia **um** harness, **um** id de mutante e **um** gate, sem curinga, com `motivo` e `remocao_prevista` não vazios (**IC-9.1**); o harness existe no `mutation_map.json` e declara aquele mutante (**IC-9.2**); o par existe em `mutation-matrix.json`, o gate declarado é o do par e `ultima_prova.resultado != "KILL"` — exceção **obsoleta reprova** (**IC-9.3**); o perdão do laço de campanha **discrimina** (perdoa o nomeado, reprova vizinho e harness alheio, não perdoa `NÃO EXECUTADO` nem campanha vazia, reprova quando o nomeado volta a `DETECTADO`) e **imprime** o que perdoou (**IC-9.4**) | `mutation` · `check_mutation.py` · bloco **aditivo** `---- exceção nominal ----`, contador e fecho próprios; contrato **C5** (`mut_perdao`, como enunciado em `red-excecao-nominal.md`); IC-9.4 medida por sonda em processo (7 cenários); primeira entrada: `KI-4` (`p51`/`M51-01`/`P51-VIS1`, `remocao_prevista` amarrada ao merge da 014) | **M-IC10**…**M-IC18**, um por cláusula, mortos no red `2f60e2c` (tabela em `red-excecao-nominal.md`); **M-IC19** (`mut_perdao` correto que o laço nunca consome) **sobrevive a IC-9** — declarado, morre no job `visual` (campanha `p51` verde sem linha `[EXCEÇÃO]` impressa) |
+| **IC-10** *(correção de defeito do IC-9, 2026-08-30 — linha inserida pela Errata G2 de 2026-09-01)* | **Perdão sobre leitura parcial é recusado, e a recusa é dita**: o laço só aplica o perdão de IC-9 quando a campanha foi lida **inteira** (`blocos lidos == esperados`, com `esperados` vindo do preflight/C1); divergência em qualquer direção, ou ausência do oráculo de contagem, **anula** o perdão (**IC-10.2/10.3**), com recusa impressa nomeando harness, mutante(s) e as duas contagens; o relato `LEITURA PARCIAL` de `mut_relata` **não é enfraquecido** — relato e veredito coexistem (**IC-10.4**); a forma lida do dicionário de C5 é **medida** (**IC-10.1**) | `mutation` · `check_mutation.py` · bloco **aditivo** `---- guarda de leitura parcial ----`; contrato **C6** (`mut_guarda_leitura`, como enunciado em `red-guarda-leitura-parcial.md`); acordo de forma C5→C6 + sonda em processo (8 cenários) + regressão de `mut_relata` | **M-IC23**…**M-IC28** e **M-IC30** mortos no red `bab7e35` (tabela em `red-guarda-leitura-parcial.md`); **M-IC29** (guarda que o laço não consome) e **M-IC31** (oráculo alimentado pelos próprios blocos lidos) **sobrevivem a IC-10** — declarados, job `visual` |
 
 **Nascimento de gate (R10)**: **positivo** = IC-8 (campanha conclui, quatro
 mortes pelo gate/motivo esperados) e IC-4 em árvore sã; **negativo** = IC-2
@@ -145,7 +147,7 @@ que os gates `P51-*` já defendem e que os mutantes atacam.
 |---|---|
 | Árvore sã, ambiente completo (CI Linux, job `visual`) | preflight de `p50`/`p51`/`p52` verde; campanhas exigidas rodam; relatório com `D detectados · 0 sobreviventes · 0 não executados`; razão `D/T` impressa; exit 0 |
 | Ambiente sem Chromium (Windows local) | preflight roda e reprova/aprova **ancoragem**; campanha exigida com `requires` faltando ⇒ `[FAIL] p51: campanha EXIGIDA … ambiente sem chromium` (ou `[DEFER]` sob a env do CI). **Nenhum número de campanha é impresso** |
-| Interpretador ausente | preflight ⇒ `interpretador ausente`, exit ≠ 0; harness invocado diretamente aborta **antes de mutar**, imprime `NÃO EXECUTADO · interpretador ausente` para todos, sem razão `D/T`, árvore limpa |
+| Interpretador ausente | preflight ⇒ `interpretador ausente`, exit ≠ 0 *(inclusive sob `MUTATION_DEFER_MISSING=1` — a env delega campanhas ao job `visual`, não o preflight, que não tem `requires` (T7); Errata G1 de 2026-09-01)*; harness invocado diretamente aborta **antes de mutar**, imprime `NÃO EXECUTADO · interpretador ausente` para todos, sem razão `D/T`, árvore limpa |
 | Âncora com 0 ocorrências | `NÃO EXECUTADO · âncora não encontrada`, nomeando mutante e arquivo; stage FAIL; nada mutado |
 | Âncora com ≥2 ocorrências | `NÃO EXECUTADO · âncora ambígua (n=<k>)`; stage FAIL; nada mutado — a mutação **nunca** é aplicada "na primeira ocorrência" |
 | Rebuild falha no meio da campanha | mutante marcado `NÃO EXECUTADO · rebuild falhou`; source restaurado e SHA conferido; campanha segue e reprova ao final |
@@ -170,6 +172,11 @@ a razão registrada + gate órfão em `dividas_declaradas` (T12). Nenhuma das
 quatro é candidata pelo que se lê hoje — o refinamento verificou as quatro
 propriedades vivas —, mas a saída existe e é a única alternativa legítima à
 reancoragem.
+
+*(Errata G2 de 2026-09-01: a E2 foi **estendida** a mais quatro âncoras — `p50/M13`,
+`p50/M23`, `p50/M35`, `p52/V322-M3` — sob a mesma disciplina desta seção; a triagem
+delas vive em `matriz-gate-mutante.md` §10. A tabela acima permanece como está: é a
+E2 nominal da `p51`. Ver §Erratas da Fase 6.)*
 
 ### Casos de borda do refinamento — tratamento nesta spec
 
@@ -248,10 +255,11 @@ permanece com a semântica atual, intocada.
 | Arquivo | Mudança | Pin |
 |---|---|---|
 | `tests_p51_mutants.js` | T1/T3/T4/T5/T6 (E1) + reancoragem das quatro (E2) | `pins.json:185` |
-| `tests_p50_mutants.js` | T1/**T3**/T4/T5/T6 (E1) — os **26** filtros inline migram para o `envOverride` que o runner já aceita (`:99`) | `pins.json:184` |
-| `tests_p52_mutants.js` | T1/T4/T5/T6 (E1) — T3 **já cumprida** (0 prefixos; `envOverride` em uso, `:1374`) | `pins.json:188` |
+| `tests_p50_mutants.js` | T1/**T3**/T4/T5/T6 (E1) — os **26** filtros inline migram para o `envOverride` que o runner já aceita (`:99`). *(Errata G2 de 2026-09-01: também **E2 estendida** — reancoragem de `M13`, `M23` e `M35` sob T9/T10, `matriz-gate-mutante.md` §10.1–10.3; ver §Erratas da Fase 6.)* | `pins.json:184` |
+| `tests_p52_mutants.js` | T1/T4/T5/T6 (E1) — T3 **já cumprida** (0 prefixos; `envOverride` em uso, `:1374`). *(Errata G2 de 2026-09-01: também **E2 estendida** — reancoragem de `V322-M3`, `matriz-gate-mutante.md` §10.4; ver §Erratas da Fase 6.)* | `pins.json:188` |
 | `.claude/verify/check_mutation.py` | T2/T7 + asserções IC-1..IC-6 | `pins.json:69` |
 | `.claude/verify/mutation_map.json` | C2 (preflight + `targets` da `p51`) | `pins.json:83` |
+| `.claude/verify/known_issues.json` | addendum **IC-9** — entrada `KI-4` (`lint: mutation-sobrevivente`; nominal a `p51`/`M51-01`/`P51-VIS1`; `remocao_prevista`: merge da demanda 014), commit `8b5be3e`. *(Errata G2 de 2026-09-01: a redação original listava este arquivo em "Não mudam"; a mudança foi autorizada por **ratificação nominal do proprietário em 2026-08-30** — ver §Erratas da Fase 6.)* | **pinado** (`pins.json`, entrada `.claude/verify/known_issues.json`) — repin no mesmo PR (R8 §1) |
 | `.claude/verify/mutation-matrix.json` | C3 (pares da P51 + dívidas) | **pinado** (`pins.json:82`) — repin no mesmo PR (R8 §1). *(Errata de 2026-08-29: a redação original dizia "fora do registry"; as exclusões de `_meta` são `docs_phase5/**`, `.claude/project-memory/**`, `*.zip` e o próprio `pins.json` — a matriz não está entre elas. Achado pelo `tech-lead` na Fase 2 e conferido por execução.)* |
 | `specs/013-integridade-da-campanha/*.md` | artefatos da demanda | entram no repin (precedente 007/008/012) |
 | `.claude/BACKLOG.md` | **condicional** — EA-4, EA-5 e EA-6 escritos **juntos** pelo `doc-writer`, só depois que o PR #28 (EA-3) chegar a `develop` (decisão 1.6 + decisão de escopo de 2026-08-29) | `pins.json:18` |
@@ -260,7 +268,10 @@ permanece com a semântica atual, intocada.
 **Não mudam**: `pipeline.yaml`, `run.sh`, `.github/workflows/verify.yml`,
 `expected_suites.json` (nenhuma suíte nova — os harnesses não são suítes
 registradas), `check_tdd.py`, `env_doctor.py`, `boundary.json`,
-`known_issues.json`, `invariants.json`, `CONTEXT.md` (glossário fechado na
+~~`known_issues.json`~~ *(Errata G2 de 2026-09-01: mudou pelo addendum IC-9 —
+entrada `KI-4`, commit `8b5be3e` — sob ratificação nominal do proprietário em
+2026-08-30; movido para a tabela acima. Ver §Erratas da Fase 6.)*,
+`invariants.json`, `CONTEXT.md` (glossário fechado na
 Fase 0), `tests_core_mutants.js`, **qualquer byte de produto**, **qualquer suíte
 `tests_*.js` de gate**.
 
@@ -317,6 +328,12 @@ que "nunca renumeram" (R12) é conflito de merge no pior lugar possível.
    conta própria: reancoragem exige a triagem de três saídas com dono e
    julgamento de propriedade (T9), e ampliar a E2 para outras campanhas é
    ampliação de escopo. Escalar ao orquestrador com a lista.
+   *(Errata G2 de 2026-09-01: a escalada prevista aqui **aconteceu** — o
+   preflight revelou `p50/M13`, `p50/M23`, `p50/M35` (ambígua, n=2) e
+   `p52/V322-M3` fora de `ocorrencias == 1`, e o orquestrador, sob a delegação
+   do proprietário de 2026-08-29, decidiu **estender a E2** às quatro, com a
+   triagem de três saídas e as três provas de T9 (`matriz-gate-mutante.md`
+   §8–§14). Ver §Fora de escopo e §Erratas da Fase 6.)*
 2. **"1 não-detectado na `p51` e 1 na `p52`" não é medição desta fase.** O número
    vem da execução do PR #24 e **não é verificável neste worktree** (o recibo cai
    em caminho gitignorado, `.gitignore:15`). A spec **não pina esse número**: a E3
@@ -425,9 +442,181 @@ Acrescentado por esta spec:
 - **Stage novo no `pipeline.yaml`, mudança em `run.sh` ou em `verify.yml`** —
   incluindo o fechamento da borda 8 (vincular `DEFER` à execução no job
   `visual`), que fica registrado como dívida com cadeia fechada (Risco 4).
-- **Reancorar mutante de `p50`/`p52`** que o preflight venha a revelar podre —
-  classificar e registrar; reancorar é E2 e a E2 é nominal às quatro (Risco 1).
+- ~~**Reancorar mutante de `p50`/`p52`** que o preflight venha a revelar podre —
+  classificar e registrar; reancorar é E2 e a E2 é nominal às quatro (Risco 1).~~
+  *(Errata G2 de 2026-09-01: este item **saiu** do fora-de-escopo em 2026-08-29,
+  pela rota que o Risco 1 previa — escalada ao orquestrador, que decidiu, sob a
+  delegação do proprietário de 2026-08-29, estender a E2 às quatro âncoras que o
+  preflight revelou: `p50/M13`, `p50/M23`, `p50/M35`, `p52/V322-M3`
+  (`matriz-gate-mutante.md` §8–§14, commit `5d06cd1`). Razão dura, registrada na
+  matriz: sem elas o IC-4 fica vermelho para sempre; a alternativa — fazer o gate
+  **tolerar** âncora podre como dívida — é o buraco que esta demanda existe para
+  fechar (R10 §1). A mesma disciplina de T9/T10 valeu para as quatro. Continuam
+  fora: expandir a matriz da P50/P52 por par (T13) e qualquer byte de produto.
+  Ver §Erratas da Fase 6.)*
 - **Corrigir o recibo declarado da `p50` e o `exit` de execução parcial** —
   achados de vizinhança, vão para `DEPENDÊNCIAS`/backlog (Risco 6).
 - **Fixar a contagem de sobreviventes** ("1 na `p51`, 1 na `p52`") como critério
   de aceite — número não medido nesta fase (Risco 2).
+
+## Erratas da Fase 6 (2026-09-01)
+
+> Escritas pelo `product-owner` no fecho retroativo da demanda, a partir dos gaps
+> **G1** e **G2** do [spec-validate.md](spec-validate.md) (32/35; ambos de classe
+> `spec-errada`, **zero** `implementação-divergente`). Nenhuma corrige código: nos
+> dois casos a implementação está certa e o texto normativo ficou para trás.
+>
+> **DECIDIDO SOB DELEGAÇÃO DO PROPRIETÁRIO de 2026-08-29, não aprovado por ele pessoalmente.**
+>
+> A delegação é **geral** (*"tome as decisões por mim"*) e **não enumera
+> "errata"**. A subsunção — errata de texto em spec de demanda que foi aprovada
+> sob a mesma delegação (`a052617`) cabe na delegação — é do **orquestrador**, e
+> fica escrita aqui para poder ser contestada pelo proprietário. A errata **não
+> decide nada novo**: G1 resolve uma contradição interna a favor de cláusulas que
+> **esta mesma spec** já fixava (T6, T7, tabela de cenários); G2 registra duas
+> decisões que já têm autorização própria, cada uma citada abaixo com a sua, sem
+> inventar autorização mais forte do que a que existe. O que a delegação exclui
+> (release, selagem, spec de fase selada) não é tocado — isto é spec de demanda.
+> Se o proprietário discordar da subsunção, o caminho é reverter este commit; a
+> redação original está preservada em cada ponto para tornar isso barato.
+
+### Convenção adotada, e por quê
+
+A spec usa nota inline em itálico (precedente: linha da `mutation-matrix.json`
+em §Arquivos rastreados que mudam). Aqui adotei **as duas formas**: nota inline
+curta **em cada ponto tocado** — para quem lê aquele ponto isolado não ser
+enganado, que é a divergência que a skill `spec-validate` nomeia — **e** esta
+seção única com o texto completo (o que dizia · o que passa a dizer · por quê ·
+autorização). Razão: G1 exige uma explicação causal que não cabe numa célula de
+tabela, e G2 toca cinco lugares — repetir a razão em cinco notas é a duplicação
+que faz texto entrar em drift. Identificação pelo **id do gap** do spec-validate
+(G1, G2), nunca `E<n>`: nesta spec `E1`…`E4` são as **entregas**. Em nenhum
+ponto a redação original foi apagada (R2 §5): célula reescrita traz a redação
+anterior citada na nota; item de lista sai **riscado**, com a razão.
+
+### Errata G1 — IC-2 e o exit do stage sob `MUTATION_DEFER_MISSING=1`
+
+**O que dizia** (célula "Gate" de IC-2): *"a mesma execução com
+`MUTATION_DEFER_MISSING=1` ⇒ `[DEFER]` nomeado, exit 0"*.
+
+**O que passa a dizer**: *"a mesma execução com `MUTATION_DEFER_MISSING=1` ⇒
+`[DEFER]` nomeado no laço de trigger **e** exit do stage ≠ 0 por IC-4
+(`preflight não resolveu o interpretador`) enquanto o interpretador não
+resolver"*.
+
+**Por que as duas redações coexistiram** — e é isto que impede a contradição de
+voltar. A condição "interpretador ausente" é respondida por **dois mecanismos**
+distintos do mesmo stage, e a spec descreveu cada um pela sua própria lente sem
+escrever a regra de composição do exit:
+
+1. **Lente da campanha** (T2 → IC-2): o laço de trigger, que existia antes da
+   013 (`check_mutation.py:69-75` na época; hoje `:1291-1303`). Nele, `[DEFER]`
+   é `continue` sem `fails += 1` — visto isolado, "exit 0" era verdade, e **era
+   a verdade do stage inteiro antes da 013**, quando não havia preflight. IC-2
+   nasceu como o gate de T2 (`have("python")` deixa de ser tautologia — M-IC3),
+   e a célula foi escrita olhando só para esse laço.
+2. **Lente do instrumento** (T6/T7 → IC-4): o preflight, criado por esta spec,
+   roda **antes** do laço e **independentemente de `requires`** (T7), reporta
+   `interpretador.resolvido` (C1) e tem exit 0 **sse** resolvido (T6); IC-4 o
+   consome e reprova o stage quando `resolvido == false`
+   (`check_mutation.py:348-350`). A tabela de cenários já dizia "Interpretador
+   ausente → exit ≠ 0".
+
+A célula de IC-2 nunca foi relida contra a segunda lente. A regra de composição,
+que passa a estar escrita: **`MUTATION_DEFER_MISSING=1` delega campanhas; não
+delega o preflight** — o preflight não é campanha, não tem `requires` e não tem
+job a quem ser delegado (T7). Logo o stage sai ≠ 0 enquanto o interpretador não
+resolver, com ou sem a env.
+
+**Por que a direção é esta, e não afrouxar IC-4**: (i) T6 é normativa e mais
+forte ("sse"); (ii) fazer IC-4 "deferir" interpretador ausente seria enfraquecer
+o gate para a prosa passar — R10 §1 ao contrário; (iii) um interpretador que
+não resolve é defeito de configuração do **instrumento** (`MUTATION_PY` errado
+ou PATH sem o binário de T1), não ausência de ambiente que outro job supra.
+
+**O que não muda**: o `[DEFER]` continua **nomeado** no laço — medido no
+spec-validate, execução (b): 8 `[DEFER] <h>: exigida (alvo mudou) — delegada ao
+job com python[/chromium] (job visual)`, e o exit 1 vem dos 7 `[FAIL] IC-4 …
+preflight não resolveu o interpretador` (`7 problema(s)`); C4 segue verdadeira
+(`MUTATION_DEFER_MISSING` com a semântica de sempre **sobre o laço**); a borda 8
+e a cláusula de regressão de §Nascimento de gate (`DEFER`/`FAIL` de `:69-75`
+intactos) seguem verdadeiras; M-IC3 segue sendo o red natural de IC-2
+(`[FAIL] IC-2: M-IC3 · have("python")`, spec-validate item 16). **Nenhuma
+asserção de `check_mutation.py` muda com esta errata.**
+
+### Errata G2 — o texto não acompanhou duas decisões autorizadas
+
+#### G2.a — addendum IC-9/IC-10 e `known_issues.json`
+
+**O que dizia**: `known_issues.json` na lista "Não mudam"; tabela de critérios
+terminando em IC-8.
+
+**O que passa a dizer**: `known_issues.json` na tabela "Arquivos rastreados que
+mudam" (entrada `KI-4`, commit `8b5be3e`, pinado — repin no mesmo PR); linhas
+**IC-9** e **IC-10** na tabela de critérios, com asserção, gate e mutantes
+conforme os reds `red-excecao-nominal.md` e `red-guarda-leitura-parcial.md`.
+
+**Autorização**: **ratificação nominal do proprietário, no chat de 2026-08-30**
+(*"Autorizo, sigo com suas recomendações"*, em resposta a pergunta direta —
+`red-excecao-nominal.md` §"O que foi autorizado, e por quem"). **Não foi
+delegação**: o addendum muda o que o gate exige (o stage `mutation` passa a
+honrar exceção nominal de mutante sobrevivente), e por isso precisou de
+ratificação pessoal — as quatro cláusulas duras são as palavras dele (nominal,
+nunca abrangente · prazo obrigatório · impressa, nunca silenciosa · obsoleta
+reprova). IC-10 foi classificado **pelo proprietário, contra a classificação do
+`qa-engineer`**, como **correção de defeito** de IC-9 ("perdão sobre leitura
+parcial não é nominal"), não como cláusula nova — logo sem ratificação nova
+(`red-guarda-leitura-parcial.md` §"A classificação"). Esta errata **registra**
+essa autorização; não a reabre nem a substitui.
+
+**Por que não voltou ao texto na hora**: o addendum nasceu na Fase 4/5 (reds
+`2f60e2c` e `bab7e35`, greens `8b5be3e` e `95dfc0c`), depois de a spec estar
+aprovada e pinada; os próprios reds declararam a divergência (§Pendências: "a
+`spec.md` não tem linha para IC-9"), e o aceite de intenção de 2026-09-01 a
+carregou como pendência (4). Ficou para o fecho — este.
+
+**Pendência que permanece** (não é desta errata): os contratos **C5**
+(`mut_perdao`) e **C6** (`mut_guarda_leitura`) são, nas palavras dos reds,
+"proposta do `qa-engineer`, não decisão de desenho ratificada" — a ratificação
+técnica (nome e forma do retorno) é do `tech-lead`, e não encontrei registro
+dela em `plan.md`/`tasks.md`. As linhas IC-9/IC-10 citam C5/C6 **como
+enunciados nos reds**, sem promovê-los a §Contratos.
+
+#### G2.b — E2 estendida a `p50`/`p52`
+
+**O que dizia** (§Fora de escopo): *"Reancorar mutante de `p50`/`p52` que o
+preflight venha a revelar podre — classificar e registrar; reancorar é E2 e a E2
+é nominal às quatro (Risco 1)"*.
+
+**O que passa a dizer**: a E2 foi **estendida** às quatro âncoras que o
+preflight revelou fora de `ocorrencias == 1` — `p50/M13`, `p50/M23`, `p50/M35`
+(ambígua, n=2) e `p52/V322-M3` — com a mesma disciplina de T9/T10: triagem
+escrita antes da edição, três perguntas por âncora, três provas cumulativas
+(`matriz-gate-mutante.md` §8–§14; commit `5d06cd1`). O item sai do fora-de-escopo,
+riscado. Continuam fora: expandir a matriz da P50/P52 por par (T13 intacto) e
+qualquer byte de produto (IC-7 e `P50-GOV1` seguiram verdes).
+
+**Autorização**: **decisão do orquestrador sob a delegação do proprietário de
+2026-08-29**, pela rota que o **Risco 1** previa ("escalar ao orquestrador com a
+lista") — registrada no cabeçalho da E2 estendida da matriz. Razão dura, nas
+palavras de lá: **sem elas o IC-4 fica vermelho para sempre**, o stage `mutation`
+nunca fecha e o PR não mescla; a alternativa — fazer o gate **tolerar** âncora
+podre como dívida — é exatamente o buraco que esta demanda existe para fechar
+(R10 §1). **Não houve ratificação pessoal do proprietário para esta extensão**,
+e esta errata não a inventa.
+
+**Consequência honesta que a errata não esconde**: das oito reancoragens, duas
+(`M51-16`, `V322-M3`) carregam só as provas (a)+(b) — a (c) exige Chromium e
+está em `dividas_declaradas` [8]/[9]. É o **G3** do spec-validate (`faltando,
+declarado`), com dono (`qa-engineer`) e rota; **não é fechado por texto** e não
+é tocado aqui.
+
+### O que esta seção não faz
+
+- Não toca `spec-validate.md`, `matriz-gate-mutante.md` nem `relatorio-final.md`.
+- Não move a fase para `done` — falta o relatório final (T031) e a decisão do
+  fecho é do orquestrador/usuário.
+- Não enfraquece asserção alguma; nenhuma invariante R1 é tangenciada; nenhuma
+  superfície protegida (R6).
+- `spec.md` é pinada (`pins.json`): esta errata exige `gen_pins.py` no mesmo PR
+  (R8 §1), com o motivo no commit.

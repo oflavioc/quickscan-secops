@@ -1,0 +1,44 @@
+{
+  "id": "P9",
+  "modo": "pre",
+  "_descricao": "PR feature/046 → develop; planning-state done; nenhum artefato em disco; excluída no registro com fonte",
+  "head_ref": "feature/046-done-excluida",
+  "base_ref": "develop",
+  "estados": {
+    "046-done-excluida": {
+      "demanda": "046-done-excluida",
+      "phase": "done",
+      "spec_dir": "specs/046-done-excluida",
+      "branch": "feature/046-done-excluida",
+      "red": {
+        "status": "proven",
+        "commit": "046c046c046c046c046c046c046c046c046c046c"
+      }
+    }
+  },
+  "artefatos": [],
+  "registro": {
+    "piso": {
+      "sha": "a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1",
+      "descricao": "piso sintético da sonda — as posições já vêm resolvidas em merges[].posicao_relativa_ao_piso"
+    },
+    "excluidas_por_r13": {
+      "046-done-excluida": {
+        "artefatos_ausentes": [
+          "relatorio-final.md",
+          "spec-validate.md"
+        ],
+        "fonte": "fechada sob a Onda 2 (PR sintético); R13"
+      }
+    },
+    "populacao": {
+      "padrao_branch": "^feature/(\\d{3})-",
+      "formato_merge_pr": "^Merge pull request #(\\d+) from ([^/]+)/(.+)$",
+      "integracoes_de_main": [
+        "^Merge remote-tracking branch 'origin/main' into develop",
+        "^Merge branch 'main' into develop",
+        "^merge: integra "
+      ]
+    }
+  }
+}

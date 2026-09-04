@@ -1,0 +1,83 @@
+{
+  "id": "F20",
+  "modo": "pos",
+  "_descricao": "registro com piso de 7 hex (não é SHA de 40 hex); duas demandas done, mescladas e com artefatos",
+  "sujeito": "038-primeira",
+  "estados": {
+    "038-primeira": {
+      "demanda": "038-primeira",
+      "phase": "done",
+      "spec_dir": "specs/038-primeira",
+      "branch": "feature/038-primeira",
+      "red": {
+        "status": "proven",
+        "commit": "038c038c038c038c038c038c038c038c038c038c"
+      }
+    },
+    "039-segunda": {
+      "demanda": "039-segunda",
+      "phase": "done",
+      "spec_dir": "specs/039-segunda",
+      "branch": "feature/039-segunda",
+      "red": {
+        "status": "proven",
+        "commit": "039c039c039c039c039c039c039c039c039c039c"
+      }
+    }
+  },
+  "merges": [
+    {
+      "sha": "a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5",
+      "data": "2026-09-02T10:00:00-03:00",
+      "msg": "Merge pull request #115 from oflavioc/feature/038-primeira",
+      "posicao_relativa_ao_piso": "posterior"
+    },
+    {
+      "sha": "a6a6a6a6a6a6a6a6a6a6a6a6a6a6a6a6a6a6a6a6",
+      "data": "2026-09-02T10:00:00-03:00",
+      "msg": "Merge pull request #116 from oflavioc/feature/039-segunda",
+      "posicao_relativa_ao_piso": "posterior"
+    }
+  ],
+  "ancestralidade": {
+    "038-primeira": {
+      "resposta": true,
+      "causa": null,
+      "anterior_ao_piso": false
+    },
+    "039-segunda": {
+      "resposta": true,
+      "causa": null,
+      "anterior_ao_piso": false
+    }
+  },
+  "artefatos": [
+    "specs/038-primeira/relatorio-final.md",
+    "specs/038-primeira/spec-validate.md",
+    "specs/039-segunda/relatorio-final.md",
+    "specs/039-segunda/spec-validate.md"
+  ],
+  "data_do_commit": "2026-09-04",
+  "registro": {
+    "piso": {
+      "sha": "921977c",
+      "descricao": "piso abreviado — malformado de propósito"
+    },
+    "excluidas_por_r13": {},
+    "populacao": {
+      "padrao_branch": "^feature/(\\d{3})-",
+      "formato_merge_pr": "^Merge pull request #(\\d+) from ([^/]+)/(.+)$",
+      "integracoes_de_main": [
+        "^Merge remote-tracking branch 'origin/main' into develop",
+        "^Merge branch 'main' into develop",
+        "^merge: integra "
+      ]
+    }
+  },
+  "origin_develop": {
+    "presente": true,
+    "sha": "0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d",
+    "causa": null,
+    "piso_na_cadeia": true
+  }
+}

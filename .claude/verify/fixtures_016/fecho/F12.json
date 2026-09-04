@@ -1,0 +1,40 @@
+{
+  "id": "F12",
+  "modo": "pos",
+  "_descricao": "merge first-parent posterior ao piso de chore/*; nenhum planning-state",
+  "sujeito": "e9e9e9e9e9e9e9e9e9e9e9e9e9e9e9e9e9e9e9e9",
+  "estados": {},
+  "merges": [
+    {
+      "sha": "e9e9e9e9e9e9e9e9e9e9e9e9e9e9e9e9e9e9e9e9",
+      "data": "2026-09-02T10:00:00-03:00",
+      "msg": "Merge pull request #109 from oflavioc/chore/fecho-009-013",
+      "posicao_relativa_ao_piso": "posterior"
+    }
+  ],
+  "ancestralidade": {},
+  "artefatos": [],
+  "data_do_commit": "2026-09-04",
+  "registro": {
+    "piso": {
+      "sha": "a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1",
+      "descricao": "piso sintético da sonda — as posições já vêm resolvidas em merges[].posicao_relativa_ao_piso"
+    },
+    "excluidas_por_r13": {},
+    "populacao": {
+      "padrao_branch": "^feature/(\\d{3})-",
+      "formato_merge_pr": "^Merge pull request #(\\d+) from ([^/]+)/(.+)$",
+      "integracoes_de_main": [
+        "^Merge remote-tracking branch 'origin/main' into develop",
+        "^Merge branch 'main' into develop",
+        "^merge: integra "
+      ]
+    }
+  },
+  "origin_develop": {
+    "presente": true,
+    "sha": "0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d",
+    "causa": null,
+    "piso_na_cadeia": true
+  }
+}

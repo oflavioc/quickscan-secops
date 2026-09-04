@@ -1,0 +1,40 @@
+{
+  "id": "hoje",
+  "_descricao": "as duas respostas reais de 2026-09-04 (gh api, token de usuário): ruleset 21381133 com deletion + non_fast_forward; classic protected=true com enabled=false e enforcement_level off",
+  "rules": {
+    "status": 200,
+    "body": [
+      {
+        "type": "deletion",
+        "ruleset_source_type": "Repository",
+        "ruleset_source": "oflavioc/quickscan-secops",
+        "ruleset_id": 21381133
+      },
+      {
+        "type": "non_fast_forward",
+        "ruleset_source_type": "Repository",
+        "ruleset_source": "oflavioc/quickscan-secops",
+        "ruleset_id": 21381133
+      }
+    ],
+    "erro": null
+  },
+  "branch": {
+    "status": 200,
+    "body": {
+      "name": "develop",
+      "protected": true,
+      "protection": {
+        "enabled": false,
+        "required_status_checks": {
+          "enforcement_level": "off",
+          "contexts": [],
+          "checks": []
+        }
+      },
+      "protection_url": "https://api.github.com/repos/oflavioc/quickscan-secops/branches/develop/protection"
+    },
+    "erro": null
+  },
+  "_nota": "resposta de /branches/develop reduzida aos campos que o classificador lê (name, protected, protection, protection_url); commit e _links omitidos — carregam e-mail do autor e URLs, irrelevantes para a classificação"
+}

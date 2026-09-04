@@ -1,0 +1,42 @@
+{
+  "_meta": {
+    "descricao": "Expectativa de proteção de `develop` (demanda 016, P16.b — decisão P2 do portão da Fase 0, estendida a três checks no portão da Fase 1, errata E1). Dado, não prosa (R6): D016-PROT1 (check_branch_protection.py, seção `branch-protection` do compliance-audit) compara a API do GitHub com isto a cada auditoria. Sonda pinada: 9 pares de respostas enlatadas em fixtures_016/protecao/, classificadas antes de qualquer leitura da rede.",
+    "demanda": "016-registro-contra-execucao",
+    "autor_wave1": "qa-engineer (os valores são a decisão P2/E1 do usuário, transcrita — não há juízo de engenharia)",
+    "owner_do_estado": "build-engineer (plan.md §Owner do estado: expectativa de identidade de configuração; só muda por ato de governança do proprietário)",
+    "o_que_e_autoral_e_o_que_e_medido": {
+      "autoral": ["repo", "ref", "checks_obrigatorios", "up_to_date", "sonda.casos (o esperado de cada caso)"],
+      "medido": ["fixtures_016/protecao/hoje.json — as duas respostas reais da API em 2026-09-04 (gh api, token de usuário; reconferidas na Fase 4, byte-equivalentes nos campos lidos)"]
+    },
+    "contrato_da_sonda": {
+      "fixtures": "um arquivo por caso, `<id>.json`, com as duas respostas como {status, body, erro} — rules = GET /repos/{repo}/rules/branches/{ref}; branch = GET /repos/{repo}/branches/{ref}; `erro` é null ou {classe, detalhe} (falha de transporte, sem resposta HTTP)",
+      "campos_pinados_por_caso": {
+        "esperado": "veredito — PROTEGIDA | DESPROTEGIDA | NÃO DETERMINÁVEL (T10); o classificador devolve o mesmo veredito nos dois modos (local/CI) — só a severidade muda",
+        "causa": "classe da causa quando NÃO DETERMINÁVEL: 'rede' | 'permissão <status>' | 'repositório não identificado' | 'resposta <status>'; null nos demais",
+        "faltam": "lista (comparada ordenada) do que falta para PROTEGIDA: nomes de contexto de checks_obrigatorios e o literal 'up-to-date'; vazia quando PROTEGIDA ou NÃO DETERMINÁVEL",
+        "severidade_local": "PASS | FAIL | WARN com modo_ci=false (T7: NÃO DETERMINÁVEL ⇒ WARN; strict sob classic ⇒ WARN permanente)",
+        "severidade_ci": "PASS | FAIL | WARN com modo_ci=true (T7: NÃO DETERMINÁVEL ⇒ FAIL; strict sob classic continua WARN)"
+      },
+      "por_que_faltam_e_severidade": "só o veredito deixaria vivos 'um contexto basta' (M14), 'dois bastam' (M17, E1) e 'ignora strict' (M13) quando o veredito coincidisse por outra via, e deixaria a política T7 sem carrasco executável: a sonda classifica cada fixture DUAS vezes (local e CI) e pina as duas severidades."
+    }
+  },
+  "repo": "oflavioc/quickscan-secops",
+  "ref": "develop",
+  "checks_obrigatorios": ["verify", "visual", "fecho"],
+  "up_to_date": true,
+  "sonda": {
+    "fixtures": ".claude/verify/fixtures_016/protecao/",
+    "total": 9,
+    "casos": [
+      { "id": "hoje",             "esperado": "DESPROTEGIDA",     "causa": null,            "faltam": ["fecho", "up-to-date", "verify", "visual"], "severidade_local": "FAIL", "severidade_ci": "FAIL" },
+      { "id": "esperado_ruleset", "esperado": "PROTEGIDA",        "causa": null,            "faltam": [],                                          "severidade_local": "PASS", "severidade_ci": "PASS" },
+      { "id": "sem_visual",       "esperado": "DESPROTEGIDA",     "causa": null,            "faltam": ["visual"],                                  "severidade_local": "FAIL", "severidade_ci": "FAIL" },
+      { "id": "sem_fecho",        "esperado": "DESPROTEGIDA",     "causa": null,            "faltam": ["fecho"],                                   "severidade_local": "FAIL", "severidade_ci": "FAIL" },
+      { "id": "strict_false",     "esperado": "DESPROTEGIDA",     "causa": null,            "faltam": ["up-to-date"],                              "severidade_local": "FAIL", "severidade_ci": "FAIL" },
+      { "id": "classic_off",      "esperado": "DESPROTEGIDA",     "causa": null,            "faltam": ["fecho", "up-to-date", "verify", "visual"], "severidade_local": "FAIL", "severidade_ci": "FAIL" },
+      { "id": "classic_on",       "esperado": "PROTEGIDA",        "causa": null,            "faltam": [],                                          "severidade_local": "WARN", "severidade_ci": "WARN" },
+      { "id": "http_403",         "esperado": "NÃO DETERMINÁVEL", "causa": "permissão 403", "faltam": [],                                          "severidade_local": "WARN", "severidade_ci": "FAIL" },
+      { "id": "sem_rede",         "esperado": "NÃO DETERMINÁVEL", "causa": "rede",          "faltam": [],                                          "severidade_local": "WARN", "severidade_ci": "FAIL" }
+    ]
+  }
+}

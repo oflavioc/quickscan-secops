@@ -1,0 +1,57 @@
+{
+  "id": "F2",
+  "modo": "pos",
+  "_descricao": "demanda em validate; nenhum merge first-parent nomeia a branch (entrou por integração de main); red.commit é ancestral de origin/develop e NÃO é ancestral do piso",
+  "sujeito": "022-so-por-ancestralidade",
+  "estados": {
+    "022-so-por-ancestralidade": {
+      "demanda": "022-so-por-ancestralidade",
+      "phase": "validate",
+      "spec_dir": "specs/022-so-por-ancestralidade",
+      "branch": "feature/022-so-por-ancestralidade",
+      "red": {
+        "status": "proven",
+        "commit": "022c022c022c022c022c022c022c022c022c022c"
+      }
+    }
+  },
+  "merges": [
+    {
+      "sha": "d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2",
+      "data": "2026-09-02T11:00:00-03:00",
+      "msg": "Merge branch 'main' into develop",
+      "posicao_relativa_ao_piso": "posterior"
+    }
+  ],
+  "ancestralidade": {
+    "022-so-por-ancestralidade": {
+      "resposta": true,
+      "causa": null,
+      "anterior_ao_piso": false
+    }
+  },
+  "artefatos": [],
+  "data_do_commit": "2026-09-04",
+  "registro": {
+    "piso": {
+      "sha": "a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1",
+      "descricao": "piso sintético da sonda — as posições já vêm resolvidas em merges[].posicao_relativa_ao_piso"
+    },
+    "excluidas_por_r13": {},
+    "populacao": {
+      "padrao_branch": "^feature/(\\d{3})-",
+      "formato_merge_pr": "^Merge pull request #(\\d+) from ([^/]+)/(.+)$",
+      "integracoes_de_main": [
+        "^Merge remote-tracking branch 'origin/main' into develop",
+        "^Merge branch 'main' into develop",
+        "^merge: integra "
+      ]
+    }
+  },
+  "origin_develop": {
+    "presente": true,
+    "sha": "0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d",
+    "causa": null,
+    "piso_na_cadeia": true
+  }
+}

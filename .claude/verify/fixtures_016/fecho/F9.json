@@ -1,0 +1,66 @@
+{
+  "id": "F9",
+  "modo": "pos",
+  "_descricao": "demanda done mesclada por mensagem, artefatos presentes, e ainda com fecho_pendente completa e no prazo",
+  "sujeito": "029-done-com-valvula",
+  "estados": {
+    "029-done-com-valvula": {
+      "demanda": "029-done-com-valvula",
+      "phase": "done",
+      "spec_dir": "specs/029-done-com-valvula",
+      "branch": "feature/029-done-com-valvula",
+      "red": {
+        "status": "proven",
+        "commit": "029c029c029c029c029c029c029c029c029c029c"
+      },
+      "fecho_pendente": {
+        "motivo": "spec-validate.md e relatorio-final.md ainda não escritos; PO/QA recusaram done sem artefatos",
+        "dono": "qa-engineer",
+        "prazo": "2026-09-30",
+        "declarado_em": "2026-09-04"
+      }
+    }
+  },
+  "merges": [
+    {
+      "sha": "d9d9d9d9d9d9d9d9d9d9d9d9d9d9d9d9d9d9d9d9",
+      "data": "2026-09-02T10:00:00-03:00",
+      "msg": "Merge pull request #106 from oflavioc/feature/029-done-com-valvula",
+      "posicao_relativa_ao_piso": "posterior"
+    }
+  ],
+  "ancestralidade": {
+    "029-done-com-valvula": {
+      "resposta": true,
+      "causa": null,
+      "anterior_ao_piso": false
+    }
+  },
+  "artefatos": [
+    "specs/029-done-com-valvula/relatorio-final.md",
+    "specs/029-done-com-valvula/spec-validate.md"
+  ],
+  "data_do_commit": "2026-09-04",
+  "registro": {
+    "piso": {
+      "sha": "a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1",
+      "descricao": "piso sintético da sonda — as posições já vêm resolvidas em merges[].posicao_relativa_ao_piso"
+    },
+    "excluidas_por_r13": {},
+    "populacao": {
+      "padrao_branch": "^feature/(\\d{3})-",
+      "formato_merge_pr": "^Merge pull request #(\\d+) from ([^/]+)/(.+)$",
+      "integracoes_de_main": [
+        "^Merge remote-tracking branch 'origin/main' into develop",
+        "^Merge branch 'main' into develop",
+        "^merge: integra "
+      ]
+    }
+  },
+  "origin_develop": {
+    "presente": true,
+    "sha": "0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d",
+    "causa": null,
+    "piso_na_cadeia": true
+  }
+}

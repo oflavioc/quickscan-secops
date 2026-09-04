@@ -1,0 +1,57 @@
+{
+  "id": "F1",
+  "modo": "pos",
+  "_descricao": "demanda em validate; merge first-parent posterior ao piso com mensagem do GitHub nomeando a branch; red.commit também é ancestral; sem fecho_pendente",
+  "sujeito": "021-mesclada-por-mensagem",
+  "estados": {
+    "021-mesclada-por-mensagem": {
+      "demanda": "021-mesclada-por-mensagem",
+      "phase": "validate",
+      "spec_dir": "specs/021-mesclada-por-mensagem",
+      "branch": "feature/021-mesclada-por-mensagem",
+      "red": {
+        "status": "proven",
+        "commit": "021c021c021c021c021c021c021c021c021c021c"
+      }
+    }
+  },
+  "merges": [
+    {
+      "sha": "d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1",
+      "data": "2026-09-02T10:00:00-03:00",
+      "msg": "Merge pull request #101 from oflavioc/feature/021-mesclada-por-mensagem",
+      "posicao_relativa_ao_piso": "posterior"
+    }
+  ],
+  "ancestralidade": {
+    "021-mesclada-por-mensagem": {
+      "resposta": true,
+      "causa": null,
+      "anterior_ao_piso": false
+    }
+  },
+  "artefatos": [],
+  "data_do_commit": "2026-09-04",
+  "registro": {
+    "piso": {
+      "sha": "a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1",
+      "descricao": "piso sintético da sonda — as posições já vêm resolvidas em merges[].posicao_relativa_ao_piso"
+    },
+    "excluidas_por_r13": {},
+    "populacao": {
+      "padrao_branch": "^feature/(\\d{3})-",
+      "formato_merge_pr": "^Merge pull request #(\\d+) from ([^/]+)/(.+)$",
+      "integracoes_de_main": [
+        "^Merge remote-tracking branch 'origin/main' into develop",
+        "^Merge branch 'main' into develop",
+        "^merge: integra "
+      ]
+    }
+  },
+  "origin_develop": {
+    "presente": true,
+    "sha": "0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d",
+    "causa": null,
+    "piso_na_cadeia": true
+  }
+}

@@ -1,0 +1,62 @@
+{
+  "id": "F8",
+  "modo": "pos",
+  "_descricao": "demanda em validate mesclada por mensagem; fecho_pendente sem o campo dono",
+  "sujeito": "028-valvula-sem-dono",
+  "estados": {
+    "028-valvula-sem-dono": {
+      "demanda": "028-valvula-sem-dono",
+      "phase": "validate",
+      "spec_dir": "specs/028-valvula-sem-dono",
+      "branch": "feature/028-valvula-sem-dono",
+      "red": {
+        "status": "proven",
+        "commit": "028c028c028c028c028c028c028c028c028c028c"
+      },
+      "fecho_pendente": {
+        "motivo": "spec-validate.md e relatorio-final.md ainda não escritos; PO/QA recusaram done sem artefatos",
+        "prazo": "2026-09-30",
+        "declarado_em": "2026-09-04"
+      }
+    }
+  },
+  "merges": [
+    {
+      "sha": "d8d8d8d8d8d8d8d8d8d8d8d8d8d8d8d8d8d8d8d8",
+      "data": "2026-09-02T10:00:00-03:00",
+      "msg": "Merge pull request #105 from oflavioc/feature/028-valvula-sem-dono",
+      "posicao_relativa_ao_piso": "posterior"
+    }
+  ],
+  "ancestralidade": {
+    "028-valvula-sem-dono": {
+      "resposta": true,
+      "causa": null,
+      "anterior_ao_piso": false
+    }
+  },
+  "artefatos": [],
+  "data_do_commit": "2026-09-04",
+  "registro": {
+    "piso": {
+      "sha": "a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1",
+      "descricao": "piso sintético da sonda — as posições já vêm resolvidas em merges[].posicao_relativa_ao_piso"
+    },
+    "excluidas_por_r13": {},
+    "populacao": {
+      "padrao_branch": "^feature/(\\d{3})-",
+      "formato_merge_pr": "^Merge pull request #(\\d+) from ([^/]+)/(.+)$",
+      "integracoes_de_main": [
+        "^Merge remote-tracking branch 'origin/main' into develop",
+        "^Merge branch 'main' into develop",
+        "^merge: integra "
+      ]
+    }
+  },
+  "origin_develop": {
+    "presente": true,
+    "sha": "0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d",
+    "causa": null,
+    "piso_na_cadeia": true
+  }
+}

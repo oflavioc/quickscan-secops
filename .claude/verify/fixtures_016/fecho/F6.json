@@ -1,0 +1,63 @@
+{
+  "id": "F6",
+  "modo": "pos",
+  "_descricao": "demanda em validate mesclada por mensagem; fecho_pendente com motivo, dono e prazo 2026-09-30 (data do commit 2026-09-04)",
+  "sujeito": "026-valvula-valida",
+  "estados": {
+    "026-valvula-valida": {
+      "demanda": "026-valvula-valida",
+      "phase": "validate",
+      "spec_dir": "specs/026-valvula-valida",
+      "branch": "feature/026-valvula-valida",
+      "red": {
+        "status": "proven",
+        "commit": "026c026c026c026c026c026c026c026c026c026c"
+      },
+      "fecho_pendente": {
+        "motivo": "spec-validate.md e relatorio-final.md ainda não escritos; PO/QA recusaram done sem artefatos",
+        "dono": "qa-engineer",
+        "prazo": "2026-09-30",
+        "declarado_em": "2026-09-04"
+      }
+    }
+  },
+  "merges": [
+    {
+      "sha": "d6d6d6d6d6d6d6d6d6d6d6d6d6d6d6d6d6d6d6d6",
+      "data": "2026-09-02T10:00:00-03:00",
+      "msg": "Merge pull request #103 from oflavioc/feature/026-valvula-valida",
+      "posicao_relativa_ao_piso": "posterior"
+    }
+  ],
+  "ancestralidade": {
+    "026-valvula-valida": {
+      "resposta": true,
+      "causa": null,
+      "anterior_ao_piso": false
+    }
+  },
+  "artefatos": [],
+  "data_do_commit": "2026-09-04",
+  "registro": {
+    "piso": {
+      "sha": "a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1",
+      "descricao": "piso sintético da sonda — as posições já vêm resolvidas em merges[].posicao_relativa_ao_piso"
+    },
+    "excluidas_por_r13": {},
+    "populacao": {
+      "padrao_branch": "^feature/(\\d{3})-",
+      "formato_merge_pr": "^Merge pull request #(\\d+) from ([^/]+)/(.+)$",
+      "integracoes_de_main": [
+        "^Merge remote-tracking branch 'origin/main' into develop",
+        "^Merge branch 'main' into develop",
+        "^merge: integra "
+      ]
+    }
+  },
+  "origin_develop": {
+    "presente": true,
+    "sha": "0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d",
+    "causa": null,
+    "piso_na_cadeia": true
+  }
+}

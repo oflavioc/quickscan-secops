@@ -1,0 +1,66 @@
+{
+  "id": "F11",
+  "modo": "pos",
+  "_descricao": "merge first-parent posterior ao piso de feature/017-* sem planning-state algum; outra demanda (018) mesclada e done ao lado, para conferir que não há junção acidental",
+  "sujeito": "e7e7e7e7e7e7e7e7e7e7e7e7e7e7e7e7e7e7e7e7",
+  "estados": {
+    "018-outra-demanda": {
+      "demanda": "018-outra-demanda",
+      "phase": "done",
+      "spec_dir": "specs/018-outra-demanda",
+      "branch": "feature/018-outra-demanda",
+      "red": {
+        "status": "proven",
+        "commit": "018c018c018c018c018c018c018c018c018c018c"
+      }
+    }
+  },
+  "merges": [
+    {
+      "sha": "e7e7e7e7e7e7e7e7e7e7e7e7e7e7e7e7e7e7e7e7",
+      "data": "2026-09-02T10:00:00-03:00",
+      "msg": "Merge pull request #107 from oflavioc/feature/017-sem-planning-state",
+      "posicao_relativa_ao_piso": "posterior"
+    },
+    {
+      "sha": "e8e8e8e8e8e8e8e8e8e8e8e8e8e8e8e8e8e8e8e8",
+      "data": "2026-09-02T10:00:00-03:00",
+      "msg": "Merge pull request #108 from oflavioc/feature/018-outra-demanda",
+      "posicao_relativa_ao_piso": "posterior"
+    }
+  ],
+  "ancestralidade": {
+    "018-outra-demanda": {
+      "resposta": true,
+      "causa": null,
+      "anterior_ao_piso": false
+    }
+  },
+  "artefatos": [
+    "specs/018-outra-demanda/relatorio-final.md",
+    "specs/018-outra-demanda/spec-validate.md"
+  ],
+  "data_do_commit": "2026-09-04",
+  "registro": {
+    "piso": {
+      "sha": "a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1",
+      "descricao": "piso sintético da sonda — as posições já vêm resolvidas em merges[].posicao_relativa_ao_piso"
+    },
+    "excluidas_por_r13": {},
+    "populacao": {
+      "padrao_branch": "^feature/(\\d{3})-",
+      "formato_merge_pr": "^Merge pull request #(\\d+) from ([^/]+)/(.+)$",
+      "integracoes_de_main": [
+        "^Merge remote-tracking branch 'origin/main' into develop",
+        "^Merge branch 'main' into develop",
+        "^merge: integra "
+      ]
+    }
+  },
+  "origin_develop": {
+    "presente": true,
+    "sha": "0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d",
+    "causa": null,
+    "piso_na_cadeia": true
+  }
+}

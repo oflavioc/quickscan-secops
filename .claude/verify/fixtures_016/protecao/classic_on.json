@@ -1,0 +1,43 @@
+{
+  "id": "classic_on",
+  "_descricao": "nenhum ruleset (lista vazia); proteção clássica ativa com enforcement_level everyone e os três contextos — strict não é legível por este endpoint",
+  "rules": {
+    "status": 200,
+    "body": [],
+    "erro": null
+  },
+  "branch": {
+    "status": 200,
+    "body": {
+      "name": "develop",
+      "protected": true,
+      "protection": {
+        "enabled": true,
+        "required_status_checks": {
+          "enforcement_level": "everyone",
+          "contexts": [
+            "verify",
+            "visual",
+            "fecho"
+          ],
+          "checks": [
+            {
+              "context": "verify",
+              "app_id": 15368
+            },
+            {
+              "context": "visual",
+              "app_id": 15368
+            },
+            {
+              "context": "fecho",
+              "app_id": 15368
+            }
+          ]
+        }
+      },
+      "protection_url": "https://api.github.com/repos/oflavioc/quickscan-secops/branches/develop/protection"
+    },
+    "erro": null
+  }
+}

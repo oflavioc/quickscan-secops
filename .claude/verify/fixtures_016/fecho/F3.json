@@ -1,0 +1,50 @@
+{
+  "id": "F3",
+  "modo": "pos",
+  "_descricao": "demanda em implement; nenhum merge; red.commit não é ancestral",
+  "sujeito": "023-nao-mesclada",
+  "estados": {
+    "023-nao-mesclada": {
+      "demanda": "023-nao-mesclada",
+      "phase": "implement",
+      "spec_dir": "specs/023-nao-mesclada",
+      "branch": "feature/023-nao-mesclada",
+      "red": {
+        "status": "proven",
+        "commit": "023c023c023c023c023c023c023c023c023c023c"
+      }
+    }
+  },
+  "merges": [],
+  "ancestralidade": {
+    "023-nao-mesclada": {
+      "resposta": false,
+      "causa": null,
+      "anterior_ao_piso": false
+    }
+  },
+  "artefatos": [],
+  "data_do_commit": "2026-09-04",
+  "registro": {
+    "piso": {
+      "sha": "a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1",
+      "descricao": "piso sintético da sonda — as posições já vêm resolvidas em merges[].posicao_relativa_ao_piso"
+    },
+    "excluidas_por_r13": {},
+    "populacao": {
+      "padrao_branch": "^feature/(\\d{3})-",
+      "formato_merge_pr": "^Merge pull request #(\\d+) from ([^/]+)/(.+)$",
+      "integracoes_de_main": [
+        "^Merge remote-tracking branch 'origin/main' into develop",
+        "^Merge branch 'main' into develop",
+        "^merge: integra "
+      ]
+    }
+  },
+  "origin_develop": {
+    "presente": true,
+    "sha": "0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d",
+    "causa": null,
+    "piso_na_cadeia": true
+  }
+}

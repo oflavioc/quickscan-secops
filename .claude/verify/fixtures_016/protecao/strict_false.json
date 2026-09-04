@@ -1,0 +1,60 @@
+{
+  "id": "strict_false",
+  "_descricao": "ruleset exige os três contextos, mas strict_required_status_checks_policy false",
+  "rules": {
+    "status": 200,
+    "body": [
+      {
+        "type": "deletion",
+        "ruleset_source_type": "Repository",
+        "ruleset_source": "oflavioc/quickscan-secops",
+        "ruleset_id": 21381133
+      },
+      {
+        "type": "non_fast_forward",
+        "ruleset_source_type": "Repository",
+        "ruleset_source": "oflavioc/quickscan-secops",
+        "ruleset_id": 21381133
+      },
+      {
+        "type": "required_status_checks",
+        "ruleset_source_type": "Repository",
+        "ruleset_source": "oflavioc/quickscan-secops",
+        "ruleset_id": 21381133,
+        "parameters": {
+          "strict_required_status_checks_policy": false,
+          "do_not_enforce_on_create": false,
+          "required_status_checks": [
+            {
+              "context": "verify"
+            },
+            {
+              "context": "visual"
+            },
+            {
+              "context": "fecho"
+            }
+          ]
+        }
+      }
+    ],
+    "erro": null
+  },
+  "branch": {
+    "status": 200,
+    "body": {
+      "name": "develop",
+      "protected": true,
+      "protection": {
+        "enabled": false,
+        "required_status_checks": {
+          "enforcement_level": "off",
+          "contexts": [],
+          "checks": []
+        }
+      },
+      "protection_url": "https://api.github.com/repos/oflavioc/quickscan-secops/branches/develop/protection"
+    },
+    "erro": null
+  }
+}

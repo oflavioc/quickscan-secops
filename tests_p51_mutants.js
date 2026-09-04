@@ -135,7 +135,15 @@ const MUTANTS = [
      SUBSTITUIÇÃO NOMINAL: `D014-M10` (tests_014_mutants_visual.js, harness
      `d014vis`), que muta a linha VENCEDORA — `grid-template-columns` de
      ui_p52_workspace_v32.css:77 — e morre em P52-LAY2, gate existente de suíte
-     INVOCADA e nunca editada. Trilha completa: mutation-matrix.json →
+     INVOCADA e nunca editada.
+     [ADENDO 2026-09-04 · errata E13 da 014] A forma acima (:77) foi medida
+     SOBREVIVENTE no job visual (run 33516136516): tirar o 2º track não tira a
+     2ª coluna — `grid-template-areas:"main side"` desta camada 5.1
+     (ui_p50_v32.css:697) segue viva e mantém a grade explícita em duas
+     colunas, e colocação explícita nunca empilha. D014-M10 foi REANCORADO em
+     ui_p52_workspace_v32.css:86 (`.wrap > #p50-shell { grid-column: 2 }` → `1`)
+     e morreu em P52-LAY2 no run 33834890154 (1/1). O sítio :74-77 continua
+     sendo o que governa a composição — essa parte não muda. Trilha completa: mutation-matrix.json →
      dividas_declaradas; a KI-4 que perdoava este sobrevivente sai no MESMO
      commit (IC-9.2 reprova exceção a fantasma).
      Identidade anterior do bloco: id M51-01 · file F.css · gate P51-VIS1. */

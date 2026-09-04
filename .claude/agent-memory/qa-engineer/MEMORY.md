@@ -60,3 +60,5 @@
 - [Grade implícita neutraliza mutante de coluna](grade-implicita-neutraliza-mutante-de-coluna.md) — tirar o track não tira a coluna (areas herdadas / grid-column:2); meça o observável do gate sob a mutação, nunca raciocine
 - [Reprodução não-canônica por shim](reproducao-nao-canonica-por-shim.md) — suíte que chama `chromium.launch()` sem `executablePath` roda no Chrome local via `node -r shim`; controle tem de bater o número do CI
 - [Exit do stage não é exit do laço](exit-do-stage-nao-e-exit-do-laco.md) — cláusula "exit 0" de IC-2 contradiz T6; mede-se o processo inteiro e a classe é spec-errada, nunca afrouxar IC-4
+- [Conforme por deferimento tem prazo](conforme-por-deferimento-tem-prazo.md) — o verde deferido expira quando o run chega; no retroativo, separe "então" de "hoje" e nomeie o item que mudou de prova
+- [Prova de carga da exceção](prova-de-carga-da-excecao.md) — três sondas sem Chromium da 014: tirar a exclusão derruba C2(zero) E C3(*); kill de M4 à mão (log trunca); KI-4 de volta em commit efêmero

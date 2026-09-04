@@ -1686,9 +1686,11 @@ demanda própria (R4 — do orquestrador); o veredito de cada instância
 
 ## EA-32 — mutante `P52-RA8` ataca dois assets pela mesma âncora; a metade `SOCaaS` é inerte por ordem de cascata
 
-**Status**: `aberto`
+**Status**: `resolvido`
 
-**Aberto em**: 2026-09-01. Achado da demanda 014 (wave 5), classe nomeada pela
+**Aberto em**: 2026-09-01 · **fechado em 2026-09-04** (fix-finding, branch
+`fix/ea32-particao-do-p52-ra8` — ver §Fecho ao final desta entrada). Achado da
+demanda 014 (wave 5), classe nomeada pela
 errata E7 do `qa-engineer`: **mutante-parcialmente-inerte**
 (`.claude/verify/regra_morta.json → exclusoes[2].cegueira` e
 `.classes_de_achado`) — id permanente alocado pelo `doc-writer` contra
@@ -1797,6 +1799,44 @@ saída recomendada é partir `P52-RA8` em dois, mas falta a confirmação do
 `product-owner` sobre o desenho (`tech-lead` desenha); a família `EA-20` **não**
 ganha membro novo — a hipótese caiu. O que permanece não decidido aqui é
 apenas o reparo em si: quando e por quem o fix-finding do `EA-32` é aberto.
+
+### Fecho (2026-09-04)
+
+Resolvido pelo fix-finding do `EA-32` (branch `fix/ea32-particao-do-p52-ra8`,
+base `09f4342`), nas cinco condições do encaminhamento acima:
+
+1. **Partição** — commit `8d753bc`: `P52-RA8` fica com a metade MDR
+   (`ui_p52_workspace_v32.css:1350`, regra vencedora) e `P52-RA8B` nasce com a
+   metade SOCaaS **alterando** `:1357` (a regra vencedora — nenhuma inserção
+   que perde por ordem); cada `reason` nomeia o `alt` que `P52-ICON2` imprime
+   (condições 1 e 2). A exclusão `achado-aberto` saiu de
+   `regra_morta.json → exclusoes` pelo seu próprio `evento_de_remocao` (par em
+   `pares`), `PARES_DECLARADOS` voltou a dois, `indecidiveis.arvore.contagem`
+   foi fixada por execução em 21 — num commit só (condição 4); errata **E14**
+   da 014.
+2. **Kill medido antes de pinado** (condição 3) — job `visual` do CI, run
+   33860535587 (job 100983709794, `workflow_dispatch` sobre `59c8ad3`,
+   2026-09-04): `[OK] IC-4: p52: 108 âncora(s) com ocorrencias == 1` ·
+   `MUTATION TESTING (Phase 5.2) [tests_p52_mutants.js]: 108/108 mutantes
+   detectados pelo gate e motivo esperados` · `não-KILL: nenhum — os 108
+   mutante(s) lidos estão DETECTADO`; controle `PASS P52-ICON2` e
+   `P52 CHROMIUM (Phase 5.2): 55 PASS · 0 FAIL de 55`. Os pares
+   `P52-RA8 × P52-ICON2` e `P52-RA8B × P52-ICON2` passam de `NÃO EXECUTADO` a
+   **KILL** em `mutation-matrix.json` com essa referência.
+3. **Colateral do mesmo run, resolvido antes de fechar este achado** (fechar
+   deixando a campanha vermelha seria trocar um achado por um vermelho crônico
+   — `EA-5`): a campanha `d014` saiu `8/9` — `D014-M8` sobreviveu por *"motivo/
+   alínea diferente"* porque o seu `reason` pinava `2 alínea(s)` e a contagem
+   da árvore fixada pela E14 acrescentou a terceira
+   (`C6(cont-arvore): contagem pinada = 21 × observada = 4`). Classe:
+   **mutante obsoleto** (não gate frouxo, não defeito do reparo) — reancorado
+   pela errata **E15** da 014; campanha `d014` reexecutada `9/9`, suíte 7/7.
+4. Dono `qa-engineer`, desenho do `tech-lead` (condição 5); a confirmação do
+   `product-owner` sobre o desenho é registrada como **atribuída pelo
+   orquestrador**, não constatada por este agente (R2 §4).
+
+Achado derivado, aberto no mesmo ciclo e **não** fechado aqui: `EA-35`
+(aritmética `scale²` da altura aparente do `P52-ICON2`).
 
 ## EA-33 — demandas mescladas na `develop` com o planning-state parado antes de `done`
 

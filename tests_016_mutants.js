@@ -2,13 +2,14 @@
    CAMPANHA DE MUTAÇÃO · DEMANDA 016 — registro contra execução (P16.a / P16.b)
    harness `d016` · T060 (wave 5) · dono: qa-engineer
    ============================================================================
-   Instrumento de MEDIÇÃO. Não tem red próprio: o aceite é 30/30 DETECTADO com
-   os 3 controles verdes.
+   Instrumento de MEDIÇÃO. Não tem red próprio: o aceite é 33/33 DETECTADO com
+   os 3 controles verdes. (30 mutantes na wave 5; M31–M33 entraram na Fase 6,
+   iteração de correção do spec-validate — G3, J1, J3, J4.)
 
    Prova o PODER DISCRIMINANTE dos gates D016-FEC1..FEC4, D016-PR1 (check_fecho.py)
    e D016-PROT1 (check_branch_protection.py) e da alínea comum C7. Três famílias:
 
-     · MUTANTES DE INSTRUMENTO — fecho.py (M1..M11) e branch_protection.py
+     · MUTANTES DE INSTRUMENTO — fecho.py (M1..M11, M31) e branch_protection.py
        (M12..M15, M17): uma linha do julgador PURO muda; quem mata é a SONDA
        pinada (`--sonda`), e o oráculo é o JSON dela: os IDS DE CASO que a spec
        nomeia têm de divergir, no CAMPO que ela nomeia (F19 → EM VOO para M1;
@@ -16,12 +17,18 @@
      · MUTANTES DO PRÓPRIO GATE — M16 (check_fecho.py) e M29
        (check_branch_protection.py): o laço da sonda é esvaziado; C7 exige
        `executados 0 ≠ total pinado`, e o JSON tem de dizer total 0.
-     · MUTANTES DE ÁRVORE — M18..M28 e M22/M30: cada um PRODUZ O ESTADO DO MUNDO
-       que faz o gate NU reprovar (fecho.json, planning-state, fixture) e mede,
-       pelo JSON de `--json`, o sujeito acusado (id, veredito, código, oráculo,
-       #PR), o TOTAL de problemas e o ISOLAMENTO — nenhum outro sujeito com
-       falha. "E nenhuma outra" é asserção, não sorte. São a prova de carga da
-       spec (E2, C3 d, C2 a) rodando de novo a cada campanha.
+     · MUTANTES DE ÁRVORE — M18..M28, M32 e M22/M30: cada um PRODUZ O ESTADO DO
+       MUNDO que faz o gate NU reprovar (fecho.json, planning-state, fixture) e
+       mede, pelo JSON de `--json`, o sujeito acusado (id, veredito, código,
+       oráculo, #PR), o TOTAL de problemas e o ISOLAMENTO — nenhum outro sujeito
+       com falha. "E nenhuma outra" é asserção, não sorte. São a prova de carga
+       da spec (E2, C3 d, C2 a) rodando de novo a cada campanha.
+     · MUTANTE DE LEITOR — M33 (Fase 6): fecho.py:ler_merges emudece (devolve []
+       com metadados sãos). A sonda NÃO vê leitor (o julgador é puro); quem mata
+       é a GUARDA DE CENSO do gate nu — `fecho.json → piso.merges_ate_piso` (39,
+       imutável) comparado à leitura — e o kill exige 0 problema(s) de
+       julgamento: a prova de que, sem a guarda, a árvore ficava verde por vácuo
+       (spec-validate J1: medido exit 0 com o leitor mudo, D016-M19 sobrevivente).
 
    POR QUE HÁ CONTROLES (não mutantes, fora da contagem do preflight):
      · C0-fecho / C0-protecao — o baseline tem de estar VERDE antes de mutar:
@@ -37,6 +44,12 @@
    = 1 sse TODA âncora do mutante tem exatamente 1 ocorrência (0 se alguma
    falta; o máximo se alguma é ambígua) e lista cada edição em `edicoes`. M22 e
    M30 REMOVEM uma fixture: a âncora é a existência do arquivo (1 sse existe).
+   M32 CRIA um planning-state sintético (`criar`): a âncora é a AUSÊNCIA do
+   arquivo (1 sse não existe; existindo, ocorrencias=0 — a âncora "ausência" não
+   foi encontrada); restauração = unlink, conferida no fecho. M18/M19/M24 e o
+   controle positivo movem o piso E o censo pinado (piso.merges_ate_piso) na
+   mesma mutação — mover só o piso faria a guarda de censo reprovar, e o kill
+   deixaria de ser atribuível à alínea que o mutante ataca.
 
    M21 — AMARRADO AO CICLO DE VIDA DA 016 (decisão registrada): hoje a 016 está
    em voo e o estado é EM VOO + fecho_pendente-prematura (C4 d). Quando a 016
@@ -48,6 +61,14 @@
    Se um dia sobreviver, é porque a árvore passou a ADMITIR a válvula (016
    mesclada com fase aberta): exatamente o sinal. M28 (válvula na 015, done e
    mesclada) é o carrasco PERMANENTE de C4(c) na árvore.
+   PERDA NOMEADA (spec-validate J4): a partir do `done` M21 passa a medir C4(c),
+   a alínea de M28, e C4(d) ficaria sem carrasco de árvore para sempre (só F10
+   na sonda). M32 (planning-state SINTÉTICO 999, `implement`, nunca mesclada,
+   válvula válida) é o carrasco PERMANENTE de C4(d): o cenário definido pela
+   alínea, em sujeito estável. E o "se um dia sobreviver" acima não se realiza
+   como SOBREVIVENTE: o mundo que o produziria (016 mesclada com fase aberta)
+   derruba antes o controle C0-fecho, e M21 sai NÃO EXECUTADO · baseline
+   vermelho — o sinal existe, com esse nome (medido em clone, spec-validate J4).
 
    M20 — "exclusões retiradas" é implementado RENOMEANDO a chave
    `excluidas_por_r13` (o instrumento lê `registro.get("excluidas_por_r13")`,
@@ -113,7 +134,8 @@ const F = {
   fxF5:       path.join(V, "fixtures_016", "fecho", "F5.json"),
   fxSemFecho: path.join(V, "fixtures_016", "protecao", "sem_fecho.json"),
   ps015:      path.join(PS, "015-superficies-de-apoio.json"),
-  ps016:      path.join(PS, "016-registro-contra-execucao.json")
+  ps016:      path.join(PS, "016-registro-contra-execucao.json"),
+  ps999:      path.join(PS, "999-sintetica-d016.json")      // NÃO existe no repositório: M32 o cria e o remove
 };
 const GATE_FECHO_REL = path.join(".claude", "verify", "check_fecho.py");
 const GATE_BP_REL = path.join(".claude", "verify", "check_branch_protection.py");
@@ -134,9 +156,19 @@ const SONDA_FECHO = "sonda-fecho", SONDA_BP = "sonda-protecao", ARVORE = "arvore
 
 /* ── âncoras de árvore reutilizadas ───────────────────────────────────────── */
 const PISO_VIGENTE_LINHA = '"sha": "921977c25e76fe0ed19dae74e17921d37c711ff0",';
+const CENSO_VIGENTE_LINHA = '"merges_ate_piso": 39,';           // censo IMUTÁVEL até o piso vigente (fecho.json → _meta.censo_de_leitura)
 const PISO_6DAD = "6dad53d3423b20c768690d0b0005ef88025b9f35";   // merge da Onda 4 (PR #15) — E2
+const CENSO_6DAD = 15;   // merges first-parent até 6dad53d, inclusive — git rev-list --count --merges --first-parent = ler_merges (2026-09-04)
 const PISO_ZERO = "e5ccd429d0ed271ab3dd9ea948181e697f891af3";   // raiz do repositório, commit NÃO-merge
-const pisoPara = s => ({ file: F.reg, find: PISO_VIGENTE_LINHA, repl: '"sha": "' + s + '",' });
+const CENSO_ZERO = 0;    // a raiz não é merge: 0 até o piso, os 39 ficam posteriores
+/* Mover o piso é mover o censo pinado junto (duas edições no fecho.json): o gate
+   assere piso.merges_ate_piso contra a leitura (guarda de censo). Piso movido com
+   censo velho reprovaria pela guarda, e o kill deixaria de ser atribuível à
+   alínea que o mutante ataca. */
+const pisoPara = (s, censo) => [
+  { file: F.reg, find: PISO_VIGENTE_LINHA, repl: '"sha": "' + s + '",' },
+  { file: F.reg, find: CENSO_VIGENTE_LINHA, repl: '"merges_ate_piso": ' + censo + ',' }
+];
 const FASE_015 = '  "phase": "done",';
 const BRANCH_015 = '  "branch": "feature/015-superficies-de-apoio",';
 const BRANCH_016 = '  "branch": "feature/016-registro-contra-execucao",';
@@ -153,9 +185,10 @@ const valvulaApos = (linha, id, prazoFn) => ({
 const em = (file, e) => Object.assign({}, e, { file });
 
 /* ==========================================================================
-   OS 30 MUTANTES · D016-M1..D016-M30 (+ 3 controles)
+   OS 33 MUTANTES · D016-M1..D016-M33 (+ 3 controles)
    `edicoes`: [{file, find, repl}] aplicadas em ordem; `repl` pode ser função
    do contexto {dataCommit}. `remover`: arquivo apagado (restaurado por bytes).
+   `criar`: {file, conteudo} escrito e depois removido (a âncora é a ausência).
    `espera`: oráculo ESTRUTURADO sobre o JSON do gate.
    ========================================================================== */
 const MUTANTS = [
@@ -221,15 +254,29 @@ const MUTANTS = [
       repl: '    if False and _dia_valido(dia) and prazo < dia:   # MUTANTE D016-M8' }],
     espera: { divergem: [{ id: "F7", campos: { veredito: "FECHO PENDENTE DECLARADO", codigo: null } }] } },
 
+  /* Fase 6 (spec-validate G3): C4(e) tinha instrumento e não tinha carrasco —
+     com a cláusula removida a sonda de 33 seguia 33 · 0 (medido em clone de HEAD
+     76fd9dc). F24 (prazo '30/09/2026') é o caso; este é o mutante que ela mata. */
+  { id: "D016-M31", gate: "D016-FEC4", modo: SONDA_FECHO,
+    desc: "prazo fora de AAAA-MM-DD é aceito — a cláusula de formato de _valvula é desligada (C4 e)",
+    edicoes: [{ file: F.fecho,
+      find: '    if not _dia_valido(prazo):',
+      repl: '    if False and not _dia_valido(prazo):   # MUTANTE D016-M31: o formato do prazo não é conferido' }],
+    espera: { divergem: [{ id: "F24", campos: { veredito: "FECHO PENDENTE DECLARADO", codigo: null, problemas: 0 } }] } },
+
   /* ── C5 · D016-PR1 — instrumento ────────────────────────────────────────── */
   { id: "D016-M9", gate: "D016-PR1", modo: SONDA_FECHO,
     desc: "validate aceito como fecho pré-merge — a fase deixa de bloquear",
     edicoes: [{ file: F.fecho,
       find: '    if fase != "done":',
       repl: '    if fase not in ("done", "validate"):   # MUTANTE D016-M9' }],
-    /* P2 (validate, sem artefatos) escorrega da cláusula de fase para a de
-       artefatos: o código muda de fase-nao-done para artefato-ausente. */
-    espera: { divergem: [{ id: "P2", campos: { veredito: "FECHO PENDENTE", codigo: "artefato-ausente" } }] } },
+    /* P11 (validate COM os dois artefatos) LIBERA — a letra da spec ("o caso 'PR
+       em validate' libera"). P2 (validate SEM artefatos) escorrega da cláusula de
+       fase para a de artefatos: o código muda de fase-nao-done para
+       artefato-ausente. Até a Fase 6 só P2 existia e M9 morria pelo código, não
+       por "libera" (spec-validate J3); P2 fica como segunda divergência. */
+    espera: { divergem: [{ id: "P11", campos: { veredito: "LIBERADO", codigo: null } },
+                         { id: "P2", campos: { veredito: "FECHO PENDENTE", codigo: "artefato-ausente" } }] } },
 
   { id: "D016-M10", gate: "D016-PR1", modo: SONDA_FECHO,
     desc: "válvula honrada pré-merge — o check deixa de recusá-la (T5)",
@@ -298,14 +345,14 @@ const MUTANTS = [
   /* ── ÁRVORE · o estado do mundo, medido pelo gate nu ────────────────────── */
   { id: "D016-M18", gate: "D016-FEC1", modo: ARVORE,
     desc: "árvore: piso recuado para 6dad53d E 015 em validate — a prova de carga de C1(a) (E2)",
-    edicoes: [pisoPara(PISO_6DAD), { file: F.ps015, find: FASE_015, repl: '  "phase": "validate",' }],
+    edicoes: pisoPara(PISO_6DAD, CENSO_6DAD).concat([{ file: F.ps015, find: FASE_015, repl: '  "phase": "validate",' }]),
     espera: { problemas: 1, globais: [],
               sujeitos: [{ id: "015-superficies-de-apoio", veredito: "MESCLADA SEM FECHO", codigo: null,
                            oraculo: "mensagem", oraculo_detalhe: "#34", fase: "validate" }] } },
 
   { id: "D016-M19", gate: "D016-FEC2", modo: ARVORE,
     desc: "árvore: piso zero (raiz e5ccd429) — a prova de carga do piso: 6 merges / 5 branches de Onda sem planning-state",
-    edicoes: [pisoPara(PISO_ZERO)],
+    edicoes: pisoPara(PISO_ZERO, CENSO_ZERO),
     espera: { problemas: 6, globais: [],
               sujeitos: [
                 { tipo: "merge", oraculo_detalhe: "#15", veredito: "MESCLADA SEM FECHO", codigo: "demanda-fora-da-maquina", detalhe_contem: ["feature/005-"] },
@@ -347,8 +394,8 @@ const MUTANTS = [
 
   { id: "D016-M24", gate: "D016-FEC4", modo: ARVORE,
     desc: "árvore: sobre o cenário de M18, válvula em 015 com prazo 2026-01-01 — vencida contra a data do commit (T4)",
-    edicoes: [pisoPara(PISO_6DAD), { file: F.ps015, find: FASE_015, repl: '  "phase": "validate",' },
-              em(F.ps015, valvulaApos(BRANCH_015, "D016-M24", () => "2026-01-01"))],
+    edicoes: pisoPara(PISO_6DAD, CENSO_6DAD).concat([{ file: F.ps015, find: FASE_015, repl: '  "phase": "validate",' },
+              em(F.ps015, valvulaApos(BRANCH_015, "D016-M24", () => "2026-01-01"))]),
     espera: { problemas: 1, globais: [],
               sujeitos: [{ id: "015-superficies-de-apoio", veredito: "MESCLADA SEM FECHO", codigo: "fecho_pendente-vencida",
                            oraculo: "mensagem", oraculo_detalhe: "#34", fase: "validate" }] } },
@@ -378,6 +425,21 @@ const MUTANTS = [
     espera: { problemas: 1, globais: [],
               sujeitos: [{ id: "015-superficies-de-apoio", veredito: "CONFORME", codigo: "fecho_pendente-obsoleta", oraculo: "mensagem", oraculo_detalhe: "#34", fase: "done" }] } },
 
+  /* Fase 6 (spec-validate J4): carrasco PERMANENTE de C4(d) — M21 perde a alínea
+     no `done` da 016. Sujeito estável: uma demanda que nunca é mesclada, CRIADA
+     pela campanha e removida por ela (âncora = ausência do arquivo). */
+  { id: "D016-M32", gate: "D016-FEC4", modo: ARVORE,
+    desc: "árvore: planning-state SINTÉTICO 999 criado (implement, nunca mesclada) com válvula VÁLIDA — carrasco permanente de C4(d), independente do ciclo de vida da 016",
+    criar: { file: F.ps999, conteudo: ctx => JSON.stringify({
+      demanda: "999-sintetica-d016", phase: "implement", spec_dir: "specs/999-sintetica-d016",
+      branch: "feature/999-sintetica-d016",
+      brief: "MUTANTE D016-M32 — planning-state SINTÉTICO escrito pela campanha d016 (tests_016_mutants.js) e removido por ela ao fim do mutante. Se este arquivo existe fora da campanha, a restauração falhou: apague-o. Sujeito estável de C4(d): demanda que nunca é mesclada, com fecho_pendente válida.",
+      fecho_pendente: { motivo: "MUTANTE D016-M32 — válvula escrita pela campanha d016", dono: "qa-engineer",
+                        prazo: ctx.dataCommit, declarado_em: ctx.dataCommit }
+    }, null, 2) + "\n" },
+    espera: { problemas: 1, globais: [],
+              sujeitos: [{ id: "999-sintetica-d016", veredito: "EM VOO", codigo: "fecho_pendente-prematura", oraculo: null, fase: "implement" }] } },
+
   /* ── C7 no gate de proteção ─────────────────────────────────────────────── */
   { id: "D016-M29", gate: "D016-PROT1 (C7)", modo: SONDA_BP,
     desc: "laço da sonda esvaziado em check_branch_protection.py — 0 casos executados contra o total pinado",
@@ -389,25 +451,37 @@ const MUTANTS = [
   { id: "D016-M30", gate: "D016-PROT1 (C7)", modo: SONDA_BP,
     desc: "árvore: fixture sem_fecho.json removida — a guarda de contagem do gate de proteção nomeia o caso",
     remover: F.fxSemFecho,
-    espera: { sondaQuebrada: { caso: "sem_fecho" } } }
+    espera: { sondaQuebrada: { caso: "sem_fecho" } } },
+
+  /* ── LEITOR · a sonda não vê leitor; a guarda de censo do gate nu vê ────── */
+  { id: "D016-M33", gate: "D016-FEC1 D016-FEC2 (guarda de censo da leitura — C7 aplicada ao leitor)", modo: ARVORE,
+    desc: "leitor: fecho.py:ler_merges devolve lista VAZIA com metadados sãos — sem a guarda de censo (piso.merges_ate_piso = 39) a árvore ficava verde por vácuo (spec-validate J1)",
+    edicoes: [{ file: F.fecho,
+      find: '    return {"merges": merges, "origin_develop": od}',
+      repl: '    return {"merges": [], "origin_develop": od}   # MUTANTE D016-M33: leitor mudo com metadados sãos' }],
+    espera: { censo: { pinado: 39, lido: 0 } } }
 ];
 
 /* Controles verdes — não são mutantes, não entram no preflight nem na contagem
    de detectados; falha de controle derruba o exit da campanha. */
 const CONTROLES = [
-  { id: "C0-fecho", modo: ARVORE, desc: "baseline verde do gate nu: sonda 33/33 ok, 0 problema(s), exit 0",
+  { id: "C0-fecho", modo: ARVORE, desc: "baseline verde do gate nu: sonda 35/35 ok, censo da leitura ok (39 = 39), 0 problema(s), exit 0",
     edicoes: [], espera: { baselineFecho: true } },
   { id: "C0-protecao", modo: SONDA_BP, desc: "baseline verde da sonda de proteção: 9/9 ok, exit 0",
     edicoes: [], espera: { baselineBp: true } },
-  { id: "D016-M24/positivo", modo: ARVORE, desc: "válvula VÁLIDA sobre o cenário de M18 (prazo == data do commit): FECHO PENDENTE DECLARADO, exit 0 — FEC4 alcança o verde e T4 lê a data do commit",
-    edicoes: [pisoPara(PISO_6DAD), { file: F.ps015, find: FASE_015, repl: '  "phase": "validate",' },
-              em(F.ps015, valvulaApos(BRANCH_015, "D016-M24/positivo", ctx => ctx.dataCommit))],
+  { id: "D016-M24/positivo", modo: ARVORE, desc: "válvula VÁLIDA sobre o cenário de M18 (prazo == data do commit): FECHO PENDENTE DECLARADO, exit 0 — FEC4 alcança o verde, T4 lê a data do commit e a guarda de censo honra o censo movido (15 = 15)",
+    edicoes: pisoPara(PISO_6DAD, CENSO_6DAD).concat([{ file: F.ps015, find: FASE_015, repl: '  "phase": "validate",' },
+              em(F.ps015, valvulaApos(BRANCH_015, "D016-M24/positivo", ctx => ctx.dataCommit))]),
     espera: { valvulaAceita: { id: "015-superficies-de-apoio", oraculo_detalhe: "#34" } } }
 ];
 
 /* ── arquivos mutáveis e snapshot ─────────────────────────────────────────── */
 const arquivosDe = m => (m.edicoes || []).map(e => e.file).concat(m.remover ? [m.remover] : []);
+const criadoPor = m => (m.criar ? [m.criar.file] : []);
 const MUTABLE = Array.from(new Set([].concat.apply([], MUTANTS.concat(CONTROLES).map(arquivosDe))));
+/* Arquivos que a campanha CRIA (M32): não têm bytes de base — a âncora é a
+   ausência; ficam fora de BASE_BYTES e a restauração é unlink + asserção de ausência. */
+const CRIAVEIS = Array.from(new Set([].concat.apply([], MUTANTS.concat(CONTROLES).map(criadoPor))));
 const BASE_BYTES = {}, BASE_SHA = {};
 MUTABLE.forEach(f => { BASE_BYTES[f] = fs.readFileSync(f); BASE_SHA[f] = sha(f); });
 
@@ -418,6 +492,8 @@ function ocorrenciasDe(edicao) {
 function preflightDoMutante(m) {
   const edicoes = (m.edicoes || []).map(e => ({ arquivo: path.basename(e.file), ocorrencias: ocorrenciasDe(e) }));
   if (m.remover) edicoes.push({ arquivo: path.basename(m.remover), ocorrencias: fs.existsSync(m.remover) ? 1 : 0, remocao: true });
+  /* criação: a âncora é a AUSÊNCIA do arquivo — 1 sse não existe; existindo, 0 (âncora não encontrada) */
+  if (m.criar) edicoes.push({ arquivo: path.basename(m.criar.file), ocorrencias: fs.existsSync(m.criar.file) ? 0 : 1, criacao: true });
   const ns = edicoes.map(e => e.ocorrencias);
   const n = ns.every(x => x === 1) ? 1 : (ns.some(x => x === 0) ? 0 : Math.max.apply(null, ns));
   return { arquivo: edicoes.map(e => e.arquivo).join("+"), ocorrencias: n, edicoes };
@@ -435,7 +511,7 @@ function preflight(sel) {
     harness: "d016",
     arquivo: path.basename(__filename),
     interpretador: { nome: PY, origem: PY_ORIGEM, resolvido: !!binario },
-    arquivos_mutados: Array.from(new Set(MUTABLE.map(f => path.basename(f)))).sort(),
+    arquivos_mutados: Array.from(new Set(MUTABLE.concat(CRIAVEIS).map(f => path.basename(f)))).sort(),
     controles: CONTROLES.map(c => c.id),
     mutantes: []
   };
@@ -531,6 +607,19 @@ function julgaArvore(r, espera) {
   if (sonda.ok !== true) return { kill: false, nota: "a sonda saiu do verde sob um mutante de ÁRVORE (" + (sonda.guarda || []).join(" | ") + ")" };
   const v = j.vivo;
   if (!v || v.erro_de_leitura) return { kill: false, nota: "árvore não julgada: " + (v ? v.erro_de_leitura : "vivo nulo") };
+  if (espera.censo) {                     /* M33 — guarda de censo da leitura (C7 aplicada ao leitor) */
+    const cen = (v._leitura || {}).censo || {}, contC = v.contagens || {}, faltasC = [];
+    if (r.code !== 1 || j.exit !== 1) faltasC.push("exit " + r.code + "/" + j.exit + " (esperado 1)");
+    if (cen.estado !== "divergente") faltasC.push("censo.estado: esperado divergente · obtido " + cen.estado);
+    if (!igual(cen.pinado, espera.censo.pinado)) faltasC.push("censo.pinado: esperado " + espera.censo.pinado + " · obtido " + JSON.stringify(cen.pinado));
+    if (!igual(cen.lido, espera.censo.lido)) faltasC.push("censo.lido: esperado " + espera.censo.lido + " · obtido " + JSON.stringify(cen.lido));
+    if (contC.problemas !== 0) faltasC.push("problemas de julgamento: esperado 0 (só a guarda de censo pode acusar o leitor mudo) · obtido " + contC.problemas);
+    const acusadosC = (v.sujeitos || []).filter(s => s.falha);
+    if (acusadosC.length) faltasC.push("sujeito com falha sob leitor mudo (esperado nenhum): " + acusadosC.map(fmtSujeito).join("; "));
+    return { kill: faltasC.length === 0,
+             nota: (faltasC.length ? faltasC.join(" | ") + " ‖ " : "") + "censo lido " + JSON.stringify(cen.lido) + " × pinado " +
+                   JSON.stringify(cen.pinado) + " (" + cen.estado + ") · " + contC.problemas + " problema(s) de julgamento · exit " + r.code };
+  }
   const faltas = [];
   if (r.code !== 1 || j.exit !== 1) faltas.push("exit " + r.code + "/" + j.exit + " (esperado 1)");
   const cont = v.contagens || {};
@@ -579,22 +668,27 @@ function julgaControle(r, espera) {
     return { ok, nota: "sonda " + j.total + "/" + j.total_pinado + " · falhas " + j.falhas + " · exit " + r.code };
   }
   const s = j.sonda || {}, v = j.vivo || {}, c = v.contagens || {};
+  const cen = (v._leitura || {}).censo || {};
+  const censoTxt = "censo da leitura " + JSON.stringify(cen.lido) + "/" + JSON.stringify(cen.pinado) + " (" + cen.estado + ")";
   if (espera.baselineFecho) {
-    const ok = r.code === 0 && j.exit === 0 && s.ok === true && c.problemas === 0;
-    return { ok, nota: "sonda " + s.total + "/" + s.total_pinado + " · " + c.demandas + " demanda(s) · " + c.problemas + " problema(s) · exit " + r.code +
+    /* a guarda de censo tem de estar VERDE no baseline: é o controle de que ela roda e alcança o ok */
+    const ok = r.code === 0 && j.exit === 0 && s.ok === true && c.problemas === 0 && cen.estado === "ok";
+    return { ok, nota: "sonda " + s.total + "/" + s.total_pinado + " · " + c.demandas + " demanda(s) · " + c.problemas + " problema(s) · " + censoTxt + " · exit " + r.code +
       " · origin/develop " + String(((v._leitura || {}).origin_develop || {}).sha || "?").slice(0, 12) + " · data do commit " + (v._leitura || {}).data_do_commit };
   }
   if (espera.valvulaAceita) {
     const suj = (v.sujeitos || []).find(x => x.id === espera.valvulaAceita.id);
     const ok = r.code === 0 && j.exit === 0 && s.ok === true && c.problemas === 0 && c.valvulas === 1 && !!suj &&
-      suj.veredito === "FECHO PENDENTE DECLARADO" && suj.oraculo_detalhe === espera.valvulaAceita.oraculo_detalhe;
-    return { ok, nota: (suj ? fmtSujeito(suj) + " · " + suj.detalhe : "sujeito ausente") + " · válvulas " + c.valvulas + " · problemas " + c.problemas + " · exit " + r.code };
+      suj.veredito === "FECHO PENDENTE DECLARADO" && suj.oraculo_detalhe === espera.valvulaAceita.oraculo_detalhe && cen.estado === "ok";
+    return { ok, nota: (suj ? fmtSujeito(suj) + " · " + suj.detalhe : "sujeito ausente") + " · válvulas " + c.valvulas + " · problemas " + c.problemas + " · " + censoTxt + " · exit " + r.code };
   }
   return { ok: false, nota: "controle sem espera" };
 }
 
 /* ── aplicar / restaurar ──────────────────────────────────────────────────── */
 function aplicar(m, ctx) {
+  if (m.criar && fs.existsSync(m.criar.file))
+    return { erro: CAUSA.ausente + " (a âncora da criação é a AUSÊNCIA do arquivo, e ele existe)", arquivo: path.basename(m.criar.file) };
   const porArquivo = new Map();
   for (const e of m.edicoes || []) {
     if (!porArquivo.has(e.file)) porArquivo.set(e.file, BASE_BYTES[e.file].toString("utf8"));
@@ -606,12 +700,17 @@ function aplicar(m, ctx) {
   }
   for (const [f, conteudo] of porArquivo) fs.writeFileSync(f, conteudo, "utf8");
   if (m.remover) fs.unlinkSync(m.remover);
+  if (m.criar) fs.writeFileSync(m.criar.file, typeof m.criar.conteudo === "function" ? m.criar.conteudo(ctx) : m.criar.conteudo, "utf8");
   return { erro: null };
 }
 function restaurar(m) {
   for (const f of arquivosDe(m)) {
     fs.writeFileSync(f, BASE_BYTES[f]);
     if (sha(f) !== BASE_SHA[f]) throw new Error(m.id + ": restauração NÃO byte-idêntica de " + path.basename(f));
+  }
+  for (const f of criadoPor(m)) {
+    if (fs.existsSync(f)) fs.unlinkSync(f);
+    if (fs.existsSync(f)) throw new Error(m.id + ": arquivo criado pela campanha NÃO removido: " + path.basename(f));
   }
 }
 
@@ -639,11 +738,13 @@ const CONTROLES_SEL = CONTROLES.filter(c => !ONLY.length || c.id.indexOf("C0-") 
 
   const fechar = () => {
     let porcelain = "";
-    const rel = MUTABLE.map(f => path.relative(HERE, f).replace(/\\/g, "/"));
+    const rel = MUTABLE.concat(CRIAVEIS).map(f => path.relative(HERE, f).replace(/\\/g, "/"));
     const g = spawnSync("git", ["status", "--porcelain", "--"].concat(rel), { cwd: HERE, encoding: "utf8" });
     porcelain = g.error ? "(git indisponível: " + String(g.error.message || g.error).split("\n")[0] + ")" : String(g.stdout || "").trim();
+    const criadosForam = CRIAVEIS.every(f => !fs.existsSync(f));
     console.log("restauração: arquivos mutados byte a byte " +
       (MUTABLE.every(f => fs.existsSync(f) && sha(f) === BASE_SHA[f]) ? "OK" : "FALHOU") +
+      " · criados removidos " + (criadosForam ? "OK" : "FALHOU") +
       " · porcelain dos alvos " + (porcelain === "" ? "limpo" : "SUJO → " + porcelain.split("\n")[0]));
     const ctrl = "controles: " + COK + " ok · " + CFALHOU + " falho(s)";
     if (U > 0) {
@@ -657,7 +758,7 @@ const CONTROLES_SEL = CONTROLES.filter(c => !ONLY.length || c.id.indexOf("C0-") 
       if (S > 0) console.log("  " + S + " sobrevivente(s): " +
         report.filter(r => r.estado === SOBREVIVENTE).map(r => r.id).join(", "));
     }
-    process.exit(D === SELECTED.length && CFALHOU === 0 && porcelain === "" ? 0 : 1);
+    process.exit(D === SELECTED.length && CFALHOU === 0 && porcelain === "" && criadosForam ? 0 : 1);
   };
 
   const binario = resolvePy(PY);
@@ -705,7 +806,8 @@ const CONTROLES_SEL = CONTROLES.filter(c => !ONLY.length || c.id.indexOf("C0-") 
       emitir(m, NAO_EXECUTADO, CAUSA.gate, "baseline da sonda de proteção VERMELHO — kill não atribuível ao mutante");
       continue;
     }
-    const precisaData = (m.edicoes || []).some(e => typeof e.repl === "function");
+    const precisaData = (m.edicoes || []).some(e => typeof e.repl === "function") ||
+      (!!m.criar && typeof m.criar.conteudo === "function");
     if (precisaData && !dataCommit) {
       emitir(m, NAO_EXECUTADO, CAUSA.gate, "data do commit indisponível (git log -1 --format=%cI HEAD falhou)");
       continue;

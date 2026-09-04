@@ -1,11 +1,11 @@
 {
   "_meta": {
-    "descricao": "Registro do stage `fecho` (demanda 016-registro-contra-execucao, P16.a): piso, exclusões R13 e sonda pinada. Consumido por check_fecho.py (o gate, qa-engineer) e julgado por fecho.py (o instrumento, core-engineer). Exceção aqui é ESTRUTURAL (sem prazo, `fonte` obrigatória) — listada pelo compliance-audit (known-issues, 3ª fonte). Owner: qa-engineer.",
+    "descricao": "Registro do stage `fecho` (demanda 016-registro-contra-execucao, P16.a): piso (com o censo pinado da leitura — `_meta.censo_de_leitura`), exclusões R13 e sonda pinada. Consumido por check_fecho.py (o gate, qa-engineer) e julgado por fecho.py (o instrumento, core-engineer). Exceção aqui é ESTRUTURAL (sem prazo, `fonte` obrigatória) — listada pelo compliance-audit (known-issues, 3ª fonte). Owner: qa-engineer.",
     "demanda": "016-registro-contra-execucao",
     "owner": "qa-engineer",
     "o_que_e_autoral_e_o_que_e_medido": {
       "autoral": ["piso", "excluidas_por_r13", "populacao", "sonda.casos (o esperado de cada caso)"],
-      "medido_por_execucao": ["_meta.prova_de_carga (wave 5, T061 — pela campanha d016)", "_meta.prova_de_carga_leitura_fase4 (Fase 4 — por git/disco, oráculo independente do gate)"],
+      "medido_por_execucao": ["_meta.prova_de_carga (wave 5, T061 — pela campanha d016)", "_meta.prova_de_carga_leitura_fase4 (Fase 4 — por git/disco, oráculo independente do gate)", "piso.merges_ate_piso (Fase 6, 2026-09-04 — censo IMUTÁVEL de merges first-parent até o piso, inclusive: `git rev-list --count --merges --first-parent 921977c…` = 39 = fecho.py:ler_merges; asserido pelo gate a cada execução — `_meta.censo_de_leitura`)"],
       "regra": "Número medido NUNCA é rebaixado para caber no verde (R10 §1). Lido ≠ medido é achado, não ajuste."
     },
     "prova_de_carga": {
@@ -52,10 +52,24 @@
       "P8": "C5(a), negativo dos artefatos — done sem spec-validate.md pré-merge ⇒ FECHO PENDENTE (sem ele, um julgador que ignorasse artefatos pré-merge passaria na sonda)",
       "P9": "C5(a), cláusula 'ou está em excluidas_por_r13' — positivo da exclusão pré-merge",
       "P10": "T5 — válvula válida em demanda não-done NÃO libera pré-merge (M10 só cobria done+válvula; um julgador que honrasse a válvula em validate sobreviveria)"
+    },
+    "acrescimos_da_fase6": {
+      "regra": "iteração de correção do spec-validate (2026-09-04, iteração 1 → 2): a mesma regra da Fase 4 — aditivo, ids permanentes, nunca renumerar. Cada caso fecha um gap ou uma observação nomeados em specs/016-registro-contra-execucao/spec-validate.md; o red de cada um está em prova-de-carga.md §9",
+      "F24": "C4(e), gap G3 — prazo '30/09/2026' (dia/mês/ano, fora de AAAA-MM-DD) ⇒ MESCLADA SEM FECHO · mensagem · fecho_pendente-invalida · 1 problema. Sem este caso a cláusula `if not _dia_valido(prazo)` de _valvula não tinha carrasco: removida à mão em clone efêmero de HEAD 76fd9dc, a sonda seguia 33 · 0, exit 0 (medido 2026-09-04). Carrasco: D016-M31 (F24 vira FECHO PENDENTE DECLARADO, 0 problemas). O prazo escolhido não é lexicograficamente menor que a data do commit: sob o mutante o caso cai em 'aceita', não em 'vencida' — o kill é pela alínea (e), não pela (b)",
+      "P11": "C5(b), observação J3 — validate COM os dois artefatos e sem válvula ⇒ FECHO PENDENTE · fase-nao-done. Isola a cláusula de fase: sob D016-M9 este caso LIBERA (a letra da spec, 'o caso PR em validate libera'); P2, sem artefatos, escorregava para artefato-ausente e M9 morria pelo código, não por 'libera'. P2 permanece como segunda divergência de M9"
+    },
+    "censo_de_leitura": {
+      "o_que_e": "piso.merges_ate_piso é o censo IMUTÁVEL de merges first-parent de origin/develop até o piso, INCLUSIVE (a história até o piso não muda). O gate (check_fecho.py) o compara a contagens.merges_ate_piso da árvore real a cada execução: divergência ⇒ FAIL nomeado, exit 1, mesmo com 0 problema(s) de julgamento. É a contagem pinada da sonda (C7) aplicada ao LEITOR — não é veredito: nenhuma demanda é julgada por ele",
+      "por_que": "spec-validate J1 (2026-09-04): um ler_merges que devolva lista vazia com metadados sãos (origin/develop presente, piso na cadeia) deixava a árvore VERDE — exit 0, 0 problema(s), as done CONFORME por ancestralidade, 016 EM VOO, 'até o piso, inclusive: 0' impresso e não comparado — e D016-M19 sobrevivia sob esse leitor. A não-vacuidade da leitura era provada só pela campanha d016 (trigger por path). Com o censo pinado o gate nu tem dentes por si",
+      "medido": "2026-09-04, dois oráculos independentes: `git rev-list --count --merges --first-parent 921977c25e76fe0ed19dae74e17921d37c711ff0` = 39 e fecho.py:ler_merges(piso) → 39 posições anterior+piso. Pinado, não calibrado (R10 §1). Os mutantes de árvore que movem o piso movem o censo junto, medido pelos mesmos dois oráculos: 6dad53d = 15; raiz e5ccd429 = 0 (o piso zero não é merge)",
+      "quando_se_aplica": "só quando o leitor reporta origin/develop presente E piso na cadeia — fora disso o global do julgador (origin-develop-ausente / piso-invalido) já nomeia a causa. Pin ausente ou inválido é FAIL, nunca guarda que some em silêncio. Os registros das fixtures da sonda não trazem a chave: a guarda vive só na árvore real",
+      "o_que_nao_cobre": "leitor que perde merges POSTERIORES ao piso: o censo pós-piso é variável por natureza (cresce a cada merge) e não se pina. Carrasco só na campanha d016 (D016-M18/M19 exigem acusações de merges posteriores ao piso movido). Declarado em mutation-matrix.json → dividas_declaradas",
+      "carrasco": "D016-M33 (leitor mudo: ler_merges devolve [] com metadados sãos ⇒ censo lido 0 ≠ pinado 39, 0 problema(s) de julgamento, exit 1)"
     }
   },
   "piso": {
     "sha": "921977c25e76fe0ed19dae74e17921d37c711ff0",
+    "merges_ate_piso": 39,
     "descricao": "merge do PR #39 em develop, 2026-09-04T08:44-03 — último commit de develop anterior à 016 (T2, interpretação de P9). Merge first-parent POSTERIOR a ele é julgado; o piso e o que vem antes contam como ANTERIOR AO PISO. O piso pode ser commit não-merge (o piso zero da prova de carga é a raiz): o leitor o localiza na cadeia first-parent inteira, nunca só em --merges"
   },
   "excluidas_por_r13": {
@@ -84,7 +98,7 @@
   },
   "sonda": {
     "fixtures": ".claude/verify/fixtures_016/fecho/",
-    "total": 33,
+    "total": 35,
     "casos": [
       { "id": "F1",  "modo": "pos", "esperado": "MESCLADA SEM FECHO",        "oraculo": "mensagem",       "codigo": null,                        "problemas": 1 },
       { "id": "F2",  "modo": "pos", "esperado": "MESCLADA SEM FECHO",        "oraculo": "ancestralidade", "codigo": null,                        "problemas": 1 },
@@ -109,6 +123,7 @@
       { "id": "F21", "modo": "pos", "esperado": "NÃO DETERMINÁVEL",          "oraculo": null,             "codigo": "piso-invalido",             "problemas": 1 },
       { "id": "F22", "modo": "pos", "esperado": "NÃO DETERMINÁVEL",          "oraculo": null,             "codigo": "origin-develop-ausente",    "problemas": 1 },
       { "id": "F23", "modo": "pos", "esperado": "MESCLADA SEM FECHO",        "oraculo": "mensagem",       "codigo": "artefato-ausente",          "problemas": 2 },
+      { "id": "F24", "modo": "pos", "esperado": "MESCLADA SEM FECHO",        "oraculo": "mensagem",       "codigo": "fecho_pendente-invalida",   "problemas": 1 },
       { "id": "P1",  "modo": "pre", "esperado": "LIBERADO",                  "codigo": null },
       { "id": "P2",  "modo": "pre", "esperado": "FECHO PENDENTE",            "codigo": "fase-nao-done" },
       { "id": "P3",  "modo": "pre", "esperado": "FECHO PENDENTE",            "codigo": "demanda-fora-da-maquina" },
@@ -118,7 +133,8 @@
       { "id": "P7",  "modo": "pre", "esperado": "FECHO PENDENTE",            "codigo": "fecho_pendente-obsoleta" },
       { "id": "P8",  "modo": "pre", "esperado": "FECHO PENDENTE",            "codigo": "artefato-ausente" },
       { "id": "P9",  "modo": "pre", "esperado": "LIBERADO",                  "codigo": null },
-      { "id": "P10", "modo": "pre", "esperado": "FECHO PENDENTE",            "codigo": "fecho_pendente-prematura" }
+      { "id": "P10", "modo": "pre", "esperado": "FECHO PENDENTE",            "codigo": "fecho_pendente-prematura" },
+      { "id": "P11", "modo": "pre", "esperado": "FECHO PENDENTE",            "codigo": "fase-nao-done" }
     ]
   }
 }

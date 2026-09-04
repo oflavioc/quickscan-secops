@@ -1,0 +1,39 @@
+{
+  "id": "P11",
+  "modo": "pre",
+  "_descricao": "PR feature/048 → develop; planning-state em validate COM os dois artefatos em disco e sem fecho_pendente — isola a cláusula de fase de C5(b): só a fase bloqueia. Acrescida na Fase 6 (spec-validate J3, 2026-09-04): sob D016-M9 este caso LIBERA, a letra da spec; P2 (sem artefatos) escorregava para artefato-ausente e M9 morria pelo código, não por 'libera'",
+  "head_ref": "feature/048-validate-com-artefatos",
+  "base_ref": "develop",
+  "estados": {
+    "048-validate-com-artefatos": {
+      "demanda": "048-validate-com-artefatos",
+      "phase": "validate",
+      "spec_dir": "specs/048-validate-com-artefatos",
+      "branch": "feature/048-validate-com-artefatos",
+      "red": {
+        "status": "proven",
+        "commit": "048c048c048c048c048c048c048c048c048c048c"
+      }
+    }
+  },
+  "artefatos": [
+    "specs/048-validate-com-artefatos/relatorio-final.md",
+    "specs/048-validate-com-artefatos/spec-validate.md"
+  ],
+  "registro": {
+    "piso": {
+      "sha": "a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1",
+      "descricao": "piso sintético da sonda — as posições já vêm resolvidas em merges[].posicao_relativa_ao_piso"
+    },
+    "excluidas_por_r13": {},
+    "populacao": {
+      "padrao_branch": "^feature/(\\d{3})-",
+      "formato_merge_pr": "^Merge pull request #(\\d+) from ([^/]+)/(.+)$",
+      "integracoes_de_main": [
+        "^Merge remote-tracking branch 'origin/main' into develop",
+        "^Merge branch 'main' into develop",
+        "^merge: integra "
+      ]
+    }
+  }
+}

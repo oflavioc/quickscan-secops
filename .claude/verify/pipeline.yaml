@@ -75,7 +75,7 @@ stages:
     mutates: false
     heavy: false
   fecho:
-    desc: "P16.a pós-merge: demanda mesclada em origin/develop sem Fase 6 fechada (FEC1), feature/NNN mesclada após o piso sem planning-state ou fora de PR (FEC2), done sem artefatos salvo exclusão R13 impressa (FEC3), válvula fecho_pendente julgada contra a data do commit (FEC4) — sem rede; sonda de 33 casos pinada antes da árvore (C7). Direção pré-merge é o job `fecho` do CI"
+    desc: "P16.a pós-merge: demanda mesclada em origin/develop sem Fase 6 fechada (FEC1), feature/NNN mesclada após o piso sem planning-state ou fora de PR (FEC2), done sem artefatos salvo exclusão R13 impressa (FEC3), válvula fecho_pendente julgada contra a data do commit (FEC4) — sem rede; sonda de 35 casos pinada antes da árvore (C7) e censo imutável de merges até o piso asserido contra a leitura (guarda de censo). Direção pré-merge é o job `fecho` do CI"
     run: python .claude/verify/check_fecho.py
     parallel: true
     mutates: false

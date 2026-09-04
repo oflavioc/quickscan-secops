@@ -11,7 +11,9 @@ instrumento NÃO edita este arquivo — mudança necessária volta por DEPENDÊN
 ESTE ARQUIVO NÃO DECIDE. Todo veredito nasce em `fecho.py` (o INSTRUMENTO, do
 core-engineer): julgadores PUROS + leitores. Aqui vivem só a CLI, a sonda pinada
 (C7), a ordem fixa sonda → leitura → julgamento → relato, o relato no
-vocabulário T10 e o exit. Um `if` que produza veredito aqui é FAIL de revisão.
+vocabulário T10, a GUARDA DE CENSO da leitura (§abaixo) e o exit. Um `if` que produza
+veredito aqui é FAIL de revisão — a guarda de censo não produz veredito: compara
+uma contagem lida a uma pinada, exatamente como a sonda faz com `total`.
 
 USO
   python .claude/verify/check_fecho.py           # stage: sonda + árvore real (pós-merge)
@@ -33,6 +35,25 @@ instrumento ausente, fixture ausente, leitura que estoura — tudo sai nomeado.
 RED (Fase 4): o instrumento não existe ⇒ cada caso da sonda sai
 `obtido: INSTRUMENTO AUSENTE` ≠ esperado ⇒ divergências nomeadas, exit 1, em
 todo modo — e a árvore não é julgada por julgador que reprovou na sonda.
+
+GUARDA DE CENSO DA LEITURA (Fase 6 · iteração de correção do spec-validate, J1,
+2026-09-04): a sonda prova o JULGADOR puro; o LEITOR de histórico não tem sonda.
+Medido em clone efêmero de HEAD 76fd9dc: um `ler_merges` que devolva lista vazia
+com metadados sãos (origin/develop presente, piso na cadeia) deixava a árvore
+VERDE — exit 0, 0 problema(s), as `done` CONFORME por ancestralidade, "até o
+piso, inclusive: 0" impresso e não comparado — e D016-M19 sobrevivia sob esse
+leitor. Por isso `fecho.json → piso.merges_ate_piso` pina o censo IMUTÁVEL de
+merges first-parent até o piso, inclusive (39 para 921977c — a história até o
+piso não muda; medido por `git rev-list --count --merges --first-parent <piso>` e
+pelo instrumento, iguais), e este gate o compara a `contagens.merges_ate_piso` da
+árvore real: divergência ⇒ FAIL nomeado, exit 1, mesmo com 0 problema(s) de
+julgamento. Não é veredito (nenhuma demanda é julgada por ele): é `total_pinado`
+aplicado à leitura. Aplica-se só quando o leitor reporta origin/develop presente
+E piso na cadeia — fora disso o global do julgador já nomeia a causa; pin ausente
+ou inválido é FAIL, nunca guarda que some em silêncio. Os registros das fixtures
+não trazem a chave: a guarda vive só em `vivo_pos`. Carrasco: D016-M33. O que
+ela NÃO cobre, declarado: leitor que perde merges POSTERIORES ao piso (censo
+variável por natureza) — carrasco só na campanha (D016-M18/M19).
 
 ============================ CONTRATO DO INSTRUMENTO (fecho.py) ==============
 Importado por caminho (.claude/verify/fecho.py, ao lado deste arquivo). Símbolos
@@ -58,7 +79,8 @@ exigidos — a falta de qualquer um é INSTRUMENTO INCOMPLETO e a sonda reprova:
     artefatos      set de paths relativos EXISTENTES (specs/<slug>/relatorio-final.md,
                    specs/<slug>/spec-validate.md)
     data_do_commit "AAAA-MM-DD" (T4 — %cI de HEAD, o dia)
-    registro       fecho.json (piso, excluidas_por_r13, populacao)
+    registro       fecho.json (piso {sha, merges_ate_piso, descricao}, excluidas_por_r13, populacao)
+                   — `merges_ate_piso` é lido SÓ pela guarda de censo do gate, nunca pelo julgador
     origin_develop {presente: bool, sha: str|null, causa: str|null, piso_na_cadeia: bool}
     devolve {
       "sujeitos": [{"id": slug | sha do merge, "tipo": "demanda"|"merge",
@@ -348,6 +370,31 @@ def protegido(fn):
         return {"erro_de_leitura": f"{type(e).__name__}: {e}"}
 
 
+def censo_da_leitura(res, registro, origin_develop):
+    """Guarda de censo (docstring §GUARDA DE CENSO): compara a leitura ao pin. NÃO decide veredito."""
+    pin = ((registro or {}).get("piso") or {}).get("merges_ate_piso")
+    od = origin_develop or {}
+    lido = (res.get("contagens") or {}).get("merges_ate_piso")
+    c = {"pinado": pin, "lido": lido, "estado": None, "detalhe": ""}
+    if isinstance(pin, bool) or not isinstance(pin, int) or pin < 0:
+        c["estado"] = "nao_pinado"
+        c["detalhe"] = (f"fecho.json → piso.merges_ate_piso ausente ou inválido ({pin!r}) — o censo da leitura "
+                        "não está pinado; sem ele um leitor mudo deixa a árvore verde por vácuo")
+    elif od.get("presente") is not True or od.get("piso_na_cadeia") is not True:
+        c["estado"] = "nao_aplicado"
+        c["detalhe"] = "não aplicado — origin/develop ausente ou piso fora da cadeia: o global do julgador nomeia a causa"
+    elif lido == pin:
+        c["estado"] = "ok"
+        c["detalhe"] = f"merges first-parent até o piso, inclusive: lidos {lido} = censo pinado {pin}"
+    else:
+        c["estado"] = "divergente"
+        c["detalhe"] = (f"merges first-parent até o piso, inclusive: lidos {lido!r} ≠ censo pinado {pin} "
+                        "(fecho.json → piso.merges_ate_piso) — leitor mudo ou histórico incompleto; "
+                        "a árvore não pode ser declarada conforme por vácuo")
+    c["falha"] = c["estado"] in ("divergente", "nao_pinado")
+    return c
+
+
 def vivo_pos(instr, registro):
     piso = registro["piso"]["sha"]
     estados = instr.ler_estados()
@@ -357,7 +404,8 @@ def vivo_pos(instr, registro):
     data = instr.ler_data_commit()
     res = instr.julgar_pos_merge(estados, lidos["merges"], anc, arte, data, registro,
                                  lidos["origin_develop"])
-    res["_leitura"] = {"origin_develop": lidos["origin_develop"], "data_do_commit": data, "piso": piso}
+    res["_leitura"] = {"origin_develop": lidos["origin_develop"], "data_do_commit": data, "piso": piso,
+                       "censo": censo_da_leitura(res, registro, lidos["origin_develop"])}
     return res
 
 
@@ -375,8 +423,12 @@ def relata_pos(res, registro, out):
       f" · origin/develop julgado: {(od.get('sha') or 'ausente')[:12]}"
       f" · data do commit julgado: {lt['data_do_commit']}")
     c = res.get("contagens") or {}
+    censo = lt.get("censo") or {}
     p(f"[INFO]  merges first-parent após o piso: {c.get('merges_apos_piso', '?')}"
-      f" · até o piso, inclusive: {c.get('merges_ate_piso', '?')} (não julgados)")
+      f" · até o piso, inclusive: {c.get('merges_ate_piso', '?')} (não julgados)"
+      f" · censo pinado: {censo.get('pinado')!r} ({censo.get('estado')})")
+    if censo.get("falha"):
+        p(f"{TAG['FAIL']} guarda de censo da leitura: {censo.get('detalhe')}")
     for g in res.get("globais") or []:
         p(f"{TAG['FAIL']} {g.get('detalhe')}")
     sujeitos = sorted(res.get("sujeitos") or [], key=lambda s: (s.get("tipo") != "demanda", str(s.get("id"))))
@@ -393,8 +445,9 @@ def relata_pos(res, registro, out):
     if incoerente:
         p(f"{TAG['FAIL']} contagens incoerentes: contagens.problemas={c.get('problemas')!r} · len(problemas)={len(problemas)}")
     p("----")
-    p(f"fecho: {c.get('demandas', '?')} demanda(s) · {c.get('valvulas', '?')} válvula(s) · {len(problemas)} problema(s)")
-    return 1 if problemas or incoerente else 0
+    p(f"fecho: {c.get('demandas', '?')} demanda(s) · {c.get('valvulas', '?')} válvula(s) · {len(problemas)} problema(s)"
+      + (" · guarda de censo da leitura: FAIL" if censo.get("falha") else ""))
+    return 1 if problemas or incoerente or censo.get("falha") else 0
 
 
 # ---------------------------------------------------------------- pré-merge

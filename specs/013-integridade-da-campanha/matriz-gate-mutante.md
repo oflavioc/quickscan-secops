@@ -1351,3 +1351,136 @@ de passagem" é mudança sem rastro) e a suíte é alcançada pela prosa da §29
 | `compliance-audit --rule=backlog` | `[PASS] achados abertos (6)` · `1 PASS · 0 FAIL` |
 | registro canônico de suítes (R10 §3) | **nada a acrescentar** — nenhuma suíte nova nasceu; as harnesses de mutação não vivem em `expected_suites.json` e `tests_p50_chromium.js` já está lá, com contagem inalterada |
 | pins (R8) | **repin pendente** — os três arquivos tocados são pinados; `gen_pins.py` não foi executado por instrução da wave (ver `DEPENDÊNCIAS`) |
+
+
+---
+---
+
+# T028 — campanha formal `M-IC1`…`M-IC9` e os cenários IC-3, medidos na árvore de 2026-09-04
+
+> Fase 6 · `qa-engineer` · retroativo (o PR #29 foi mesclado sem esta seção — a
+> prova de R3 §5 para IC-1…IC-6 vivia **dispersa**: P1–P6 do
+> [red-integridade.md](red-integridade.md), contra um *stub* de C1, e os
+> "estados de hoje" do próprio red). Aqui a campanha é **formal, sobre a
+> implementação real**, e cada mutante morre pela linha do seu gate.
+> Executada junto do [spec-validate.md](spec-validate.md); fecha a pendência (3)
+> do aceite do `product-owner` (2026-09-01).
+
+## 20. Método
+
+- **Worktree efêmera** (`git worktree add --detach`) no HEAD
+  `7bf1c300a8364c0ac854849ad4ecd3e1b602c5ab` (branch `chore/fecho-009-013`),
+  árvore limpa; descartada ao fim. A árvore real **não foi tocada** (R7 §3, T10).
+- Cada mutante é aplicado por substituição de âncora **única** na cópia (o
+  script aborta se a âncora do próprio mutante tiver `≠ 1` ocorrência — a regra
+  que a demanda impõe aos harnesses vale para quem os muta), **commitado na
+  efêmera** (o stage recusa árvore suja, `check_mutation.py:57-61`) e medido por
+  `python .claude/verify/check_mutation.py` **sem** `--all`, com `origin/develop`
+  como base do trigger. Depois de cada medição: `git checkout -f --detach <HEAD>`
+  + `git clean -fdq`, `porcelain` vazio conferido.
+- Ambiente: node v24.19.0 · Python 3.14.7 (`python`, origem `padrão`) ·
+  `NODE_PATH` apontando para o `node_modules` do clone (a efêmera não tem o seu)
+  · **sem Chromium** — o que só importa para o `[FAIL] p51: campanha EXIGIDA
+  (alvo mudou) mas ambiente sem chromium` que aparece ao lado de todo mutante que
+  toca `tests_p51_mutants.js` (é o laço nomeando o ambiente ausente, R10 §2; não
+  é a morte do mutante e está listado como "outro FAIL" no log).
+- **Controle** (árvore sã, mesma efêmera): `---- integridade: 0 problema(s) ----`
+  · `---- exceção nominal: 0 ----` · `---- guarda de leitura parcial: 0 ----` ·
+  IC-4 verde nos 7 harnesses (19 + 24 + 19 + 15 + 53 + 20 + 107 = **257**
+  âncoras com `ocorrencias == 1`) · `mutation: 0 campanha(s) executada(s) · 0
+  problema(s)` · exit 0 · 0,9 s. Sem o controle verde, nenhuma das mortes abaixo
+  provaria nada (gate constante-vermelho passa por gate correto).
+
+## 21. Os nove — mutação aplicada, gate, linha que mata
+
+| mutante | gate | mutação (âncora única na cópia) | linha que mata (verbatim, truncada) | exit · t |
+|---|---|---|---|---|
+| **M-IC1** | IC-1 | `tests_p51_mutants.js:100` — `function build() { return run(\`"${PY}" "${BUILD_PY}"\`); }` → `run("python3 build_v32_html.py")` | `[FAIL] IC-1: p51/tests_p51_mutants.js:100 · interpretador por nome fixo em literal de comando — T1 exige MUTATION_PY ou o padrão por plataforma (win32 ? python : python3), com o caminho do script entre aspas` | 1 · 0,9 s |
+| **M-IC2** | IC-1 | `M51-02`: `cmd: "node tests_p50_core.js"` → `cmd: "P50_ONLY=P51-UX1 node tests_p50_core.js"` | `[FAIL] IC-1: p51/tests_p51_mutants.js · 1 de 20 cmd de mutante começam com prefixo POSIX de variável (classe ^[A-Za-z_][A-Za-z0-9_]*=; prefixos: P50_ONLY=)` | 1 · 0,9 s |
+| **M-IC3** | IC-2 | `check_mutation.py:47` — `return shutil.which(mutation_py_bin()) is not None` → `return True` (o estado pré-013) | `[FAIL] IC-2: M-IC3 · have("python") · com MUTATION_PY=mutation-py-inexistente-013 (binário inexistente) o requisito "python" ainda foi dado por presente — requisito declarado que nunca reprova` | 1 · 0,9 s |
+| **M-IC4** | IC-3 | ver §22 — morre pelos **dois cenários**, não pelo stage | — | — |
+| **M-IC5** | IC-4 | `find` de `M51-18` trocado pela linha nua `const overall = suff && scored.length ? Math.round(…)` — texto **idêntico** em `ui_v32.js:131` (`legacySnapshot`) e `:1164` (relatório; era `:1026` na spec — o arquivo cresceu) | `[FAIL] IC-4: p51/M51-18 · âncora ambígua — ocorrencias=2 em ui_v32.js (C1 exige exatamente 1 antes de mutar)` | 1 · 0,9 s |
+| **M-IC6** | IC-5 | par `p51/M51-07` removido de `mutation-matrix.json` (sem entrada em `dividas_declaradas`) | `[FAIL] IC-5: p51 · 1 mutante(s) do harness sem par na matriz (nem aposentado em dividas_declaradas): M51-07 [oráculo dos ids: preflight (C1)]` | 1 · 0,9 s |
+| **M-IC7** | IC-5 | `ultima_prova.registro` de `p51/M51-07` → `specs/013-integridade-da-campanha/nao-existe-qa013.md` | `[FAIL] IC-5: p51/M51-07 · ultima_prova.registro não resolve no disco: 'specs/013-integridade-da-campanha/nao-existe-qa013.md'` | 1 · 0,9 s |
+| **M-IC8** | IC-6 | `USER_GUIDE.md` removido de `mutation_map.json → p51.targets` (o estado pré-013, causa direta do rot de `M51-20`) | `[FAIL] IC-6: p51.targets · alvo mutado ausente de targets: USER_GUIDE.md [oráculo: preflight (C1)]` | 1 · 0,9 s |
+| **M-IC9** | IC-6 | `ui_session_v32.js` (alvo fantasma) devolvido a `p51.targets` | `[FAIL] IC-6: p51.targets · alvo declarado que o harness não muta: ui_session_v32.js [oráculo: preflight (C1)]` | 1 · 0,9 s |
+
+Em todos: `porcelain` vazio depois do stage (o stage não escreve; a mutação
+estava commitada na efêmera e foi descartada pelo reset). Os oito mortos pelo
+stage morrem **cada um pelo seu gate** — nenhuma morte incidental por outro
+`IC-n` (o único FAIL adicional é o do ambiente, acima). `M-IC1`, `M-IC2` e
+`M-IC3` deixam de ser "estado de hoje" e passam a ser mutantes **aplicados sobre
+o green** e mortos: a prova que o red não podia dar.
+
+## 22. `M-IC4` e os dois cenários de IC-3 — medidos sobre as harnesses de hoje
+
+IC-3 não é asserção do stage: é execução das harnesses em cópia (spec, IC-3).
+Primeiro os cenários **sem** mutante, sobre a implementação real — o que o
+red-integridade.md §"Cenário IC-3(a)" mediu **antes** da correção e ninguém havia
+re-medido depois:
+
+**(a) interpretador ausente** — `MUTATION_PY=py-inexistente-qa013 node <harness>`,
+sem filtro (o aborto precede a mutação, então nada é construído):
+
+| harness | `NÃO EXECUTADO` | com `causa: interpretador ausente` | razão `D/T` impressa | fecho | exit | porcelain |
+|---|---|---|---|---|---|---|
+| `tests_p50_mutants.js` | **53/53** | 53 | **0** | `CAMPANHA NÃO CONCLUÍDA [tests_p50_mutants.js · namespace P50]: 0 detectados · 0 sobreviventes · 53 não executados (de 53)` | 1 | vazio |
+| `tests_p51_mutants.js` | **20/20** | 20 | **0** | `CAMPANHA NÃO CONCLUÍDA · 0 detectados · 0 sobreviventes · 20 não executados (de 20)` | 1 | vazio |
+| `tests_p52_mutants.js` | **107/107** | 107 | **0** | `CAMPANHA NÃO CONCLUÍDA [tests_p52_mutants.js]: 0 detectados · 0 sobreviventes · 107 não executados (de 107)` | 1 | vazio |
+
+Compare com o red: a `p51` imprimia `NÃO DETECTADO` + razão `0/1`; `p50` e
+`p52` morriam em *stack trace* cru. As três agora dizem a mesma coisa, com a
+mesma causa, em 0,1 s.
+
+**(b) âncora corrompida** — `find` de `M51-03` trocado por texto inexistente,
+commitado na cópia:
+
+- `node tests_p51_mutants.js --preflight` → exit 1, stdout = um objeto JSON,
+  `M51-03 = {ocorrencias: 0, estado: "nao_executavel", causa: "âncora não
+  encontrada"}`, os outros 19 `ok`;
+- `MUT_ONLY=M51-03 node tests_p51_mutants.js` →
+  `NÃO EXECUTADO  M51-03 · exemplo de MSSP vaza para um qid incorreto` /
+  `gate esperado: P51-UX2 · causa: âncora não encontrada · ocorrencias=0 em
+  ui_p50_shell_v32.js` / `CAMPANHA NÃO CONCLUÍDA · 0 detectados · 0 sobreviventes
+  · 1 não executados (de 1)`, exit 1, **nada mutado** (porcelain vazio — a
+  mutação "na primeira ocorrência" nunca é aplicada);
+- stage sobre a cópia: `[FAIL] IC-4: p51/M51-03 · âncora não encontrada —
+  ocorrencias=0 em ui_p50_shell_v32.js (C1 exige exatamente 1 antes de mutar)`
+  — mutante, arquivo e contagem nomeados.
+
+**`M-IC4`** — a spec o define contra o código pré-013 ("o `run()` que engole a
+exceção e rotula `NÃO DETECTADO`"); sobre o código de hoje a forma fiel é
+**reintroduzir o laço de dois estados**: cinco sítios em `tests_p51_mutants.js`,
+todos com âncora única — `const binario = resolvePy(PY) || PY;` (não aborta sem
+interpretador), `if (n !== 1)` → `if (false)` (não conta âncora),
+`if (rb.code !== 0)` → `if (false)` (engole rebuild falho),
+`if (r.spawnFalhou)` → `if (false)` e `} else if (!linha)` → `} else if (false)`
+(engole spawn falho e linha ausente). Resultado: tudo que não reprova pelo motivo
+vira `SOBREVIVENTE`, exatamente o colapso que EA-5 descreve.
+
+| cenário sob `M-IC4` | saída observada | veredito |
+|---|---|---|
+| (a) `MUTATION_PY=py-inexistente-qa013 MUT_ONLY=M51-02` | `SOBREVIVENTE  M51-02 · reintroduz um segundo botão de evidência focável` + `MUTATION TESTING (Phase 5.1): 0/1 mutantes detectados pelo gate e motivo esperados` — o gate rodou contra o HTML **não reconstruído** (o rebuild falhou em silêncio) e o harness publicou veredito **e** razão sobre um mutante que nunca foi medido | **MORTO** — o cenário exige `NÃO EXECUTADO · interpretador ausente` e zero razão `D/T` |
+| (b) âncora de `M51-03` corrompida, `MUT_ONLY=M51-03` (interpretador presente) | `SOBREVIVENTE  M51-03 …` + `0/1 mutantes detectados` — o `replace` sem casamento é *no-op*, o rebuild devolve o HTML idêntico, o gate passa e o harness chama isso de sobrevivência; `'âncora não encontrada'` aparece **0** vezes | **MORTO** — o cenário exige `NÃO EXECUTADO · âncora não encontrada` |
+
+Porcelain vazio nos dois (o `finally` restaurou o fonte e o SHA conferiu — a
+regressão da borda 12 **não** foi enfraquecida pelo mutante, que só tocou a
+classificação).
+
+## 23. O que esta campanha NÃO cobre (declarado)
+
+- `M-IC10`…`M-IC31` são dos addenda IC-9/IC-10 e estão medidos nos seus reds
+  (`red-excecao-nominal.md`, `red-guarda-leitura-parcial.md`); os três de
+  **fiação** (`M-IC19`, `M-IC29`, `M-IC31`) seguem com morte declarada fora das
+  sondas em processo — o laço executou de verdade no job `visual` do PR #29
+  (`[EXCEÇÃO] KI-4 …` impresso, `p51` 19/20 fechando `0 problema(s)`), o que
+  prova a **fiação viva**, não a **morte do mutante** (matar exige rodar o
+  mutante, e isso o CI não faz).
+- Prova **(c)** de T9 para `M51-16` e `V322-M3` (Chromium) — G3 do
+  spec-validate; rota não-canônica agora conhecida (Chrome estável via
+  `CHROME_PATH`), dono `qa-engineer`.
+- Campanhas `p50`/`p51`/`p52` completas — canônicas no job `visual` (run
+  33295007844: 53/53 · 19/20 com KI-4 · 107/107).
+
+Nada desta seção altera contagem canônica, pin ou asserção. O único arquivo
+tocado é este.

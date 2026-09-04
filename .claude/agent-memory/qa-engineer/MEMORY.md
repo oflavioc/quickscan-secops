@@ -5,7 +5,7 @@
 - [Armadilha: oráculo de texto × copyMap](armadilha-oraculo-de-texto-copymap.md) — sem aplicar `__P52.copyMap()`, asserção negativa de tela vira PASS vacuoso
 - [`core` colapsa crash em sobrevivente](core-colapsa-crash-em-sobrevivente.md) — sem `node_modules` a campanha core devolve 3 falsos sobreviventes; não tem NÃO EXECUTADO
 - [Saída real de harness sem campanha](saida-real-de-harness-sem-campanha.md) — `MUTATION_PY` inexistente rende 53/20/107 blocos reais em segundos, sem mutar nem Chromium
-- [Trilha e ambiente](trilha-e-ambiente-quickscan.md) — Chromium não existe nesta worktree; agentes pinados em `fable` rodam em Opus
+- [Trilha e ambiente](trilha-e-ambiente-quickscan.md) — sem Chromium do Playwright, mas Chrome local via `CHROME_PATH` reproduz o job visual (não-canônico); Opus
 - [Perdão sobre leitura parcial](perdao-sobre-leitura-parcial.md) — tolerância aplicada a uma leitura incompleta vira abrangente por acidente; as duas classes de mutante de fiação
 - [Defeito de mecanismo × cláusula nova](defeito-de-mecanismo-x-clausula-nova.md) — se a mudança só faz cumprir cláusula já ratificada, não escale: escreva o red
 - [Exceção que morre com a razão](excecao-que-morre-com-a-razao.md) — prazo auto-executável contra a matriz, sonda sintética, e o gate que não pode passar a exigir a exceção
@@ -56,3 +56,5 @@
 - [Número esperado diferente do medido](numero-esperado-diferente-do-medido.md) — isole a causa e procure a pré-classificação na spec; reporte e pare, nunca calibre
 - [Verde com exceção impressa](verde-com-excecao-impressa.md) — vermelho crônico é pior (EA-5); asserção idêntica + dono/id/prazo auto-executável, e a exceção tem de ser carga
 - [Mutante de árvore sob censo pinado](mutante-de-arvore-sob-censo-pinado.md) — adição mata pelo censo, não pelo veredito; troca censo-neutra é a forma isolante; harness novo entra na própria população
+- [Arbitragem de desvio declarado](arbitragem-de-desvio-declarado.md) — reproduza o kill à mão, exija o gate "sugerido" VERDE sob o mutante; errata quando a spec promete o que não há
+- [Grade implícita neutraliza mutante de coluna](grade-implicita-neutraliza-mutante-de-coluna.md) — tirar o track não tira a coluna (areas herdadas / grid-column:2); meça o observável do gate sob a mutação, nunca raciocine

@@ -16,3 +16,5 @@ Três restrições que decidiram a forma de `D014-M4`/`D014-M7` (wave 6 da 014),
 **Bônus de forma**: quando o runner da suíte imprime `FAIL <id>` numa linha e as alíneas nas linhas INDENTADAS seguintes, `gateLine` não discrimina alínea — use `gateBlock` (linha + bloco indentado) e pine no `reason` também a CONTAGEM (`N alínea(s) reprovada(s)`): matar pela alínea errada é sobrevivente disfarçado ([[bateria-negativa-que-mata-a-si-mesma]]).
 
 **Como aplicar:** toda campanha futura cujos alvos incluam folha varrida por `tests_014_regra_morta.js` herda as três restrições. E `mutation_map.targets` deve conter TUDO que a campanha muta (na 014 a spec omitia `.claude/verify/regra_morta*.js`; incluí como desvio declarado que endurece — campanha que não re-executa quando o próprio arquivo mutado muda é o EA-7 dentro do remédio).
+
+**Status (T082, 2026-09-01):** os três desvios foram ARBITRADOS na validação — forma do M4 e local do kill de M5/M6 viraram erratas E10/E11 da spec (mais E12, o pin sintético veredito+razão); os targets ficaram conforme sem errata. Protocolo em [[arbitragem-de-desvio-declarado]].

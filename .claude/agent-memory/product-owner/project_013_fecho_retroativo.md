@@ -20,18 +20,20 @@ linhas de IC-9/IC-10 na spec.md (PO+TL, spec pinada → repin) · IC-10 fora de
 as campanhas delegadas** — as provas (b)/(c) de M51-16, V322-M3 e P50::M51 "fecham
 no job visual" só como dívida declarada na mutation-matrix.json.
 
-**A tripwire que vai morder sozinha**: a exceção nominal `KI-4`
-(`known_issues.json`, perdoa `p51/M51-01` SOBREVIVENTE por EA-7) tem
-`remocao_prevista` amarrada ao **merge da demanda 014**. `IC-9.3` reprova o stage
-`mutation` no dia em que a `mutation-matrix.json` voltar a dizer `KILL` para
-M51-01 — quem fechar a 014 e esquecer de remover a KI-4 recebe `EXCEÇÃO OBSOLETA`.
-Não é defeito: é o desenho ratificado pelo proprietário (2026-08-30).
+**A tripwire foi DESARMADA sem nunca disparar** (atualizado 2026-09-01): a 014
+(T050, wave 5 indivisível) **aposentou** `M51-01` com substituição nominal por
+`D014-M10` e **removeu a `KI-4` no mesmo commit** — `known_issues.json` está com
+`issues: []` e a trilha no `_meta`. `IC-9.3` nunca chegou a morder porque a rota
+não foi "M51-01 volta a KILL": foi aposentadoria, cuja direção de guarda é
+`IC-9.2` (exceção a fantasma). O par substituto `D014-M10 × P52-LAY2` nasceu
+`NÃO EXECUTADO · ambiente sem chromium` e fecha no job `visual`.
 
 **Why:** aceite retroativo que só pode dizer "sim" não mede nada (argumento da
 própria delegação, e da 014); o veredito precisou nomear o que faltou para não
 virar carimbo — e a fase em `validate` mantém a pendência visível à máquina.
 
 **How to apply:** quando o relatorio-final da 013 for escrito, ele deve citar o
-run do CI do PR #29 (job visual) — cobrar isso na revisão. Quando a 014 mesclar,
-esperar o vermelho de IC-9.3 como sinal correto, não como regressão. Ver
+run do CI do PR #29 (job visual) — cobrar isso na revisão. A expectativa antiga
+de "vermelho de IC-9.3 no merge da 014" está superada: a KI-4 já saiu, pela rota
+da aposentadoria (ver [[fecho-da-014-e-pendencias]]). Ver
 [[gate-verde-nao-e-protecao]] e [[gatilho-de-campanha-e-cego]].

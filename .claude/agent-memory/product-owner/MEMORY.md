@@ -11,4 +11,6 @@
 - [Pergunta sempre com recomendação](feedback_pergunta_sempre_com_recomendacao.md) — o usuário aprova refinamento em bloco; pergunta nua vira rodada de chat desnecessária
 - ["Não há demanda" é entrega](feedback_nao_demanda_e_entrega.md) — resultado aceito no refinamento; e refutar recomendação própria anterior é esperado, com a razão
 - [Medir com o instrumento da suíte](feedback_medir_com_o_instrumento_da_suite.md) — nunca estimar número que um gate cobra; duas suítes, duas métricas: nomear a que reprova primeiro
-- [Fecho retroativo da 013](project_013_fecho_retroativo.md) — mesclada com wave 9 incompleta; fase ficou em validate; KI-4 é tripwire que dispara no merge da 014
+- [Fecho retroativo da 013](project_013_fecho_retroativo.md) — mesclada com wave 9 incompleta; fase ficou em validate; tripwire KI-4 desarmada pela 014 sem disparar
+- [Fecho da 014 e pendências](project_014_fecho_e_pendencias.md) — aceite condicionado ao run visual; glossário do refinamento só entrou na Fase 6: conferir em todo aceite
+- [Aceite segundo passe da 011](project_011_aceite_segundo_passe.md) — mesclada sem aceite (EA-33); "d011 19/19" nunca cobre D011-M9; relatório congelado num SHA anterior ao merge

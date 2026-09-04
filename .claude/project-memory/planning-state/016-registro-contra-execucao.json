@@ -1,6 +1,6 @@
 {
   "demanda": "016-registro-contra-execucao",
-  "phase": "tasks",
+  "phase": "red",
   "spec_dir": "specs/016-registro-contra-execucao",
   "branch": "feature/016-registro-contra-execucao",
   "brief": "Vigiar o registro contra a execucao. Duas instancias da MESMA propriedade ausente, ambas com id permanente: EA-33 - demanda mesclada na develop com a Fase 6 aberta nao e reprovada por gate nenhum (check_state.py:52-53 exige pr_url em done, mas nada exige que branch mesclada CHEGUE a done; cinco instancias, a quinta criada pelo orquestrador no mesmo ciclo em que o achado foi aberto) - e EA-14/borda 8 - sob MUTATION_DEFER_MISSING=1 a campanha exigida sem ambiente vira [DEFER] e o stage passa, mas NADA verifica que o job irmao executou a campanha delegada: um DEFER cujo job falhe, seja pulado ou nao rode deixa a campanha SEM EXECUCAO e SEM FAIL. A spec da 013 registrou a borda 8 como demanda propria (spec 013 §Riscos 4: vincular o DEFER a execucao efetiva exige mexer em verify.yml e/ou em protecao de branch).",
@@ -41,5 +41,14 @@
     "portao": "Usuario no chat, 2026-09-04: 'Prossiga com as tarefas da 016'.",
     "desenho": "Job fecho roda em TODO evento, sem needs/if, checkout raso; imprime NAO JULGADO com motivo em push/dispatch/chore. Stage fecho local paralelo, heavy false, ZERO REDE por construcao - a rede fica so em branch_protection.py sob T7. Cada script partido em gate (qa-engineer) x instrumento (core/build-engineer) para manter R3 §2 por arquivo. fecho_pendente fora dos pins (estado por evento); fecho.json e branch_protection.json dentro (regua e expectativa de identidade). Sonda em fixtures_016 so com entradas, esperados pinados nos registros, cinco guardas. Waves 0-7; P2 entre a wave 4 e a 7.",
     "medicoes_que_mudaram_o_desenho": "check_mutation.py:1287 casa targets por pertinencia EXATA - a notacao fixtures_016/** nao casa nada, entao as 35 fixtures vao listadas uma a uma. check_suites.py:50-51 registra harness pelo mutation_map.json - harness e entrada no mesmo commit (D4 da 013)."
+  },
+  "tasks": {
+    "status": "approved",
+    "data": "2026-09-04",
+    "artefato": "specs/016-registro-contra-execucao/tasks.md",
+    "portao": "DECIDIDO SOB DELEGACAO DO PROPRIETARIO de 2026-08-29, nao aprovado por ele pessoalmente. O usuario disse no chat 'Prossiga com as tarefas da 016'; a escrita das tarefas estava coberta pela frase, a aprovacao do artefato entra sob a delegacao geral. Registrado para poder ser contestado.",
+    "forma": "33 tarefas em 8 waves (0-7) mais a wave P2. Nenhuma do tipo fix. 14-15 repins previstos, UM por commit de conteudo - a 008 previu um e precisou de tres, a 014 precisou de dezesseis.",
+    "resposta_ao_alerta_do_orquestrador": "Secao 'O estado do mundo que reprova cada gate' lista, por gate, o estado + a tarefa que o produz + a que o mede. Nenhum gate ficou sem estado produzivel. VACUO DECLARADO: D016-FEC4 nao tem valvula na arvore de hoje; o estado e fabricado por T060(e) e (h) mais a sonda F6-F10.",
+    "duas_medicoes_que_mudaram_o_desenho": "O R0 ja foi consumido em 9e3fb0c, logo T001 e R0b. E check_tdd.py:55-56 imprime cada divida como {d}: o desfecho da Borda 8 tem de ser SUFIXO DA STRING, nao objeto. Tambem medido: 'sem o piso' nao pode ser piso ausente (cai em C2 d) - o mutante usa o PISO ZERO, a raiz e5ccd429."
   }
 }

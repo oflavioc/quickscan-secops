@@ -1,7 +1,7 @@
 {
   "_meta": {
     "descricao": "Registry único de pins — fonte de identidade dos artefatos (R8). Hashes = SHA-256 dos blobs de HEAD. Alterar arquivo pinado exige regenerar este registry no MESMO PR, com motivo no commit.",
-    "gerado_de_head": "bdda9a1f6f0ce652ab23ce43d7cbdd2cf373049e",
+    "gerado_de_head": "24acad64ab18e9cb77b4e14c98cc35620f9fa552",
     "gerado_em": "2026-09-04",
     "exclusoes": [
       "docs_phase5/**",
@@ -126,8 +126,8 @@
     ".claude/verify/gen_pins.py": "730043800a41b4cfbb799945dd6499df8ba1375096f5f748df01c8c2d12a407a",
     ".claude/verify/invariants.json": "b8571facafbe6098cc643886cd158f877dd702c0cba6ca5addff34fc3e10bee6",
     ".claude/verify/known_issues.json": "9f4ac86a8e20443935cc03efeca3668d9774824d84778f2db930b185b1971818",
-    ".claude/verify/mutation-matrix.json": "0bbf4a803d43be5fb7f676fe5448a15cafe94208c3b3ba7140c911ddf28c43e5",
-    ".claude/verify/mutation_map.json": "85516222c11a6c459d3dca31be1c1211a8860de6cb0bf2cdf0b95fa2e93cc144",
+    ".claude/verify/mutation-matrix.json": "2b5c4714f2ff8144720b925b45cb9b755ec1bcca2f2757fcc43e67c8898d1837",
+    ".claude/verify/mutation_map.json": "1d97f9ca86b45ffe0ec0dc4c9aa1c0f7000e89415edef89b5ac247446065b815",
     ".claude/verify/pipeline.yaml": "ca135c0cfec2d2489be6cc111f0cf7a96b5d9d19bbd2ae2a622e1b8148377986",
     ".claude/verify/regra_morta.js": "bfe0944b5088c40c346d63ca39f2dda0795524818b8ead46ceabc7b57f5a5616",
     ".claude/verify/regra_morta.json": "bd97869e0bd2f5e1c9b9fc5d86070ecc4a2e1c146b5ca1ed33a4cab4397a74fe",
@@ -248,7 +248,7 @@
     "specs/013-integridade-da-campanha/tasks.md": "5153fbed842845d4264eb1f74cb5a68bc2631fe4ffc5670c0da8e6d0c2a7b8c2",
     "specs/014-gate-sem-poder-discriminante/plan.md": "0a61aee4f6a28191069374192c3ae67976d4549cc03e856f3ea41469dcafb2c4",
     "specs/014-gate-sem-poder-discriminante/refinement.md": "0b0fed08a437a5fb69f9cda16d1d7cee361eae27536d95d08b33a0362ffb549b",
-    "specs/014-gate-sem-poder-discriminante/spec.md": "a5f8e6ed1f5a02138298924bf1b61bfb49b3c70d98a32f2c8335399697d08dc3",
+    "specs/014-gate-sem-poder-discriminante/spec.md": "1a639b5aac1da59196183456aacb7bce8b63697eeaac063710ada8bd205c8b06",
     "specs/014-gate-sem-poder-discriminante/tasks.md": "5c25757d29217c2c19271e15bc018fd8d46e3ecab160b73430796609bdc8aa0d",
     "specs/PHASE_5_0_REV_A.md": "22e729174c6a3c5dd620da5330b03eb96d9eb6fc6e64eba097c2bde55eb0a510",
     "specs/PHASE_5_0_REV_B.md": "4f1583c733df62a9452aa7b218d962e40d781bb8d30dfc3179ad6e1ef004619b",
@@ -262,7 +262,7 @@
     "tests_011_mutants.js": "1538e95f2e9a56606a8c92eba965aafd470d98eec1e4a494b8e02970022df96c",
     "tests_011_prioridade.js": "b8fce56a38f2e9ac18fdbddcc76b278ab2e84eaa5eaea82495a8dd868982c7b6",
     "tests_014_mutants.js": "9c541d6a46edc7527728e848297051f713da457ba52391d4536867673041743d",
-    "tests_014_mutants_visual.js": "efe9b6d00306d28dceeea5b785f576c2a2254574f84b6571ee0796d0c4d309bc",
+    "tests_014_mutants_visual.js": "6fadbb55fd0302ee951d3f8ee9c6d79828784253989e94f7534f98f7ea5438b6",
     "tests_014_regra_morta.js": "77a65c9704f3a1ecdc5265cd5102d7ee2c3991898b8355e8303345f16c34ce06",
     "tests_core_mutants.js": "8a0502c2d7f34832722059435f2ccf4d7889614769526b645d4e2a720732af7e",
     "tests_icons_m46.js": "f73f96e32951507135c0b36d968fe12e9ffbc268e8ad438ea2e6c861a8b88123",

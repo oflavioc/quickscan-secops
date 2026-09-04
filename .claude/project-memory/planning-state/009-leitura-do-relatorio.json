@@ -1,6 +1,6 @@
 {
   "demanda": "009-leitura-do-relatorio",
-  "phase": "validate",
+  "phase": "done",
   "spec_dir": "specs/009-leitura-do-relatorio",
   "brief": "Legibilidade da entrega ao cliente na tela de resultados: quebra da nota da jornada, redundancia entre narrativa e bullets, glossario do contexto tecnologico na secao de resultados, ordem canonica das 9 secoes, posicao da base de evidencia, regra de bloco de ausencia e o defeito de mensagem unica em ui_target_v32.js:166. Itens 4/6/8 saem para a 010 e o item 1 para a 011 (divisao aprovada em P1).",
   "branch": "feature/009-leitura-do-relatorio",
@@ -59,8 +59,9 @@
     "pending": []
   },
   "validate": {
-    "status": "awaiting_approval",
+    "status": "done",
     "conformance": "15/17 (88%) — zero gaps de implementacao; as 2 nao-conformidades eram redacao e foram fechadas na rodada 2 (61c646b)",
-    "notes": "PR #24 aberto para develop. d009 15/0 (fixada por execucao), p50core 64/0, p52layout 45/0, campanha d009 19 KILL/19 e core 3/3, pipeline 13 PASS/1 FAIL — o unico FAIL e mutation nomeando p51/p52 por ausencia de Chromium (KI-3, agendamento, fecha no job visual do PR). Red commitado antes da implementacao em 3950288 e d48b906. Aceite de intencao do product-owner: 'nao encontrei objecao' apos a iteracao — o achado dele (frase falsa no caso parcial) foi corrigido em e77b7b5 com gate endurecido D009-UNS3 e mutante D009-M20. CINCO ratificacoes do proprietario registradas na spec: troca de ancora §8, ampliacao C13, autorizacao nominal §29.4, errata de fidelidade e rotulo derivado aceito como nao medido. Merge e do usuario, no GitHub."
+    "notes": "PR #24 aberto para develop. d009 15/0 (fixada por execucao), p50core 64/0, p52layout 45/0, campanha d009 19 KILL/19 e core 3/3, pipeline 13 PASS/1 FAIL — o unico FAIL e mutation nomeando p51/p52 por ausencia de Chromium (KI-3, agendamento, fecha no job visual do PR). Red commitado antes da implementacao em 3950288 e d48b906. Aceite de intencao do product-owner: 'nao encontrei objecao' apos a iteracao — o achado dele (frase falsa no caso parcial) foi corrigido em e77b7b5 com gate endurecido D009-UNS3 e mutante D009-M20. CINCO ratificacoes do proprietario registradas na spec: troca de ancora §8, ampliacao C13, autorizacao nominal §29.4, errata de fidelidade e rotulo derivado aceito como nao medido. Merge e do usuario, no GitHub.",
+    "fecho_retroativo": "PR #24 mescladO em 4092463 (2026-08-30T07:49Z) sob delegacao do proprietario, com validate.status ainda 'awaiting_approval' e SEM relatorio-final.md — mesmo padrao da demanda 013 (achado citado pelo orquestrador como EA-33, alocado numa branch da 014 ainda nao mesclada; CENSADO nesta escrita em develop/EA-31, no unico PR aberto #36 (head 5cf7c82, EA-20) e em toda a arvore local — NAO ENCONTRADO em lugar nenhum, discrepancia registrada em relatorio-final.md §Dependencias, nao resolvida aqui). Escrito retroativamente por doc-writer em 2026-09-01: specs/009-leitura-do-relatorio/relatorio-final.md. Ponto verificado nesta escrita (nao presumido): o deferimento de p51/p52 ao job visual FECHOU no proprio PR #24, run 33298658338, ANTES do merge — job verify 14 PASS/0 FAIL de stage (com MUTATION_DEFER_MISSING=1), job visual com Chromium real: p50chromium+p51 27/0, p52chromium 55/0, campanha mutation 'd009 19 KILL de 19 · core 3 KILL de 3 · p51 19/20 (unico nao-KILL e a excecao nominal KI-4, achado EA-7, alheio a esta demanda) · p52 107/107 · 4 campanhas executadas, 0 problemas'. Dois achados devolvidos e nunca registrados com id permanente ficam nomeados no relatorio (buraco na numeracao visivel das secoes, proposto EA-32 sem escrita em BACKLOG.md; discrepancia prosa x codigo em B4, sem numero por causa da disputa do EA-33) — nenhum e absorvido nem corrigido de passagem."
   }
 }

@@ -3,6 +3,12 @@
 > Mantido pelo `product-owner` na Fase 0 de cada demanda (R12). Só glossário:
 > o que cada conceito É, em uma ou duas frases. Doc, spec e prompt novos usam o
 > termo daqui, sem derivar para os sinônimos evitados.
+>
+> **Desvio declarado — 2026-09-01.** *Cláusula sentinela* foi gravado na **Fase 4**
+> da demanda 015, fora da Fase 0, por autorização do orquestrador sob delegação.
+> Razão: o termo já estava em uso em três artefatos e no registro de mutantes, e
+> deixá-lo indefinido custava mais que o desvio. Trilha em
+> `specs/015-superficies-de-apoio/spec.md` §E2.1.
 
 ## Metodologia (produto)
 
@@ -215,7 +221,15 @@ Checagem estática que, para cada mutante de CSS, prova que a declaração resul
 decide ao menos uma propriedade — cascata, sem navegador. Distinta da varredura de
 gate constante (achado EA-20), que mede expressão e alcançabilidade de estado.
 _Evitar_: varredura de gates sem poder discriminante, lint de CSS morto
-
+**Cláusula sentinela**:
+Alínea de gate que não pode falhar no estado atual do produto, mas cujo **gatilho
+de falsificação é nomeado** — existe para apanhar a regressão no dia em que o
+gatilho disparar. Fica **sem mutante**, e a ausência é declarada, nunca dívida.
+Distinta da *cláusula defensiva inalcançável por construção* (`design-decisions.md`
+§Candidatas), que **nenhuma** mudança pode tornar falsa e cuja disposição é "não
+reporte": sentinela é falsificável, e a sua disposição é "reavalie quando o gatilho
+disparar".
+_Evitar_: cláusula defensiva, código morto, dívida de mutante
 **Selagem**:
 Ato do auditor humano que congela uma fase: release develop→main com tag anotada;
 a boundary da fase fecha para sempre.

@@ -18,6 +18,8 @@ processo existe para impedir.
 
 **How to apply:** (1) nunca escreva "aprovado pelo proprietário" quando foi
 delegação — use a fórmula acima; (2) se a tarefa exigir ratificação pessoal
-dele (release, selagem, conteúdo de invariante/glossário), **pare e escale** em
+dele (release, selagem, conteúdo de invariante/glossário, **editar spec de
+fase selada** — mexer na §29.4 de `specs/PHASE_5_0_REV_B.md` é promoção de
+REV C, não conserto de texto), **pare e escale** em
 vez de decidir; (3) o desvio segue em DEPENDÊNCIAS junto com
 [[trilha-modelo-opus]].

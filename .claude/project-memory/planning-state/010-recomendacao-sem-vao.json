@@ -1,6 +1,13 @@
 {
   "demanda": "010-recomendacao-sem-vao",
-  "phase": "validate",
+  "phase": "done",
+  "pr_url": "https://github.com/oflavioc/quickscan-secops/pull/31",
+  "validate": {
+    "status": "done",
+    "conformance": "13 de 14 conformes (skill spec-validate, registrado em validacao.spec_validate). O unico gap era de classe spec-errada — a linha normativa de C8 nao acompanhava a errata E17 — e foi corrigido. Dois dos tres flags do extrator foram descartados pelo proprio QA como artefato dele, em vez de virarem gaps.",
+    "aceite_po": "NAO ENCONTREI OBJECAO, em segundo passe. O primeiro veredito foi REPROVADO (objecao: V3 subtrai conteudo) e esta preservado em validacao.t029_aceite_po; apos a correcao — errata E18 + particao de baseIds por payload — o product-owner retirou a reprovacao, conforme specs/010-recomendacao-sem-vao/relatorio-final.md:233.",
+    "nota": "Este bloco `validate` foi escrito no fecho retroativo de 2026-09-01 e NAO acrescenta juizo novo: ele espelha, no formato que check_tdd.py:37 cobra, o que ja estava em `validacao`. A demanda usa a chave `validacao` (PT); o gate le `validate` (EN). Ver validacao.fecho_retroativo e o achado EA-33."
+  },
   "spec_dir": "specs/010-recomendacao-sem-vao",
   "brief": "O vao entre as duas doutrinas de recomendacao: a Camada 1 congelada recomenda produto a partir do gap sem contexto, o engine V3.2 exige contexto declarado, e isLegacyModeV32() escolhe entre elas exigindo contexto ZERO. Contexto parcial desliga a primeira sem ligar a segunda — foi onde o cliente caiu e recebeu zero recomendacoes. Itens 4, 6 e 8 do feedback de 2026-08-27.",
   "branch": "feature/010-recomendacao-sem-vao",
@@ -130,6 +137,7 @@
       "segunda quebra de reason alheia por mudanca de literal - desta vez por escrever mensagens SEM ACENTO, que quebrou a regex do M7 e violou R12 de quebra. Regex nao afrouxada: acentuacao corrigida em 18 tokens e 24/24 reauditadas.",
       "falso positivo latente: (a) exigia exatamente 1 aviso e teria reprovado um estado LEGITIMO (todo baseIds com payload - um SOC maduro com uma pratica fraca). Aviso passou a ser esperado condicionalmente. Fixture do ramo fica em divida declarada, com rota medida."
     ],
-    "erratas": "E12 a E18, todas nascidas de medicao. E17 nomeou o padrao que a demanda encontrou tres vezes: alinea cuja pre-condicao nunca falha e indistinguivel de alinea que mede, ate alguem escrever o mutante e ele sobreviver."
+    "erratas": "E12 a E18, todas nascidas de medicao. E17 nomeou o padrao que a demanda encontrou tres vezes: alinea cuja pre-condicao nunca falha e indistinguivel de alinea que mede, ate alguem escrever o mutante e ele sobreviver.",
+    "fecho_retroativo": "FECHO RETROATIVO em 2026-09-01. Mesclada na develop (PR #31) com phase=validate e pr_url NULO; o achado permanente do padrao e EA-33. Esta transicao NAO fabrica aceite: ela move o registro para onde ja havia substancia. O aceite de intencao do product-owner EXISTE, em specs/010-recomendacao-sem-vao/relatorio-final.md:233 — ele retirou a reprovacao e declarou 'nao encontrei objecao' apos a correcao (errata E18 + particao de baseIds por payload). O planning-state guardava so o PRIMEIRO veredito, REPROVADO, e por isso lido isoladamente dava a impressao de demanda reprovada e mesclada: o registro canonico ficou atras do artefato. Nada do texto anterior foi apagado (R2 §5)."
   }
 }

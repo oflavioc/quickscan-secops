@@ -1049,6 +1049,42 @@ dentro do gate, na correção do `EA-10` (demanda 010).
 **Não executado**: não rodei o workflow. A cadeia acima é leitura do YAML, do
 `check_mutation.py` e do `mutation_map.json` na `develop` `86a4f1e`.
 
+### Nota do desfecho (demanda 016, 2026-09-04) — **permanece `aberto`**
+
+A demanda **016-registro-contra-execucao** tratou esta borda 8 (`spec.md`
+§P16.b, gate `D016-PROT1`) sem fechar o achado. O que muda: a promessa
+`[DEFER]` **não foi retirada** (o desenho recusado seria R-b1, "levar Chromium
+ao `verify`") **nem instrumentada por recibo** (o outro desenho recusado, R-b2)
+— a cobrança que faltava passou a ser **da proteção de branch**: o merge em
+`develop` passa a esperar o job `visual` (e o `fecho`) como check obrigatório,
+uma vez que o proprietário execute o ato P2, auditado por `D016-PROT1`
+(`.claude/verify/branch_protection.json`, seção `branch-protection` do
+`compliance-audit.sh`). `mutation-matrix.json → dividas_declaradas` (entrada
+"Borda 8") recebeu o desfecho **anexado como sufixo da mesma string** (R2 §5,
+texto original preservado): *"credor = proteção de branch com `visual`
+obrigatório, auditada por `D016-PROT1`; a promessa continua, a cobrança
+existe"*.
+
+**O que isso fecha**: um `[DEFER]` cujo job `visual` **falhe, seja pulado ou
+não rode** no head SHA do merge passa a **bloquear o merge**, porque `visual`
+vira check obrigatório — o sintoma central que abriu a borda 8 (o caso dos
+"65 segundos" entre o job fechar e o merge acontecer no PR #29, sem nada que
+obrigasse a esperar) deixa de ser possível, uma vez que P2 esteja configurada.
+
+**O que isso NÃO fecha — por que o achado permanece `aberto`**: nenhuma
+máquina compara a **lista** de campanhas que o `[DEFER]` do job `verify`
+prometeu com as que o job `visual` de fato executou; a coincidência de ambos
+derivarem `changed` do mesmo merge-base é **coincidência de código, não
+cobrança** (`spec.md` §NÃO mede 6, ratificado pelo aceite do `product-owner`,
+`validate.aceite_po.respostas_as_seis_perguntas.1_p16_cumprida_ou_contornada`).
+O diagnóstico desta borda 8 — suíte vermelha deixa o passo das campanhas
+`skipped` sem que a não-medição apareça como falha própria (o corpo original
+deste achado) — **também não mudou**: com `visual` obrigatório, uma suíte
+vermelha naquele job passa a **bloquear o merge**, mas o sinal visível
+continua sendo o da suíte, não "campanha exigida não medida" (`spec.md` §NÃO
+mede 9). Se as duas listas um dia divergirem, fechar isso é demanda própria
+(R-b2), não desta.
+
 ## EA-15 — `run.sh` trunca a saída do stage em 30 linhas: o veredito do `mutation` chega sem motivo e parece crash
 
 **Status**: `aberto`
@@ -1840,7 +1876,7 @@ Achado derivado, aberto no mesmo ciclo e **não** fechado aqui: `EA-35`
 
 ## EA-33 — demandas mescladas na `develop` com o planning-state parado antes de `done`
 
-**Status**: `aberto`
+**Status**: `resolvido`
 
 **Aberto em**: 2026-09-01. Observado pelo orquestrador durante a demanda 014.
 Instância nova da família **`EA-31`** ("o registro da prova não é comparado
@@ -1895,6 +1931,78 @@ fechamento manual da Fase 6; se `009` e `013` precisam, retroativamente, de
 `relatorio-final.md` e aceite de intenção registrado, ou se o merge já
 consumado é aceito como fato encerrado; abrir demanda é do orquestrador (R4); o
 veredito é do `qa-engineer` com o `product-owner`.
+
+### Resolução — o que foi feito, e o que fica de fora
+
+Demanda **016-registro-contra-execucao** (`specs/016-registro-contra-execucao/`,
+PR [#40](https://github.com/oflavioc/quickscan-secops/pull/40), branch
+`feature/016-registro-contra-execucao`). Tratou **EA-33** e a borda 8 do `EA-14`
+juntas, sob a mesma propriedade de processo — **P16: o merge é o vencimento de
+toda promessa feita à verificação** — com mecanismos e donos distintos por
+metade (`refinement.md` §Desafio ao enquadramento).
+
+**O que entrou, executado e citável** (HEAD local `ed2f9d0`; pipeline completo
+local **16 PASS · 0 FAIL**, `MUTATION_DEFER_MISSING=1 bash .claude/verify/run.sh`;
+`compliance-audit.sh` **15 PASS · 1 FAIL · 0 WARN**; campanha `d016` — número por
+estado, ver `specs/016-registro-contra-execucao/relatorio-final.md` §Números):
+
+- **P16.a — direção registro↔git**: gates `D016-FEC1` (registro→git, com o
+  oráculo de mensagem de merge `#N` e o secundário de ancestralidade),
+  `D016-FEC2` (git→registro com piso, `.claude/verify/fecho.json → piso.sha =
+  921977c2…`), `D016-FEC3` (`done` ⇒ artefatos em disco, com as três exclusões
+  R13 impressas — 003, 009, 010), `D016-FEC4` (válvula `fecho_pendente`) e
+  `D016-PR1`, o **check pré-merge** em job próprio `fecho` (`verify.yml`, sem
+  `needs:`/`if:`) — todos no namespace `D016-*`, definidos em
+  `specs/016-registro-contra-execucao/spec.md`.
+- **P16.b — a borda 8**: a rota escolhida **não** foi nenhuma das duas
+  recomendadas no refinamento (R-b1: levar Chromium ao `verify`; R-b2:
+  recibo+reconcile) — foi **tornar a proteção de branch de `develop` dado
+  auditável**. A medição do `build-engineer` (`medicoes-fase0.md` §Medição 1)
+  derrubou R-b1 por custo (campanhas dominam por **duas ordens de grandeza**:
+  42–55 min contra 28–35 s de instalação) e revelou o credor real (§Medição 2:
+  `develop` não tinha **nenhum** check obrigatório). O gate `D016-PROT1`
+  (seção `branch-protection` do `compliance-audit.sh`) audita a proteção via
+  API a cada execução; a promessa `[DEFER]` **continua existindo** —
+  `verify.yml:42` (`MUTATION_DEFER_MISSING`) e a semântica do `check_mutation.py`
+  ficaram byte-intactas (T9) — e quem a cobra passou a ser o merge esperando o
+  check `visual` obrigatório, ao lado de `verify` e do novo `fecho`.
+- **CI, run real citado**: PR #40, run
+  [`33927191969`](https://github.com/oflavioc/quickscan-secops/actions/runs/33927191969)
+  (head `ebe0b22`, evento `pull_request`, único run do PR até esta escrita) —
+  job `fecho` **FAILURE** com `[FAIL] FECHO PENDENTE da demanda
+  016-registro-contra-execucao (fase implement) — merge bloqueado até done`
+  (exit 1: o red **ao vivo** de `D016-PR1`, esperado por desenho enquanto a
+  demanda não estiver em `done`); job `verify` **FAILURE** só no passo de
+  auditoria (`bash .claude/verify/run.sh` fechou **16 PASS · 0 FAIL** dentro do
+  mesmo job — o pipeline em si é verde — e `compliance-audit.sh` reprovou com
+  `develop DESPROTEGIDA · faltam: fecho, up-to-date, verify, visual`: o red **ao
+  vivo** de `D016-PROT1`, também esperado até o ato do proprietário).
+- **O ato do proprietário (P2)** — configurar `verify`, `visual` e `fecho` como
+  checks obrigatórios em `develop`, mais *up to date* — **ainda não foi
+  executado** nesta data. É condição do aceite do `product-owner`
+  (`016-registro-contra-execucao.json → validate.aceite_po.condicoes_do_aceite`),
+  não pendência solta.
+
+**O que fica de fora, declarado** (detalhe completo e fontes em
+`specs/016-registro-contra-execucao/relatorio-final.md`):
+
+- A reconciliação `[DEFER]` × campanha efetivamente executada continua **não
+  medida por gate nenhum** — o que a proteção garante é que o job `visual`
+  rodou verde sobre o mesmo head SHA, não que exigiu as mesmas campanhas
+  (`spec.md` §NÃO mede 6). Por isso **`EA-14` permanece `aberto`**, com nota
+  própria abaixo.
+- **Achado novo** sobre a conflação de sinais entre o vermelho de `D016-PROT1`
+  (que vive dentro do job `verify`) e o significado de "verify vermelho" —
+  registrado como `EA-36`, abaixo, por decisão do orquestrador de não ampliar
+  o escopo desta demanda.
+- A recusa do `data-engineer` em normalizar a chave irmã
+  `validacao`/`implementacao` do planning-state (010/011/015) **dentro** do
+  mesmo commit que endurecia o schema — ratificada pelo `product-owner` no
+  aceite (`validate.aceite_po.respostas_as_seis_perguntas.4_recusa_do_data_engineer`);
+  fica candidata, fora desta demanda.
+- `spec-validate.md` está em **iteração 1 de 2** (63/66, 95 %) nesta data; a
+  iteração 2 (reverificação de G1/G2/G3 com a execução que os fechou) está em
+  curso pelo `qa-engineer` em paralelo a este registro.
 
 ## EA-34 — "declaração viva" não implica "mutação observável pelo gate": o limite do instrumento de regra morta por cascata
 
@@ -2101,3 +2209,106 @@ Se a duplicação é bug de fato (opção 1) ou nome errado sobre grandeza
 intencional (opção 2); a confirmação por execução do gate após qualquer
 mudança é do `qa-engineer`; a autorização da linha exata é do proprietário,
 no chat.
+
+## EA-36 — o vermelho de `D016-PROT1` vive dentro do job `verify`: o sinal que a errata E1 quis separar volta a se confundir, uma vez
+
+**Status**: `aberto`
+
+**Aberto em**: 2026-09-04. Achado do `product-owner` no aceite de intenção da
+demanda 016 (`016-registro-contra-execucao.json →
+validate.observacoes_do_po_a_tratar.1_prot1_no_verify`), decisão do
+orquestrador de **não ampliar o escopo** daquela demanda e registrar aqui como
+achado próprio.
+
+### Cadeia arquivo:linha → efeito
+
+- **`specs/016-registro-contra-execucao/spec.md`, errata **E1**** — o check
+  pré-merge (P16.a) ganhou **job próprio** `fecho` em vez de virar passo do
+  job `verify`, com a razão escrita: *"um `verify` vermelho durante toda a
+  demanda ensina que vermelho é normal, e vermelho normal deixa de ser lido —
+  mecanismo exato do `E5`; um check `fecho` vermelho diz algo verdadeiro e
+  útil (a demanda ainda não fechou) e o `verify` continua significando 'o
+  código está são'"* (`spec.md`, tabela T8, item b).
+- **`.github/workflows/verify.yml:43-44`** — a auditoria de proteção de
+  branch (`D016-PROT1`, P16.b) foi colocada como **passo do job `verify`**
+  (`bash .claude/verify/compliance-audit.sh`), não em job próprio — decisão
+  registrada em T8 c, com a razão de custo ("chamada de rede a cada turno
+  seria custo sem valor" e "o `compliance-audit` já é executado em todo run
+  do CI").
+- **Efeito, medido no run `33927191969` (PR #40, head `ebe0b22`)**: o job
+  `verify` fechou `FAILURE` — mas `bash .claude/verify/run.sh` (o pipeline,
+  "o código está são") fechou **16 PASS · 0 FAIL** dentro do mesmo job; quem
+  reprovou foi só o passo seguinte, `compliance-audit.sh`, com `[FAIL]
+  branch-protection: develop DESPROTEGIDA`. Um `verify` vermelho por razão que
+  **não é** "o código está são" — exatamente o que a E1 quis evitar ao separar
+  o job `fecho`.
+
+### Por que não é o mesmo mecanismo do `E5`, e por que é achado ainda assim
+
+Decisão do orquestrador, registrada no planning-state: o vermelho de
+`D016-PROT1` dentro do `verify` é **transiente** — tem dono (o proprietário),
+evento único (o ato P2) e desaparece assim que a proteção de branch for
+configurada — não é o vermelho crônico que ninguém investiga (`E5`). Por isso
+a demanda 016 não expandiu escopo para lhe dar job próprio. Mas a conflação de
+sinais é **real** enquanto durar: quem olha o check `verify` do PR #40 vê
+vermelho sem saber, sem abrir o log, se é o pipeline ou a auditoria de
+configuração externa ao repositório — a mesma ambiguidade que a E1 nomeou e
+resolveu para P16.a, reaberta para P16.b.
+
+### Encaminhamento
+
+Demanda própria (mover a seção `branch-protection` para um job dedicado, ou
+para o job `fecho` já existente, ou aceitar o custo transiente como está) —
+não é `fix-finding` porque envolve decisão de desenho de CI (R4). A abrir
+quando o proprietário decidir se o custo de um job a mais (chamada de API
+isolada) vale a separação de sinal. Este registro descreve o defeito e não
+propõe a correção.
+
+## EA-37 — a regra "commit por caminho nominal com agente em voo" vive só numa trilha de demanda: nem `orchestration.md` nem a skill a carregam
+
+**Status**: `aberto`
+
+**Aberto em**: 2026-09-04. Achado do `product-owner` no aceite de intenção da
+demanda 016 (`016-registro-contra-execucao.json →
+validate.observacoes_do_po_a_tratar.2_regra_so_na_trilha`), sobre erro do
+próprio orquestrador registrado em
+`specs/016-registro-contra-execucao/trilha-do-commit-541771a.md`.
+
+### Cadeia arquivo:linha → efeito
+
+- **`specs/016-registro-contra-execucao/trilha-do-commit-541771a.md`** — dois
+  commits (`541771a`, `d130a04`) empacotaram trabalho de agentes em voo sob
+  mensagem que descreve só uma fração do conteúdo, por `git add -A` rodado
+  pelo orquestrador enquanto `build-engineer`/`data-engineer`/`doc-writer`
+  ainda escreviam na mesma worktree. A trilha registra a regra que passou a
+  valer: *"enquanto houver delegação ativa na worktree, o orquestrador
+  commita por caminho nominal, nunca com `-A`"*.
+- **`.claude/rules/orchestration.md`** e
+  **`.claude/skills/new-demand/SKILL.md`** — nenhum dos dois cita a regra
+  (conferido por leitura em 2026-09-04, antes da correção registrada abaixo).
+- **Efeito**: a regra nasceu **em prosa de demanda**, no exato formato que a
+  R6 (§origem, achado `E2`) e a R12 dizem não sustentar — "regra que a máquina
+  não sustenta é prosa" — desta vez aplicada a **processo do próprio
+  orquestrador**, não a produto. A segunda ocorrência (`d130a04`) aconteceu
+  **quatro horas depois** de a primeira já estar escrita e commitada,
+  confirmando que registrar sozinho não bastou.
+
+### O que já foi corrigido, no mesmo PR que abriu este achado
+
+A demanda 016 acrescentou a regra a **`.claude/rules/orchestration.md`**
+§Anti-patterns (item novo, forma errado→custo→correto, citando `541771a` e
+`d130a04`) — ver esta mesma seção do arquivo. Isso resolve a metade
+**normativa** (a regra agora vive num arquivo que `CLAUDE.md` aponta e que
+todo agente lê). **O que este achado continua cobrando é a metade
+mecânica**: nenhum hook vigia `git add -A`/`git add .` — a regra, mesmo
+escrita no lugar certo, ainda depende de disciplina do orquestrador para ser
+seguida.
+
+### Encaminhamento
+
+`fix-finding` candidato, nomeado pelo `product-owner` no aceite: hook
+`PreToolUse` que barre `git add -A` e `git add .` **enquanto houver
+delegação ativa** (o mesmo sinal que hoje aciona `state-eval`/`guard-*`) —
+dono `build-engineer`. Não decidido aqui se o hook é viável sem falsos
+positivos (ex.: `gen_pins.py` exige árvore limpa e roda só quando nenhum
+agente está em voo, que já é o sinal natural do momento seguro).

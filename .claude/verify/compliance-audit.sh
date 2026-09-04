@@ -118,6 +118,96 @@ PY
   N=$("$PYBIN" -c "import json;print(len(json.load(open('.claude/verify/known_issues.json',encoding='utf-8'))['issues']))")
   if [ -z "$MISS" ]; then ok "known-issues: $N exceção(ões) nominal(is), todas com remoção prevista"
   else falha "exceção nominal SEM remoção prevista:" "$MISS"; fi
+
+  # Segunda FONTE de exceção nominal: `regra_morta.json` (demanda 014). A seção
+  # existe para que ninguém precise saber ONDE procurar — exceção fora do lugar
+  # em que a casa lê exceções é permissão permanente por omissão.
+  # OS SHAPES DIFEREM, e não se reescreve nenhum: known_issues identifica por `id`
+  # e carrega o achado na PROSA do motivo; regra_morta identifica pelo par
+  # (harness, mutante), tem motivo de VOCABULÁRIO FECHADO e campos próprios de dono
+  # (`achado_id`/`achado_id_alocado`/`achado_id_pendencia`) e de prazo estruturado
+  # (`evento_de_remocao`). O mínimo que as unifica é o CRITÉRIO, não o formato:
+  # toda exceção TEMPORÁRIA tem dono e remoção prevista escritos. A aderência do
+  # `evento_de_remocao` ao prazo auto-executável é de C3(e) (tests_014_regra_morta.js)
+  # — a auditoria LISTA e cobra dono+prazo; não duplica o gate.
+  RM=$("$PYBIN" - <<'PY'
+import json, sys
+sys.stdout.reconfigure(encoding="utf-8")  # R7 §2
+P = ".claude/verify/regra_morta.json"
+# Fail-closed: só estes motivos são ESTRUTURAIS (exclusão por desenho, sem prazo —
+# obrigatória neles é a `cegueira`, cobrada por C3(d)). QUALQUER outro motivo,
+# inclusive um que o vocabulário ganhe amanhã, é tratado como TEMPORÁRIO e cobrado.
+ESTRUTURAIS = {"oraculo-de-fonte", "fallback-declarado"}
+
+def corta(s, n):
+    s = " ".join((s or "").split())
+    return s if len(s) <= n else s[:n - 1] + "…"
+
+try:
+    d = json.load(open(P, encoding="utf-8"))
+except FileNotFoundError:
+    print("AUSENTE " + P)          # não-execução NOMEADA, nunca SKIP silencioso (R10 §2)
+    raise SystemExit
+except Exception as e:
+    print("FALHA %s ilegível para o parser de exceções: %s" % (P, type(e).__name__))
+    raise SystemExit
+
+entradas = []
+for e in (d.get("exclusoes") or []):
+    if not isinstance(e, dict):
+        print("FALHA entrada de `exclusoes` que não é objeto")
+        continue
+    entradas.append(("exclusão %s/%s → %s" % (e.get("harness", "?"), e.get("mutante", "?"),
+                                              e.get("gate", "?")), e))
+arv = ((d.get("indecidiveis") or {}).get("arvore") or {})
+if isinstance(arv, dict) and arv.get("motivo"):
+    entradas.append(("pin adiado `indecidiveis.arvore`", arv))
+
+if not entradas:
+    print("FALHA %s não declara exceção alguma — leitura sem sujeito não mede nada" % P)
+
+for rot, e in entradas:
+    motivo = (e.get("motivo") or "").strip()
+    prazo = (e.get("remocao_prevista") or "").strip()
+    aid = (e.get("achado_id") or "").strip()
+    alocado = e.get("achado_id_alocado")
+    pend = (e.get("achado_id_pendencia") or "").strip()
+    if not motivo:
+        print("FALHA %s: sem `motivo`" % rot)
+        continue
+    if motivo in ESTRUTURAIS:
+        print("LISTA %s · motivo `%s` (estrutural, sem prazo por desenho)" % (rot, motivo))
+        continue
+    faltam = []
+    if not aid:
+        faltam.append("achado_id (exceção sem dono)")
+    if alocado is False and not pend:
+        faltam.append("achado_id_pendencia — marcador silencioso")
+    if not prazo:
+        faltam.append("remocao_prevista")
+    if faltam:
+        print("FALHA %s · motivo `%s`: %s" % (rot, motivo, "; ".join(faltam)))
+        continue
+    dono = aid
+    if alocado is False:   # ausente != False — sem o `is`, entrada sem a chave
+                           # imprimia "PENDENTE:" vazio, que é dado inventado
+        dono = "%s (id de backlog PENDENTE: %s)" % (aid, corta(pend, 90))
+    print("LISTA %s · motivo `%s` · achado %s · remoção: %s"
+          % (rot, motivo, dono, corta(prazo, 110)))
+PY
+)
+  RM_FALHA=$(printf '%s\n' "$RM" | sed -n 's/^FALHA //p')
+  RM_LISTA=$(printf '%s\n' "$RM" | sed -n 's/^LISTA //p')
+  RM_AUSENTE=$(printf '%s\n' "$RM" | sed -n 's/^AUSENTE //p')
+  if [ -z "$RM_LISTA" ]; then RM_N=0; else RM_N=$(printf '%s\n' "$RM_LISTA" | grep -c ''); fi
+  if [ -n "$RM_FALHA" ]; then
+    falha "regra-morta: exceção nominal SEM dono ou SEM remoção prevista:" "$RM_FALHA"
+  elif [ -n "$RM_AUSENTE" ]; then
+    falha "regra-morta: registro de exceções ausente — a auditoria ficaria cega:" "$RM_AUSENTE"
+  else
+    ok "regra-morta: $RM_N exceção(ões) nominal(is), todas com dono e remoção prevista:"
+    printf '%s\n' "$RM_LISTA" | sed 's/^/       /'
+  fi
 fi
 
 # ---------------------------------------------------------------- waivers

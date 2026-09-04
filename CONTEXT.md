@@ -196,6 +196,31 @@ um harness por gatilho de path. Deve ser exatamente o conjunto de arquivos que o
 harness muta, mais o próprio harness.
 _Evitar_: arquivo do mutante, escopo da campanha
 
+**Regra morta**:
+Declaração CSS que permanece no arquivo e não decide nenhuma propriedade
+renderizada, porque outra declaração vence a cascata — importância, depois
+especificidade, depois ordem de inlining. Mutar regra morta troca texto sem mudar
+produto.
+_Evitar_: regra órfã, CSS não usado, seletor morto, código morto
+
+**Poder discriminante**:
+Propriedade de um gate: existe ao menos um estado alcançável do produto em que ele
+reprova. Provado por mutante que ele mata — e a prova vale para a árvore em que
+foi medida, não para sempre.
+_Evitar_: cobertura, força do gate, robustez
+
+**Prova de discriminância vencida**:
+Par cuja última prova de KILL foi medida em árvore anterior a uma mudança que pode
+ter tirado o poder do gate, e que não foi re-executada desde então. Quarto estado
+de leitura do registro, distinto de SOBREVIVENTE (medido e escapou) e de MUTANTE
+NÃO EXECUTADO (não rodou).
+_Evitar_: prova stale, KILL antigo, par desatualizado
+
+**Varredura de regra morta**:
+Checagem estática que, para cada mutante de CSS, prova que a declaração resultante
+decide ao menos uma propriedade — cascata, sem navegador. Distinta da varredura de
+gate constante (achado EA-20), que mede expressão e alcançabilidade de estado.
+_Evitar_: varredura de gates sem poder discriminante, lint de CSS morto
 **Cláusula sentinela**:
 Alínea de gate que não pode falhar no estado atual do produto, mas cujo **gatilho
 de falsificação é nomeado** — existe para apanhar a regressão no dia em que o
@@ -205,7 +230,6 @@ Distinta da *cláusula defensiva inalcançável por construção* (`design-decis
 reporte": sentinela é falsificável, e a sua disposição é "reavalie quando o gatilho
 disparar".
 _Evitar_: cláusula defensiva, código morto, dívida de mutante
-
 **Selagem**:
 Ato do auditor humano que congela uma fase: release develop→main com tag anotada;
 a boundary da fase fecha para sempre.

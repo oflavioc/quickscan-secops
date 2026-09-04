@@ -113,6 +113,27 @@
         "docs_phase5/evidence_p52/P52-mutation.json"
       ]
     },
+    "d014": {
+      "cmd": "node tests_014_mutants.js",
+      "preflight": true,
+      "targets": [
+        "ui_v32.css",
+        "ui_ux_v32.css",
+        "ui_p50_v32.css",
+        "ui_p52_workspace_v32.css",
+        "ui_d011_prioridade_v32.css",
+        "build_v32_html.py",
+        "tests_014_regra_morta.js",
+        "tests_014_mutants.js",
+        ".claude/verify/regra_morta.js",
+        ".claude/verify/regra_morta_seletor.js"
+      ],
+      "requires": [
+        "node",
+        "python"
+      ],
+      "_trilha": "demanda 014-gate-sem-poder-discriminante · T060 (wave 6), registrada no MESMO commit da criacao de tests_014_mutants.js (D4 da 013: a chave `preflight` sem o modo em argv derrubaria IC-4 e o stage inteiro mesmo com a campanha verde — o harness le `--preflight` desde o nascimento). 9 mutantes: D014-M1..D014-M9. SEM chromium: nenhum gate de tests_014_regra_morta.js mede geometria — e o ponto da demanda (o par que exige navegador e D014-M10, harness d014vis). SEM rebuild: a varredura le folhas-FONTE e o fonte do builder; nada consome o HTML construido — python fica em requires porque o contrato C1/C4 exige o interpretador RESOLVIDO e coerente com o que o stage declara. ALVOS ALEM DOS 8 QUE A SPEC NOMEIA (5 folhas CSS + builder + suite + harness): .claude/verify/regra_morta.js e .claude/verify/regra_morta_seletor.js entram porque sao o que D014-M1/M2/M3/M8/M9 MUTAM — campanha que nao re-executa quando o proprio arquivo mutado muda e o EA-7 em miniatura, construido dentro do remedio. Desvio declarado que ENDURECE o trigger (mais re-execucao, nunca menos; precedente d009/d010/d011). regra_morta.json NAO entra: a campanha nao o muta, e a spec fixa os alvos — a lacuna 'editar o registro nao re-dispara d014' fica dita aqui, nao escondida. Preflight executado em T060: 9/9 ancoras com ocorrencias == 1, exit 0. Campanha executada sob arvore limpa apos o commit (adianta T071); vocabulario de tres estados (DETECTADO/SOBREVIVENTE/NAO EXECUTADO com causa do conjunto fechado)."
+    },
     "d011": {
       "cmd": "node tests_011_mutants.js",
       "preflight": true,
@@ -129,6 +150,20 @@
       ],
       "_trilha": "demanda 011-numeracao-das-prioridades · T018/T019 (wave 5), registrada no MESMO commit da criacao de tests_011_mutants.js. 19 mutantes LOCAIS: D011-M1, M2, M3, M3B, M4, M5, M5B, M7, M10, M11, M12, M13, M14, M15, M16, M17, M18, M19, M20. CORRECAO DE REGISTRO (2026-08-31, build-engineer): esta lista dizia \"18 mutantes\" e omitia D011-M20, nascido depois na janela vermelha 2 (clausula f de D011-PRT1); a contagem correta e 19, conferida contra o array MUTANTS de tests_011_mutants.js e contra a medicao do IC-4 (19). O harness NAO foi tocado: divergia o registro, nao a execucao. SEM requires chromium: nenhum gate de tests_011_prioridade.js mede geometria. \"preflight\": true declarado no MESMO commit em que o harness passou a ler --preflight em argv (D4 da 013) — a guarda de fonte de check_mutation.py recusa a chave sem o modo, e sem ela IC-4 derruba o stage inteiro mesmo com a campanha verde. TRES MUTANTES DA MATRIZ NAO ESTAO AQUI, e a ausencia e RAIA, nao lacuna: D011-M6 (edita um byte de ui_ux_v32.js) e D011-M8 (altera o mapeamento tecla->finding em quickscan_secops_soccmm_v3_1_3.html:1058) mutam arquivos PROTEGIDOS (frozen/§29.4) e rodam em WORKTREE EFEMERA, manualmente — o harness automatizado nunca toca PROTECTED, que e o ponto exato onde a demanda 009 se queimou; D011-M9 exige Chromium e e deferido ao job visual do CI (KI-3). Os tres tem par proprio em mutation-matrix.json, com a raia nomeada. ALVOS ALEM DOS ARQUIVOS DE PRODUTO: tests_011_prioridade.js entra porque e o ORACULO da campanha — mexer nele muda o que a campanha prova (precedente d009/p52); tests_011_mutants.js entra porque e o proprio harness. build_v32_html.py entra porque a injecao do bloco CSS do modulo no artefato publicado e comportamento verificavel (D011-M18): sem ela a regra de print existe no fonte e nao chega ao leitor."
     },
+    "d014vis": {
+      "cmd": "node tests_014_mutants_visual.js",
+      "preflight": true,
+      "targets": [
+        "ui_p52_workspace_v32.css",
+        "tests_014_mutants_visual.js"
+      ],
+      "requires": [
+        "node",
+        "python",
+        "chromium"
+      ],
+      "_trilha": "demanda 014-gate-sem-poder-discriminante · T061 (wave 6), registrada no MESMO commit da criacao de tests_014_mutants_visual.js (D4 da 013). 1 mutante: D014-M10 — a SUBSTITUICAO NOMINAL do M51-01 aposentado na wave 5 (T050): muta a linha VENCEDORA da composicao da tela de pergunta (ui_p52_workspace_v32.css:77, grid-template-columns → minmax(0, 1fr)) e morre em P52-LAY2 (tests_p52_chromium.js:231), gate EXISTENTE de suite INVOCADA E NUNCA EDITADA — a autorizacao §29.4 daquele arquivo era da 010 e nao se transfere. Particao E1 da spec: requires chromium ⇒ fecha no job `visual` do CI (KI-3, design-decisions.md), que ja executa check_mutation.py; localmente o harness aborta ANTES de mutar, com NAO EXECUTADO e causa do conjunto fechado — e assim o par nasce em mutation-matrix.json (resultado NAO EXECUTADO · ambiente sem chromium), fechado em T081 com o resultado do job. Ciclo: muta a folha → REBUILD (python build_v32_html.py, interpretador e script entre aspas — R10 §7) → node tests_p52_chromium.js com P52_ONLY=P52-LAY2 e P52_NO_EVIDENCE=1 pelo AMBIENTE (nunca prefixo POSIX no cmd — IC-1) → finally restaura folha E artefato com rebuild + SHA-256 dos dois + porcelain escopado (R7 §3). Alvos: a folha mutada + o proprio harness (os 2 que a spec §Contratos nomeia). Preflight executado em T061: 1/1 ancora com ocorrencias == 1, exit 0 — o preflight NAO exige chromium (contrato C1 e do interpretador; IC-4 roda em ambiente sem navegador). O find/repl emitido (extensao E3) poe D014-M10 na populacao da varredura de regra morta: a declaracao alterada e a VENCEDORA da cascata (viva na arvore limpa — conferido por execucao da suite antes do commit). ADENDO 2026-09-04 (E13): a forma :77 citada acima foi medida SOBREVIVENTE no job visual (run 33516136516) e o mutante foi REANCORADO em ui_p52_workspace_v32.css:86 (`.wrap > #p50-shell { grid-column: 2 }` -> `1`), mesmo arquivo - targets inalterados; a causa (grid-template-areas da 5.1 mantem duas colunas; colocacao explicita nunca empilha) e a datacao estao no par D014-M10 da mutation-matrix.json e na E13 da spec. O harness passou a levar a sonda diagnostica na nota do bloco nao-KILL (sha e contagem do repl no HTML sob mutacao, linha crua do gate, grade resolvida em 1280) - a unica parte da saida que check_mutation.py ecoa no log do CI alem das duas ultimas linhas."
+    },
     "d015": {
       "cmd": "node tests_015_mutants.js",
       "preflight": true,
@@ -142,7 +177,6 @@
         "node",
         "python"
       ],
-      "_trilha": "demanda 015-superficies-de-apoio · 15 mutantes no harness: M1-M10, M14, M15 (forma AMPLA), M17, M18 e M19. M17 e M18 ENTRARAM EM 2026-09-01, depois de o spec-validate achar que a spec os declarava carrascos e o harness nao os executava: tinham sido provados so na bateria negativa da Fase 4, cujo registro foi substituido, de modo que a prova vivia apenas no historico do git. M18 e o UNICO carrasco de C1(h1), e a clausula sentinela C1(h2) so se sustenta porque (h1) tem carrasco. `preflight: true` e a leitura de `--preflight` em argv entram no MESMO commit do harness — a guarda de fonte de check_mutation.py recusa a chave sem o modo, e sem ela o IC-4 derruba o stage inteiro mesmo com a campanha verde. SEM chromium em requires: nenhum gate D015-* mede geometria. TARGETS mais amplo do que os arquivos que o harness muta (so ui_v32.js), de proposito e no precedente d009/d010: o ORACULO (tests_015_apoio.js) e a FIXTURE (fixtures_015_apoio.js) entram como alvo porque erosao neles muda o poder da campanha sem tocar em produto — medido nesta demanda, quando o estado E8 sem sobrevivente fez M14 ser detectado pelo assert da fixture em vez da alinea atribuida. E o proprio harness, para que mudanca nele redispare a campanha. IC-6 e nominal a p51, entao o excedente aqui nao reprova: e endurecimento do trigger, nao folga. MUTANTES FORA DESTE HARNESS: M16 muta ui_target_v32.js, PROTEGIDO e NAO autorizado — roda em worktree efemera (T022), e o harness automatizado nunca toca PROTECTED (foi ai que a 009 se queimou). M11/M12/M13 APOSENTADOS com a queda do criterio C4 (errata E1), ids NUNCA reutilizados (R12)."
-    }
+      "_trilha": "demanda 015-superficies-de-apoio · 15 mutantes no harness: M1-M10, M14, M15 (forma AMPLA), M17, M18 e M19. M17 e M18 ENTRARAM EM 2026-09-01, depois de o spec-validate achar que a spec os declarava carrascos e o harness nao os executava: tinham sido provados so na bateria negativa da Fase 4, cujo registro foi substituido, de modo que a prova vivia apenas no historico do git. M18 e o UNICO carrasco de C1(h1), e a clausula sentinela C1(h2) so se sustenta porque (h1) tem carrasco. `preflight: true` e a leitura de `--preflight` em argv entram no MESMO commit do harness — a guarda de fonte de check_mutation.py recusa a chave sem o modo, e sem ela o IC-4 derruba o stage inteiro mesmo com a campanha verde. SEM chromium em requires: nenhum gate D015-* mede geometria. TARGETS mais amplo do que os arquivos que o harness muta (so ui_v32.js), de proposito e no precedente d009/d010: o ORACULO (tests_015_apoio.js) e a FIXTURE (fixtures_015_apoio.js) entram como alvo porque erosao neles muda o poder da campanha sem tocar em produto — medido nesta demanda, quando o estado E8 sem sobrevivente fez M14 ser detectado pelo assert da fixture em vez da alinea atribuida. E o proprio harness, para que mudanca nele redispare a campanha. IC-6 e nominal a p51, entao o excedente aqui nao reprova: e endurecimento do trigger, nao folga. MUTANTES FORA DESTE HARNESS: M16 muta ui_target_v32.js, PROTEGIDO e NAO autorizado — roda em worktree efemera (T022), e o harness automatizado nunca toca PROTECTED (foi ai que a 009 se queimou). M11/M12/M13 APOSENTADOS com a queda do criterio C4 (errata E1), ids NUNCA reutilizados (R12)."    }
   }
 }

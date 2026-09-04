@@ -4,7 +4,8 @@
     "onda": 3,
     "expansao_p51": "2026-08-29, demanda 013-integridade-da-campanha (T12/T024, contrato C3): a linha agregada 'campanhas P51 (múltiplos)' foi substituída por UM PAR POR MUTANTE dos 20 da p51, com propriedade, ancora e ultima_prova. É o que IC-5 (check_mutation.py) lê para exigir cobertura nominal: mutante do harness sem par aqui é FAIL, e par sem mutante correspondente também. NENHUM mutante da p51 foi aposentado nesta demanda — as oito âncoras triadas deram reancorar, nenhuma deu aposentadoria, logo nenhum gate ficou órfão. As linhas agregadas de P50 e P52 seguem agregadas: expandi-las é outra demanda (T13). A prova narrada da triagem e das reancoragens vive em specs/013-integridade-da-campanha/matriz-gate-mutante.md.",
     "classificacao_e3": "2026-08-29, demanda 013 (E3/T022 · W7): os DOIS não-KILL relatados pelo CI foram classificados no vocabulário fechado, e deram saídas DIFERENTES. (1) P50::M51 — `rot semântica`: o gate P50-PR1 reprovou, mas com mensagem que o `reason` não casava mais; as cinco alternativas eram INALCANÇÁVEIS depois da errata externa B-02/B-03 (quatro com zero ocorrência no arquivo do gate; a quinta viva só dentro de `cmp`, tests_p50_chromium.js:1046, definido e nunca invocado). Conserto EM ESCOPO: o par foi re-derivado da mensagem atual pela propriedade que o `desc` documenta (spec §Casos de borda, caso 5). A linha agregada 'campanhas P50 (múltiplos)' NÃO é expandida por par — expandir a P50 é outra demanda (T13). (2) p51/M51-01 — `gate sem poder discriminante (achado EA-7)`: o gate P51-VIS1 rodou e NÃO reprovou; âncora única e `reason` vivo, mas a Fase 5.2 passou a governar a composição que a mutação ataca via CSS da 5.0/5.1. NÃO é consertado aqui (spec §Fora de escopo e §Riscos 3): a demanda PARA nesse ponto e o remédio é asserção nova sobre comportamento de produto. Narrativa das duas em specs/013-integridade-da-campanha/matriz-gate-mutante.md §15.",
-    "execucao_ci_demanda_010": "T027, 2026-08-31. Primeira execução das campanhas deferidas neste PR: o passo vinha saindo `skipped` porque as suítes visuais estavam vermelhas, e só rodou quando `P52-TGT4` fechou. PROVENIÊNCIA: job `visual` do CI, run 33389017967 (job 99478074174), 2026-08-31 — `mutation: 5 campanha(s) executada(s) · 0 problema(s)`. LIDO DO LOG, não inferido: (a) `p52` — 'MUTATION TESTING (Phase 5.2) [tests_p52_mutants.js]: 107/107 mutantes detectados pelo gate e motivo esperados' e 'não-KILL: nenhum — os 107 mutante(s) lidos estão DETECTADO'; (b) `p51` — 'MUTATION TESTING (Phase 5.1): 19/20 mutantes detectados' e 'não-KILL: 1 de 20 mutante(s) lido(s) · 19 KILL ficam na contagem'. O único não-KILL é a EXCEÇÃO NOMINAL KI-4: '[EXCEÇÃO] KI-4: p51/M51-01 SOBREVIVENTE perdoado · gate P51-VIS1', classificação 'gate sem poder discriminante (achado EA-7)', prazo 'Merge da demanda 014 na develop'. O IC-9 validou os DOIS lados: que a entrada existe no harness (oráculo: preflight C1) e que segue não-KILL no registro (ultima_prova.resultado = 'SOBREVIVENTE', 2026-08-29); (c) `d010` — '24/24 mutantes detectados' e 'não-KILL: nenhum — os 24 mutante(s) lidos estão DETECTADO', com 3 em dívida declarada (D010-M3/M4 sem caso nas fixtures; D010-M11 equivalente por construção); (d) `d009` — '19 KILL · 0 escaparam de 19'; (e) `core` — '3 KILL · 0 escaparam de 3'. SÃO CINCO E NÃO SEIS porque `p50` NÃO foi exigida: '[OK] p50: nenhum alvo mudou desde a base — campanha não exigida'. As linhas de `p50` e `p52` seguem AGREGADAS nesta matriz por decisão registrada em `expansao_p51` (expandi-las é a T13 da 013), então os 107 mutantes de p52 NÃO ganham par nominal aqui — e isso não é omissão: o IC-5 exige cobertura nominal apenas de `p51`, e ela está completa (20 pares, um por mutante). A alternativa de DÍVIDA DECLARADA que o tasks.md previa, caso o job não fechasse dentro do PR, NÃO se aplica: fechou, e os dois jobs saíram verdes (verify 11m34s, visual 37m45s)."
+    "execucao_ci_demanda_010": "T027, 2026-08-31. Primeira execução das campanhas deferidas neste PR: o passo vinha saindo `skipped` porque as suítes visuais estavam vermelhas, e só rodou quando `P52-TGT4` fechou. PROVENIÊNCIA: job `visual` do CI, run 33389017967 (job 99478074174), 2026-08-31 — `mutation: 5 campanha(s) executada(s) · 0 problema(s)`. LIDO DO LOG, não inferido: (a) `p52` — 'MUTATION TESTING (Phase 5.2) [tests_p52_mutants.js]: 107/107 mutantes detectados pelo gate e motivo esperados' e 'não-KILL: nenhum — os 107 mutante(s) lidos estão DETECTADO'; (b) `p51` — 'MUTATION TESTING (Phase 5.1): 19/20 mutantes detectados' e 'não-KILL: 1 de 20 mutante(s) lido(s) · 19 KILL ficam na contagem'. O único não-KILL é a EXCEÇÃO NOMINAL KI-4: '[EXCEÇÃO] KI-4: p51/M51-01 SOBREVIVENTE perdoado · gate P51-VIS1', classificação 'gate sem poder discriminante (achado EA-7)', prazo 'Merge da demanda 014 na develop'. O IC-9 validou os DOIS lados: que a entrada existe no harness (oráculo: preflight C1) e que segue não-KILL no registro (ultima_prova.resultado = 'SOBREVIVENTE', 2026-08-29); (c) `d010` — '24/24 mutantes detectados' e 'não-KILL: nenhum — os 24 mutante(s) lidos estão DETECTADO', com 3 em dívida declarada (D010-M3/M4 sem caso nas fixtures; D010-M11 equivalente por construção); (d) `d009` — '19 KILL · 0 escaparam de 19'; (e) `core` — '3 KILL · 0 escaparam de 3'. SÃO CINCO E NÃO SEIS porque `p50` NÃO foi exigida: '[OK] p50: nenhum alvo mudou desde a base — campanha não exigida'. As linhas de `p50` e `p52` seguem AGREGADAS nesta matriz por decisão registrada em `expansao_p51` (expandi-las é a T13 da 013), então os 107 mutantes de p52 NÃO ganham par nominal aqui — e isso não é omissão: o IC-5 exige cobertura nominal apenas de `p51`, e ela está completa (20 pares, um por mutante). A alternativa de DÍVIDA DECLARADA que o tasks.md previa, caso o job não fechasse dentro do PR, NÃO se aplica: fechou, e os dois jobs saíram verdes (verify 11m34s, visual 37m45s).",
+    "execucao_ci_demanda_014": "T081, 2026-09-04. Job `visual` do CI, run 33516136516 (job 99883514179), workflow_dispatch sobre 5cf7c82 (2026-09-01T13:53Z) — os arquivos do ciclo (harness, folha, suíte p52, builder, HTML, check_mutation, map) são byte-idênticos entre 5cf7c82 e a65c19d (git diff --stat vazio). LIDO DO LOG: `mutation: 8 campanha(s) executada(s) · 1 problema(s)` — d010 24/24 · d009 19 KILL · p50 53/53 · p51 19/19 · p52 107/107 · d014 9/9 · d011 19/19 · d014vis 0/1 com 'SOBREVIVENTE D014-M10 · gate P52-LAY2 · o gate esperado NÃO reprovou — sem poder discriminante'; `core` não exigida (nenhum alvo mudou). Suítes visuais no mesmo job: P52 CHROMIUM 55/55, D011 CHROMIUM 1/1. O log NÃO traz a linha crua do gate nem o baseline do harness (check_mutation ecoa só as 2 últimas linhas + bloco não-KILL) — motivo da sonda da E13. Veredito sobre a forma :77 do D014-M10: SOBREVIVENTE de nascença (ver par). O par renasce NÃO EXECUTADO com a forma da E13 e fecha no próximo run SEGUNDO RUN (fecho da T081): 33834890154 (job visual 100905257457), workflow_dispatch sobre 51e6c69, 2026-09-04T03:54Z, ambos os jobs success — LIDO DO LOG: 'mutation: 8 campanha(s) executada(s) · 0 problema(s)' — d014vis 1/1 ('não-KILL: nenhum — os 1 mutante(s) lidos estão DETECTADO'); p52 107/107 ('não-KILL: nenhum — os 107 mutante(s) lidos estão DETECTADO'); p50 53/53; p51 19/19; d014 9/9; d011 19/19; d010 24/24; d009 19 KILL; suítes visuais: P52 CHROMIUM 55/55 com 'PASS P52-ICON2'. VEREDITO DO EA-32 (mesmo run): P52-RA8 está entre os 107 (IC-4: p52 107 âncoras) e não é não-KILL ⇒ P52-ICON2 MATA sob a mutação parcial (só a metade MDR é efetiva) — cai a saída 'segundo par sem poder discriminante'; o par é válido, a metade SOCaaS segue inerte por ordem e o desc promete demais. Registro do veredito: regra_morta.json → exclusoes[2].veredito_job_visual. O par (p52, P52-RA8) NÃO entra em `pares` neste fecho: a matriz mantém p50/p52 agregadas (T13 da 013) e registrá-lo dispararia o evento_de_remocao com o mutante ainda partido ao meio, deixando C2(zero) vermelha crônica sem o reparo autorizado (E7 §3) — o par nasce no fix-finding do EA-32, junto com o reparo, num commit só."
   },
   "pares": [
     {
@@ -64,32 +65,6 @@
         "resultado": "KILL",
         "registro": "docs_phase5/evidence_p50/P50-5.0.5-mutation.json"
       }
-    },
-    {
-      "mutante": "M51-01",
-      "harness": "p51 (tests_p51_mutants.js)",
-      "gate": "P51-VIS1 (tests_p50_chromium.js)",
-      "invariante": "superfícies 5.1",
-      "propriedade": "no desktop o mapa e a pergunta ficam lado a lado (grid de duas colunas, áreas `main side`); o layout nunca volta a empilhar",
-      "ancora": {
-        "arquivo": "ui_p50_v32.css",
-        "ocorrencias": 1,
-        "verificada_em": "2026-08-29 · preflight (C1) na árvore real, exit 0 · 20/20 âncoras com ocorrencias == 1 (specs/013-integridade-da-campanha/matriz-gate-mutante.md §14)",
-        "recorte": "as duas linhas de `grid-template-columns` + `grid-template-areas` da faixa central"
-      },
-      "ultima_prova": {
-        "data": "2026-08-29",
-        "resultado": "SOBREVIVENTE",
-        "registro": "specs/013-integridade-da-campanha/matriz-gate-mutante.md",
-        "nota": "E3 da demanda 013: a campanha p51 do job `visual` reportou 19/20 com SOBREVIVENTE em M51-01, nota `o gate esperado NÃO reprovou` — o gate rodou e passou. Não é âncora podre (preflight de 2026-08-29: ocorrencias == 1) nem rot semântica (as três alternativas do `reason` /se sobrep|empilhamento|faixa central/i seguem emitidas por tests_p50_chromium.js:3405, :3408 e :3412). Causa verificada por análise de cascata na árvore real: a Fase 5.2 (c1e3649) passou a governar a composição da tela de pergunta em ui_p52_workspace_v32.css:70-83 — `html body[data-uxscreen=\"question\"] .wrap` vence a regra 5.1 por especificidade (0,2,2 > 0,2,1, medida com @bramus/specificity) e as colocações explícitas `> #app{grid-column:1}` / `> #p50-shell{grid-column:2}` vencem os `grid-area:main|side` da 5.1 por ordem de fonte (build_v32_html.py:76 inlina a CSS da 5.2 DEPOIS da 5.0/5.1). A mutação de M51-01 recai sobre declarações que já não decidem nada: o layout renderizado não muda e P51-VIS1 não tem como reprovar. A propriedade continua VIVA — quem a implementa mudou de camada.",
-        "prova_anterior": {
-          "data": "2026-08-22",
-          "resultado": "KILL",
-          "registro": "docs_phase5/AUDITORIA_INDEPENDENTE_REAUDITORIA_PHASE_5_1_ERRATA.md",
-          "nota": "KILL de 2026-08-22 preservado como histórico (R13: registro selado não se retro-ajusta). Ele era verdadeiro contra a árvore da fase 5.1, ANTES de c1e3649. campanha `tests_p51_mutants.js` executada integralmente na reauditoria independente da fase 5.1: 20/20 mutantes detectados pelo gate e pelo motivo esperados, zero NÃO DETECTADO, zero ERRO, zero restauração divergente. Âncora conferida de novo em 2026-08-29 pelo preflight (C1), ocorrencias == 1 — a prova de KILL, porém, é a de 2026-08-22."
-        }
-      },
-      "classificacao": "gate sem poder discriminante (achado EA-7)"
     },
     {
       "mutante": "M51-02",
@@ -1349,6 +1324,132 @@
       }
     },
     {
+      "mutante": "D014-M1",
+      "harness": "d014 (tests_014_mutants.js)",
+      "gate": "D014-CASC1 (tests_014_regra_morta.js, alínea C1(d))",
+      "invariante": "C1 — importância é a PRIMEIRA régua da cascata: !important em camada anterior vence declaração normal posterior",
+      "descricao": "vence() ignora a importância — o cenário (d) sai 'morta'",
+      "ultima_prova": {
+        "data": "2026-09-01",
+        "resultado": "KILL",
+        "registro": "campanha d014 executada em 2026-09-01 sob árvore limpa (worktree phase5-014, após o commit de T060): 9 DETECTADO / 0 SOBREVIVENTE / 0 NÃO EXECUTADO de 9 · restauração byte a byte OK · porcelain dos alvos limpo · preflight 9/9 âncoras com ocorrencias == 1. O reason pina a CONTAGEM ('1 alínea(s) reprovada(s)') além da alínea: matar pela alínea errada é sobrevivente disfarçado"
+      }
+    },
+    {
+      "mutante": "D014-M2",
+      "harness": "d014 (tests_014_mutants.js)",
+      "gate": "D014-CASC1 (tests_014_regra_morta.js, alíneas C1(a) e C1(c))",
+      "invariante": "C1 — especificidade decide antes da ordem de inlining; ordem é a TERCEIRA régua, nunca a primeira",
+      "descricao": "vence() decide só por ordem — (a) vira 'viva' e (c) vira 'morta'; a contagem pinada em 2 prova que (b)/(d)/(e) seguem certos",
+      "ultima_prova": {
+        "data": "2026-09-01",
+        "resultado": "KILL",
+        "registro": "campanha d014 de 2026-09-01 (árvore limpa): 9/9 DETECTADO — bloco de D014-CASC1 com '2 alínea(s) reprovada(s)' nomeando C1(a) e C1(c)"
+      }
+    },
+    {
+      "mutante": "D014-M3",
+      "harness": "d014 (tests_014_mutants.js)",
+      "gate": "D014-CASC1 (tests_014_regra_morta.js, alínea C1(b))",
+      "invariante": "C1/E5 — contexto de mídia é equivalência SEMÂNTICA (conjunção das condições ancestrais, por valor), nunca textual",
+      "descricao": "contextoEfetivo() acumula o texto cru — a mesma condição escrita de dois jeitos (bloco único × aninhada) deixa de competir e (b) sai 'indecidivel' em vez de 'morta'; é o defeito que faria o único caso morto do repositório escapar",
+      "ultima_prova": {
+        "data": "2026-09-01",
+        "resultado": "KILL",
+        "registro": "campanha d014 de 2026-09-01 (árvore limpa): 9/9 DETECTADO — '1 alínea(s) reprovada(s)' com C1(b) obtido 'indecidivel'"
+      }
+    },
+    {
+      "mutante": "D014-M4",
+      "harness": "d014 (tests_014_mutants.js)",
+      "gate": "D014-VARR1 (tests_014_regra_morta.js, alínea C2(zero))",
+      "invariante": "C2 — a varredura sobre a árvore real acusa regra morta nova, pelo VEREDITO (par mortas/indecidíveis), nunca pelo censo",
+      "descricao": "troca censo-neutra em ui_p50_v32.css (1 longhand → 1 longhand, fora de @media) planta `html #ux-target .ux-tgt-row select option` — dominadora por prefixo VÁCUO + especificidade sobre a declaração de :792 que p51/M51-08 ataca. É a forma do M51-01 recriada ao vivo. A forma literal da célula C2 ('acrescentar declaração') foi medida e recusada: adição muda o censo pinado (E6) e mataria por C2(cen) — 'a folha mudou' —, não por 'há regra morta'; e um mutante de CSS do próprio d014 cuja declaração introduzida nascesse morta deixaria D014-VARR1 permanentemente vermelho na árvore limpa (a varredura avalia a folha mutada EM MEMÓRIA a partir do preflight). Desvio de forma declarado; a propriedade provada é a da célula",
+      "ultima_prova": {
+        "data": "2026-09-01",
+        "resultado": "KILL",
+        "registro": "campanha d014 de 2026-09-01 (árvore limpa): 9/9 DETECTADO — C2(zero) com 'mortas: p51/M51-08'. Medição prévia com o instrumento real (2026-09-01, aplicar→varrer→restaurar): censo_ok true, mortas = [p51/M51-08 · background-color · 'perde em todo o alcance … prefixo VÁCUO [html]'], indecidíveis 20 (inalterados), restauração byte a byte OK"
+      }
+    },
+    {
+      "mutante": "D014-M5",
+      "harness": "d014 (tests_014_mutants.js)",
+      "gate": "D014-DISC1 (tests_014_regra_morta.js, bateria negativa de C3(b))",
+      "invariante": "C3(b) — curinga, campo vazio ou não-texto NÃO excluem; alínea de C3 que deixa de poder falhar é pega pela bateria",
+      "descricao": "julgarExclusoes aceita curinga (shape do IC-9.1). O carrasco é D014-DISC1, não D014-EXC1, por decisão registrada: o mutante enfraquece o JULGADOR, e um julgador enfraquecido continua verde sobre o registro real, que é são (não há curinga em regra_morta.json para ele engolir); quem tem estado alcançável de falha é a bateria negativa, que nomeia 'a alínea C3(b) NÃO reprovou com o defeito injetado'. O critério medido é o C3 da spec; o carrasco executável é DISC1",
+      "ultima_prova": {
+        "data": "2026-09-01",
+        "resultado": "KILL",
+        "registro": "campanha d014 de 2026-09-01 (árvore limpa): 9/9 DETECTADO — bateria[19] nomeando C3(b)"
+      }
+    },
+    {
+      "mutante": "D014-M6",
+      "harness": "d014 (tests_014_mutants.js)",
+      "gate": "D014-DISC1 (tests_014_regra_morta.js, bateria negativa de C3(c))",
+      "invariante": "C3(c) — exclusão que nomeia mutante inexistente reprova (oráculo: preflight, resolvido no disco); exclusão órfã é permissão permanente disfarçada",
+      "descricao": "julgarExclusoes deixa de conferir a existência do mutante nomeado (orfas = []). Mesmo desenho de D014-M5: o registro real não tem exclusão órfã, então quem mata é a bateria negativa de D014-DISC1",
+      "ultima_prova": {
+        "data": "2026-09-01",
+        "resultado": "KILL",
+        "registro": "campanha d014 de 2026-09-01 (árvore limpa): 9/9 DETECTADO — bateria[20] nomeando C3(c), mais 'alínea(s) sem entrada na bateria negativa' para a mesma C3(c) (o caso deixa de cobrir a alínea quando não reprova)"
+      }
+    },
+    {
+      "mutante": "D014-M7",
+      "harness": "d014 (tests_014_mutants.js)",
+      "gate": "D014-COB1 (tests_014_regra_morta.js)",
+      "invariante": "C5 — a cobertura da varredura é DERIVADA de build_v32_html.py; folha que o builder injeta e a varredura não consegue ler reprova ALTO, nomeando a folha — nunca silêncio",
+      "descricao": "acrescenta folha nova ao builder sem tocar a varredura, com UMA âncora contígua (o contrato C1 tem UM find): constante `D014CSS`, `open()` e o identificador na linha de injeção nascem juntos no repl. A folha `ui_d014_m7_fantasma.css` não existe no disco DE PROPÓSITO: a varredura, que segue o builder por derivação, tem de recusar com ENOENT nomeando a folha — varrer por baixo seria o EA-7 de novo",
+      "ultima_prova": {
+        "data": "2026-09-01",
+        "resultado": "KILL",
+        "registro": "campanha d014 de 2026-09-01 (árvore limpa): 9/9 DETECTADO — FAIL D014-COB1 com ENOENT citando ui_d014_m7_fantasma.css (o kill colateral em VARR1/IND1/CEN1 existe e não é o medido: o oráculo é o bloco do gate atribuído)"
+      }
+    },
+    {
+      "mutante": "D014-M8",
+      "harness": "d014 (tests_014_mutants.js)",
+      "gate": "D014-IND1 (tests_014_regra_morta.js, alíneas C6(sint) e C6(cont-sint))",
+      "invariante": "C6/E9 — o que a varredura não decide é nomeado e contado; o pin SINTÉTICO (veredito + razão do caso f) é o carrasco de hoje, enquanto a contagem da árvore aguarda o fecho do achado 014-P52-RA8",
+      "descricao": "classificarDeclaracao descarta a dúvida em silêncio — (f) sai 'viva'. As alíneas da árvore (nome/cons/cont-arvore) seguem conservadas com lista vazia; sem o pin sintético da E9 este mutante SOBREVIVERIA — é a prova de que a E9 fechou um buraco real",
+      "ultima_prova": {
+        "data": "2026-09-01",
+        "resultado": "KILL",
+        "registro": "campanha d014 de 2026-09-01 (árvore limpa): 9/9 DETECTADO — '2 alínea(s) reprovada(s)' nomeando C6(sint) (obtido 'viva') e C6(cont-sint) (pin de veredito+razão)"
+      }
+    },
+    {
+      "mutante": "D014-M9",
+      "harness": "d014 (tests_014_mutants.js)",
+      "gate": "D014-CASC1 (tests_014_regra_morta.js, alínea C1(e))",
+      "invariante": "C1(e)/E5 — prefixar RESTRINGE: a vencedora prefixada por composto não-vácuo casa um subconjunto e a perdedora segue decidindo fora dele; só o prefixo vácuo (html/body/:root) mata",
+      "descricao": "ehVacuo() devolve true para todo composto — (e) sai 'morta'. A contagem pinada em 1 é a prova de desenho: (a) — prefixo `html`, vácuo de verdade — continua 'morta' e continua passando; o mutante prova que prefixar restringe e que a vencedora prefixada NÃO mata o original, e que só a vacuidade separa os dois casos reais (M51-01 × M51-08)",
+      "ultima_prova": {
+        "data": "2026-09-01",
+        "resultado": "KILL",
+        "registro": "campanha d014 de 2026-09-01 (árvore limpa): 9/9 DETECTADO — '1 alínea(s) reprovada(s)' com C1(e) obtido 'morta'"
+      }
+    },
+    {
+      "mutante": "D014-M10",
+      "harness": "d014vis (tests_014_mutants_visual.js)",
+      "gate": "P52-LAY2 (tests_p52_chromium.js:231 — gate existente; suíte INVOCADA, nunca editada)",
+      "invariante": "C4 (E13) — a colocação que HOJE decide 'no desktop o mapa fica ao lado da pergunta' (ui_p52_workspace_v32.css:86, camada 5.2: `.wrap > #p50-shell { grid-column: 2 }`) tem carrasco",
+      "descricao": "body[data-uxscreen=\"question\"] .wrap > #p50-shell { grid-column: 2; … } → grid-column: 1 — o mapa cai na MESMA célula de #app (linha 3, coluna 1): as caixas se sobrepõem e a pergunta deixa de estar à esquerda do mapa. SUBSTITUIÇÃO NOMINAL do M51-01 aposentado (wave 5, T050). Motivo esperado (inalterado): 'a pergunta não está à esquerda do mapa' | 'as colunas se sobrepõem' | 'colunas desalinhadas no topo' (célula C4 da spec, por E13). REANCORADO em 2026-09-04 (errata E13): a forma anterior — ui_p52_workspace_v32.css:77, `grid-template-columns: minmax(0, 1fr) clamp(320px, 23vw, 440px)` → `minmax(0, 1fr)`, 'uma coluna' — foi medida SOBREVIVENTE no job `visual` (run 33516136516, workflow_dispatch sobre 5cf7c82, 2026-09-01: 'o gate esperado NÃO reprovou — sem poder discriminante'). CAUSA, medida em reprodução não-canônica e não raciocinada: tirar o 2º track NÃO tira a 2ª coluna — `grid-template-areas:\"main side\"` de ui_p50_v32.css:697 (camada 5.1, mesmo breakpoint 1180px, VIVA pela própria varredura desta demanda) mantém a grade explícita em duas colunas e a não dimensionada cai em `grid-auto-columns: auto` (tracks resolvidos em 1280: 842px 320px na base → 861px 301px sob a mutação; grid-template-areas segue \"main side\"; rodapé `1 / -1` segue largo); e mesmo sem as áreas (variante de controle com `grid-template-areas: none`) a colocação explícita `grid-column: 2` cria track implícito — só o rodapé encolhe, motivo fora do reason. P52-LAY2 mede esquerda, sobreposição, topo e rodapé, nunca largura de coluna; a largura da coluna 2 era a única coisa que a mutação alterava. Colocação explícita nunca empilha — o raciocínio da spec (§Não mensurável item 2) era CSS errado. NASCEU SEM FACA, não apodreceu: áreas 4aa1f12 (2026-08-22) e regra 5.2 c1e3649 (2026-08-24) precedem o mutante 7c93899 (2026-09-01) — distinto de EA-30 (prova vencida). Refutação registrada permanece (R2 §5): a forma :77 não renasce",
+      "ancora": {
+        "arquivo": "ui_p52_workspace_v32.css",
+        "ocorrencias": 1,
+        "verificada_em": "2026-09-04 — preflight d014vis (C1), exit 0, 1/1 âncora com ocorrencias == 1 (linha 86; a âncora anterior, linha 77, saiu com a E13) · IC-4 do run 33834890154 (job visual 100905257457): 'd014vis: 1 âncora(s) com ocorrencias == 1 (preflight, C1)'"
+      },
+      "ultima_prova": {
+        "data": "2026-09-04",
+        "resultado": "KILL",
+        "registro": "job `visual` do CI, run 33834890154 (job 100905257457), workflow_dispatch sobre 51e6c69 (2026-09-04T03:54Z; os arquivos do ciclo são byte-idênticos até c08acc9 — git diff --stat vazio), Chrome for Testing 151.0.7922.34, ambos os jobs success. LIDO DO LOG: '[OK] IC-4: d014vis: 1 âncora(s) com ocorrencias == 1 (preflight, C1)' · '[RUN] d014vis: node tests_014_mutants_visual.js' · 'D014VIS MUTATION [tests_014_mutants_visual.js]: 1/1 mutantes detectados pelo gate e motivo esperados' · 'não-KILL: nenhum — os 1 mutante(s) lidos estão DETECTADO' · fecho 'mutation: 8 campanha(s) executada(s) · 0 problema(s)'. A reprodução NÃO-canônica de 2026-09-04 (Chrome estável 152 local, worktree efêmera: DETECTADO 1/1 com 'a pergunta não está à esquerda do mapa · as colunas se sobrepõem') bateu com o job. T081 FECHADA.",
+        "nota": "Forma anterior (:77) REFUTADA — SOBREVIVENTE no run 33516136516 (job 99883514179), causa e datação na descricao; refutação registrada permanece (R2 §5) e a forma velha não renasce. A sonda diagnóstica (E13) segue ativa no não-KILL: se um run futuro mostrar SOBREVIVENTE, o log traz sha e contagem do repl no HTML sob mutação, linha crua do gate e grade resolvida em 1280; nunca se afrouxa o reason (R10 §1)."
+      }
+    },
+    {
       "mutante": "D015-M1",
       "harness": "d015",
       "gate": "D015-TIT1 (a)",
@@ -1537,8 +1638,7 @@
         "data": "2026-08-31",
         "resultado": "KILL",
         "registro": "specs/015-superficies-de-apoio/ (campanha d015 · tests_015_mutants.js)",
-        "nota": "Demanda 015 · mover a declaracao de C2 para o card-alvo, o que EXIGE mutar ui_target_v32.js — PROTEGIDO (§29.4) e NAO autorizado. Por isso NAO vive no harness: o harness automatizado nunca toca PROTECTED, que e o ponto exato onde a demanda 009 se queimou. Precedente de forma: D011-M6. EXECUTADO em 2026-08-31 em worktree efemera (`git worktree add --detach` a partir de aab5dc7), com CONTROLE VERDE antes de mutar (D015-GOV1 1 PASS · 0 FAIL la dentro). Sob o mutante, com rebuild feito na propria worktree: D015-GOV1 reprova na alinea (a) com 6 divergencias — `#pr-target DIVERGE (ancora 45898 bytes, HEAD 46113)` em E2, e analogas em E1/E3/E4/E5 —, e P50-GOV1 reprova com `protegidos alterados: ui_v32.js, ui_target_v32.js`. ACHADO DE INSTRUMENTO, registrado porque muda o que se pode alegar: o stage `baseline` NAO pega este mutante — `check_baseline.py` fechou 289/289 pins conferindo dentro da worktree mutada, porque compara pins contra os BLOBS DE HEAD e nao contra o disco. Quem pega a edicao em disco e P50-GOV1 (que hasheia o arquivo) e D015-GOV1 (que le o PRODUTO). Worktree removida ao fim; a arvore da demanda ficou intacta, com ui_target_v32.js no valor pinado 81adcb21…c8f5c."
-      }
+        "nota": "Demanda 015 · mover a declaracao de C2 para o card-alvo, o que EXIGE mutar ui_target_v32.js — PROTEGIDO (§29.4) e NAO autorizado. Por isso NAO vive no harness: o harness automatizado nunca toca PROTECTED, que e o ponto exato onde a demanda 009 se queimou. Precedente de forma: D011-M6. EXECUTADO em 2026-08-31 em worktree efemera (`git worktree add --detach` a partir de aab5dc7), com CONTROLE VERDE antes de mutar (D015-GOV1 1 PASS · 0 FAIL la dentro). Sob o mutante, com rebuild feito na propria worktree: D015-GOV1 reprova na alinea (a) com 6 divergencias — `#pr-target DIVERGE (ancora 45898 bytes, HEAD 46113)` em E2, e analogas em E1/E3/E4/E5 —, e P50-GOV1 reprova com `protegidos alterados: ui_v32.js, ui_target_v32.js`. ACHADO DE INSTRUMENTO, registrado porque muda o que se pode alegar: o stage `baseline` NAO pega este mutante — `check_baseline.py` fechou 289/289 pins conferindo dentro da worktree mutada, porque compara pins contra os BLOBS DE HEAD e nao contra o disco. Quem pega a edicao em disco e P50-GOV1 (que hasheia o arquivo) e D015-GOV1 (que le o PRODUTO). Worktree removida ao fim; a arvore da demanda ficou intacta, com ui_target_v32.js no valor pinado 81adcb21…c8f5c."      }
     }
   ],
   "dividas_declaradas": [
@@ -1569,8 +1669,9 @@
     "D010-M11 (demanda 010) NAO E EXECUTADO - EQUIVALENTE POR CONSTRUCAO, nao 'sem caso nas fixtures'. EQUIVALENTE POR CONSTRUCAO - reconciliado em 2026-08-30 contra a varredura que sustenta a errata E14. RETIFICA o relato de T021, que dizia 'falta fixture': a fixture NAO PODE EXISTIR, e a diferenca importa porque 'falta fixture' e divida que alguem tenta pagar e nao consegue. CADEIA: S2-de-CONTEXTO exige capability UNICA dona do qid com landscapeEnabled true; capability dona de qid tem questionIds nao vazio; o invariante de validateConfigV32 (erra em coverage 'none' COM questionIds; 0 erros hoje, com gate vivo em tests_m42_m86.js) implica coverage != 'none'; e a UNICA rota que emite candidato sob presence UNSET e UNASSESSED_CAPABILITY, exclusiva das capabilities coverage 'none'. MEDIDO: catalogo com 25 capabilities - 13 com questionIds, ZERO delas coverage 'none'; 12 sem questionIds, TODAS coverage 'none'. Varredura adversarial de 900 sessoes com landscape todo UNSET e vetor/sinais/arquitetura/plataforma variados: 9000 observacoes (dona de qid x UNSET), 0 contraexemplos, e as classificacoes observadas nessa classe sao so CONTEXT_NOT_INFORMED / null / NEEDS_VALIDATION - UNASSESSED_CAPABILITY nao aparece. Logo temCandidato e SEMPRE falso onde tgtValidateHTML chega. Desfecho igual ao de E1/A5: a clausula FICA no predicado como defesa contra mudanca futura no engine, e NENHUM mutante a tem como alvo. CONSEQUENCIA PARA O GATE, que e o segundo fato: D010-CARD2 (a) e verdadeira por ESTADO e nao por GATE - a ausencia do no em `logs` sob D010-F2 e explicada pelo S3 de contexto, e por nada mais. Quem mede C8 e a alinea (b) - 'capability com apenas servicos e em S2-contexto CONTINUA recebendo o no' -, essa sim viva e com caso em D010-F4 (3 qids). Com M11 fora, D010-CARD2 fica SEM MUTANTE ate que se escreva o de (b): proposta medida no relatorio de T022, com ancora e replica, pendente de autorizacao (move o declarado de 25 para 26).",
     "RAMO SEM AVISO de C6/E18 (demanda 010) — FALTA CENARIO, e o cenario e ALCANCAVEL: nao confundir com o caso de D010-M11, que era inalcancavel por invariante. Com `baseSemPayload` vazio (todo `baseIds` tem payload) `baseAbsenceHTML` devolve \"\" e o bloco nasce SEM aviso, de proposito — aviso sobre 0 capabilities seria falso. MEDIDO em 2026-08-31 que o estado e alcancavel por TRES vetores, e um deles e trivial e realista: 'incident-response em 0, os demais em 3' (um SOC maduro com uma pratica fraca) da baseIds=1, com=1, sem=0, com o bloco trazendo 1 card e ZERO aviso. CONSEQUENCIA JA TRATADA no gate: D010-ABS1 (a) e o helper do papel passaram a esperar o aviso CONDICIONALMENTE (`sem.length ? 1 : 0`) — antes disso exigiam exatamente 1 e teriam REPROVADO um estado legitimo, o que era falso positivo latente do meu proprio gate. O QUE FALTA e a FIXTURE que exercite o ramo: sem ela nenhum mutante sobre a condicionalidade pode morrer. Rota barata e ja medida (vetor acima); custo a medir antes de aplicar, porque fixture nova mexe no censo de D010-INV7 (c), que itera todas as fixtures.",
     "D011 · D011-PRT1 alinea (f) e D011-M20 — DIVIDA QUITADA em 2026-08-31, e o registro fica pela trilha (R2 §5: refutacao registrada permanece). A 3a clausula de print nasceu VERMELHA pela reprovacao do product-owner, o mutante ficou declarado como especificado-e-nao-executavel enquanto o sitio nao existia, e a correcao entrou na FORMA B — a que preserva as ancoras de D011-M10/M13/M19. D011-M20 esta ARMADO e DETECTADO em D011-PRT1(f); a campanha d011 subiu de 18 para 19 mutantes, todos detectados. Nada aqui permanece em aberto.",
+    "p51/M51-01 — APOSENTADO em 2026-09-01 (demanda 014, T050), com SUBSTITUIÇÃO NOMINAL. Razão: `gate sem poder discriminante` (EA-7) — o par estava íntegro (âncora única pelo preflight C1; `reason` com as três alternativas ainda emitidas por tests_p50_chromium.js:3405/:3408/:3412) e ainda assim P51-VIS1 rodava e PASSAVA sob a mutação. A varredura de regra morta da 014 confirmou a causa por medição, e não por análise: das DUAS declarações que M51-01 alterava, `grid-template-columns` é MORTA (perde em todo o alcance para ui_p52_workspace_v32.css · `html body[data-uxscreen=\"question\"] .wrap` (0,2,2), prefixo VÁCUO `html`) e `grid-template-areas` é VIVA por ausência de concorrente em folha nenhuma — veredito POR DECLARAÇÃO, não por mutante. SUBSTITUTO: `D014-M10` (harness `d014vis`, tests_014_mutants_visual.js), que muta a linha VENCEDORA (ui_p52_workspace_v32.css:77, `grid-template-columns: minmax(0, 1fr) clamp(320px, 23vw, 440px)` → `minmax(0, 1fr)`) e morre em P52-LAY2 — gate EXISTENTE, em suíte INVOCADA e nunca editada. O par de D014-M10 nasce na wave 6 (T062) com resultado `NÃO EXECUTADO` e causa `ambiente sem chromium`, e fecha no job `visual` (T081). A KI-4 que perdoava este sobrevivente foi removida no MESMO commit: aposentar sem remover reprova em IC-9.2 (exceção a fantasma), e remover sem aposentar deixa o sobrevivente sem perdão — os três atos são indivisíveis. ADENDO 2026-09-04 (E13): a forma citada acima para o substituto (:77, grid-template-columns → minmax(0, 1fr)) foi medida SOBREVIVENTE no job visual (run 33516136516) e REANCORADA em ui_p52_workspace_v32.css:86 (`.wrap > #p50-shell { grid-column: 2 }` → `1`), mesmo arquivo, mesmo bloco @media, mesma camada 5.2 — a causa e a datação estão no par D014-M10. A aposentadoria do M51-01 e a remoção da KI-4 permanecem: o substituto existe e mira a propriedade certa; o que era falso era a forma, não a substituição",
+    "P51-VIS1 (tests_p50_chromium.js) — FICA SEM MUTANTE PRÓPRIO, e isto é DÍVIDA DECLARADA COM CAUSA, nunca falsa garantia. Com M51-01 aposentado, nenhum mutante da campanha p51 ataca a propriedade 'no desktop o mapa e a pergunta ficam lado a lado'. A propriedade NÃO fica desguardada: quem a mede é o par `D014-M10`/`P52-LAY2`, na camada que HOJE a decide (ui_p52_workspace_v32.css) — e P52-LAY2 já a afirmava antes desta demanda, medindo caixas reais (tests_p52_chromium.js:206-209 e :224-226). P51-VIS1 permanece como SEGUNDA MEDIÇÃO INDEPENDENTE, na camada 5.1: é redundância útil, não cobertura. Mesma linguagem do precedente D011-IDEM1(d). Dívida declarada NUNCA vira mutante sintético: escrever um carrasco para P51-VIS1 hoje exigiria mutar a folha da 5.2 de dentro da campanha da 5.1, acoplando um par da fase anterior a artefato da fase seguinte — que é justamente a rota R1 que o refinamento da 014 contraindicou. ADENDO 2026-09-04 (E13): a frase 'quem a mede é o par D014-M10/P52-LAY2' era FALSA na forma :77 (SOBREVIVENTE no run 33516136516 — a mutação só alterava a largura da coluna 2, que P52-LAY2 não mede) e passa a ser verdadeira com a forma reancorada em :86, que viola exatamente 'lado a lado' (medida FAIL com dois dos três motivos, reprodução não-canônica; fecho canônico no job visual)",
     "D015-TIT1(h2) · CLÁUSULA SENTINELA, SEM MUTANTE — e NÃO a classe da 010. [demanda 015, errata E2 §E2.1] A alínea afirma que o `.section-title` de `#v32prio` nunca recebe `.v32-hidden` em E1..E8. Nenhum estado a falsifica hoje, e a razão é dupla, MEDIDA em 2026-08-31: (i) RUNTIME — `hideLegacyRecommendation` (`ui_v32.js:178-193`) varre FILHOS DIRETOS do escopo e RETORNA em `#v32panel`; o nó é NETO (`#v32panel > #v32support > .section-title`), logo nunca é visitado — simulação direta de M18 no HTML construído deu ZERO diferença observável; (ii) ORÁCULO — `U15` não lê a lista do produto, usa cópia HARDCODED (`tests_ui_m31.js:279-280`), então mutar o array do produto não alcançaria `U15` nem se o runtime mudasse (a frase da spec 'M18 derruba U15 junto' era FALSA e está riscada). A CLASSIFICAÇÃO IMPORTA E NÃO É COSMÉTICA: esta NÃO é a classe 'cláusula defensiva inalcançável por construção' registrada em design-decisions.md pela 010 — aquela é para asserção que NENHUMA mudança pode tornar falsa, e o que ela diz ao leitor é NÃO REPORTE. (h2) é FALSIFICÁVEL e o GATILHO TEM NOME: mudança do ESCOPO DE VARREDURA de `hideLegacyRecommendation`, que JÁ OCORREU UMA VEZ — a 5.2 o moveu de `section.screen` para a seção de apoio (`ui_v32.js:171-177`). O que ela diz ao leitor é REAVALIE QUANDO O GATILHO DISPARAR. Arquivar sentinela como classe-da-010 mata a alínea de abandono. Quem desarma a bomba hoje é (h1), no fonte, e M18 é o único carrasco dela. ATUALIZACAO (2026-09-01): quando esta divida foi escrita, M18 era declarado carrasco de (h1) e NAO existia em harness nem em matriz — a divida AFIRMAVA um carrasco que a campanha nunca executava. Corrigido: PAR EXECUTADO, D015-M18 esta no harness d015 e fechou KILL na campanha de 2026-09-01 (15/15). A sentinela (h2) passa a se apoiar em (h1) com carrasco provado, que era a condicao da particao feita pela errata E2.",
     "D015-GOV1(d) · CLÁUSULA DEFENSIVA INALCANÇÁVEL POR CONSTRUÇÃO, SEM MUTANTE — esta SIM é a classe da 010, registrada em design-decisions.md §Candidatas. [demanda 015] A alínea NOMEIA o estado E6 (sem cenário-alvo declarado) como o caso em que `#pr-target` legitimamente não existe (`ui_target_v32.js:426`), para que a ausência nunca seja lida como regressão de boundary nem feche alínea por vacuidade. Nenhuma mudança pode torná-la falsa: ela só reconhece uma ausência já legítima. NÃO reportar como código morto. CONTRASTE DELIBERADO com D015-TIT1(h2), na mesma demanda e nesta mesma matriz: (h2) é SENTINELA (falsificável, gatilho nomeado, reavaliar) e (d) é DEFENSIVA (infalsificável, não reportar). As duas passam a ser classes DISTINTAS a partir da errata E2 da 015; antes desta demanda estavam confundidas numa só.",
-    "D015-NOSUB1(d) · O LIMITE DO INSTRUMENTO, declarado para que ninguém cite a alínea como prova do que ela não prova. [demanda 015, errata E2 §E2.2] A alínea exige que `txt(#pr-support).length` e `txt(#pr-findings).length` NÃO DIMINUAM contra a âncora imutável. Ela é REDE, NÃO GUARDA: numa entrega ADITIVA não detecta subtração MENOR QUE A PRÓPRIA ADIÇÃO — o texto novo compensa o removido e o saldo continua não negativo. MEDIDO na bateria negativa da Fase 4: M15 na forma ESTREITA (suprimir as opções de UM qid) removeu conteúdo real e (d) NÃO disparou; só a forma AMPLA (os QUATRO qids, queda de 1.139 chars em `#pr-findings` no estado E2) a faz reprovar — por isso M15 foi reatribuído à forma ampla, senão (d) ficaria SEM CARRASCO. É o ESPELHO DA E18 DA 010: lá a contagem de caracteres REVELOU uma subtração de 31%; aqui ela pode MASCARAR uma. As guardas reais de não-subtração são (a), (b) e (c), que comparam CONJUNTOS e apanham a perda de UM item; (d) só apanha o grosseiro."
-  ]
+    "D015-NOSUB1(d) · O LIMITE DO INSTRUMENTO, declarado para que ninguém cite a alínea como prova do que ela não prova. [demanda 015, errata E2 §E2.2] A alínea exige que `txt(#pr-support).length` e `txt(#pr-findings).length` NÃO DIMINUAM contra a âncora imutável. Ela é REDE, NÃO GUARDA: numa entrega ADITIVA não detecta subtração MENOR QUE A PRÓPRIA ADIÇÃO — o texto novo compensa o removido e o saldo continua não negativo. MEDIDO na bateria negativa da Fase 4: M15 na forma ESTREITA (suprimir as opções de UM qid) removeu conteúdo real e (d) NÃO disparou; só a forma AMPLA (os QUATRO qids, queda de 1.139 chars em `#pr-findings` no estado E2) a faz reprovar — por isso M15 foi reatribuído à forma ampla, senão (d) ficaria SEM CARRASCO. É o ESPELHO DA E18 DA 010: lá a contagem de caracteres REVELOU uma subtração de 31%; aqui ela pode MASCARAR uma. As guardas reais de não-subtração são (a), (b) e (c), que comparam CONJUNTOS e apanham a perda de UM item; (d) só apanha o grosseiro."  ]
 }

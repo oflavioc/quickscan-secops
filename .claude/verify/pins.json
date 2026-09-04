@@ -1,7 +1,7 @@
 {
   "_meta": {
     "descricao": "Registry único de pins — fonte de identidade dos artefatos (R8). Hashes = SHA-256 dos blobs de HEAD. Alterar arquivo pinado exige regenerar este registry no MESMO PR, com motivo no commit.",
-    "gerado_de_head": "85377a35d5e422bb593aff18cadfc27b87f7dfa2",
+    "gerado_de_head": "2854fdbffb38f144a4f1b2de793a11d15479ffcd",
     "gerado_em": "2026-09-04",
     "exclusoes": [
       "docs_phase5/**",
@@ -15,7 +15,7 @@
     "baseline_core_zip_sha256": "625079c462be7d44ffd69b1cd85f256382322bd0555ae4b548f21bf30ee5b89d"
   },
   "files": {
-    ".claude/BACKLOG.md": "615d19190e02f37b7591338e16f55e5d40b347030783314e0feedd48028cea5b",
+    ".claude/BACKLOG.md": "c6d344c6877c56c5ef2983f0c4bf32329c5c8b1c699aa3d940c914dd2f47c05a",
     ".claude/agent-memory/README.md": "2f868716c8785119c1d6a02a7715f7b5058ab968f55951410fc82fc45b960a93",
     ".claude/agent-memory/build-engineer/MEMORY.md": "c1718832965955a9ef20631c7b0fc6af4cdbc4c02223b69f45120c39989859f9",
     ".claude/agent-memory/build-engineer/project_013_e1_harnesses.md": "109cd0778c35a7312a6afae586956ae91df9e886afe531b01958fe7335b58eba",
@@ -248,7 +248,7 @@
     "specs/013-integridade-da-campanha/tasks.md": "5153fbed842845d4264eb1f74cb5a68bc2631fe4ffc5670c0da8e6d0c2a7b8c2",
     "specs/014-gate-sem-poder-discriminante/plan.md": "0a61aee4f6a28191069374192c3ae67976d4549cc03e856f3ea41469dcafb2c4",
     "specs/014-gate-sem-poder-discriminante/refinement.md": "0b0fed08a437a5fb69f9cda16d1d7cee361eae27536d95d08b33a0362ffb549b",
-    "specs/014-gate-sem-poder-discriminante/relatorio-final.md": "b0a6c59369b52f46f520d254060d40dbbb4d6cb64a8141b11f7ec0530bb17e9f",
+    "specs/014-gate-sem-poder-discriminante/relatorio-final.md": "b06ba5560857d7d68ee87c02481900020325ae92015c147b0741d0d0db25ddcd",
     "specs/014-gate-sem-poder-discriminante/spec.md": "1a639b5aac1da59196183456aacb7bce8b63697eeaac063710ada8bd205c8b06",
     "specs/014-gate-sem-poder-discriminante/tasks.md": "5c25757d29217c2c19271e15bc018fd8d46e3ecab160b73430796609bdc8aa0d",
     "specs/PHASE_5_0_REV_A.md": "22e729174c6a3c5dd620da5330b03eb96d9eb6fc6e64eba097c2bde55eb0a510",

@@ -1409,3 +1409,81 @@ fechamento manual da Fase 6; se `009` e `013` precisam, retroativamente, de
 `relatorio-final.md` e aceite de intenção registrado, ou se o merge já
 consumado é aceito como fato encerrado; abrir demanda é do orquestrador (R4); o
 veredito é do `qa-engineer` com o `product-owner`.
+
+## EA-34 — "declaração viva" não implica "mutação observável pelo gate": o limite do instrumento de regra morta por cascata
+
+**Status**: `aberto`
+
+**Aberto em**: 2026-09-04. Medido pelo `qa-engineer` na errata **E13** da demanda
+014 (`specs/014-gate-sem-poder-discriminante/spec.md:728-733`), repassado ao
+`doc-writer` para id permanente **fora daquela errata** — é o próprio texto da
+E13 que nomeia a entrega. **Isto é limitação declarada do instrumento
+(`.claude/verify/regra_morta.js`), não defeito dele**: a demanda 014 o construiu
+para varrer cascata por declaração, e é exatamente isso que ele faz, corretamente,
+nas duas formas medidas abaixo. O achado é o **limite** — para que ninguém leia
+`D014-VARR1` verde como uma promessa maior do que ele dá.
+
+### Cadeia arquivo:linha → efeito
+
+- `.claude/verify/regra_morta.js:227` — `classificarDeclaracao()` só considera
+  concorrente `O` quando `O.prop === D.prop` (a linha filtra por
+  `O.prop !== D.prop`); é a régua da §3 do próprio arquivo (comentário
+  `:196-214`): "regra morta ⟺ existe uma concorrente que vence D … " — concorrente
+  é sempre da **mesma propriedade**.
+- `.claude/verify/regra_morta.js:392-412` (§6 `diferenca()`) — agrupa as
+  declarações introduzidas/alteradas pelo mutante em um `Map` cuja chave é
+  `ctxChave(d) + " " + d.seletor + " " + d.prop` (`:399`/`:405`):
+  contexto de mídia, seletor e **propriedade**. Uma declaração cujo efeito visual
+  é neutralizado por **outra propriedade**, de **outra camada**, nunca entra na
+  mesma chave — o instrumento não tem onde compará-las.
+- **Efeito, medido duas vezes**:
+  1. **`ui_p50_v32.css:697`** `grid-template-areas:"main side"` (camada 5.1,
+     `4aa1f12`) neutraliza `grid-template-columns` de
+     **`ui_p52_workspace_v32.css:77`** (camada 5.2, `c1e3649`): tirar o segundo
+     track não tira a segunda coluna — a área nomeada já define grade explícita
+     de duas colunas, e a coluna não dimensionada cai em `grid-auto-columns:
+     auto`. `regra_morta.js` responde **viva** para a declaração de `:77`
+     (`censo_ok`, zero mortas) — e o gate `P52-LAY2` não a via: mutar `:77` só
+     mudava a **largura** da coluna 2 (medido em 1280: `842px 320px` →
+     `861px 301px`), nunca a composição "lado a lado" que o gate mede. Foi assim
+     que `D014-M10`, na forma `:77`, saiu **SOBREVIVENTE** no job `visual` do CI,
+     run **33516136516** (`SOBREVIVENTE D014-M10 · gate P52-LAY2 · o gate
+     esperado NÃO reprovou — sem poder discriminante`), enquanto o instrumento
+     desta própria demanda dizia a declaração "viva".
+  2. **`ui_p52_workspace_v32.css:1350`** (`--p52-icon-scale` de
+     `FortiGuard-MDR-Service`, mutante `P52-RA8`) — caso irmão, já registrado sob
+     outro nome (`EA-32`, "mutante parcialmente inerte"): ali a neutralização é
+     por **ordem de cascata dentro da mesma propriedade**, não por interação
+     entre propriedades; `EA-32` não é instância desta família, é citado só para
+     marcar a fronteira.
+
+### A frase que resume
+
+**"Declaração viva" não implica "mutação observável pelo gate"** — o instrumento
+mede cascata por declaração (mesma propriedade, mesmo seletor, mesmo contexto de
+mídia), não layout. Duas declarações de propriedades diferentes podem produzir a
+mesma geometria renderizada, e nesse caso mutar uma delas é indistinguível, para
+o instrumento, de não mutar nada — mas não é indistinguível para o navegador.
+
+### Por que não é `EA-20` nem `EA-32`
+
+`EA-20` é a família "gate saudável, mas sem poder de reprovar" — pré-condição que
+nunca falha, expressão constante. Aqui o defeito não está em gate nenhum: o gate
+`P52-LAY2` **tem** poder discriminante sobre a propriedade certa (medido pela
+própria E13, variante `grid-column: 2` → `1`: **DETECTADO 1/1**). O que tem um
+limite é o **instrumento de varredura estática** — `D014-VARR1` continua correto
+sobre o que promete (cascata por declaração) e errado apenas se alguém o lesse
+como promessa sobre layout. `EA-32` é o mutante parcialmente inerte (regra
+inserida que perde por ordem, dentro da **mesma** propriedade); aqui a regra
+sequer compete — são propriedades diferentes, e a `diferenca()` do §6 nem as
+coloca na mesma chave para competir.
+
+### O que este registro não decide
+
+Se o instrumento ganha uma segunda fase (medição de geometria renderizada,
+necessariamente com Chromium — o que o tornaria `heavy`, ao contrário do desenho
+atual) para cobrir interação entre propriedades; se o remédio é documentar o
+limite no cabeçalho de `regra_morta.js` e em `CONTEXT.md` (vocabulário do
+`product-owner`); ou se a exposição permanece vigiada só pelo par mutante↔gate
+por Chromium, caso a caso, como o próprio `D014-M10`/`P52-LAY2` reancorado.
+Abrir demanda é do orquestrador (R4); o veredito é do `qa-engineer`.

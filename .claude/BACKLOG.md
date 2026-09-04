@@ -1933,3 +1933,131 @@ limite no cabeçalho de `regra_morta.js` e em `CONTEXT.md` (vocabulário do
 `product-owner`); ou se a exposição permanece vigiada só pelo par mutante↔gate
 por Chromium, caso a caso, como o próprio `D014-M10`/`P52-LAY2` reancorado.
 Abrir demanda é do orquestrador (R4); o veredito é do `qa-engineer`.
+
+## EA-35 — a "altura aparente" do `P52-ICON2` é proporcional a `scale²`, não a `scale`: o `getBoundingClientRect()` já inclui o `transform`
+
+**Status**: `aberto`
+
+**Aberto em**: 2026-09-04. Achado do `qa-engineer` durante o reparo do
+`EA-32` (partição do mutante `P52-RA8`) — id permanente alocado pelo
+`doc-writer` contra `origin/develop` (HEAD `09f4342`) e todas as branches
+não mescladas censadas nesta data (`chore/fecho-013-done`, ainda parada em
+`EA-34`; a própria `fix/ea32-particao-do-p52-ra8`, idem); nenhuma prosa de
+`specs/**` reservava `EA-35` ou adiante em nenhuma delas.
+
+**Nota de conferência contra o fonte**: a delegação citou
+`tests_p52_chromium.js:1131-1132` como o sítio da duplicação; a leitura do
+arquivo em HEAD (`59c8ad3`) mostra que **essas duas linhas são o laço de
+varredura alfa do canvas** (`for (let yy...) if (d[...] > 16) {`), não a
+multiplicação. A cadeia real, confirmada linha a linha, está abaixo — cito-a
+em vez de transcrever a referência recebida (R2 §4).
+
+### Cadeia arquivo:linha → efeito
+
+1. **`ui_p52_workspace_v32.css:1342`** — `transform: scale(var(--p52-icon-scale, 1));`
+   aplicado ao `img` do tile. O `--p52-icon-scale` de cada asset é declarado
+   em `:1345-1357` (ex.: `FortiGuard-MDR-Service` em `1350`, `SOCaaS` em
+   `1357`).
+2. **`tests_p52_chromium.js:1123`** — `const tr = tile.getBoundingClientRect(), ir = img.getBoundingClientRect();`.
+   `ir` é medido **depois** do `transform: scale(...)` do passo 1 — o
+   navegador já devolve a caixa **pós-escala**.
+3. **`tests_p52_chromium.js:1125`** — `const scale = parseFloat(cs.getPropertyValue("--p52-icon-scale")) || 1;`
+   lê o mesmo fator que já está embutido em `ir`.
+4. **`tests_p52_chromium.js:1138`** — `const drawn = Math.min(ir.width, ir.height) * scale;`
+   multiplica a caixa **já escalada** pelo fator de escala **outra vez**. A
+   partir daqui, `drawn` é proporcional a `scale²`.
+5. **`tests_p52_chromium.js:1146-1147`** — `hApparent`/`wApparent` herdam
+   `drawn` diretamente: `(fh * drawn) / tileSide` e `(fw * drawn) / tileSide`.
+6. **`tests_p52_chromium.js:1170-1175`** — o limiar (`0.68 − 0.005` a
+   `0.82 + 0.005`, isto é 67,5%–82,5%) compara contra esse valor em `scale²`,
+   e a linha impressa nomeia a grandeza errada: `detail.push(size + "/" + t.alt + ": altura aparente " + (t.hApparent * 100).toFixed(1) + "% do tile")`
+   (idem `wApparent` em `:1175`) — o rótulo "altura aparente N% do tile" não é
+   a fração linear que o nome promete.
+
+### O que muda e o que não muda (o achado é a distinção, não o número isolado)
+
+- **O veredito não muda.** `P52-ICON2` reprova quando deve reprovar; a
+  monotonicidade de detecção se preserva e os mutantes morrem — isto é
+  relatado como observação do `qa-engineer`, não reexecutado por mim
+  (`doc-writer` não decide PASS/FAIL, R5).
+- **A fidelidade do número muda.** No reparo do `EA-32`, o raciocínio pinado
+  previa que `1.006 → 0.70` levaria a altura aparente de ~75% para **~52%**
+  (abaixo do limiar de 67,5%, portanto ainda reprovando — previsão do
+  veredito correta). A medição real, reportada pelo `qa-engineer`, deu
+  **34,9%** (`lg/FortiGuard MDR`) e **36,5%** (`lg/FortiGuard SOCaaS`) — a
+  distância entre a previsão (~52%) e a medição (~35%) é exatamente o
+  quadrado do fator, não ruído de medição. Quem ler o log para calibrar
+  limiar, ou para prever o efeito de uma mudança de `scale`, é enganado pelo
+  número, não pelo veredito.
+
+### Por que este achado é a confirmação empírica da condição 3 do reparo do `EA-32`
+
+O reparo do `EA-32` (ver `EA-32`, seção "Encaminhamento recomendado") pôs
+como condição 3: *"o kill de cada metade é medido no job `visual` **antes**
+de ser pinado — a errata **E13** acabou de mostrar o que custa pinar
+raciocínio."* Este achado é o motivo ficando concreto pela terceira vez no
+mesmo ciclo:
+
+1. **E13** (demanda 014) — a spec afirmava que tirar `grid-template-columns`
+   faria `#app` e `#p50-shell` empilharem; colocação explícita nunca
+   empilha, e o par `D014-M10` nasceu sem faca por isso.
+2. **`EA-32`** — o `desc` do mutante prometia "reduzir SOCaaS E MDR" e a
+   metade `SOCaaS` era inerte por ordem de cascata.
+3. **Este achado** — a aritmética da "altura aparente" dobra o expoente do
+   fator de escala; o número que a condição 3 existe para checar por
+   execução (e não por conta) teria sido pinado **errado** se a condição não
+   existisse.
+
+**Viés de amostragem declarado**: as três origens nasceram na mesma janela
+(o ciclo do `EA-32`, 2026-08-31 a 2026-09-04) e do mesmo par de agentes
+(`tech-lead`/`qa-engineer` desenhando e verificando a mesma partição de
+mutante) — a frequência mede o cuidado desta demanda com raciocínio pinado,
+não uma taxa de erro do repositório. Registrado como contexto, não como
+família nomeada: falta a terceira origem independente que
+[[nomear-padrao-com-gatilho-de-falsificacao]] exige antes de um id de
+padrão; aqui as três instâncias já têm dono (`E13`, `EA-32`, este achado) e
+citar as três é o que a demanda pediu — não é proposta de família nova.
+
+### Limite deste registro — por que é registro, não conserto
+
+`tests_p52_chromium.js` é suíte congelada por autorização **nominal e restrita
+à linha** do proprietário (padrão em `:4023-4024`, "Autorização NOMINAL do
+proprietário [...], restrita a ESTA linha" — a mesma suíte já registra, no
+próprio corpo, que autorização de uma correção **não se estende** a outra
+linha, nem a outra demanda). A autorização §29.4 citada para outras edições
+deste arquivo foi da demanda 010 e não cobre esta linha nem esta demanda.
+**Este arquivo não está listado nas quatro classes de
+`.claude/verify/boundary.json`** (`frozen`/`generated`/`legacy`/`registry`)
+— o mecanismo de proteção aqui é o rito §29.4 registrado em comentário no
+próprio gate (mesma família do precedente "Exceção UG8" em
+`design-decisions.md`), não o hook `guard-boundary`. Isso não abre a porta
+para editar sem pedir: por R6 §5 e R6 §3 (expansão de boundary só por spec
+commitada antes do código, nunca por autorização só em prosa de relatório),
+qualquer correção aqui **exige parar e aguardar autorização nominal do
+proprietário no chat**, nomeando a linha exata a mudar.
+
+### Opções de remédio nomeadas (nenhuma escolhida aqui)
+
+1. **Remover a segunda multiplicação** — trocar `:1138` para
+   `const drawn = Math.min(ir.width, ir.height);` (sem `* scale`), já que
+   `ir` medido em `:1123` já é pós-transform. Dono: `qa-engineer` (autor do
+   gate, R3 §2); exige a autorização nominal acima antes de tocar a linha.
+2. **Renomear a grandeza em vez de corrigi-la** — se a intenção original era
+   medir algo proporcional a `scale²` por algum motivo não documentado no
+   comentário do bloco (`:1106-1109`), o remédio é documentar essa intenção
+   e renomear `hApparent`/`wApparent` e a mensagem impressa para não afirmar
+   "altura aparente" sobre uma grandeza que não é. Dono: `qa-engineer` +
+   confirmação do `product-owner` sobre o que o nome deve prometer.
+3. Nenhuma das duas altera o limiar (`0.68`–`0.82`) sem recalibrar contra a
+   grandeza corrigida — recalibrar é decisão do `product-owner` (a régua
+   óptica é conteúdo de produto, R1).
+
+Qual das opções, e quando o fix-finding abre, é decisão do orquestrador
+depois da autorização do proprietário — este registro não escolhe.
+
+### O que este registro não decide
+
+Se a duplicação é bug de fato (opção 1) ou nome errado sobre grandeza
+intencional (opção 2); a confirmação por execução do gate após qualquer
+mudança é do `qa-engineer`; a autorização da linha exata é do proprietário,
+no chat.

@@ -1319,7 +1319,11 @@ regra morta estava **na folha do produto**; aqui a folha é sã e a regra morta
 nasce **no mutante**. Mesmo sintoma de superfície (regra CSS que perde por
 ordem/especificidade), dono e remédio diferentes.
 
-### O que não se sabe, e por isso o remédio não foi escolhido
+### O que não se sabia, e por isso o remédio não tinha sido escolhido
+
+> **Resolvido em 2026-09-04** — ver "Veredito do job visual" abaixo. Texto
+> original preservado (R2 §5): não é refutação, é a pergunta que o parágrafo
+> abaixo deixava em aberto, agora respondida por execução.
 
 Não se sabe se `P52-ICON2` ainda mata com **só** a metade `MDR` da mutação — a
 resposta depende do veredito do job `visual` do CI **sob a mutação parcial**,
@@ -1345,12 +1349,48 @@ morre no dia em que existir um par `(p52*, P52-RA8)` em
 `visual` volta e fecha esta exceção. `remocao_prevista` (ambas as posições do
 registro) já cita `EA-32`.
 
+### Veredito do job visual (2026-09-04)
+
+Veredito dado em 2026-09-04 (run 33834890154): `P52-ICON2` mata sob a mutação
+parcial — par válido; resta o reparo. Registro em
+`regra_morta.json → exclusoes[2].veredito_job_visual`.
+
+Cai a saída "segundo par sem poder discriminante" (não vira instância de
+`EA-20`). O que resta é o defeito medido nesta cadeia: a metade `SOCaaS` é
+inerte por ordem de cascata contra `ui_p52_workspace_v32.css:1357`, e o `desc`
+do mutante promete "reduzir SOCaaS e MDR" quando só `MDR` é efetivo.
+
+O `qa-engineer` **recusou disparar** o `evento_de_remocao` auto-executável da
+exceção. Razão: registrar o par de `P52-RA8` agora — com o mutante ainda
+partido ao meio e o reparo deferido — reprovaria `C3(e)` e forçaria a saída da
+exclusão; sem a exclusão, a varredura passaria a ver a regra `SOCaaS` inserida
+como **morta**, e `C2(zero)` ficaria **cronicamente vermelha**; e
+`C6(cont-árvore)` exigiria fixar a contagem da árvore por execução. Três
+consequências sem o ato que as resolve — vermelho crônico é o padrão do
+`EA-5`. A exceção segue válida pela condição de máquina, com a razão
+**estreitada por escrito** (`veredito_job_visual` em `regra_morta.json`), e o
+par nasce no fix-finding **junto com o reparo, num commit só**.
+
+**Encaminhamento recomendado**, com as cinco condições que o `qa-engineer` pôs
+para partir o mutante em dois (uma metade por asset):
+
+1. Cada metade altera a **regra vencedora** do seu asset —
+   `ui_p52_workspace_v32.css:1350` (MDR), `:1357` (SOCaaS) — nunca inserindo
+   regra que perde por ordem.
+2. O `reason` de cada metade **nomeia o `alt`** do tile atacado.
+3. O kill de cada metade é medido no job `visual` **antes** de pinar — a
+   errata **E13** acabou de mostrar o que custa pinar raciocínio.
+4. Commit atômico: partição do mutante + remoção da exclusão + errata na
+   lista `C3` + contagem da árvore fixada por execução + registro dos pares.
+5. Dono `qa-engineer`; desenho do `tech-lead`; confirmação do `product-owner`.
+
 ### O que este registro não decide
 
-O veredito de `P52-ICON2` sob a mutação parcial (`qa-engineer`, job `visual` em
-curso); qual das três saídas se aplica (`tech-lead` desenha, `product-owner`
-confirma); se a família `EA-20` ganha membro novo (condicionado ao veredito
-acima).
+O veredito de `P52-ICON2` sob a mutação parcial chegou (ver seção acima); a
+saída recomendada é partir `P52-RA8` em dois, mas falta a confirmação do
+`product-owner` sobre o desenho (`tech-lead` desenha); a família `EA-20` **não**
+ganha membro novo — a hipótese caiu. O que permanece não decidido aqui é
+apenas o reparo em si: quando e por quem o fix-finding do `EA-32` é aberto.
 
 ## EA-33 — demandas mescladas na `develop` com o planning-state parado antes de `done`
 

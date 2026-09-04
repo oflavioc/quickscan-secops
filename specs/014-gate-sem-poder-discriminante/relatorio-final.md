@@ -184,3 +184,50 @@ chat.
   2026-09-04, HEAD `51e6c69`
 - `gh run view 33834890154` — confirmação de que o run está em andamento
   (PR #36, jobs `verify` e `visual`)
+
+## Adendo (2026-09-04) — os dois vereditos que ficaram "em voo" chegaram
+
+> Este relatório não é reescrito (R2 §5): o corpo acima registra o estado no
+> momento do fecho da Fase 6; este adendo registra o que aconteceu depois,
+> datado, sem apagar o que ficou pendente na primeira versão.
+
+O run **33834890154** (https://github.com/oflavioc/quickscan-secops/actions/runs/33834890154,
+`headSha 51e6c69`) terminou com os dois jobs (`verify`, `visual`) em
+`success`, e trouxe os dois vereditos que a seção "Pendências que ficam
+abertas" (itens 1 e 2) deixava em aberto:
+
+1. **Par `D014-M10`×`P52-LAY2` fecha `KILL`.** `D014VIS MUTATION: 1/1
+   mutantes detectados` · `não-KILL: nenhum` · `mutation: 8 campanha(s) · 0
+   problema(s)`. A errata **E13** (reancoragem em
+   `ui_p52_workspace_v32.css:86`) está **validada canonicamente** — não só na
+   reprodução não-canônica local (T081, já registrada acima), mas no próprio
+   job `visual` do CI. `mutation-matrix.json` tem `ultima_prova` fechada pelo
+   `qa-engineer` (não tocado por este adendo).
+
+2. **`EA-32` deixa de ter pergunta em aberto.** Mesmo run: `p52` **107/107,
+   não-KILL: nenhum**, e `P52-RA8` está entre as 107 âncoras conferidas pelo
+   `IC-4`. Logo `P52-ICON2` **mata** sob a mutação parcial. Cai a hipótese
+   "segundo par sem poder discriminante" (não vira instância de `EA-20`): o
+   par é válido. O que resta, registrado em `.claude/BACKLOG.md → EA-32` e em
+   `regra_morta.json → exclusoes[2].veredito_job_visual`, é o defeito
+   medido — a metade `SOCaaS` é inerte por ordem de cascata contra
+   `ui_p52_workspace_v32.css:1357`, e o `desc` do mutante promete "reduzir
+   SOCaaS e MDR" quando só `MDR` é efetivo. O `qa-engineer` recusou disparar
+   o `evento_de_remocao` auto-executável da exceção — a razão está no
+   `BACKLOG.md`; o par nasce no fix-finding do `EA-32`, junto com o reparo,
+   num commit só.
+
+A **pendência que permanece** não é mais a dúvida sobre poder discriminante:
+é o **reparo** de `P52-RA8` (partir o mutante em dois, um por asset, nas
+cinco condições que o `qa-engineer` registrou no `BACKLOG.md`).
+
+### A lição da demanda 014, que é o que ela tem de mais valioso
+
+A demanda **encontrou dentro de si a patologia que existe para expor** — e o
+**instrumento que ela construiu não a pegou**. Quem pegou foi a campanha no
+CI. O instrumento (`regra_morta.js`) mediu "declaração viva" e concluiu que
+`D014-M10` na forma `:77` era inofensivo; só o job `visual`, rodando o
+navegador de verdade, mostrou o `SOBREVIVENTE` que a análise estática nunca
+veria (run 33516136516). O **`EA-34`** nomeia exatamente esse limite:
+*"declaração viva" não implica "mutação observável pelo gate"*. Um instrumento
+que mede cascata por declaração não vê layout.

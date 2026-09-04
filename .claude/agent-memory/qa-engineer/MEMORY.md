@@ -62,3 +62,5 @@
 - [Exit do stage não é exit do laço](exit-do-stage-nao-e-exit-do-laco.md) — cláusula "exit 0" de IC-2 contradiz T6; mede-se o processo inteiro e a classe é spec-errada, nunca afrouxar IC-4
 - [Gate compõe o scale duas vezes](gate-compoe-o-scale-duas-vezes.md) — P52-ICON2 multiplica um rect já transformado por `scale`; previsto 52% deu 34,9%: número de gate visual só entra em registro depois de lido do gate
 - [Acervo migrado vive no histórico](acervo-migrado-vive-no-historico.md) — `git show <último-commit>^:<path>` lê evidence_p52 sem download; o aspecto do asset decide o ramo do `reason` antes de escrevê-lo
+- [Conforme por deferimento tem prazo](conforme-por-deferimento-tem-prazo.md) — o verde deferido expira quando o run chega; no retroativo, separe "então" de "hoje" e nomeie o item que mudou de prova
+- [Prova de carga da exceção](prova-de-carga-da-excecao.md) — três sondas sem Chromium da 014: tirar a exclusão derruba C2(zero) E C3(*); kill de M4 à mão (log trunca); KI-4 de volta em commit efêmero

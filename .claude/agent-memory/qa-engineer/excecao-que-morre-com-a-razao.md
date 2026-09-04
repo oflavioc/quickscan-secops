@@ -77,3 +77,29 @@ verificável + sonda sintética + mutante para cada cláusula. Ver
 [[medir-red-do-proprio-julgador]] para o rito de medição (o stage recusa árvore
 suja) e [[ancora-viva-em-regra-morta]] para o EA-7, que é a razão da primeira
 exceção.
+
+## 2026-09-04 — veredito não é evento (EA-32, fecho da 014)
+
+A exceção `achado-aberto` de `p52/P52-RA8` tinha `remocao_prevista` = "veredito
+do QA no job visual" e `evento_de_remocao` = "par (p52, P52-RA8) passa a existir
+em `pares`" — o registro desenhou o veredito VOLTANDO como par. O veredito veio
+(P52-ICON2 mata sob a mutação parcial: par válido, metade SOCaaS inerte, desc
+promete demais), mas o reparo (partir por asset, ancorar SOCaaS na regra
+vencedora :1357) foi deferido. Registrar o par naquele momento dispararia
+`C3(e)` e deixaria `C2(zero)` vermelha crônica sem reparo autorizado — o que a
+E7 §3 já tinha recusado (EA-5). Decisão: veredito entra como TEXTO no registro
+(`exclusoes[2].veredito_job_visual` + `remocao_prevista` reescrita com o texto
+original preservado); o par nasce no fix-finding junto com o reparo, num
+commit só, e é ele que mata a exceção.
+
+**Why:** quando a condição textual (veredito) e a condição de máquina (par)
+foram escritas como se coincidissem, e não coincidem, a exceção parece
+"sobreviver à própria razão". A saída honesta não é forçar o evento nem
+fingir que o veredito não veio: é estreitar a razão por escrito e amarrar o
+evento ao ato que de fato resolve o achado.
+
+**How to apply:** ao registrar um veredito de CI que uma exceção esperava,
+leia o `evento_de_remocao` antes de escrever no registro que ele aponta; se o
+ato que dispara o evento também derrubaria um gate sem o reparo, registre o
+veredito fora do gatilho e diga exatamente que ato o disparará. Ver
+[[grade-implicita-neutraliza-mutante-de-coluna]] (mesmo fecho).

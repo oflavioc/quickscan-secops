@@ -176,8 +176,8 @@ três contextos, *strict*) **depois** do push da wave 4 e **antes** do
 Posição: **depois de `tdd`** — mesma família (`state` → `tdd` → `fecho`: o
 planning-state é válido, o red é auditável, o merge cobrou o fecho). Entra no
 `--light`: hoje 11 stages (15 declarados, 4 `heavy`), passa a **12**; o hook
-Stop o executa a cada turno. Custo estimado abaixo de 1 s (um `git log --merges
---first-parent`, no máximo 11 `git merge-base --is-ancestor`, 11 JSON, 26
+Stop o executa a cada turno. Custo estimado abaixo de 1 s (um `git log --first-parent`
+com `%P` *(ET2)*, no máximo 11 `git merge-base --is-ancestor`, 11 JSON, 26
 fixtures) — fixado por execução na wave 5, não prometido.
 
 Ordem interna, sempre: **sonda → leitura → julgamento → relato**. `--sonda` para
@@ -269,11 +269,14 @@ carrasco.
 
   julgar_pos_merge(estados, merges, ancestralidade, artefatos, data_do_commit,
                    registro, origin_develop)
-      -> {sujeitos: [{id, veredito, oraculo, fase, detalhe}], contagens, problemas}
+      -> {sujeitos: [{id, tipo, veredito, oraculo, oraculo_detalhe, fase, codigo, detalhe, falha}],
+          globais, contagens, problemas}        # (ET3) globais: impeditivos + exclusao-malformada;
+                                                #       shape completo no docstring do gate
      estados        dict slug -> conteúdo do planning-state
      merges         list first-parent de origin/develop, mais recente primeiro:
                     {sha, data, msg, posicao_relativa_ao_piso: anterior|piso|posterior}
-     ancestralidade dict slug -> {resposta: true|false|null, causa}   (T1 secundário,
+     ancestralidade dict slug -> {resposta: true|false|null, causa, anterior_ao_piso}  (ET1;
+                    T1 secundário,
                     pré-resolvido pelo leitor; null = "oráculo não responde", borda 8)
      artefatos      set de paths relativos existentes
      data_do_commit "AAAA-MM-DD" (T4)
@@ -284,7 +287,8 @@ carrasco.
       -> {veredito, motivo, demanda, fase}
   ```
 
-  Leitores: `ler_estados()`, `ler_merges(piso)`, `ler_ancestralidade(estados)`
+  Leitores: `ler_estados()`, `ler_merges(piso)` *(ET2: cadeia inteira, `%P`)*,
+  `ler_ancestralidade(estados, piso)` *(ET1)*
   (`git rev-parse --verify <sha>^{commit}` antes de `merge-base --is-ancestor`;
   ambíguo ⇒ `null` com causa), `ler_data_commit()`, `ler_artefatos(estados)`.
   `git` por lista de argumentos, sem shell (R10 §7). Nada escreve (R7 §3).
@@ -479,3 +483,27 @@ carga de C1(a) não acusaria nada com o piso vigente — `222edd5` está antes d
 `921977c` na first-parent de `origin/develop`, e `6dad53d` é o recuo que a torna
 executável (E2). O que resta desconhecido — a permissão do token de Actions — só
 se mede **no run do PR**, e a wave 4 é exatamente isso, com dono.
+
+## Errata — wave 3 (2026-09-04)
+
+Quatro pontos deste plano ficaram atrás do docstring de `check_fecho.py`
+§CONTRATO DO INSTRUMENTO (que vence onde divergirem — precedência fixada pelo
+orquestrador para a wave 3). Registro completo, com a razão **medida** de cada
+um, em [`tasks.md`](tasks.md) §Errata; as células deste arquivo foram amendadas
+com a marca `*(ETn)*`:
+
+- **ET1** — `ler_ancestralidade(estados, piso)`: dois parâmetros; devolve
+  `anterior_ao_piso` (F4 consome).
+- **ET2** — `ler_merges(piso)` percorre a first-parent **inteira** com `%P`, não
+  `--merges`: o piso zero `e5ccd429` é a raiz (0 pais) — `--merges` nunca o
+  encontra (medido: 0 × 1). §Stage, "Custo estimado", amendado.
+- **ET3** — o retorno de `julgar_pos_merge` tem `globais`, em duas classes:
+  impeditivos (`piso-invalido` | `origin-develop-ausente`) e não impeditivo
+  (`exclusao-malformada`) — único lugar que o relato imprime (C7; `D016-M27`).
+  §Contratos amendado.
+- **ET4** — a varredura sem-rede de T032(v) acusava o próprio gate (R10 §10):
+  os dois arquivos varridos deixam de nomear as bibliotecas; a lista nominal
+  vive só na célula de T032; forma `-w` (palavra inteira, arquivo inteiro),
+  medida contra 16 casos adversariais — a forma "só linhas de import" é
+  afrouxamento (5 evasões). Este §Camada continua citando a propriedade
+  (não é arquivo varrido).

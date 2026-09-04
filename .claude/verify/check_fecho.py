@@ -20,8 +20,13 @@ USO
   python .claude/verify/check_fecho.py [--pr] --json   # objeto completo em stdout, prosa em stderr
   Ao vivo NÃO existem --head/--base (T5, spec §CLI): argumento desconhecido ⇒ exit 2.
 
-SEM REDE, por construção: nenhum import de urllib/http/socket/ssl aqui nem no
-instrumento (plan §Camada). Nada escreve (R7 §3). git só no instrumento, por
+SEM REDE, por construção: nenhum import de biblioteca de rede aqui nem no
+instrumento (plan §Camada). A lista nominal das bibliotecas vive SÓ na varredura
+que a cobra — tasks.md T032(v), errata ET4 —, fora dos dois arquivos varridos:
+nomeá-la aqui fazia a varredura acusar o próprio gate (R10 §10). A auto-exclusão
+é NÃO NOMEAR, e o scanner segue de arquivo inteiro — restringi-lo a linhas de
+import deixaria vivos import no meio da linha, `__import__`, `importlib` e `exec`
+(medido, ET4). Nada escreve (R7 §3). git só no instrumento, por
 lista de argumentos (R10 §7). Exit 1 sse há problema; SKIP silencioso não existe:
 instrumento ausente, fixture ausente, leitura que estoura — tudo sai nomeado.
 
@@ -60,7 +65,13 @@ exigidos — a falta de qualquer um é INSTRUMENTO INCOMPLETO e a sonda reprova:
                     "veredito": <VEREDITOS>, "oraculo": "mensagem"|"ancestralidade"|null,
                     "oraculo_detalhe": "#34" | "<sha12>" | null, "fase": str|null,
                     "codigo": <CODIGOS>|null, "detalhe": str, "falha": bool}],
-      "globais":  [{"codigo": <CODIGOS>, "detalhe": str}],   # piso-invalido, origin-develop-ausente
+      "globais":  [{"codigo": <CODIGOS>, "detalhe": str}],
+                  # duas classes (ET3): IMPEDITIVOS piso-invalido | origin-develop-ausente
+                  # (no máximo UM por execução, por precedência — sob ele todo sujeito-
+                  # demanda sai NÃO DETERMINÁVEL); NÃO IMPEDITIVO exclusao-malformada (uma
+                  # entrada por exclusão inválida; os sujeitos seguem julgados). Fica em
+                  # globais porque o relato só imprime globais e sujeitos: problema fora
+                  # dos dois seria contado e não dito — julgador mudo (C7; carrasco D016-M27)
       "problemas": [str],   # UMA linha por sujeito com falha + UMA por global; sujeito
                             # abortado por um global NÃO acrescenta linha
       "contagens": {"demandas", "valvulas", "problemas", "merges_apos_piso",
@@ -78,15 +89,17 @@ exigidos — a falta de qualquer um é INSTRUMENTO INCOMPLETO e a sonda reprova:
         com o código que diz por quê. Done sem artefato e sem exclusão válida:
         MESCLADA SEM FECHO + artefato-ausente se mesclada, EM VOO + artefato-ausente se
         não. Exclusão sem `fonte` ou com artefatos_ausentes vazio/curinga NÃO exclui e
-        acrescenta problema próprio (exclusao-malformada). Merge de feature/NNN posterior
-        ao piso sem estado: MESCLADA SEM FECHO + demanda-fora-da-maquina;
+        acrescenta problema próprio (exclusao-malformada — global NÃO impeditivo: a demanda
+        segue julgada; F23 pina artefato-ausente no sujeito e 2 problemas). Merge de
+        feature/NNN posterior ao piso sem estado: MESCLADA SEM FECHO + demanda-fora-da-maquina;
       · o piso NÃO é julgado (posição "piso" conta como anterior); posição "anterior" ⇒
         ANTERIOR AO PISO; ancestralidade com anterior_ao_piso ⇒ ANTERIOR AO PISO; a
         ancestralidade só é consultada quando a mensagem cala (T1);
       · estado sem `branch` ⇒ NÃO DETERMINÁVEL + registro-sem-branch (só esse sujeito);
         piso fora de ^[0-9a-f]{40}$ ou origin_develop.piso_na_cadeia false ⇒ global
         piso-invalido; origin_develop.presente false ⇒ global origin-develop-ausente; sob
-        um global, TODO sujeito-demanda sai NÃO DETERMINÁVEL com o código do global;
+        um global IMPEDITIVO (esses dois), TODO sujeito-demanda sai NÃO DETERMINÁVEL com o
+        código do global — exclusao-malformada é global e NÃO impede (F23);
       · NÃO DETERMINÁVEL sempre com `detalhe` não vazio (T10).
 
   julgar_pre_merge(head_ref, base_ref, estados, artefatos, registro) -> dict    PURO
@@ -115,6 +128,11 @@ exigidos — a falta de qualquer um é INSTRUMENTO INCOMPLETO e a sonda reprova:
         contra refs/remotes/origin/develop e contra o piso
     ler_artefatos(estados) -> iterável de paths existentes (os dois arquivos por spec_dir)
     ler_data_commit() -> "AAAA-MM-DD"    `git log -1 --format=%cI HEAD`[:10]
+
+  Onde plan.md/tasks.md divergirem deste contrato, vale ESTE texto: as erratas
+  ET1–ET4 de tasks.md §Errata (2026-09-04) registram cada divergência com a razão
+  medida (assinatura de ler_ancestralidade, cadeia inteira em ler_merges, classes
+  de globais, varredura sem-rede).
 ==============================================================================
 """
 import importlib.util

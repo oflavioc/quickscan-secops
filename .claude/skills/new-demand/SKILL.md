@@ -63,4 +63,14 @@ Falha de um agente não derruba os pares; máx. 3 tentativas → escalar. Regist
    canônicas) + `spec-validate` (score; <100% → classificar e iterar, máx. 2).
 2. `product-owner`: aceite de intenção contra o `refinement.md`.
 3. Push + **PR feature → develop** (`gh pr create --base develop`); merge é do
-   usuário. Planning-state `done` só com PR aberto e CI verde.
+   usuário, **e só depois do `done`** (check pré-merge **`fecho`** — `D016-PR1`,
+   obrigatório na proteção de `develop`). Planning-state `done` exige a Fase 6
+   completa (1 e 2 acima, com `spec-validate.md` e `relatorio-final.md` em
+   disco) e o PR aberto. **CI verde é condição do merge** — cobrada pela
+   proteção de branch (`D016-PROT1`) —, não do `done`.
+
+   > Redação anterior (até a demanda 016, P7 do portão da Fase 0 — decisão
+   > literal do usuário no chat, 2026-09-04): *"Planning-state `done` só com PR
+   > aberto e CI verde"*. Mudou porque criava impasse: o check pré-merge da 016
+   > exigiria `done`, que por sua vez exigiria o CI verde do qual o próprio
+   > check faz parte.

@@ -66,3 +66,15 @@ alegação, não evidência. Já houve um incidente (E6) com 23 gates visuais
 (com contagem) e NÃO EXECUTADO (com motivo nomeado). Nunca escreva a contagem
 canônica de uma suíte Chromium a partir do registro — cite o registro como
 *esperado*, não como *medido*. Ver [[armadilha-oraculo-de-texto-copymap]].
+
+4. **Heredoc que não é heredoc.** Em 2026-09-04 o Bash tool desta máquina
+   recusou dois scripts longos passados por `<<PYEOF` com aspas
+   (`unexpected EOF while looking for matching quote`, apontando a primeira
+   aspa simples do corpo) — o delimitador não foi reconhecido e o corpo foi
+   parseado como shell. Heredocs curtos `<<EOF` funcionaram; e uma barra invertida DUPLA no
+   corpo já chegou colapsada em barra simples (esta própria nota sofreu isso
+   ao ser gravada). Regra prática:
+   script multi-linha (python/node/sh) vai para o scratchpad pela ferramenta
+   de escrita e roda por caminho; no shell, só one-liners com aspas simples
+   e sem apóstrofo no texto. Custo evitado: uma rodada inteira perdida por
+   quoting, não por conteúdo.

@@ -30,10 +30,15 @@ A "morte raciocinada" da spec (§Não mensurável item 2: "com uma coluna #app e
 
 ## O que o instrumento da 014 responde — e o que não vê
 
-`regra_morta.js` (`varrerArvore`) devolve D014-M10 = 1 declaração, VIVA,
+`regra_morta.js` (`varrerArvore`) devolve a forma `:77` = 1 declaração, VIVA,
 `censo_ok`. Correto e irrelevante: ele é por declaração e por cascata; não
 enxerga interação entre propriedades (`areas` × `columns`) nem layout.
-"Declaração viva" ≠ "mutação observável pelo gate".
+"Declaração viva" ≠ "mutação observável pelo gate". E a forma reancorada
+(`:86`, seletor com `>`) sai **indecidível** — `gramatica-de-seletor-recusada`
+—, nomeada e contada (árvore 20→21 indecidíveis, não pinada): a vida da
+declaração é provada pelo kill, não pela varredura. Cheque SEMPRE o que o
+instrumento responde para a forma nova antes de escrever "viva" em qualquer
+registro — eu escrevi e tive de corrigir três lugares.
 
 ## O protocolo que fechou em uma sessão, sem Chromium do Playwright
 

@@ -101,7 +101,7 @@
         "ui_p52_workspace_v32.css"
       ],
       "cegueira": "REAL, MEDIDA, e e o proprio achado. P52-RA8 ALTERA --p52-icon-scale de FortiGuard-MDR-Service (ui_p52_workspace_v32.css:1350) - metade EFETIVA - e INSERE uma regra para .icon-tile img[data-p52-icon=SOCaaS] logo abaixo; a folha JA declara o mesmo seletor em :1357, com especificidade identica e mesmo contexto de midia, entao a inserida perde por ORDEM. O valor computado de SOCaaS e identico com e sem mutacao: a metade SOCaaS e INERTE, embora o desc prometa 'reduzir SOCaaS E MDR'. Classe: mutante-parcialmente-inerte. DISTINCAO QUE DECIDE O DONO: no M51-01 a regra morta esta NA FOLHA DO PRODUTO; aqui a folha esta SA e quem escreve a regra morta e o MUTANTE - outro defeito, outro dono, outro remedio. O QUE FICA SEM SABER, e por isso o remedio nao foi escolhido: nao se sabe se P52-ICON2 ainda morre com metade da mutacao. Se morrer, o par e valido com desc que promete demais; SE SOBREVIVER, e um segundo par sem poder discriminante e o achado e maior. Terceira saida nomeada pelo product-owner, que nem o QA nem o orquestrador tinham visto: talvez o certo nao seja mover a insercao nem alterar a regra existente, e sim PARTIR o mutante em dois, um por asset - mutante que ataca dois assets pela mesma ancora nao diz qual alinea do gate morreu (precedente das metades simetricas D011-M12/M13).",
-      "remocao_prevista": "Veredito do qa-engineer sobre P52-ICON2 no job visual, COM a mutacao parcial. Prazo por EVENTO, nao por data, no padrao da KI-4.",
+      "remocao_prevista": "VEREDITO DADO em 2026-09-04 — job visual, run 33834890154 (job 100905257457, head 51e6c69): p52 107/107, 'não-KILL: nenhum', P52-RA8 entre os 107 ⇒ P52-ICON2 MATA com a mutação parcial (só a metade MDR é efetiva). Cai a saída 'segundo par sem poder discriminante'; o par é VÁLIDO; o que resta é o defeito medido — metade SOCaaS inerte por ordem, desc que promete demais. A exceção NÃO sai neste fecho: sai quando o par reparado entrar em `pares` (evento_de_remocao, inalterado), o que acontece no fix-finding do EA-32 junto com o reparo (partir por asset, metade SOCaaS ancorada na regra vencedora :1357). Registrar o par agora, com o mutante ainda partido ao meio, dispararia C3(e) e deixaria C2(zero) vermelha crônica sem o reparo autorizado — E7 §3. Texto original (2026-09-01), preservado: 'Veredito do qa-engineer sobre P52-ICON2 no job visual, COM a mutacao parcial. Prazo por EVENTO, nao por data, no padrao da KI-4.'",
       "evento_de_remocao": {
         "registro": ".claude/verify/mutation-matrix.json",
         "condicao": "par com mutante == P52-RA8 e harness comecando por p52 passa a existir em `pares`",
@@ -109,6 +109,22 @@
         "mutante": "P52-RA8",
         "gate": "P52-ICON2",
         "nota": "AUTO-EXECUTAVEL: hoje nao existe par para P52-RA8 (a matriz mantem p50/p52 agregadas por decisao registrada - T13 da 013), entao a excecao e valida. No dia em que o veredito do job visual for registrado como par, a alinea C3(e) REPROVA esta entrada e forca a remocao. E assim que o veredito volta: como um par P52-RA8 x P52-ICON2 na matriz - e e ele que mata esta excecao."
+      },
+      "veredito_job_visual": {
+        "data": "2026-09-04",
+        "run": "33834890154",
+        "job": "100905257457",
+        "head": "51e6c69",
+        "resultado": "P52-ICON2 mata sob a mutação parcial — par válido; metade SOCaaS inerte por ordem; desc promete demais",
+        "lido_do_log": [
+          "[OK]   IC-4: p52: 107 âncora(s) com ocorrencias == 1 (preflight, C1)",
+          "MUTATION TESTING (Phase 5.2) [tests_p52_mutants.js]: 107/107 mutantes detectados pelo gate e motivo esperados",
+          "não-KILL: nenhum — os 107 mutante(s) lidos estão DETECTADO",
+          "PASS  P52-ICON2 — catálogo exibido com altura aparente normalizada e nenhum artwork encostando na borda (suítes visuais, árvore limpa)"
+        ],
+        "saida_que_cai": "segundo par sem poder discriminante (família EA-20)",
+        "saida_recomendada": "partir P52-RA8 em dois mutantes, um por asset, cada um ALTERANDO a regra vencedora do seu asset (ui_p52_workspace_v32.css:1350 MDR · :1357 SOCaaS — nunca inserir regra que perde por ordem) e com reason que nomeie o alt do tile (P52-ICON2 imprime 'lg/<alt>: altura aparente N% do tile'); higiene de registro, não correção de gate; medir o kill de cada metade no job visual ANTES de pinar (lição da E13); remover esta exclusão e registrar os pares no MESMO commit",
+        "quem": "fix-finding do EA-32 — qa-engineer com tech-lead; product-owner confirma"
       }
     }
   ],
@@ -142,7 +158,8 @@
         "mutante": "P52-RA8",
         "gate": "P52-ICON2"
       },
-      "_nota": "O numero 20 fica REGISTRADO e nao pinado: registro e trilha (R2 secao 5), pin e assercao. A estimativa pre-instrumento era >= 6 e errou por mais de 3x - e a razao pela qual ela nunca foi criterio: numero que um gate cobra se mede com o instrumento do gate, nunca se estima."
+      "_nota": "O numero 20 fica REGISTRADO e nao pinado: registro e trilha (R2 secao 5), pin e assercao. A estimativa pre-instrumento era >= 6 e errou por mais de 3x - e a razao pela qual ela nunca foi criterio: numero que um gate cobra se mede com o instrumento do gate, nunca se estima.",
+      "nota_veredito_2026_09_04": "Veredito do EA-32 dado (ver exclusoes[2].veredito_job_visual); o achado segue ABERTO até o reparo, logo a contagem segue não fixada, pelo mesmo evento. Observado em 2026-09-04 com a forma reancorada de D014-M10 (E13): 21 indecidíveis em 15 mutantes (gramatica-de-seletor-recusada 16 · contexto-de-midia-nao-relacionado 5) — registro, não pin."
     },
     "medicao_pre_instrumento": {
       "data": "2026-09-01",

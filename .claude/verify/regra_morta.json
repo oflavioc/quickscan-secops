@@ -57,10 +57,41 @@
     ],
     "por_que_a_razao_tem_vocabulario": "Indecidível sem razão nomeada é 'provavelmente viva' com outro nome — o silêncio que C6 existe para matar. O vocabulário vive AQUI, no registro canônico, e não no corpo do gate (R10 §3): o instrumento o lê, a suíte o confere, e ampliá-lo é ato explícito. Deriva do plan §Normalização de seletor (6) e §Contexto de mídia (4).",
     "auto_exclusao_e_r10_10": "Scanner de padrão proibido tem auto-exclusão nominal, e a exclusão é sempre IMPRESSA (R10 §2/§10). Aqui a auto-exclusão é NOMINAL por par (harness, mutante) — nunca por curinga, nunca por prefixo de path. Exclusão que não resolve no preflight reprova (C3-c): exclusão órfã é permissão permanente disfarçada.",
-    "motivo_achado_aberto": "Motivo criado pela errata E7 (2026-09-01). Cobre o objeto cuja CAUSA ainda nao fechou: a varredura o acusou corretamente, o diagnostico nao esta completo, e escolher remedio antes do diagnostico e o erro que esta demanda existe para nao repetir (R2 secao 3). NAO enfraquece o gate (R10 secao 1): a assercao de C2 e identica - zero regras mortas entre as decidiveis -, e o que muda e que o objeto excluido passa a ter DONO, ID e PRAZO. A alternativa recusada pelo product-owner foi manter C2(zero) cronicamente vermelha; o custo dela ja esta documentado nesta casa: o MANIFEST 74/74 'sempre vermelho, logo nunca rodado' (EA-5). Gate que ninguem le nao protege nada. O prazo e POR EVENTO, nunca por data, e e auto-executavel contra mutation-matrix.json - a excecao morre com a razao que a criou.",
+    "motivo_achado_aberto": "Motivo criado pela errata E7 (2026-09-01). Cobre o objeto cuja CAUSA ainda nao fechou: a varredura o acusou corretamente, o diagnostico nao esta completo, e escolher remedio antes do diagnostico e o erro que esta demanda existe para nao repetir (R2 secao 3). NAO enfraquece o gate (R10 secao 1): a assercao de C2 e identica - zero regras mortas entre as decidiveis -, e o que muda e que o objeto excluido passa a ter DONO, ID e PRAZO. A alternativa recusada pelo product-owner foi manter C2(zero) cronicamente vermelha; o custo dela ja esta documentado nesta casa: o MANIFEST 74/74 'sempre vermelho, logo nunca rodado' (EA-5). Gate que ninguem le nao protege nada. O prazo e POR EVENTO, nunca por data, e e auto-executavel contra mutation-matrix.json - a excecao morre com a razao que a criou. PRIMEIRA INSTANCIA ENCERRADA em 2026-09-04 (p52/P52-RA8, EA-32) exatamente pelo evento declarado: o par p52/P52-RA8 passou a existir em mutation-matrix.json no MESMO commit em que a exclusao saiu e o mutante foi partido. O mecanismo funcionou como escrito: nenhum prazo por data, nenhuma lembranca de autor. Trilha em _meta.exclusoes_encerradas.",
     "classes_de_achado": {
-      "mutante-parcialmente-inerte": "CLASSE NOVA, nomeada pela errata E7 e ausente do vocabulario fechado do harness. NAO e SOBREVIVENTE (o gate morre), NAO e NAO EXECUTADO, NAO e ancora podre (ocorrencias == 1) e NAO e equivalente por construcao (a mutacao aplica e altera bytes). E: a mutacao aplica, o gate reprova, e PARTE da mutacao nao pode influenciar veredito nenhum. O perigo e de LEITURA - a matriz sugere carrasco para uma propriedade que nao tem. A casa ja tinha o principio escrito 460 linhas acima no mesmo arquivo (tests_p52_mutants.js:860-863: o asset mutado tem de ser um dos EFETIVAMENTE renderizados, 'senao o mutante seria invisivel por ausencia, nao por acerto'); P52-RA8 e a variante POR ORDEM do mesmo principio."
-    }
+      "mutante-parcialmente-inerte": "CLASSE NOVA, nomeada pela errata E7 e ausente do vocabulario fechado do harness. NAO e SOBREVIVENTE (o gate morre), NAO e NAO EXECUTADO, NAO e ancora podre (ocorrencias == 1) e NAO e equivalente por construcao (a mutacao aplica e altera bytes). E: a mutacao aplica, o gate reprova, e PARTE da mutacao nao pode influenciar veredito nenhum. O perigo e de LEITURA - a matriz sugere carrasco para uma propriedade que nao tem. A casa ja tinha o principio escrito 460 linhas acima no mesmo arquivo (tests_p52_mutants.js:860-863: o asset mutado tem de ser um dos EFETIVAMENTE renderizados, 'senao o mutante seria invisivel por ausencia, nao por acerto'); P52-RA8 e a variante POR ORDEM do mesmo principio. INSTANCIA FECHADA em 2026-09-04 (fix-finding do EA-32): P52-RA8 partido em P52-RA8 (metade MDR, :1350) + P52-RA8B (metade SOCaaS, ALTERANDO a regra vencedora :1357, nunca inserindo regra que perde por ordem), cada `reason` nomeando o alt que P52-ICON2 imprime. Medido: com as duas exclusoes restantes a varredura devolve mortas 0 e cada metade 1 declaracao viva. A classe permanece no vocabulario porque o mecanismo (insercao que perde por ordem na mesma folha) pode voltar em qualquer mutante aditivo de CSS."
+    },
+    "exclusoes_encerradas": [
+      {
+        "harness": "p52",
+        "mutante": "P52-RA8",
+        "motivo": "achado-aberto",
+        "gate": "P52-ICON2",
+        "achado_id": "EA-32",
+        "aberta_em": "2026-09-01 (errata E7 da 014, commit 49f5bec — o fecho indivisível da wave 5)",
+        "encerrada_em": "2026-09-04 — fix-finding do EA-32 (branch fix/ea32-particao-do-p52-ra8, base 09f4342), errata E14 da 014",
+        "como_encerrou": "EVENTO CUMPRIDO, nao prazo vencido: o par (p52, P52-RA8) entrou em mutation-matrix.json → pares no mesmo commit em que (a) tests_p52_mutants.js partiu P52-RA8 em P52-RA8 (MDR, altera ui_p52_workspace_v32.css:1350) + P52-RA8B (SOCaaS, altera :1357 — a regra vencedora, e nao mais uma insercao que perdia por ordem), (b) esta entrada saiu de `exclusoes`, (c) PARES_DECLARADOS do instrumento voltou a dois pares (C3(*)), (d) indecidiveis.arvore.contagem foi fixada por execucao. Separar em dois commits deixaria C3(*)/C3(c)/C3(e) ou C2(zero) vermelhas entre eles (EA-5).",
+        "prova_de_carga_e_red": "Medido em 2026-09-04, sem commit e sem tocar a arvore, via varrerArvore() com SO as duas exclusoes de §Justificativa: sobre o harness ainda inteiro, mortas 1 — p52/P52-RA8 · .icon-tile img[data-p52-icon=\"SOCaaS\"] · --p52-icon-scale · perde em todo o alcance para ui_p52_workspace_v32.css (0,2,1), relacao identica (a metade inerte, vista sozinha). Sobre o harness partido: mortas 0; P52-RA8 e P52-RA8B com 1 declaracao viva cada.",
+        "veredito_job_visual_da_forma_antiga": {
+          "data": "2026-09-04",
+          "run": "33834890154",
+          "job": "100905257457",
+          "head": "51e6c69",
+          "resultado": "P52-ICON2 mata sob a mutação parcial — par válido; metade SOCaaS inerte por ordem; desc promete demais",
+          "lido_do_log": [
+            "[OK]   IC-4: p52: 107 âncora(s) com ocorrencias == 1 (preflight, C1)",
+            "MUTATION TESTING (Phase 5.2) [tests_p52_mutants.js]: 107/107 mutantes detectados pelo gate e motivo esperados",
+            "não-KILL: nenhum — os 107 mutante(s) lidos estão DETECTADO",
+            "PASS  P52-ICON2 — catálogo exibido com altura aparente normalizada e nenhum artwork encostando na borda (suítes visuais, árvore limpa)"
+          ],
+          "saida_que_cai": "segundo par sem poder discriminante (família EA-20)",
+          "saida_recomendada": "partir P52-RA8 em dois mutantes, um por asset, cada um ALTERANDO a regra vencedora do seu asset (ui_p52_workspace_v32.css:1350 MDR · :1357 SOCaaS — nunca inserir regra que perde por ordem) e com reason que nomeie o alt do tile (P52-ICON2 imprime 'lg/<alt>: altura aparente N% do tile'); higiene de registro, não correção de gate; medir o kill de cada metade no job visual ANTES de pinar (lição da E13); remover esta exclusão e registrar os pares no MESMO commit",
+          "quem": "fix-finding do EA-32 — qa-engineer com tech-lead; product-owner confirma"
+        },
+        "texto_integral": "git show 09f4342:.claude/verify/regra_morta.json → exclusoes[2] (cegueira, remocao_prevista, evento_de_remocao e pendencias de id preservados no blob; nao se apaga trilha — R2 §5)",
+        "kill_canonico_das_metades": "PENDENTE no job `visual` do CI — os pares P52-RA8 e P52-RA8B nascem NÃO EXECUTADO · ambiente sem chromium (condicao 3 do reparo, licao da E13). Reproducao NAO-canonica de 2026-09-04 (Chrome estavel local, worktree efemera): DETECTADO 2/2, cada linha FAIL nomeando so o proprio alt."
+      }
+    ]
   },
   "exclusoes": [
     {
@@ -87,49 +118,10 @@
         "ui_ux_v32.css"
       ],
       "cegueira": "REAL, e por isso impressa. O gate afirma uma propriedade de RENDERIZAÇÃO (o canal não-cromático existe na tela) lendo UM único arquivo. Uma folha posterior que declarasse `font-weight:normal` em `.jn-dom` mataria o canal, e o gate NÃO notaria — ele continuaria achando a regra de ui_ux_v32.css e passando. Medido em 2026-09-01: `.jn-dom` ocorre 12× em ui_ux_v32.css (linhas 249-271) e ZERO vezes em ui_v32.css, ui_p50_v32.css, ui_p52_workspace_v32.css e ui_d011_prioridade_v32.css — logo NÃO HÁ DEFEITO hoje. Registro de cegueira, não achado. E a cegueira NÃO é fechada por esta demanda: a varredura vigia declarações que MUTANTES tocam, e este mutante está excluído — nenhum carrasco olha para .jn-dom sob cascata. Excluir sem dizer o que se deixa de ver é a doença que esta demanda combate, aplicada a ela mesma; dizer é o mínimo, e o remédio é achado de outro dono."
-    },
-    {
-      "harness": "p52",
-      "mutante": "P52-RA8",
-      "motivo": "achado-aberto",
-      "gate": "P52-ICON2",
-      "achado_id": "EA-32",
-      "achado_id_alocado": true,
-      "achado_id_pendencia": "RESOLVIDA em 2026-09-01 pelo doc-writer: id permanente EA-32 alocado contra origin/develop (fetch em 2026-09-01; `.claude/BACKLOG.md` da develop conferido ate EA-31, nenhum EA-32/EA-33 alocado por demanda paralela - todas as branches feature/* e fix/* estao mescladas em develop, exceto esta). Registrado em `.claude/BACKLOG.md` desta worktree (entrada `## EA-32`), a levar no merge do PR (R14). Razao original da escolha do qa-engineer preservada abaixo, sem apagar (R2 secao 5): MARCADOR do namespace da demanda, nao id de backlog. O id permanente (EA-N) e alocado pelo doc-writer contra a develop, que esta worktree nao enxerga (R14: branches paralelas nao se veem). Escolha registrada do qa-engineer: marcador AGORA + id depois, e NUNCA marcador sozinho - o que impede o apodrecimento nao e o formato do id, e o evento_de_remocao auto-executavel. Esperar o id bloquearia a wave 5, que e indivisivel. O marcador NAO finge ser EA-N: achado_id_alocado false o declara, e a alinea C3(e) exige esta pendencia escrita - marcador silencioso reprova.",
-      "propriedade_afirmada": "P52-ICON2 afirma que os assets do mosaico ficam dentro do limite optico de altura aparente. P52-RA8 ataca DOIS assets pela mesma ancora (tests_p52_mutants.js:398-406) e so UM e efetivo.",
-      "arquivos_lidos": [
-        "ui_p52_workspace_v32.css"
-      ],
-      "cegueira": "REAL, MEDIDA, e e o proprio achado. P52-RA8 ALTERA --p52-icon-scale de FortiGuard-MDR-Service (ui_p52_workspace_v32.css:1350) - metade EFETIVA - e INSERE uma regra para .icon-tile img[data-p52-icon=SOCaaS] logo abaixo; a folha JA declara o mesmo seletor em :1357, com especificidade identica e mesmo contexto de midia, entao a inserida perde por ORDEM. O valor computado de SOCaaS e identico com e sem mutacao: a metade SOCaaS e INERTE, embora o desc prometa 'reduzir SOCaaS E MDR'. Classe: mutante-parcialmente-inerte. DISTINCAO QUE DECIDE O DONO: no M51-01 a regra morta esta NA FOLHA DO PRODUTO; aqui a folha esta SA e quem escreve a regra morta e o MUTANTE - outro defeito, outro dono, outro remedio. O QUE FICA SEM SABER, e por isso o remedio nao foi escolhido: nao se sabe se P52-ICON2 ainda morre com metade da mutacao. Se morrer, o par e valido com desc que promete demais; SE SOBREVIVER, e um segundo par sem poder discriminante e o achado e maior. Terceira saida nomeada pelo product-owner, que nem o QA nem o orquestrador tinham visto: talvez o certo nao seja mover a insercao nem alterar a regra existente, e sim PARTIR o mutante em dois, um por asset - mutante que ataca dois assets pela mesma ancora nao diz qual alinea do gate morreu (precedente das metades simetricas D011-M12/M13).",
-      "remocao_prevista": "VEREDITO DADO em 2026-09-04 — job visual, run 33834890154 (job 100905257457, head 51e6c69): p52 107/107, 'não-KILL: nenhum', P52-RA8 entre os 107 ⇒ P52-ICON2 MATA com a mutação parcial (só a metade MDR é efetiva). Cai a saída 'segundo par sem poder discriminante'; o par é VÁLIDO; o que resta é o defeito medido — metade SOCaaS inerte por ordem, desc que promete demais. A exceção NÃO sai neste fecho: sai quando o par reparado entrar em `pares` (evento_de_remocao, inalterado), o que acontece no fix-finding do EA-32 junto com o reparo (partir por asset, metade SOCaaS ancorada na regra vencedora :1357). Registrar o par agora, com o mutante ainda partido ao meio, dispararia C3(e) e deixaria C2(zero) vermelha crônica sem o reparo autorizado — E7 §3. Texto original (2026-09-01), preservado: 'Veredito do qa-engineer sobre P52-ICON2 no job visual, COM a mutacao parcial. Prazo por EVENTO, nao por data, no padrao da KI-4.'",
-      "evento_de_remocao": {
-        "registro": ".claude/verify/mutation-matrix.json",
-        "condicao": "par com mutante == P52-RA8 e harness comecando por p52 passa a existir em `pares`",
-        "harness": "p52",
-        "mutante": "P52-RA8",
-        "gate": "P52-ICON2",
-        "nota": "AUTO-EXECUTAVEL: hoje nao existe par para P52-RA8 (a matriz mantem p50/p52 agregadas por decisao registrada - T13 da 013), entao a excecao e valida. No dia em que o veredito do job visual for registrado como par, a alinea C3(e) REPROVA esta entrada e forca a remocao. E assim que o veredito volta: como um par P52-RA8 x P52-ICON2 na matriz - e e ele que mata esta excecao."
-      },
-      "veredito_job_visual": {
-        "data": "2026-09-04",
-        "run": "33834890154",
-        "job": "100905257457",
-        "head": "51e6c69",
-        "resultado": "P52-ICON2 mata sob a mutação parcial — par válido; metade SOCaaS inerte por ordem; desc promete demais",
-        "lido_do_log": [
-          "[OK]   IC-4: p52: 107 âncora(s) com ocorrencias == 1 (preflight, C1)",
-          "MUTATION TESTING (Phase 5.2) [tests_p52_mutants.js]: 107/107 mutantes detectados pelo gate e motivo esperados",
-          "não-KILL: nenhum — os 107 mutante(s) lidos estão DETECTADO",
-          "PASS  P52-ICON2 — catálogo exibido com altura aparente normalizada e nenhum artwork encostando na borda (suítes visuais, árvore limpa)"
-        ],
-        "saida_que_cai": "segundo par sem poder discriminante (família EA-20)",
-        "saida_recomendada": "partir P52-RA8 em dois mutantes, um por asset, cada um ALTERANDO a regra vencedora do seu asset (ui_p52_workspace_v32.css:1350 MDR · :1357 SOCaaS — nunca inserir regra que perde por ordem) e com reason que nomeie o alt do tile (P52-ICON2 imprime 'lg/<alt>: altura aparente N% do tile'); higiene de registro, não correção de gate; medir o kill de cada metade no job visual ANTES de pinar (lição da E13); remover esta exclusão e registrar os pares no MESMO commit",
-        "quem": "fix-finding do EA-32 — qa-engineer com tech-lead; product-owner confirma"
-      }
     }
   ],
   "indecidiveis": {
-    "_nota": "DUAS contagens com DOIS prazos (errata E9). A SINTETICA e pinada agora e e o carrasco de hoje; a da ARVORE entra quando o achado 014-P52-RA8 fechar. Razao de nao pinar a arvore agora: o achado esta aberto, e se o mutante mudar o conjunto avaliado muda - pinar contra arvore em movimento ensina que pin e cerimonia. Medido e ratificado: aposentar M51-01 sozinho NAO altera a contagem da arvore (ele nao contribui indecidivel nenhum).",
+    "_nota": "DUAS contagens com DOIS prazos (errata E9). A SINTETICA e pinada agora e e o carrasco de hoje; a da ARVORE entra quando o achado 014-P52-RA8 fechar. Razao de nao pinar a arvore agora: o achado esta aberto, e se o mutante mudar o conjunto avaliado muda - pinar contra arvore em movimento ensina que pin e cerimonia. Medido e ratificado: aposentar M51-01 sozinho NAO altera a contagem da arvore (ele nao contribui indecidivel nenhum). FECHO (2026-09-04, fix-finding do EA-32): a contagem da ARVORE entrou — fixada POR EXECUCAO em `arvore.contagem`, no mesmo commit da particao de P52-RA8. As duas contagens seguem com funcoes distintas: a sintetica e o carrasco de D014-M8; a da arvore e o pin contra deriva silenciosa do conjunto avaliado.",
     "sintetico": {
       "caso": "f",
       "veredito": "indecidivel",
@@ -139,24 +131,31 @@
       "por_que_a_razao_e_o_pin": "Uma CONTAGEM sintetica seria redundante: com 6 fixtures e C1 asserindo cinco vereditos um a um, qualquer agregado sobre elas e determinado pelas alineas que ja existem - e alinea que nao pode falhar sozinha nao mede nada. Medido tambem que classificar() reporta so o PRIMEIRO concorrente indecidivel (sonda de 3 camadas, 2026-09-01), entao nem contagem por caso e observavel. O que NINGUEM assere hoje e a RAZAO: um instrumento que classifique (f) como indecidivel pelo motivo errado - digamos gramatica-de-seletor-recusada em vez de contexto-de-midia-nao-relacionado - passa em C6(sint) e em toda C1. Este pin fecha esse buraco e tem estado de falha EXCLUSIVO: veredito certo com razao errada."
     },
     "arvore": {
-      "contagem": null,
-      "observado_em_2026_09_01": 20,
-      "detalhe_observado": {
-        "gramatica-de-seletor-recusada": 15,
+      "contagem": 21,
+      "fixado_em": "2026-09-04",
+      "fonte": "qa-engineer, fix-finding do EA-32 — varrerArvore() do instrumento (regra_morta.js, API 1) sobre a arvore de fix/ea32-particao-do-p52-ra8 (base 09f4342) com tests_p52_mutants.js ja partido e SO as duas exclusoes restantes; populacao lida do --preflight de todo harness com preflight: true (p52 = 108 mutantes, 37 de CSS). Contagem POR EXECUCAO, nunca copiada da observacao anterior (T070).",
+      "detalhe": {
+        "gramatica-de-seletor-recusada": 16,
         "contexto-de-midia-nao-relacionado": 5,
-        "mutantes_com_parte_indecidivel": 14,
-        "populacao_antes_da_aposentadoria": 49
+        "mutantes_com_parte_indecidivel": 15,
+        "populacao_avaliada": 49,
+        "excluidos": 2,
+        "conservacao": "84 declaracoes avaliadas = 63 vivas + 21 indecidiveis + 0 mortas"
       },
-      "motivo": "achado-aberto",
+      "por_que_agora": "O segundo prazo da E9 era 'quando o achado da E7 fechar e a arvore parar de se mexer'. Fechou neste commit: P52-RA8 partido, exclusao removida. As duas metades sao seletor de atributo decidivel e NAO acrescentam indecidivel — medido: a contagem e identica a observacao pre-particao de 2026-09-04 (21 em 15). Se um dia divergir, a pergunta e 'que mutante de CSS entrou/saiu ou que seletor mudou de gramatica?' — nunca rebaixar o pin (R10 §1).",
       "achado_id": "EA-32",
-      "achado_id_pendencia_nota": "Id permanente EA-32 alocado pelo doc-writer contra origin/develop em 2026-09-01 (mesma alocacao da entrada `exclusoes[2]` acima, mesmo achado); marcador `014-P52-RA8` que aqui vivia substituido, sem apagar o motivo original (R2 secao 5): esta posicao nao carregava achado_id_alocado/achado_id_pendencia proprios (so achado_id), por isso a substituicao e so do valor.",
-      "remocao_prevista": "Fixar POR EXECUCAO (T070) quando o achado EA-32 fechar e a arvore parar de se mexer.",
-      "evento_de_remocao": {
-        "registro": ".claude/verify/mutation-matrix.json",
-        "condicao": "par com mutante == P52-RA8 e harness comecando por p52 passa a existir em `pares`",
-        "harness": "p52",
-        "mutante": "P52-RA8",
-        "gate": "P52-ICON2"
+      "historico": {
+        "observado_em_2026_09_01": {
+          "contagem": 20,
+          "detalhe": {
+            "gramatica-de-seletor-recusada": 15,
+            "contexto-de-midia-nao-relacionado": 5,
+            "mutantes_com_parte_indecidivel": 14,
+            "populacao_antes_da_aposentadoria": 49
+          }
+        },
+        "observado_em_2026_09_04_pre_particao": "21 indecidiveis em 15 mutantes (gramatica-de-seletor-recusada 16 · contexto-de-midia-nao-relacionado 5) — forma reancorada de D014-M10 (E13); registro, nao pin",
+        "pendencia_que_vigorou": "motivo achado-aberto · achado_id EA-32 (marcador 014-P52-RA8 ate a alocacao) · remocao_prevista 'Fixar POR EXECUCAO (T070) quando o achado EA-32 fechar e a arvore parar de se mexer' · evento_de_remocao {registro mutation-matrix.json, condicao 'par com mutante == P52-RA8 e harness comecando por p52 passa a existir em pares', harness p52, mutante P52-RA8, gate P52-ICON2} — cumprido em 2026-09-04; texto integral em git show 09f4342:.claude/verify/regra_morta.json"
       },
       "_nota": "O numero 20 fica REGISTRADO e nao pinado: registro e trilha (R2 secao 5), pin e assercao. A estimativa pre-instrumento era >= 6 e errou por mais de 3x - e a razao pela qual ela nunca foi criterio: numero que um gate cobra se mede com o instrumento do gate, nunca se estima.",
       "nota_veredito_2026_09_04": "Veredito do EA-32 dado (ver exclusoes[2].veredito_job_visual); o achado segue ABERTO até o reparo, logo a contagem segue não fixada, pelo mesmo evento. Observado em 2026-09-04 com a forma reancorada de D014-M10 (E13): 21 indecidíveis em 15 mutantes (gramatica-de-seletor-recusada 16 · contexto-de-midia-nao-relacionado 5) — registro, não pin."

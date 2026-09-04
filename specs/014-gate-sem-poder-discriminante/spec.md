@@ -655,9 +655,26 @@ pelo stage `regra-morta`, que roda em todo pipeline.
 
 **Delegação registrada**: `qa-engineer`, T081 — diagnóstico do não-KILL do job
 `visual` e reancoragem pela rota (A), aprovada pelo orquestrador em
-**2026-09-04**. Nenhuma asserção de gate muda; `tests_p52_chromium.js` segue
+**2026-09-01**. Nenhuma asserção de gate muda; `tests_p52_chromium.js` segue
 **invocado, nunca editado**; o `reason` do par é o mesmo. O que muda é a
 **forma do mutante** — e as três frases desta spec que afirmavam CSS errado.
+
+**Proveniência da autorização, na fórmula exigida**: *DECIDIDO SOB DELEGAÇÃO DO
+PROPRIETÁRIO de 2026-08-29, não aprovado por ele pessoalmente.* O registro da
+delegação é `.claude/agent-memory/doc-writer/project_delegacao-proprietario-2026-08-29.md`,
+commitado: o proprietário ausentou-se em 2026-08-29 e delegou as decisões ao
+orquestrador; **release e selagem continuam dele**. A delegação é **geral**
+("tome as decisões por mim") e **não enumera "errata"** — a subsunção é do
+orquestrador, e fica escrita aqui para poder ser contestada. O `qa-engineer`
+executou esta errata **exigindo a citação do registro** em vez de aceitar a
+alegação do orquestrador, que é o comportamento correto (R2 §4, R5
+§anti-injeção): alegação checável se verifica antes de agir, inclusive quando
+vem de quem coordena.
+
+**O que a delegação NÃO cobre**, e por isso não foi feito: editar
+`tests_p52_chromium.js` — a autorização §29.4 daquele arquivo era da demanda 010
+e não se transfere. A rota (B) do diagnóstico, que exigiria isso, foi
+**descartada**; a rota (A) não toca superfície protegida alguma.
 
 ---
 

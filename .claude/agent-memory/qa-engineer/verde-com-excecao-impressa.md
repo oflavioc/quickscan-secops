@@ -1,6 +1,6 @@
 ---
 name: verde-com-excecao-impressa
-description: Vermelho crônico é remédio pior que a doença (EA-5); a saída é verde com exceção impressa — asserção idêntica, objeto com dono/id/prazo, prazo auto-executável, e a exceção tem de ser CARGA
+description: Vermelho crônico é remédio pior que a doença (EA-5); a saída é verde com exceção impressa — asserção idêntica, objeto com dono/id/prazo, prazo auto-executável, e a exceção tem de ser CARGA; e como ela morre (EA-32) — cinco atos num commit, evento provado por registro antigo × matriz nova
 metadata:
   type: project
 ---
@@ -44,3 +44,30 @@ sintético** para o gate não ficar sem dentes no intervalo — mas cuidado: um
 agregado sobre poucas fixtures já asseridas uma a uma é **redundante**; pine o
 que ninguém assere (aqui, a **razão** do indecidível, não a contagem). Ver
 [[universo-de-tamanho-um]].
+
+## Como a exceção morreu (fix-finding do EA-32, 2026-09-04, commit `8d753bc`)
+
+O evento se cumpriu como escrito: o par `p52/P52-RA8` entrou na matriz e a
+exceção saiu — **no mesmo commit**. Cinco atos indivisíveis: partição do
+mutante · remoção da exclusão · literal `PARES_DECLARADOS` do instrumento de
+volta a dois · `arvore.contagem` fixada por execução · pares na matriz. Qualquer
+subconjunto deixa `C3(*)`/`C3(c)`/`C3(e)` ou `C2(zero)` vermelha entre commits.
+
+**Prove que o prazo era real antes de fechá-lo.** Em worktree efêmera:
+instrumento e registro de HEAD (exclusão viva, `contagem: null`) contra o
+harness partido e a matriz nova → **exatamente** `C3(e)` e `C6(cont-arvore)`
+reprovam, ambas por *PRAZO VENCIDO* ("observado hoje = 21"), e nada mais cai.
+Sem essa medição, "o evento dispara" seria promessa do desenho, não fato.
+
+**O red do fecho não precisa de commit vermelho.** A prova de carga (amarra 4)
+*é* o red: `varrerArvore()` do instrumento só com as exclusões restantes, sobre o
+harness ainda inteiro, devolve `mortas: 1`; sobre o harness partido, `0`. Fica
+registrado em três lugares (mensagem do commit, errata, `_meta.exclusoes_encerradas`)
+e o desvio de R3 §4 vai declarado ao orquestrador — a atomicidade venceu porque
+o custo do estado vermelho intermediário já tinha nome (EA-5).
+
+**O que fica**: a classe (`mutante-parcialmente-inerte`) e o motivo
+(`achado-aberto`) continuam no vocabulário; a forma "pendência bem-formada"
+continua como cenário **sintético** de `D014-DISC1` — o julgador que só passa
+com inteiro não mede a válvula. A trilha da exclusão vai para
+`_meta.exclusoes_encerradas` (R2 §5), nunca se apaga.

@@ -44,7 +44,7 @@ demandas "em voo" a cada prompt até ninguém mais ler a linha.
 Por que agora: os dez planning-states existentes acabaram de ser postos em `done`
 (fecho retroativo de 2026-09-01/04). É o único momento em que um gate desta
 natureza **nasce verde no registro** e pode ser instalado sem virar o vermelho
-crônico que ninguém roda (`EA-5`). Daqui a duas demandas, não mais.
+crônico que ninguém roda (`E5`). Daqui a duas demandas, não mais.
 
 ---
 
@@ -119,7 +119,7 @@ Os quatro enfraquecimentos, cada um com a razão:
    nascimento do gate não são julgados: R13 ("fases seladas sob o processo
    antigo valem como foram seladas") e R10 §5 (âncora de regressão é commit
    imutável + SHA). Sem isso o gate nasce vermelho sobre a história e vira o
-   `EA-5`.
+   `E5`.
 4. **`done` não exige "CI verde".** A `new-demand` diz hoje "*Planning-state
    `done` só com PR aberto e CI verde*" (`.claude/skills/new-demand/SKILL.md:66`).
    Se um check pré-merge passar a exigir `done`, a frase cria um **impasse**:

@@ -140,7 +140,7 @@ não muda depois da wave 1).
 ```yaml
   fecho:
     # E1 da spec 016: check PRÓPRIO, não passo do `verify`. Um `verify` vermelho a
-    # demanda inteira ensina que vermelho é normal (EA-5); este check vermelho diz
+    # demanda inteira ensina que vermelho é normal (E5); este check vermelho diz
     # algo verdadeiro: "a demanda ainda não fechou". Sem `needs:` e sem `if:` —
     # fora de PR de demanda ele RODA e responde `NÃO JULGADO (<motivo>)` (R10 §2).
     # Direção pós-merge (stage `fecho` do pipeline.yaml) roda no job `verify`.

@@ -224,12 +224,27 @@ html = html.replace("</style>", "\n/* V32_CSS_BEGIN */\n" + uicss + "\n/* V32_CS
 
   /* ── C6 · o indecidível ───────────────────────────────────────────────── */
   { id: "D014-M8", file: F.instr, gate: "D014-IND1",
-    desc: "o indecidível é descartado em silêncio — a dúvida nomeada vira 'viva' (oráculo: o pin SINTÉTICO da E9)",
-    /* 2 alíneas, e só 2: C6(sint) — o veredito do caso (f) — e C6(cont-sint),
-       o pin de veredito+razão. As da árvore (nome/cons/cont-arvore) seguem
-       conservadas com lista vazia: é exatamente por isso que a E9 pinou o
-       SINTÉTICO agora — sem ele este mutante sobreviveria. */
-    reason: /2 alínea\(s\) reprovada\(s\):[\s\S]*· C6\(sint\): [\s\S]*esperado "indecidivel", obtido "viva"[\s\S]*· C6\(cont-sint\):/,
+    desc: "o indecidível é descartado em silêncio — a dúvida nomeada vira 'viva' (oráculos: o pin SINTÉTICO da E9/E12 e a contagem da árvore da E14 — errata E15)",
+    /* 3 alíneas, e só 3 (errata E15, 2026-09-04): C6(sint) — o veredito do
+       caso (f) —, C6(cont-sint) — o pin de veredito+razão — e C6(cont-arvore),
+       a contagem da árvore que a E14 fixou por execução (segundo prazo da E9).
+       FORMA ANTERIOR (2026-09-01 → E14): `2 alínea(s)`, com o comentário "as
+       da árvore seguem conservadas com lista vazia" — verdadeiro só enquanto
+       `arvore.contagem` era null (pendência bem-formada: cont-arvore nem
+       comparava). Com o inteiro pinado, a lista encolhida sob a mutação faz a
+       alínea disparar, e o par saiu SOBREVIVENTE por "motivo diferente" no
+       run 33860535587 (jobs verify e visual) — mutante OBSOLETO, não gate
+       frouxo: sint e cont-sint continuaram disparando. MEDIDO (varrerArvore()
+       com o instrumento mutado): o mutante engole os 17 indecidíveis de
+       COMPETIÇÃO (regra_morta.js:269-270) e NÃO os 4 emitidos antes do laço —
+       gramática do próprio seletor (:217, p52/P52-ER5 ×3) e contexto do
+       próprio @media (:220, p52/P52-EX12) —, logo "observada" é 4, não 0, e a
+       lista nunca foi vazia; C6(nome)/C6(cons) seguem verdes (84 = 80 + 4 + 0).
+       Os números (21, 4) vivem no registro e na matriz, não aqui (R10 §3): o
+       reason pina a ALÍNEA e a forma da mensagem, nunca o valor. O pin
+       sintético NÃO ficou redundante: trocar só a RAZÃO da dúvida morre em
+       1 alínea, C6(cont-sint) sozinha — estado que 21 = 21 não vê. */
+    reason: /3 alínea\(s\) reprovada\(s\):[\s\S]*· C6\(sint\): [\s\S]*esperado "indecidivel", obtido "viva"[\s\S]*· C6\(cont-sint\):[\s\S]*· C6\(cont-arvore\): contagem pinada = \d+ × observada = \d+/,
     find: String.raw`  if (duvida)
     return { veredito: "indecidivel", razao: duvida.razao, detalhe: duvida.detalhe };`,
     repl: String.raw`  if (false)   /* MUTANTE D014-M8: dúvida engolida */

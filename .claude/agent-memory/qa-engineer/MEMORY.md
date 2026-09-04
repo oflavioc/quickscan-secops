@@ -52,13 +52,15 @@
 - [Parser declarado tem cegueira medida](parser-declarado-tem-cegueira-medida.md) — jsdom perde `!important` com `var()`; censo de volume não vê, sentinela com gatilho vê
 - [Divergência de censo tem causa isolável](divergencia-de-censo-tem-causa-isolavel.md) — 158/1175 × 157/1170 era o `@page`; pine a regra de contagem junto do número
 - [Oráculo independente do instrumento](oraculo-independente-do-instrumento.md) — população vinda do julgado é círculo; e a alínea de conjunto declarado é a testemunha da fiação
-- [Mutante aditivo nasce morto](mutante-aditivo-nasce-morto.md) — insere regra para seletor que já existe abaixo na mesma folha; metade do mutante é inerte
+- [Mutante aditivo nasce morto](mutante-aditivo-nasce-morto.md) — insere regra para seletor que já existe abaixo na mesma folha; metade inerte. Remédio (EA-32): partir por asset, alterar a regra vencedora, `reason` com o alt — depois de conferir o ramo do emissor
 - [Número esperado diferente do medido](numero-esperado-diferente-do-medido.md) — isole a causa e procure a pré-classificação na spec; reporte e pare, nunca calibre
-- [Verde com exceção impressa](verde-com-excecao-impressa.md) — vermelho crônico é pior (EA-5); asserção idêntica + dono/id/prazo auto-executável, e a exceção tem de ser carga
+- [Verde com exceção impressa](verde-com-excecao-impressa.md) — vermelho crônico é pior (EA-5); asserção idêntica + dono/id/prazo auto-executável, e a exceção tem de ser carga; e como ela morre: cinco atos num commit, evento provado por registro antigo × matriz nova
 - [Mutante de árvore sob censo pinado](mutante-de-arvore-sob-censo-pinado.md) — adição mata pelo censo, não pelo veredito; troca censo-neutra é a forma isolante; harness novo entra na própria população
 - [Arbitragem de desvio declarado](arbitragem-de-desvio-declarado.md) — reproduza o kill à mão, exija o gate "sugerido" VERDE sob o mutante; errata quando a spec promete o que não há
 - [Grade implícita neutraliza mutante de coluna](grade-implicita-neutraliza-mutante-de-coluna.md) — tirar o track não tira a coluna (areas herdadas / grid-column:2); meça o observável do gate sob a mutação, nunca raciocine
 - [Reprodução não-canônica por shim](reproducao-nao-canonica-por-shim.md) — suíte que chama `chromium.launch()` sem `executablePath` roda no Chrome local via `node -r shim`; controle tem de bater o número do CI
 - [Exit do stage não é exit do laço](exit-do-stage-nao-e-exit-do-laco.md) — cláusula "exit 0" de IC-2 contradiz T6; mede-se o processo inteiro e a classe é spec-errada, nunca afrouxar IC-4
+- [Gate compõe o scale duas vezes](gate-compoe-o-scale-duas-vezes.md) — P52-ICON2 multiplica um rect já transformado por `scale`; previsto 52% deu 34,9%: número de gate visual só entra em registro depois de lido do gate
+- [Acervo migrado vive no histórico](acervo-migrado-vive-no-historico.md) — `git show <último-commit>^:<path>` lê evidence_p52 sem download; o aspecto do asset decide o ramo do `reason` antes de escrevê-lo
 - [Conforme por deferimento tem prazo](conforme-por-deferimento-tem-prazo.md) — o verde deferido expira quando o run chega; no retroativo, separe "então" de "hoje" e nomeie o item que mudou de prova
 - [Prova de carga da exceção](prova-de-carga-da-excecao.md) — três sondas sem Chromium da 014: tirar a exclusão derruba C2(zero) E C3(*); kill de M4 à mão (log trunca); KI-4 de volta em commit efêmero

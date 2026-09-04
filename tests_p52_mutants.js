@@ -394,15 +394,38 @@ const MUTANTS = [
     gate: "P52-DOM2", cmd: "node tests_p52_layout.js", only: "P52-DOM2",
     reason: /n\/d desenhou barra|zero geométrico proibido|n\/d marcado como plotado|barra desenhada apesar de n\/d/
   },
+  /* [EA-32 · fix-finding, 2026-09-04] P52-RA8 PARTIDO em duas metades, uma por
+     asset. A forma anterior (commit c1e3649) alterava a regra de MDR (:1350) E
+     INSERIA logo abaixo uma regra para SOCaaS — a folha já declara o mesmo
+     seletor em :1357, com a mesma especificidade e no mesmo @media, então a
+     inserida perdia por ORDEM: metade inerte, `desc` prometendo dois assets e
+     `reason` que casava a linha de qualquer asset sem dizer qual alínea morreu
+     (classe "mutante parcialmente inerte" — regra_morta.json, errata E7 da 014).
+     Regra que fica: cada metade ALTERA a regra VENCEDORA do seu asset — nunca
+     se insere regra que perde por ordem — e o `reason` nomeia o `alt` que
+     P52-ICON2 imprime (tests_p52_chromium.js:1171 e :1183 — `lg/<alt>: altura
+     aparente N% do tile` · `lg/<alt>: desvio de altura N% da mediana`).
+     Precedente das metades simétricas: D011-M12/M13; o sufixo de letra do id
+     novo segue D011-M3B/M5B. O princípio já estava escrito neste arquivo, em
+     P52-EX12 ("o asset mutado tem de ser um dos EFETIVAMENTE renderizados"):
+     isto é a variante por ordem do mesmo princípio. */
   {
     id: "P52-RA8",
-    desc: "reduzir SOCaaS e MDR abaixo do limite óptico",
+    desc: "reduzir FortiGuard MDR abaixo do limite óptico (metade MDR da partição do EA-32 — regra vencedora, ui_p52_workspace_v32.css:1350)",
     file: P52CSS,
     find: `  .icon-tile img[data-p52-icon="FortiGuard-MDR-Service"]    { --p52-icon-scale: 1.053; }`,
-    repl: `  .icon-tile img[data-p52-icon="FortiGuard-MDR-Service"]    { --p52-icon-scale: 0.70; }
-  .icon-tile img[data-p52-icon="SOCaaS"]                    { --p52-icon-scale: 0.70; }`,
+    repl: `  .icon-tile img[data-p52-icon="FortiGuard-MDR-Service"]    { --p52-icon-scale: 0.70; }`,
     gate: "P52-ICON2", cmd: "node tests_p52_chromium.js", only: "P52-ICON2",
-    reason: /altura aparente [\d.]+% do tile|desvio de altura [\d.]+%/
+    reason: /lg\/FortiGuard MDR: altura aparente [\d.]+% do tile|lg\/FortiGuard MDR: desvio de altura [\d.]+% da mediana/
+  },
+  {
+    id: "P52-RA8B",
+    desc: "reduzir FortiGuard SOCaaS abaixo do limite óptico (metade SOCaaS da partição do EA-32 — regra vencedora, ui_p52_workspace_v32.css:1357)",
+    file: P52CSS,
+    find: `  .icon-tile img[data-p52-icon="SOCaaS"]                    { --p52-icon-scale: 1.006; }`,
+    repl: `  .icon-tile img[data-p52-icon="SOCaaS"]                    { --p52-icon-scale: 0.70; }`,
+    gate: "P52-ICON2", cmd: "node tests_p52_chromium.js", only: "P52-ICON2",
+    reason: /lg\/FortiGuard SOCaaS: altura aparente [\d.]+% do tile|lg\/FortiGuard SOCaaS: desvio de altura [\d.]+% da mediana/
   },
   {
     id: "P52-RA9",

@@ -144,13 +144,19 @@ const VEREDITO_CANONICO = { a: "morta", b: "morta", c: "viva", d: "viva", e: "vi
 const VEREDITO_INDECIDIVEL = { f: "indecidivel" };
 const VOCABULARIO_VEREDITO = ["morta", "viva", "indecidivel"];
 
-/* Conjunto NOMINAL FECHADO das exclusões, literal da spec. Duas vêm de
+/* Conjunto NOMINAL FECHADO das exclusões, literal da spec. As duas vêm de
    §Justificativa ("imune por oráculo — o gate lê fonte, não renderização | 2 |
-   M8 (P50-COR1) · D009-M5 (D009-DOM1)"); a terceira foi ratificada pela errata
-   **E7** (`p52/P52-RA8`, motivo `achado-aberto`). Uma QUARTA exige mudança de
-   spec — é isto que dá dentes a C3, e é o que impede que `achado-aberto` vire
-   a gaveta onde todo caso incômodo é despejado. */
-const PARES_DECLARADOS = ["p50/M8", "d009/D009-M5", "p52/P52-RA8"];
+   M8 (P50-COR1) · D009-M5 (D009-DOM1)"). Houve uma terceira — `p52/P52-RA8`,
+   motivo `achado-aberto`, ratificada pela errata **E7** — que SAIU pela errata
+   **E14** (fix-finding do EA-32, 2026-09-04): o mutante foi partido em
+   `P52-RA8` (MDR) + `P52-RA8B` (SOCaaS), cada metade alterando a regra
+   VENCEDORA do seu asset, e a exceção morreu com a razão que a criou — o par
+   `p52/P52-RA8` passou a existir na matriz, que era o `evento_de_remocao` que
+   ela mesma declarava (sem esta linha mudar, C3(*) e C3(c) reprovariam: a
+   exclusão ficaria órfã pelo preflight). Uma TERCEIRA exige mudança de spec —
+   é isto que dá dentes a C3, e é o que impede que `achado-aberto` vire a
+   gaveta onde todo caso incômodo é despejado. */
+const PARES_DECLARADOS = ["p50/M8", "d009/D009-M5"];
 
 /* specs/PHASE_5_0_REV_B.md:1606 — âncora normativa de fase selada. A cláusula
    declara a ORDEM (ui_ux_v32.css antes de ui_p50_v32.css); nunca quem vence a
@@ -823,8 +829,12 @@ const IND_SADIO = {
   sintetico: { caso: "f", veredito: "indecidivel", razao: "gramatica-de-seletor-recusada" },
   arvore: { contagem: 1 }
 };
-/* pendência bem-formada: é o estado REAL do registro enquanto o achado
-   `014-P52-RA8` estiver aberto, e o controle verde tem de alcançá-lo. */
+/* pendência bem-formada: FOI o estado REAL do registro enquanto o EA-32
+   (`014-P52-RA8`) esteve aberto — 2026-09-01 → 2026-09-04, fechado pela errata
+   E14 com a contagem da árvore fixada por execução. Permanece como cenário
+   SINTÉTICO porque o julgador continua a aceitar a forma (é a válvula de C6
+   contra o vermelho crônico, EA-5) e o controle verde tem de continuar a
+   alcançá-la — julgador que só passa com inteiro não mede a válvula. */
 const IND_PEND = {
   sintetico: IND_SADIO.sintetico,
   arvore: { contagem: null, motivo: "achado-aberto", achado_id: "sint-A",

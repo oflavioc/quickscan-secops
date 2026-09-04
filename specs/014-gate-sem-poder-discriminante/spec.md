@@ -81,7 +81,7 @@ Namespace `D014-*`.
 | C3 | A auto-exclusão nominal tem dentes e **não é passe livre** | `D014-EXC1` · `tests_014_regra_morta.js` · (a) motivo do vocabulário fechado `oraculo-de-fonte` \| `fallback-declarado` \| **`achado-aberto`** (por **E7**); (b) curinga, campo vazio ou não-texto **não excluem**; (c) exclusão que nomeia mutante inexistente **reprova** (oráculo: preflight); (d) exclusão `oraculo-de-fonte` registra **qual propriedade** o oráculo afirma e **quais arquivos** ele lê; **(e) exclusão `achado-aberto` exige `achado` (id do backlog) E `remocao_prevista`** — sem os dois, não exclui | `D014-M5` aceitar curinga (shape do `IC-9.1`) · `D014-M6` deixar de conferir a existência do mutante nomeado — carrasco executável dos dois: `D014-DISC1`, por **E11** (julgador enfraquecido fica verde sobre registro são) |
 | C4 | A colocação que **decide** a composição da tela de pergunta ganha carrasco | `P52-LAY2` (**gate existente**, `tests_p52_chromium.js:231` — suíte **não editada**, só invocada) · mutação de `ui_p52_workspace_v32.css:86` — `#p50-shell` para a coluna 1, a mesma célula de `#app` (**E13**; a forma anterior, `:77` "para uma coluna", foi medida **SOBREVIVENTE** no job `visual`) · harness **`d014vis`** (`tests_014_mutants_visual.js`), separado por **E1** | `D014-M10` · `body[data-uxscreen="question"] .wrap > #p50-shell { grid-column: 2; … }` → `grid-column: 1` (**E13**); motivo esperado, **inalterado**: `/a pergunta não está à esquerda do mapa\|as colunas se sobrepõem\|colunas desalinhadas no topo/` |
 | C5 | A cobertura da varredura é **derivada do builder**, não digitada | `D014-COB1` · `tests_014_regra_morta.js` · a lista e a **ordem** das folhas injetadas saem de `build_v32_html.py`; folha injetada pelo builder e não lida pela varredura reprova; a ordem observada casa com a declarada em `specs/PHASE_5_0_REV_B.md:1606` | `D014-M7` acrescentar uma folha ao builder sem tocar a varredura (precedente: `D011-M18` muta `build_v32_html.py`) |
-| C6 | O que a varredura **não** decide é nomeado e contado — nunca engolido | `D014-IND1` · `tests_014_regra_morta.js` · declaração cuja competição não cai na relação decidível sai em lista **nomeada e contada**; SKIP silencioso é FAIL (R10 §2). **Duas contagens, dois prazos** (**E9**): a **sintética** é pinada **agora** — na forma **veredito+razão** do caso (f), por **E12** — e é o oráculo de `D014-M8`; a da **árvore real** entra no registro quando o achado da E7 fechar | `D014-M8` descartar silenciosamente o indecidível → a contagem **sintética** muda |
+| C6 | O que a varredura **não** decide é nomeado e contado — nunca engolido | `D014-IND1` · `tests_014_regra_morta.js` · declaração cuja competição não cai na relação decidível sai em lista **nomeada e contada**; SKIP silencioso é FAIL (R10 §2). **Duas contagens, dois prazos** (**E9**): a **sintética** é pinada **agora** — na forma **veredito+razão** do caso (f), por **E12** — e é o oráculo de `D014-M8`; a da **árvore real** entra no registro quando o achado da E7 fechar — **fechou pela E14** (fix-finding do `EA-32`, 2026-09-04): `indecidiveis.arvore.contagem = 21`, fixada **por execução** — e com ela `D014-M8` passou a morrer em **três** alíneas, `C6(cont-arvore)` inclusa (**E15**) | `D014-M8` descartar silenciosamente o indecidível → o pin **sintético** (veredito+razão, E12) **e** a contagem da **árvore** (E14) acusam — três alíneas (**E15**) |
 | C7 | A `KI-4` fecha **no mesmo PR** | **Sem gate novo** — o carrasco é **`IC-9.2`** (`check_mutation.py:895` · o objeto da exceção existe no harness) e **`IC-9.3`** (`:912` · não obsoleta, pelo registro). Corrigido por **E2** | — (criar gate aqui duplicaria o juiz) |
 
 ### Guarda de tautologia, alínea por alínea
@@ -632,8 +632,8 @@ motivo errado passaria em `C6(sint)` e em toda C1.
 (f) — `("indecidivel", "contexto-de-midia-nao-relacionado")` —, com estado de
 falha **exclusivo** (veredito certo, razão errada) exercido pela bateria. Segue
 sendo o oráculo de `D014-M8` (kill registrado com as duas alíneas: `C6(sint)` +
-`C6(cont-sint)`); a contagem da **árvore** mantém o segundo prazo da E9,
-inalterado. Quem "restaurar" uma contagem sintética por fidelidade à letra da E9
+`C6(cont-sint)` — **três desde a E14**, com `C6(cont-arvore)`; ver **E15**); a
+contagem da **árvore** mantém o segundo prazo da E9, inalterado. Quem "restaurar" uma contagem sintética por fidelidade à letra da E9
 estará criando a alínea vacuosa que a medição recusou.
 
 ---
@@ -763,6 +763,278 @@ verdadeira; aposentadoria de `M51-01` e remoção da `KI-4` permanecem.
 `tests_p52_chromium.js` (rota B) ou converter o par em dívida — o mesmo
 conjunto que a E7 e a R10 §1/§2 já vedavam.
 
+## Errata E14 — a exceção que morreu com a razão: `P52-RA8` partido por asset (fix-finding do `EA-32`)
+
+**Delegação registrada**: `qa-engineer`, fix-finding do `EA-32`
+(`.claude/BACKLOG.md`), **2026-09-04**, depois do merge do PR #36 (base
+`09f4342`). A autorização do reparo em si foi **relatada pelo orquestrador** como
+dada pelo usuário no chat em 2026-09-04 — alegação que este agente não tem como
+verificar (R2 §4) e que fica registrada como atribuída, não como constatada. O
+desenho técnico (as cinco condições abaixo) veio do orquestrador com o
+`tech-lead`, a partir da análise já registrada em
+`regra_morta.json → exclusoes[2].veredito_job_visual` (blob `09f4342`); a
+confirmação do `product-owner` é o passo seguinte. Nenhuma asserção de gate
+muda; `tests_p52_chromium.js` segue **invocado, nunca editado**; a folha do
+produto (`ui_p52_workspace_v32.css`) é **alvo** da mutação, não do reparo. O que
+muda é a **forma do mutante** (um vira dois), o **registro** que o perdoava, o
+literal de `PARES_DECLARADOS` no instrumento e as frases desta spec que davam a
+exceção como viva.
+
+**Proveniência da autorização desta errata, na fórmula exigida**: *DECIDIDO SOB
+DELEGAÇÃO DO PROPRIETÁRIO de 2026-08-29, não aprovado por ele pessoalmente.* O
+registro da delegação é
+`.claude/agent-memory/doc-writer/project_delegacao-proprietario-2026-08-29.md`,
+commitado; a delegação é **geral** ("tome as decisões por mim") e **não enumera
+"errata"** — a subsunção é do orquestrador, e fica escrita aqui para poder ser
+contestada. O mesmo registro manda **parar** diante de release, selagem,
+invariante, glossário ou spec de fase selada: nada disso é tocado aqui.
+
+---
+
+### E14 · A lista C3 volta a dois pares, e o segundo prazo da E9 fecha
+
+**Antes**: a E7 ratificou a **terceira** exclusão nominal — `p52/P52-RA8`,
+motivo `achado-aberto`, prazo por evento (*"um par `(p52*, P52-RA8)` passa a
+existir em `mutation-matrix.json → pares`"*) — e a E9 deixou a contagem da
+árvore real de C6 em `null` com pendência bem-formada, *"até o achado da E7
+fechar e a árvore parar de se mexer"*. O `desc` de `P52-RA8` prometia *"reduzir
+SOCaaS **e** MDR"*; o `reason`
+(`/altura aparente [\d.]+% do tile|desvio de altura [\d.]+%/`) casava a linha de
+**qualquer** asset e não dizia qual alínea morrera. O veredito do job `visual`
+(run 33834890154) já tinha fechado a única incógnita: `P52-ICON2` **mata** pela
+metade MDR; restava o reparo.
+
+**Fatos medidos em 2026-09-04**, branch `fix/ea32-particao-do-p52-ra8`, sem
+Chromium gerenciado (env-doctor: `[WARN] Chromium indisponível`):
+
+1. **Red — sem commit e sem tocar a árvore.** `varrerArvore()` com **só** as
+   duas exclusões de §Justificativa, sobre o harness ainda inteiro:
+   `mortas: 1` — `p52/P52-RA8 · .icon-tile img[data-p52-icon="SOCaaS"] ·
+   --p52-icon-scale · perde em todo o alcance para ui_p52_workspace_v32.css
+   (0,2,1) — relação idêntica`. A exceção era **carga** (amarra 4 da E7); a
+   varredura vê a metade inerte sozinha, e é esse o vermelho que o reparo tem
+   de apagar sem afrouxar nada.
+2. **Partição** (`tests_p52_mutants.js`): `P52-RA8` fica com a metade **MDR**
+   — `:1350`, `1.053 → 0.70`, a regra vencedora, como já era — e `P52-RA8B`
+   nasce com a metade **SOCaaS** **alterando `:1357`** (`1.006 → 0.70`), a
+   regra vencedora do asset; **nunca** se insere regra que perde por ordem
+   (condição 1). Cada `reason` nomeia o `alt` que `P52-ICON2` imprime
+   (`tests_p52_chromium.js:1171`/`:1183`):
+   `/lg\/FortiGuard MDR: altura aparente [\d.]+% do tile|lg\/FortiGuard MDR:
+   desvio de altura [\d.]+% da mediana/` e o simétrico para `FortiGuard SOCaaS`
+   (condição 2). Sonda contra a `gateLine` literal do harness: cada `reason`
+   casa **só** a linha do próprio asset, não casa `PASS`, e cada alternativa do
+   emissor basta sozinha; a `reason` antiga casava as duas linhas. O aspecto
+   do artwork SOCaaS (0.78, lido do blob histórico de `P52-ICON2-optics.json`,
+   commit `c46016e`) o põe no ramo "quadrado" do gate — um `reason` de altura
+   para um asset panorâmico sobreviveria por *"motivo diferente"*; por isso se
+   mediu antes de escrever. Ids: `P52-RA8` preservado na metade que **sempre**
+   foi a efetiva sob esse id — e que é o literal do `evento_de_remocao` —;
+   sufixo de letra para a irmã, no precedente `D011-M3B`/`M5B`; metades
+   simétricas, no precedente `D011-M12`/`M13`.
+3. **Preflight p52 (C1)**: `108/108` âncoras com `ocorrencias == 1`, exit 0
+   (era 107); 37 mutantes de CSS na população da varredura (era 36).
+4. **Green**: `varrerArvore()` com as duas exclusões sobre o harness partido:
+   `mortas: 0`; `P52-RA8` e `P52-RA8B` = 1 declaração, 1 **viva** cada;
+   população 49 avaliados + 2 excluídos; conservação
+   `84 = 63 vivas + 21 indecidíveis + 0 mortas`.
+5. **Contagem da árvore, por execução**: **21 indecidíveis em 15 mutantes**
+   (`gramatica-de-seletor-recusada` 16 · `contexto-de-midia-nao-relacionado` 5)
+   — idêntica à observação pré-partição de 2026-09-04 (`D014-M10`
+   reancorado): as metades são seletor de atributo decidível e não acrescentam
+   indecidível. Pinada em `regra_morta.json → indecidiveis.arvore.contagem`;
+   `C6(cont-arvore)` passa a comparar inteiro × observado (condição 4).
+6. **`node tests_014_regra_morta.js`**: 7 PASS · 0 FAIL **antes** (com a
+   exceção) e **depois** (sem a exceção, `PARES_DECLARADOS` com dois pares,
+   contagem fixada). O `D014-DISC1` continua a exercer a forma "pendência
+   bem-formada" como cenário **sintético** — a válvula de C6 não some do
+   julgador só porque o registro real deixou de precisar dela.
+7. **Reprodução NÃO-canônica** (Chrome estável 152.0.7977.77 local via
+   `CHROME_PATH`, Playwright 1.62.1, worktree efêmera destacada em `09f4342`
+   com o harness partido, removida em seguida): controle sem mutação
+   `PASS P52-ICON2` (igual ao CI); campanha filtrada
+   `P52_MUT_ONLY=P52-RA8,P52-RA8B`: **DETECTADO 2/2** —
+   `lg/FortiGuard MDR: altura aparente 34.9% do tile · desvio de altura 53.9% da
+   mediana` e `lg/FortiGuard SOCaaS: altura aparente 36.5% do tile · desvio de
+   altura 51.8% da mediana`; restauração byte a byte OK, acervo intacto. Os
+   números ficaram **abaixo** do que a análise raciocinava (≈52%): o gate
+   multiplica por `scale` um rect que **já inclui** o `transform`
+   (`tests_p52_chromium.js:1131-1132`) — observação repassada como candidata a
+   achado, fora desta errata e sem toque no gate. **Não substitui a contagem
+   canônica** (KI-3): os pares nascem `NÃO EXECUTADO` (condição 3).
+
+**O que passa a valer**:
+
+- **Lista C3**: as exclusões nominais são **duas** — `p50/M8` e
+  `d009/D009-M5`. `PARES_DECLARADOS` em `tests_014_regra_morta.js` volta a
+  dois; uma **terceira** exige mudança de spec. A entrada de `P52-RA8` sai de
+  `regra_morta.json → exclusoes` e fica registrada, com o desfecho, em
+  `_meta.exclusoes_encerradas` (R2 §5); o texto integral vive no blob
+  `09f4342:.claude/verify/regra_morta.json`.
+- **Segundo prazo da E9**: cumprido. `indecidiveis.arvore.contagem = 21`, por
+  execução; a pendência bem-formada (`motivo`/`achado_id`/`remocao_prevista`/
+  `evento_de_remocao`) sai do registro real, fica no `historico` da mesma chave
+  e permanece como cenário sintético de `D014-DISC1`.
+- **O mecanismo funcionou como escrito**: o par `p52/P52-RA8` entra em
+  `mutation-matrix.json → pares` neste mesmo commit — o evento que a exceção
+  declarava como a própria morte. Commit **atômico** por construção:
+  partição + remoção da exclusão + `PARES_DECLARADOS` + contagem + pares +
+  esta errata; separados, `C3(*)`/`C3(c)`/`C3(e)` ou `C2(zero)` ficariam
+  vermelhas entre um commit e outro (EA-5). O red deste reparo é, por isso,
+  **medido e registrado** (item 1, `_meta.exclusoes_encerradas.prova_de_carga_e_red`,
+  mensagem do commit), **não commitado como estado da árvore** — desvio
+  declarado de R3 §4, decidido pela atomicidade da condição 4; quem arbitra é
+  o orquestrador.
+- **Pares novos**: `P52-RA8 × P52-ICON2` e `P52-RA8B × P52-ICON2` nascem com
+  `resultado: "NÃO EXECUTADO"`, causa `ambiente sem chromium`, com a
+  reprodução não-canônica na nota e a prova anterior (run 33834890154, forma de
+  duas partes) preservada **sem** se transferir à forma nova. O fecho é o job
+  `visual` do CI; o `KILL` só se pina depois de lido do log.
+- **Item "Corrigir `P52-RA8`" de §Fora de escopo**: continuou fora **desta
+  demanda** — executado depois do merge do PR #36, como fix-finding; o item
+  ganhou a nota de desfecho. A E7 item 2 (*"NÃO corrigir nesta demanda"*) foi
+  honrada à letra.
+
+**Vedado**: afrouxar qualquer `reason`; reintroduzir regra inserida que perde
+por ordem; editar `tests_p52_chromium.js`; pinar `KILL` por reprodução
+não-canônica ou por raciocínio; recriar a exclusão sem mudança de spec;
+rebaixar `arvore.contagem` para caber num verde.
+
+## Errata E15 — o carrasco que ganhou um sócio: `D014-M8` reancorado em três alíneas (fecho do `EA-32`)
+
+**Delegação registrada**: `qa-engineer`, fecho do fix-finding do `EA-32`,
+**2026-09-04** — tarefa do orquestrador: *"causa antes de culpa (R2 §3), e nada
+de afrouxar"*, com as três classes nomeadas por ele (mutante obsoleto / gate
+frouxo / defeito do reparo) e a proibição de trocar `reason`, alínea ou `desc`
+fora de errata numerada. A autorização do fix-finding é a mesma da E14 —
+relatada pelo orquestrador como dada pelo usuário no chat em 2026-09-04,
+registrada como atribuída, não constatada (R2 §4). Nenhuma asserção de gate
+muda; nenhum arquivo protegido é tocado; `tests_p52_chromium.js` segue
+**invocado, nunca editado**. O que muda é o **`reason` e o comentário de um
+mutante do próprio `qa-engineer`** (`tests_014_mutants.js`), o par
+correspondente na matriz e as frases desta spec que davam o kill como de duas
+alíneas.
+
+**Proveniência da autorização, na fórmula exigida**: *DECIDIDO SOB DELEGAÇÃO DO
+PROPRIETÁRIO de 2026-08-29, não aprovado por ele pessoalmente.* Mesmo registro
+da E13/E14 (`.claude/agent-memory/doc-writer/project_delegacao-proprietario-2026-08-29.md`);
+a delegação é geral e não enumera "errata" — a subsunção é do orquestrador e
+fica escrita para poder ser contestada.
+
+---
+
+### E15 · `D014-M8`: o `reason` pinava um estado do registro que a E14 moveu
+
+**Antes**: o mutante `D014-M8` (`regra_morta.js:269-270`, `if (duvida)` →
+`if (false)`: a dúvida de competição engolida) tinha `reason` pinado em
+**`2 alínea(s) reprovada(s)`** — `C6(sint)` + `C6(cont-sint)` — e o comentário
+*"as da árvore (nome/cons/cont-arvore) seguem conservadas com lista vazia: é
+exatamente por isso que a E9 pinou o SINTÉTICO agora — sem ele este mutante
+sobreviveria"*. A E12 registrou o kill *"com as duas alíneas"*. A E14 fixou
+`indecidiveis.arvore.contagem = 21` (segundo prazo da E9) e **não reexecutou a
+campanha `d014`** — o item 6 dela mediu `tests_014_regra_morta.js` 7/7 antes e
+depois, nunca `tests_014_mutants.js`; a verificação pedida foi `run.sh --light`,
+que **pula o stage `mutation`**.
+
+**Fato medido** — run 33860535587 (`workflow_dispatch` sobre `59c8ad3`,
+2026-09-04), jobs `verify` (100983709521) **e** `visual` (100983709794), mesmo
+texto: `D014 MUTATION [tests_014_mutants.js]: 8/9 mutantes detectados pelo gate
+e motivo esperados · 1 sobrevivente(s): D014-M8 · SOBREVIVENTE D014-M8 · gate
+D014-IND1 · reprovou por motivo/alínea DIFERENTE do esperado · mutation: 2
+campanha(s) executada(s) · 1 problema(s)`. Reproduzido localmente (8/9, mesma
+linha). O log da campanha trunca o bloco em 220 chars; o bloco inteiro saiu por
+reprodução manual (mesmo `find`/`repl` do harness, suíte executada, restauração
+conferida por SHA-256), em quatro estados:
+
+1. **Árvore pós-reparo** (HEAD `69c8eb3`): `FAIL D014-IND1 — 3 alínea(s)
+   reprovada(s): C6(sint) … esperado "indecidivel", obtido "viva" ·
+   C6(cont-sint) … pinado ("indecidivel", "contexto-de-midia-nao-relacionado")
+   × observado ("viva", "nenhuma concorrente na relação decidível") ·
+   C6(cont-arvore): contagem pinada = 21 × observada = 4`. Suíte 6/7;
+   `D014-DISC1` verde.
+2. **Árvore pré-reparo** (worktree efêmera em `09f4342`, base do PR, removida em
+   seguida): o mesmo mutante dá **2 alíneas** e o `reason` antigo casa —
+   `C6(cont-arvore)` estava em pendência bem-formada (`contagem: null`, evento
+   não vencido) e **não comparava**.
+3. **Pós-reparo com `exclusoes[2]` readicionada** (do blob `09f4342`):
+   continuam **3 alíneas**, `21 × 4` — a saída da exclusão não é causa; a causa
+   é a contagem fixada.
+4. **Controle** sem mutante: `PASS D014-IND1`, 7/7, nas duas árvores.
+
+Pela API (`varrerArvore()` com o instrumento mutado): árvore limpa **21**
+indecidíveis (16 gramática · 5 mídia), 63 vivas, 84 declarações; sob `D014-M8`
+**4** indecidíveis (3 gramática · 1 mídia), 80 vivas, 84 declarações — **17
+engolidos**, `C6(cons)` conservada. Os 4 que sobrevivem ao mutante são emitidos
+**antes** do laço de competição, em sítios que o `find` não toca:
+`regra_morta.js:217` (gramática do **próprio** seletor — `p52/P52-ER5`,
+`.p52-emblem-node:not([data-dom="2"]) .p52-emblem-hit`,
+`fill`/`stroke`/`pointer-events`) e `:220` (contexto do **próprio** `@media` —
+`p52/P52-EX12`, `.v32-icon[data-icon="FortiSIEM"]`, `--p52-v32icon-scale`). A
+frase *"conservadas com lista vazia"* era, portanto, **falsa desde 2026-09-01**:
+a lista tinha 4, e o erro era invisível porque a alínea que o exporia estava em
+pendência.
+
+**Classificação, pelas três classes da tarefa**: (1) **mutante obsoleto** — é
+esta. O `reason` pinava a **contagem de alíneas**, que era asserção deliberada
+de isolamento (*"a contagem pinada é asserção, não sorte"*) e, por isso mesmo,
+codificava um estado do registro (`contagem: null`) que a E14 moveu
+**legitimamente** — o segundo prazo da E9 previa a mudança, e ninguém nomeou o
+dependente. (2) **gate frouxo** — **não**: `C6(sint)` e `C6(cont-sint)`
+continuaram disparando; a terceira alínea não "pega por acidente", pega **por
+desenho** — `arvore.contagem` é *"o pin contra deriva silenciosa do conjunto
+avaliado"*, e engolir 17 indecidíveis é deriva silenciosa do conjunto avaliado.
+(3) **defeito do reparo** — **não**: 21 é a contagem limpa por execução
+(controle 7/7 nas duas árvores); o pin faz exatamente o que a E14 escreveu.
+
+**O pin sintético não ficou redundante** (medido, não raciocinado): a variante
+que troca **só a razão** da dúvida (`duvida.razao` →
+`"gramatica-de-seletor-recusada"`) morre em **1 alínea, `C6(cont-sint)`
+sozinha** — `C6(sint)` passa (veredito certo), `C6(nome)` passa (razão do
+vocabulário), `C6(cont-arvore)` passa (`21 = 21`). É o estado de falha exclusivo
+da E12, exercido no instrumento real e não só na bateria de `D014-DISC1`. A
+contagem da árvore é **cega** a ele. Sem o pin sintético, `D014-M8` hoje
+morreria mesmo assim (pela árvore) — a frase da E9 *"sem ele este mutante
+sobreviveria"* passa a ser **histórica** (verdadeira entre E9 e E14), e a
+justificativa do pin sintético passa a ser a razão, não o M8.
+
+**O que passa a valer**:
+
+- `D014-M8` morre em **três alíneas**: `reason` =
+  `/3 alínea\(s\) reprovada\(s\):[\s\S]*· C6\(sint\): [\s\S]*esperado "indecidivel", obtido "viva"[\s\S]*· C6\(cont-sint\):[\s\S]*· C6\(cont-arvore\): contagem pinada = \d+ × observada = \d+/`.
+  O `reason` pina a **alínea e a forma da mensagem**, nunca o `21` nem o `4` —
+  as contagens vivem em `regra_morta.json` (R10 §3); pinar o `4` no harness
+  faria o par sobreviver por "motivo diferente" à primeira mudança legítima da
+  árvore, que é exatamente a doença desta errata. `find`/`repl` inalterados;
+  `desc` ganha o segundo oráculo no parêntese. Validado antes de escrito: o
+  `reason` novo casa o bloco pós-reparo e **não** casa o pré-reparo, o controle
+  nem a variante.
+- **Campanha `d014` reexecutada**: `9/9 mutantes detectados pelo gate e motivo
+  esperados`, restauração byte a byte OK, `D014-M8` com o bloco de 3 alíneas;
+  `tests_014_regra_morta.js` 7/7; preflight 9/9 âncoras; stage `tdd` verde.
+  Fecho canônico: job `verify` do CI no próximo push (a `d014` exige só
+  `node`+`python` e roda igual nos dois jobs).
+- **Matriz**: par `D014-M8 × D014-IND1` reancorado (três alíneas, KILL de
+  2026-09-04, o não-KILL do run 33860535587 preservado em `prova_anterior`, R2
+  §5); pares `P52-RA8 × P52-ICON2` e `P52-RA8B × P52-ICON2` saem de
+  `NÃO EXECUTADO` para **KILL** com o job `visual` do mesmo run (`108/108`,
+  `não-KILL: nenhum`, IC-4 108 âncoras) — condição 3 do reparo cumprida, e o
+  `EA-32` fecha no `BACKLOG.md`.
+- A linha C6 da matriz desta spec e a E12 ganham o ponteiro para cá; a E9 e a
+  E12 permanecem como estão (trilha), com a frase *"sem ele este mutante
+  sobreviveria"* datada.
+- **Lição para o processo** (não é regra nova): mover o registro que um
+  `reason` pina exige **reexecutar a campanha que o lê** no mesmo commit;
+  `run.sh --light` pula `mutation` e não serve de verificação para mudança em
+  `regra_morta.json`, `mutation-matrix.json` ou em qualquer
+  `tests_*_mutants.js`. A lacuna residual declarada na E12 (*"editar
+  `regra_morta.json` não re-dispara `d014`"*) se materializou aqui: foi o
+  registro que mudou, e o trigger por path não viu.
+
+**Vedado**: reduzir o `reason` a duas alíneas para "casar como antes"; pinar
+`21` ou `4` no harness; rebaixar `arvore.contagem`; reintroduzir a pendência
+bem-formada no registro real para devolver o par ao estado antigo; converter o
+par em dívida. Mesmo conjunto da E7/E14 e da R10 §1/§2/§3.
+
 ## Fora de escopo
 
 Herdado do refinamento, mais o que esta spec exclui:
@@ -784,7 +1056,11 @@ Herdado do refinamento, mais o que esta spec exclui:
 - **Corrigir `P52-RA8`** (E7). O achado é registrado, o mutante é excluído por
   `achado-aberto` com prazo, e o remédio — mover a inserção, alterar a regra de
   `:1357`, ou **partir o mutante em dois** — é do `qa-engineer` com o
-  `tech-lead`, depois do veredito de `P52-ICON2` no job `visual`.
+  `tech-lead`, depois do veredito de `P52-ICON2` no job `visual`. **Desfecho
+  (E14, 2026-09-04)**: continuou fora **desta demanda** — executado depois do
+  merge do PR #36, como fix-finding do `EA-32`, pela terceira via (partir em
+  dois, cada metade na regra vencedora do seu asset); a exclusão saiu no mesmo
+  commit.
 - **Acrescentar dependência a `package.json` / `package-lock.json`** (E4).
   Conferido na spec selada: `:1607` autoriza **somente** os scripts nominais e a
   devDependency `@axe-core/playwright@4.13.0`, com *"nenhuma dependência de

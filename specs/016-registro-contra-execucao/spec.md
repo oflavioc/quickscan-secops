@@ -127,7 +127,9 @@ real de `D016-PROT1`**.
 ### Superfície 1 — stage `fecho` (`check_fecho.py`, direção pós-merge)
 
 **Entrada**: os planning-states de `.claude/project-memory/planning-state/*.json`;
-`git log --format=%H%x00%cI%x00%s --merges --first-parent origin/develop`;
+`git log --first-parent --format=%H%x00%P%x00%cI%x00%s origin/develop` — a
+cadeia first-parent **inteira**, sem `--merges`; o piso é localizado nela (pode
+ser commit não-merge) e **sujeito é só quem tem ≥ 2 pais** (**E3**);
 `git merge-base --is-ancestor <red.commit> origin/develop` para cada estado
 `!= done` que o oráculo de mensagem não resolveu e que tem `red.commit`;
 `fecho.json` (piso, exclusões, sonda); existência de `spec_dir/relatorio-final.md`
@@ -669,16 +671,20 @@ nomeado local / FAIL no CI, precedente EB-5). **E1** registra a decisão contrá
 sob a delegação vigente): não muda critério, não renumera id, e só torna
 executável uma prova que a spec já prometia — não exige ratificação. Nenhuma
 asserção enfraquece; nenhuma boundary se amplia; nenhum veredito de gate alheio
-muda. As células amendadas levam a marca `(E1)`/`(E2)`; a redação original de
-cada uma está preservada abaixo (R2 §5).
+muda. **E3** (wave 5) corrige a §Superfície 1 "Entrada", que ainda prescrevia
+`--merges` — classe **spec-errada** do `spec-validate` (a errata ET2 do
+`tasks.md` já registrava a divergência e a devolvia para cá por DEPENDÊNCIAS);
+não muda critério, id, contagem nem o conjunto de sujeitos julgados. As células
+amendadas levam a marca `(E1)`/`(E2)`/`(E3)`; a redação original de cada uma
+está preservada abaixo (R2 §5).
 
 | Campo | Registro |
 |---|---|
-| **Quem decidiu** | E1: o usuário, no chat. E2: tech-lead, sob delegação, por leitura e execução (`git log --first-parent`) |
-| **Quando** | 2026-09-04 |
-| **Onde** | Portão da Fase 1 (E1); Fase 2, ao escrever o `plan.md` (E2) |
-| **Alcance** | E1: T8(b); P2 (estendida pelo próprio usuário); T6; C5 (lugar do gate); C6 (três contextos; sonda 8 → 9); §Superfície 2; amostras de §Superfície 3; redações de `SKILL.md`/`sdd.md` em §Superfície 5; §Nascimento (linhas `D016-PR1`/`D016-PROT1`); bordas novas; §NÃO mede 12; §Contratos `branch_protection.json`; tabela de arquivos; cross-check R4/R14. E2: §Guarda de tautologia C1(a) e §Nascimento linha `D016-FEC1` |
-| **O que NÃO é reaberto** | P1, P3–P9 do portão da Fase 0; T1–T5, T7, T9, T10; T8(a) (stage `fecho` no `pipeline.yaml`) e T8(c) (`D016-PROT1` no `compliance-audit`); C1–C4, C7–C10; as asserções de `D016-PR1` (só o **lugar** muda); todos os ids `D016-*`, `F*`, `P*`; o piso; a política EB-5. `EA-5` é citado como razão, não reaberto como achado |
+| **Quem decidiu** | E1: o usuário, no chat. E2: tech-lead, sob delegação, por leitura e execução (`git log --first-parent`). E3: `qa-engineer` — **DECIDIDO SOB DELEGAÇÃO DO PROPRIETÁRIO de 2026-08-29, não aprovado por ele pessoalmente**; a delegação é **geral** (*"tome as decisões por mim"*, registro em `.claude/agent-memory/doc-writer/project_delegacao-proprietario-2026-08-29.md`) e **não enumera "errata"** — a subsunção é do orquestrador; registrado assim para poder ser contestado |
+| **Quando** | 2026-09-04 (E1, E2 e E3) |
+| **Onde** | Portão da Fase 1 (E1); Fase 2, ao escrever o `plan.md` (E2); wave 5, ao escrever o harness `d016` e a prova de carga M19 (E3) |
+| **Alcance** | E1: T8(b); P2 (estendida pelo próprio usuário); T6; C5 (lugar do gate); C6 (três contextos; sonda 8 → 9); §Superfície 2; amostras de §Superfície 3; redações de `SKILL.md`/`sdd.md` em §Superfície 5; §Nascimento (linhas `D016-PR1`/`D016-PROT1`); bordas novas; §NÃO mede 12; §Contratos `branch_protection.json`; tabela de arquivos; cross-check R4/R14. E2: §Guarda de tautologia C1(a) e §Nascimento linha `D016-FEC1`. E3: §Superfície 1, "Entrada" — só o comando de leitura dos merges |
+| **O que NÃO é reaberto** | P1, P3–P9 do portão da Fase 0; T1–T5, T7, T9, T10; T8(a) (stage `fecho` no `pipeline.yaml`) e T8(c) (`D016-PROT1` no `compliance-audit`); C1–C4, C7–C10; as asserções de `D016-PR1` (só o **lugar** muda); todos os ids `D016-*`, `F*`, `P*`; o piso; a política EB-5. `EA-5` é citado como razão, não reaberto como achado. E3 não reabre T1/T2 nem o julgamento dos merges: o conjunto de sujeitos é **idêntico** nas duas formas (39 merges na árvore de hoje, medido) |
 
 ### E1 · T8(b) — o check pré-merge vive em job próprio `fecho`, e a `develop` passa a exigir três checks
 
@@ -700,3 +706,14 @@ cada uma está preservada abaixo (R2 §5).
 | **O que passa a valer** | A cópia efêmera recua **também** `fecho.json → piso` para `6dad53d` (merge da Onda 4, PR #15, posição 45 — o "piso sugerido pelos dados" da §Medição 3: posterior a toda Onda, anterior a toda demanda real) **e** põe 015 em `validate`: `D016-FEC1` acusa **015** por `oráculo: mensagem #34` e **nada mais** (as outras nove estão `done`); restaurado o piso, o mesmo estado responde `ANTERIOR AO PISO`. Registrado em `fecho.json → _meta.prova_de_carga.fec1`. Declarado: com o piso vigente e 0 merges após ele, C1(a) é **verde por vácuo na árvore** hoje — como C4 — e a não-vacuidade vem da sonda (F1, F2, F19) e desta prova |
 | **Onde o gate já afirma isso** | Lugar nenhum ainda; o `plan.md` propõe automatizá-la no harness `d016` como mutante de árvore (dois arquivos mutados com restauração por SHA) |
 | **Classe** | Precisão de procedimento; **fortalece**; sem mudança de critério, id ou contagem de gate |
+
+### E3 · A leitura dos merges percorre a cadeia first-parent inteira — `--merges` tornaria a prova de carga M19 inexecutável
+
+| Campo | Registro |
+|---|---|
+| **Proveniência** | **DECIDIDO SOB DELEGAÇÃO DO PROPRIETÁRIO de 2026-08-29, não aprovado por ele pessoalmente.** Decisão do `qa-engineer` na wave 5 (2026-09-04), autorizada pelo orquestrador sob a delegação **geral** do proprietário (*"tome as decisões por mim"*; o registro não enumera "errata" — a subsunção é do orquestrador). Escrito desta forma para que a decisão possa ser contestada como delegada, nunca lida como pessoal |
+| **O que estava escrito** | §Superfície 1, "Entrada": *"`git log --format=%H%x00%cI%x00%s --merges --first-parent origin/develop`"* — o leitor enumeraria **só** os commits de merge e localizaria o piso nessa lista |
+| **Fato medido** (git, 2026-09-04, `refs/remotes/origin/develop` = `921977c`) | O piso zero da prova de carga de C2(a) — `e5ccd429d0ed271ab3dd9ea948181e697f891af3`, a raiz do repositório — é commit **não-merge**, posição 67 de 67 na cadeia first-parent (39 merges). `git log --first-parent --merges … \| grep -c ^e5ccd429` ⇒ **0**; sem `--merges` ⇒ **1**. Com `--merges` o leitor devolveria `piso_na_cadeia: false`, o julgador abortaria em `piso-invalido` (forma de F21, C2 d) e a prova de carga de C2(a) — 6 merges / 5 branches de Onda sem planning-state, mutante de árvore `D016-M19` — seria **inexecutável**: um FAIL de forma no lugar da acusação que ela existe para produzir. O mesmo vale para qualquer piso legítimo que seja commit não-merge (falso positivo permanente) |
+| **O que passa a valer** | `ler_merges(piso)` percorre `git log --first-parent --format=%H%x00%P%x00%cI%x00%s origin/develop` — a cadeia **inteira**, com `%P` —, localiza o piso nela e anota cada merge (**≥ 2 pais**) com a posição `anterior` / `piso` / `posterior`. **Sujeito continua sendo só o merge**: o julgamento é idêntico nas duas formas (`merges_ate_piso` = 39 na árvore de hoje, igual ao censo por `--merges`); muda apenas onde o piso pode estar. É a letra de ET2 (`tasks.md` §Errata), do docstring do gate (§CONTRATO, leitores) e de `fecho.json → piso.descricao`, agora também da spec |
+| **Onde o gate já afirma isso** | `fecho.py:ler_merges` (T030, `d80c7ed`); sonda F20/F21 (piso fora de forma / fora da cadeia ⇒ `piso-invalido`); `D016-M19` e `D016-M25` no harness `d016` (wave 5) — o piso zero acusa 6 merges / 5 branches **só** porque a cadeia é lida inteira |
+| **Classe** | **spec-errada** (skill `spec-validate` §3): a spec prescrevia um comando que o próprio critério dela (C2 d + prova de carga) torna incorreto; a implementação estava certa antes da spec. Nenhuma asserção enfraquece; nenhum id, contagem ou critério muda; nenhuma boundary se amplia |

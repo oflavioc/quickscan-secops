@@ -2264,6 +2264,77 @@ quando o proprietário decidir se o custo de um job a mais (chamada de API
 isolada) vale a separação de sinal. Este registro descreve o defeito e não
 propõe a correção.
 
+### Medição do fix-finding (`build-engineer`, 2026-09-05) — recusa medida
+
+Tarefa recebida como `fix-finding` apesar do encaminhamento acima (decisão do
+orquestrador de restringir o escopo às duas formas baratas já nomeadas pelo
+`qa-engineer`). Medido antes de tocar:
+
+- **Reconfirmação**: hoje o `D016-PROT1` responde `PASS · PROTEGIDA` — medido
+  duas vezes, `bash .claude/verify/compliance-audit.sh` (17 PASS · 0 FAIL) e
+  `--rule=branch-protection` isolado (`develop PROTEGIDA · ruleset 21381133 +
+  classic enabled=false · checks obrigatórios: fecho, verify, visual`). O
+  sintoma (vermelho transiente) não se reproduz agora — o achado continua
+  válido como descrito (é sobre ONDE o sinal mora), a medição é só sobre as
+  duas correções propostas.
+- **Custo em tempo, medido no run `33978353035` (push, `develop`,
+  2026-09-05T16:35)**: job `fecho` completo = **5 s** (16:35:41→16:35:46); só
+  o passo `compliance-audit.sh` dentro do job `verify` = **~1 s**
+  (16:41:31,17→16:41:32,21, saída `compliance: 17 PASS · 0 FAIL · 0 WARN`);
+  job `verify` inteiro = 352 s; job `visual` = 527 s. Rodar o audit inteiro
+  dentro do `fecho` custaria ~1 s a mais nos ~5 s dele — **tempo não é o
+  fator decisivo em nenhuma das duas formas**.
+- **O fator decisivo é o que a P16.a/E1 já resolveu, e as duas formas
+  desfazem de um jeito ou de outro**:
+  1. *Mover só a seção `branch-protection` para um passo novo do job
+     `fecho`*: o job `fecho` é hoje **sem rede por construção** — não por
+     acaso, mas porque `check_fecho.py` roda para TODA PR, inclusive "fora da
+     população", e sua doutrina (docstring, linhas 25-33) é nunca ficar mudo
+     nem depender de algo que possa faltar. Introduzir uma chamada à API do
+     GitHub nesse job faz o veredito `NÃO DETERMINÁVEL` do classificador de
+     branch-protection (rede indisponível, permissão, resposta inesperada)
+     virar `FAIL` sob `GITHUB_ACTIONS` (política T7, `check_branch_protection.py`)
+     **dentro do check que hoje é o mais confiável dos três** — um `fecho`
+     vermelho por "a API do GitHub não respondeu" não é "a demanda ainda não
+     fechou": é o MESMO mecanismo que a E1 e este achado nomeiam, deslocado
+     para o job errado, com o agravante de ser o job que a spec 016 desenhou
+     para nunca falhar por causa externa.
+  2. *Rodar o `compliance-audit.sh` inteiro dentro do `fecho`*: das 9 seções
+     do script, 8 (`hooks`, `deny`, `invariantes`, `suites`, `paths`,
+     `known-issues`, `waivers`, `backlog`) não têm relação alguma com "esta
+     demanda fechou" — um hook desregistrado ou uma exceção nominal sem dono
+     passaria a reprovar o `fecho` de QUALQUER PR, inclusive uma que não
+     tocou nada disso. É a mesma conflação que este achado descreve,
+     espelhada: em vez de "`verify` vermelho por razão que não é 'o código
+     está são'", vira "`fecho` vermelho por razão que não é 'a demanda
+     fechou'".
+  3. *Job dedicado novo* (considerado, não pedido pelo achado): só teria
+     efeito de bloqueio real se entrasse em `checks_obrigatorios` do
+     branch-protection do GitHub — ou seja, mudar a própria configuração
+     viva do repositório que este gate audita, fora da alçada de um
+     `fix-finding` (é ação de governança sobre o remoto, não mudança de
+     código) e fora do domínio do `build-engineer` sem pedido explícito do
+     proprietário. Sem isso, um job novo só audita — não impede merge — o
+     que **enfraquece** o gate hoje em vigor (a seção vive num job
+     obrigatório).
+- **Conclusão**: as duas formas nomeadas pelo `qa-engineer` como "baratas"
+  custam pouco em tempo e caro no mesmo eixo que o achado protege — trocam o
+  vermelho-alheio de um job pelo vermelho-alheio de outro, ou pior, colocam
+  a dependência de rede dentro do único job desenhado para nunca precisar
+  dela. **Recusa medida**: nenhuma mudança de código nesta passagem;
+  `.github/workflows/verify.yml` e `.claude/verify/compliance-audit.sh`
+  permanecem como estavam. Precedentes do mesmo tipo de entrega: recusa do
+  `data-engineer` em normalizar a chave irmã `validacao`/`implementacao` do
+  planning-state dentro do mesmo commit (ratificada pelo `product-owner`,
+  ver EA-33 acima) e recusa do `qa-engineer` em disparar o
+  `evento_de_remocao` auto-executável sem as cinco condições que ele mesmo
+  pôs (ver EA-32, "Encaminhamento recomendado"). Acompanhado de
+  `bash .claude/verify/compliance-audit.sh` (17 PASS · 0 FAIL) e
+  `bash .claude/verify/run.sh --light` na mesma medição, como não-regressão.
+  Acha aberto o encaminhamento original: só o proprietário decide se aceita
+  o custo transiente como está ou pede o job dedicado com a mudança de
+  `checks_obrigatorios` no GitHub.
+
 ## EA-37 — a regra "commit por caminho nominal com agente em voo" vive só numa trilha de demanda: nem `orchestration.md` nem a skill a carregam
 
 **Status**: `aberto`

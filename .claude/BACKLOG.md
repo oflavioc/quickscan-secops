@@ -2369,9 +2369,30 @@ simples de `develop` **não** repara (medido). Quem prova o fecho é um run
 `pull_request` com `visual` verde. Ver `EA-39` para a metade que este remédio
 não toca.
 
+### Nota do desfecho do EA-39 (2026-09-05) — permanece `aberto`
+
+O fix-finding do `EA-39` produziu a primeira execução em `pull_request` com
+`visual` **verde** desde o remédio deste achado (`8ec429a`): run
+`33946727326` (PR #41, `fix/ea37-guarda-do-add-A`, 2026-09-05) — `verify`:
+`[PASS] fecho`; `fecho` sob `--pr`: `NÃO JULGADO · fora-da-populacao` (por
+desenho, `fetch-depth: 1` do job); `visual`: **success**. É a prova que
+faltava para o remédio em si (`captureGitInfo` desligado).
+
+**O que isso não fecha**: no mesmo run, `mutation: 0 campanha(s)` — o diff do
+PR #41 (`EA-37`) não toca path que dispare a campanha `d016`, logo o
+`C0-fecho` (sonda + gate nu, sob as condições reais de um job `visual` de
+`pull_request`) **não foi exercido** ali. A prova de que o remédio também
+sustenta `d016` sob PR só existe quando um PR que **muda**
+`fecho.py`/`check_fecho.py`/`fecho.json`/`tests_016_mutants.js` rodar
+`visual` verde com a campanha de fato executando — e o primeiro PR nessas
+condições é o **deste** fix-finding, `fix/ea39-leitor-mudo → develop` (que
+toca exatamente esses arquivos). Ler, no primeiro run do PR desta branch, os
+jobs `verify` e `visual`, a linha `controle: C0-fecho · OK · … 39/39`; só
+essa leitura decide se o achado fecha.
+
 ## EA-39 — o leitor de histórico lê um repositório raso como cadeia completa e não diz: "0 merges" não distingue "não há" de "não consegui caminhar" (família do EA-5)
 
-**Status**: `aberto`
+**Status**: `resolvido`
 
 **Aberto em**: 2026-09-05. Achado do `qa-engineer`, nomeado pelo orquestrador
 como o que importa mais que a causa do A1: sem a guarda de censo (J1 do
@@ -2568,3 +2589,113 @@ no chat, leva a fórmula de delegação como E3/E016-5.** Pontos:
 comparação de pais, ou ambas) e o nome do campo em `origin_develop` —
 `tech-lead`; implementação — `core-engineer`; red, F25 e mutantes —
 `qa-engineer`. Independente do `EA-38`, como o registro acima já diz.
+
+### Resolução — o que foi feito
+
+`fix-finding` do `EA-39` (tipagem `fix`, T090–T099,
+`specs/016-registro-contra-execucao/ea39-desenho.md` §8), na branch
+`fix/ea39-leitor-mudo` (de `develop`, `ec74d6f`), um commit por wave, com
+repin em commit separado após cada um de conteúdo (R8 §1).
+
+**Decisão de forma** (`product-owner`, `e2d3892`) — registrada acima,
+"Decisão de forma": código novo `historico-raso`, veredito `NÃO
+DETERMINÁVEL`, vocabulário fechado T10 intacto (os 17 códigos vivem em
+`fecho.json → _meta.contrato_da_sonda.codigos` e em `check_fecho.py`
+§CONTRATO, nunca na spec). O argumento decisivo foi de **remédio**:
+`piso-invalido` já cobre dois estados que se consertam corrigindo o registro
+(`fecho.json` ou a branch julgada); o terceiro tem outro dono — o clone é
+que está raso — e outro remédio (`git fetch --unshallow origin`); o remédio
+óbvio, `git fetch origin develop`, foi **medido ineficaz**
+(`prova-de-carga.md` §11.3 "reparo 1: persiste", repetido em §12.2 cenário
+E.1, "fetch de novo não conserta").
+
+**Desenho** (`tech-lead`, `fac8bfd`, `ea39-desenho.md`): detecção por
+**conjunção** — `git rev-parse --is-shallow-repository` como portão barato,
+e só sob `true` a comparação `%P` (pais caminhados) × `git cat-file -p`
+(pais do objeto) no fim da cadeia. Nenhuma metade sozinha basta, e as duas
+falhas estão medidas em `prova-de-carga.md` §12: o flag sozinho acusaria
+falso um clone **completo** que fez `fetch --depth=1` de um commit alheio
+(cenário **C** — `39 (ok)` · `0 problema(s)` · `--json` byte-idêntico ao
+baseline do mesmo código, em §12.1 e de novo em §12.2); a comparação sozinha
+confunde graft/replace e custaria processo em toda execução.
+
+**Implementação** (`core-engineer`, `a8bdfe4`, T094) em `fecho.py`:
+`C_HISTORICO_RASO` em `CODIGOS`, o ramo em `_impedimento` na posição de
+precedência (forma → `origin/develop` ausente → **raso** → piso fora da
+cadeia) e a detecção em `ler_merges`, populando `cadeia_integra` /
+`fim_da_cadeia` / `posicao_do_piso` **antes** da linha que a âncora do
+`D016-M33` corta (`tests_016_mutants.js:472`) — âncora conferida
+byte-idêntica e única por preflight (`node tests_016_mutants.js --preflight`)
+antes e depois.
+
+**Red commitado** (`c535431`, T091) falhando por dois caminhos
+independentes: `check_fecho.py --sonda` (guarda `CODIGOS … a menos:
+['historico-raso']`, `✗ F25` obtido `EM VOO`, `✗ F26` obtido
+`piso-invalido`, exit 1) e o gate nu (*"árvore não julgada: o julgador
+reprovou na própria sonda"*, exit 1).
+
+**Campanha e mutantes** (`qa-engineer`, `5e5b151`, T096): harness `d016` 33
+→ 35 pares, com `D016-M34` (julgador ignora `cadeia_integra`) e `D016-M35`
+(precedência trocada — F25 não vê M35, por isso F26 existe). Campanha
+integral **35/35 DETECTADO · 3 controles OK · 24 s**, com `D016-M33`
+mantendo o kill inalterado (censo `0 × 39 · 0 problema(s)`).
+
+**Errata `E016-8`**, aditiva (`82f22b9`), com o texto do global `[FAIL]`
+**extraído** da implementação — nunca redigido antes do green — e **medido**
+nas duas variantes do detalhe: piso **dentro** do trecho lido ("na posição
+N") e piso **fora** do trecho lido, ambas em `prova-de-carga.md` §12.2.
+
+**O achado que a bateria produziu, mais forte que o achado original.** O
+caso **G** (`--depth=10`, raso **abaixo** do piso — cadeia lida com 10
+commits, `.git/shallow` com 7 linhas pela fronteira do BFS) não existia em
+fixture nenhuma (`F25` termina a cadeia **no** piso; `F26` tem o piso **fora**
+do trecho). Medido em clone efêmero (`prova-de-carga.md` §12.2, linha "G"):
+
+- **Pré-fix**: a guarda de censo pegava `7 ≠ 39` — mas com **0 problema(s)**
+  de julgamento e **sete** das dez demandas `done` mescladas saindo `EM VOO`
+  (afirmação falsa sobre a árvore). O número já estava acusado e os
+  vereditos já saíam errados mesmo assim.
+- **Pós-fix**: o leitor nomeia (`cadeia_integra: false`, `fim_da_cadeia
+  fdf5779608dc…`, `posicao_do_piso 2`) ⇒ global `historico-raso` na posição
+  2, `em_voo 0`, e a guarda **cede a vez** (`nao_aplicado`, com o `lido 7`
+  ainda visível no `--json`) — **um** FAIL, a causa certa.
+
+Isto é o argumento mais forte do fix: mostra que a guarda de censo sozinha
+**não bastava** — ela dizia que algo estava errado, nunca o quê, e sete
+vereditos de demanda passavam errados por baixo da mesma contagem que a
+guarda já sinalizava como divergente.
+
+**O que fica registrado, e não se resolve por si só:**
+
+- **Dívida declarada com causa, não par vazio**: mutante de árvore para a
+  metade de I/O do leitor foi **recusado com razão medida**
+  (`prova-de-carga.md` §12, cabeçalho): `.git/shallow` é invisível às três
+  guardas de restauração do harness (bytes, SHA-256, `git status
+  --porcelain` escopado), `git fetch --depth=1` numa worktree muta o `.git`
+  **compartilhado por nove worktrees** desta máquina, e `--unshallow` exige
+  o remoto e falha em repositório completo. O carrasco é a **bateria
+  adversarial** de `prova-de-carga.md` §12 (clones efêmeros em scratchpad,
+  nada escrito na árvore), reexecutada a cada mudança de
+  `fecho.py:ler_merges` — registrada em `mutation-matrix.json →
+  dividas_declaradas`, "leitor sob clone raso".
+- **A fixture `F26` é load-bearing**: a bateria negativa do julgador do
+  harness provou que julgar `D016-M35` só por `F25` o deixa **sobrevivente**
+  — `F25` (cadeia truncada **no** piso) não distingue a ordem certa da
+  precedência trocada; só `F26` (truncada **acima** do piso) o mata.
+- **Proveniência, para poder ser contestada**: a errata `E016-8` leva a
+  mesma fórmula de delegação do `E016-5`/`E3` — decidida **sob a delegação
+  geral do proprietário de 2026-08-29**
+  (`.claude/agent-memory/doc-writer/project_delegacao-proprietario-2026-08-29.md`),
+  **não aprovada por ele pessoalmente**. O `product-owner` registrou
+  explicitamente que a **ratificação nominal do usuário no chat seria a
+  autorização mais forte e não foi pedida** nesta rodada (`spec.md:884`) —
+  delegação não se promove sozinha a ratificação.
+
+**Evidência**: pipeline do worktree `16 PASS · 0 FAIL` (citado pelo
+orquestrador na delegação deste fechamento, não medido de novo por este
+agente); campanha `d016` **35/35 DETECTADO · 3 controles OK**; red commitado
+em `c535431`; bateria de I/O do leitor em `prova-de-carga.md` §12.1 (pré-fix)
+e §12.2 (pós-fix); commits de conteúdo `e2d3892`, `fac8bfd`, `82f22b9`,
+`c535431`, `81c0326`, `a8bdfe4`, `5e5b151`, repinados em `31eb1a4`,
+`1c8f601`, `859ecf5`, `2f0245c` (R8 §1). `gen_pins.py` **não roda neste
+passo** — é do `build-engineer`, no PR desta demanda.

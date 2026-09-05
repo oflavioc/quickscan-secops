@@ -2780,7 +2780,7 @@ e §12.2 (pós-fix); commits de conteúdo `e2d3892`, `fac8bfd`, `82f22b9`,
 passo** — é do `build-engineer`, no PR desta demanda.
 ## EA-40 — o cabeçalho de `FROZEN_VISUAL_AUTHORITY` cita a §29.4 para uma entrada que a §29.4 não nomeia
 
-**Status**: `aberto`
+**Status**: `resolvido`
 
 **Aberto em**: 2026-09-05. Levantado pelo `qa-engineer` ao executar o repin
 inline do `P50-COR4` da demanda 016 (`EA-38`); classificação de achado (não de
@@ -2842,3 +2842,61 @@ executada aqui):
    congelada).
 
 Nenhuma rota toca `specs/PHASE_5_0_REV_B.md`.
+
+### Fecho (2026-09-05) — rota 1, executada como `fix-finding` pelo `qa-engineer`
+
+**Decisão de rota** (orquestrador + `product-owner`, no despacho do
+`fix-finding`; nenhuma outra executada): **rota 1**. Remover
+`playwright.config.js` do mapa seria enfraquecer gate (R10 §1) — e a demanda
+016 acabou de provar o valor do pin: o remédio do `EA-38` tocou exatamente esse
+arquivo e o pin forçou o repin com trilha. Acrescentar à §29.4 é impossível:
+REV B imutável (`P50-GOV2`), expansão de boundary só por spec (R6 §3) —
+`specs/PHASE_5_0_REV_B.md` **não foi tocada**. A rota 3 não foi escolhida: toca
+estrutura de gate em suíte congelada para sanar um erro de justificativa.
+Leitura do `product-owner` que sustenta a redação nova: o pin nasceu na
+microfase 5.0.5 (`docs_phase5/MICROFASE_5_0_5_REPORT.md:403-408`, §7.11) como
+**hospedeiro da autoridade** — viewports/`projects` e `launchOptions` sob os
+quais V4+V5 medem — sem invocar a §29.4.
+
+**Reconfirmado antes de tocar** (passo 1 da skill; medido na worktree
+`phase5-014`, branch `fix/ea40-justificativa-do-cabecalho`, HEAD `b534fad`):
+(1) a divergência ainda era verdade — `tests_p50_core.js:2724-2727` dizia
+"arquivos que a §29.4 declara protegidos"; `specs/PHASE_5_0_REV_B.md:1613-1620`
+(blob `4f1583c7…`, o hash registrado no `CLAUDE.md`) nomeia `tests_visual/` e
+os `tests_*.js`, não `playwright.config.js`; (2) `tests_p50_core.js` não consta
+de `boundary.json`, de `permissions.deny` (`settings.json`) nem do
+`guard-boundary.sh`, e o `guard-tdd.sh` só alcança
+`ui_*.js|ui_*.css|build_v32_html.py|generate_icons_v32.py` — quem a protege é
+`pins.json` (`5cf40876…`, igual ao blob de HEAD; rito: `gen_pins.py` no mesmo
+PR); (3) nenhum gate, âncora de mutante (`mutation-matrix.json`: 22 campos
+`arquivo`, nenhum em `tests_p50_core.js`) ou scanner lê o texto do cabeçalho —
+as frases dele só existem nele mesmo, e a suíte não se auto-pina.
+
+**O que foi feito**: só o comentário que abre `FROZEN_VISUAL_AUTHORITY`
+(`tests_p50_core.js:2724-2727` → `:2724-2734`, +7 linhas) foi reescrito. A
+lista passa a ser descrita como os arquivos que **hospedam** a autoridade de
+identidade visual (cor e ícones): os que a §29.4 declara protegidos
+(`tests_visual/`, `tests_icons_m46.js`) **e** `playwright.config.js`, que a
+§29.4 **não** nomeia — pinado desde a 5.0.5 (§7.11) por hospedar os viewports
+(`BP`/`projects`) e as `launchOptions` sob os quais V4+V5 medem. A frase do
+guard estrutural permanece; a trilha desta mudança (achado e data) está no
+próprio comentário. Nenhuma chave, nenhum hash e nenhuma alínea de `P50-COR4`
+mudou; a trilha do repin do `EA-38` desceu byte-idêntica para `:2740-2771`
+(R2 §5). Prova de que a edição é só de comentário: fora do bloco `/* … */`
+nenhum byte do arquivo difere (asserido no script de edição), `node --check`
+limpo, e a suíte fecha na contagem canônica antes **e** depois.
+
+**Medido** (2026-09-05, mesma worktree): `node tests_p50_core.js` — **64 PASS ·
+0 FAIL de 64** antes e depois da edição (`expected_suites.json → p50core` =
+64/0; `P50-COR4` PASS); `bash .claude/verify/run.sh --light` — **11 PASS ·
+1 FAIL**: o FAIL é `baseline`, `.claude/BACKLOG.md` (registry `cdd4891…` ≠
+HEAD `cf5c656b…`), divergência que já existia antes desta edição — nasce do
+cherry-pick `b534fad` (a abertura deste achado) sem repin e foi medida idêntica
+no controle pré-edição; `bash .claude/verify/compliance-audit.sh` — **17 PASS ·
+0 FAIL · 0 WARN** antes deste fecho (EA-40 entre os 31 abertos) e **17 PASS ·
+0 FAIL · 0 WARN** (30 abertos, EA-40 fora da lista) depois dele;
+`python .claude/verify/check_suites.py` (stage `suites`, lê o disco) —
+**19/19 suítes na contagem canônica, 0 problema(s)**, com `p50core` 64 PASS ·
+0 FAIL lido do disco já editado. O repin de `tests_p50_core.js` e deste
+`BACKLOG.md` (`gen_pins.py`) é do orquestrador, em commit próprio; até ele o
+stage `baseline` acusa os dois.

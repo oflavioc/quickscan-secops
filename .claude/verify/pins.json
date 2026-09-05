@@ -1,7 +1,7 @@
 {
   "_meta": {
     "descricao": "Registry único de pins — fonte de identidade dos artefatos (R8). Hashes = SHA-256 dos blobs de HEAD. Alterar arquivo pinado exige regenerar este registry no MESMO PR, com motivo no commit.",
-    "gerado_de_head": "442d5f3c70959b72881af18124cef3d9f8a704a0",
+    "gerado_de_head": "b9d02ecd3073f6158f32f13ebdb2c96009376ef2",
     "gerado_em": "2026-09-05",
     "exclusoes": [
       "docs_phase5/**",
@@ -153,6 +153,8 @@
     ".claude/agents/qa-engineer.md": "83859f5c61b24ba327da542f560cf1ecdd03113a3b3c2a78f677762658dacc81",
     ".claude/agents/tech-lead.md": "6f1066563db68ae9776ccbea6541bdae68ef4e6f078c75f931e91cdb04779dee",
     ".claude/agents/ui-engineer.md": "695180ac8d71be7cd89a13fdb6e803d1f3f30ad44911aba7d306bf2a1a5a6708",
+    ".claude/hooks/README-guard-add.md": "0a2b6bf0f51a943748563225790442e720713e7161797621722ff5f455eb23ec",
+    ".claude/hooks/guard-add.sh": "2e4b26177a5ff235173c35b8a3c9e9ef79a7032e2e477fd769fd9a279d8710dd",
     ".claude/hooks/guard-boundary.sh": "2ffbed8b15e2dfdf61a5e49dc90e49f4fb47765bda5a8081dafe4103f63afdf4",
     ".claude/hooks/guard-data.sh": "1f5e71dfc002c4d3b48b814914aa757910fc3473b91ff627b071a8263e231b4b",
     ".claude/hooks/guard-tdd.sh": "44d726cf06fdb0ed99cec8ce6eb4160e1b59bfdc1ccb5ce4a625bec5d9821820",
@@ -173,7 +175,7 @@
     ".claude/rules/product-invariants.md": "1f15c55ce257303ad26e3b6a20dbf0dfaa93aa3febb37d64e0f37e873d61f937",
     ".claude/rules/sdd.md": "791cae9ce1ccd85160135bfdee6297597366c87a62b775932bfd29449271227c",
     ".claude/rules/tdd.md": "ee60145c0784af3bade1d08e0e11bf29d8ea8bf17a878a4d033a1fae6ddd7a52",
-    ".claude/settings.json": "1880bcc9e42931269a63e635c6581be9f457466d013ddce27c5877b8ac8df95f",
+    ".claude/settings.json": "6179184ce1981cab3dc73193cac5ba5452841a8a8bd9103fa81bbe84b044a5d1",
     ".claude/skills/baseline/SKILL.md": "f507035c6ed33fcd6992c3fe28188f50d0dca8ffc636b07f137eefadde1c1c54",
     ".claude/skills/fix-finding/SKILL.md": "fa06811b2f52895dede17005e170f981a17a739f1ff5bb67433f46ac63112b4f",
     ".claude/skills/new-demand/SKILL.md": "fd5194d15680e82eb1093a7e30de674be987a5f8ef1057fb95df3a237d62b2db",
@@ -202,7 +204,7 @@
     ".claude/verify/check_state.py": "934999bd6e989bd09e17d322b65ac1c92fece5db85d409558b28de5b6b2fc212",
     ".claude/verify/check_suites.py": "457516eae3a5f98ac894a13fb6283f30a2f5e5dce158d24fced5295fd1978dfe",
     ".claude/verify/check_tdd.py": "1077e9025a9559f34e23658bba12a98ac6fb65c718d057a62687251671de2ce9",
-    ".claude/verify/compliance-audit.sh": "1c112893ae88b3d39d8d95d3927b9fb82478088e1a07679fc5582d91321b457a",
+    ".claude/verify/compliance-audit.sh": "34a1480c21688f7f010e165fa479becc742b52183f6269f08ebcc983bafbcb15",
     ".claude/verify/current_phase.json": "235f00d041c4a026290affb3ae3fabfb6268f75baed83ffc5d21ac5579d30733",
     ".claude/verify/env_doctor.py": "c3da72f6cbe6b1084dad68e97b23e0c7c7a4be3ec42623ac626b3e5b08a9369f",
     ".claude/verify/evidence_bridge.json": "8fbf8bca5e6710c709828f839e5f4c6ae552c5fb382429f25aae39b6ad0d291a",

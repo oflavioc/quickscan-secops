@@ -3152,3 +3152,129 @@ backlog **com instrumento**, não com promessa.
   de bytes: `eol-text` fecha em **0 problema(s)** antes e depois de
   `env-doctor`/`boundary`/`marker-lint`/`icons-check`/`build`/`lint-arch`/
   `regra-morta`/`state`/`tdd`/`fecho`/`m41`, que não leem este arquivo.
+- **Pares de mutante na matriz** (commit `fab2216`, harness `ea41` —
+  `tests_ea41_mutants.js` — e fixture `.claude/verify/fixtures_ea41/sujeito.md`
+  no mesmo commit da entrada em `mutation-matrix.json`): **`EA41-M1`** (NUL só
+  no worktree ⇒ `EOL1(a)`, disjunto `w`), **`EA41-M2`** (CRLF no blob do
+  índice sob `eol=lf` ⇒ `EOL1(b)`), **`EA41-M3`** (NUL no blob do índice ⇒
+  `EOL1(a)`, disjunto `i` — o estado exato em que o defeito viveu antes desta
+  correção). M3 existe além do pedido: a sonda interna do gate arma
+  `i/-text` **e** `w/-text` ao mesmo tempo, então não distingue sozinha qual
+  dos dois disjuntos da alínea (a) está fazendo o trabalho — M1 mede o `w`,
+  M3 mede o `i`; sem M3, metade da alínea ficaria sem testemunha. Medido
+  agora (worktree `phase5-014`, branch `fix/ea41-bytes-nul`, HEAD `fab2216`):
+  `bash .claude/verify/run.sh --stage=mutation` → **`[PASS] mutation` · 1
+  PASS · 0 FAIL**; `python .claude/verify/check_tdd.py` → **`tdd: 11
+  demanda(s) · 0 waiver(s) · 0 problema(s)`** e **`matriz gate↔mutante: 163
+  pares completos`**. O `qa-engineer` declarou dívida com gatilho para
+  `EA41-EOL2` (a cláusula que confere que o próprio `.gitattributes` está
+  rastreado e em escopo): sem mutante de árvore porque o estado que a
+  exercita é remover a declaração do repositório inteiro, e aí a acusação
+  sairia pelo censo tanto quanto pela alínea — kill não atribuível. É a
+  forma que `design-decisions.md` já aceita para cláusula defensiva
+  declarada, e o `check_tdd` a imprime a cada execução.
+
+## EA-42 — a prova de que o julgador de `eol-text` não mente vive só em bateria efêmera
+
+**Status**: `aberto`
+
+**Aberto em**: 2026-09-05. Levantado pelo `qa-engineer`, apontando o
+princípio contra o próprio trabalho dele, no fecho do `EA-41`; registrado
+aqui pelo `doc-writer`.
+
+### Cadeia arquivo:linha → efeito
+
+- **`.claude/verify/check_eol_text.py`** (gate `eol-text`) tem **duas** provas
+  de poder discriminante, de ordens diferentes.
+- **Prova 1 — mutantes de ÁRVORE** (o gate é fixo, o mundo muda): que ele
+  **acusa o estado errado e absolve o certo**. Provada pelos pares
+  `EA41-M1`/`EA41-M2`/`EA41-M3`, agora versionados no harness `ea41`
+  (`tests_ea41_mutants.js`) e na matriz (commit `fab2216`). **Resolvida** —
+  é o objeto do fecho do `EA-41` acima.
+- **Prova 2 — mutantes de INSTRUMENTO** (o gate muda, o mundo é fixo): que o
+  **julgador não mente** — que não é um `return PASS`, que não acusa tudo,
+  que o parser não é cego, que o código de causa não é constante, que a
+  sonda não foi encurtada, que a alínea (b) tem carrasco, que exclusão
+  declarada (`-text`) e ausência de declaração não foram confundidas com
+  escopo. Provada por **8 mutantes do próprio gate**, numa bateria que rodou
+  em cópia efêmera do gate durante a Fase Red (commit RED `2a1fb7f`) — 8/8
+  mortos, mais o controle intacto e o mutante mudo em modo completo sobre a
+  árvore real. **O único registro que sobrevive dessa bateria é a linha
+  `EA41-EOL0/EOL1` de `dividas_declaradas`**
+  (`.claude/verify/mutation-matrix.json:2216`) — a mensagem de relatório de
+  um agente, sem par na matriz, sem harness, sem trigger de path que a
+  re-execute.
+
+### Precedente já pago
+
+Esta classe já custou: `G2` da demanda 015
+(`specs/015-superficies-de-apoio/spec-validate.md:118`,
+`relatorio-final.md:277-288,512`) — dois carrascos (`M17`, `M18`) declarados
+na spec e provados na bateria negativa da Fase 4, sem par no harness; o
+registro que os sustentava (`_trilha` de `expected_suites.json`) foi
+**substituído** e a prova ficou só no histórico do git, sem trigger que a
+re-executasse. A frase que ficou: **"prova que vive só na bateria efêmera
+EVAPORA"**. Este achado é a mesma classe, achada pelo autor do instrumento
+contra o próprio instrumento.
+
+### Por que isto é achado, e não só dívida na matriz
+
+`EA41-EOL0/EOL1` já está escrito em `dividas_declaradas`
+(`mutation-matrix.json:2216`) — mas dívida na matriz é lida por quem abre a
+matriz; achado no backlog aparece na listagem do `compliance-audit.sh` a
+cada execução. A diferença entre os dois é quem tropeça nela sem procurar.
+
+### Remédio candidato (não decidido aqui)
+
+Portar os 8 mutantes do gate como mutantes de instrumento, no padrão
+`d016 M1..M11` (8 âncoras no fonte do gate + o julgador da sonda,
+~80 linhas). Dono `qa-engineer`. **Não corrigido neste diff** — este PR é
+um `fix-finding` do `EA-41` que já cresceu de dois bytes para gate + harness
++ fixture + três pares; portar os 8 mutantes de instrumento é escopo novo,
+`fix-finding` próprio.
+
+## EA-43 — a sonda de `eol-text` deixa diretório órfão em `%TEMP%` no Windows: `rmtree(ignore_errors=True)` engole a falha sobre objeto git somente-leitura
+
+**Status**: `aberto`
+
+**Aberto em**: 2026-09-05. Medido pelo `qa-engineer` durante a campanha do
+`EA-41`, que removeu os órfãos à mão; conferido e reproduzido pelo
+`doc-writer` agora.
+
+### Cadeia arquivo:linha → efeito
+
+- **`.claude/verify/check_eol_text.py:278`** — a sonda cria um repositório
+  git efêmero com `tempfile.mkdtemp(prefix="eol-text-sonda-")`.
+- **`.claude/verify/check_eol_text.py:332`** — a limpeza usa
+  `shutil.rmtree(tmp, ignore_errors=True)`.
+- No Windows, os objetos do git dentro do repositório efêmero nascem
+  **somente-leitura**; o `rmtree` tenta remover, falha, e
+  `ignore_errors=True` **engole o erro** silenciosamente — o diretório fica
+  em `%TEMP%`.
+- **Medido pelo `qa-engineer`**: **38** diretórios `eol-text-sonda-*` órfãos
+  em `%TEMP%`, mais **35** criados só no dia da campanha; removidos à mão.
+- **Reproduzido pelo `doc-writer` agora** (worktree `phase5-014`, branch
+  `fix/ea41-bytes-nul`): `ls "$TEMP" | grep -c eol-text-sonda-` — **10**
+  diretórios órfãos presentes antes de qualquer ação minha; uma execução
+  isolada de `python .claude/verify/check_eol_text.py` (exit 0) levou a
+  contagem a **11** — confirma o crescimento de um por execução, do jeito
+  que o `qa-engineer` descreveu. `git status --porcelain`, antes e depois
+  da execução, mostrou só a edição deste `BACKLOG.md` — a árvore
+  **versionada** fica intacta; o resíduo é só fora dela.
+
+### Por que não é falso verde
+
+O gate julga certo e a árvore versionada permanece íntegra
+(`git status --porcelain` limpo, conferido) — isto não é um `PASS` indevido.
+É desperdício de disco na plataforma de desenvolvimento, e toca a R7 §3 no
+espírito ("verificação nunca escreve na árvore"): a regra fala da árvore
+**versionada**; este resíduo vive fora dela, em `%TEMP%`, e cresce sem
+limite conhecido. **O CI Linux não sofre** — lá o bit somente-leitura do
+objeto git não existe e o `rmtree` limpa sem erro.
+
+### Remédio candidato (não decidido aqui)
+
+`onerror`/`onexc` no `shutil.rmtree` que limpe o bit somente-leitura
+(`os.chmod` + retry) antes de remover, em vez de `ignore_errors=True`.
+Arquivo **pinado** (`check_eol_text.py`, registry R8) — repin no mesmo PR.
+Dono `qa-engineer`, `fix-finding` próprio.

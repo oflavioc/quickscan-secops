@@ -2,14 +2,15 @@
    CAMPANHA DE MUTAÇÃO · DEMANDA 016 — registro contra execução (P16.a / P16.b)
    harness `d016` · T060 (wave 5) · dono: qa-engineer
    ============================================================================
-   Instrumento de MEDIÇÃO. Não tem red próprio: o aceite é 33/33 DETECTADO com
+   Instrumento de MEDIÇÃO. Não tem red próprio: o aceite é 35/35 DETECTADO com
    os 3 controles verdes. (30 mutantes na wave 5; M31–M33 entraram na Fase 6,
-   iteração de correção do spec-validate — G3, J1, J3, J4.)
+   iteração de correção do spec-validate — G3, J1, J3, J4; M34–M35 no
+   fix-finding EA-39, errata E016-8, 2026-09-05.)
 
    Prova o PODER DISCRIMINANTE dos gates D016-FEC1..FEC4, D016-PR1 (check_fecho.py)
    e D016-PROT1 (check_branch_protection.py) e da alínea comum C7. Três famílias:
 
-     · MUTANTES DE INSTRUMENTO — fecho.py (M1..M11, M31) e branch_protection.py
+     · MUTANTES DE INSTRUMENTO — fecho.py (M1..M11, M31, M34, M35) e branch_protection.py
        (M12..M15, M17): uma linha do julgador PURO muda; quem mata é a SONDA
        pinada (`--sonda`), e o oráculo é o JSON dela: os IDS DE CASO que a spec
        nomeia têm de divergir, no CAMPO que ela nomeia (F19 → EM VOO para M1;
@@ -39,7 +40,7 @@
        o stage descartava — só a nota chega ao log). A nota nomeia a METADE que
        falhou (SONDA / ÁRVORE) e nunca imprime `undefined`: vivo null, JSON
        ausente (exit + última linha do stderr), erro de leitura e globais
-       (origin-develop-ausente / piso-invalido) saem com nome. Medido antes da
+       (origin-develop-ausente / historico-raso / piso-invalido) saem com nome. Medido antes da
        mudança, em clone: fixture extra ⇒ C0-fecho FALHOU com `undefined
        demanda(s)`, M18 NÃO EXECUTADO com nota constante — e M1 DETECTADO,
        porque julgaSonda não pina isolamento: um C0 vermelho NÃO localiza a
@@ -194,9 +195,16 @@ const valvulaApos = (linha, id, prazoFn) => ({
     '", "declarado_em": "' + ctx.dataCommit + '"},'
 });
 const em = (file, e) => Object.assign({}, e, { file });
+/* EA-39 (E016-8) — os dois últimos elos de fecho.py:_impedimento, byte a byte: o ramo
+   `historico-raso` (RASO_RAMO) e o ramo `piso fora da cadeia` (PISO_FORA_RAMO). M35 os
+   troca de ordem; a âncora é a CONCATENAÇÃO (única), para que a troca seja de precedência
+   e não de conteúdo. Se o core-engineer reescrever um dos ramos, o preflight acusa
+   ocorrencias=0 em vez de o mutante morrer por outra razão. */
+const RASO_RAMO = '    if od.get("cadeia_integra") is False:\n        fim = (_txt(od.get("fim_da_cadeia")) or "?")[:12]\n        pos = od.get("posicao_do_piso")\n        onde = f"na posição {pos}" if pos is not None else "fora do trecho lido"\n        return C_HISTORICO_RASO, (\n            f"{NAO_DETERMINAVEL} (histórico raso: a cadeia first-parent de {REF_DEVELOP} termina "\n            f"em {fim}, commit cujo objeto tem pais que o clone não tem; piso {piso[:12]} {onde} "\n            f"— git fetch --unshallow origin; git fetch origin develop NÃO repara)")\n';
+const PISO_FORA_RAMO = '    if od.get("piso_na_cadeia") is not True:\n        return C_PISO_INVALIDO, (f"{NAO_DETERMINAVEL} (piso {piso[:12]} ausente da cadeia first-parent de "\n                                 f"{REF_DEVELOP} — um SHA de outra branch não é piso)")\n';
 
 /* ==========================================================================
-   OS 33 MUTANTES · D016-M1..D016-M33 (+ 3 controles)
+   OS 35 MUTANTES · D016-M1..D016-M35 (+ 3 controles)
    `edicoes`: [{file, find, repl}] aplicadas em ordem; `repl` pode ser função
    do contexto {dataCommit}. `remover`: arquivo apagado (restaurado por bytes).
    `criar`: {file, conteudo} escrito e depois removido (a âncora é a ausência).
@@ -471,13 +479,34 @@ const MUTANTS = [
     edicoes: [{ file: F.fecho,
       find: '    return {"merges": merges, "origin_develop": od}',
       repl: '    return {"merges": [], "origin_develop": od}   # MUTANTE D016-M33: leitor mudo com metadados sãos' }],
-    espera: { censo: { pinado: 39, lido: 0 } } }
+    espera: { censo: { pinado: 39, lido: 0 } } },
+
+  /* ── C1(g) / C2(d) · historico-raso — instrumento (fecho.py), fix-finding EA-39 (E016-8) ──
+     A metade PURA do EA-39: o julgador recebe `origin_develop.cadeia_integra` do leitor e
+     tem de (M34) honrá-lo e (M35) honrá-lo ANTES de "piso fora da cadeia". A metade de I/O
+     (o leitor que popula o campo sob .git/shallow) NÃO tem mutante de árvore — razão medida
+     no registro (mutation-matrix.json → dividas_declaradas); carrasco = bateria em clone
+     efêmero, prova-de-carga.md §12. D016-M33 não muda: sob ele o `od` sai íntegro. */
+  { id: "D016-M34", gate: "D016-FEC1 (C1 g)", modo: SONDA_FECHO,
+    desc: "o julgador ignora cadeia_integra — o ramo historico-raso de _impedimento é desligado (o julgador de HEAD antes do fix): F25 volta a EM VOO · 0 problema(s), F26 volta ao piso-invalido com detalhe falso",
+    edicoes: [{ file: F.fecho,
+      find: '    if od.get("cadeia_integra") is False:',
+      repl: '    if False and od.get("cadeia_integra") is False:   # MUTANTE D016-M34: o julgador ignora cadeia_integra' }],
+    espera: { divergem: [{ id: "F25", campos: { veredito: "EM VOO", codigo: null, problemas: 0 } },
+                         { id: "F26", campos: { veredito: "NÃO DETERMINÁVEL", codigo: "piso-invalido", problemas: 1 } }] } },
+
+  { id: "D016-M35", gate: "D016-FEC1 D016-FEC2 (C1 g · C2 d — precedência dos globais)", modo: SONDA_FECHO,
+    desc: "precedência trocada — o ramo `piso fora da cadeia` passa a ser julgado ANTES do ramo historico-raso: F26 (piso fora do trecho lido) volta a piso-invalido; F25 (piso na cadeia) não vê esta mutação — por isso F26 existe",
+    edicoes: [{ file: F.fecho,
+      find: RASO_RAMO + PISO_FORA_RAMO,
+      repl: '    # MUTANTE D016-M35: precedência trocada — piso fora da cadeia julgado ANTES do raso\n' + PISO_FORA_RAMO + RASO_RAMO }],
+    espera: { divergem: [{ id: "F26", campos: { veredito: "NÃO DETERMINÁVEL", codigo: "piso-invalido", problemas: 1 } }] } }
 ];
 
 /* Controles verdes — não são mutantes, não entram no preflight nem na contagem
    de detectados; falha de controle derruba o exit da campanha. */
 const CONTROLES = [
-  { id: "C0-fecho", modo: ARVORE, desc: "baseline verde do gate nu: sonda 35/35 ok, censo da leitura ok (39 = 39), 0 problema(s), exit 0",
+  { id: "C0-fecho", modo: ARVORE, desc: "baseline verde do gate nu: sonda 37/37 ok, censo da leitura ok (39 = 39), 0 problema(s), exit 0",
     edicoes: [], espera: { baselineFecho: true } },
   { id: "C0-protecao", modo: SONDA_BP, desc: "baseline verde da sonda de proteção: 9/9 ok, exit 0",
     edicoes: [], espera: { baselineBp: true } },
@@ -677,7 +706,7 @@ function julgaArvore(r, espera) {
    não-KILL; a linha `CONTROLE … resultado:` só passou a ser ecoada no mesmo dia).
    Por isso ela nunca imprime `undefined`: cada metade (SONDA / ÁRVORE) é nomeada, e
    o que falta é dito com nome — vivo null, JSON ausente (exit + última linha do
-   stderr), erro de leitura, globais (origin-develop-ausente / piso-invalido). */
+   stderr), erro de leitura, globais (origin-develop-ausente / historico-raso / piso-invalido). */
 const num = x => (x === undefined || x === null ? "?" : x);
 const ultimaLinha = s => { const l = String(s || "").split("\n").filter(Boolean).slice(-1)[0]; return l ? l.slice(0, 200) : "(stderr vazio)"; };
 const txtProblema = p => (typeof p === "string" ? p : JSON.stringify(p));

@@ -2369,9 +2369,30 @@ simples de `develop` **não** repara (medido). Quem prova o fecho é um run
 `pull_request` com `visual` verde. Ver `EA-39` para a metade que este remédio
 não toca.
 
+### Nota do desfecho do EA-39 (2026-09-05) — permanece `aberto`
+
+O fix-finding do `EA-39` produziu a primeira execução em `pull_request` com
+`visual` **verde** desde o remédio deste achado (`8ec429a`): run
+`33946727326` (PR #41, `fix/ea37-guarda-do-add-A`, 2026-09-05) — `verify`:
+`[PASS] fecho`; `fecho` sob `--pr`: `NÃO JULGADO · fora-da-populacao` (por
+desenho, `fetch-depth: 1` do job); `visual`: **success**. É a prova que
+faltava para o remédio em si (`captureGitInfo` desligado).
+
+**O que isso não fecha**: no mesmo run, `mutation: 0 campanha(s)` — o diff do
+PR #41 (`EA-37`) não toca path que dispare a campanha `d016`, logo o
+`C0-fecho` (sonda + gate nu, sob as condições reais de um job `visual` de
+`pull_request`) **não foi exercido** ali. A prova de que o remédio também
+sustenta `d016` sob PR só existe quando um PR que **muda**
+`fecho.py`/`check_fecho.py`/`fecho.json`/`tests_016_mutants.js` rodar
+`visual` verde com a campanha de fato executando — e o primeiro PR nessas
+condições é o **deste** fix-finding, `fix/ea39-leitor-mudo → develop` (que
+toca exatamente esses arquivos). Ler, no primeiro run do PR desta branch, os
+jobs `verify` e `visual`, a linha `controle: C0-fecho · OK · … 39/39`; só
+essa leitura decide se o achado fecha.
+
 ## EA-39 — o leitor de histórico lê um repositório raso como cadeia completa e não diz: "0 merges" não distingue "não há" de "não consegui caminhar" (família do EA-5)
 
-**Status**: `aberto`
+**Status**: `resolvido`
 
 **Aberto em**: 2026-09-05. Achado do `qa-engineer`, nomeado pelo orquestrador
 como o que importa mais que a causa do A1: sem a guarda de censo (J1 do
@@ -2419,3 +2440,262 @@ segue na bateria adversarial, já registrada em `prova-de-carga.md` §11.
 Implementação em `fecho.py` do **`core-engineer`**; red e mutante do
 **`qa-engineer`** depois da decisão. Independente de `EA-38`: consertar o
 vetor não ensina o leitor a falar.
+
+### Decisão de forma — encaminhamento datado (`product-owner`, 2026-09-05)
+
+Encaminhamento, não resolução: o achado só fecha quando o código existir e
+for provado (red da metade pura + campanha). Lido nesta árvore:
+`fecho.py:176-190` e `:459-503`, `check_fecho.py:374-397` e §CONTRATO,
+`fecho.json → _meta.contrato_da_sonda` e `_meta.censo_de_leitura`,
+`tests_016_mutants.js:469-474`, spec 016 (T10, §Casos de borda linha 10,
+E016-5), `plan.md` ET3 e o `EA-5` acima.
+
+**Decisão: rota (b) — código novo `historico-raso`, veredito `NÃO
+DETERMINÁVEL`.** T10 não é tocado.
+
+Por que não reusar `piso-invalido` (rota a):
+
+1. **O código é o discriminador que a sonda pina; o detalhe não é.**
+   `contrato_da_sonda.campos_pinados_por_caso_pos` pina `esperado`,
+   `oraculo`, `codigo`, `problemas` — e diz por quê: *"pinar só o veredito
+   deixaria vivo um julgador que reprova pela razão errada"*. Sob a rota (a)
+   a fixture F25 pinaria exatamente o que F21 já pina (`NÃO DETERMINÁVEL ·
+   piso-invalido · 1`): a sonda não separaria o julgador certo do que trata
+   truncamento como "SHA de outra branch" — o detalhe falso que o caso "raso
+   **acima** do piso" já produz hoje (cadeia acima). E o código é também o
+   que o harness imprime na nota do controle (`tests_016_mutants.js:41-42`,
+   "globais saem com nome"): sob (a), a linha do job `visual` que levou dois
+   dias a decifrar passaria a dizer `piso-invalido` para um clone raso — o
+   rótulo errado no exato lugar onde o `EA-38` foi diagnosticado.
+2. **`piso-invalido` já cobre dois estados, mas de um só remédio** — piso
+   fora de forma e piso fora da cadeia dizem ambos "o registro aponta um piso
+   que esta cadeia não tem": corrige-se `fecho.json`, ou busca-se a branch
+   certa. O terceiro estado tem **outro dono e outro remédio**: o piso está
+   certo, o clone é que está raso; conserta-se com `git fetch --unshallow`,
+   e `git fetch origin develop` — o remédio de C1(e) — **não repara**
+   (medido: `prova-de-carga.md` §11.3, "reparo 1: persiste"). Mesmo rótulo
+   para remédios distintos é o `EA-5` por outra porta: em seis meses quem lê
+   `piso-invalido` no log abre o `fecho.json`, encontra o piso certo e ou
+   desiste ou "corrige" o piso.
+3. **Fechado não é congelado.** O que torna um vocabulário fechado é que
+   todo valor emitido pertence a uma enumeração comparada por igualdade
+   (enum, não regex sobre prosa — T10, R10 §6). Ele cresce por errata
+   aditiva com fixture que pina o membro novo — foi assim que a própria 016
+   foi de F19/P7 a F24/P11 sob "aditivo, ids permanentes, nunca renumerar",
+   e é a forma das causas de `NÃO EXECUTADO` da 013 (conjunto fechado, T4).
+   O que dissolve o fechamento é o contrário: esticar um membro até cobrir
+   estados de remédio distinto — o enum fica do mesmo tamanho e deixa de
+   significar uma coisa só. Cada código responde a "o que faço agora?" com
+   uma resposta; código com duas respostas é o número que não distingue.
+4. **Precisão sobre o custo, para não o superestimar**: T10 enumera
+   **vereditos**; a lista de **códigos** (16) não está na spec — vive em
+   `fecho.json → _meta.contrato_da_sonda.codigos`, no §CONTRATO de
+   `check_fecho.py`, em `fecho.py → CODIGOS` e em `plan.md` ET3. O veredito
+   para "clone raso" já é `NÃO DETERMINÁVEL` pela letra da spec (§Casos de
+   borda, linha 10). A errata é pequena e aditiva; o que muda de verdade é o
+   dado do gate.
+
+**Terceira rota, considerada e rejeitada — reusar `origin-develop-ausente`.**
+É para onde a borda 10 da spec aponta hoje ("clone raso / `git` ausente →
+C1 e") e não exigiria errata nenhuma. Rejeitada: a ref **está** presente, o
+nome do código mentiria sobre o estado, e o remédio que ele carrega (`git
+fetch origin develop`) é justamente o que a §11.3 mediu que não conserta. O
+código mais barato que mente é o mais caro.
+
+**Semântica do código novo (para a errata, o docstring e a linha do log):**
+
+- `historico-raso` — o clone é raso (`.git/shallow` presente; `git rev-parse
+  --is-shallow-repository` = `true`) e a cadeia first-parent de
+  `refs/remotes/origin/develop` termina num commit sem pais caminháveis cujo
+  objeto tem pais. **Nenhuma posição relativa ao piso é julgável** — esteja o
+  piso na cadeia (índice 0, o caso do `EA-38`) ou fora dela (base de PR mais
+  nova que o piso, quando `develop` avançar). Global **impeditivo**, como os
+  outros dois: todo sujeito-demanda sai `NÃO DETERMINÁVEL` com este código.
+- **Precedência** (decisão 2 do cabeçalho de `fecho.py`, estendida): piso
+  fora de 40 hex → `origin/develop` ausente → **histórico raso** → piso fora
+  da cadeia. Não se localiza piso numa cadeia truncada pela mesma razão que
+  não se localiza numa cadeia ilegível; hoje "raso acima do piso" cai em
+  `piso-invalido` com detalhe falso.
+- **Detalhe obrigatório** (T10: causa não vazia): o SHA em que a cadeia
+  termina, se o piso foi encontrado e em que posição, e o remédio — `git
+  fetch --unshallow origin` — nunca `git fetch origin develop`.
+- **Detecção** é do `tech-lead`/`core-engineer`; o que decido é o
+  vocabulário: `historico-raso` só é emitido quando o clone é de fato raso.
+  Truncamento por outro mecanismo (grafts, `refs/replace`) nunca foi
+  observado e **não ganha código**: linguagem para caso hipotético é
+  linguagem inventada (R12). Cai na guarda de censo, que existe para o que
+  não tem nome.
+- O nome segue a palavra que a spec já usa ("clone raso", borda 10;
+  "checkout raso", Superfície 2): não é vocabulário novo, é identificador
+  (INV-10) — não entra no `CONTEXT.md`, como nenhum dos 16 códigos nem as
+  causas da 013 entram.
+
+**Pergunta 1 — a guarda de censo fica redundante? Não, e a divisão importa:**
+
+- O **impedimento** é o autorrelato do instrumento: nomeia a causa e cobre o
+  raso em qualquer posição — inclusive **acima** do piso, onde a guarda não
+  alcança (limite declarado em `_meta.censo_de_leitura.o_que_nao_cobre`).
+- A **guarda** é o oráculo **independente** do instrumento (número pinado,
+  R10 §3): acusa qualquer contagem errada até o piso, inclusive a causa que
+  o leitor não sabe detectar e o defeito do próprio leitor que o cale
+  (`D016-M33`).
+- **Qual não se remove: a guarda.** Foi ela que pegou o `EA-39`, e é a única
+  das duas que não depende de o leitor ser honesto sobre si mesmo — a lição
+  literal do `EA-5` (autorrelato de instrumento não é evidência; R2 §4).
+  Remover o impedimento perde precisão de mensagem; remover a guarda perde a
+  detecção do que ainda não tem nome. Não é cinto e suspensório: uma é o
+  diagnóstico, a outra é a medição.
+- **Regra de composição** (a errata escreve, senão a contradição volta):
+  leitor nomeia truncamento → global `historico-raso` e guarda
+  `nao_aplicado` — a regra vigente *"fora disso o global do julgador já
+  nomeia a causa"* estendida ao campo novo: **um** FAIL nomeado, não dois.
+  Leitor cala com contagem errada → guarda `divergente`, e a disjunção do
+  detalhe passa a ser honesta: "o leitor não nomeou causa — defeito do
+  instrumento ou truncamento que ele não detecta".
+- **Condição para `D016-M33` continuar medindo o que mede**: M33 corta na
+  linha `return {"merges": merges, "origin_develop": od}`
+  (`tests_016_mutants.js:472`) com `od` intacto. O campo novo tem de estar
+  populado **antes** dessa linha — senão o `od` de M33 sai "truncado", o
+  impedimento novo dispara, `problemas` deixa de ser 0 e M33 passa a provar
+  o impedimento em vez da guarda. Quem confere é o `qa-engineer`.
+
+**Errata da spec 016 — aditiva, id `E016-8` (a série da Fase 6); quem
+escreve é o `qa-engineer` com o `tech-lead`; sem ratificação do proprietário
+no chat, leva a fórmula de delegação como E3/E016-5.** Pontos:
+
+1. §Casos de borda, linha 10: "clone raso" separa de "`git` ausente" — raso ⇒
+   `NÃO DETERMINÁVEL` com código `historico-raso`; C1(e) fica para ref/git
+   ausente.
+2. E016-5 (b)/(c) e `fecho.json → _meta.censo_de_leitura.quando_se_aplica`:
+   "só com `origin/develop` presente, piso na cadeia **e cadeia íntegra**".
+3. §Contratos, casos da sonda: **F25** — leitor reporta raso, piso na
+   cadeia, `merges: []` ⇒ `NÃO DETERMINÁVEL · null · historico-raso · 1
+   problema` (acréscimo sob a regra da Fase 4/6). Recomendo uma segunda
+   fixture, "raso com piso fora da cadeia" (`piso_na_cadeia: false` + raso ⇒
+   `historico-raso`, não `piso-invalido`): é o que prova a precedência. Ids
+   do `qa-engineer`.
+4. Dado e contrato: `fecho.json → _meta.contrato_da_sonda.codigos` 16 → 17;
+   `check_fecho.py` §CONTRATO ("(16)"; "sob um global IMPEDITIVO (esses
+   dois)" → três; shape de `origin_develop`); `plan.md` ET3; cabeçalho de
+   `fecho.py`, decisão 2. Tudo pinado ⇒ `gen_pins.py` no mesmo PR (R8 §1).
+5. Mutantes: F25 mata "julgador ignora o campo" (metade pura). "Leitor não
+   consulta o raso" só é observável num clone raso — mutante de árvore que
+   produza `.git/shallow` (é o próprio `git fetch --depth=1` de um commit
+   presente, com `--unshallow` na restauração) ou, se for caro demais,
+   dívida declarada com carrasco na bateria adversarial de §11. `D016-M33`
+   permanece como está.
+
+**O que este encaminhamento não decide**: a detecção (`is-shallow`,
+comparação de pais, ou ambas) e o nome do campo em `origin_develop` —
+`tech-lead`; implementação — `core-engineer`; red, F25 e mutantes —
+`qa-engineer`. Independente do `EA-38`, como o registro acima já diz.
+
+### Resolução — o que foi feito
+
+`fix-finding` do `EA-39` (tipagem `fix`, T090–T099,
+`specs/016-registro-contra-execucao/ea39-desenho.md` §8), na branch
+`fix/ea39-leitor-mudo` (de `develop`, `ec74d6f`), um commit por wave, com
+repin em commit separado após cada um de conteúdo (R8 §1).
+
+**Decisão de forma** (`product-owner`, `e2d3892`) — registrada acima,
+"Decisão de forma": código novo `historico-raso`, veredito `NÃO
+DETERMINÁVEL`, vocabulário fechado T10 intacto (os 17 códigos vivem em
+`fecho.json → _meta.contrato_da_sonda.codigos` e em `check_fecho.py`
+§CONTRATO, nunca na spec). O argumento decisivo foi de **remédio**:
+`piso-invalido` já cobre dois estados que se consertam corrigindo o registro
+(`fecho.json` ou a branch julgada); o terceiro tem outro dono — o clone é
+que está raso — e outro remédio (`git fetch --unshallow origin`); o remédio
+óbvio, `git fetch origin develop`, foi **medido ineficaz**
+(`prova-de-carga.md` §11.3 "reparo 1: persiste", repetido em §12.2 cenário
+E.1, "fetch de novo não conserta").
+
+**Desenho** (`tech-lead`, `fac8bfd`, `ea39-desenho.md`): detecção por
+**conjunção** — `git rev-parse --is-shallow-repository` como portão barato,
+e só sob `true` a comparação `%P` (pais caminhados) × `git cat-file -p`
+(pais do objeto) no fim da cadeia. Nenhuma metade sozinha basta, e as duas
+falhas estão medidas em `prova-de-carga.md` §12: o flag sozinho acusaria
+falso um clone **completo** que fez `fetch --depth=1` de um commit alheio
+(cenário **C** — `39 (ok)` · `0 problema(s)` · `--json` byte-idêntico ao
+baseline do mesmo código, em §12.1 e de novo em §12.2); a comparação sozinha
+confunde graft/replace e custaria processo em toda execução.
+
+**Implementação** (`core-engineer`, `a8bdfe4`, T094) em `fecho.py`:
+`C_HISTORICO_RASO` em `CODIGOS`, o ramo em `_impedimento` na posição de
+precedência (forma → `origin/develop` ausente → **raso** → piso fora da
+cadeia) e a detecção em `ler_merges`, populando `cadeia_integra` /
+`fim_da_cadeia` / `posicao_do_piso` **antes** da linha que a âncora do
+`D016-M33` corta (`tests_016_mutants.js:472`) — âncora conferida
+byte-idêntica e única por preflight (`node tests_016_mutants.js --preflight`)
+antes e depois.
+
+**Red commitado** (`c535431`, T091) falhando por dois caminhos
+independentes: `check_fecho.py --sonda` (guarda `CODIGOS … a menos:
+['historico-raso']`, `✗ F25` obtido `EM VOO`, `✗ F26` obtido
+`piso-invalido`, exit 1) e o gate nu (*"árvore não julgada: o julgador
+reprovou na própria sonda"*, exit 1).
+
+**Campanha e mutantes** (`qa-engineer`, `5e5b151`, T096): harness `d016` 33
+→ 35 pares, com `D016-M34` (julgador ignora `cadeia_integra`) e `D016-M35`
+(precedência trocada — F25 não vê M35, por isso F26 existe). Campanha
+integral **35/35 DETECTADO · 3 controles OK · 24 s**, com `D016-M33`
+mantendo o kill inalterado (censo `0 × 39 · 0 problema(s)`).
+
+**Errata `E016-8`**, aditiva (`82f22b9`), com o texto do global `[FAIL]`
+**extraído** da implementação — nunca redigido antes do green — e **medido**
+nas duas variantes do detalhe: piso **dentro** do trecho lido ("na posição
+N") e piso **fora** do trecho lido, ambas em `prova-de-carga.md` §12.2.
+
+**O achado que a bateria produziu, mais forte que o achado original.** O
+caso **G** (`--depth=10`, raso **abaixo** do piso — cadeia lida com 10
+commits, `.git/shallow` com 7 linhas pela fronteira do BFS) não existia em
+fixture nenhuma (`F25` termina a cadeia **no** piso; `F26` tem o piso **fora**
+do trecho). Medido em clone efêmero (`prova-de-carga.md` §12.2, linha "G"):
+
+- **Pré-fix**: a guarda de censo pegava `7 ≠ 39` — mas com **0 problema(s)**
+  de julgamento e **sete** das dez demandas `done` mescladas saindo `EM VOO`
+  (afirmação falsa sobre a árvore). O número já estava acusado e os
+  vereditos já saíam errados mesmo assim.
+- **Pós-fix**: o leitor nomeia (`cadeia_integra: false`, `fim_da_cadeia
+  fdf5779608dc…`, `posicao_do_piso 2`) ⇒ global `historico-raso` na posição
+  2, `em_voo 0`, e a guarda **cede a vez** (`nao_aplicado`, com o `lido 7`
+  ainda visível no `--json`) — **um** FAIL, a causa certa.
+
+Isto é o argumento mais forte do fix: mostra que a guarda de censo sozinha
+**não bastava** — ela dizia que algo estava errado, nunca o quê, e sete
+vereditos de demanda passavam errados por baixo da mesma contagem que a
+guarda já sinalizava como divergente.
+
+**O que fica registrado, e não se resolve por si só:**
+
+- **Dívida declarada com causa, não par vazio**: mutante de árvore para a
+  metade de I/O do leitor foi **recusado com razão medida**
+  (`prova-de-carga.md` §12, cabeçalho): `.git/shallow` é invisível às três
+  guardas de restauração do harness (bytes, SHA-256, `git status
+  --porcelain` escopado), `git fetch --depth=1` numa worktree muta o `.git`
+  **compartilhado por nove worktrees** desta máquina, e `--unshallow` exige
+  o remoto e falha em repositório completo. O carrasco é a **bateria
+  adversarial** de `prova-de-carga.md` §12 (clones efêmeros em scratchpad,
+  nada escrito na árvore), reexecutada a cada mudança de
+  `fecho.py:ler_merges` — registrada em `mutation-matrix.json →
+  dividas_declaradas`, "leitor sob clone raso".
+- **A fixture `F26` é load-bearing**: a bateria negativa do julgador do
+  harness provou que julgar `D016-M35` só por `F25` o deixa **sobrevivente**
+  — `F25` (cadeia truncada **no** piso) não distingue a ordem certa da
+  precedência trocada; só `F26` (truncada **acima** do piso) o mata.
+- **Proveniência, para poder ser contestada**: a errata `E016-8` leva a
+  mesma fórmula de delegação do `E016-5`/`E3` — decidida **sob a delegação
+  geral do proprietário de 2026-08-29**
+  (`.claude/agent-memory/doc-writer/project_delegacao-proprietario-2026-08-29.md`),
+  **não aprovada por ele pessoalmente**. O `product-owner` registrou
+  explicitamente que a **ratificação nominal do usuário no chat seria a
+  autorização mais forte e não foi pedida** nesta rodada (`spec.md:884`) —
+  delegação não se promove sozinha a ratificação.
+
+**Evidência**: pipeline do worktree `16 PASS · 0 FAIL` (citado pelo
+orquestrador na delegação deste fechamento, não medido de novo por este
+agente); campanha `d016` **35/35 DETECTADO · 3 controles OK**; red commitado
+em `c535431`; bateria de I/O do leitor em `prova-de-carga.md` §12.1 (pré-fix)
+e §12.2 (pós-fix); commits de conteúdo `e2d3892`, `fac8bfd`, `82f22b9`,
+`c535431`, `81c0326`, `a8bdfe4`, `5e5b151`, repinados em `31eb1a4`,
+`1c8f601`, `859ecf5`, `2f0245c` (R8 §1). `gen_pins.py` **não roda neste
+passo** — é do `build-engineer`, no PR desta demanda.

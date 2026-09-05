@@ -49,12 +49,24 @@ piso não muda; medido por `git rev-list --count --merges --first-parent <piso>`
 pelo instrumento, iguais), e este gate o compara a `contagens.merges_ate_piso` da
 árvore real: divergência ⇒ FAIL nomeado, exit 1, mesmo com 0 problema(s) de
 julgamento. Não é veredito (nenhuma demanda é julgada por ele): é `total_pinado`
-aplicado à leitura. Aplica-se só quando o leitor reporta origin/develop presente
-E piso na cadeia — fora disso o global do julgador já nomeia a causa; pin ausente
-ou inválido é FAIL, nunca guarda que some em silêncio. Os registros das fixtures
-não trazem a chave: a guarda vive só em `vivo_pos`. Carrasco: D016-M33. O que
-ela NÃO cobre, declarado: leitor que perde merges POSTERIORES ao piso (censo
-variável por natureza) — carrasco só na campanha (D016-M18/M19).
+aplicado à leitura. Aplica-se só quando o leitor reporta origin/develop presente,
+piso na cadeia E cadeia íntegra (`origin_develop.cadeia_integra` ≠ false — E016-8,
+fix-finding EA-39, 2026-09-05) — fora disso o global do julgador
+(origin-develop-ausente / historico-raso / piso-invalido) já nomeia a causa e a
+guarda cede a vez (`nao_aplicado`): UM FAIL por causa, nunca dois. Leitura por
+`is False`: campo ausente/null = não afirmado = comportamento anterior (F1–F24
+intactas). Quando o leitor CALA com contagem errada, `divergente` diz a disjunção
+honesta — o leitor não nomeou causa: defeito do instrumento ou truncamento que
+ele não detecta (EA-39: sob .git/shallow no piso, ler_merges devolvia 0 com
+metadados sãos e só esta guarda acusava; medido em prova-de-carga.md §11.3 e
+§12.1). Pin ausente ou inválido é FAIL, nunca guarda que some em silêncio. Os
+registros das fixtures não trazem a chave: a guarda vive só em `vivo_pos`.
+Carrasco: D016-M33; a cessão de vez sob cadeia truncada não tem mutante de árvore
+(.git/shallow é invisível à restauração do harness e o .git é compartilhado entre
+worktrees) — carrasco: bateria adversarial de I/O em clone efêmero, origin =
+GitHub (prova-de-carga.md §12). O que ela NÃO cobre, declarado: leitor que perde
+merges POSTERIORES ao piso (censo variável por natureza) — carrasco só na campanha
+(D016-M18/M19).
 
 ============================ CONTRATO DO INSTRUMENTO (fecho.py) ==============
 Importado por caminho (.claude/verify/fecho.py, ao lado deste arquivo). Símbolos
@@ -66,7 +78,8 @@ exigidos — a falta de qualquer um é INSTRUMENTO INCOMPLETO e a sonda reprova:
               "EM VOO" · "ANTERIOR AO PISO" · "FORA DA POPULAÇÃO" ·
               "NÃO DETERMINÁVEL" · "LIBERADO" · "FECHO PENDENTE" · "NÃO JULGADO"
   CODIGOS     conjunto FECHADO com EXATAMENTE os códigos de
-              fecho.json → _meta.contrato_da_sonda.codigos (16).
+              fecho.json → _meta.contrato_da_sonda.codigos (17 — o 17º, historico-raso,
+              entrou pela errata E016-8; a divergência é o RED do fix-finding EA-39).
 
   julgar_pos_merge(estados, merges, ancestralidade, artefatos, data_do_commit,
                    registro, origin_develop) -> dict     PURO: sem git, disco, rede, relógio
@@ -82,14 +95,22 @@ exigidos — a falta de qualquer um é INSTRUMENTO INCOMPLETO e a sonda reprova:
     data_do_commit "AAAA-MM-DD" (T4 — %cI de HEAD, o dia)
     registro       fecho.json (piso {sha, merges_ate_piso, descricao}, excluidas_por_r13, populacao)
                    — `merges_ate_piso` é lido SÓ pela guarda de censo do gate, nunca pelo julgador
-    origin_develop {presente: bool, sha: str|null, causa: str|null, piso_na_cadeia: bool}
+    origin_develop {presente: bool, sha: str|null, causa: str|null, piso_na_cadeia: bool,
+                    cadeia_integra: true|false|null, fim_da_cadeia: sha40|null,
+                    posicao_do_piso: int|null}   (E016-8) `cadeia_integra: false` é o LEITOR
+                   afirmando que a cadeia first-parent termina em commit cujo objeto tem pais
+                   que o clone não tem (clone raso); `null` = cadeia não lida (os retornos
+                   antecipados, onde `presente` já é false). O julgador e a guarda de censo
+                   leem `is False`: ausente/null = não afirmado = comportamento anterior.
+                   `piso_na_cadeia` permanece e vale `posicao_do_piso is not None`.
     devolve {
       "sujeitos": [{"id": slug | sha do merge, "tipo": "demanda"|"merge",
                     "veredito": <VEREDITOS>, "oraculo": "mensagem"|"ancestralidade"|null,
                     "oraculo_detalhe": "#34" | "<sha12>" | null, "fase": str|null,
                     "codigo": <CODIGOS>|null, "detalhe": str, "falha": bool}],
       "globais":  [{"codigo": <CODIGOS>, "detalhe": str}],
-                  # duas classes (ET3): IMPEDITIVOS piso-invalido | origin-develop-ausente
+                  # duas classes (ET3): IMPEDITIVOS piso-invalido | origin-develop-ausente |
+                  # historico-raso (E016-8; precedência forma → ausente → raso → piso fora da cadeia)
                   # (no máximo UM por execução, por precedência — sob ele todo sujeito-
                   # demanda sai NÃO DETERMINÁVEL); NÃO IMPEDITIVO exclusao-malformada (uma
                   # entrada por exclusão inválida; os sujeitos seguem julgados). Fica em
@@ -120,9 +141,14 @@ exigidos — a falta de qualquer um é INSTRUMENTO INCOMPLETO e a sonda reprova:
         ancestralidade só é consultada quando a mensagem cala (T1);
       · estado sem `branch` ⇒ NÃO DETERMINÁVEL + registro-sem-branch (só esse sujeito);
         piso fora de ^[0-9a-f]{40}$ ou origin_develop.piso_na_cadeia false ⇒ global
-        piso-invalido; origin_develop.presente false ⇒ global origin-develop-ausente; sob
-        um global IMPEDITIVO (esses dois), TODO sujeito-demanda sai NÃO DETERMINÁVEL com o
-        código do global — exclusao-malformada é global e NÃO impede (F23);
+        piso-invalido; origin_develop.presente false ⇒ global origin-develop-ausente;
+        (E016-8) origin_develop.cadeia_integra false ⇒ global historico-raso — ANTES de
+        piso_na_cadeia ser consultado: F25 (piso na cadeia, posição 0) e F26 (piso fora do
+        trecho lido) pinam ambos historico-raso, e F26 NÃO é piso-invalido; detalhe (T10)
+        com o SHA em que a cadeia termina, a posição do piso ou 'fora do trecho lido' e o
+        remédio git fetch --unshallow origin; sob um global IMPEDITIVO (esses três), TODO
+        sujeito-demanda sai NÃO DETERMINÁVEL com o código do global —
+        exclusao-malformada é global e NÃO impede (F23);
       · NÃO DETERMINÁVEL sempre com `detalhe` não vazio (T10).
 
   julgar_pre_merge(head_ref, base_ref, estados, artefatos, registro) -> dict    PURO
@@ -144,7 +170,14 @@ exigidos — a falta de qualquer um é INSTRUMENTO INCOMPLETO e a sonda reprova:
         refs/remotes/origin/develop` — a cadeia INTEIRA, não --merges: o piso pode ser
         commit não-merge (o piso zero da prova de carga é a raiz e5ccd429) —, localiza o
         piso e anota cada merge; piso ausente da cadeia ⇒ piso_na_cadeia false; ref
-        ausente ou git ausente ⇒ presente false + causa (nunca exceção silenciosa)
+        ausente ou git ausente ⇒ presente false + causa (nunca exceção silenciosa).
+        (E016-8) Depois de montar a cadeia: `git rev-parse --is-shallow-repository`
+        (condição necessária; false ⇒ cadeia_integra true sem mais processo) e, só se
+        true, `git cat-file -p <fim da cadeia>` — ≥ 1 linha `parent` num commit que a
+        caminhada viu sem pais ⇒ cadeia_integra false + fim_da_cadeia + posicao_do_piso.
+        Os três campos são populados ANTES do `return` final — a âncora de D016-M33
+        (`return {"merges": merges, "origin_develop": od}`) fica byte-idêntica e única,
+        e sob M33 o `od` sai íntegro: a guarda continua sendo quem mata o leitor mudo.
     ler_ancestralidade(estados, piso) -> {slug: {...}}
         só para estados com red.commit: `git rev-parse --verify --quiet <sha>^{commit}`
         (ambíguo/inexistente ⇒ resposta null + causa) → `git merge-base --is-ancestor`
@@ -381,17 +414,30 @@ def censo_da_leitura(res, registro, origin_develop):
         c["estado"] = "nao_pinado"
         c["detalhe"] = (f"fecho.json → piso.merges_ate_piso ausente ou inválido ({pin!r}) — o censo da leitura "
                         "não está pinado; sem ele um leitor mudo deixa a árvore verde por vácuo")
-    elif od.get("presente") is not True or od.get("piso_na_cadeia") is not True:
+    elif od.get("presente") is not True:
         c["estado"] = "nao_aplicado"
-        c["detalhe"] = "não aplicado — origin/develop ausente ou piso fora da cadeia: o global do julgador nomeia a causa"
+        c["detalhe"] = "não aplicado — origin/develop ausente: o global origin-develop-ausente do julgador nomeia a causa"
+    elif od.get("cadeia_integra") is False:
+        # E016-8 (EA-39): o LEITOR afirmou o truncamento (clone raso). Leitura por `is False` —
+        # campo ausente/null = não afirmado = comportamento anterior. A guarda cede a vez ao
+        # global historico-raso: UM FAIL por causa, nunca dois. Mesma ordem de fecho.py:_impedimento
+        # (forma → ausente → raso → piso fora da cadeia). Sem mutante de árvore (razão medida no
+        # registro): carrasco = bateria adversarial em clone efêmero, prova-de-carga.md §12.
+        c["estado"] = "nao_aplicado"
+        c["detalhe"] = ("não aplicado — cadeia truncada nomeada pelo leitor (cadeia_integra false): "
+                        "o global historico-raso já diz")
+    elif od.get("piso_na_cadeia") is not True:
+        c["estado"] = "nao_aplicado"
+        c["detalhe"] = "não aplicado — piso fora da cadeia: o global piso-invalido do julgador nomeia a causa"
     elif lido == pin:
         c["estado"] = "ok"
         c["detalhe"] = f"merges first-parent até o piso, inclusive: lidos {lido} = censo pinado {pin}"
     else:
         c["estado"] = "divergente"
         c["detalhe"] = (f"merges first-parent até o piso, inclusive: lidos {lido!r} ≠ censo pinado {pin} "
-                        "(fecho.json → piso.merges_ate_piso) — leitor mudo ou histórico incompleto; "
-                        "a árvore não pode ser declarada conforme por vácuo")
+                        "(fecho.json → piso.merges_ate_piso) — o leitor não nomeou causa: defeito do "
+                        "instrumento ou truncamento que ele não detecta; a árvore não pode ser "
+                        "declarada conforme por vácuo")
     c["falha"] = c["estado"] in ("divergente", "nao_pinado")
     return c
 

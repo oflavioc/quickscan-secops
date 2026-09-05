@@ -675,3 +675,98 @@ contagem alguma (KI-3): o que este experimento mede é o `.git`, e ele não mudo
   F20–F22) — decisão de `product-owner`/`tech-lead`, implementação em `fecho.py` do `core-engineer`; o red da metade pura se
   escreve quando a forma estiver decidida.
 - **O que não foi medido**: um run `pull_request` com `visual` verde — não existe antes do remédio de EA-38 e de um novo push.
+
+## 12. Fix-finding EA-39 — bateria adversarial de I/O em clone efêmero, `origin` = GitHub (2026-09-05)
+
+Carrasco **declarado** da metade do leitor (a detecção do clone raso em `fecho.py:ler_merges`), no lugar do
+mutante de árvore recusado com razão medida (`ea39-desenho.md` §6; dívida em `mutation-matrix.json →
+dividas_declaradas`): `.git/shallow` é invisível às três guardas de restauração do harness (bytes, SHA-256,
+`git status --porcelain` escopado), `git fetch --depth=1` numa worktree muta o `.git` compartilhado pelas nove
+worktrees desta máquina, e `--unshallow` exige o remoto e falha em repositório completo. A bateria roda em clones
+no scratchpad, **nada é escrito na worktree**, e é reexecutada a cada mudança de `ler_merges` (o trigger por path
+da `d016` não a dispara — por isso está declarada). §12.1 é o "antes" (T092); §12.2 (T096, depois do green de
+`fecho.py`) repete os mesmos comandos e compara.
+
+### 12.1 Pré-fix — o "antes" que §12.2 compara (T092 · `qa-engineer` · 2026-09-05)
+
+Ambiente: `git version 2.55.0.windows.4`, Python 3.14.7, Windows. Código: HEAD `31eb1a4` — os três arquivos que o
+gate lê são os **mesmos blobs** em `origin/develop` `ec74d6f` (`git ls-remote origin refs/heads/develop`):
+`check_fecho.py 2ab6908e05fe`, `fecho.json 2e043cac1159`, `fecho.py ba4ce6cca3f2` (conferido em cada clone por
+`git ls-tree HEAD`). Clones **A** e **B**: `git init` + `git remote add origin https://github.com/oflavioc/quickscan-secops.git`
++ `git fetch --depth=N origin +refs/heads/develop:refs/remotes/origin/develop` + `git checkout --detach origin/develop`
+— o molde do checkout do CI (2–3 s cada). Clone **C**: clone local completo (`git clone --no-hardlinks -b fix/ea39-leitor-mudo`)
+com `origin` **reapontado para o GitHub** e `git fetch --prune origin` (refs remotas refeitas de lá). Ressalva do
+protótipo do `tech-lead` (§0 do desenho) fechada: lá o `--unshallow` puxou o `develop` **local** (`acc9c21`, atrás
+do remoto); aqui todo `origin` é o GitHub. Gate nu = `python .claude/verify/check_fecho.py` (+ `--json` para os campos).
+
+| # | cenário | `.git/shallow` · `is-shallow-repository` | cadeia first-parent lida | `vivo._leitura.origin_develop` | gate nu (código de HEAD) |
+|---|---|---|---|---|---|
+| **A** | `--depth=1` — raso **acima** do piso (`develop` tem 2 merges depois de `921977c`) | 1 linha (`ec74d6f`) · `true` | `[ec74d6f]`, `%P` vazio; `git cat-file -p ec74d6f` tem **2 `parent`**; piso não localizado | `{presente: true, sha: ec74d6f…, causa: null, piso_na_cadeia: false}` | `[FAIL]  NÃO DETERMINÁVEL (piso 921977c25e76 ausente da cadeia first-parent de refs/remotes/origin/develop — um SHA de outra branch não é piso)` · 11/11 `NÃO DETERMINÁVEL [piso-invalido]` · censo `nao_aplicado` · `fecho: 11 demanda(s) · 0 válvula(s) · 1 problema(s)` · exit 1 — **detalhe falso** |
+| **B** | `--depth=3` — a cadeia termina **no** piso (assinatura do EA-38) | 3 linhas (`921977c a3def2d b9d02ec`) · `true` | `[ec74d6f, 1f7d039, 921977c]`; `921977c` com `%P` vazio e objeto com 2 `parent`; piso na posição 2 | `{presente: true, sha: ec74d6f…, causa: null, piso_na_cadeia: true}` | **leitor mudo**: `globais []` · `merges_apos_piso 2 · merges_ate_piso 0` · `em_voo 10` (as dez `done` mescladas saem `[OK] … EM VOO (fase done)`) · 016 `CONFORME` (#40) · `[FAIL]  guarda de censo da leitura: … lidos 0 ≠ censo pinado 39 … leitor mudo ou histórico incompleto` · `fecho: 11 demanda(s) · 0 válvula(s) · 0 problema(s) · guarda de censo da leitura: FAIL` · exit 1 |
+| **C** | clone **completo** + `git fetch --depth=1 origin c4ecfec … --no-tags` (o comando do Playwright, com `ec74d6f^2` — ponta de `fix/ea37`, **fora** da cadeia first-parent) | 1 linha (`c4ecfec`) · **`true`** | 69 commits até a raiz `e5ccd42` (`%P` vazio, **0 `parent`**); `c4ecfec` fora da cadeia, `%P` vazio e objeto com 1 `parent` | `{presente: true, piso_na_cadeia: true}` | `39 (ok)` · `0 problema(s)` · exit 0 · `--json` **byte-idêntico** ao baseline completo do mesmo clone (antes do fetch raso) — o flag sozinho acusaria falso |
+| **D** | `--pr --json` em **A** (raso) × **C** (completo), `GITHUB_EVENT_NAME=pull_request`, `GITHUB_BASE_REF=develop` | — | — | não lido (`_leitura` = `head_ref, base_ref, evento`) | `feature/016-registro-contra-execucao` ⇒ `LIBERADO` · `fix/ea39-leitor-mudo` ⇒ `NÃO JULGADO · fora-da-populacao`; os dois JSONs **byte-idênticos** raso × completo (`cmp`, 15 485 bytes cada) — o caminho `--pr` não lê histórico |
+| **E.1** | em B: `git fetch origin +refs/heads/develop:refs/remotes/origin/develop` (sem `--depth`) | **persiste** (3 linhas) · `true` | 3 | idem B | idem B — "fetch de novo" não conserta |
+| **E.2** | em B: `git fetch --unshallow origin` (GitHub, 9 s) | ausente · `false` | 69, raiz `e5ccd42` | `{presente: true, piso_na_cadeia: true}` | `[INFO]  merges first-parent após o piso: 2 · até o piso, inclusive: 39 (não julgados) · censo pinado: 39 (ok)` · `0 problema(s)` · exit 0 |
+
+O que a tabela fixa para §12.2 (mesmos comandos, código pós-fix): **A** ⇒ global `historico-raso` com o detalhe
+verdadeiro (`fim_da_cadeia ec74d6f…`, "piso fora do trecho lido"), guarda `nao_aplicado`, `1 problema(s)`, exit 1;
+**B** ⇒ idem, `fim_da_cadeia 921977c…`, `posicao_do_piso 2`, `em_voo 0` (todas abortadas pelo global); **C** ⇒ `exit 0 ·
+39 (ok) · 0 problema(s)`, `--json` byte-idêntico ao baseline completo **do mesmo código** (o objeto `origin_develop`
+ganha três campos, logo não é comparável byte a byte com o pré-fix — compara-se veredito, contagens e censo); **D** ⇒
+`--pr --json` byte-idêntico raso × completo; **E.2** ⇒ restaura. Se A ou B saírem com **dois** FAIL (global + guarda
+`divergente`), a regra de composição da E016-8 foi violada; se C sair `NÃO DETERMINÁVEL`, o impedimento está
+disparando pelo flag e não pela cadeia.
+
+### 12.2 Pós-fix — os mesmos comandos, código `859ecf5` (T096 · `qa-engineer` · 2026-09-05)
+
+Ambiente: `git version 2.55.0.windows.4`, Python 3.14.7, Windows; remoto `develop` = `ec74d6f` (o mesmo de §12.1, `git ls-remote`);
+a branch `fix/ea39-leitor-mudo` **não está no remoto**. Como o código pós-fix chega a um clone raso da `develop`: em **A**, **B** e **G**,
+depois do `git checkout --detach origin/develop` (controle **pré-fix**, blobs de §12.1: `check_fecho.py 2ab6908e` · `fecho.json 2e043cac` ·
+`fecho.py ba4ce6cc`), `git fetch <worktree local> +fix/ea39-leitor-mudo:refs/heads/fix-ea39` traz os nove commits do fix — descendentes da
+ponta rasa — **sem tocar `.git/shallow`** (conferido antes/depois em cada clone: inalterado) e `git checkout --detach fix-ea39` põe o código
+pós-fix (`fecho.py 8ae729c9` · `check_fecho.py b36578e4` · `fecho.json 22c89806`) sobre a mesma `origin/develop` rasa. **C** é clone local
+completo (`--no-hardlinks -b fix/ea39-leitor-mudo`) com `origin` reapontado para o GitHub e `git fetch --prune origin`. Bateria inteira: 57 s;
+nada escrito na worktree; clones apagados ao fim. Gate nu = `python .claude/verify/check_fecho.py` (+ `--json` para os campos).
+
+| # | cenário · código | `.git/shallow` · `is-shallow` | cadeia first-parent lida · fim (`%P` · `parent` no objeto) | `vivo._leitura.origin_develop` | gate nu |
+|---|---|---|---|---|---|
+| **A** pré | `--depth=1` · develop | 1 (`ec74d6f`) · `true` | 1 · `ec74d6f` `%P` vazio · **2 `parent`** | `{presente, piso_na_cadeia: false}` | reproduz §12.1 A: `piso-invalido` com o detalhe falso · 11/11 · censo `nao_aplicado` · 1 problema · exit 1 |
+| **A** pós | `--depth=1` · **fix** | idem (inalterado) | idem | `{presente: true, piso_na_cadeia: false, cadeia_integra: false, fim_da_cadeia: ec74d6f…, posicao_do_piso: null}` | `[FAIL]  NÃO DETERMINÁVEL (histórico raso: a cadeia first-parent de refs/remotes/origin/develop termina em ec74d6f79fb5, commit cujo objeto tem pais que o clone não tem; piso 921977c25e76 fora do trecho lido — git fetch --unshallow origin; git fetch origin develop NÃO repara)` · 11/11 `NÃO DETERMINÁVEL [historico-raso]` · censo `nao_aplicado` (lido 0) · `em_voo 0` · `fecho: 11 demanda(s) · 0 válvula(s) · 1 problema(s)` · exit 1 |
+| **B** pré | `--depth=3` · develop | 3 (`921977c a3def2d b9d02ec`) · `true` | 3 · `921977c` `%P` vazio · 2 `parent` | `{presente, piso_na_cadeia: true}` | reproduz §12.1 B: leitor mudo, `globais []`, `em_voo 10`, `CONFORME 1`, só a guarda (`0 ≠ 39`), `0 problema(s)`, exit 1 |
+| **B** pós | `--depth=3` · **fix** | idem (inalterado) | idem | `{…, piso_na_cadeia: true, cadeia_integra: false, fim_da_cadeia: 921977c…, posicao_do_piso: 2}` | `[FAIL]  NÃO DETERMINÁVEL (histórico raso: … termina em 921977c25e76, … piso 921977c25e76 na posição 2 — git fetch --unshallow origin; git fetch origin develop NÃO repara)` · 11/11 `historico-raso` · censo `nao_aplicado` · `merges_apos_piso 2 · merges_ate_piso 0 · em_voo 0` · `1 problema(s)` · exit 1 |
+| **E.1** em B pós | `git fetch origin +refs/heads/develop:refs/remotes/origin/develop` (sem `--depth`), exit 0 | **persiste** (3) · `true` | 3 · idem | idem B pós | idem B pós — "fetch de novo" não conserta e o `[FAIL]` continua dizendo qual remédio conserta |
+| **E.2** em B pós | `git fetch --unshallow origin` (GitHub, 10 s) | ausente · `false` | 69 · raiz `e5ccd42` · **0 `parent`** | `{…, cadeia_integra: true, fim_da_cadeia: e5ccd429…, posicao_do_piso: 2}` | `[INFO]  merges first-parent após o piso: 2 · até o piso, inclusive: 39 (não julgados) · censo pinado: 39 (ok)` · 11/11 `CONFORME` · `0 problema(s)` · exit 0 |
+| **G** pré (**novo**) | `--depth=10` · develop — raso **abaixo** do piso | **7 linhas** (`4844447 48df9ae 59c8ad3 66ee17f 8b4aff3 927a0ef fdf5779` — a fronteira do BFS de `--depth`, não uma linha por profundidade) · `true` | **10** · `fdf5779` `%P` vazio · 2 `parent`; piso na posição 2 | `{presente, piso_na_cadeia: true}` | **leitor parcialmente mudo**: `merges_apos_piso 2 · merges_ate_piso 7 · em_voo 7` — sete `done` mescladas saem `EM VOO` (falso) e quatro `CONFORME` · `globais []` · `0 problema(s)` · `[FAIL]  guarda de censo da leitura: … lidos 7 ≠ censo pinado 39 … leitor mudo ou histórico incompleto` · exit 1 |
+| **G** pós (**novo**) | `--depth=10` · **fix** | idem (inalterado) | idem | `{…, piso_na_cadeia: true, cadeia_integra: false, fim_da_cadeia: fdf5779…, posicao_do_piso: 2}` | `[FAIL]  NÃO DETERMINÁVEL (histórico raso: … termina em fdf5779608dc, … piso 921977c25e76 na posição 2 — …)` · 11/11 `historico-raso` · censo lido **7**, estado **`nao_aplicado`** (cede a vez) · `em_voo 0` · `1 problema(s)` · exit 1 |
+| **C** base | clone **completo** · fix | ausente · `false` | 69 · raiz `e5ccd42` · 0 `parent` | `{…, cadeia_integra: true, fim_da_cadeia: e5ccd429…, posicao_do_piso: 2}` | `39 (ok)` · 11/11 `CONFORME` · `0 problema(s)` · exit 0 |
+| **C** raso | + `git fetch origin c4ecfece… --depth=1 --no-auto-maintenance --no-auto-gc --no-tags --no-recurse-submodules` (o comando do Playwright; `ec74d6f^2`, fora da cadeia) | 1 (`c4ecfec`) · **`true`** | 69 · raiz `e5ccd42` · 0 `parent` | idem C base | `39 (ok)` · `0 problema(s)` · exit 0 · `--json` **byte-idêntico** a C base (`cmp`, 21 116 bytes) — o flag sozinho acusaria falso; a conjunção não acusa |
+| **D** | `--pr --json` em **A** (raso) × **C** (completo), `GITHUB_EVENT_NAME=pull_request`, `GITHUB_BASE_REF=develop` | — | — | não lido (`_leitura` = `head_ref, base_ref, evento`) | `feature/016-registro-contra-execucao` ⇒ `LIBERADO` · `fix/ea39-leitor-mudo` ⇒ `NÃO JULGADO · fora-da-populacao`; **byte-idênticos** raso × completo (16 401 e 16 383 bytes — maiores que os 15 485 de §12.1 porque o objeto inclui a sonda, hoje 37 casos) |
+
+**O que §12.1 fixou, conferido linha a linha.** A ⇒ `historico-raso` com o detalhe verdadeiro (`fim_da_cadeia ec74d6f…`, "fora do trecho
+lido"), guarda `nao_aplicado`, `1 problema(s)`, exit 1 — sim. B ⇒ idem, `fim_da_cadeia 921977c…`, `posicao_do_piso 2`, `em_voo 0` — sim.
+C ⇒ `exit 0 · 39 (ok) · 0 problema(s)` e `--json` byte-idêntico ao baseline completo **do mesmo código** — sim (21 116 bytes). A frase do
+desenho *"C byte-idêntico ao pré-fix"* **não vale byte a byte** e não é o que se mede: o `od` ganhou três campos; contra §12.1 C compara-se
+veredito, contagens e censo, e são iguais (`39 (ok) · 0 problema(s) · exit 0`, 11/11 `CONFORME`). D ⇒ byte-idênticos — sim. E.2 ⇒ restaura —
+sim. **Nenhum cenário saiu com dois FAIL** (global + guarda `divergente`): a regra de composição da E016-8 está de pé; e C **não** saiu
+`NÃO DETERMINÁVEL`: o impedimento dispara pela cadeia, não pelo flag.
+
+**G — onde a guarda de censo e o impedimento se encontram.** É o único ponto da conjunção que nenhuma fixture da sonda exercita (F25 tem
+a cadeia terminando **no** piso, `merges []`; F26 tem o piso **fora** do trecho): piso na cadeia, `fim ≠ piso`, contagem parcial. Pré-fix a
+guarda **pegava** (`7 ≠ 39`), mas com 0 problema(s) de julgamento e sete demandas mescladas ditas `EM VOO` — o instrumento errava nos
+sujeitos e só o oráculo independente reclamava, sem nomear a causa. Pós-fix o leitor nomeia (`cadeia_integra false`, `fim fdf5779608dc`,
+`posicao_do_piso 2`), o julgador aborta 11/11 com `historico-raso` e a guarda **cede a vez** (`nao_aplicado`, com o `lido 7` ainda visível
+no JSON e no `[INFO]`): um FAIL, a causa certa, o remédio certo. Detalhe do `--depth=N`: a fronteira rasa é a do BFS do git sobre todos os
+pais — `.git/shallow` fica com 7 linhas e a cadeia first-parent lida tem 10 commits; o que o leitor usa é o **fim da caminhada**, não o
+arquivo, por isso o número de linhas não importa.
+
+**A linha extraída (E016-8, §Superfície 1 — Saída).** `relata_pos` imprime o global como `[FAIL]  <detalhe>` e cada demanda o herda como
+`NÃO DETERMINÁVEL (fase …) · não julgada — <detalhe>`. As duas variantes do detalhe, medidas: piso **dentro** do trecho lido (B, G) —
+`NÃO DETERMINÁVEL (histórico raso: a cadeia first-parent de refs/remotes/origin/develop termina em <fim12>, commit cujo objeto tem pais que o
+clone não tem; piso 921977c25e76 na posição 2 — git fetch --unshallow origin; git fetch origin develop NÃO repara)`; piso **fora** do trecho
+lido (A) — `… termina em ec74d6f79fb5, …; piso 921977c25e76 fora do trecho lido — …`. A spec recebeu as duas (célula 4 da E016-8 e o bloco de
+Saída); a pendência nomeada fecha aqui, antes do `spec-validate` do fix.
+
+**Reexecução.** Esta bateria roda de novo a cada mudança de `fecho.py:ler_merges`/`_cadeia_integra` (o trigger por path da `d016` não a
+dispara — está declarada por isso em `mutation-matrix.json → dividas_declaradas`, "LEITOR SOB CLONE RASO", agora com o resultado pós-fix).
+Receita reutilizável quando a branch não está no remoto: clone raso da `develop` do GitHub + `git fetch <worktree>` da branch local (o
+`.git/shallow` não muda) + `checkout --detach` da branch — controle pré-fix e medição pós-fix no mesmo clone.

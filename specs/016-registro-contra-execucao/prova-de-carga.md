@@ -675,3 +675,44 @@ contagem alguma (KI-3): o que este experimento mede é o `.git`, e ele não mudo
   F20–F22) — decisão de `product-owner`/`tech-lead`, implementação em `fecho.py` do `core-engineer`; o red da metade pura se
   escreve quando a forma estiver decidida.
 - **O que não foi medido**: um run `pull_request` com `visual` verde — não existe antes do remédio de EA-38 e de um novo push.
+
+## 12. Fix-finding EA-39 — bateria adversarial de I/O em clone efêmero, `origin` = GitHub (2026-09-05)
+
+Carrasco **declarado** da metade do leitor (a detecção do clone raso em `fecho.py:ler_merges`), no lugar do
+mutante de árvore recusado com razão medida (`ea39-desenho.md` §6; dívida em `mutation-matrix.json →
+dividas_declaradas`): `.git/shallow` é invisível às três guardas de restauração do harness (bytes, SHA-256,
+`git status --porcelain` escopado), `git fetch --depth=1` numa worktree muta o `.git` compartilhado pelas nove
+worktrees desta máquina, e `--unshallow` exige o remoto e falha em repositório completo. A bateria roda em clones
+no scratchpad, **nada é escrito na worktree**, e é reexecutada a cada mudança de `ler_merges` (o trigger por path
+da `d016` não a dispara — por isso está declarada). §12.1 é o "antes" (T092); §12.2 (T096, depois do green de
+`fecho.py`) repete os mesmos comandos e compara.
+
+### 12.1 Pré-fix — o "antes" que §12.2 compara (T092 · `qa-engineer` · 2026-09-05)
+
+Ambiente: `git version 2.55.0.windows.4`, Python 3.14.7, Windows. Código: HEAD `31eb1a4` — os três arquivos que o
+gate lê são os **mesmos blobs** em `origin/develop` `ec74d6f` (`git ls-remote origin refs/heads/develop`):
+`check_fecho.py 2ab6908e05fe`, `fecho.json 2e043cac1159`, `fecho.py ba4ce6cca3f2` (conferido em cada clone por
+`git ls-tree HEAD`). Clones **A** e **B**: `git init` + `git remote add origin https://github.com/oflavioc/quickscan-secops.git`
++ `git fetch --depth=N origin +refs/heads/develop:refs/remotes/origin/develop` + `git checkout --detach origin/develop`
+— o molde do checkout do CI (2–3 s cada). Clone **C**: clone local completo (`git clone --no-hardlinks -b fix/ea39-leitor-mudo`)
+com `origin` **reapontado para o GitHub** e `git fetch --prune origin` (refs remotas refeitas de lá). Ressalva do
+protótipo do `tech-lead` (§0 do desenho) fechada: lá o `--unshallow` puxou o `develop` **local** (`acc9c21`, atrás
+do remoto); aqui todo `origin` é o GitHub. Gate nu = `python .claude/verify/check_fecho.py` (+ `--json` para os campos).
+
+| # | cenário | `.git/shallow` · `is-shallow-repository` | cadeia first-parent lida | `vivo._leitura.origin_develop` | gate nu (código de HEAD) |
+|---|---|---|---|---|---|
+| **A** | `--depth=1` — raso **acima** do piso (`develop` tem 2 merges depois de `921977c`) | 1 linha (`ec74d6f`) · `true` | `[ec74d6f]`, `%P` vazio; `git cat-file -p ec74d6f` tem **2 `parent`**; piso não localizado | `{presente: true, sha: ec74d6f…, causa: null, piso_na_cadeia: false}` | `[FAIL]  NÃO DETERMINÁVEL (piso 921977c25e76 ausente da cadeia first-parent de refs/remotes/origin/develop — um SHA de outra branch não é piso)` · 11/11 `NÃO DETERMINÁVEL [piso-invalido]` · censo `nao_aplicado` · `fecho: 11 demanda(s) · 0 válvula(s) · 1 problema(s)` · exit 1 — **detalhe falso** |
+| **B** | `--depth=3` — a cadeia termina **no** piso (assinatura do EA-38) | 3 linhas (`921977c a3def2d b9d02ec`) · `true` | `[ec74d6f, 1f7d039, 921977c]`; `921977c` com `%P` vazio e objeto com 2 `parent`; piso na posição 2 | `{presente: true, sha: ec74d6f…, causa: null, piso_na_cadeia: true}` | **leitor mudo**: `globais []` · `merges_apos_piso 2 · merges_ate_piso 0` · `em_voo 10` (as dez `done` mescladas saem `[OK] … EM VOO (fase done)`) · 016 `CONFORME` (#40) · `[FAIL]  guarda de censo da leitura: … lidos 0 ≠ censo pinado 39 … leitor mudo ou histórico incompleto` · `fecho: 11 demanda(s) · 0 válvula(s) · 0 problema(s) · guarda de censo da leitura: FAIL` · exit 1 |
+| **C** | clone **completo** + `git fetch --depth=1 origin c4ecfec … --no-tags` (o comando do Playwright, com `ec74d6f^2` — ponta de `fix/ea37`, **fora** da cadeia first-parent) | 1 linha (`c4ecfec`) · **`true`** | 69 commits até a raiz `e5ccd42` (`%P` vazio, **0 `parent`**); `c4ecfec` fora da cadeia, `%P` vazio e objeto com 1 `parent` | `{presente: true, piso_na_cadeia: true}` | `39 (ok)` · `0 problema(s)` · exit 0 · `--json` **byte-idêntico** ao baseline completo do mesmo clone (antes do fetch raso) — o flag sozinho acusaria falso |
+| **D** | `--pr --json` em **A** (raso) × **C** (completo), `GITHUB_EVENT_NAME=pull_request`, `GITHUB_BASE_REF=develop` | — | — | não lido (`_leitura` = `head_ref, base_ref, evento`) | `feature/016-registro-contra-execucao` ⇒ `LIBERADO` · `fix/ea39-leitor-mudo` ⇒ `NÃO JULGADO · fora-da-populacao`; os dois JSONs **byte-idênticos** raso × completo (`cmp`, 15 485 bytes cada) — o caminho `--pr` não lê histórico |
+| **E.1** | em B: `git fetch origin +refs/heads/develop:refs/remotes/origin/develop` (sem `--depth`) | **persiste** (3 linhas) · `true` | 3 | idem B | idem B — "fetch de novo" não conserta |
+| **E.2** | em B: `git fetch --unshallow origin` (GitHub, 9 s) | ausente · `false` | 69, raiz `e5ccd42` | `{presente: true, piso_na_cadeia: true}` | `[INFO]  merges first-parent após o piso: 2 · até o piso, inclusive: 39 (não julgados) · censo pinado: 39 (ok)` · `0 problema(s)` · exit 0 |
+
+O que a tabela fixa para §12.2 (mesmos comandos, código pós-fix): **A** ⇒ global `historico-raso` com o detalhe
+verdadeiro (`fim_da_cadeia ec74d6f…`, "piso fora do trecho lido"), guarda `nao_aplicado`, `1 problema(s)`, exit 1;
+**B** ⇒ idem, `fim_da_cadeia 921977c…`, `posicao_do_piso 2`, `em_voo 0` (todas abortadas pelo global); **C** ⇒ `exit 0 ·
+39 (ok) · 0 problema(s)`, `--json` byte-idêntico ao baseline completo **do mesmo código** (o objeto `origin_develop`
+ganha três campos, logo não é comparável byte a byte com o pré-fix — compara-se veredito, contagens e censo); **D** ⇒
+`--pr --json` byte-idêntico raso × completo; **E.2** ⇒ restaura. Se A ou B saírem com **dois** FAIL (global + guarda
+`divergente`), a regra de composição da E016-8 foi violada; se C sair `NÃO DETERMINÁVEL`, o impedimento está
+disparando pelo flag e não pela cadeia.

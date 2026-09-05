@@ -291,14 +291,18 @@ vivo, por desenho" (`spec.md` §Nascimento sem vermelho crônico):
 **A terceira linha não estava prevista na `tasks.md` (T063) e não foi
 diagnosticada por mim.** Dentro do próprio job `verify`, a mesma campanha
 `d016`, invocada pelo estágio `mutation` do `run.sh`, fechou `[PASS] mutation`
-minutos antes (22:51:18Z) — no mesmo head SHA. A invocação direta e separada
-de `check_mutation.py` no job `visual` (um passo pré-existente, anterior à
-demanda 016, que roda **de novo** as campanhas sem Chromium como efeito
-colateral de rodar as que precisam dele) encontrou, oito minutos depois
-(22:59:21Z), o gate nu (`check_fecho.py`, sem flags) **vermelho** como
-baseline — impedindo o harness de atribuir qualquer kill aos mutantes de
-árvore. Registro o observado sem diagnosticar a causa (R2 §3: causa antes de
-conclusão) — é **dependência** para `qa-engineer`/`build-engineer`, abaixo.
+minutos antes (~~22:51:18Z~~ **[CORRIGIDO no adendo de 2026-09-04: hora de
+flush do passo no log, não do evento]**) — no mesmo head SHA. A invocação
+direta e separada de `check_mutation.py` no job `visual` (um passo
+pré-existente, anterior à demanda 016, que roda **de novo** as campanhas sem
+Chromium como efeito colateral de rodar as que precisam dele) encontrou, oito
+minutos depois (~~22:59:21Z~~ **[idem: flush, não evento]**), o gate nu
+(~~`check_fecho.py`, sem flags~~ **[CORRIGIDO: `check_fecho.py --json` — é o
+controle `C0-fecho` do harness, que sempre chama com `--json`, nunca "sem
+flags"]**) **vermelho** como baseline — impedindo o harness de atribuir
+qualquer kill aos mutantes de árvore. Registrei o observado sem diagnosticar
+a causa (R2 §3: causa antes de conclusão) — isolado depois, no run que fecha
+esta pendência (§Adendo — 2026-09-04, abaixo).
 
 **O que isso não muda**: nenhuma das três falhas é inesperada pelo desenho da
 spec para o estado atual da demanda (`phase: implement`, P2 não executada); a
@@ -351,6 +355,106 @@ listadas para não se perderem:
 | orquestrador | Decidir quando abrir demanda para `EA-36` (job dedicado para `branch-protection`, ou aceitar o custo transiente) e para o `fix-finding` do hook de `EA-37`; mover `phase` para `validate` no planning-state (a `validate` já está `in_progress`, mas `phase` ainda registra `implement` — observação do próprio aceite, `observacao_de_registro`) |
 | usuário (proprietário) | **P2** — configurar `verify`, `visual` e `fecho` como checks obrigatórios em `develop` (ruleset, não proteção clássica — T7 e), mais *up to date*. Sem isso o PR #40 não deve ser mesclado (spec §Nascimento sem vermelho crônico) |
 
+## Adendo — 2026-09-04: o run que fecha as pendências (R2 §5 — adendo, não reescrita)
+
+Este adendo **não substitui** nada acima; as duas correções de fato que ele
+motivou (o comando exato do controle de baseline e a natureza dos dois
+horários citados) ficaram **riscadas com a razão, no próprio ponto** — seção
+"Runs de CI — o que já aconteceu…", acima —, nunca reescritas por cima. O que
+segue é leitura direta de
+`gh run view`/`gh api` sobre o run
+[`33933884597`](https://github.com/oflavioc/quickscan-secops/actions/runs/33933884597)
+do PR #40, evento `workflow_dispatch`, head `5df74c2` — o commit
+`chore(016): gen_pins — repin R9 (G6, eco do controle, erratas E016-5/6/7)`,
+já no remoto e citado como `feito` no HEAD local desta escrita (o `ed2f9d0`
+citado acima e em `.claude/BACKLOG.md → EA-33` é anterior ao push e ao repin;
+não corrijo o BACKLOG aqui — fora do escopo deste adendo).
+
+### Por job, cada um lido e não repassado
+
+| Job | Conclusão | O que o log mostra, por dentro |
+|---|---|---|
+| `visual` | **success** | As 3 suítes visuais (P50/P52/D011) `success`; o passo "Campanhas de mutação com Chromium" fechou `D016 MUTATION [tests_016_mutants.js]: 33/33 mutantes detectados pelo gate e motivo esperados · controles: 3 ok · 0 falho(s)` e `não-KILL: nenhum — os 33 mutante(s) lidos estão DETECTADO`; `mutation: 1 campanha(s) executada(s) · 0 problema(s)` |
+| `fecho` | **success** | `[SONDA] fecho: 35 caso(s) · 0 divergência(s) (total pinado: 35)`; `[OK] NÃO JULGADO (evento sem base (push, workflow_dispatch ou re-run fora de pull_request))`; `fecho --pr: NÃO JULGADO · evento-sem-base`, exit 0. Nomeado, não silencioso (R10 §2) — é `workflow_dispatch`, não `pull_request`; no próprio PR #40 o mesmo check volta a **reprovar** com `FECHO PENDENTE` até o `done`, por desenho |
+| `verify` | **failure** | `bash .claude/verify/run.sh` fechou **16 PASS · 0 FAIL** dentro do job (todos os stages, inclusive `[PASS] mutation` e `[PASS] fecho`); o passo seguinte, `compliance-audit.sh`, fechou **15 PASS · 1 FAIL · 0 WARN** — o único FAIL é `branch-protection`: `develop DESPROTEGIDA · faltam: fecho, up-to-date, verify, visual · mecanismo lido: ruleset 21381133 (deletion, non_fast_forward) + classic enabled=false`. Esperado até o proprietário executar P2 |
+
+O run inteiro fecha `failure` porque o job `verify` fecha `failure` — os
+outros dois `success` não mudam o veredito agregado do run; é o mesmo desenho
+que a spec já previa (`spec.md` §Nascimento sem vermelho crônico): o `fecho`
+passa nomeando o "não julgado", o `verify` reprova pela metade que só o
+proprietário fecha.
+
+### A campanha `d016` não reincidiu — a causa continua não atribuída, e é isso que muda
+
+O achado **A1** do `spec-validate.md` (run `33927191969`: 20/33, 13×
+`NÃO EXECUTADO · baseline do gate nu VERMELHO`) **não se repetiu** neste run:
+os 33 mutantes saíram `DETECTADO`, com os 3 controles (`C0-fecho`,
+`C0-protecao`, `D016-M24/positivo`) todos `OK`. Confirmo o que o próprio
+`prova-de-carga.md` §10.4 já registrava como pendência: **a causa do run
+`33927191969` continua sem atribuição** (R2 §3 — não isolei condição alguma
+que explique aquele vermelho pontual). O que mudou não foi a causa ficar
+conhecida — foi o **instrumento** ganhar, no mesmo dia, o eco do controle
+(errata **E016-7**, commit `6678d31` "fix(016): eco do controle — a razão do
+baseline vermelho chega ao log"): se a divergência
+`d016` voltar a acontecer num run futuro do job `visual`, a nota do
+`NÃO EXECUTADO` passará a carregar `controle <id> · resultado: FALHOU ·
+<exit/problemas/censo/erro_de_leitura>` em vez da string constante "baseline
+do gate nu VERMELHO" sem motivo — provado em clone efêmero
+(`prova-de-carga.md` §10.3, cenário do `check_fecho.py` quebrado por
+`F99.json`: `13 de 33 mutante(s) lido(s)` com cada um carregando a nota do
+controle que falhou). Era transitória; segue não-nomeável a partir do registro
+antigo; deixa de ser não-nomeável a partir do próximo registro, se recorrer.
+
+### G6 — a medição de §Não mensurável 1, com a precisão que faltava
+
+Confirmo a mecânica, com uma correção de escopo em relação ao que me foi
+passado: `GITHUB_TOKEN: ***` mascarado **no ambiente do passo "Auditoria de
+conformidade da configuração agêntica"** aparece **só no job `verify`** —
+porque é o **único** dos três jobs que roda `compliance-audit.sh` (T8 c:
+`D016-PROT1` é seção do audit, não stage do `pipeline.yaml`; não roda em
+`fecho` nem em `visual`, por desenho). O `token: ***` que aparece nos três
+jobs, nos passos `actions/setup-python@v7`/`actions/setup-node@v7`, é a
+máscara padrão do parâmetro `token:` dessas actions (usada para consultar o
+índice de versões sem esbarrar em rate limit anônimo) — **não** é o mecanismo
+do gap G6, e já existia antes desta demanda. O que fecha, de fato,
+§Não mensurável 1 (`spec.md:524`, commit `9a460f5`) é só a linha do job
+`verify`: `GITHUB_TOKEN: ***` no bloco `env:` do passo do audit, seguida de
+`[FAIL] branch-protection: … mecanismo lido: ruleset 21381133 (…) + classic
+enabled=false` — uma leitura da API que **classifica o mecanismo**, o que uma
+leitura anônima (sujeita a limite e a `403` silenciosos) não garantia antes de
+`9a460f5`. Uma incógnita declarada desde a Fase 1 fechada por medição, não por
+argumento — mas fechada num job, não em três.
+
+### A correção que eu mesmo devia — o A1 deixou de estar "sem diagnóstico"
+
+Em `DEPENDÊNCIAS` eu havia deixado registrado que o relatório "ainda diz A1
+registrado sem diagnóstico". Está corrigido: o `spec-validate.md` (§Achado A1)
+recebeu diagnóstico que **refutou quatro hipóteses por medição** — (a) o
+código em HEAD (33/33 no stage isolado e no clone efêmero, ambos lidos na
+saída; e 33/33 no job `verify` por **dedução** válida e citada como tal, não
+por leitura de log — a segunda das duas correções que o `spec-validate.md`
+registrou riscadas em 2026-09-04); (b) escrita das suítes no gate; (c)
+`999-sintetica-d016.json` pré-existente; (d) árvore suja — e concluiu que a
+razão exata **não era nomeável a partir do registro daquele run** (o
+`check_mutation.py` truncava a saída em duas linhas + o bloco de não-KILL com
+nota constante). A refutação da inferência "a sonda estava sã" (`julgaSonda`
+não pina isolamento; `D016-M1` sai `DETECTADO` mesmo com `C0-fecho` vermelho,
+medido em clone efêmero com `F99.json`) também fica registrada, riscada, no
+`spec-validate.md` — não apagada. O que o eco corrigiu não foi a causa do run
+antigo: foi a capacidade do instrumento de nomear a causa, **daqui para
+frente**.
+
+### O que este adendo não decide
+
+`spec-validate.md` segue em **iteração 1 de 2** — a iteração 2 (condição 3 do
+aceite do `product-owner`) não foi tocada por mim; é o `qa-engineer` quem a
+fecha, com G1/G2/G3 reverificados e o score recomputado. P2 (ruleset com os
+três checks obrigatórios) segue **não executada** — é o único item, das cinco
+condições do aceite, que este run não pôde medir por não depender de
+execução alguma minha ou do CI: depende do proprietário, fora do repositório.
+`phase` no planning-state segue `validate` — não movo esse campo (é do
+orquestrador, T084).
+
 ## Fontes citadas
 
 - `specs/016-registro-contra-execucao/refinement.md` — §Enquadramento (P16),
@@ -386,3 +490,20 @@ listadas para não se perderem:
   [`33927191969`](https://github.com/oflavioc/quickscan-secops/actions/runs/33927191969)
   (head `ebe0b22`; `fecho`, `verify` e `visual` **failure**, cada um pela razão
   citada acima)
+
+### Fontes do adendo — 2026-09-04
+
+- PR [#40](https://github.com/oflavioc/quickscan-secops/pull/40) · run
+  [`33933884597`](https://github.com/oflavioc/quickscan-secops/actions/runs/33933884597)
+  (head `5df74c2`, evento `workflow_dispatch`; `visual` **success**, `fecho`
+  **success**, `verify` **failure** — por job, lido acima)
+- `specs/016-registro-contra-execucao/spec-validate.md` §Achado A1 — as duas
+  correções riscadas ("a sonda estava sã"; "33/33 no `verify`" como leitura)
+- `specs/016-registro-contra-execucao/prova-de-carga.md` §10 (E016-7 · o eco
+  do controle) — RED/GREEN do cenário `F99.json`, bateria do leitor (29
+  verificações · 0 falhas)
+- `specs/016-registro-contra-execucao/spec.md:524` — gap G6, commit `9a460f5`
+- Commits desta rodada de fechamento: `9a460f5` (G6), `6678d31` (eco do
+  controle), `f0fe1e2` (erratas E016-5/E016-6), `7cec314` (correções do
+  `spec-validate` §A1), `5df74c2` (`chore(016): gen_pins` — repin R9, feito
+  pelo `build-engineer`/orquestrador, não por mim)

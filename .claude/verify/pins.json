@@ -1,7 +1,7 @@
 {
   "_meta": {
     "descricao": "Registry único de pins — fonte de identidade dos artefatos (R8). Hashes = SHA-256 dos blobs de HEAD. Alterar arquivo pinado exige regenerar este registry no MESMO PR, com motivo no commit.",
-    "gerado_de_head": "ec79a1073d1ed3b44b0b29f5dd4724caca8b50fe",
+    "gerado_de_head": "1beae4d3b64de617223872f0cbb9b33f4177133e",
     "gerado_em": "2026-09-04",
     "exclusoes": [
       "docs_phase5/**",
@@ -321,7 +321,7 @@
     "icons_v32_source/FortiXDR.svg": "224439945c540376e47f7bcb712a71ab5ce50d77241c8e9d3e851d68814edf39",
     "package-lock.json": "920d148fdfa9636df5128f44f38796a5e1d2fd74531c2ed3b1b24e564cdaaf1c",
     "package.json": "0697d82b015471a2dea757d22a0f76fd0319e71cf85e55016db71ab4718a7c26",
-    "playwright.config.js": "9661deed970d595c62bc924708e1eb0b6d09c1c7db60176972819f1ea15b5dcf",
+    "playwright.config.js": "3eacc465035e5fdf3136f09e8346ab05de36c8384710f33a780bd297599bf846",
     "prototypes/.gitkeep": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
     "quickscan_secops_soccmm_v3_1_3.html": "d329049147950a5b2a40b2735c3d4bd9a89177fed439efbcb58df01bdeb7ae82",
     "quickscan_secops_soccmm_v3_2_dev.html": "5c6904edfe19c72eda624b8ec7daaefbe74006950ae5976230b0d886b4d492c1",

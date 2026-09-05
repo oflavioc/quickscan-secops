@@ -2315,7 +2315,7 @@ agente está em voo, que já é o sinal natural do momento seguro).
 
 ## EA-38 — no job `visual` sob `pull_request`, o runner do Playwright torna o clone raso no `base.sha` do PR: a campanha `d016` mede um repositório mutado e sai 20/33
 
-**Status**: `aberto`
+**Status**: `resolvido`
 
 **Aberto em**: 2026-09-05. Achado do `qa-engineer` no diagnóstico do A1 do
 `spec-validate.md` da demanda 016 (runs `33927191969`, `33930617469`,
@@ -2389,6 +2389,85 @@ condições é o **deste** fix-finding, `fix/ea39-leitor-mudo → develop` (que
 toca exatamente esses arquivos). Ler, no primeiro run do PR desta branch, os
 jobs `verify` e `visual`, a linha `controle: C0-fecho · OK · … 39/39`; só
 essa leitura decide se o achado fecha.
+
+### Resolução — a prova que faltava (2026-09-05)
+
+**Remédio** (`build-engineer`, já registrado acima): `captureGitInfo: {
+commit: false, diff: false }` em `playwright.config.js` — a causa era o
+runner do Playwright chamando `git fetch origin <base.sha> --depth=1` com o
+`base.sha` do PR (o próprio piso do gate), o que tornava `.git/shallow` a
+raiz da cadeia e derrubava o censo de `ler_merges`.
+
+**Prova, conferida por execução direta desta run (não repassada)**: run
+**`33952207595`**, evento `pull_request` do PR #42 (`fix/ea39-leitor-mudo →
+develop`, head `58c879e`), job **`visual`** (conferido via `gh run view
+33952207595 --json jobs`, id `101268992664`, conclusão `success`) — log lido
+via `gh run view --job 101268992664 --log`:
+
+```
+D016 MUTATION [tests_016_mutants.js]: 35/35 mutantes detectados pelo gate e motivo esperados · controles: 3 ok · 0 falho(s)
+controle: C0-fecho · OK · sonda 37/37 · falhas 0 · 11 demanda(s) · 0 problema(s)
+         · censo da leitura 39/39 (ok) · exit 0 · origin/develop ec74d6f79fb5 · data do commit 2026-09-05
+controle: C0-protecao · OK · sonda 9/9 · falhas 0 · exit 0
+controle: D016-M24/positivo · OK · 015-superficies-de-apoio: FECHO PENDENTE DECLARADO
+         · mensagem #34 · dono qa-engineer · prazo 2026-09-05 · válvulas 1 · censo 15/15 (ok)
+não-KILL: nenhum — os 35 mutante(s) lidos estão DETECTADO
+mutation: 1 campanha(s) executada(s) · 0 problema(s)
+```
+
+É a condição que a nota do desfecho do `EA-39` (acima) nomeava como pendente:
+sob `pull_request` — o ambiente exato onde o defeito existia —, com a
+campanha `d016` de fato executada (o PR toca `fecho.py`/`check_fecho.py`/
+`tests_016_mutants.js`), o censo lê **39/39** em vez de **0/39**. `C0-fecho`
+foi exercido sob PR e fechou verde; o achado fecha por essa leitura, como o
+próprio registro pedia.
+
+**O que tornou o defeito diagnosticável não foi o conserto.** Foi o eco do
+controle (errata `E016-8`, ver `EA-39`), que levou a razão até o log. Antes
+dele, o mesmo vermelho aparecia sem causa — dois dias de `[FAIL]` sem motivo
+nomeado (runs `33927191969` a `33935247512`).
+
+**A cadeia completa, como lição durável — três silêncios em série:**
+
+1. Um runner de teste (Playwright, `gitCommitInfoPlugin`) alterou
+   silenciosamente o repositório (`git fetch --depth=1` escreveu
+   `.git/shallow`) como efeito colateral de coletar metadado de diagnóstico —
+   nunca declarado como escrita na árvore.
+2. Isso fez um leitor de governança (`fecho.py:ler_merges`) devolver `merges:
+   []`/`od.causa: None` **em silêncio** — sem consultar
+   `git rev-parse --is-shallow-repository` nem comparar pais caminhados ×
+   pais do objeto — a lacuna que o `EA-39` fechou (código `historico-raso`,
+   errata `E016-8`).
+3. Isso derrubou 13 mutantes `ARVORE` com `NÃO EXECUTADO` (e, sem a guarda de
+   censo, teria saído **verde por omissão** — o cenário que o próprio
+   `EA-39` mediu no caso **G** da bateria) — uma razão que não chegava ao
+   log do CI.
+
+O `EA-39` — o leitor que agora **nomeia** o histórico raso — é o remédio da
+segunda camada, e está `resolvido` (ver abaixo). Sem ele, o mesmo defeito
+voltaria mudo se o vetor de truncamento mudasse: o remédio deste achado trata
+o vetor conhecido (Playwright/`base.sha`); o `EA-39` trata a classe (clone
+raso, qualquer origem).
+
+**Sobre a válvula `D016-M24/positivo · prazo 2026-09-05` na mesma linha do
+log** — conferido no fonte, não é uma válvula real vencendo hoje. É o
+controle positivo do próprio harness (`tests_016_mutants.js:513-516`):
+`valvulaApos(BRANCH_015, "D016-M24/positivo", ctx => ctx.dataCommit)` escreve
+uma válvula sintética no arquivo mutável `F.ps015`
+(`.claude/project-memory/planning-state/015-superficies-de-apoio.json`) com
+`prazo = dataDoCommit()` (`git log -1 --format=%cI HEAD`, a data do commit
+julgado — hoje, porque o HEAD do PR é de hoje) e depois **restaura os bytes
+originais** (`BASE_BYTES`, linha 527/779) ao fim da campanha. O
+`015-superficies-de-apoio.json` real, lido nesta árvore, **não tem** campo de
+válvula/prazo — a fase já é `"done"`. Não é achado; é o desenho do controle
+(nomeado no `desc` do próprio par: "válvula escrita pela campanha d016").
+
+**Evidência**: run `33952207595`, job `visual` (`101268992664`), conclusão
+`success`, log com as linhas acima citadas — conferido diretamente por este
+agente via `gh run view 33952207595 --json jobs` e `gh run view --job
+101268992664 --log`, não repassado do texto de delegação. Confirmação de
+PASS/FAIL da campanha e do fechamento é do `qa-engineer`; este registro cita
+o que a execução mostrou.
 
 ## EA-39 — o leitor de histórico lê um repositório raso como cadeia completa e não diz: "0 merges" não distingue "não há" de "não consegui caminhar" (família do EA-5)
 

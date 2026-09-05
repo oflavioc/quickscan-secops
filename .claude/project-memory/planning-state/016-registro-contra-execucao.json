@@ -1,6 +1,6 @@
 {
   "demanda": "016-registro-contra-execucao",
-  "phase": "validate",
+  "phase": "done",
   "spec_dir": "specs/016-registro-contra-execucao",
   "branch": "feature/016-registro-contra-execucao",
   "brief": "Vigiar o registro contra a execucao. Duas instancias da MESMA propriedade ausente, ambas com id permanente: EA-33 - demanda mesclada na develop com a Fase 6 aberta nao e reprovada por gate nenhum (check_state.py:52-53 exige pr_url em done, mas nada exige que branch mesclada CHEGUE a done; cinco instancias, a quinta criada pelo orquestrador no mesmo ciclo em que o achado foi aberto) - e EA-14/borda 8 - sob MUTATION_DEFER_MISSING=1 a campanha exigida sem ambiente vira [DEFER] e o stage passa, mas NADA verifica que o job irmao executou a campanha delegada: um DEFER cujo job falhe, seja pulado ou nao rode deixa a campanha SEM EXECUCAO e SEM FAIL. A spec da 013 registrou a borda 8 como demanda propria (spec 013 §Riscos 4: vincular o DEFER a execucao efetiva exige mexer em verify.yml e/ou em protecao de branch).",
@@ -73,7 +73,7 @@
     "data": "2026-09-04"
   },
   "validate": {
-    "status": "in_progress",
+    "status": "done",
     "conformance": "63/66 (95%) na 1a iteracao do spec-validate (specs/016-registro-contra-execucao/spec-validate.md). Os 3 gaps eram todos da classe 'faltando' e foram fechados: G1 schema (2 de 3 partes; a terceira RECUSADA com medicao pelo data-engineer), G2 design-decisions + ADR 0001, G3 o carrasco que faltava (F24 + D016-M31, provado nas duas direcoes).",
     "notes": "Pipeline completo 16 PASS/0 FAIL. Campanha d016 33/33 DETECTADO, controles 3/3. Sonda do fecho 35 casos/0 divergencias; sonda da protecao 9/0. compliance-audit 15 PASS/1 FAIL - o FAIL e branch-protection acusando develop DESPROTEGIDA, correto e esperado ate o usuario configurar os tres checks (T050, fora do repositorio). O job fecho reprova sobre a propria branch com FECHO PENDENTE da 016 - o gate funcionando sobre si mesmo, por desenho.",
     "aceite_po": {
@@ -113,6 +113,7 @@
       "2_regra_so_na_trilha": "A regra 'commit por caminho nominal com agente em voo' existe so em specs/016-*/trilha-do-commit-541771a.md - nem orchestration.md nem a skill a carregam. Prosa nao vigia (E2/R6). VAI SER CORRIGIDO nesta demanda: linha em orchestration.md §Anti-patterns, mais achado de backlog para o hook que a tornaria mecanica.",
       "3_spec_validate_datado": "spec-validate.md diz 'iteracao 1, 95%' enquanto o estado diz 'gaps fechados'. Registro atras da execucao - a familia desta propria demanda. Iteracao 2 encomendada."
     },
-    "nota_de_status": "Tentei gravar 'awaiting_report' e o stage state reprovou: status fora do vocabulario fechado (pending|in_progress|awaiting_approval|proven|done). Voltou a in_progress. Registrado porque o gate acusou uma invencao de vocabulario minha em 2 segundos - e e o mesmo tipo de guarda que esta demanda constroi para fase."
+    "nota_de_status": "Tentei gravar 'awaiting_report' e o stage state reprovou: status fora do vocabulario fechado (pending|in_progress|awaiting_approval|proven|done). Voltou a in_progress. Registrado porque o gate acusou uma invencao de vocabulario minha em 2 segundos - e e o mesmo tipo de guarda que esta demanda constroi para fase.",
+    "fecho": "FASE 6 COMPLETA em 2026-09-04. As tres pecas existem: spec-validate (iteracao 2, 67/70 = 95,7%, com os 3 gaps originais fechados e 3 novos vindos da execucao do CI, todos tratados - G4/G5 por errata E016-5/E016-6 autorizadas literalmente pelo usuario no chat depois de eu escalar a 2a iteracao abaixo de 100% como a skill manda, e G6 corrigido por codigo), aceite do product-owner ('nao encontrei objecao', CONDICIONADO a P2 antes do merge) e relatorio final com adendo do desfecho. done sob a definicao nova que esta propria demanda escreveu (C8): Fase 6 completa + PR aberto; CI verde e condicao do MERGE, nao do done. CONDICAO DO PO QUE PERMANECE: o usuario tem de configurar verify/visual/fecho como checks obrigatorios na develop antes do merge - senao o merge da 016 seria ele proprio uma promessa nao cobrada, que e o defeito que ela existe para acabar. O D016-PROT1 segue vermelho ao vivo ate la, corretamente."
   }
 }

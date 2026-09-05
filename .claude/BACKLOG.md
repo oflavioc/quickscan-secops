@@ -2038,7 +2038,7 @@ nas duas formas medidas abaixo. O achado é o **limite** — para que ninguém l
   é sempre da **mesma propriedade**.
 - `.claude/verify/regra_morta.js:392-412` (§6 `diferenca()`) — agrupa as
   declarações introduzidas/alteradas pelo mutante em um `Map` cuja chave é
-  `ctxChave(d) + " " + d.seletor + " " + d.prop` (`:399`/`:405`):
+  `ctxChave(d) + "\u0000" + d.seletor + "\u0000" + d.prop` (`:399`/`:405`):
   contexto de mídia, seletor e **propriedade**. Uma declaração cujo efeito visual
   é neutralizado por **outra propriedade**, de **outra camada**, nunca entra na
   mesma chave — o instrumento não tem onde compará-las.
@@ -2986,7 +2986,7 @@ stage `baseline` acusa os dois.
 
 ## EA-41 — `.claude/BACKLOG.md:2041` carrega dois bytes NUL literais: o registro sai da normalização de texto que ele mesmo vigia (R7 §1)
 
-**Status**: `aberto`
+**Status**: `resolvido`
 
 **Aberto em**: 2026-09-05. Levantado pelo `qa-engineer` de passagem, ao fechar o
 `EA-40`; não corrigido no mesmo diff (skill `fix-finding` §4) — registrado aqui
@@ -3050,16 +3050,43 @@ que cresce não é endereço estável. **A âncora que não apodrece é o conte�
 defeito em qualquer versão do arquivo; o número é conforto de leitura, não
 endereço. Quem consertar o `EA-41` **mede antes**, não confia no número daqui.
 
+### Nota de precisão (2026-09-05) — o escape do fonte é `\u0000`, não `\x00`
+
+A cadeia acima (item `regra_morta.js:399`/`:405`) e o "remédio" candidato
+abaixo supõem que o separador da chave é gravado no fonte como o escape
+hexadecimal de duas letras `\x00`. Conferido agora, antes de restaurar o
+texto: `grep -n '\x00\|\u0000' .claude/verify/regra_morta.js` devolve três
+linhas — `:399`, `:405` e `:438` (`chaveCache` de `verificarPasta`) — e as
+três usam o escape **Unicode de seis caracteres `\u0000`**, nenhuma usa
+`\x00`. A citação restaurada na linha 2041 usa `\u0000`, para ficar byte a
+byte idêntica ao fonte; gravar `\x00` teria produzido uma citação **nova e
+diferente** do código, não uma correção — a mesma classe de erro que este
+achado documenta, só que na prosa em vez do byte. A premissa original
+(`\x00`) fica registrada acima como foi escrita — refutada aqui, não apagada
+(R2 §5) — e vale também para a frase de mesmo teor em "O remédio" logo abaixo.
+
 ### Escopo — só este arquivo (pergunta respondida)
 
-`git ls-files --eol | grep -- "-text"` (medido nesta worktree) devolve, além
-de `.claude/BACKLOG.md`: os 26 PNGs de `docs_phase5/evidence_v322/**` e todos
-os SVGs de `icons_v32_source/**` — todos com `attr/-text`, ou seja, **exclusão
-explícita e intencional** no `.gitattributes` (imagem/ícone declarado binário
-por desenho, não achado). `.claude/BACKLOG.md` é o **único** arquivo em que o
-`.gitattributes` pede normalização de texto (`attr/text=auto eol=lf`) e o
-conteúdo a desativa por acidente. O achado é de um arquivo só; não muda de
-dono nem de rota por isso.
+`git ls-files --eol | grep -- "-text"` (medido nesta worktree, antes desta
+correção) devolvia **55 linhas**, não todas exclusão de fato: o defeito
+(`.claude/BACKLOG.md`, único com `i/-text`) e mais 54 linhas que casam com a
+substring `-text` em algum ponto da linha — sendo que **uma** delas casa pelo
+**nome do arquivo**, não por coluna de estado: `.claude/agent-memory/
+qa-engineer/armadilha-oraculo-de-texto-copymap.md`, que é `i/lf w/lf` (texto
+normal — o próprio nome documenta esta classe de armadilha de instrumento, e
+o `grep` sobre a linha inteira cai nela). Medição **por coluna** (`i/` ou `w/`
+contendo `-text`, a única que conta exclusão de fato): **53** — **27 PNGs**
+de `docs_phase5/evidence_v322/**` e **26 SVGs** de `icons_v32_source/**`
+(conferido por extensão e por contagem de arquivo: `icons_v32_source/*.svg`
+tem 26 entradas, todas rastreadas), todos com `attr/-text`, ou seja,
+**exclusão explícita e intencional** no `.gitattributes` (imagem/ícone
+declarado binário por desenho, não achado). Depois desta correção, a mesma
+busca devolve **54** linhas (as 53 exclusões mais a linha do nome de
+arquivo) — `.claude/BACKLOG.md` sai da lista. `.claude/BACKLOG.md` era o
+**único** arquivo rastreado em que o `.gitattributes` pedia normalização de
+texto (`attr/text=auto eol=lf`) e o conteúdo a desativava por acidente. A
+conclusão do achado se mantém — um arquivo só, sem mudar de dono ou de rota;
+os números (55/53/26+27) é que estavam errados.
 
 ### O remédio, como candidato (não decidido aqui)
 
@@ -3070,3 +3097,58 @@ provável `doc-writer` (autor da prosa, dono do `BACKLOG.md`) ou
 `build-engineer` (se a rota preferida tratar isso como correção de registry).
 Rito: correção não entra no mesmo diff que a abriu (skill `fix-finding` §4);
 decisão de rota e de dono é do orquestrador.
+
+### Fecho (2026-09-05) — rota `doc-writer`, bytes trocados pelo escape do fonte, gate novo em vigia
+
+**Decisão de rota**: `doc-writer`, dono do `BACKLOG.md` e autor da prosa (a
+rota candidata 1 do "remédio" acima), despachado pelo orquestrador. Rito:
+correção fora do commit RED (`2a1fb7f`, do `qa-engineer` — ele não corrige,
+R3 §2); diff mínimo (fix-finding §3): os dois bytes da linha 2041 e este
+registro do achado.
+
+**O que foi feito**: os dois bytes \x00 literais da linha 2041 (offsets 116172
+e 116190 do arquivo antes da troca, medidos por script) foram substituídos
+pelo escape textual \u0000 — não \x00, como a cadeia original e o "remédio"
+supunham; ver "Nota de precisão" acima. A linha 2041 passa a ler
+``ctxChave(d) + "\u0000" + d.seletor + "\u0000" + d.prop`` (``:399``/``:405``),
+byte a byte idêntica à construção da chave em `regra_morta.js:399`/`:405`.
+Nenhum outro byte do arquivo mudou fora desta linha, da correção da seção
+"Escopo" e da "Nota de precisão" acrescentadas por este fecho.
+
+**O instrumento que passa a vigiar a classe**: gate novo `eol-text`
+(`EA41-EOL1`/`EA41-EOL2`, `.claude/verify/check_eol_text.py`), escrito e
+provado em RED pelo `qa-engineer` no commit `2a1fb7f` antes desta correção,
+com stage próprio no `pipeline.yaml` (dono `qa-engineer`, não tocado aqui). A
+R7 §1 ("LF em todo texto") era regra bloqueante **sem checagem executável**
+para a classe "texto rastreado que o `.gitattributes` marca `eol=lf` e o
+conteúdo desativa por NUL ou CR solitário"; agora tem. O achado sai do
+backlog **com instrumento**, não com promessa.
+
+**Medido** (2026-09-05, worktree `phase5-014`, branch `fix/ea41-bytes-nul`):
+- `python .claude/verify/check_eol_text.py` — antes da correção (RED do
+  `qa-engineer`, commit `2a1fb7f`): `[FAIL] EA41-EOL1(a) .claude/BACKLOG.md —
+  attr/text=auto eol=lf · i/-text w/lf: classificado binário ... causa
+  (índice): nul — NUL=2 (1ª ocorrência: linha 2041)`, `1 problema(s)
+  [EOL1(a)=1 · EOL1(b)=0]`, exit 1; depois de trocar os bytes e reindexar por
+  caminho nominal (`git add .claude/BACKLOG.md`): **`579 rastreado(s) · 526
+  com normalização declarada · 53 excluído(s) por declaração (-text) · 0 sem
+  declaração · 0 com CR só no worktree · 0 problema(s) [EOL1(a)=0 ·
+  EOL1(b)=0] · 0 falha(s) de instrumento · sonda 13/13`**, exit 0 — os **53
+  excluídos por declaração** que o próprio gate conta batem com a medição por
+  coluna da "Escopo" acima.
+- `git ls-files --eol .claude/BACKLOG.md` — antes: `i/-text w/lf
+  attr/text=auto eol=lf`; depois de `git add` por caminho nominal: **`i/lf
+  w/lf attr/text=auto eol=lf`**.
+- `bash .claude/verify/run.sh --light` — o stage `baseline` **FALHA**, e é
+  **esperado até o repin do orquestrador** (R8, fora deste commit):
+  `check_baseline.py` mede contra `HEAD` (R2 §2), não contra o índice; antes
+  deste commit, `HEAD` ainda é o RED do `qa-engineer` e o `baseline` só acusa
+  o que ele já havia introduzido — `pipeline.yaml` divergente e
+  `check_eol_text.py` rastreado sem pin. A partir deste commit,
+  `.claude/BACKLOG.md` entra como uma **terceira** divergência (o hash de
+  `HEAD` muda; o registro ainda cita o anterior, `f9fa841b…`) — as três
+  fecham juntas no mesmo `gen_pins.py`, que é do orquestrador, em commit
+  separado. Nenhum outro stage do `--light` muda de veredito por esta troca
+  de bytes: `eol-text` fecha em **0 problema(s)** antes e depois de
+  `env-doctor`/`boundary`/`marker-lint`/`icons-check`/`build`/`lint-arch`/
+  `regra-morta`/`state`/`tdd`/`fecho`/`m41`, que não leem este arquivo.

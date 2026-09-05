@@ -1,7 +1,7 @@
 {
   "_meta": {
     "descricao": "Registry único de pins — fonte de identidade dos artefatos (R8). Hashes = SHA-256 dos blobs de HEAD. Alterar arquivo pinado exige regenerar este registry no MESMO PR, com motivo no commit.",
-    "gerado_de_head": "52023a302266c9d01311b23550f2951ef7b1e655",
+    "gerado_de_head": "3d7c676337b03a90f58cbb17332995bdbe74de50",
     "gerado_em": "2026-09-05",
     "exclusoes": [
       "docs_phase5/**",
@@ -15,7 +15,7 @@
     "baseline_core_zip_sha256": "625079c462be7d44ffd69b1cd85f256382322bd0555ae4b548f21bf30ee5b89d"
   },
   "files": {
-    ".claude/BACKLOG.md": "cdd4891345cacff2a7abddee3887a25d79c19f6398d1e3e81cea2845ba92c586",
+    ".claude/BACKLOG.md": "7de753c9effcb0f96b4d55f3fb121428645966b671bdea601fd256e0df8d3267",
     ".claude/agent-memory/README.md": "2f868716c8785119c1d6a02a7715f7b5058ab968f55951410fc82fc45b960a93",
     ".claude/agent-memory/build-engineer/MEMORY.md": "5ed47a73226fea6613b44c2ce70b26e95415033bafbd69a3ada20fa7df0bf950",
     ".claude/agent-memory/build-engineer/feedback_escopo_de_scanner_nos_dois_sentidos.md": "a07b03eb0687bc4f08ff02375684b8441f8d434384c415a3e25b1fe233007527",

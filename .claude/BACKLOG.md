@@ -2778,3 +2778,67 @@ e §12.2 (pós-fix); commits de conteúdo `e2d3892`, `fac8bfd`, `82f22b9`,
 `c535431`, `81c0326`, `a8bdfe4`, `5e5b151`, repinados em `31eb1a4`,
 `1c8f601`, `859ecf5`, `2f0245c` (R8 §1). `gen_pins.py` **não roda neste
 passo** — é do `build-engineer`, no PR desta demanda.
+## EA-40 — o cabeçalho de `FROZEN_VISUAL_AUTHORITY` cita a §29.4 para uma entrada que a §29.4 não nomeia
+
+**Status**: `aberto`
+
+**Aberto em**: 2026-09-05. Levantado pelo `qa-engineer` ao executar o repin
+inline do `P50-COR4` da demanda 016 (`EA-38`); classificação de achado (não de
+defeito do gate) do orquestrador e do `product-owner` — o `qa-engineer`
+registrou desenho defensável (viewports e resolução de browser parametrizam
+V4+V5) e não o reportou como falha.
+
+### Cadeia arquivo:linha → efeito
+
+- **`tests_p50_core.js:2724-2726`** — o comentário que abre
+  `FROZEN_VISUAL_AUTHORITY` diz: *"Estes hashes fixam os arquivos que a §29.4
+  declara protegidos"*.
+- **`specs/PHASE_5_0_REV_B.md:1613-1620`** (spec selada, imutável) — a §29.4
+  nomeia `tests_visual/` e "todas as suítes congeladas (`tests_*.js`
+  existentes...)"; **não nomeia `playwright.config.js`** em nenhuma alínea.
+- **`tests_p50_core.js:2765`** — `"playwright.config.js"` está na chave do
+  mapa mesmo assim, coberto pela alínea (a) de `P50-COR4` (identidade byte a
+  byte).
+- **Efeito**: toda mudança **só de ferramental** em `playwright.config.js`
+  (dono `build-engineer`) passa pela mesma trilha de repin que uma suíte de
+  fase selada exigiria — como aconteceu hoje na correção do `EA-38` (repin
+  `8ec429a`, comentário `:2733-2764`). O custo é real; a justificativa citada
+  para pagá-lo aponta para uma fonte que não a sustenta.
+
+### Distinção da família (não é duplicata)
+
+Mesma família de **E5** (citação que aponta para fonte que não diz aquilo — o
+erro do orquestrador corrigido ontem, sete citações propagadas). **Vizinho,
+não membro, de `EA-31`**: `EA-31` é registro não confrontado com **execução**;
+aqui não há execução nenhuma — é um **registro citando outro registro** (a
+spec) que não o sustenta. A comparação que falta é registro↔registro, não
+registro↔execução.
+
+### O que este achado NÃO propõe
+
+`specs/PHASE_5_0_REV_B.md` é spec selada e imutável (R6 §4; boundary classe
+`frozen`/`legacy` conforme o caso) — **não é tocada por este achado**; mexer
+na §29.4 é promoção de REV C, matéria do proprietário
+([[project_delegacao-proprietario-2026-08-29]]), não conserto de texto. Este
+registro também não decide que `playwright.config.js` deva **sair** da lista
+— isso pressuporia que a inclusão é indevida, e o desenho (parametrizar
+V4+V5) é defensável.
+
+### Encaminhamento
+
+Rotas possíveis, decisão nomeada para `product-owner`/`tech-lead` (nenhuma
+executada aqui):
+
+1. **Corrigir só a justificativa do cabeçalho** em `tests_p50_core.js:2724-2726`
+   para dizer que a lista é **mais ampla** que a §29.4, por decisão de quem a
+   escreveu (o pin cobre ferramental que parametriza V4+V5, não só o que a
+   §29.4 nomeia) — sem mexer na lista. Custo: baixo; `fix-finding`, dono
+   `qa-engineer` (autor do gate).
+2. **Deixar como está**, registrando aqui que a imprecisão é conhecida e
+   aceita — custo: a próxima leitura do cabeçalho repete o mesmo engano.
+3. **Mover `playwright.config.js` para um mapa de autoridade próprio**, fora
+   de `FROZEN_VISUAL_AUTHORITY`, com justificativa nominal separada da §29.4 —
+   custo: maior, toca estrutura do gate `P50-COR4` (rito R10, gate em suíte
+   congelada).
+
+Nenhuma rota toca `specs/PHASE_5_0_REV_B.md`.

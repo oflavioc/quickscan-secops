@@ -33,6 +33,17 @@
    POR QUE HÁ CONTROLES (não mutantes, fora da contagem do preflight):
      · C0-fecho / C0-protecao — o baseline tem de estar VERDE antes de mutar:
        kill medido contra baseline vermelho não é atribuível ao mutante.
+       A NOTA de cada NÃO EXECUTADO por baseline carrega o `resultado:` do
+       controle que caiu (2026-09-04, spec-validate A1: no job `visual` do CI
+       13 mutantes de árvore saíram NÃO EXECUTADO e a razão ficou no stdout que
+       o stage descartava — só a nota chega ao log). A nota nomeia a METADE que
+       falhou (SONDA / ÁRVORE) e nunca imprime `undefined`: vivo null, JSON
+       ausente (exit + última linha do stderr), erro de leitura e globais
+       (origin-develop-ausente / piso-invalido) saem com nome. Medido antes da
+       mudança, em clone: fixture extra ⇒ C0-fecho FALHOU com `undefined
+       demanda(s)`, M18 NÃO EXECUTADO com nota constante — e M1 DETECTADO,
+       porque julgaSonda não pina isolamento: um C0 vermelho NÃO localiza a
+       falha numa metade; quem localiza é esta nota.
      · M24/positivo — a válvula VÁLIDA sobre o cenário de M18 (015 em validate,
        piso recuado) tem de ser ACEITA: FECHO PENDENTE DECLARADO, exit 0, com
        prazo == data do commit (a borda exata de T4). É o controle de que FEC4
@@ -661,27 +672,57 @@ function julgaArvore(r, espera) {
                  ((v.globais || []).length ? " · globais: " + v.globais.map(g => g.codigo).join(",") : "") };
 }
 
+/* A nota do controle é o ÚNICO diagnóstico que sobrevive ao stage quando um baseline
+   cai (spec-validate A1, 2026-09-04: o `check_mutation.py` ecoa o tail e as notas dos
+   não-KILL; a linha `CONTROLE … resultado:` só passou a ser ecoada no mesmo dia).
+   Por isso ela nunca imprime `undefined`: cada metade (SONDA / ÁRVORE) é nomeada, e
+   o que falta é dito com nome — vivo null, JSON ausente (exit + última linha do
+   stderr), erro de leitura, globais (origin-develop-ausente / piso-invalido). */
+const num = x => (x === undefined || x === null ? "?" : x);
+const ultimaLinha = s => { const l = String(s || "").split("\n").filter(Boolean).slice(-1)[0]; return l ? l.slice(0, 200) : "(stderr vazio)"; };
+const txtProblema = p => (typeof p === "string" ? p : JSON.stringify(p));
 function julgaControle(r, espera) {
   const j = r.json;
-  if (!j) return { ok: false, nota: r.erroJson || "sem JSON" };
+  if (!j) return { ok: false, nota: (r.erroJson || "sem JSON") + " · exit " + num(r.code) + " · stderr: " + ultimaLinha(r.stderr) };
   if (espera.baselineBp) {
     const ok = r.code === 0 && j.ok === true && j.total === j.total_pinado && j.falhas === 0;
-    return { ok, nota: "sonda " + j.total + "/" + j.total_pinado + " · falhas " + j.falhas + " · exit " + r.code };
+    return { ok, nota: "sonda " + num(j.total) + "/" + num(j.total_pinado) + " · falhas " + num(j.falhas) +
+      (j.ok === undefined ? " · JSON sem `ok`" : "") + " · exit " + num(r.code) };
   }
-  const s = j.sonda || {}, v = j.vivo || {}, c = v.contagens || {};
-  const cen = (v._leitura || {}).censo || {};
-  const censoTxt = "censo da leitura " + JSON.stringify(cen.lido) + "/" + JSON.stringify(cen.pinado) + " (" + cen.estado + ")";
+  if (j.erro) return { ok: false, nota: "gate: " + j.erro + " · exit " + num(r.code) };   /* registro ausente/ilegível: sonda e vivo nulos */
+  const s = j.sonda;
+  if (!s) return { ok: false, nota: "JSON sem `sonda` · exit " + num(r.code) };
+  const sondaTxt = "sonda " + num(s.total) + "/" + num(s.total_pinado) + " · falhas " + num(s.falhas) +
+    ((s.guarda || []).length ? " · guarda: " + s.guarda.join(" | ") : "") +
+    (s.instrumento && s.instrumento.presente !== true ? " · instrumento: " + num(s.instrumento.causa) : "");
+  const v = j.vivo;
+  if (v === null || v === undefined)
+    return { ok: false, nota: (s.ok === true ? "sonda ok mas árvore NÃO julgada (vivo: null) — forma inesperada do JSON"
+                                             : "metade que falhou: SONDA (árvore NÃO julgada, vivo: null)") + " · " + sondaTxt + " · exit " + num(r.code) };
+  if (v.erro_de_leitura)
+    return { ok: false, nota: "metade que falhou: ÁRVORE (erro de leitura: " + v.erro_de_leitura + ") · " + sondaTxt + " · exit " + num(r.code) };
+  const c = v.contagens || {}, lt = v._leitura || {}, cen = lt.censo || {};
+  const globais = (v.globais || []).map(g => (g && (g.codigo || g.detalhe)) || txtProblema(g)).filter(Boolean);
+  const acusados = (v.problemas || []).map(txtProblema);
+  const censoTxt = "censo da leitura " + JSON.stringify(cen.lido === undefined ? null : cen.lido) + "/" +
+    JSON.stringify(cen.pinado === undefined ? null : cen.pinado) + " (" + num(cen.estado) + ")";
+  const odTxt = "origin/develop " + String((lt.origin_develop || {}).sha || "ausente").slice(0, 12);
+  const arvoreTxt = num(c.demandas) + " demanda(s) · " + num(c.problemas) + " problema(s)" +
+    (globais.length ? " · globais: " + globais.join(" | ") : "") +
+    (acusados.length ? " · acusados: " + acusados.slice(0, 3).join("; ") + (acusados.length > 3 ? " (+" + (acusados.length - 3) + ")" : "") : "") +
+    " · " + censoTxt + " · exit " + num(r.code) + " · " + odTxt + " · data do commit " + num(lt.data_do_commit);
   if (espera.baselineFecho) {
     /* a guarda de censo tem de estar VERDE no baseline: é o controle de que ela roda e alcança o ok */
     const ok = r.code === 0 && j.exit === 0 && s.ok === true && c.problemas === 0 && cen.estado === "ok";
-    return { ok, nota: "sonda " + s.total + "/" + s.total_pinado + " · " + c.demandas + " demanda(s) · " + c.problemas + " problema(s) · " + censoTxt + " · exit " + r.code +
-      " · origin/develop " + String(((v._leitura || {}).origin_develop || {}).sha || "?").slice(0, 12) + " · data do commit " + (v._leitura || {}).data_do_commit };
+    const metade = ok ? "" : (s.ok !== true ? "metade que falhou: SONDA · " : "metade que falhou: ÁRVORE · ");
+    return { ok, nota: metade + sondaTxt + " · " + arvoreTxt };
   }
   if (espera.valvulaAceita) {
     const suj = (v.sujeitos || []).find(x => x.id === espera.valvulaAceita.id);
     const ok = r.code === 0 && j.exit === 0 && s.ok === true && c.problemas === 0 && c.valvulas === 1 && !!suj &&
       suj.veredito === "FECHO PENDENTE DECLARADO" && suj.oraculo_detalhe === espera.valvulaAceita.oraculo_detalhe && cen.estado === "ok";
-    return { ok, nota: (suj ? fmtSujeito(suj) + " · " + suj.detalhe : "sujeito ausente") + " · válvulas " + c.valvulas + " · problemas " + c.problemas + " · " + censoTxt + " · exit " + r.code };
+    return { ok, nota: (suj ? fmtSujeito(suj) + " · " + suj.detalhe : "sujeito ausente") + " · válvulas " + num(c.valvulas) +
+      " · problemas " + num(c.problemas) + (globais.length ? " · globais: " + globais.join(" | ") : "") + " · " + censoTxt + " · exit " + num(r.code) };
   }
   return { ok: false, nota: "controle sem espera" };
 }
@@ -787,9 +828,13 @@ const CONTROLES_SEL = CONTROLES.filter(c => !ONLY.length || c.id.indexOf("C0-") 
   for (const c of CONTROLES_SEL.filter(c => c.id.indexOf("C0-") === 0)) {
     const r = medir(c);
     const v = r.spawnFalhou ? { ok: false, nota: CAUSA.gate + ": " + r.erro } : julgaControle(r, c.espera);
-    baseline[c.modo] = v.ok;
+    baseline[c.modo] = { ok: v.ok, id: c.id, nota: v.nota };
     emitirControle(c, v.ok, v.nota);
   }
+  /* Baseline vermelho: a nota de cada NÃO EXECUTADO carrega o `resultado:` do controle
+     que caiu — no CI é a única linha que chega ao log (spec-validate A1). */
+  const vermelho = modo => !!baseline[modo] && baseline[modo].ok === false;
+  const notaBaseline = (modo, prefixo) => prefixo + " · controle " + baseline[modo].id + " · resultado: FALHOU · " + baseline[modo].nota;
 
   /* 2. mutantes */
   for (const m of SELECTED) {
@@ -799,12 +844,12 @@ const CONTROLES_SEL = CONTROLES.filter(c => !ONLY.length || c.id.indexOf("C0-") 
         pf.edicoes.map(e => e.arquivo + "=" + e.ocorrencias).join(", "));
       continue;
     }
-    if (m.modo === ARVORE && baseline[ARVORE] === false) {
-      emitir(m, NAO_EXECUTADO, CAUSA.gate, "baseline do gate nu VERMELHO — kill não atribuível ao mutante");
+    if (m.modo === ARVORE && vermelho(ARVORE)) {
+      emitir(m, NAO_EXECUTADO, CAUSA.gate, notaBaseline(ARVORE, "baseline do gate nu VERMELHO — kill não atribuível ao mutante"));
       continue;
     }
-    if (m.modo === SONDA_BP && baseline[SONDA_BP] === false) {
-      emitir(m, NAO_EXECUTADO, CAUSA.gate, "baseline da sonda de proteção VERMELHO — kill não atribuível ao mutante");
+    if (m.modo === SONDA_BP && vermelho(SONDA_BP)) {
+      emitir(m, NAO_EXECUTADO, CAUSA.gate, notaBaseline(SONDA_BP, "baseline da sonda de proteção VERMELHO — kill não atribuível ao mutante"));
       continue;
     }
     const precisaData = (m.edicoes || []).some(e => typeof e.repl === "function") ||
@@ -838,7 +883,7 @@ const CONTROLES_SEL = CONTROLES.filter(c => !ONLY.length || c.id.indexOf("C0-") 
 
   /* 3. controle positivo (muta a árvore como M18 + válvula válida; restaura) */
   for (const c of CONTROLES_SEL.filter(c => c.id.indexOf("C0-") !== 0)) {
-    if (baseline[ARVORE] === false) { emitirControle(c, false, "baseline vermelho — não medido"); continue; }
+    if (vermelho(ARVORE)) { emitirControle(c, false, notaBaseline(ARVORE, "baseline vermelho — não medido")); continue; }
     if (!dataCommit) { emitirControle(c, false, "data do commit indisponível"); continue; }
     let ok = false, nota = "";
     try {

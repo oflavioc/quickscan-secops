@@ -534,3 +534,56 @@ iteração) — e também em `design-decisions.md`, `planning-state.schema.json`
   Registrado em `mutation-matrix.json → dividas_declaradas`, com a razão medida.
 - **CI**: nada disto rodou no CI — a branch continua sem push e sem PR (T041). `run.sh` completo (com `suites`/`suites-heavy`/`evidence-bridge`)
   não foi reexecutado nesta iteração: nenhum arquivo de suíte ou de produto mudou; a regressão congelada é a de §4 do `spec-validate`.
+
+## 10. Fase 6 — A1 do `spec-validate`: o eco do controle (2026-09-04, errata E016-7)
+
+Clone efêmero de `9a460f5` no scratchpad, `refs/remotes/origin/develop` posto em `921977c` (o SHA do remoto), `node_modules` por junction;
+nada tocado na worktree. Os quatro vermelhos são formas de C0-fecho FALHOU que a nota tem de distinguir.
+
+### 10.1 RED — harness e stage de HEAD
+
+| cenário | C0-fecho · nota emitida por HEAD | mutante(s) | o que falta |
+|---|---|---|---|
+| S0 controle (campanha inteira) | `OK · sonda 35/35 · 11 demanda(s) · 0 problema(s) · censo da leitura 39/39 (ok) · exit 0 · origin/develop 921977c25e76 · data do commit 2026-09-04` | 33/33 · 3 controles ok · 22 s | — |
+| S2 `F99.json` extra (metade da SONDA) | `FALHOU · sonda 35/35 · undefined demanda(s) · undefined problema(s) · censo da leitura undefined/undefined (undefined) · exit 1 · origin/develop ? · data do commit undefined` | M18 `NÃO EXECUTADO` · nota constante; **M1 `DETECTADO`** (divergentes 13/35) | `undefined` ×5; a metade não é nomeada; `julgaSonda` não pina isolamento — um C0 vermelho não localiza a falha numa metade |
+| S1 `origin/develop` apagado só no clone (metade da ÁRVORE) | `FALHOU · sonda 35/35 · 11 demanda(s) · 1 problema(s) · censo da leitura 0/39 (nao_aplicado) · exit 1 · origin/develop ? · data do commit 2026-09-04` | M18 `NÃO EXECUTADO` · nota constante | o global (`origin-develop-ausente`) não é nomeado |
+| S3 `check_fecho.py` quebrado (JSON ausente) | `FALHOU · stdout não é o JSON do gate (Unexpected end of JSON input)` | idem | sem exit, sem stderr |
+| S4 `origin/develop` = `6dad53d` (piso fora da cadeia) | `FALHOU · sonda 35/35 · 11 demanda(s) · 1 problema(s) · censo da leitura 0/39 (nao_aplicado) · exit 1 · origin/develop 6dad53d3423b · data do commit 2026-09-04` | idem | o global (`piso-invalido`) não é nomeado |
+
+Stage de HEAD sobre essas cinco saídas (funções `mut_ler`/`mut_relata` extraídas por AST de `HEAD:.claude/verify/check_mutation.py`):
+**nenhuma linha `CONTROLE`/`resultado:` ecoada em nenhum cenário** — o tail de 2 linhas devolve `CAMPANHA NÃO CONCLUÍDA …` e a última entrada
+`NÃO EXECUTADO … nota constante`. É o log do job `visual` do run `33927191969`.
+
+### 10.2 O que mudou
+
+- `tests_016_mutants.js`: `julgaControle` nomeia a metade que falhou (SONDA / ÁRVORE), cobre `vivo: null`, JSON ausente (exit + última linha
+  do stderr), `erro_de_leitura`, globais e acusados, e nunca imprime `undefined`; `baseline[modo]` passa a `{ok, id, nota}`; `notaBaseline()`
+  nos três pontos (mutantes `ARVORE`, mutantes `SONDA_BP`, controle positivo "não medido").
+- `check_mutation.py`: `RE_CTRL_LINHA`/`RE_CTRL_RES`, `mut_controles()` (pura), `mut_relata_controles()` (eco + `LEITURA PARCIAL` contra
+  `controles` do preflight + teto 15), chamada após o tail e antes de `mut_relata`. `fails` intocado.
+
+### 10.3 GREEN
+
+- S0: 33/33 · 3 controles ok (a nota do C0-fecho ganha `falhas 0`).
+- S2: `FALHOU · metade que falhou: SONDA (árvore NÃO julgada, vivo: null) · sonda 35/35 · falhas 0 · guarda: fixture sem caso no registro: F99.json | contagem: 36 fixture(s) · 35 caso(s) · total pinado 35 · exit 1`
+- S1: `FALHOU · metade que falhou: ÁRVORE · sonda 35/35 · falhas 0 · 11 demanda(s) · 1 problema(s) · globais: origin-develop-ausente · acusados: origin-develop-ausente: NÃO DETERMINÁVEL (refs/remotes/origin/develop ausente — git fetch origin develop) · censo da leitura 0/39 (nao_aplicado) · exit 1 · origin/develop ausente · data do commit 2026-09-04`
+- S3: `FALHOU · stdout não é o JSON do gate (Unexpected end of JSON input) · exit 1 · stderr: SyntaxError: invalid syntax`
+- S4: `FALHOU · metade que falhou: ÁRVORE · … · globais: piso-invalido · acusados: piso-invalido: NÃO DETERMINÁVEL (piso 921977c25e76 ausente da cadeia first-parent de refs/remotes/origin/develop — um SHA de outra branch não é piso) · censo da leitura 0/39 (nao_aplicado) · exit 1 · origin/develop 6dad53d3423b · …`
+- Em todos, o `NÃO EXECUTADO` de M18 carrega `· controle C0-fecho · resultado: FALHOU · <a nota acima>` — na linha `gate esperado:` e na lista de fecho.
+- **Bateria unitária do leitor: 29 verificações · 0 falhas** — 5 cenários reais × 4 (HEAD não ecoa; o novo ecoa cada bloco; C0-fecho lido
+  como FALHOU com nota; `mut_ler` idêntico em HEAD e no emendado) + 9 sintéticos: `CONTROLE` sem `resultado:` na linha seguinte;
+  `CONTROLE` na última linha; linha indentada / no meio do texto / bloco de mutante não casam; harness sem controles (p50) ⇒ nada; 1 bloco
+  contra 3 declarados ⇒ `LEITURA PARCIAL` com os ids; 0 contra 3 ⇒ nomeado; preflight `None` ⇒ ecoa `FALHOU · razão`; 17 controles ⇒ 15
+  + sobra nomeada; `resultado: TALVEZ` (fora do vocabulário) não é lido como OK nem FALHOU.
+- **Stage `mutation` inteiro no clone, com `F99.json` commitada só lá** (árvore limpa): `IC-4: d016: 33 âncora(s)` · `[RUN] d016` →
+  tail (2 linhas) → `controle: C0-fecho · FALHOU · metade que falhou: SONDA (…F99.json…)` · `controle: C0-protecao · OK · …` ·
+  `controle: D016-M24/positivo · FALHOU · baseline vermelho — não medido · controle C0-fecho · resultado: FALHOU · …` →
+  `não-KILL: 13 de 33 mutante(s) lido(s) · 20 KILL ficam na contagem` (M18–M28, M32, M33, cada um com a nota do controle) →
+  `mutation: 1 campanha(s) executada(s) · 1 problema(s)`, exit 1. A forma exata do log do job `visual`, agora com a razão. Clone resetado
+  (`git reset --hard 9a460f5`, porcelain vazio, `F99.json` inexistente).
+
+### 10.4 O que NÃO foi medido
+
+- **A causa do run `33927191969`** continua desconhecida: este instrumento a dirá na próxima execução do job `visual`, se o vermelho se
+  repetir. Nada aqui a atribui (R2 §3).
+- O CI não rodou este HEAD; o pipeline completo local está registrado no relato do agente, não aqui.

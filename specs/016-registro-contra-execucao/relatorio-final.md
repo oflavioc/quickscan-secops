@@ -384,7 +384,31 @@ que a spec já previa (`spec.md` §Nascimento sem vermelho crônico): o `fecho`
 passa nomeando o "não julgado", o `verify` reprova pela metade que só o
 proprietário fecha.
 
-### A campanha `d016` não reincidiu — a causa continua não atribuída, e é isso que muda
+### ~~A campanha `d016` não reincidiu — a causa continua não atribuída, e é isso que muda~~
+
+> **[REFUTADO em 2026-09-05 — R2 §5: riscado, não apagado; o refutado é o
+> próprio autor deste adendo.]** A conclusão "não reincidiu, era transitória"
+> comparou amostras **não comparáveis**: o run `33933884597`, usado como prova,
+> é `workflow_dispatch` (checkout da ponta da branch, `event.json` sem
+> `pull_request`); os runs vermelhos são `pull_request` (checkout de
+> `refs/pull/40/merge`, `event.json` com `pull_request.base.sha`). O par
+> comparável do mesmo head `5df74c2` — run `33933887655`, `pull_request`,
+> 2026-09-05T00:43Z — fechou o `visual` **vermelho outra vez**, e o run
+> `33935247512` (`pull_request`, head `0b774b3`) também: 4 de 4 runs
+> `pull_request` vermelhos, 2 de 2 `workflow_dispatch` verdes. **Não era
+> transitória: era determinística e específica do evento `pull_request`.** A
+> causa foi isolada por execução em 2026-09-05 — o runner do
+> `@playwright/test` (`node_modules/playwright/lib/runner/index.js:762`), sob
+> `GITHUB_ACTIONS` com evento `pull_request`, executa `git fetch origin
+> <pull_request.base.sha> --depth=1` para montar o diff do PR; `base.sha` do
+> PR #40 é o piso `921977c`, e esse fetch grava `.git/shallow` com o piso:
+> `origin/develop` passa a ter **um** commit sem pais, `ler_merges` devolve 0
+> merges com `piso_na_cadeia: true`, e a guarda de censo (0 ≠ 39) reprova o
+> baseline. O job `verify` do mesmo run (checkout idêntico, sem Playwright)
+> fecha `[PASS] fecho`. Registro integral: `spec-validate.md` §Desfecho de A1,
+> `prova-de-carga.md` §11, `BACKLOG.md` EA-38 (vetor e remédio) e EA-39 (o
+> leitor não nomeia o histórico raso). O parágrafo abaixo fica como foi
+> escrito, para que a leitura futura veja o erro e a razão.
 
 O achado **A1** do `spec-validate.md` (run `33927191969`: 20/33, 13×
 `NÃO EXECUTADO · baseline do gate nu VERMELHO`) **não se repetiu** neste run:
@@ -402,8 +426,10 @@ baseline vermelho chega ao log"): se a divergência
 do gate nu VERMELHO" sem motivo — provado em clone efêmero
 (`prova-de-carga.md` §10.3, cenário do `check_fecho.py` quebrado por
 `F99.json`: `13 de 33 mutante(s) lido(s)` com cada um carregando a nota do
-controle que falhou). Era transitória; segue não-nomeável a partir do registro
-antigo; deixa de ser não-nomeável a partir do próximo registro, se recorrer.
+controle que falhou). ~~Era transitória; segue não-nomeável a partir do registro
+antigo; deixa de ser não-nomeável a partir do próximo registro, se recorrer.~~
+**[Refutado — ver a nota no início desta seção: não era transitória; o
+próximo registro (`33933887655`) disse a razão, e a razão levou à causa.]**
 
 ### G6 — a medição de §Não mensurável 1, com a precisão que faltava
 
@@ -507,3 +533,23 @@ orquestrador, T084).
   controle), `f0fe1e2` (erratas E016-5/E016-6), `7cec314` (correções do
   `spec-validate` §A1), `5df74c2` (`chore(016): gen_pins` — repin R9, feito
   pelo `build-engineer`/orquestrador, não por mim)
+
+### Fontes da correção do adendo — 2026-09-05 (`qa-engineer`)
+
+- Runs do PR #40, job `visual`, lidos pela linha do controle:
+  [`33933887655`](https://github.com/oflavioc/quickscan-secops/actions/runs/33933887655)
+  (`pull_request`, head `5df74c2`, `C0-fecho · FALHOU · … censo da leitura
+  0/39 (divergente)`) e
+  [`33935247512`](https://github.com/oflavioc/quickscan-secops/actions/runs/33935247512)
+  (`pull_request`, head `0b774b3`, mesma nota); o job `verify` dos dois:
+  `[PASS] fecho` · `[PASS] mutation`. Dispatches verdes no mesmo head:
+  `33933884597` (`C0-fecho · OK · 39/39`, lido) e
+  [`33937833002`](https://github.com/oflavioc/quickscan-secops/actions/runs/33937833002)
+  (`visual` `success`; a nota não foi lida — `run.sh` não ecoa PASS).
+- `node_modules/playwright/lib/runner/index.js` (`playwright` 1.62.1):
+  `:641-642`, `:652-676` (condição `:669`), `:679-693` (`ciInfo`), `:759-763`
+  (`gitDiff`: o `fetch --depth=1`).
+- `specs/016-registro-contra-execucao/spec-validate.md` §Desfecho de A1;
+  `specs/016-registro-contra-execucao/prova-de-carga.md` §11 (réplicas Linux e
+  Windows do checkout do CI, forense, reparos, direção do remédio);
+  `.claude/BACKLOG.md` EA-38, EA-39.

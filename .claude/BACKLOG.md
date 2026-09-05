@@ -2312,3 +2312,110 @@ delegação ativa** (o mesmo sinal que hoje aciona `state-eval`/`guard-*`) —
 dono `build-engineer`. Não decidido aqui se o hook é viável sem falsos
 positivos (ex.: `gen_pins.py` exige árvore limpa e roda só quando nenhum
 agente está em voo, que já é o sinal natural do momento seguro).
+
+## EA-38 — no job `visual` sob `pull_request`, o runner do Playwright torna o clone raso no `base.sha` do PR: a campanha `d016` mede um repositório mutado e sai 20/33
+
+**Status**: `aberto`
+
+**Aberto em**: 2026-09-05. Achado do `qa-engineer` no diagnóstico do A1 do
+`spec-validate.md` da demanda 016 (runs `33927191969`, `33930617469`,
+`33933887655`, `33935247512` — 4 de 4 `pull_request` vermelhos; `33933884597`
+e `33937833002` — 2 de 2 `workflow_dispatch` verdes). Reprodução integral em
+`specs/016-registro-contra-execucao/prova-de-carga.md` §11.
+
+### Cadeia arquivo:linha → efeito
+
+- **`.github/workflows/verify.yml`**, job `visual`, passo "Suítes visuais"
+  (`npm run test:visual` = `playwright test`) — roda **depois** do checkout e
+  **antes** do passo "Campanhas de mutação com Chromium". O job `verify` não
+  o executa.
+- **`node_modules/playwright/lib/runner/index.js`** (`playwright` 1.62.1):
+  `gitCommitInfoPlugin` (`:652-676`) é registrado sempre (`:641-642`, `:6606`,
+  `:6648`); com `captureGitInfo.diff === undefined && ci` (`:669`) chama
+  `gitDiff()`; `ciInfo()` (`:679-693`) lê `GITHUB_EVENT_PATH` e, se há
+  `pull_request`, devolve `prBaseHash = pull_request.base.sha`; `gitDiff()`
+  (`:762`) executa **`git fetch origin <base.sha> --depth=1
+  --no-auto-maintenance --no-auto-gc --no-tags --no-recurse-submodules`**.
+- **`.git/shallow`** passa a conter `base.sha` — no PR #40, **o piso
+  `921977c`**. A cadeia first-parent de `origin/develop` vira um commit sem
+  pais (`%P` vazio; o objeto cru segue com dois `parent`).
+- **`.claude/verify/fecho.py:473-503`** (`ler_merges`) acha o piso na posição
+  0 e não conta merge algum; **`check_fecho.py:374-397`** (guarda de censo)
+  reprova `0 ≠ 39`; o harness (`tests_016_mutants.js`, `C0-fecho`) marca os
+  13 mutantes `ARVORE` como `NÃO EXECUTADO`; o stage sai `1 problema(s)`.
+- **Efeito**: o check obrigatório `visual` fica vermelho em **todo**
+  `pull_request` — o PR não mescla sob P2 — por uma mutação do `.git` que a
+  guarda de "árvore limpa" do `check_mutation.py` (`git status --porcelain`)
+  **não vê**. Em `workflow_dispatch` o `event.json` não tem `pull_request` ⇒
+  nenhum fetch ⇒ verde: os dois eventos **não são amostras comparáveis** para
+  esse job (o adendo do `relatorio-final.md` errou por isso; corrigido, R2 §5).
+- **Refutado por execução, e por isso registrado**: não é o checkout de
+  `refs/pull/N/merge` (o job `verify` do mesmo run, checkout idêntico, fecha
+  `[PASS] fecho` 7 s depois dele; as réplicas Linux e Windows do checkout do
+  CI dão `39 (ok)` logo após o checkout), não é `fetch-depth` (é 0 e o fetch
+  é completo), não é versão de git (2.55.0 antes e depois do `apt-get`).
+
+### Encaminhamento
+
+`fix-finding` candidato, dono **`build-engineer`**: `captureGitInfo: { commit:
+false, diff: false }` em `playwright.config.js` — direção **provada** na
+réplica Linux (mesma execução do `playwright test` sob as variáveis de PR:
+sem `.git/shallow`, cadeia inteira, gate `39 (ok)`); arquivo **pinado** ⇒
+`gen_pins.py` no mesmo PR (R8 §1). É a forma que a R7 §4 pede: dependência de
+ambiente declarada, nunca implícita. Alternativa que trata só o sintoma: passo
+`git fetch --unshallow` antes da campanha, guardado por `git rev-parse
+--is-shallow-repository` (falha num repositório completo). Um `git fetch`
+simples de `develop` **não** repara (medido). Quem prova o fecho é um run
+`pull_request` com `visual` verde. Ver `EA-39` para a metade que este remédio
+não toca.
+
+## EA-39 — o leitor de histórico lê um repositório raso como cadeia completa e não diz: "0 merges" não distingue "não há" de "não consegui caminhar" (família do EA-5)
+
+**Status**: `aberto`
+
+**Aberto em**: 2026-09-05. Achado do `qa-engineer`, nomeado pelo orquestrador
+como o que importa mais que a causa do A1: sem a guarda de censo (J1 do
+`spec-validate`, `piso.merges_ate_piso = 39`) a árvore rasa teria saído
+**verde** — `0 problema(s)`, exit 0. Red da metade de I/O medido em dois SOs
+(`prova-de-carga.md` §11.3 "red do leitor" e §11.4 "à mão").
+
+### Cadeia arquivo:linha → efeito
+
+- **`.claude/verify/fecho.py:473`** — `git log --first-parent
+  --format=%H%x00%P%x00%cI%x00%s refs/remotes/origin/develop`; sob
+  `.git/shallow` = piso, devolve uma linha com `%P` vazio.
+- **`:487-489`** — o piso é achado (`indice = 0`) ⇒ `piso_na_cadeia = True`;
+  **`:491-503`** — nenhum elemento com dois pais ⇒ `merges = []`; **`od.causa`
+  fica `None`**: o leitor não consulta `git rev-parse --is-shallow-repository`
+  nem compara os pais caminhados com os do objeto (`git cat-file -p`).
+- **`:516-543`** (`ler_ancestralidade`) — `merge-base --is-ancestor
+  <red.commit> refs/remotes/origin/develop` responde `False` para os dez
+  `red.commit` (a caminhada está truncada), com `causa: None`.
+- **`:176-190`** (`_impedimento`) — só dois impedimentos: `origin/develop`
+  ausente e piso fora da cadeia; "piso na cadeia, cadeia truncada nele" não
+  existe. **`:242-286`** julga: as dez `done` mescladas saem **`EM VOO`**
+  (afirmação falsa sobre a árvore), `contagens.problemas = 0`.
+- **`check_fecho.py:374-397`** — a guarda de censo reprova (`lidos 0 ≠ censo
+  pinado 39`) com o detalhe **disjuntivo** "leitor mudo ou histórico
+  incompleto": o gate sabe que algo está errado, não sabe o quê, e o leitor
+  tinha como saber.
+- **Efeito**: o mesmo número — 0 — para "não há merges" e "não consegui
+  caminhar" (EA-5: número que não distingue "não medi" de "medi e deu zero").
+  A guarda de censo cobre só o trecho até o piso; um histórico raso **acima**
+  do piso (base de PR mais nova que o piso, quando `develop` avançar) cai em
+  `piso-invalido` com o detalhe errado ("um SHA de outra branch não é piso").
+
+### Encaminhamento
+
+Muda veredito ⇒ **decisão antes de código** (`product-owner`/`tech-lead`):
+o leitor passa a nomear o histórico raso (`git rev-parse
+--is-shallow-repository` e/ou pais caminhados ≠ pais do objeto) e o julgador
+ganha o impedimento — ou como **`piso-invalido`** com detalhe nomeado ("piso
+`921977c` é raiz de um histórico raso; `git fetch --unshallow`"), sem tocar o
+vocabulário fechado T10, ou como código novo (errata da spec 016). Carrasco
+permanente: fixture **pura** F25 na sonda (o leitor reporta o estado, o
+julgador não pode responder `EM VOO`), no padrão de F20–F22; a metade de I/O
+segue na bateria adversarial, já registrada em `prova-de-carga.md` §11.
+Implementação em `fecho.py` do **`core-engineer`**; red e mutante do
+**`qa-engineer`** depois da decisão. Independente de `EA-38`: consertar o
+vetor não ensina o leitor a falar.

@@ -584,6 +584,94 @@ Stage de HEAD sobre essas cinco saídas (funções `mut_ler`/`mut_relata` extra�
 
 ### 10.4 O que NÃO foi medido
 
-- **A causa do run `33927191969`** continua desconhecida: este instrumento a dirá na próxima execução do job `visual`, se o vermelho se
-  repetir. Nada aqui a atribui (R2 §3).
+- ~~**A causa do run `33927191969`** continua desconhecida: este instrumento a dirá na próxima execução do job `visual`, se o vermelho se
+  repetir. Nada aqui a atribui (R2 §3).~~ **[2026-09-05: o instrumento disse (runs `33933887655` e `33935247512`) e a causa foi
+  isolada por execução — §11.]**
 - O CI não rodou este HEAD; o pipeline completo local está registrado no relato do agente, não aqui.
+
+## 11. A1 — causa isolada: o runner do Playwright torna o clone raso no piso, só sob `pull_request` (2026-09-05)
+
+Pergunta do orquestrador: por que `ler_merges` devolve 0 sob checkout de `refs/pull/N/merge` com `origin/develop` presente e no SHA
+certo — e, mais importante, por que devolve 0 **sem dizer que não conseguiu caminhar**. Método: réplicas do checkout do CI
+(`git init` + `remote add` + o `fetch` literal da linha 101 do log + `checkout --progress --force refs/remotes/pull/40/merge`), uma
+em Linux (WSL Ubuntu, git 2.53.0, python 3.14.4, node 22.23.2, `npm ci`, Chromium `1234` do cache do Playwright) e uma em
+Windows (git 2.55.0.windows.4, python 3.14.7, node 24.19.0, `NODE_PATH` da worktree, Chrome local por `CHROME_PATH`, shim de
+preload só para a `tests_011_chromium.js`). Nada tocado na worktree; as duas réplicas foram apagadas ao fim.
+
+### 11.1 O que o CI já dizia, lido de novo com os pares certos
+
+| run | evento | head | job `visual` — `C0-fecho` | job `verify` — stage `fecho` |
+|---|---|---|---|---|
+| `33927191969` | `pull_request` | `ebe0b22` | 13 `NÃO EXECUTADO`, nota constante (pré-E016-7) | `[PASS]` (16 PASS) |
+| `33930617469` | `pull_request` | `a2f15b3` | 13 `NÃO EXECUTADO`, nota constante | — |
+| `33933887655` | `pull_request` | `5df74c2` | `FALHOU · metade que falhou: ÁRVORE · sonda 35/35 · falhas 0 · 11 demanda(s) · 0 problema(s) · censo da leitura 0/39 (divergente) · exit 1 · origin/develop 921977c25e76 · data do commit 2026-09-05` | `[PASS] fecho` · `[PASS] mutation` |
+| `33935247512` | `pull_request` | `0b774b3` | idem | `[PASS] fecho` · `[PASS] mutation` |
+| `33933884597` | `workflow_dispatch` | `5df74c2` | `OK · … censo da leitura 39/39 (ok) · exit 0 · … data do commit 2026-09-04` | — |
+| `33937833002` | `workflow_dispatch` | `0b774b3` | job `success` (nota não lida: `run.sh` não ecoa PASS) | `success` |
+
+Constantes conferidas nos quatro jobs comparáveis (`visual`/`verify` de `33935247512`, `visual` de `33933887655` e de `33933884597`):
+imagem `ubuntu-24.04 20260831.293.1`, `git version 2.55.0`; grupo de checkout do `visual` e do `verify` do mesmo run **idêntico**
+linha a linha (salvo o nome do arquivo temporário de credenciais); `git version 2.55.0` impresso de novo pelo `check_mutation.py` às
+01:17:04 (o `apt-get` do `visual` não trocou o git); saída das suítes idêntica PR × dispatch (67 passed/37 skipped, 27/27, 55/55, 1/1;
+só a ordem dos workers difere). Conclusão de leitura: o checkout **não** é a causa (o `verify` lê a cadeia inteira 7 s depois dele);
+a diferença está no que o `visual` executa entre `01:09:09` e `01:17:02` — o passo "Suítes visuais" — e é sensível a `pull_request`.
+
+### 11.2 O vetor, no código instalado
+
+`node_modules/playwright/lib/runner/index.js` (`playwright` 1.62.1): `addGitCommitInfoPlugin` (`:641-642`, registrado em `:6606` e
+`:6648`) → `gitCommitInfoPlugin` (`:652-676`): com `fullConfig.captureGitInfo?.diff === void 0 && ci` (`:669`) chama `gitDiff(configDir,
+ci)`; `ciInfo()` (`:679-693`): sob `GITHUB_ACTIONS`, lê `GITHUB_EVENT_PATH` e devolve `prBaseHash: json.pull_request.base.sha` (só
+existe se o evento tem `pull_request`); `gitDiff()` (`:759-763`):
+
+```
+await runGit(["fetch", "origin", ci.prBaseHash, "--depth=1", "--no-auto-maintenance", "--no-auto-gc", "--no-tags", "--no-recurse-submodules"], gitDir);
+const diff3 = await runGit(["diff", ci.prBaseHash, "HEAD"], gitDir);
+```
+
+No PR #40, `pull_request.base.sha = 921977c25e76fe0ed19dae74e17921d37c711ff0` — **o piso**. `git fetch --depth=1` de um commit já
+presente grava `.git/shallow` com ele: a cadeia first-parent de `origin/develop` passa a ser `[921977c]` sem pais. `%P` vazio ⇒
+`len(pais) < 2` ⇒ o piso é achado na posição 0 (`piso_na_cadeia: true`) e nenhum merge é contado (`merges_ate_piso = 0`).
+
+### 11.3 Réplica Linux — passo a passo
+
+| passo | `.git/shallow` | `git log -1 --format=%P 921977c` | `rev-list --count --first-parent origin/develop` | gate nu |
+|---|---|---|---|---|
+| após o checkout do CI | ausente | `49388e1f… 452df467…` | 67 (39 merges até o piso) | `até o piso, inclusive: 39 · censo pinado: 39 (ok)` · `0 problema(s)` · exit 0 |
+| `git checkout -- docs_phase5/` + `node tests_016_mutants.js` | ausente | 2 pais | 67 | `33/33 · controles: 3 ok · 0 falho(s)`; `C0-fecho · OK · 39/39` |
+| `playwright test tests_visual/screen.spec.js -g "V3 zero console" --project=d1920` (1 teste, `1 passed`) sob `CI=true GITHUB_ACTIONS=true GITHUB_EVENT_NAME=pull_request GITHUB_EVENT_PATH=event.json GITHUB_SHA=3891999… GITHUB_REF=refs/pull/40/merge GITHUB_REPOSITORY=… GITHUB_SERVER_URL=… GITHUB_RUN_ID=1`, com `event.json = {"pull_request": {"number": 40, "base": {"sha": "921977c…"}, …}}` | **`921977c…`** (41 bytes; `git rev-parse --is-shallow-repository` ⇒ `true`; sem grafts, sem `refs/replace`) | **vazio** — e `git cat-file -p 921977c` segue com as duas linhas `parent` | **1** | `[INFO] merges first-parent após o piso: 0 · até o piso, inclusive: 0 (não julgados) · censo pinado: 39 (divergente)` · `[FAIL] guarda de censo da leitura: … lidos 0 ≠ censo pinado 39 … leitor mudo ou histórico incompleto` · `fecho: 11 demanda(s) · 0 válvula(s) · 0 problema(s) · guarda de censo da leitura: FAIL` · exit 1 |
+| idem, `check_fecho.py --json` — **o red do leitor** | `921977c…` | vazio | 1 | `vivo._leitura.origin_develop = {"presente": true, "sha": "921977c…", "causa": null, "piso_na_cadeia": true}` · `contagens = {demandas 11, problemas 0, merges_apos_piso 0, merges_ate_piso 0, em_voo 11, …}` · `globais []` · `problemas []` · `exit 1` — as dez `done` mescladas saem `EM VOO` (a mensagem não acha merge e `merge-base --is-ancestor` responde `False` sobre a cadeia truncada), sem uma linha que diga por quê |
+| idem, harness `D016_MUT_ONLY=D016-M18` | `921977c…` | vazio | 1 | `C0-fecho · resultado: FALHOU · metade que falhou: ÁRVORE · sonda 35/35 · falhas 0 · 11 demanda(s) · 0 problema(s) · censo da leitura 0/39 (divergente) · exit 1 · origin/develop 921977c25e76 · data do commit 2026-09-05` — **byte-idêntica à do CI**; M18 `NÃO EXECUTADO` com essa nota |
+| reparo 1: `git fetch origin +refs/heads/develop:refs/remotes/origin/develop` (sem `--depth`) | **persiste** | vazio | 1 | — (um "fetch de novo" não conserta) |
+| reparo 2: `git fetch --unshallow origin` | ausente (`is-shallow-repository: false`) | 2 pais | 67 | `39 (ok)` · `0 problema(s)` · exit 0 |
+| direção do remédio: mesma execução do `playwright test` sob as mesmas variáveis, com `captureGitInfo: { commit: false, diff: false }` acrescentado a `playwright.config.js` (edição efêmera na réplica, restaurada: porcelain 0) | ausente | 2 pais | 67 | `39 (ok)` · `0 problema(s)` · exit 0 |
+
+### 11.4 Réplica Windows — controle negativo e mecanismo sem Playwright
+
+| passo | `.git/shallow` | gate nu |
+|---|---|---|
+| após o checkout do CI | ausente | `39 (ok)` · exit 0 |
+| `playwright test` (60 passed · 1 failed · 37 skipped — ambiente não-canônico), **sem** variáveis do GitHub | nunca nasce | `39 (ok)` |
+| `tests_p50_chromium.js` (24/3), `tests_p52_chromium.js` (50/5), `tests_011_chromium.js` via shim (1/0), `git checkout -- docs_phase5/` | nunca nasce | `39 (ok)` após cada uma |
+| `python .claude/verify/check_mutation.py` (passo literal do CI) | nunca nasce | `[RUN] d016` · `C0-fecho · OK · … 39/39 (ok)` · `D016-M24/positivo · OK` · `não-KILL: nenhum — os 33 mutante(s) lidos estão DETECTADO` · `mutation: 1 campanha(s) executada(s) · 0 problema(s)` · exit 0 |
+| à mão, o comando do Playwright: `git fetch origin 921977c… --depth=1 --no-auto-maintenance --no-auto-gc --no-tags --no-recurse-submodules` | `921977c…` (`is-shallow=true`; objeto cru com 2 pais; `%P` vazio; first-parent count 1) | leitor `{presente: true, causa: null, piso_na_cadeia: true}` · censo `divergente` lido 0 · `0 problema(s)` · exit 1 |
+| `git fetch --unshallow origin` | ausente | `39 (ok)` · `0 problema(s)` · exit 0 |
+
+Os FAIL das suítes no Windows são do ambiente não-canônico (Chrome 152 em vez do Chromium gerenciado; sem poppler) e não entram em
+contagem alguma (KI-3): o que este experimento mede é o `.git`, e ele não mudou.
+
+### 11.5 O que fica
+
+- **EA-38** (vetor): o job `visual` deixa o `@playwright/test` mutar o `.git` entre o checkout e a campanha, e a guarda de "árvore
+  limpa" do `check_mutation.py` (`git status --porcelain`) não vê `.git/shallow`. Remédio provado na linha "direção do remédio"
+  de §11.3: `captureGitInfo: { commit: false, diff: false }` em `playwright.config.js` (pinado ⇒ repin no mesmo PR). Dono:
+  `build-engineer`. Um passo `git fetch --unshallow` antes da campanha trataria o sintoma (e falha num repositório completo: exige
+  guarda por `git rev-parse --is-shallow-repository`) — o remédio na configuração trata a causa.
+- **EA-39** (o que importa mais): o leitor não distingue "não há merges" de "não consegui caminhar". Sob histórico raso,
+  `ler_merges` (`fecho.py:459-503`) devolve `piso_na_cadeia: true`, `causa: null`, `merges: []`; `ler_ancestralidade`
+  (`:516-543`) responde `False` para os dez `red.commit`; o julgador (`_impedimento`, `:176-190`) não tem impedimento para
+  isso e julga com 0 problema(s); só a guarda de censo (`check_fecho.py:374-397`) reprova, com um detalhe **disjuntivo**. Este é
+  o **red da metade de I/O** (as duas linhas "red do leitor"/"à mão" acima, nos dois SOs). O remédio muda veredito (impedimento
+  novo, código do vocabulário fechado T10 ou `piso-invalido` com detalhe nomeado; fixture pura F25 como carrasco permanente, como
+  F20–F22) — decisão de `product-owner`/`tech-lead`, implementação em `fecho.py` do `core-engineer`; o red da metade pura se
+  escreve quando a forma estiver decidida.
+- **O que não foi medido**: um run `pull_request` com `visual` verde — não existe antes do remédio de EA-38 e de um novo push.

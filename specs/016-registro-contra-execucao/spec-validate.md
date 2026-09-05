@@ -23,6 +23,9 @@
 >    encontrou o gate nu vermelho como baseline e deixou **13 de 33** mutantes
 >    `NÃO EXECUTADO` (achado **A1**, §abaixo). Sob P2, `visual` é check
 >    obrigatório: **enquanto A1 durar, o PR não mescla**.
+>    **[2026-09-05: A1 diagnosticado por execução — §Desfecho de A1. A
+>    condição do merge continua valendo até um `pull_request` com `visual`
+>    verde depois do remédio.]**
 > 2. **O remoto está em `ebe0b22`; o HEAD local está quatro commits à frente**
 >    (`ed2f9d0` fase `validate`; `b4b458a`/`8a2be5a`/`643daa4` = T082). O que
 >    difere entre `ebe0b22` e HEAD são **quatro arquivos, nenhum gate nem
@@ -46,7 +49,7 @@ obtida, as razões parecidas que seriam defeito, e a classe.
 |---|---|---|---|
 | **`fecho`** (`101198164054`, 22:50:54→22:51:00, `fetch-depth: 1`, sem `npm`) | `[SONDA] fecho: 35 caso(s) · 0 divergência(s) (total pinado: 35)` · `[FAIL] FECHO PENDENTE da demanda 016-registro-contra-execucao (fase implement) — merge bloqueado até done` · `fecho --pr: FECHO PENDENTE · fase-nao-done` · exit 1 | `demanda-fora-da-maquina` (junção quebrada) · `artefato-ausente` (fase ignorada) · sonda divergindo · `NÃO JULGADO` · exit 0 | **desenho** (C5 b, borda 6): o red ao vivo de `D016-PR1`, no check com nome próprio (E1). A fase impressa é `implement` porque o head do PR é `ebe0b22`; em HEAD o mesmo gate imprime `(fase validate)` (executado hoje, exit 1, código `fase-nao-done`) |
 | **`verify`** (`101198164047`) | `verify: 16 PASS · 0 FAIL` (pipeline, 22:56:55) e, no passo seguinte, `[FAIL] branch-protection: develop DESPROTEGIDA · faltam: fecho, up-to-date, verify, visual · mecanismo lido: ruleset 21381133 (deletion, non_fast_forward) + classic enabled=false` · `compliance: 15 PASS · 1 FAIL · 0 WARN` · exit 1 | `JSONDecodeError` (forma do `541771a`) · `NÃO DETERMINÁVEL` no CI (rede/permissão) · sonda `D016-PROT1` divergindo · qualquer stage do pipeline vermelho | **desenho** para o gate (§Nascimento: dono = proprietário, evento = P2) — **e gap de spec** para a frase *"o `verify` fica verde"* (E1 iv, §Superfície 2): ver **G5**. O token usado foi **anônimo**, não `GITHUB_TOKEN` (ver **G6**) |
-| **`visual`** (`101198163861`) | suítes: playwright ✓ · `P50 CHROMIUM + P51: 27 PASS · 0 FAIL` · `P52 CHROMIUM: 55 PASS · 0 FAIL` · `D011 CHROMIUM: 1 PASS`; passo "Campanhas de mutação com Chromium": `IC-4: d016: 33 âncora(s)` · `[RUN] d016` · **13 × `NÃO EXECUTADO · causa: gate não pôde ser executado · baseline do gate nu VERMELHO — kill não atribuível ao mutante`** (M18–M28, M32, M33 — exatamente os de modo `ARVORE`) · `não-KILL: 13 de 33 · 20 KILL ficam na contagem` · `mutation: 1 campanha(s) executada(s) · 1 problema(s)` · exit 1 | — | **achado A1, não diagnosticado** (R2 §3: causa antes de conclusão). O que está isolado e o que não está, em §A1 |
+| **`visual`** (`101198163861`) | suítes: playwright ✓ · `P50 CHROMIUM + P51: 27 PASS · 0 FAIL` · `P52 CHROMIUM: 55 PASS · 0 FAIL` · `D011 CHROMIUM: 1 PASS`; passo "Campanhas de mutação com Chromium": `IC-4: d016: 33 âncora(s)` · `[RUN] d016` · **13 × `NÃO EXECUTADO · causa: gate não pôde ser executado · baseline do gate nu VERMELHO — kill não atribuível ao mutante`** (M18–M28, M32, M33 — exatamente os de modo `ARVORE`) · `não-KILL: 13 de 33 · 20 KILL ficam na contagem` · `mutation: 1 campanha(s) executada(s) · 1 problema(s)` · exit 1 | — | **achado A1, não diagnosticado** (R2 §3: causa antes de conclusão). O que está isolado e o que não está, em §A1 — **diagnosticado em 2026-09-05, §Desfecho de A1** |
 
 ## Método
 
@@ -423,6 +426,9 @@ o log não permite distinguir: falha transitória de `git` naquele runner após
 oito minutos de Chromium (o `protegido()` do gate converteria em
 `erro_de_leitura` ⇒ `contagens` vazio ⇒ baseline vermelho), ou um estado de
 árvore que eu não vejo daqui. Não atribuo causa sem a linha (R2 §3).
+**[2026-09-05: era a segunda candidata — um estado do repositório
+(`.git/shallow`) que `git status` não mostra e que nasce dentro do próprio
+job. §Desfecho de A1.]**
 
 **Direção** (nada disto é desta validação, que é somente leitura):
 
@@ -443,6 +449,93 @@ oito minutos de Chromium (o `protegido()` do gate converteria em
 3. **Até lá**: o registro não pode dizer "campanha `d016` 33/33 no CI" — diz
    33/33 no job `verify` e **20/33 no job `visual`**, como o `relatorio-final.md`
    já diz. Sob P2, o merge espera o `visual` verde: A1 é **condição do merge**.
+
+### Desfecho de A1 — 2026-09-05: a causa, isolada por execução
+
+**O que o log passou a dizer** (E016-7 funcionou): runs `33933887655`
+(`pull_request`, head `5df74c2`) e `33935247512` (`pull_request`, head
+`0b774b3`), job `visual`, os 13 mutantes `ARVORE` saíram `NÃO EXECUTADO` com
+`controle C0-fecho · resultado: FALHOU · metade que falhou: ÁRVORE · sonda
+35/35 · falhas 0 · 11 demanda(s) · 0 problema(s) · censo da leitura 0/39
+(divergente) · exit 1 · origin/develop 921977c25e76 · data do commit
+2026-09-05`. **A guarda de censo (J1) foi quem pegou**: sem ela o gate nu
+teria saído `0 problema(s)`, exit 0, e os 13 mutantes teriam sido medidos
+contra um leitor cego.
+
+**Os pares comparáveis** (a lição de método está no `relatorio-final.md`,
+§correção do adendo): o run `33933884597` (`workflow_dispatch`, **mesmo head**
+`5df74c2`) e o `33937833002` (`workflow_dispatch`, **mesmo head** `0b774b3`)
+fecharam `visual` verde — `C0-fecho · OK · censo da leitura 39/39 (ok)` lido
+no primeiro; conclusão `success` do job no segundo (a nota não foi lida:
+`run.sh` não ecoa PASS). E, **dentro do mesmo run `pull_request`**, o job
+`verify` — checkout **idêntico** ao do `visual` (linhas 101/144 dos dois logs:
+`git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules
+origin +refs/heads/*:refs/remotes/origin/* +refs/tags/*:refs/tags/*
++389199923e…:refs/remotes/pull/40/merge` e `git checkout --progress --force
+refs/remotes/pull/40/merge`) — fechou `[PASS] fecho` (gate nu, exit 0 ⇒ censo
+`ok`) e `[PASS] mutation` nos dois runs. Mesma imagem (`ubuntu-24.04
+20260831.293.1`), mesmo `git version 2.55.0` nos quatro jobs — e o
+`check_mutation.py` imprime `git version 2.55.0` de novo às 01:17:04, logo o
+binário não mudou depois do `apt-get`. **Isso refuta as três hipóteses de
+checkout** (first-parent a partir de HEAD, piso fora da cadeia, `fetch-depth`
+raso): o mesmo checkout, lido 7 s depois pelo `verify`, tinha a cadeia
+inteira. O que sobra é o intervalo `01:09:09 → 01:17:02` do `visual`: o passo
+"Suítes visuais", que o `verify` não executa.
+
+**O vetor** (lido no código instalado, `playwright` 1.62.1,
+`node_modules/playwright/lib/runner/index.js`): o runner do `@playwright/test`
+registra `gitCommitInfoPlugin` (`:641-642`, `:6606`, `:6648`); com
+`captureGitInfo.diff === undefined && ci` (`:669`) ele chama `gitDiff()`
+(`:759-763`); `ciInfo()` (`:679-693`) lê `GITHUB_EVENT_PATH` e, se o evento
+tem `pull_request`, devolve `prBaseHash = pull_request.base.sha`; e então
+**`git fetch origin <base.sha> --depth=1 --no-auto-maintenance --no-auto-gc
+--no-tags --no-recurse-submodules`** (`:762`) seguido de `git diff <base.sha>
+HEAD`. No PR #40, `base.sha` **é o piso `921977c`**. `git fetch --depth=1` de
+um commit que o clone já tem por inteiro **grava `.git/shallow` com esse
+commit**: o repositório vira raso exatamente no piso, `%P` de `921977c` passa
+a vazio, `git log --first-parent refs/remotes/origin/develop` devolve **um**
+commit. Em `workflow_dispatch` o `event.json` não tem `pull_request` ⇒
+`prBaseHash` indefinido ⇒ nenhum fetch — por isso o dispatch é verde. No job
+`verify` o Playwright não roda — por isso o `verify` é verde.
+
+**Reproduzido em dois clones efêmeros do checkout do CI** (mesmos refspecs,
+`checkout --force refs/remotes/pull/40/merge`; integral em
+`prova-de-carga.md` §11):
+
+| clone | passo | `.git/shallow` | `%P` do piso | gate nu |
+|---|---|---|---|---|
+| Linux (WSL, git 2.53.0) | após o checkout | ausente | 2 pais | `39 (ok)` · exit 0 |
+| Linux | harness `d016` direto | ausente | 2 pais | `33/33 · 3 controles ok` |
+| Linux | **1 teste** do `playwright test` sob `GITHUB_ACTIONS=true`, `GITHUB_EVENT_NAME=pull_request`, `event.json` com `base.sha = 921977c` | **`921977c`** (`is-shallow-repository: true`) | **vazio** (o objeto cru, `cat-file -p`, segue com 2 `parent`) | `até o piso, inclusive: 0 · censo pinado: 39 (divergente)` · `0 problema(s)` · exit 1 |
+| Linux, raso | harness `D016_MUT_ONLY=D016-M18` | `921977c` | vazio | nota do C0 **byte-idêntica à do CI** |
+| Linux, raso | `git fetch origin +refs/heads/develop:…` (sem `--depth`) | **persiste** | vazio | — (reparo insuficiente) |
+| Linux, raso | `git fetch --unshallow origin` | ausente | 2 pais | `39 (ok)` · exit 0 |
+| Linux | `playwright test` sob as mesmas variáveis com `captureGitInfo: { commit: false, diff: false }` (edição efêmera) | ausente | 2 pais | `39 (ok)` · exit 0 |
+| Windows (git 2.55.0.windows.4) | suítes inteiras com Chrome local **sem** variáveis do GitHub + `check_mutation.py` | nunca nasce | 2 pais | `39 (ok)` após cada suíte; `C0-fecho · OK · 39/39`, `não-KILL: nenhum`, exit 0 |
+| Windows | só o comando do Playwright, à mão: `git fetch origin 921977c… --depth=1 …` | `921977c` | vazio | leitor `{presente: true, causa: null, piso_na_cadeia: true}` · censo `divergente` 0 · `0 problema(s)` · exit 1; `--unshallow` ⇒ `39 (ok)` |
+
+**Classe**: não é defeito do gate, do instrumento nem do checkout — é o **job
+`visual` deixando uma ferramenta de terceiros mutar o `.git`** entre o checkout
+e a campanha, num arquivo que `git status --porcelain` (a guarda de "árvore
+limpa" do `check_mutation.py`) **não vê**. Dois achados, com id permanente no
+`BACKLOG.md`: **EA-38** (o vetor: remédio pequeno e determinístico,
+`captureGitInfo: { commit: false, diff: false }` em `playwright.config.js`,
+provado acima; arquivo pinado ⇒ repin) e **EA-39** (o que o orquestrador
+apontou como o mais importante: o **leitor lê um histórico raso como cadeia
+completa e não diz** — `ler_merges` devolve `piso_na_cadeia: true` e `causa:
+null`, `ler_ancestralidade` responde `False` para os dez `red.commit` com a
+mesma calma, e as dez `done` mescladas saem `EM VOO`; quem reprova é só a
+guarda de censo, com o detalhe **disjuntivo** "leitor mudo ou histórico
+incompleto" — família do EA-5). O remédio de EA-39 muda veredito (impedimento
+novo ou `piso-invalido` com detalhe nomeado; fixture pura F25 como carrasco
+permanente; vocabulário fechado T10 ⇒ decisão de `product-owner`/`tech-lead`)
+e por isso **para aqui e sobe**, com o red da metade de I/O já medido nos dois
+clones (§11 da prova de carga) e o da metade pura a escrever quando a forma
+for decidida.
+
+**O que este desfecho não fecha**: um run `pull_request` com `visual` verde
+— só existe depois do remédio de EA-38 e de um novo push. Até lá, a linha 3 da
+§Direção vale como está.
 
 ## Julgamentos pedidos pelo orquestrador — com a execução, não com o argumento
 
@@ -501,7 +594,7 @@ com o run citado ao lado: registro que a execução contradiz.
 | 64 (§Nascimento) | PR1 e PROT1 vermelhos no CI pela razão certa | os **flips**: `LIBERADO` após o `done` (T084) e `PROTEGIDA` após P2, cada um num run citado por número (condições 1 e 2 do aceite do PO) |
 | 29 (C6 a) | — | `PROTEGIDA` ao vivo: **só P2** produz o estado; nenhum run o antecipa |
 | 72 (G6) / §Não mensurável 1 | leitura **anônima** do ruleset (200) | `token: GITHUB_TOKEN` + veredito, depois da linha `env:` (T043) |
-| A1 | 20/33 no `visual` | reexecução com o instrumento dizendo a razão |
+| A1 | 20/33 no `visual` | reexecução com o instrumento dizendo a razão — **feita** (`33933887655`, `33935247512`): a razão chegou ao log e a causa foi isolada em clone (§Desfecho de A1, EA-38/EA-39). O que ainda depende de run: `visual` **verde num `pull_request`**, depois do remédio de EA-38 |
 | 35 (audit no CI) | `compliance: 15 PASS · 1 FAIL · 0 WARN` | `15 PASS · 0 FAIL` só depois de P2 |
 
 ## Observações — o que não virou gap, e por quê

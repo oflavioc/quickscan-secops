@@ -1,7 +1,7 @@
 {
   "_meta": {
     "descricao": "Registry único de pins — fonte de identidade dos artefatos (R8). Hashes = SHA-256 dos blobs de HEAD. Alterar arquivo pinado exige regenerar este registry no MESMO PR, com motivo no commit.",
-    "gerado_de_head": "7cec31463dd16d53feb9b8f1d53351ed7c48c135",
+    "gerado_de_head": "48df9ae33e807a07af469808d16657a7bbf09b54",
     "gerado_em": "2026-09-04",
     "exclusoes": [
       "docs_phase5/**",
@@ -399,7 +399,7 @@
     "specs/016-registro-contra-execucao/prova-de-carga.md": "bde97934691f54f44b3a354cb2abbf63be9e85e0d8d12fc65730c70eba0d7707",
     "specs/016-registro-contra-execucao/red-016.md": "2261148c845d4e36d6940bf952700cdbf0966b5fc267925f24203ad8045d5baf",
     "specs/016-registro-contra-execucao/refinement.md": "6647743d6f9961c0c6a71e726b08b51c1dca5d41f4a93301978a1ba0bae6a364",
-    "specs/016-registro-contra-execucao/relatorio-final.md": "4e029a1c99368eb566df4eabd6b103239877405560ea7948a74d30e8adb927a8",
+    "specs/016-registro-contra-execucao/relatorio-final.md": "0fbbfccfec436f17d524a3c59b6531d0a42ed3313def47cf769d2b8412944bcd",
     "specs/016-registro-contra-execucao/spec-validate.md": "14997b5b0943122b8c277546db7e6b46adfaf92a0a491c256ca367a22427773c",
     "specs/016-registro-contra-execucao/spec.md": "70c87e976c72a6923a078c0b45f02ff8fa88ac1bdd85aaa930277180e64d8b16",
     "specs/016-registro-contra-execucao/tasks.md": "a946424399dc2b7cbaa4d896be80b49900aa4ae37b5ddfcba65061c3d97c4b19",

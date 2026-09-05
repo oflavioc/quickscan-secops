@@ -1656,6 +1656,18 @@ divergência só aparece quando um humano lê os dois lados.
    spec ser emendada, uma delas no comentário do gate.
 3. **`EA-30`** — prova registrada com **data e agregação anteriores** à execução
    que a cobriu.
+4. **Citação de sítio de gate que apodreceu por deslocamento** — registrada em
+   2026-09-05, achada pelo `qa-engineer` ao fechar o `EA-40`. `mutation-matrix.json:103`
+   (`ancora.razao` de `P51-UX2`) cita `tests_p50_core.js:2723-2724` como o sítio do
+   gate; medido hoje, aquelas linhas caem dentro do comentário de cabeçalho e o gate
+   real começa em `:2966`. A mesma citação ecoa em
+   `specs/013-integridade-da-campanha/refinement.md:135` e `spec.md:165`.
+   **Distinção que a mantém nesta família e não no `E5`**: aqui a citação **estava
+   certa quando escrita** e apodreceu depois, por deslocamento de linha — como no
+   `EA-30`. No `E5` a citação apontava para uma fonte que **nunca** disse aquilo.
+   **Quarta origem independente**, fora da janela de 2026-09-01 que produziu
+   `EA-28`/`EA-29`/`EA-30`: reforça o gatilho de falsificação da família em vez de
+   ameaçá-lo.
 
 **Casos de fronteira, nomeados com a razão** (não os conto como membros, mas eles
 mostram as duas direções da mesma falha): **`EA-22`** — o registro promete **mais**
@@ -2900,3 +2912,65 @@ no controle pré-edição; `bash .claude/verify/compliance-audit.sh` — **17 PA
 0 FAIL lido do disco já editado. O repin de `tests_p50_core.js` e deste
 `BACKLOG.md` (`gen_pins.py`) é do orquestrador, em commit próprio; até ele o
 stage `baseline` acusa os dois.
+
+## EA-41 — `.claude/BACKLOG.md:2029` carrega dois bytes NUL literais: o registro sai da normalização de texto que ele mesmo vigia (R7 §1)
+
+**Status**: `aberto`
+
+**Aberto em**: 2026-09-05. Levantado pelo `qa-engineer` de passagem, ao fechar o
+`EA-40`; não corrigido no mesmo diff (skill `fix-finding` §4) — registrado aqui
+pelo `doc-writer`.
+
+### Cadeia arquivo:linha → efeito
+
+- **`.claude/BACKLOG.md:2029`** (medido em `HEAD` desta worktree e idêntico em
+  `origin/develop`) contém **dois bytes `0x00` literais** dentro da string
+  ``ctxChave(d) + "<NUL>" + d.seletor + "<NUL>" + d.prop`` — hexdump da linha:
+  `... 22 00 22 20 2b 20 ... 22 00 22 20 2b ...` (aspas · NUL · aspas, duas
+  vezes). A intenção do texto é citar o separador de string do código-fonte
+  (`.claude/verify/regra_morta.js:399`/`:405`, onde a chave é montada como
+  `ctxChave(d) + "\x00" + d.seletor + "\x00" + d.prop`) como o escape de duas
+  letras `\x00`; o que foi gravado foi o byte em si, não o escape.
+- **Origem**: entrou no commit `5729961` ("doc(014): EA-34 — limite do
+  instrumento de regra morta…"), na linha 1435 daquela versão do arquivo
+  (1489 linhas então; o arquivo cresceu para os 2029 linhas de hoje) — já
+  presente no próprio diff do commit (linha 48 do patch). Confirmado bit a bit
+  igual em `origin/develop` (`git fetch origin develop`, mesma posição
+  relativa do trecho).
+- **Efeito de determinismo** — `git ls-files --eol .claude/BACKLOG.md` responde
+  `i/-text w/-text attr/text=auto eol=lf`: o `.gitattributes` pede `eol=lf`
+  para o arquivo, mas o conteúdo é classificado **binário** pelo git (por
+  causa do NUL) e a normalização de fim de linha fica **desligada** para ele.
+  Um commit que introduzisse CRLF neste arquivo passaria sem normalização —
+  e `.claude/BACKLOG.md` é arquivo **pinado** (`pins.json`, registry da R8).
+  É exatamente a classe de risco que motivou a R7 §1 ("LF em todo texto"),
+  nascida do achado E9 (56 de 74 hashes falsos no Windows por CRLF de
+  checkout não normalizado) — aqui ela vive dormente dentro do próprio
+  registro de achados.
+- **Efeito colateral observado, custou tempo**: `grep` sobre o arquivo sem
+  `-a` responde `Binary file .claude/BACKLOG.md matches` e não imprime a
+  linha — vários agentes e o orquestrador tropeçaram nisso durante dias sem
+  saber a causa. `git diff` permanece textual só pela heurística dos
+  primeiros ~8000 bytes, o que **esconde** a classificação binária em vez de
+  expô-la.
+
+### Escopo — só este arquivo (pergunta respondida)
+
+`git ls-files --eol | grep -- "-text"` (medido nesta worktree) devolve, além
+de `.claude/BACKLOG.md`: os 26 PNGs de `docs_phase5/evidence_v322/**` e todos
+os SVGs de `icons_v32_source/**` — todos com `attr/-text`, ou seja, **exclusão
+explícita e intencional** no `.gitattributes` (imagem/ícone declarado binário
+por desenho, não achado). `.claude/BACKLOG.md` é o **único** arquivo em que o
+`.gitattributes` pede normalização de texto (`attr/text=auto eol=lf`) e o
+conteúdo a desativa por acidente. O achado é de um arquivo só; não muda de
+dono nem de rota por isso.
+
+### O remédio, como candidato (não decidido aqui)
+
+Substituir os dois bytes NUL por representação textual (o escape de duas
+letras `\x00`, ou o nome do byte em prosa — "byte nulo") restaura a
+classificação de texto do arquivo. É `fix-finding` pequeno, sem spec; dono
+provável `doc-writer` (autor da prosa, dono do `BACKLOG.md`) ou
+`build-engineer` (se a rota preferida tratar isso como correção de registry).
+Rito: correção não entra no mesmo diff que a abriu (skill `fix-finding` §4);
+decisão de rota e de dono é do orquestrador.

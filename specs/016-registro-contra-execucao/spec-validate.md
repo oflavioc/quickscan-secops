@@ -350,6 +350,10 @@ que a E4 acabou de desambiguar de `EA-5`. Quem escrever a errata decide a forma;
 recomendo que o título diga a que namespace pertence (errata da spec 016), para
 a confusão não renascer no arquivo que a corrigiu.
 
+**Forma adotada (2026-09-04)**: prefixo da demanda, na forma dos ids `D016-*` —
+**`E016-5`** (G4), **`E016-6`** (G5) e **`E016-7`** (T9 · eco do controle, A1);
+E1–E4 mantêm os ids com que já foram citadas.
+
 ## Achado A1 — a campanha `d016` no job `visual`: 20/33, baseline do gate nu vermelho, causa não isolada
 
 **O fato** (log do job `101198163861`): depois de todas as suítes visuais
@@ -365,13 +369,42 @@ foram `DETECTADO`.
 principal): só os mutantes `ARVORE` são gateados pelo controle `C0-fecho`, que
 roda `check_fecho.py --json` **antes** de qualquer mutação e exige `rc 0 · exit
 0 · sonda ok · 0 problema(s) · censo ok`. Os mutantes de sonda **não têm** gate
-de baseline e mataram cada um pelo seu caso — logo a **sonda** estava sã naquele
+de baseline e mataram cada um pelo seu caso — ~~logo a **sonda** estava sã naquele
 ambiente; o que falhou foi a **metade de árvore** do gate nu (problemas ≠ 0, ou
-censo ≠ ok, ou exit ≠ 0, ou erro de leitura).
+censo ≠ ok, ou exit ≠ 0, ou erro de leitura)~~.
 
-**O que está descartado**: (a) o código em HEAD — o mesmo commit fecha 33/33 no
-job `verify` (stage `mutation` dentro do `run.sh`, `16 PASS`), na worktree
-(stage isolado, árvore limpa) e no clone efêmero; (b) as suítes escreverem nas
+> **[REFUTADO por medição — 2026-09-04, R2 §5: riscado, não apagado.]** A
+> inferência é **falsa**. `julgaSonda` (`tests_016_mutants.js`, julgadores do
+> KILL) exige que os casos nomeados em `espera.divergem` divirjam e que
+> `ok === false`; **não pina isolamento** — não exige que os demais casos
+> estejam verdes nem que a `guarda` da sonda esteja vazia (só `julgaArvore`
+> pina isolamento). Medido em clone efêmero de `9a460f5` (`origin/develop` =
+> `921977c`) com uma fixture extra, `F99.json`, que derruba a **sonda** por
+> guarda ("fixture sem caso no registro"): `C0-fecho` **FALHOU** com
+> `vivo: null` — e **`D016-M1` saiu DETECTADO** (`divergentes: F1,F4,F5,…
+> (13/35)`). Logo 20 KILL de sonda sob C0 vermelho **não provam** que a sonda
+> estava sã: a falha do run pode estar em **qualquer das duas metades** — sonda
+> (fixture, registro, instrumento) ou árvore (problemas ≠ 0, censo ≠ ok,
+> exit ≠ 0, erro de leitura). O que localiza a metade é a **nota do controle**,
+> que o instrumento passou a carregar no mesmo dia (spec, errata **E016-7**;
+> `prova-de-carga.md` §10).
+
+**O que está descartado**: (a) o código em HEAD — o mesmo commit fecha 33/33 na
+worktree (stage isolado, árvore limpa) e no clone efêmero, **ambos lidos na
+saída**; ~~e 33/33 no job `verify` (stage `mutation` dentro do `run.sh`, `16
+PASS`)~~ **[CORRIGIDO 2026-09-04: no job `verify` é DEDUÇÃO, não leitura]** — o
+log daquele job mostra **só** `[PASS] mutation` (`run.sh` ecoa o stdout de um
+stage apenas no FAIL, `run.sh:66-69`); nenhuma linha `[RUN] d016`, `33/33` ou
+`controles: 3 ok` está no log. A cadeia que sustenta a dedução, cada elo
+verificável no código: `[PASS]` ⇒ `check_mutation.py` saiu 0 ⇒ `fails == 0` ⇒
+nenhuma campanha executada com exit ≠ 0 sem perdão vivo (`known_issues.issues`
+está vazio); a `d016` **foi** executada nesse job — mesmo merge-base e mesmos
+targets mudados que fizeram o job `visual` imprimir `[RUN] d016`, `requires
+[node, python]` presentes no job `verify`, logo nem `[OK] nenhum alvo mudou`
+nem `[DEFER]` —; e o harness só sai 0 com `D === SELECTED.length && CFALHOU
+=== 0` (`tests_016_mutants.js`, `fechar()`), isto é, 33/33 **e** 3 controles
+OK. Dedução válida; **dita como dedução**, porque nenhuma linha do log a
+mostra; (b) as suítes escreverem nas
 entradas do gate — toda escrita das suítes Chromium vai para `os.tmpdir()`,
 para `docs_phase5/evidence_*` (ignorados ou restaurados por `git checkout --
 docs_phase5/`) ou para `visual_evidence/`/`print_evidence/`/`test-results/`
@@ -396,9 +429,13 @@ oito minutos de Chromium (o `protegido()` do gate converteria em
 1. **Instrumento primeiro** — `qa-engineer` (dono do harness): a `nota` do
    `NÃO EXECUTADO` por baseline passa a carregar o `resultado:` do controle
    (`exit`, `problemas`, `censo`, `erro_de_leitura`, primeira linha do stderr).
-   O bloco de não-KILL do `check_mutation.py` — intocado, T9 — já repete a
+   O bloco de não-KILL do `check_mutation.py` — ~~intocado, T9~~ — já repete a
    `nota` "nas palavras do harness": é o único canal que sobrevive à truncagem,
-   e foi desenhado para isso.
+   e foi desenhado para isso. **[FEITO em 2026-09-04 — errata E016-7]**: a nota
+   passou a carregar `controle <id> · resultado: FALHOU · <nota>` (metade que
+   falhou nomeada, sem `undefined`), **e** o `check_mutation.py` passou a ecoar
+   os próprios blocos `CONTROLE … resultado:` (T9 emendado; relato, não
+   veredito). Prova em `prova-de-carga.md` §10.
 2. **Reexecução** — `build-engineer`: push do HEAD e novo run; se o vermelho se
    repetir, o log passa a dizer por quê. Alternativa mais barata para um único
    run diagnóstico: um passo `python .claude/verify/check_fecho.py` (prosa)

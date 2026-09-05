@@ -26,6 +26,12 @@ stages:
     parallel: true
     mutates: false
     heavy: false
+  eol-text:
+    desc: "R7 §1 executável (EA-41): nenhum arquivo rastreado com normalização de texto declarada no .gitattributes (attr/text…) é classificado binário pelo git (i/-text ou w/-text — NUL, CR solitário ou não-imprimíveis desligam a normalização em silêncio) nem carrega CR no blob do índice; -text/binary declarados ficam fora por desenho e são contados; sonda em repositório efêmero antes da árvore (instrumento que não discrimina não julga); sem rede, sem escrita"
+    run: python .claude/verify/check_eol_text.py
+    parallel: true
+    mutates: false
+    heavy: false
   boundary:
     desc: "Manifesto de boundary coerente: protegidos existem, pinados, e divergência nomeia o rito violado"
     run: python .claude/verify/check_boundary.py

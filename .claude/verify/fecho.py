@@ -30,11 +30,12 @@ uma está escrita aqui porque a próxima leitura vai perguntar "por quê"):
  1. `exclusao-malformada` sai em `globais`, não numa linha solta de `problemas`.
     O relato do gate só imprime `globais` e `sujeitos`: um problema fora dos dois
     seria contado e não seria dito — julgador mudo (C7). É global NÃO abortante:
-    só `piso-invalido` e `origin-develop-ausente` derrubam os sujeitos.
+    só os impeditivos da decisão 2 derrubam os sujeitos.
  2. Impedimento global é UM, por cadeia de precedência: piso fora de 40 hex →
-    `origin/develop` ausente → piso fora da cadeia. Os posteriores da cadeia são
-    consequência do primeiro (não se localiza um piso numa cadeia ilegível, nem
-    um piso que não é SHA), e o código do global é o que cada sujeito-demanda
+    `origin/develop` ausente → cadeia truncada por clone raso (`historico-raso`,
+    E016-8) → piso fora da cadeia. Cada elo é consequência do anterior (não se
+    localiza piso em cadeia ilegível, nem se afirma "fora da cadeia" sobre cadeia
+    que o clone não tem inteira), e o código do global é o que cada sujeito-demanda
     herda — dois globais deixariam essa herança ambígua.
  3. Um `codigo` por sujeito, na precedência `artefato-ausente` >
     `fecho_pendente-*` > `exclusao-obsoleta`; o que perde a vaga continua dito em
@@ -91,7 +92,7 @@ VEREDITOS = frozenset({
     LIBERADO, FECHO_PENDENTE, NAO_JULGADO,
 })
 
-# Códigos — iguais a fecho.json → _meta.contrato_da_sonda.codigos (16, fechado).
+# Códigos — iguais a fecho.json → _meta.contrato_da_sonda.codigos (17, fechado).
 C_VALVULA_INVALIDA = "fecho_pendente-invalida"
 C_VALVULA_VENCIDA = "fecho_pendente-vencida"
 C_VALVULA_OBSOLETA = "fecho_pendente-obsoleta"
@@ -108,12 +109,14 @@ C_FASE_NAO_DONE = "fase-nao-done"
 C_FORA_DA_POPULACAO = "fora-da-populacao"
 C_BASE_NAO_DEVELOP = "base-nao-develop"
 C_EVENTO_SEM_BASE = "evento-sem-base"
+# (E016-8) o 17º — impeditivo emitido SÓ quando o leitor afirma cadeia truncada por clone raso.
+C_HISTORICO_RASO = "historico-raso"
 CODIGOS = frozenset({
     C_VALVULA_INVALIDA, C_VALVULA_VENCIDA, C_VALVULA_OBSOLETA, C_VALVULA_PREMATURA,
     C_FORA_DA_MAQUINA, C_MERGE_FORA_DE_PR, C_ARTEFATO_AUSENTE, C_EXCLUSAO_OBSOLETA,
     C_EXCLUSAO_MALFORMADA, C_REGISTRO_SEM_BRANCH, C_PISO_INVALIDO,
     C_ORIGIN_DEVELOP_AUSENTE, C_FASE_NAO_DONE, C_FORA_DA_POPULACAO,
-    C_BASE_NAO_DEVELOP, C_EVENTO_SEM_BASE,
+    C_BASE_NAO_DEVELOP, C_EVENTO_SEM_BASE, C_HISTORICO_RASO,
 })
 
 
@@ -183,6 +186,14 @@ def _impedimento(registro, origin_develop):
     if od.get("presente") is not True:
         causa = _txt(od.get("causa")) or f"{REF_DEVELOP} ausente — git fetch origin develop"
         return C_ORIGIN_DEVELOP_AUSENTE, f"{NAO_DETERMINAVEL} ({causa})"
+    if od.get("cadeia_integra") is False:
+        fim = (_txt(od.get("fim_da_cadeia")) or "?")[:12]
+        pos = od.get("posicao_do_piso")
+        onde = f"na posição {pos}" if pos is not None else "fora do trecho lido"
+        return C_HISTORICO_RASO, (
+            f"{NAO_DETERMINAVEL} (histórico raso: a cadeia first-parent de {REF_DEVELOP} termina "
+            f"em {fim}, commit cujo objeto tem pais que o clone não tem; piso {piso[:12]} {onde} "
+            f"— git fetch --unshallow origin; git fetch origin develop NÃO repara)")
     if od.get("piso_na_cadeia") is not True:
         return C_PISO_INVALIDO, (f"{NAO_DETERMINAVEL} (piso {piso[:12]} ausente da cadeia first-parent de "
                                  f"{REF_DEVELOP} — um SHA de outra branch não é piso)")
@@ -456,9 +467,30 @@ def ler_estados():
     return estados
 
 
+def _cadeia_integra(fim):
+    """(E016-8) `cadeia_integra`: True · False (clone raso truncou a cadeia) · None.
+
+    CONJUNÇÃO (medido — ea39-desenho.md §1): o flag é necessário e é o portão barato
+    (`false` ⇒ íntegra, sem mais processo); só se `true`, o objeto do fim da
+    caminhada decide. O flag sozinho acusaria falso um clone completo que fez `fetch
+    --depth=1` de commit alheio; a comparação sozinha confundiria graft/`refs/replace`.
+    """
+    raso = _git(["rev-parse", "--is-shallow-repository"])
+    if raso.returncode != 0:
+        return None                                   # git não respondeu: nada afirmado
+    if _txt(raso.stdout) != "true" or fim is None or fim["pais"]:
+        return True
+    obj = _git(["cat-file", "-p", fim["sha"]])
+    if obj.returncode != 0:
+        return None
+    cabecalho = obj.stdout.split("\n\n", 1)[0]     # só o cabeçalho: "parent " no corpo é texto
+    return not any(l.startswith("parent ") for l in cabecalho.splitlines())
+
+
 def ler_merges(piso):
     """{merges, origin_develop} — cadeia first-parent INTEIRA (o piso pode ser não-merge)."""
-    od = {"presente": False, "sha": None, "causa": None, "piso_na_cadeia": False}
+    od = {"presente": False, "sha": None, "causa": None, "piso_na_cadeia": False,
+          "cadeia_integra": None, "fim_da_cadeia": None, "posicao_do_piso": None}
     piso = _txt(piso)
     try:
         ref = _git(["rev-parse", "--verify", "--quiet", REF_DEVELOP])
@@ -487,6 +519,11 @@ def ler_merges(piso):
                        "data": campos[2].strip(), "msg": campos[3]})
     indice = next((i for i, c in enumerate(cadeia) if c["sha"] == piso), None)
     od["piso_na_cadeia"] = indice is not None
+    # (E016-8) a caminhada só para onde o git não vê pai: raiz OU commit raso (`%P` vazio).
+    fim = cadeia[-1] if cadeia else None
+    od["fim_da_cadeia"] = fim["sha"] if fim else None
+    od["posicao_do_piso"] = indice
+    od["cadeia_integra"] = _cadeia_integra(fim)
 
     merges = []
     for i, c in enumerate(cadeia):

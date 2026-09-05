@@ -1,0 +1,26 @@
+{
+  "id": "classic_off",
+  "_descricao": "nenhum ruleset alcança o ref (lista vazia); classic protected=true com enabled=false — a armadilha do protected:true",
+  "rules": {
+    "status": 200,
+    "body": [],
+    "erro": null
+  },
+  "branch": {
+    "status": 200,
+    "body": {
+      "name": "develop",
+      "protected": true,
+      "protection": {
+        "enabled": false,
+        "required_status_checks": {
+          "enforcement_level": "off",
+          "contexts": [],
+          "checks": []
+        }
+      },
+      "protection_url": "https://api.github.com/repos/oflavioc/quickscan-secops/branches/develop/protection"
+    },
+    "erro": null
+  }
+}

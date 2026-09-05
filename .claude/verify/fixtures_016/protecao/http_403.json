@@ -1,0 +1,30 @@
+{
+  "id": "http_403",
+  "_descricao": "GET /rules/branches/develop respondeu 403 (token sem permissão); o endpoint clássico respondeu como hoje",
+  "rules": {
+    "status": 403,
+    "body": {
+      "message": "Resource not accessible by integration",
+      "documentation_url": "https://docs.github.com/rest/repos/rules#get-rules-for-a-branch",
+      "status": "403"
+    },
+    "erro": null
+  },
+  "branch": {
+    "status": 200,
+    "body": {
+      "name": "develop",
+      "protected": true,
+      "protection": {
+        "enabled": false,
+        "required_status_checks": {
+          "enforcement_level": "off",
+          "contexts": [],
+          "checks": []
+        }
+      },
+      "protection_url": "https://api.github.com/repos/oflavioc/quickscan-secops/branches/develop/protection"
+    },
+    "erro": null
+  }
+}

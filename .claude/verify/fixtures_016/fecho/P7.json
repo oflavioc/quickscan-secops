@@ -1,0 +1,45 @@
+{
+  "id": "P7",
+  "modo": "pre",
+  "_descricao": "PR feature/044 → develop; planning-state done com artefatos e ainda com fecho_pendente completa e no prazo",
+  "head_ref": "feature/044-done-com-valvula",
+  "base_ref": "develop",
+  "estados": {
+    "044-done-com-valvula": {
+      "demanda": "044-done-com-valvula",
+      "phase": "done",
+      "spec_dir": "specs/044-done-com-valvula",
+      "branch": "feature/044-done-com-valvula",
+      "red": {
+        "status": "proven",
+        "commit": "044c044c044c044c044c044c044c044c044c044c"
+      },
+      "fecho_pendente": {
+        "motivo": "spec-validate.md e relatorio-final.md ainda não escritos; PO/QA recusaram done sem artefatos",
+        "dono": "qa-engineer",
+        "prazo": "2026-09-30",
+        "declarado_em": "2026-09-04"
+      }
+    }
+  },
+  "artefatos": [
+    "specs/044-done-com-valvula/relatorio-final.md",
+    "specs/044-done-com-valvula/spec-validate.md"
+  ],
+  "registro": {
+    "piso": {
+      "sha": "a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1",
+      "descricao": "piso sintético da sonda — as posições já vêm resolvidas em merges[].posicao_relativa_ao_piso"
+    },
+    "excluidas_por_r13": {},
+    "populacao": {
+      "padrao_branch": "^feature/(\\d{3})-",
+      "formato_merge_pr": "^Merge pull request #(\\d+) from ([^/]+)/(.+)$",
+      "integracoes_de_main": [
+        "^Merge remote-tracking branch 'origin/main' into develop",
+        "^Merge branch 'main' into develop",
+        "^merge: integra "
+      ]
+    }
+  }
+}

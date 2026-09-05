@@ -1,0 +1,36 @@
+{
+  "id": "P2",
+  "modo": "pre",
+  "_descricao": "PR feature/042 → develop; planning-state em validate",
+  "head_ref": "feature/042-em-validate",
+  "base_ref": "develop",
+  "estados": {
+    "042-em-validate": {
+      "demanda": "042-em-validate",
+      "phase": "validate",
+      "spec_dir": "specs/042-em-validate",
+      "branch": "feature/042-em-validate",
+      "red": {
+        "status": "proven",
+        "commit": "042c042c042c042c042c042c042c042c042c042c"
+      }
+    }
+  },
+  "artefatos": [],
+  "registro": {
+    "piso": {
+      "sha": "a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1",
+      "descricao": "piso sintético da sonda — as posições já vêm resolvidas em merges[].posicao_relativa_ao_piso"
+    },
+    "excluidas_por_r13": {},
+    "populacao": {
+      "padrao_branch": "^feature/(\\d{3})-",
+      "formato_merge_pr": "^Merge pull request #(\\d+) from ([^/]+)/(.+)$",
+      "integracoes_de_main": [
+        "^Merge remote-tracking branch 'origin/main' into develop",
+        "^Merge branch 'main' into develop",
+        "^merge: integra "
+      ]
+    }
+  }
+}

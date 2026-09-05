@@ -1,0 +1,59 @@
+{
+  "id": "F15",
+  "modo": "pos",
+  "_descricao": "demanda done mesclada por mensagem; só relatorio-final.md em disco; nenhuma exclusão no registro",
+  "sujeito": "031-done-sem-spec-validate",
+  "estados": {
+    "031-done-sem-spec-validate": {
+      "demanda": "031-done-sem-spec-validate",
+      "phase": "done",
+      "spec_dir": "specs/031-done-sem-spec-validate",
+      "branch": "feature/031-done-sem-spec-validate",
+      "red": {
+        "status": "proven",
+        "commit": "031c031c031c031c031c031c031c031c031c031c"
+      }
+    }
+  },
+  "merges": [
+    {
+      "sha": "f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0",
+      "data": "2026-09-02T10:00:00-03:00",
+      "msg": "Merge pull request #110 from oflavioc/feature/031-done-sem-spec-validate",
+      "posicao_relativa_ao_piso": "posterior"
+    }
+  ],
+  "ancestralidade": {
+    "031-done-sem-spec-validate": {
+      "resposta": true,
+      "causa": null,
+      "anterior_ao_piso": false
+    }
+  },
+  "artefatos": [
+    "specs/031-done-sem-spec-validate/relatorio-final.md"
+  ],
+  "data_do_commit": "2026-09-04",
+  "registro": {
+    "piso": {
+      "sha": "a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1",
+      "descricao": "piso sintético da sonda — as posições já vêm resolvidas em merges[].posicao_relativa_ao_piso"
+    },
+    "excluidas_por_r13": {},
+    "populacao": {
+      "padrao_branch": "^feature/(\\d{3})-",
+      "formato_merge_pr": "^Merge pull request #(\\d+) from ([^/]+)/(.+)$",
+      "integracoes_de_main": [
+        "^Merge remote-tracking branch 'origin/main' into develop",
+        "^Merge branch 'main' into develop",
+        "^merge: integra "
+      ]
+    }
+  },
+  "origin_develop": {
+    "presente": true,
+    "sha": "0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d",
+    "causa": null,
+    "piso_na_cadeia": true
+  }
+}

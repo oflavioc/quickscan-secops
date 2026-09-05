@@ -1,0 +1,63 @@
+{
+  "id": "F7",
+  "modo": "pos",
+  "_descricao": "demanda em validate mesclada por mensagem; fecho_pendente completa com prazo 2026-01-01, anterior à data do commit 2026-09-04",
+  "sujeito": "027-valvula-vencida",
+  "estados": {
+    "027-valvula-vencida": {
+      "demanda": "027-valvula-vencida",
+      "phase": "validate",
+      "spec_dir": "specs/027-valvula-vencida",
+      "branch": "feature/027-valvula-vencida",
+      "red": {
+        "status": "proven",
+        "commit": "027c027c027c027c027c027c027c027c027c027c"
+      },
+      "fecho_pendente": {
+        "motivo": "spec-validate.md e relatorio-final.md ainda não escritos; PO/QA recusaram done sem artefatos",
+        "dono": "qa-engineer",
+        "prazo": "2026-01-01",
+        "declarado_em": "2025-12-20"
+      }
+    }
+  },
+  "merges": [
+    {
+      "sha": "d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7",
+      "data": "2026-09-02T10:00:00-03:00",
+      "msg": "Merge pull request #104 from oflavioc/feature/027-valvula-vencida",
+      "posicao_relativa_ao_piso": "posterior"
+    }
+  ],
+  "ancestralidade": {
+    "027-valvula-vencida": {
+      "resposta": true,
+      "causa": null,
+      "anterior_ao_piso": false
+    }
+  },
+  "artefatos": [],
+  "data_do_commit": "2026-09-04",
+  "registro": {
+    "piso": {
+      "sha": "a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1",
+      "descricao": "piso sintético da sonda — as posições já vêm resolvidas em merges[].posicao_relativa_ao_piso"
+    },
+    "excluidas_por_r13": {},
+    "populacao": {
+      "padrao_branch": "^feature/(\\d{3})-",
+      "formato_merge_pr": "^Merge pull request #(\\d+) from ([^/]+)/(.+)$",
+      "integracoes_de_main": [
+        "^Merge remote-tracking branch 'origin/main' into develop",
+        "^Merge branch 'main' into develop",
+        "^merge: integra "
+      ]
+    }
+  },
+  "origin_develop": {
+    "presente": true,
+    "sha": "0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d",
+    "causa": null,
+    "piso_na_cadeia": true
+  }
+}

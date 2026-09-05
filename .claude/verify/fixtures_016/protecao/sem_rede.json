@@ -1,0 +1,20 @@
+{
+  "id": "sem_rede",
+  "_descricao": "os dois GETs falharam no transporte (DNS/timeout); nenhuma resposta HTTP",
+  "rules": {
+    "status": null,
+    "body": null,
+    "erro": {
+      "classe": "rede",
+      "detalhe": "URLError: <urlopen error [Errno 11001] getaddrinfo failed>"
+    }
+  },
+  "branch": {
+    "status": null,
+    "body": null,
+    "erro": {
+      "classe": "rede",
+      "detalhe": "URLError: <urlopen error [Errno 11001] getaddrinfo failed>"
+    }
+  }
+}

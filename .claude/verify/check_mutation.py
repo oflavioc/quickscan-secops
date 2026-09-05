@@ -500,6 +500,52 @@ RE_MUT_GATE = re.compile(r"^ {14}gate esperado: (.*)$")
 # saem nomeados numa linha só, pelo precedente do próprio IC-1 acima.
 MUT_TETO_DETALHE = 15
 
+# [016 · A1 do spec-validate, 2026-09-04] CONTROLES do harness — mesmo canal, mesma
+# forma de bloco, emitido por `emitirControle()` (tests_016_mutants.js):
+#     CONTROLE␣␣<id>␣·␣<desc>
+#     ␣×14      resultado: OK|FALHOU[ · <nota>]
+# Um controle de baseline que FALHA torna uma família inteira de mutantes
+# `NÃO EXECUTADO` (run 33927191969, job visual: 13 de 33), e a linha que diz POR QUÊ
+# é esta — que o `tail` de 2 linhas nunca alcança (o fecho lista os não executados
+# por cima dela). Relato, nunca veredito: o exit do harness já carrega a falha do
+# controle, e nada aqui move `fails`. Quem diz quantos controles deveriam aparecer é
+# o JSON do preflight (`controles`, quando o harness o declara) — nunca esta leitura.
+RE_CTRL_LINHA = re.compile(r"^CONTROLE  (\S+) · (.*)$")
+RE_CTRL_RES = re.compile(r"^ {14}resultado: (OK|FALHOU)(?: · (.*))?$")
+
+
+def mut_controles(saida):
+    """Blocos CONTROLE da saída da campanha: [{id, desc, resultado, nota}]. Pura."""
+    linhas = (saida or "").splitlines()
+    out = []
+    for i, l in enumerate(linhas):
+        m = RE_CTRL_LINHA.match(l)
+        if not m:
+            continue
+        g = RE_CTRL_RES.match(linhas[i + 1]) if i + 1 < len(linhas) else None
+        out.append({"id": m.group(1), "desc": m.group(2),
+                    "resultado": g.group(1) if g else "SEM LINHA `resultado:`",
+                    "nota": (g.group(2) or "").strip() if g else ""})
+    return out
+
+
+def mut_relata_controles(name, saida):
+    """Ecoa os controles POR NOME, com o resultado nas palavras do harness. Não altera contagem."""
+    ctrls = mut_controles(saida)
+    pf = IC_PREFLIGHT.get(name)
+    declarados = pf.get("controles") if isinstance(pf, dict) and isinstance(pf.get("controles"), list) else None
+    if not ctrls and not declarados:
+        return  # harness sem controles declarados nem emitidos (p50/p51/p52/d009…): nada a ecoar
+    if declarados is not None and len(ctrls) != len(declarados):
+        print(f"       controles: LEITURA PARCIAL em `{name}` — {len(ctrls)} bloco(s) `CONTROLE` na saída "
+              f"contra {len(declarados)} declarado(s) pelo preflight (C1): {', '.join(map(str, declarados))}")
+    for c in ctrls[:MUT_TETO_DETALHE]:
+        print(f"       controle: {c['id']} · {c['resultado']}" + (f" · {c['nota']}" if c["nota"] else ""))
+    sobra = ctrls[MUT_TETO_DETALHE:]
+    if sobra:
+        print(f"       + {len(sobra)} controle(s) além do teto de {MUT_TETO_DETALHE} linhas, nomeado(s) aqui: "
+              + ", ".join(f"{c['id']}={c['resultado']}" for c in sobra))
+
 
 def mut_ler(saida):
     """Blocos por mutante da saída da campanha. Devolve (todos, não-KILL)."""
@@ -1310,6 +1356,11 @@ for name, h in MAP.items():
     tail = [l for l in (r.stdout or "").splitlines() if l.strip()][-2:]
     for l in tail:
         print("       " + l)
+    # [016 · A1] os CONTROLES saem POR NOME com o `resultado:` do harness — é a única
+    # linha que diz por que uma família inteira saiu NÃO EXECUTADO por baseline
+    # vermelho; o tail acima nunca a alcança, e a nota dos não-KILL abaixo só a
+    # repete se o harness a tiver posto lá (T060-b). Relato: nada aqui move `fails`.
+    mut_relata_controles(name, r.stdout)
     # [013/E3 passo 0] os não-KILL param de ser descartados: identidade, gate
     # esperado, estado e a causa nas palavras do harness. Um `[FAIL]` que diz
     # "2 problemas" sem dizer QUAIS é a doença desta demanda cometida no próprio

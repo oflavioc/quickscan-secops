@@ -1,0 +1,38 @@
+{
+  "id": "P8",
+  "modo": "pre",
+  "_descricao": "PR feature/045 → develop; planning-state done; só relatorio-final.md em disco; sem exclusão",
+  "head_ref": "feature/045-done-sem-spec-validate",
+  "base_ref": "develop",
+  "estados": {
+    "045-done-sem-spec-validate": {
+      "demanda": "045-done-sem-spec-validate",
+      "phase": "done",
+      "spec_dir": "specs/045-done-sem-spec-validate",
+      "branch": "feature/045-done-sem-spec-validate",
+      "red": {
+        "status": "proven",
+        "commit": "045c045c045c045c045c045c045c045c045c045c"
+      }
+    }
+  },
+  "artefatos": [
+    "specs/045-done-sem-spec-validate/relatorio-final.md"
+  ],
+  "registro": {
+    "piso": {
+      "sha": "a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1",
+      "descricao": "piso sintético da sonda — as posições já vêm resolvidas em merges[].posicao_relativa_ao_piso"
+    },
+    "excluidas_por_r13": {},
+    "populacao": {
+      "padrao_branch": "^feature/(\\d{3})-",
+      "formato_merge_pr": "^Merge pull request #(\\d+) from ([^/]+)/(.+)$",
+      "integracoes_de_main": [
+        "^Merge remote-tracking branch 'origin/main' into develop",
+        "^Merge branch 'main' into develop",
+        "^merge: integra "
+      ]
+    }
+  }
+}

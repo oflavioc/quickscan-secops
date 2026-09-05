@@ -1,0 +1,73 @@
+{
+  "id": "F25",
+  "modo": "pos",
+  "_descricao": "E016-8 (fix-finding EA-39): clone raso com a cadeia first-parent de origin/develop truncada NO piso (assinatura do EA-38) — o leitor reporta presente, piso na cadeia (posição 0), cadeia_integra false, fim_da_cadeia = o próprio piso; merges vazios (nada caminhável); ancestralidade responde false (merge-base --is-ancestor sobre cadeia truncada); duas demandas done com artefatos. Sem o impedimento historico-raso, o julgador diz EM VOO para demanda mesclada — a afirmação falsa do EA-39",
+  "sujeito": "038-primeira",
+  "estados": {
+    "038-primeira": {
+      "demanda": "038-primeira",
+      "phase": "done",
+      "spec_dir": "specs/038-primeira",
+      "branch": "feature/038-primeira",
+      "red": {
+        "status": "proven",
+        "commit": "038c038c038c038c038c038c038c038c038c038c"
+      }
+    },
+    "039-segunda": {
+      "demanda": "039-segunda",
+      "phase": "done",
+      "spec_dir": "specs/039-segunda",
+      "branch": "feature/039-segunda",
+      "red": {
+        "status": "proven",
+        "commit": "039c039c039c039c039c039c039c039c039c039c"
+      }
+    }
+  },
+  "merges": [],
+  "ancestralidade": {
+    "038-primeira": {
+      "resposta": false,
+      "causa": null,
+      "anterior_ao_piso": false
+    },
+    "039-segunda": {
+      "resposta": false,
+      "causa": null,
+      "anterior_ao_piso": false
+    }
+  },
+  "artefatos": [
+    "specs/038-primeira/relatorio-final.md",
+    "specs/038-primeira/spec-validate.md",
+    "specs/039-segunda/relatorio-final.md",
+    "specs/039-segunda/spec-validate.md"
+  ],
+  "data_do_commit": "2026-09-04",
+  "registro": {
+    "piso": {
+      "sha": "a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1",
+      "descricao": "piso sintético da sonda — as posições já vêm resolvidas em merges[].posicao_relativa_ao_piso"
+    },
+    "excluidas_por_r13": {},
+    "populacao": {
+      "padrao_branch": "^feature/(\\d{3})-",
+      "formato_merge_pr": "^Merge pull request #(\\d+) from ([^/]+)/(.+)$",
+      "integracoes_de_main": [
+        "^Merge remote-tracking branch 'origin/main' into develop",
+        "^Merge branch 'main' into develop",
+        "^merge: integra "
+      ]
+    }
+  },
+  "origin_develop": {
+    "presente": true,
+    "sha": "0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d",
+    "causa": null,
+    "piso_na_cadeia": true,
+    "cadeia_integra": false,
+    "fim_da_cadeia": "a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1",
+    "posicao_do_piso": 0
+  }
+}

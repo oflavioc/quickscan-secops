@@ -2722,9 +2722,16 @@ T("P50-IC3", "fonte única de ícones: nenhum mapa/asset paralelo nos módulos n
    ========================================================================== */
 
 /* Autoridade congelada sobre as superfícies protegidas. Estes hashes fixam os
-   arquivos que a §29.4 declara protegidos e que governam a cor (V4+V5 vivem em
-   tests_visual/screen.spec.js) — pinar aqui é o guard estrutural de que a
-   Phase 5.0 não moveu a autoridade, e não uma reimplementação dela. */
+   arquivos que HOSPEDAM a autoridade de identidade visual (cor e ícones): os
+   que a §29.4 da REV B declara protegidos — `tests_visual/` (V4+V5 vivem em
+   tests_visual/screen.spec.js) e a suíte congelada `tests_icons_m46.js` — e
+   `playwright.config.js`, que a §29.4 NÃO nomeia: pinado desde a microfase
+   5.0.5 (docs_phase5/MICROFASE_5_0_5_REPORT.md §7.11) por hospedar os
+   viewports (`BP`/`projects`) e as `launchOptions` sob os quais V4+V5 medem.
+   Pinar aqui é o guard estrutural de que a Phase 5.0 não moveu a autoridade,
+   e não uma reimplementação dela. Trilha: a redação anterior atribuía a lista
+   inteira à §29.4 — corrigida pelo EA-40 (.claude/BACKLOG.md, 2026-09-05), sem
+   mudar entrada ou hash algum. */
 const FROZEN_VISUAL_AUTHORITY = {
   "tests_visual/screen.spec.js": "18e2b8f69d3e7b4e2e6a43d6d6ac325724e8ef80c8d4afcdbdd76d8ee27f692a",
   "tests_visual/print.spec.js": "9fe2e998e6151b9fa447c334456605fa68d9c4b1b2469a2d6d5650d58f75565d",

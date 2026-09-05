@@ -1656,6 +1656,18 @@ divergência só aparece quando um humano lê os dois lados.
    spec ser emendada, uma delas no comentário do gate.
 3. **`EA-30`** — prova registrada com **data e agregação anteriores** à execução
    que a cobriu.
+4. **Citação de sítio de gate que apodreceu por deslocamento** — registrada em
+   2026-09-05, achada pelo `qa-engineer` ao fechar o `EA-40`. `mutation-matrix.json:103`
+   (`ancora.razao` de `P51-UX2`) cita `tests_p50_core.js:2723-2724` como o sítio do
+   gate; medido hoje, aquelas linhas caem dentro do comentário de cabeçalho e o gate
+   real começa em `:2966`. A mesma citação ecoa em
+   `specs/013-integridade-da-campanha/refinement.md:135` e `spec.md:165`.
+   **Distinção que a mantém nesta família e não no `E5`**: aqui a citação **estava
+   certa quando escrita** e apodreceu depois, por deslocamento de linha — como no
+   `EA-30`. No `E5` a citação apontava para uma fonte que **nunca** disse aquilo.
+   **Quarta origem independente**, fora da janela de 2026-09-01 que produziu
+   `EA-28`/`EA-29`/`EA-30`: reforça o gatilho de falsificação da família em vez de
+   ameaçá-lo.
 
 **Casos de fronteira, nomeados com a razão** (não os conto como membros, mas eles
 mostram as duas direções da mesma falha): **`EA-22`** — o registro promete **mais**
@@ -2778,3 +2790,187 @@ e §12.2 (pós-fix); commits de conteúdo `e2d3892`, `fac8bfd`, `82f22b9`,
 `c535431`, `81c0326`, `a8bdfe4`, `5e5b151`, repinados em `31eb1a4`,
 `1c8f601`, `859ecf5`, `2f0245c` (R8 §1). `gen_pins.py` **não roda neste
 passo** — é do `build-engineer`, no PR desta demanda.
+## EA-40 — o cabeçalho de `FROZEN_VISUAL_AUTHORITY` cita a §29.4 para uma entrada que a §29.4 não nomeia
+
+**Status**: `resolvido`
+
+**Aberto em**: 2026-09-05. Levantado pelo `qa-engineer` ao executar o repin
+inline do `P50-COR4` da demanda 016 (`EA-38`); classificação de achado (não de
+defeito do gate) do orquestrador e do `product-owner` — o `qa-engineer`
+registrou desenho defensável (viewports e resolução de browser parametrizam
+V4+V5) e não o reportou como falha.
+
+### Cadeia arquivo:linha → efeito
+
+- **`tests_p50_core.js:2724-2726`** — o comentário que abre
+  `FROZEN_VISUAL_AUTHORITY` diz: *"Estes hashes fixam os arquivos que a §29.4
+  declara protegidos"*.
+- **`specs/PHASE_5_0_REV_B.md:1613-1620`** (spec selada, imutável) — a §29.4
+  nomeia `tests_visual/` e "todas as suítes congeladas (`tests_*.js`
+  existentes...)"; **não nomeia `playwright.config.js`** em nenhuma alínea.
+- **`tests_p50_core.js:2765`** — `"playwright.config.js"` está na chave do
+  mapa mesmo assim, coberto pela alínea (a) de `P50-COR4` (identidade byte a
+  byte).
+- **Efeito**: toda mudança **só de ferramental** em `playwright.config.js`
+  (dono `build-engineer`) passa pela mesma trilha de repin que uma suíte de
+  fase selada exigiria — como aconteceu hoje na correção do `EA-38` (repin
+  `8ec429a`, comentário `:2733-2764`). O custo é real; a justificativa citada
+  para pagá-lo aponta para uma fonte que não a sustenta.
+
+### Distinção da família (não é duplicata)
+
+Mesma família de **E5** (citação que aponta para fonte que não diz aquilo — o
+erro do orquestrador corrigido ontem, sete citações propagadas). **Vizinho,
+não membro, de `EA-31`**: `EA-31` é registro não confrontado com **execução**;
+aqui não há execução nenhuma — é um **registro citando outro registro** (a
+spec) que não o sustenta. A comparação que falta é registro↔registro, não
+registro↔execução.
+
+### O que este achado NÃO propõe
+
+`specs/PHASE_5_0_REV_B.md` é spec selada e imutável (R6 §4; boundary classe
+`frozen`/`legacy` conforme o caso) — **não é tocada por este achado**; mexer
+na §29.4 é promoção de REV C, matéria do proprietário
+([[project_delegacao-proprietario-2026-08-29]]), não conserto de texto. Este
+registro também não decide que `playwright.config.js` deva **sair** da lista
+— isso pressuporia que a inclusão é indevida, e o desenho (parametrizar
+V4+V5) é defensável.
+
+### Encaminhamento
+
+Rotas possíveis, decisão nomeada para `product-owner`/`tech-lead` (nenhuma
+executada aqui):
+
+1. **Corrigir só a justificativa do cabeçalho** em `tests_p50_core.js:2724-2726`
+   para dizer que a lista é **mais ampla** que a §29.4, por decisão de quem a
+   escreveu (o pin cobre ferramental que parametriza V4+V5, não só o que a
+   §29.4 nomeia) — sem mexer na lista. Custo: baixo; `fix-finding`, dono
+   `qa-engineer` (autor do gate).
+2. **Deixar como está**, registrando aqui que a imprecisão é conhecida e
+   aceita — custo: a próxima leitura do cabeçalho repete o mesmo engano.
+3. **Mover `playwright.config.js` para um mapa de autoridade próprio**, fora
+   de `FROZEN_VISUAL_AUTHORITY`, com justificativa nominal separada da §29.4 —
+   custo: maior, toca estrutura do gate `P50-COR4` (rito R10, gate em suíte
+   congelada).
+
+Nenhuma rota toca `specs/PHASE_5_0_REV_B.md`.
+
+### Fecho (2026-09-05) — rota 1, executada como `fix-finding` pelo `qa-engineer`
+
+**Decisão de rota** (orquestrador + `product-owner`, no despacho do
+`fix-finding`; nenhuma outra executada): **rota 1**. Remover
+`playwright.config.js` do mapa seria enfraquecer gate (R10 §1) — e a demanda
+016 acabou de provar o valor do pin: o remédio do `EA-38` tocou exatamente esse
+arquivo e o pin forçou o repin com trilha. Acrescentar à §29.4 é impossível:
+REV B imutável (`P50-GOV2`), expansão de boundary só por spec (R6 §3) —
+`specs/PHASE_5_0_REV_B.md` **não foi tocada**. A rota 3 não foi escolhida: toca
+estrutura de gate em suíte congelada para sanar um erro de justificativa.
+Leitura do `product-owner` que sustenta a redação nova: o pin nasceu na
+microfase 5.0.5 (`docs_phase5/MICROFASE_5_0_5_REPORT.md:403-408`, §7.11) como
+**hospedeiro da autoridade** — viewports/`projects` e `launchOptions` sob os
+quais V4+V5 medem — sem invocar a §29.4.
+
+**Reconfirmado antes de tocar** (passo 1 da skill; medido na worktree
+`phase5-014`, branch `fix/ea40-justificativa-do-cabecalho`, HEAD `b534fad`):
+(1) a divergência ainda era verdade — `tests_p50_core.js:2724-2727` dizia
+"arquivos que a §29.4 declara protegidos"; `specs/PHASE_5_0_REV_B.md:1613-1620`
+(blob `4f1583c7…`, o hash registrado no `CLAUDE.md`) nomeia `tests_visual/` e
+os `tests_*.js`, não `playwright.config.js`; (2) `tests_p50_core.js` não consta
+de `boundary.json`, de `permissions.deny` (`settings.json`) nem do
+`guard-boundary.sh`, e o `guard-tdd.sh` só alcança
+`ui_*.js|ui_*.css|build_v32_html.py|generate_icons_v32.py` — quem a protege é
+`pins.json` (`5cf40876…`, igual ao blob de HEAD; rito: `gen_pins.py` no mesmo
+PR); (3) nenhum gate, âncora de mutante (`mutation-matrix.json`: 22 campos
+`arquivo`, nenhum em `tests_p50_core.js`) ou scanner lê o texto do cabeçalho —
+as frases dele só existem nele mesmo, e a suíte não se auto-pina.
+
+**O que foi feito**: só o comentário que abre `FROZEN_VISUAL_AUTHORITY`
+(`tests_p50_core.js:2724-2727` → `:2724-2734`, +7 linhas) foi reescrito. A
+lista passa a ser descrita como os arquivos que **hospedam** a autoridade de
+identidade visual (cor e ícones): os que a §29.4 declara protegidos
+(`tests_visual/`, `tests_icons_m46.js`) **e** `playwright.config.js`, que a
+§29.4 **não** nomeia — pinado desde a 5.0.5 (§7.11) por hospedar os viewports
+(`BP`/`projects`) e as `launchOptions` sob os quais V4+V5 medem. A frase do
+guard estrutural permanece; a trilha desta mudança (achado e data) está no
+próprio comentário. Nenhuma chave, nenhum hash e nenhuma alínea de `P50-COR4`
+mudou; a trilha do repin do `EA-38` desceu byte-idêntica para `:2740-2771`
+(R2 §5). Prova de que a edição é só de comentário: fora do bloco `/* … */`
+nenhum byte do arquivo difere (asserido no script de edição), `node --check`
+limpo, e a suíte fecha na contagem canônica antes **e** depois.
+
+**Medido** (2026-09-05, mesma worktree): `node tests_p50_core.js` — **64 PASS ·
+0 FAIL de 64** antes e depois da edição (`expected_suites.json → p50core` =
+64/0; `P50-COR4` PASS); `bash .claude/verify/run.sh --light` — **11 PASS ·
+1 FAIL**: o FAIL é `baseline`, `.claude/BACKLOG.md` (registry `cdd4891…` ≠
+HEAD `cf5c656b…`), divergência que já existia antes desta edição — nasce do
+cherry-pick `b534fad` (a abertura deste achado) sem repin e foi medida idêntica
+no controle pré-edição; `bash .claude/verify/compliance-audit.sh` — **17 PASS ·
+0 FAIL · 0 WARN** antes deste fecho (EA-40 entre os 31 abertos) e **17 PASS ·
+0 FAIL · 0 WARN** (30 abertos, EA-40 fora da lista) depois dele;
+`python .claude/verify/check_suites.py` (stage `suites`, lê o disco) —
+**19/19 suítes na contagem canônica, 0 problema(s)**, com `p50core` 64 PASS ·
+0 FAIL lido do disco já editado. O repin de `tests_p50_core.js` e deste
+`BACKLOG.md` (`gen_pins.py`) é do orquestrador, em commit próprio; até ele o
+stage `baseline` acusa os dois.
+
+## EA-41 — `.claude/BACKLOG.md:2029` carrega dois bytes NUL literais: o registro sai da normalização de texto que ele mesmo vigia (R7 §1)
+
+**Status**: `aberto`
+
+**Aberto em**: 2026-09-05. Levantado pelo `qa-engineer` de passagem, ao fechar o
+`EA-40`; não corrigido no mesmo diff (skill `fix-finding` §4) — registrado aqui
+pelo `doc-writer`.
+
+### Cadeia arquivo:linha → efeito
+
+- **`.claude/BACKLOG.md:2029`** (medido em `HEAD` desta worktree e idêntico em
+  `origin/develop`) contém **dois bytes `0x00` literais** dentro da string
+  ``ctxChave(d) + "<NUL>" + d.seletor + "<NUL>" + d.prop`` — hexdump da linha:
+  `... 22 00 22 20 2b 20 ... 22 00 22 20 2b ...` (aspas · NUL · aspas, duas
+  vezes). A intenção do texto é citar o separador de string do código-fonte
+  (`.claude/verify/regra_morta.js:399`/`:405`, onde a chave é montada como
+  `ctxChave(d) + "\x00" + d.seletor + "\x00" + d.prop`) como o escape de duas
+  letras `\x00`; o que foi gravado foi o byte em si, não o escape.
+- **Origem**: entrou no commit `5729961` ("doc(014): EA-34 — limite do
+  instrumento de regra morta…"), na linha 1435 daquela versão do arquivo
+  (1489 linhas então; o arquivo cresceu para os 2029 linhas de hoje) — já
+  presente no próprio diff do commit (linha 48 do patch). Confirmado bit a bit
+  igual em `origin/develop` (`git fetch origin develop`, mesma posição
+  relativa do trecho).
+- **Efeito de determinismo** — `git ls-files --eol .claude/BACKLOG.md` responde
+  `i/-text w/-text attr/text=auto eol=lf`: o `.gitattributes` pede `eol=lf`
+  para o arquivo, mas o conteúdo é classificado **binário** pelo git (por
+  causa do NUL) e a normalização de fim de linha fica **desligada** para ele.
+  Um commit que introduzisse CRLF neste arquivo passaria sem normalização —
+  e `.claude/BACKLOG.md` é arquivo **pinado** (`pins.json`, registry da R8).
+  É exatamente a classe de risco que motivou a R7 §1 ("LF em todo texto"),
+  nascida do achado E9 (56 de 74 hashes falsos no Windows por CRLF de
+  checkout não normalizado) — aqui ela vive dormente dentro do próprio
+  registro de achados.
+- **Efeito colateral observado, custou tempo**: `grep` sobre o arquivo sem
+  `-a` responde `Binary file .claude/BACKLOG.md matches` e não imprime a
+  linha — vários agentes e o orquestrador tropeçaram nisso durante dias sem
+  saber a causa. `git diff` permanece textual só pela heurística dos
+  primeiros ~8000 bytes, o que **esconde** a classificação binária em vez de
+  expô-la.
+
+### Escopo — só este arquivo (pergunta respondida)
+
+`git ls-files --eol | grep -- "-text"` (medido nesta worktree) devolve, além
+de `.claude/BACKLOG.md`: os 26 PNGs de `docs_phase5/evidence_v322/**` e todos
+os SVGs de `icons_v32_source/**` — todos com `attr/-text`, ou seja, **exclusão
+explícita e intencional** no `.gitattributes` (imagem/ícone declarado binário
+por desenho, não achado). `.claude/BACKLOG.md` é o **único** arquivo em que o
+`.gitattributes` pede normalização de texto (`attr/text=auto eol=lf`) e o
+conteúdo a desativa por acidente. O achado é de um arquivo só; não muda de
+dono nem de rota por isso.
+
+### O remédio, como candidato (não decidido aqui)
+
+Substituir os dois bytes NUL por representação textual (o escape de duas
+letras `\x00`, ou o nome do byte em prosa — "byte nulo") restaura a
+classificação de texto do arquivo. É `fix-finding` pequeno, sem spec; dono
+provável `doc-writer` (autor da prosa, dono do `BACKLOG.md`) ou
+`build-engineer` (se a rota preferida tratar isso como correção de registry).
+Rito: correção não entra no mesmo diff que a abriu (skill `fix-finding` §4);
+decisão de rota e de dono é do orquestrador.

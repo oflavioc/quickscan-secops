@@ -1,7 +1,7 @@
 {
   "_meta": {
     "descricao": "Registry único de pins — fonte de identidade dos artefatos (R8). Hashes = SHA-256 dos blobs de HEAD. Alterar arquivo pinado exige regenerar este registry no MESMO PR, com motivo no commit.",
-    "gerado_de_head": "48df9ae33e807a07af469808d16657a7bbf09b54",
+    "gerado_de_head": "ec79a1073d1ed3b44b0b29f5dd4724caca8b50fe",
     "gerado_em": "2026-09-04",
     "exclusoes": [
       "docs_phase5/**",
@@ -15,7 +15,7 @@
     "baseline_core_zip_sha256": "625079c462be7d44ffd69b1cd85f256382322bd0555ae4b548f21bf30ee5b89d"
   },
   "files": {
-    ".claude/BACKLOG.md": "492c8b699bc451b442e9a07249cabee7acde8856b41d5042742788ebe4492ba3",
+    ".claude/BACKLOG.md": "9ece9c0f644304f490bb4fbcfbc62afb14754e9d9067ab37334f8ace022a3b31",
     ".claude/agent-memory/README.md": "2f868716c8785119c1d6a02a7715f7b5058ab968f55951410fc82fc45b960a93",
     ".claude/agent-memory/build-engineer/MEMORY.md": "5ed47a73226fea6613b44c2ce70b26e95415033bafbd69a3ada20fa7df0bf950",
     ".claude/agent-memory/build-engineer/feedback_escopo_de_scanner_nos_dois_sentidos.md": "a07b03eb0687bc4f08ff02375684b8441f8d434384c415a3e25b1fe233007527",
@@ -396,11 +396,11 @@
     "specs/015-superficies-de-apoio/tasks.md": "75f812ff27e1f4c3a7c687ce5b34cd7a876be3909cfcd99fd4f52c17e2f873b1",
     "specs/016-registro-contra-execucao/medicoes-fase0.md": "fd657e45466ae85891f9d33569002e48d46d598314d513f2d5c4ebbc87f6cb3f",
     "specs/016-registro-contra-execucao/plan.md": "57fc8f259395a16afb2ddf9b5230a10905395981e18d3ee8453fb646d136d97c",
-    "specs/016-registro-contra-execucao/prova-de-carga.md": "bde97934691f54f44b3a354cb2abbf63be9e85e0d8d12fc65730c70eba0d7707",
+    "specs/016-registro-contra-execucao/prova-de-carga.md": "8c4a46e6babdcfaf469c0119e9a469350f220a62b0800dc147d8ed4884b75e6a",
     "specs/016-registro-contra-execucao/red-016.md": "2261148c845d4e36d6940bf952700cdbf0966b5fc267925f24203ad8045d5baf",
     "specs/016-registro-contra-execucao/refinement.md": "6647743d6f9961c0c6a71e726b08b51c1dca5d41f4a93301978a1ba0bae6a364",
-    "specs/016-registro-contra-execucao/relatorio-final.md": "0fbbfccfec436f17d524a3c59b6531d0a42ed3313def47cf769d2b8412944bcd",
-    "specs/016-registro-contra-execucao/spec-validate.md": "14997b5b0943122b8c277546db7e6b46adfaf92a0a491c256ca367a22427773c",
+    "specs/016-registro-contra-execucao/relatorio-final.md": "5500a4d32eefe2a02669e5162283aa56b523e58ef6e729d68c3018a7048e3a41",
+    "specs/016-registro-contra-execucao/spec-validate.md": "aae79024d5260cdf6fae619c54ca094ad75bad55a780c66986771c824c406120",
     "specs/016-registro-contra-execucao/spec.md": "70c87e976c72a6923a078c0b45f02ff8fa88ac1bdd85aaa930277180e64d8b16",
     "specs/016-registro-contra-execucao/tasks.md": "a946424399dc2b7cbaa4d896be80b49900aa4ae37b5ddfcba65061c3d97c4b19",
     "specs/016-registro-contra-execucao/trilha-do-commit-541771a.md": "af82eeafaf044481b7a9fd0161e96d27b89292d283b173665868c24fb282a4f8",

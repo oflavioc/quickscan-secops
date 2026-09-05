@@ -1,0 +1,39 @@
+{
+  "id": "P3",
+  "modo": "pre",
+  "_descricao": "PR feature/043 → develop; nenhum planning-state casa a branch",
+  "head_ref": "feature/043-fora-da-maquina",
+  "base_ref": "develop",
+  "estados": {
+    "041-liberada": {
+      "demanda": "041-liberada",
+      "phase": "done",
+      "spec_dir": "specs/041-liberada",
+      "branch": "feature/041-liberada",
+      "red": {
+        "status": "proven",
+        "commit": "041c041c041c041c041c041c041c041c041c041c"
+      }
+    }
+  },
+  "artefatos": [
+    "specs/041-liberada/relatorio-final.md",
+    "specs/041-liberada/spec-validate.md"
+  ],
+  "registro": {
+    "piso": {
+      "sha": "a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1",
+      "descricao": "piso sintético da sonda — as posições já vêm resolvidas em merges[].posicao_relativa_ao_piso"
+    },
+    "excluidas_por_r13": {},
+    "populacao": {
+      "padrao_branch": "^feature/(\\d{3})-",
+      "formato_merge_pr": "^Merge pull request #(\\d+) from ([^/]+)/(.+)$",
+      "integracoes_de_main": [
+        "^Merge remote-tracking branch 'origin/main' into develop",
+        "^Merge branch 'main' into develop",
+        "^merge: integra "
+      ]
+    }
+  }
+}

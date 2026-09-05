@@ -1,0 +1,74 @@
+{
+  "id": "F18",
+  "modo": "pos",
+  "_descricao": "planning-state em validate SEM a chave branch (junção impossível); outra demanda done, mesclada e com artefatos ao lado",
+  "sujeito": "034-sem-branch",
+  "estados": {
+    "034-sem-branch": {
+      "demanda": "034-sem-branch",
+      "phase": "validate",
+      "spec_dir": "specs/034-sem-branch",
+      "red": {
+        "status": "proven",
+        "commit": "034c034c034c034c034c034c034c034c034c034c"
+      }
+    },
+    "035-normal": {
+      "demanda": "035-normal",
+      "phase": "done",
+      "spec_dir": "specs/035-normal",
+      "branch": "feature/035-normal",
+      "red": {
+        "status": "proven",
+        "commit": "035c035c035c035c035c035c035c035c035c035c"
+      }
+    }
+  },
+  "merges": [
+    {
+      "sha": "f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3",
+      "data": "2026-09-02T10:00:00-03:00",
+      "msg": "Merge pull request #113 from oflavioc/feature/035-normal",
+      "posicao_relativa_ao_piso": "posterior"
+    }
+  ],
+  "ancestralidade": {
+    "034-sem-branch": {
+      "resposta": true,
+      "causa": null,
+      "anterior_ao_piso": false
+    },
+    "035-normal": {
+      "resposta": true,
+      "causa": null,
+      "anterior_ao_piso": false
+    }
+  },
+  "artefatos": [
+    "specs/035-normal/relatorio-final.md",
+    "specs/035-normal/spec-validate.md"
+  ],
+  "data_do_commit": "2026-09-04",
+  "registro": {
+    "piso": {
+      "sha": "a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1",
+      "descricao": "piso sintético da sonda — as posições já vêm resolvidas em merges[].posicao_relativa_ao_piso"
+    },
+    "excluidas_por_r13": {},
+    "populacao": {
+      "padrao_branch": "^feature/(\\d{3})-",
+      "formato_merge_pr": "^Merge pull request #(\\d+) from ([^/]+)/(.+)$",
+      "integracoes_de_main": [
+        "^Merge remote-tracking branch 'origin/main' into develop",
+        "^Merge branch 'main' into develop",
+        "^merge: integra "
+      ]
+    }
+  },
+  "origin_develop": {
+    "presente": true,
+    "sha": "0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d",
+    "causa": null,
+    "piso_na_cadeia": true
+  }
+}

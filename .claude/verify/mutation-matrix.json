@@ -6,7 +6,8 @@
     "classificacao_e3": "2026-08-29, demanda 013 (E3/T022 · W7): os DOIS não-KILL relatados pelo CI foram classificados no vocabulário fechado, e deram saídas DIFERENTES. (1) P50::M51 — `rot semântica`: o gate P50-PR1 reprovou, mas com mensagem que o `reason` não casava mais; as cinco alternativas eram INALCANÇÁVEIS depois da errata externa B-02/B-03 (quatro com zero ocorrência no arquivo do gate; a quinta viva só dentro de `cmp`, tests_p50_chromium.js:1046, definido e nunca invocado). Conserto EM ESCOPO: o par foi re-derivado da mensagem atual pela propriedade que o `desc` documenta (spec §Casos de borda, caso 5). A linha agregada 'campanhas P50 (múltiplos)' NÃO é expandida por par — expandir a P50 é outra demanda (T13). (2) p51/M51-01 — `gate sem poder discriminante (achado EA-7)`: o gate P51-VIS1 rodou e NÃO reprovou; âncora única e `reason` vivo, mas a Fase 5.2 passou a governar a composição que a mutação ataca via CSS da 5.0/5.1. NÃO é consertado aqui (spec §Fora de escopo e §Riscos 3): a demanda PARA nesse ponto e o remédio é asserção nova sobre comportamento de produto. Narrativa das duas em specs/013-integridade-da-campanha/matriz-gate-mutante.md §15.",
     "execucao_ci_demanda_010": "T027, 2026-08-31. Primeira execução das campanhas deferidas neste PR: o passo vinha saindo `skipped` porque as suítes visuais estavam vermelhas, e só rodou quando `P52-TGT4` fechou. PROVENIÊNCIA: job `visual` do CI, run 33389017967 (job 99478074174), 2026-08-31 — `mutation: 5 campanha(s) executada(s) · 0 problema(s)`. LIDO DO LOG, não inferido: (a) `p52` — 'MUTATION TESTING (Phase 5.2) [tests_p52_mutants.js]: 107/107 mutantes detectados pelo gate e motivo esperados' e 'não-KILL: nenhum — os 107 mutante(s) lidos estão DETECTADO'; (b) `p51` — 'MUTATION TESTING (Phase 5.1): 19/20 mutantes detectados' e 'não-KILL: 1 de 20 mutante(s) lido(s) · 19 KILL ficam na contagem'. O único não-KILL é a EXCEÇÃO NOMINAL KI-4: '[EXCEÇÃO] KI-4: p51/M51-01 SOBREVIVENTE perdoado · gate P51-VIS1', classificação 'gate sem poder discriminante (achado EA-7)', prazo 'Merge da demanda 014 na develop'. O IC-9 validou os DOIS lados: que a entrada existe no harness (oráculo: preflight C1) e que segue não-KILL no registro (ultima_prova.resultado = 'SOBREVIVENTE', 2026-08-29); (c) `d010` — '24/24 mutantes detectados' e 'não-KILL: nenhum — os 24 mutante(s) lidos estão DETECTADO', com 3 em dívida declarada (D010-M3/M4 sem caso nas fixtures; D010-M11 equivalente por construção); (d) `d009` — '19 KILL · 0 escaparam de 19'; (e) `core` — '3 KILL · 0 escaparam de 3'. SÃO CINCO E NÃO SEIS porque `p50` NÃO foi exigida: '[OK] p50: nenhum alvo mudou desde a base — campanha não exigida'. As linhas de `p50` e `p52` seguem AGREGADAS nesta matriz por decisão registrada em `expansao_p51` (expandi-las é a T13 da 013), então os 107 mutantes de p52 NÃO ganham par nominal aqui — e isso não é omissão: o IC-5 exige cobertura nominal apenas de `p51`, e ela está completa (20 pares, um por mutante). A alternativa de DÍVIDA DECLARADA que o tasks.md previa, caso o job não fechasse dentro do PR, NÃO se aplica: fechou, e os dois jobs saíram verdes (verify 11m34s, visual 37m45s).",
     "execucao_ci_demanda_014": "T081, 2026-09-04. Job `visual` do CI, run 33516136516 (job 99883514179), workflow_dispatch sobre 5cf7c82 (2026-09-01T13:53Z) — os arquivos do ciclo (harness, folha, suíte p52, builder, HTML, check_mutation, map) são byte-idênticos entre 5cf7c82 e a65c19d (git diff --stat vazio). LIDO DO LOG: `mutation: 8 campanha(s) executada(s) · 1 problema(s)` — d010 24/24 · d009 19 KILL · p50 53/53 · p51 19/19 · p52 107/107 · d014 9/9 · d011 19/19 · d014vis 0/1 com 'SOBREVIVENTE D014-M10 · gate P52-LAY2 · o gate esperado NÃO reprovou — sem poder discriminante'; `core` não exigida (nenhum alvo mudou). Suítes visuais no mesmo job: P52 CHROMIUM 55/55, D011 CHROMIUM 1/1. O log NÃO traz a linha crua do gate nem o baseline do harness (check_mutation ecoa só as 2 últimas linhas + bloco não-KILL) — motivo da sonda da E13. Veredito sobre a forma :77 do D014-M10: SOBREVIVENTE de nascença (ver par). O par renasce NÃO EXECUTADO com a forma da E13 e fecha no próximo run SEGUNDO RUN (fecho da T081): 33834890154 (job visual 100905257457), workflow_dispatch sobre 51e6c69, 2026-09-04T03:54Z, ambos os jobs success — LIDO DO LOG: 'mutation: 8 campanha(s) executada(s) · 0 problema(s)' — d014vis 1/1 ('não-KILL: nenhum — os 1 mutante(s) lidos estão DETECTADO'); p52 107/107 ('não-KILL: nenhum — os 107 mutante(s) lidos estão DETECTADO'); p50 53/53; p51 19/19; d014 9/9; d011 19/19; d010 24/24; d009 19 KILL; suítes visuais: P52 CHROMIUM 55/55 com 'PASS P52-ICON2'. VEREDITO DO EA-32 (mesmo run): P52-RA8 está entre os 107 (IC-4: p52 107 âncoras) e não é não-KILL ⇒ P52-ICON2 MATA sob a mutação parcial (só a metade MDR é efetiva) — cai a saída 'segundo par sem poder discriminante'; o par é válido, a metade SOCaaS segue inerte por ordem e o desc promete demais. Registro do veredito: regra_morta.json → exclusoes[2].veredito_job_visual. O par (p52, P52-RA8) NÃO entra em `pares` neste fecho: a matriz mantém p50/p52 agregadas (T13 da 013) e registrá-lo dispararia o evento_de_remocao com o mutante ainda partido ao meio, deixando C2(zero) vermelha crônica sem o reparo autorizado (E7 §3) — o par nasce no fix-finding do EA-32, junto com o reparo, num commit só.",
-    "execucao_fix_finding_ea32": "2026-09-04, qa-engineer, branch fix/ea32-particao-do-p52-ra8 (base 09f4342 = merge do PR #36). P52-RA8 PARTIDO por asset em tests_p52_mutants.js: P52-RA8 (metade MDR, altera ui_p52_workspace_v32.css:1350 — regra vencedora, como já era) + P52-RA8B (metade SOCaaS, altera :1357 — a regra vencedora; a forma antiga INSERIA uma regra que perdia por ordem para ela). Cada `reason` nomeia o alt que P52-ICON2 imprime; a `reason` antiga casava a linha de qualquer asset. Pares registrados aqui NÃO EXECUTADO · ambiente sem chromium — o kill canônico de CADA metade é do job `visual` (condição 3 do reparo; lição da E13). É ESTE registro que cumpre o evento_de_remocao da exclusão `achado-aberto` de P52-RA8 em regra_morta.json (condição literal: par com mutante == P52-RA8 e harness p52 passa a existir em `pares`): a exclusão saiu no MESMO commit, com PARES_DECLARADOS do instrumento de volta a dois pares e indecidiveis.arvore.contagem fixada por execução (21 em 15). MEDIDO NESTE CICLO, sem Chromium gerenciado: preflight p52 108/108 (era 107); varrerArvore() com as duas exclusões restantes — harness inteiro: mortas 1 (p52/P52-RA8, seletor SOCaaS, perde por ordem para :1357) = o RED da correção e a prova de que a exceção era carga; harness partido: mortas 0, cada metade 1 declaração viva; tests_014_regra_morta.js 7/7 antes e depois. Reprodução NÃO-canônica (Chrome estável 152.0.7977.77 via CHROME_PATH, Playwright 1.62.1, worktree efêmera em 09f4342, removida): controle 'PASS P52-ICON2'; P52_MUT_ONLY=P52-RA8,P52-RA8B → DETECTADO 2/2, cada FAIL nomeando só o próprio alt (MDR 34.9% · SOCaaS 36.5% do tile). A matriz segue com a linha agregada de p52 (T13 da 013); estes dois pares nominais entram ao lado de P52-M3, no mesmo precedente. Fecho pendente: ler o run do job visual e trocar os dois blocos NÃO EXECUTADO pelo resultado do log."
+    "execucao_fix_finding_ea32": "2026-09-04, qa-engineer, branch fix/ea32-particao-do-p52-ra8 (base 09f4342 = merge do PR #36). P52-RA8 PARTIDO por asset em tests_p52_mutants.js: P52-RA8 (metade MDR, altera ui_p52_workspace_v32.css:1350 — regra vencedora, como já era) + P52-RA8B (metade SOCaaS, altera :1357 — a regra vencedora; a forma antiga INSERIA uma regra que perdia por ordem para ela). Cada `reason` nomeia o alt que P52-ICON2 imprime; a `reason` antiga casava a linha de qualquer asset. Pares registrados aqui NÃO EXECUTADO · ambiente sem chromium — o kill canônico de CADA metade é do job `visual` (condição 3 do reparo; lição da E13). É ESTE registro que cumpre o evento_de_remocao da exclusão `achado-aberto` de P52-RA8 em regra_morta.json (condição literal: par com mutante == P52-RA8 e harness p52 passa a existir em `pares`): a exclusão saiu no MESMO commit, com PARES_DECLARADOS do instrumento de volta a dois pares e indecidiveis.arvore.contagem fixada por execução (21 em 15). MEDIDO NESTE CICLO, sem Chromium gerenciado: preflight p52 108/108 (era 107); varrerArvore() com as duas exclusões restantes — harness inteiro: mortas 1 (p52/P52-RA8, seletor SOCaaS, perde por ordem para :1357) = o RED da correção e a prova de que a exceção era carga; harness partido: mortas 0, cada metade 1 declaração viva; tests_014_regra_morta.js 7/7 antes e depois. Reprodução NÃO-canônica (Chrome estável 152.0.7977.77 via CHROME_PATH, Playwright 1.62.1, worktree efêmera em 09f4342, removida): controle 'PASS P52-ICON2'; P52_MUT_ONLY=P52-RA8,P52-RA8B → DETECTADO 2/2, cada FAIL nomeando só o próprio alt (MDR 34.9% · SOCaaS 36.5% do tile). A matriz segue com a linha agregada de p52 (T13 da 013); estes dois pares nominais entram ao lado de P52-M3, no mesmo precedente. Fecho pendente: ler o run do job visual e trocar os dois blocos NÃO EXECUTADO pelo resultado do log.",
+    "execucao_fase6_iteracao_016": "2026-09-04, qa-engineer, worktree phase5-014, branch feature/016-registro-contra-execucao — iteração de correção do spec-validate da 016 (G3, J1, J3, J4). Commit de código 9fe57f0: F24 e P11 na sonda (33 → 35), guarda de censo da leitura em check_fecho.py com fecho.json → piso.merges_ate_piso = 39, D016-M31/M32/M33 no harness (30 → 33), mutantes que movem o piso movem o censo, targets 51 → 54. REDS de HEAD (clone efêmero de d130a04; fecho.py, check_fecho.py, fecho.json, harness e esta matriz byte-idênticos aos de 76fd9dc, HEAD do spec-validate): M31 à mão ⇒ sonda 33 · 0, exit 0 (sobreviveria — G3); leitor mudo à mão ⇒ gate nu exit 0, 0 problema(s), merges_ate_piso 0, done CONFORME por ancestralidade (J1); M9 à mão ⇒ só P2 diverge, por artefato-ausente (J3); planning-state 999 com válvula à mão ⇒ o gate já acusa (EM VOO · prematura · 1 problema) — faltava o carrasco permanente na campanha (J4). GREENS: sonda 35 · 0; gate nu 0 problema(s) com censo 39 = 39; preflight 33/33 âncoras únicas; campanha 33/33 · 3 controles ok (árvore de trabalho e reexecutada sobre 9fe57f0, porcelain limpo); stage mutation 'IC-4: d016: 33 âncora(s)' · 'não-KILL: nenhum' · 'mutation: 1 campanha(s) executada(s) · 0 problema(s)'; bateria negativa dos julgadores novos 0 detectados · 4 sobreviventes · 1 não executado de 5. run.sh --light: 11 PASS · 1 FAIL — o FAIL é o baseline (pins divergentes/ausentes até o repin, R8 §1); a lista do baseline inclui também design-decisions.md, planning-state.schema.json, plan.md, refinement.md, spec.md, o ADR 0001 e spec-validate.md, alterados por d130a04 ('errata E4'), não por esta iteração. check_tdd: 0 problema(s), pares completos. NÃO medido: nada disto no CI — a branch segue sem push e sem PR (T041)"
   },
   "pares": [
     {
@@ -1679,6 +1680,435 @@
         "resultado": "KILL",
         "registro": "specs/015-superficies-de-apoio/ (campanha d015 · tests_015_mutants.js)",
         "nota": "Demanda 015 · mover a declaracao de C2 para o card-alvo, o que EXIGE mutar ui_target_v32.js — PROTEGIDO (§29.4) e NAO autorizado. Por isso NAO vive no harness: o harness automatizado nunca toca PROTECTED, que e o ponto exato onde a demanda 009 se queimou. Precedente de forma: D011-M6. EXECUTADO em 2026-08-31 em worktree efemera (`git worktree add --detach` a partir de aab5dc7), com CONTROLE VERDE antes de mutar (D015-GOV1 1 PASS · 0 FAIL la dentro). Sob o mutante, com rebuild feito na propria worktree: D015-GOV1 reprova na alinea (a) com 6 divergencias — `#pr-target DIVERGE (ancora 45898 bytes, HEAD 46113)` em E2, e analogas em E1/E3/E4/E5 —, e P50-GOV1 reprova com `protegidos alterados: ui_v32.js, ui_target_v32.js`. ACHADO DE INSTRUMENTO, registrado porque muda o que se pode alegar: o stage `baseline` NAO pega este mutante — `check_baseline.py` fechou 289/289 pins conferindo dentro da worktree mutada, porque compara pins contra os BLOBS DE HEAD e nao contra o disco. Quem pega a edicao em disco e P50-GOV1 (que hasheia o arquivo) e D015-GOV1 (que le o PRODUTO). Worktree removida ao fim; a arvore da demanda ficou intacta, com ui_target_v32.js no valor pinado 81adcb21…c8f5c."      }
+    },
+    {
+      "mutante": "D016-M1",
+      "harness": "d016 (tests_016_mutants.js)",
+      "gate": "D016-FEC1 (sonda F19, F1)",
+      "invariante": "C1/T1 — a mensagem do merge é o oráculo primário; a ancestralidade só quando ela cala",
+      "descricao": "fecho.py: o laço que consulta a mensagem dos merges deixa de iterar — só a ancestralidade responde",
+      "ultima_prova": {
+        "data": "2026-09-04",
+        "resultado": "KILL",
+        "registro": "campanha d016 (tests_016_mutants.js) · 1ª execução em 2026-09-04 na worktree da 016 (HEAD 612002e; harness, mapa e spec ainda não commitados; os 9 arquivos que a campanha muta estavam limpos): 30/30 DETECTADO · controles 3 ok · restauração byte a byte OK · porcelain dos alvos limpo; REEXECUTADA pelo stage `mutation` (check_mutation.py) sob árvore limpa no commit T060, com IC-4 'd016: 30 âncora(s) com ocorrencias == 1' e 'não-KILL: nenhum'. Bateria NEGATIVA do julgador do harness no mesmo dia: 0 detectados · 5 sobreviventes · 1 não executado de 6 adversariais (no-op de instrumento, no-op de árvore, contagem errada, isolamento violado, valor errado — todos SOBREVIVENTE; réplica que não importa — NÃO EXECUTADO · rebuild falhou). Saídas integrais em specs/016-registro-contra-execucao/prova-de-carga.md",
+        "nota": "oráculo: JSON de `--sonda` (ids de caso + campo que divergem; instrumento PRESENTE sob a mutação; obtido é veredito, não exceção) · medido: divergentes F1,F4,F5,F6,F7,F8,F9,F15,F16,F17,F19,F23 (12/33); pinados F19 → EM VOO (tdd_waiver sem red.commit some) e F1 → oráculo ancestralidade"
+      }
+    },
+    {
+      "mutante": "D016-M2",
+      "harness": "d016 (tests_016_mutants.js)",
+      "gate": "D016-FEC1 (sonda F1, F4)",
+      "invariante": "C1(c)/(d) — só o merge POSTERIOR ao piso é julgado; anterior e a posição do piso contam como ANTERIOR AO PISO",
+      "descricao": "fecho.py: a posição que responde 'anterior' passa a ser ('posterior',) — piso invertido",
+      "ultima_prova": {
+        "data": "2026-09-04",
+        "resultado": "KILL",
+        "registro": "campanha d016 (tests_016_mutants.js) · 1ª execução em 2026-09-04 na worktree da 016 (HEAD 612002e; harness, mapa e spec ainda não commitados; os 9 arquivos que a campanha muta estavam limpos): 30/30 DETECTADO · controles 3 ok · restauração byte a byte OK · porcelain dos alvos limpo; REEXECUTADA pelo stage `mutation` (check_mutation.py) sob árvore limpa no commit T060, com IC-4 'd016: 30 âncora(s) com ocorrencias == 1' e 'não-KILL: nenhum'. Bateria NEGATIVA do julgador do harness no mesmo dia: 0 detectados · 5 sobreviventes · 1 não executado de 6 adversariais (no-op de instrumento, no-op de árvore, contagem errada, isolamento violado, valor errado — todos SOBREVIVENTE; réplica que não importa — NÃO EXECUTADO · rebuild falhou). Saídas integrais em specs/016-registro-contra-execucao/prova-de-carga.md",
+        "nota": "oráculo: JSON de `--sonda` (ids de caso + campo que divergem; instrumento PRESENTE sob a mutação; obtido é veredito, não exceção) · medido: divergentes F1,F4,F6,F7,F8,F19 (6/33); pinados F1 → ANTERIOR AO PISO e F4 → MESCLADA SEM FECHO (trocam de veredito)"
+      }
+    },
+    {
+      "mutante": "D016-M3",
+      "harness": "d016 (tests_016_mutants.js)",
+      "gate": "D016-FEC2 (sonda F11)",
+      "invariante": "C2(a) — feature/NNN mesclada após o piso sem planning-state é demanda fora da máquina, nunca FORA DA POPULAÇÃO",
+      "descricao": "fecho.py: `if pop.e_de_demanda(branch)` → `if False and …` em _julga_merges",
+      "ultima_prova": {
+        "data": "2026-09-04",
+        "resultado": "KILL",
+        "registro": "campanha d016 (tests_016_mutants.js) · 1ª execução em 2026-09-04 na worktree da 016 (HEAD 612002e; harness, mapa e spec ainda não commitados; os 9 arquivos que a campanha muta estavam limpos): 30/30 DETECTADO · controles 3 ok · restauração byte a byte OK · porcelain dos alvos limpo; REEXECUTADA pelo stage `mutation` (check_mutation.py) sob árvore limpa no commit T060, com IC-4 'd016: 30 âncora(s) com ocorrencias == 1' e 'não-KILL: nenhum'. Bateria NEGATIVA do julgador do harness no mesmo dia: 0 detectados · 5 sobreviventes · 1 não executado de 6 adversariais (no-op de instrumento, no-op de árvore, contagem errada, isolamento violado, valor errado — todos SOBREVIVENTE; réplica que não importa — NÃO EXECUTADO · rebuild falhou). Saídas integrais em specs/016-registro-contra-execucao/prova-de-carga.md",
+        "nota": "oráculo: JSON de `--sonda` (ids de caso + campo que divergem; instrumento PRESENTE sob a mutação; obtido é veredito, não exceção) · medido: divergentes F11 (1/33); pinado F11 → FORA DA POPULAÇÃO sem código"
+      }
+    },
+    {
+      "mutante": "D016-M4",
+      "harness": "d016 (tests_016_mutants.js)",
+      "gate": "D016-FEC2 (sonda F13)",
+      "invariante": "C2(c) — merge em develop fora de PR após o piso é FAIL nomeado (R14)",
+      "descricao": "fecho.py: `codigo=C_MERGE_FORA_DE_PR` → `codigo=None` — o merge manual é engolido",
+      "ultima_prova": {
+        "data": "2026-09-04",
+        "resultado": "KILL",
+        "registro": "campanha d016 (tests_016_mutants.js) · 1ª execução em 2026-09-04 na worktree da 016 (HEAD 612002e; harness, mapa e spec ainda não commitados; os 9 arquivos que a campanha muta estavam limpos): 30/30 DETECTADO · controles 3 ok · restauração byte a byte OK · porcelain dos alvos limpo; REEXECUTADA pelo stage `mutation` (check_mutation.py) sob árvore limpa no commit T060, com IC-4 'd016: 30 âncora(s) com ocorrencias == 1' e 'não-KILL: nenhum'. Bateria NEGATIVA do julgador do harness no mesmo dia: 0 detectados · 5 sobreviventes · 1 não executado de 6 adversariais (no-op de instrumento, no-op de árvore, contagem errada, isolamento violado, valor errado — todos SOBREVIVENTE; réplica que não importa — NÃO EXECUTADO · rebuild falhou). Saídas integrais em specs/016-registro-contra-execucao/prova-de-carga.md",
+        "nota": "oráculo: JSON de `--sonda` (ids de caso + campo que divergem; instrumento PRESENTE sob a mutação; obtido é veredito, não exceção) · medido: divergentes F13 (1/33); pinado F13 → código null e 0 problemas"
+      }
+    },
+    {
+      "mutante": "D016-M5",
+      "harness": "d016 (tests_016_mutants.js)",
+      "gate": "D016-FEC3 (sonda F15) + D016-PR1 (sonda P8)",
+      "invariante": "C3(a)/C5(a) — done exige relatorio-final.md E spec-validate.md, pós e pré-merge",
+      "descricao": "fecho.py: ARTEFATOS_EXIGIDOS perde spec-validate.md",
+      "ultima_prova": {
+        "data": "2026-09-04",
+        "resultado": "KILL",
+        "registro": "campanha d016 (tests_016_mutants.js) · 1ª execução em 2026-09-04 na worktree da 016 (HEAD 612002e; harness, mapa e spec ainda não commitados; os 9 arquivos que a campanha muta estavam limpos): 30/30 DETECTADO · controles 3 ok · restauração byte a byte OK · porcelain dos alvos limpo; REEXECUTADA pelo stage `mutation` (check_mutation.py) sob árvore limpa no commit T060, com IC-4 'd016: 30 âncora(s) com ocorrencias == 1' e 'não-KILL: nenhum'. Bateria NEGATIVA do julgador do harness no mesmo dia: 0 detectados · 5 sobreviventes · 1 não executado de 6 adversariais (no-op de instrumento, no-op de árvore, contagem errada, isolamento violado, valor errado — todos SOBREVIVENTE; réplica que não importa — NÃO EXECUTADO · rebuild falhou). Saídas integrais em specs/016-registro-contra-execucao/prova-de-carga.md",
+        "nota": "oráculo: JSON de `--sonda` (ids de caso + campo que divergem; instrumento PRESENTE sob a mutação; obtido é veredito, não exceção) · medido: divergentes F15,F16,F23,P8 (4/33); pinados F15 → CONFORME sem código e P8 → LIBERADO"
+      }
+    },
+    {
+      "mutante": "D016-M6",
+      "harness": "d016 (tests_016_mutants.js)",
+      "gate": "D016-FEC3 (sonda F17)",
+      "invariante": "C3(b) — exclusão cujo artefato nomeado existe é obsoleta e reprova (direção IC-9.3/KI-4)",
+      "descricao": "fecho.py: `if obsoletos:` → `if False and obsoletos:`",
+      "ultima_prova": {
+        "data": "2026-09-04",
+        "resultado": "KILL",
+        "registro": "campanha d016 (tests_016_mutants.js) · 1ª execução em 2026-09-04 na worktree da 016 (HEAD 612002e; harness, mapa e spec ainda não commitados; os 9 arquivos que a campanha muta estavam limpos): 30/30 DETECTADO · controles 3 ok · restauração byte a byte OK · porcelain dos alvos limpo; REEXECUTADA pelo stage `mutation` (check_mutation.py) sob árvore limpa no commit T060, com IC-4 'd016: 30 âncora(s) com ocorrencias == 1' e 'não-KILL: nenhum'. Bateria NEGATIVA do julgador do harness no mesmo dia: 0 detectados · 5 sobreviventes · 1 não executado de 6 adversariais (no-op de instrumento, no-op de árvore, contagem errada, isolamento violado, valor errado — todos SOBREVIVENTE; réplica que não importa — NÃO EXECUTADO · rebuild falhou). Saídas integrais em specs/016-registro-contra-execucao/prova-de-carga.md",
+        "nota": "oráculo: JSON de `--sonda` (ids de caso + campo que divergem; instrumento PRESENTE sob a mutação; obtido é veredito, não exceção) · medido: divergentes F17 (1/33); pinado F17 → código null e 0 problemas"
+      }
+    },
+    {
+      "mutante": "D016-M7",
+      "harness": "d016 (tests_016_mutants.js)",
+      "gate": "D016-FEC4 (sonda F8)",
+      "invariante": "C4(a) — válvula sem motivo/dono/prazo não é válvula",
+      "descricao": "fecho.py: a lista de campos faltantes vira sempre vazia",
+      "ultima_prova": {
+        "data": "2026-09-04",
+        "resultado": "KILL",
+        "registro": "campanha d016 (tests_016_mutants.js) · 1ª execução em 2026-09-04 na worktree da 016 (HEAD 612002e; harness, mapa e spec ainda não commitados; os 9 arquivos que a campanha muta estavam limpos): 30/30 DETECTADO · controles 3 ok · restauração byte a byte OK · porcelain dos alvos limpo; REEXECUTADA pelo stage `mutation` (check_mutation.py) sob árvore limpa no commit T060, com IC-4 'd016: 30 âncora(s) com ocorrencias == 1' e 'não-KILL: nenhum'. Bateria NEGATIVA do julgador do harness no mesmo dia: 0 detectados · 5 sobreviventes · 1 não executado de 6 adversariais (no-op de instrumento, no-op de árvore, contagem errada, isolamento violado, valor errado — todos SOBREVIVENTE; réplica que não importa — NÃO EXECUTADO · rebuild falhou). Saídas integrais em specs/016-registro-contra-execucao/prova-de-carga.md",
+        "nota": "oráculo: JSON de `--sonda` (ids de caso + campo que divergem; instrumento PRESENTE sob a mutação; obtido é veredito, não exceção) · medido: divergentes F8 (1/33); pinado F8 (sem dono) → FECHO PENDENTE DECLARADO sem código"
+      }
+    },
+    {
+      "mutante": "D016-M8",
+      "harness": "d016 (tests_016_mutants.js)",
+      "gate": "D016-FEC4 (sonda F7)",
+      "invariante": "C4(b)/T4 — prazo anterior à data do commit julgado é válvula vencida",
+      "descricao": "fecho.py: a comparação `prazo < dia` é desligada",
+      "ultima_prova": {
+        "data": "2026-09-04",
+        "resultado": "KILL",
+        "registro": "campanha d016 (tests_016_mutants.js) · 1ª execução em 2026-09-04 na worktree da 016 (HEAD 612002e; harness, mapa e spec ainda não commitados; os 9 arquivos que a campanha muta estavam limpos): 30/30 DETECTADO · controles 3 ok · restauração byte a byte OK · porcelain dos alvos limpo; REEXECUTADA pelo stage `mutation` (check_mutation.py) sob árvore limpa no commit T060, com IC-4 'd016: 30 âncora(s) com ocorrencias == 1' e 'não-KILL: nenhum'. Bateria NEGATIVA do julgador do harness no mesmo dia: 0 detectados · 5 sobreviventes · 1 não executado de 6 adversariais (no-op de instrumento, no-op de árvore, contagem errada, isolamento violado, valor errado — todos SOBREVIVENTE; réplica que não importa — NÃO EXECUTADO · rebuild falhou). Saídas integrais em specs/016-registro-contra-execucao/prova-de-carga.md",
+        "nota": "oráculo: JSON de `--sonda` (ids de caso + campo que divergem; instrumento PRESENTE sob a mutação; obtido é veredito, não exceção) · medido: divergentes F7 (1/33); pinado F7 (prazo 2026-01-01) → FECHO PENDENTE DECLARADO sem código"
+      }
+    },
+    {
+      "mutante": "D016-M9",
+      "harness": "d016 (tests_016_mutants.js)",
+      "gate": "D016-PR1 (sonda P11, P2)",
+      "invariante": "C5(b) — pré-merge só done libera; validate bloqueia",
+      "descricao": "fecho.py: `if fase != \"done\"` → `if fase not in (\"done\", \"validate\")`",
+      "ultima_prova": {
+        "data": "2026-09-04",
+        "resultado": "KILL",
+        "registro": "campanha d016 (tests_016_mutants.js) · 1ª execução em 2026-09-04 na worktree da 016 (HEAD 612002e; harness, mapa e spec ainda não commitados; os 9 arquivos que a campanha muta estavam limpos): 30/30 DETECTADO · controles 3 ok · restauração byte a byte OK · porcelain dos alvos limpo; REEXECUTADA pelo stage `mutation` (check_mutation.py) sob árvore limpa no commit T060, com IC-4 'd016: 30 âncora(s) com ocorrencias == 1' e 'não-KILL: nenhum'. Bateria NEGATIVA do julgador do harness no mesmo dia: 0 detectados · 5 sobreviventes · 1 não executado de 6 adversariais (no-op de instrumento, no-op de árvore, contagem errada, isolamento violado, valor errado — todos SOBREVIVENTE; réplica que não importa — NÃO EXECUTADO · rebuild falhou). Saídas integrais em specs/016-registro-contra-execucao/prova-de-carga.md",
+        "nota": "oráculo: JSON de `--sonda` (ids de caso + campo que divergem; instrumento PRESENTE sob a mutação; obtido é veredito, não exceção) · medido: divergentes P2 (1/33); pinado P2 → FECHO PENDENTE com código artefato-ausente (escorrega da cláusula de fase para a de artefatos — o código muda, e é isso que a sonda vê) · EMENDA (Fase 6, spec-validate J3, 2026-09-04): entrou P11 (validate COM os dois artefatos, sem válvula) — sob M9 P11 → LIBERADO, a letra da spec ('o caso PR em validate libera'); P2 fica como segunda divergência. Medido na reexecução: divergentes P2,P11 (2/35), P11 → LIBERADO com código null, P2 → artefato-ausente. Em HEAD (clone, M9 à mão, sem P11) só P2 divergia"
+      }
+    },
+    {
+      "mutante": "D016-M10",
+      "harness": "d016 (tests_016_mutants.js)",
+      "gate": "D016-PR1 (sonda P7, P10)",
+      "invariante": "C5(d)/T5 — o pré-merge não honra fecho_pendente (obsoleta em done, prematura antes)",
+      "descricao": "fecho.py: a cláusula `if estado.get(\"fecho_pendente\") is not None` do pré-merge é desligada",
+      "ultima_prova": {
+        "data": "2026-09-04",
+        "resultado": "KILL",
+        "registro": "campanha d016 (tests_016_mutants.js) · 1ª execução em 2026-09-04 na worktree da 016 (HEAD 612002e; harness, mapa e spec ainda não commitados; os 9 arquivos que a campanha muta estavam limpos): 30/30 DETECTADO · controles 3 ok · restauração byte a byte OK · porcelain dos alvos limpo; REEXECUTADA pelo stage `mutation` (check_mutation.py) sob árvore limpa no commit T060, com IC-4 'd016: 30 âncora(s) com ocorrencias == 1' e 'não-KILL: nenhum'. Bateria NEGATIVA do julgador do harness no mesmo dia: 0 detectados · 5 sobreviventes · 1 não executado de 6 adversariais (no-op de instrumento, no-op de árvore, contagem errada, isolamento violado, valor errado — todos SOBREVIVENTE; réplica que não importa — NÃO EXECUTADO · rebuild falhou). Saídas integrais em specs/016-registro-contra-execucao/prova-de-carga.md",
+        "nota": "oráculo: JSON de `--sonda` (ids de caso + campo que divergem; instrumento PRESENTE sob a mutação; obtido é veredito, não exceção) · medido: divergentes P7,P10 (2/33); pinados P7 → LIBERADO e P10 → fase-nao-done (em vez de fecho_pendente-prematura)"
+      }
+    },
+    {
+      "mutante": "D016-M11",
+      "harness": "d016 (tests_016_mutants.js)",
+      "gate": "D016-PR1 (sonda P3)",
+      "invariante": "C5(c) — head feature/NNN sem planning-state é demanda fora da máquina, bloqueia",
+      "descricao": "fecho.py: o retorno `FECHO PENDENTE · demanda-fora-da-maquina` vira `LIBERADO`",
+      "ultima_prova": {
+        "data": "2026-09-04",
+        "resultado": "KILL",
+        "registro": "campanha d016 (tests_016_mutants.js) · 1ª execução em 2026-09-04 na worktree da 016 (HEAD 612002e; harness, mapa e spec ainda não commitados; os 9 arquivos que a campanha muta estavam limpos): 30/30 DETECTADO · controles 3 ok · restauração byte a byte OK · porcelain dos alvos limpo; REEXECUTADA pelo stage `mutation` (check_mutation.py) sob árvore limpa no commit T060, com IC-4 'd016: 30 âncora(s) com ocorrencias == 1' e 'não-KILL: nenhum'. Bateria NEGATIVA do julgador do harness no mesmo dia: 0 detectados · 5 sobreviventes · 1 não executado de 6 adversariais (no-op de instrumento, no-op de árvore, contagem errada, isolamento violado, valor errado — todos SOBREVIVENTE; réplica que não importa — NÃO EXECUTADO · rebuild falhou). Saídas integrais em specs/016-registro-contra-execucao/prova-de-carga.md",
+        "nota": "oráculo: JSON de `--sonda` (ids de caso + campo que divergem; instrumento PRESENTE sob a mutação; obtido é veredito, não exceção) · medido: divergentes P3 (1/33); pinado P3 → LIBERADO"
+      }
+    },
+    {
+      "mutante": "D016-M12",
+      "harness": "d016 (tests_016_mutants.js)",
+      "gate": "D016-PROT1 (sonda http_403, sem_rede)",
+      "invariante": "C6(d)/T7 — NÃO DETERMINÁVEL nunca é PROTEGIDA",
+      "descricao": "branch_protection.py: `_nao_determinavel` devolve veredito PROTEGIDA",
+      "ultima_prova": {
+        "data": "2026-09-04",
+        "resultado": "KILL",
+        "registro": "campanha d016 (tests_016_mutants.js) · 1ª execução em 2026-09-04 na worktree da 016 (HEAD 612002e; harness, mapa e spec ainda não commitados; os 9 arquivos que a campanha muta estavam limpos): 30/30 DETECTADO · controles 3 ok · restauração byte a byte OK · porcelain dos alvos limpo; REEXECUTADA pelo stage `mutation` (check_mutation.py) sob árvore limpa no commit T060, com IC-4 'd016: 30 âncora(s) com ocorrencias == 1' e 'não-KILL: nenhum'. Bateria NEGATIVA do julgador do harness no mesmo dia: 0 detectados · 5 sobreviventes · 1 não executado de 6 adversariais (no-op de instrumento, no-op de árvore, contagem errada, isolamento violado, valor errado — todos SOBREVIVENTE; réplica que não importa — NÃO EXECUTADO · rebuild falhou). Saídas integrais em specs/016-registro-contra-execucao/prova-de-carga.md",
+        "nota": "oráculo: JSON de `--sonda` (ids de caso + campo que divergem; instrumento PRESENTE sob a mutação; obtido é veredito, não exceção) · medido: divergentes http_403,sem_rede (2/9); pinados os dois → PROTEGIDA (a coerência extra também acusa causa em veredito determinável)"
+      }
+    },
+    {
+      "mutante": "D016-M13",
+      "harness": "d016 (tests_016_mutants.js)",
+      "gate": "D016-PROT1 (sonda strict_false)",
+      "invariante": "C6(b) — strict_required_status_checks_policy false ⇒ falta up-to-date",
+      "descricao": "branch_protection.py: `strict_provado_false = False` — strict ignorado",
+      "ultima_prova": {
+        "data": "2026-09-04",
+        "resultado": "KILL",
+        "registro": "campanha d016 (tests_016_mutants.js) · 1ª execução em 2026-09-04 na worktree da 016 (HEAD 612002e; harness, mapa e spec ainda não commitados; os 9 arquivos que a campanha muta estavam limpos): 30/30 DETECTADO · controles 3 ok · restauração byte a byte OK · porcelain dos alvos limpo; REEXECUTADA pelo stage `mutation` (check_mutation.py) sob árvore limpa no commit T060, com IC-4 'd016: 30 âncora(s) com ocorrencias == 1' e 'não-KILL: nenhum'. Bateria NEGATIVA do julgador do harness no mesmo dia: 0 detectados · 5 sobreviventes · 1 não executado de 6 adversariais (no-op de instrumento, no-op de árvore, contagem errada, isolamento violado, valor errado — todos SOBREVIVENTE; réplica que não importa — NÃO EXECUTADO · rebuild falhou). Saídas integrais em specs/016-registro-contra-execucao/prova-de-carga.md",
+        "nota": "oráculo: JSON de `--sonda` (ids de caso + campo que divergem; instrumento PRESENTE sob a mutação; obtido é veredito, não exceção) · medido: divergentes strict_false (1/9); pinado strict_false → PROTEGIDA com severidade_local WARN (cai no ramo 'não determinável (classic)')"
+      }
+    },
+    {
+      "mutante": "D016-M14",
+      "harness": "d016 (tests_016_mutants.js)",
+      "gate": "D016-PROT1 (sonda sem_visual, sem_fecho)",
+      "invariante": "C6(b) — cada um dos três contextos tem de ser exigido; um não basta",
+      "descricao": "branch_protection.py: `faltam_ctx` zerado quando a cobertura é parcial",
+      "ultima_prova": {
+        "data": "2026-09-04",
+        "resultado": "KILL",
+        "registro": "campanha d016 (tests_016_mutants.js) · 1ª execução em 2026-09-04 na worktree da 016 (HEAD 612002e; harness, mapa e spec ainda não commitados; os 9 arquivos que a campanha muta estavam limpos): 30/30 DETECTADO · controles 3 ok · restauração byte a byte OK · porcelain dos alvos limpo; REEXECUTADA pelo stage `mutation` (check_mutation.py) sob árvore limpa no commit T060, com IC-4 'd016: 30 âncora(s) com ocorrencias == 1' e 'não-KILL: nenhum'. Bateria NEGATIVA do julgador do harness no mesmo dia: 0 detectados · 5 sobreviventes · 1 não executado de 6 adversariais (no-op de instrumento, no-op de árvore, contagem errada, isolamento violado, valor errado — todos SOBREVIVENTE; réplica que não importa — NÃO EXECUTADO · rebuild falhou). Saídas integrais em specs/016-registro-contra-execucao/prova-de-carga.md",
+        "nota": "oráculo: JSON de `--sonda` (ids de caso + campo que divergem; instrumento PRESENTE sob a mutação; obtido é veredito, não exceção) · medido: divergentes sem_visual,sem_fecho (2/9); pinados os dois → PROTEGIDA"
+      }
+    },
+    {
+      "mutante": "D016-M15",
+      "harness": "d016 (tests_016_mutants.js)",
+      "gate": "D016-PROT1 (sonda hoje, classic_off)",
+      "invariante": "C6(c) — protected: true com enabled false / enforcement off e ruleset sem required_status_checks é DESPROTEGIDA (o estado real de 2026-09-04)",
+      "descricao": "branch_protection.py: `protected: true` no clássico zera os contextos necessários",
+      "ultima_prova": {
+        "data": "2026-09-04",
+        "resultado": "KILL",
+        "registro": "campanha d016 (tests_016_mutants.js) · 1ª execução em 2026-09-04 na worktree da 016 (HEAD 612002e; harness, mapa e spec ainda não commitados; os 9 arquivos que a campanha muta estavam limpos): 30/30 DETECTADO · controles 3 ok · restauração byte a byte OK · porcelain dos alvos limpo; REEXECUTADA pelo stage `mutation` (check_mutation.py) sob árvore limpa no commit T060, com IC-4 'd016: 30 âncora(s) com ocorrencias == 1' e 'não-KILL: nenhum'. Bateria NEGATIVA do julgador do harness no mesmo dia: 0 detectados · 5 sobreviventes · 1 não executado de 6 adversariais (no-op de instrumento, no-op de árvore, contagem errada, isolamento violado, valor errado — todos SOBREVIVENTE; réplica que não importa — NÃO EXECUTADO · rebuild falhou). Saídas integrais em specs/016-registro-contra-execucao/prova-de-carga.md",
+        "nota": "oráculo: JSON de `--sonda` (ids de caso + campo que divergem; instrumento PRESENTE sob a mutação; obtido é veredito, não exceção) · medido: divergentes hoje,sem_visual,sem_fecho,classic_off,http_403 (5/9); pinados hoje e classic_off → PROTEGIDA"
+      }
+    },
+    {
+      "mutante": "D016-M16",
+      "harness": "d016 (tests_016_mutants.js)",
+      "gate": "C7 comum a D016-FEC1..FEC4/PR1 (guarda de contagem do gate check_fecho.py)",
+      "invariante": "C7 — o julgador não pode ficar mudo: executados == total pinado",
+      "descricao": "check_fecho.py (o GATE): o laço da sonda itera sobre [] — 0 casos executados",
+      "ultima_prova": {
+        "data": "2026-09-04",
+        "resultado": "KILL",
+        "registro": "campanha d016 (tests_016_mutants.js) · 1ª execução em 2026-09-04 na worktree da 016 (HEAD 612002e; harness, mapa e spec ainda não commitados; os 9 arquivos que a campanha muta estavam limpos): 30/30 DETECTADO · controles 3 ok · restauração byte a byte OK · porcelain dos alvos limpo; REEXECUTADA pelo stage `mutation` (check_mutation.py) sob árvore limpa no commit T060, com IC-4 'd016: 30 âncora(s) com ocorrencias == 1' e 'não-KILL: nenhum'. Bateria NEGATIVA do julgador do harness no mesmo dia: 0 detectados · 5 sobreviventes · 1 não executado de 6 adversariais (no-op de instrumento, no-op de árvore, contagem errada, isolamento violado, valor errado — todos SOBREVIVENTE; réplica que não importa — NÃO EXECUTADO · rebuild falhou). Saídas integrais em specs/016-registro-contra-execucao/prova-de-carga.md",
+        "nota": "oráculo: JSON de `--sonda` com total 0 ≠ total_pinado 33, ok false, guarda 'executados 0 ≠ total pinado 33 — a sonda não rodou inteira (C7)' · exit 1. Provado antes em cópia efêmera no red (red-016.md §3.1)"
+      }
+    },
+    {
+      "mutante": "D016-M17",
+      "harness": "d016 (tests_016_mutants.js)",
+      "gate": "D016-PROT1 (sonda sem_fecho, hoje)",
+      "invariante": "C6/E1 — os TRÊS contextos (verify, visual, fecho) são obrigatórios; dois não bastam",
+      "descricao": "branch_protection.py: `necessarios` perde 'fecho' — dois dos três contextos bastam (errata E1)",
+      "ultima_prova": {
+        "data": "2026-09-04",
+        "resultado": "KILL",
+        "registro": "campanha d016 (tests_016_mutants.js) · 1ª execução em 2026-09-04 na worktree da 016 (HEAD 612002e; harness, mapa e spec ainda não commitados; os 9 arquivos que a campanha muta estavam limpos): 30/30 DETECTADO · controles 3 ok · restauração byte a byte OK · porcelain dos alvos limpo; REEXECUTADA pelo stage `mutation` (check_mutation.py) sob árvore limpa no commit T060, com IC-4 'd016: 30 âncora(s) com ocorrencias == 1' e 'não-KILL: nenhum'. Bateria NEGATIVA do julgador do harness no mesmo dia: 0 detectados · 5 sobreviventes · 1 não executado de 6 adversariais (no-op de instrumento, no-op de árvore, contagem errada, isolamento violado, valor errado — todos SOBREVIVENTE; réplica que não importa — NÃO EXECUTADO · rebuild falhou). Saídas integrais em specs/016-registro-contra-execucao/prova-de-carga.md",
+        "nota": "oráculo: JSON de `--sonda` (ids de caso + campo que divergem; instrumento PRESENTE sob a mutação; obtido é veredito, não exceção) · medido: divergentes hoje,sem_fecho,classic_off (3/9); pinados sem_fecho → PROTEGIDA com faltam [] e hoje → faltam [up-to-date, verify, visual] (sem fecho)"
+      }
+    },
+    {
+      "mutante": "D016-M18",
+      "harness": "d016 (tests_016_mutants.js)",
+      "gate": "D016-FEC1 (gate nu · C1 a)",
+      "invariante": "C1(a)/E2 — demanda mesclada por PR após o piso com fase aberta e sem válvula é MESCLADA SEM FECHO, nomeando oráculo e #PR",
+      "descricao": "ÁRVORE: fecho.json → piso.sha = 6dad53d (merge da Onda 4, PR #15) E planning-state 015 → phase validate — a prova de carga de C1(a) automatizada",
+      "ultima_prova": {
+        "data": "2026-09-04",
+        "resultado": "KILL",
+        "registro": "campanha d016 (tests_016_mutants.js) · 1ª execução em 2026-09-04 na worktree da 016 (HEAD 612002e; harness, mapa e spec ainda não commitados; os 9 arquivos que a campanha muta estavam limpos): 30/30 DETECTADO · controles 3 ok · restauração byte a byte OK · porcelain dos alvos limpo; REEXECUTADA pelo stage `mutation` (check_mutation.py) sob árvore limpa no commit T060, com IC-4 'd016: 30 âncora(s) com ocorrencias == 1' e 'não-KILL: nenhum'. Bateria NEGATIVA do julgador do harness no mesmo dia: 0 detectados · 5 sobreviventes · 1 não executado de 6 adversariais (no-op de instrumento, no-op de árvore, contagem errada, isolamento violado, valor errado — todos SOBREVIVENTE; réplica que não importa — NÃO EXECUTADO · rebuild falhou). Saídas integrais em specs/016-registro-contra-execucao/prova-de-carga.md",
+        "nota": "oráculo: JSON de `check_fecho.py --json` (sujeito por id/veredito/código/oráculo/#PR, total de problemas e ISOLAMENTO — nenhum outro sujeito com falha) · medido: 1 problema(s) · acusados: 015-superficies-de-apoio: MESCLADA SEM FECHO · mensagem #34 (fase validate) — e NENHUMA outra (as outras nove done, 016 EM VOO). Restaurado o piso, a 015 em validate responde ANTERIOR AO PISO (E2) — conferido pelo controle M24/positivo com o piso recuado e pelo gate nu com o piso vigente"
+      }
+    },
+    {
+      "mutante": "D016-M19",
+      "harness": "d016 (tests_016_mutants.js)",
+      "gate": "D016-FEC2 (gate nu · C2 a)",
+      "invariante": "C2(a)/P9 — feature/NNN mesclada após o piso sem planning-state é demanda fora da máquina; os dentes do piso",
+      "descricao": "ÁRVORE: fecho.json → piso.sha = e5ccd429 (raiz do repositório, commit NÃO-merge) — 'piso zero' equivale a não ter piso sem cair em C2(d)",
+      "ultima_prova": {
+        "data": "2026-09-04",
+        "resultado": "KILL",
+        "registro": "campanha d016 (tests_016_mutants.js) · 1ª execução em 2026-09-04 na worktree da 016 (HEAD 612002e; harness, mapa e spec ainda não commitados; os 9 arquivos que a campanha muta estavam limpos): 30/30 DETECTADO · controles 3 ok · restauração byte a byte OK · porcelain dos alvos limpo; REEXECUTADA pelo stage `mutation` (check_mutation.py) sob árvore limpa no commit T060, com IC-4 'd016: 30 âncora(s) com ocorrencias == 1' e 'não-KILL: nenhum'. Bateria NEGATIVA do julgador do harness no mesmo dia: 0 detectados · 5 sobreviventes · 1 não executado de 6 adversariais (no-op de instrumento, no-op de árvore, contagem errada, isolamento violado, valor errado — todos SOBREVIVENTE; réplica que não importa — NÃO EXECUTADO · rebuild falhou). Saídas integrais em specs/016-registro-contra-execucao/prova-de-carga.md",
+        "nota": "oráculo: JSON de `check_fecho.py --json` (sujeito por id/veredito/código/oráculo/#PR, total de problemas e ISOLAMENTO — nenhum outro sujeito com falha) · medido: 6 problema(s) · acusados (todos MESCLADA SEM FECHO [demanda-fora-da-maquina], tipo merge): #15 feature/005-onda4-reconciliacao (6dad53d), #14 feature/004-onda3-tdd (775d8f4), #12 feature/002-onda2-papeis-processo (c300ed0), #11 e #10 feature/001-onda1-enforcement (7d843cc, 5f673c1), #9 feature/000-estrutura-agentica (d943a5e) — 6 merges / 5 branches, igual à leitura independente da Fase 4 (fecho.json → _meta.prova_de_carga_leitura_fase4); 0 fora de PR; as 10 done CONFORME. Só é executável porque ler_merges percorre a cadeia inteira (E3)"
+      }
+    },
+    {
+      "mutante": "D016-M20",
+      "harness": "d016 (tests_016_mutants.js)",
+      "gate": "D016-FEC3 (gate nu · C3 a/d)",
+      "invariante": "C3(a)/(d) — done sem artefato e sem exclusão válida reprova; as três exclusões R13 são CARGA, não afrouxamento",
+      "descricao": "ÁRVORE: a chave `excluidas_por_r13` do fecho.json é renomeada (o instrumento passa a ler {}) — equivale a retirar as três entradas com âncora de UMA linha",
+      "ultima_prova": {
+        "data": "2026-09-04",
+        "resultado": "KILL",
+        "registro": "campanha d016 (tests_016_mutants.js) · 1ª execução em 2026-09-04 na worktree da 016 (HEAD 612002e; harness, mapa e spec ainda não commitados; os 9 arquivos que a campanha muta estavam limpos): 30/30 DETECTADO · controles 3 ok · restauração byte a byte OK · porcelain dos alvos limpo; REEXECUTADA pelo stage `mutation` (check_mutation.py) sob árvore limpa no commit T060, com IC-4 'd016: 30 âncora(s) com ocorrencias == 1' e 'não-KILL: nenhum'. Bateria NEGATIVA do julgador do harness no mesmo dia: 0 detectados · 5 sobreviventes · 1 não executado de 6 adversariais (no-op de instrumento, no-op de árvore, contagem errada, isolamento violado, valor errado — todos SOBREVIVENTE; réplica que não importa — NÃO EXECUTADO · rebuild falhou). Saídas integrais em specs/016-registro-contra-execucao/prova-de-carga.md",
+        "nota": "oráculo: JSON de `check_fecho.py --json` (sujeito por id/veredito/código/oráculo/#PR, total de problemas e ISOLAMENTO — nenhum outro sujeito com falha) · medido: 3 problema(s) · acusados: 003-marcador-duplicado MESCLADA SEM FECHO [artefato-ausente] #13 'done sem relatorio-final.md, spec-validate.md'; 009-leitura-do-relatorio idem #24 'done sem spec-validate.md'; 010-recomendacao-sem-vao idem #31 'done sem spec-validate.md' — 3 demandas / 4 artefatos, igual à leitura em disco da Fase 4"
+      }
+    },
+    {
+      "mutante": "D016-M21",
+      "harness": "d016 (tests_016_mutants.js)",
+      "gate": "D016-FEC4 (gate nu · C4 d hoje; C4 c depois do done/merge da 016 — a partir daí C4 d fica com D016-M32)",
+      "invariante": "C4(d)/T5 — válvula em demanda NÃO mesclada é 'válvula antes do vencimento'; uma válvula na 016 nunca é legítima em ponto algum do ciclo",
+      "descricao": "ÁRVORE: fecho_pendente VÁLIDA (prazo = data do commit) escrita no planning-state da 016, que está em voo",
+      "ultima_prova": {
+        "data": "2026-09-04",
+        "resultado": "KILL",
+        "registro": "campanha d016 (tests_016_mutants.js) · 1ª execução em 2026-09-04 na worktree da 016 (HEAD 612002e; harness, mapa e spec ainda não commitados; os 9 arquivos que a campanha muta estavam limpos): 30/30 DETECTADO · controles 3 ok · restauração byte a byte OK · porcelain dos alvos limpo; REEXECUTADA pelo stage `mutation` (check_mutation.py) sob árvore limpa no commit T060, com IC-4 'd016: 30 âncora(s) com ocorrencias == 1' e 'não-KILL: nenhum'. Bateria NEGATIVA do julgador do harness no mesmo dia: 0 detectados · 5 sobreviventes · 1 não executado de 6 adversariais (no-op de instrumento, no-op de árvore, contagem errada, isolamento violado, valor errado — todos SOBREVIVENTE; réplica que não importa — NÃO EXECUTADO · rebuild falhou). Saídas integrais em specs/016-registro-contra-execucao/prova-de-carga.md",
+        "nota": "oráculo: JSON de `check_fecho.py --json` (sujeito por id/veredito/código/oráculo/#PR, total de problemas e ISOLAMENTO — nenhum outro sujeito com falha) · medido: 1 problema(s) · acusados: 016-registro-contra-execucao: EM VOO [fecho_pendente-prematura] (fase implement). CICLO DE VIDA declarado no harness: com a 016 em done e ainda sem merge (T084) o mesmo estado sai EM VOO [fecho_pendente-obsoleta] (decisão 3 do instrumento: done pré-empta); depois do merge, CONFORME [fecho_pendente-obsoleta] (C4 c). O julgador do harness aceita SÓ essas três combinações acopladas à fase — não é afrouxamento: a válvula na 016 tem de reprovar sempre; se um dia sobreviver, a árvore passou a admiti-la (016 mesclada com fase aberta), que é o sinal · EMENDA (Fase 6, spec-validate J4, 2026-09-04): (1) o 'se um dia sobreviver' NÃO se realiza como SOBREVIVENTE — o mundo que o produziria derruba antes o controle C0-fecho e M21 sai NÃO EXECUTADO · baseline vermelho (medido em clone); o sinal existe, com esse nome. (2) PERDA NOMEADA: a partir do done, M21 mede C4(c), a alínea de M28, e C4(d) ficaria sem carrasco de árvore para sempre — o carrasco PERMANENTE de C4(d) passa a ser D016-M32 (planning-state sintético 999, nunca mesclada, criado e removido pela campanha)"
+      }
+    },
+    {
+      "mutante": "D016-M22",
+      "harness": "d016 (tests_016_mutants.js)",
+      "gate": "C7 comum a D016-FEC1..FEC4/PR1 (guarda 2: arquivos == casos == total)",
+      "invariante": "C7 — fixture ausente é nomeada e a árvore NÃO é julgada",
+      "descricao": "ÁRVORE: fixtures_016/fecho/F5.json removida",
+      "ultima_prova": {
+        "data": "2026-09-04",
+        "resultado": "KILL",
+        "registro": "campanha d016 (tests_016_mutants.js) · 1ª execução em 2026-09-04 na worktree da 016 (HEAD 612002e; harness, mapa e spec ainda não commitados; os 9 arquivos que a campanha muta estavam limpos): 30/30 DETECTADO · controles 3 ok · restauração byte a byte OK · porcelain dos alvos limpo; REEXECUTADA pelo stage `mutation` (check_mutation.py) sob árvore limpa no commit T060, com IC-4 'd016: 30 âncora(s) com ocorrencias == 1' e 'não-KILL: nenhum'. Bateria NEGATIVA do julgador do harness no mesmo dia: 0 detectados · 5 sobreviventes · 1 não executado de 6 adversariais (no-op de instrumento, no-op de árvore, contagem errada, isolamento violado, valor errado — todos SOBREVIVENTE; réplica que não importa — NÃO EXECUTADO · rebuild falhou). Saídas integrais em specs/016-registro-contra-execucao/prova-de-carga.md",
+        "nota": "oráculo: JSON de `--json` com sonda.ok false, caso F5 obtido 'FIXTURE AUSENTE', guarda 'caso sem fixture: F5' + 'contagem: 32 fixture(s) · 33 caso(s) · total pinado 33', vivo null, exit 1. Provado antes em cópia efêmera no red (red-016.md §3 [B5])"
+      }
+    },
+    {
+      "mutante": "D016-M23",
+      "harness": "d016 (tests_016_mutants.js)",
+      "gate": "D016-FEC1 (gate nu · C1 f)",
+      "invariante": "C1(f) — planning-state sem `branch` é FAIL de forma (junção registro↔git impossível), só para esse sujeito",
+      "descricao": "ÁRVORE: a linha `branch` do planning-state 015 (done) é removida",
+      "ultima_prova": {
+        "data": "2026-09-04",
+        "resultado": "KILL",
+        "registro": "campanha d016 (tests_016_mutants.js) · 1ª execução em 2026-09-04 na worktree da 016 (HEAD 612002e; harness, mapa e spec ainda não commitados; os 9 arquivos que a campanha muta estavam limpos): 30/30 DETECTADO · controles 3 ok · restauração byte a byte OK · porcelain dos alvos limpo; REEXECUTADA pelo stage `mutation` (check_mutation.py) sob árvore limpa no commit T060, com IC-4 'd016: 30 âncora(s) com ocorrencias == 1' e 'não-KILL: nenhum'. Bateria NEGATIVA do julgador do harness no mesmo dia: 0 detectados · 5 sobreviventes · 1 não executado de 6 adversariais (no-op de instrumento, no-op de árvore, contagem errada, isolamento violado, valor errado — todos SOBREVIVENTE; réplica que não importa — NÃO EXECUTADO · rebuild falhou). Saídas integrais em specs/016-registro-contra-execucao/prova-de-carga.md",
+        "nota": "oráculo: JSON de `check_fecho.py --json` (sujeito por id/veredito/código/oráculo/#PR, total de problemas e ISOLAMENTO — nenhum outro sujeito com falha) · medido: 1 problema(s) · acusados: 015-superficies-de-apoio: NÃO DETERMINÁVEL [registro-sem-branch] (fase done) — os outros 10 sujeitos seguem julgados (falha de um não cala os outros)"
+      }
+    },
+    {
+      "mutante": "D016-M24",
+      "harness": "d016 (tests_016_mutants.js)",
+      "gate": "D016-FEC4 (gate nu · C4 b/T4)",
+      "invariante": "C4(b)/T4 — prazo anterior à data do commit julgado é vencida, medido na ÁRVORE (%cI de HEAD, não relógio)",
+      "descricao": "ÁRVORE: cenário de M18 (piso 6dad53d + 015 validate) + fecho_pendente na 015 com prazo 2026-01-01",
+      "ultima_prova": {
+        "data": "2026-09-04",
+        "resultado": "KILL",
+        "registro": "campanha d016 (tests_016_mutants.js) · 1ª execução em 2026-09-04 na worktree da 016 (HEAD 612002e; harness, mapa e spec ainda não commitados; os 9 arquivos que a campanha muta estavam limpos): 30/30 DETECTADO · controles 3 ok · restauração byte a byte OK · porcelain dos alvos limpo; REEXECUTADA pelo stage `mutation` (check_mutation.py) sob árvore limpa no commit T060, com IC-4 'd016: 30 âncora(s) com ocorrencias == 1' e 'não-KILL: nenhum'. Bateria NEGATIVA do julgador do harness no mesmo dia: 0 detectados · 5 sobreviventes · 1 não executado de 6 adversariais (no-op de instrumento, no-op de árvore, contagem errada, isolamento violado, valor errado — todos SOBREVIVENTE; réplica que não importa — NÃO EXECUTADO · rebuild falhou). Saídas integrais em specs/016-registro-contra-execucao/prova-de-carga.md",
+        "nota": "oráculo: JSON de `check_fecho.py --json` (sujeito por id/veredito/código/oráculo/#PR, total de problemas e ISOLAMENTO — nenhum outro sujeito com falha) · medido: 1 problema(s) · acusados: 015-superficies-de-apoio: MESCLADA SEM FECHO [fecho_pendente-vencida] · mensagem #34 (fase validate). CONTROLE POSITIVO (não é mutante, roda na mesma campanha): o mesmo cenário com prazo == data do commit (2026-09-04, a borda exata de T4) ⇒ FECHO PENDENTE DECLARADO · dono qa-engineer · válvulas 1 · problemas 0 · exit 0 — FEC4 alcança o verde e T4 lê a data do commit"
+      }
+    },
+    {
+      "mutante": "D016-M25",
+      "harness": "d016 (tests_016_mutants.js)",
+      "gate": "D016-FEC2 (gate nu · C2 d)",
+      "invariante": "C2(d) — piso que não é SHA de 40 hex é global piso-invalido; toda demanda sai NÃO DETERMINÁVEL, nunca EM VOO em silêncio",
+      "descricao": "ÁRVORE: fecho.json → piso.sha = '921977c' (SHA curto) no registro real",
+      "ultima_prova": {
+        "data": "2026-09-04",
+        "resultado": "KILL",
+        "registro": "campanha d016 (tests_016_mutants.js) · 1ª execução em 2026-09-04 na worktree da 016 (HEAD 612002e; harness, mapa e spec ainda não commitados; os 9 arquivos que a campanha muta estavam limpos): 30/30 DETECTADO · controles 3 ok · restauração byte a byte OK · porcelain dos alvos limpo; REEXECUTADA pelo stage `mutation` (check_mutation.py) sob árvore limpa no commit T060, com IC-4 'd016: 30 âncora(s) com ocorrencias == 1' e 'não-KILL: nenhum'. Bateria NEGATIVA do julgador do harness no mesmo dia: 0 detectados · 5 sobreviventes · 1 não executado de 6 adversariais (no-op de instrumento, no-op de árvore, contagem errada, isolamento violado, valor errado — todos SOBREVIVENTE; réplica que não importa — NÃO EXECUTADO · rebuild falhou). Saídas integrais em specs/016-registro-contra-execucao/prova-de-carga.md",
+        "nota": "oráculo: JSON de `check_fecho.py --json` (sujeito por id/veredito/código/oráculo/#PR, total de problemas e ISOLAMENTO — nenhum outro sujeito com falha) · medido: 1 problema(s) (o global) · globais: piso-invalido · 11/11 demandas NÃO DETERMINÁVEL [piso-invalido] · nenhum sujeito merge julgado sob o impedimento"
+      }
+    },
+    {
+      "mutante": "D016-M26",
+      "harness": "d016 (tests_016_mutants.js)",
+      "gate": "D016-FEC3 (gate nu · C3 b)",
+      "invariante": "C3(b) — exclusão que nomeia artefato existente é obsoleta e reprova (exceção cujo objeto sumiu vira permissão a fantasma — KI-4 da 014)",
+      "descricao": "ÁRVORE: entrada em excluidas_por_r13 para 011-numeracao-das-prioridades (spec-validate.md), cujo artefato EXISTE em disco",
+      "ultima_prova": {
+        "data": "2026-09-04",
+        "resultado": "KILL",
+        "registro": "campanha d016 (tests_016_mutants.js) · 1ª execução em 2026-09-04 na worktree da 016 (HEAD 612002e; harness, mapa e spec ainda não commitados; os 9 arquivos que a campanha muta estavam limpos): 30/30 DETECTADO · controles 3 ok · restauração byte a byte OK · porcelain dos alvos limpo; REEXECUTADA pelo stage `mutation` (check_mutation.py) sob árvore limpa no commit T060, com IC-4 'd016: 30 âncora(s) com ocorrencias == 1' e 'não-KILL: nenhum'. Bateria NEGATIVA do julgador do harness no mesmo dia: 0 detectados · 5 sobreviventes · 1 não executado de 6 adversariais (no-op de instrumento, no-op de árvore, contagem errada, isolamento violado, valor errado — todos SOBREVIVENTE; réplica que não importa — NÃO EXECUTADO · rebuild falhou). Saídas integrais em specs/016-registro-contra-execucao/prova-de-carga.md",
+        "nota": "oráculo: JSON de `check_fecho.py --json` (sujeito por id/veredito/código/oráculo/#PR, total de problemas e ISOLAMENTO — nenhum outro sujeito com falha) · medido: 1 problema(s) · acusados: 011-numeracao-das-prioridades: CONFORME [exclusao-obsoleta] · mensagem #32 (fase done)"
+      }
+    },
+    {
+      "mutante": "D016-M27",
+      "harness": "d016 (tests_016_mutants.js)",
+      "gate": "D016-FEC3 (gate nu · C3 c)",
+      "invariante": "C3(c) — exclusão sem `fonte` NÃO exclui: global exclusao-malformada (não impeditivo, ET3) E a demanda cai em artefato-ausente",
+      "descricao": "ÁRVORE: `fonte` da exclusão da 009 vira string vazia no fecho.json real",
+      "ultima_prova": {
+        "data": "2026-09-04",
+        "resultado": "KILL",
+        "registro": "campanha d016 (tests_016_mutants.js) · 1ª execução em 2026-09-04 na worktree da 016 (HEAD 612002e; harness, mapa e spec ainda não commitados; os 9 arquivos que a campanha muta estavam limpos): 30/30 DETECTADO · controles 3 ok · restauração byte a byte OK · porcelain dos alvos limpo; REEXECUTADA pelo stage `mutation` (check_mutation.py) sob árvore limpa no commit T060, com IC-4 'd016: 30 âncora(s) com ocorrencias == 1' e 'não-KILL: nenhum'. Bateria NEGATIVA do julgador do harness no mesmo dia: 0 detectados · 5 sobreviventes · 1 não executado de 6 adversariais (no-op de instrumento, no-op de árvore, contagem errada, isolamento violado, valor errado — todos SOBREVIVENTE; réplica que não importa — NÃO EXECUTADO · rebuild falhou). Saídas integrais em specs/016-registro-contra-execucao/prova-de-carga.md",
+        "nota": "oráculo: JSON de `check_fecho.py --json` (sujeito por id/veredito/código/oráculo/#PR, total de problemas e ISOLAMENTO — nenhum outro sujeito com falha) · medido: 2 problema(s) · globais: exclusao-malformada · acusados: 009-leitura-do-relatorio: MESCLADA SEM FECHO [artefato-ausente] · mensagem #24 (fase done). Forma provada à mão na wave 3 (ET3): a variante 'malformada só em problemas' era julgador mudo — o gate só imprime globais e sujeitos"
+      }
+    },
+    {
+      "mutante": "D016-M28",
+      "harness": "d016 (tests_016_mutants.js)",
+      "gate": "D016-FEC4 (gate nu · C4 c)",
+      "invariante": "C4(c) — fecho_pendente em demanda done é obsoleta e reprova; carrasco PERMANENTE de (c) na árvore (independe do ciclo da 016)",
+      "descricao": "ÁRVORE: fecho_pendente VÁLIDA (prazo = data do commit) escrita no planning-state 015 (done, mesclada), piso vigente",
+      "ultima_prova": {
+        "data": "2026-09-04",
+        "resultado": "KILL",
+        "registro": "campanha d016 (tests_016_mutants.js) · 1ª execução em 2026-09-04 na worktree da 016 (HEAD 612002e; harness, mapa e spec ainda não commitados; os 9 arquivos que a campanha muta estavam limpos): 30/30 DETECTADO · controles 3 ok · restauração byte a byte OK · porcelain dos alvos limpo; REEXECUTADA pelo stage `mutation` (check_mutation.py) sob árvore limpa no commit T060, com IC-4 'd016: 30 âncora(s) com ocorrencias == 1' e 'não-KILL: nenhum'. Bateria NEGATIVA do julgador do harness no mesmo dia: 0 detectados · 5 sobreviventes · 1 não executado de 6 adversariais (no-op de instrumento, no-op de árvore, contagem errada, isolamento violado, valor errado — todos SOBREVIVENTE; réplica que não importa — NÃO EXECUTADO · rebuild falhou). Saídas integrais em specs/016-registro-contra-execucao/prova-de-carga.md",
+        "nota": "oráculo: JSON de `check_fecho.py --json` (sujeito por id/veredito/código/oráculo/#PR, total de problemas e ISOLAMENTO — nenhum outro sujeito com falha) · medido: 1 problema(s) · acusados: 015-superficies-de-apoio: CONFORME [fecho_pendente-obsoleta] · mensagem #34 (fase done)"
+      }
+    },
+    {
+      "mutante": "D016-M29",
+      "harness": "d016 (tests_016_mutants.js)",
+      "gate": "D016-PROT1 (C7 — guarda de contagem do gate check_branch_protection.py)",
+      "invariante": "C7 — o classificador não pode ficar mudo: executados == total pinado (9)",
+      "descricao": "check_branch_protection.py (o GATE): o laço da sonda itera sobre [] — 0 casos executados",
+      "ultima_prova": {
+        "data": "2026-09-04",
+        "resultado": "KILL",
+        "registro": "campanha d016 (tests_016_mutants.js) · 1ª execução em 2026-09-04 na worktree da 016 (HEAD 612002e; harness, mapa e spec ainda não commitados; os 9 arquivos que a campanha muta estavam limpos): 30/30 DETECTADO · controles 3 ok · restauração byte a byte OK · porcelain dos alvos limpo; REEXECUTADA pelo stage `mutation` (check_mutation.py) sob árvore limpa no commit T060, com IC-4 'd016: 30 âncora(s) com ocorrencias == 1' e 'não-KILL: nenhum'. Bateria NEGATIVA do julgador do harness no mesmo dia: 0 detectados · 5 sobreviventes · 1 não executado de 6 adversariais (no-op de instrumento, no-op de árvore, contagem errada, isolamento violado, valor errado — todos SOBREVIVENTE; réplica que não importa — NÃO EXECUTADO · rebuild falhou). Saídas integrais em specs/016-registro-contra-execucao/prova-de-carga.md",
+        "nota": "oráculo: JSON de `--sonda` com total 0 ≠ total_pinado 9, ok false, guarda 'executados 0 ≠ total pinado 9 — a sonda não rodou inteira (C7)' · exit 1. Irmão de M16 no segundo gate (red-016.md §3.1 provou os dois em cópia efêmera; aqui o par ganha execução própria)"
+      }
+    },
+    {
+      "mutante": "D016-M30",
+      "harness": "d016 (tests_016_mutants.js)",
+      "gate": "D016-PROT1 (C7 — guarda 2 do gate de proteção)",
+      "invariante": "C7 — fixture de proteção ausente é nomeada; a API não é consultada",
+      "descricao": "ÁRVORE: fixtures_016/protecao/sem_fecho.json removida",
+      "ultima_prova": {
+        "data": "2026-09-04",
+        "resultado": "KILL",
+        "registro": "campanha d016 (tests_016_mutants.js) · 1ª execução em 2026-09-04 na worktree da 016 (HEAD 612002e; harness, mapa e spec ainda não commitados; os 9 arquivos que a campanha muta estavam limpos): 30/30 DETECTADO · controles 3 ok · restauração byte a byte OK · porcelain dos alvos limpo; REEXECUTADA pelo stage `mutation` (check_mutation.py) sob árvore limpa no commit T060, com IC-4 'd016: 30 âncora(s) com ocorrencias == 1' e 'não-KILL: nenhum'. Bateria NEGATIVA do julgador do harness no mesmo dia: 0 detectados · 5 sobreviventes · 1 não executado de 6 adversariais (no-op de instrumento, no-op de árvore, contagem errada, isolamento violado, valor errado — todos SOBREVIVENTE; réplica que não importa — NÃO EXECUTADO · rebuild falhou). Saídas integrais em specs/016-registro-contra-execucao/prova-de-carga.md",
+        "nota": "oráculo: JSON de `--sonda` com ok false, caso sem_fecho obtido 'FIXTURE AUSENTE', guarda 'caso sem fixture: sem_fecho' + 'contagem: 8 fixture(s) · 9 caso(s) · total pinado 9' · exit 1"
+      }
+    },
+    {
+      "mutante": "D016-M31",
+      "harness": "d016 (tests_016_mutants.js)",
+      "gate": "D016-FEC4 (sonda F24)",
+      "invariante": "C4(e) — prazo fora de AAAA-MM-DD não é data, não é válvula (gap G3 do spec-validate: alínea com instrumento e sem carrasco)",
+      "descricao": "fecho.py: `if not _dia_valido(prazo):` → `if False and not _dia_valido(prazo):` — a cláusula de formato de _valvula é desligada",
+      "ultima_prova": {
+        "data": "2026-09-04",
+        "resultado": "KILL",
+        "registro": "campanha d016 (tests_016_mutants.js) · Fase 6, iteração de correção do spec-validate (G3, J1, J3, J4), 2026-09-04, worktree da 016: 1ª execução sobre a árvore de trabalho (HEAD d130a04 + as edições ainda não commitadas): 33/33 DETECTADO · controles 3 ok · restauração byte a byte OK · criados removidos OK · porcelain dos alvos SUJO só pelo check_fecho.py em edição; REEXECUTADA sobre o commit 9fe57f0 (alvos limpos): 33/33 · 3 ok · porcelain limpo; e pelo stage `mutation` (check_mutation.py, árvore limpa, mesmo commit): IC-4 'd016: 33 âncora(s) com ocorrencias == 1', 'não-KILL: nenhum — os 33 mutante(s) lidos estão DETECTADO', 'mutation: 1 campanha(s) executada(s) · 0 problema(s)'. Bateria negativa dos julgadores NOVOS (cópia efêmera do harness, apagada): 0 detectados · 4 sobreviventes · 1 não executado de 5 — leitor intacto, criação sem válvula, cláusula de formato intacta e censo com valor errado SOBREVIVEM pelo motivo nomeado; criação sobre arquivo existente sai NÃO EXECUTADO · âncora não encontrada. Saídas integrais em specs/016-registro-contra-execucao/prova-de-carga.md §9",
+        "nota": "oráculo: JSON de `--sonda` (ids de caso + campo que divergem; instrumento PRESENTE sob a mutação; obtido é veredito, não exceção) · medido: divergentes F24 (1/35); pinado F24 (prazo '30/09/2026') → FECHO PENDENTE DECLARADO, código null, 0 problemas. RED do gate: a mesma mutação à mão em clone efêmero de d130a04 (fecho.py idêntico ao de 76fd9dc, HEAD do spec-validate), SEM F24 ⇒ sonda 33 · 0, exit 0 — o mutante sobreviveria; é o G3. Com F24 e a cláusula presente ⇒ 35 · 0; removida ⇒ F24 diverge. O prazo é lexicograficamente maior que a data do commit: sob o mutante o caso cai em 'aceita', não em 'vencida' — o kill é pela alínea (e), não pela (b). Negativo do julgador: cláusula intacta (só comentário) ⇒ SOBREVIVENTE 'sonda não reprovou (exit 0, ok=true)'"
+      }
+    },
+    {
+      "mutante": "D016-M32",
+      "harness": "d016 (tests_016_mutants.js)",
+      "gate": "D016-FEC4 (gate nu · C4 d — carrasco PERMANENTE)",
+      "invariante": "C4(d)/T5 — válvula em demanda NÃO mesclada é prematura; sujeito ESTÁVEL, independente do ciclo de vida da 016 (a perda de M21 após o done, spec-validate J4)",
+      "descricao": "ÁRVORE: a campanha CRIA .claude/project-memory/planning-state/999-sintetica-d016.json (implement, branch feature/999-…, sem red.commit, fecho_pendente válida com prazo = data do commit) e o REMOVE ao fim — âncora = AUSÊNCIA do arquivo (1 sse não existe), restauração = unlink conferido",
+      "ultima_prova": {
+        "data": "2026-09-04",
+        "resultado": "KILL",
+        "registro": "campanha d016 (tests_016_mutants.js) · Fase 6, iteração de correção do spec-validate (G3, J1, J3, J4), 2026-09-04, worktree da 016: 1ª execução sobre a árvore de trabalho (HEAD d130a04 + as edições ainda não commitadas): 33/33 DETECTADO · controles 3 ok · restauração byte a byte OK · criados removidos OK · porcelain dos alvos SUJO só pelo check_fecho.py em edição; REEXECUTADA sobre o commit 9fe57f0 (alvos limpos): 33/33 · 3 ok · porcelain limpo; e pelo stage `mutation` (check_mutation.py, árvore limpa, mesmo commit): IC-4 'd016: 33 âncora(s) com ocorrencias == 1', 'não-KILL: nenhum — os 33 mutante(s) lidos estão DETECTADO', 'mutation: 1 campanha(s) executada(s) · 0 problema(s)'. Bateria negativa dos julgadores NOVOS (cópia efêmera do harness, apagada): 0 detectados · 4 sobreviventes · 1 não executado de 5 — leitor intacto, criação sem válvula, cláusula de formato intacta e censo com valor errado SOBREVIVEM pelo motivo nomeado; criação sobre arquivo existente sai NÃO EXECUTADO · âncora não encontrada. Saídas integrais em specs/016-registro-contra-execucao/prova-de-carga.md §9",
+        "nota": "oráculo: JSON de `check_fecho.py --json` (sujeito por id/veredito/código/oráculo/fase, total de problemas e ISOLAMENTO — nenhum outro sujeito com falha) · medido: 1 problema(s) · acusados: 999-sintetica-d016: EM VOO [fecho_pendente-prematura] (fase implement), nenhuma outra; arquivo removido ('criados removidos OK'). O gate já acusava esse estado em HEAD (medido à mão no clone: 12 demanda(s) · 1 problema(s)) — o que faltava era o carrasco PERMANENTE na campanha. Negativos do julgador: o mesmo planning-state SEM válvula ⇒ SOBREVIVENTE ('exit 0/0 · problemas: esperado 1 · obtido 0 · sujeito não casou · real: EM VOO'); `criar` sobre arquivo que existe (planning-state 016) ⇒ NÃO EXECUTADO · âncora não encontrada, e o arquivo existente ficou byte-idêntico (sha conferido)"
+      }
+    },
+    {
+      "mutante": "D016-M33",
+      "harness": "d016 (tests_016_mutants.js)",
+      "gate": "D016-FEC1 D016-FEC2 (guarda de censo da leitura no gate nu — C7 aplicada ao leitor)",
+      "invariante": "o leitor de histórico não pode ficar mudo: fecho.json → piso.merges_ate_piso (39, censo IMUTÁVEL até o piso 921977c) é asserido pelo gate contra contagens.merges_ate_piso da árvore real (spec-validate J1)",
+      "descricao": "LEITOR: fecho.py:ler_merges devolve {\"merges\": [], \"origin_develop\": od} com od intacto (presente, piso_na_cadeia) — a sonda não vê leitor (julgador puro); só a guarda de censo do gate nu vê",
+      "ultima_prova": {
+        "data": "2026-09-04",
+        "resultado": "KILL",
+        "registro": "campanha d016 (tests_016_mutants.js) · Fase 6, iteração de correção do spec-validate (G3, J1, J3, J4), 2026-09-04, worktree da 016: 1ª execução sobre a árvore de trabalho (HEAD d130a04 + as edições ainda não commitadas): 33/33 DETECTADO · controles 3 ok · restauração byte a byte OK · criados removidos OK · porcelain dos alvos SUJO só pelo check_fecho.py em edição; REEXECUTADA sobre o commit 9fe57f0 (alvos limpos): 33/33 · 3 ok · porcelain limpo; e pelo stage `mutation` (check_mutation.py, árvore limpa, mesmo commit): IC-4 'd016: 33 âncora(s) com ocorrencias == 1', 'não-KILL: nenhum — os 33 mutante(s) lidos estão DETECTADO', 'mutation: 1 campanha(s) executada(s) · 0 problema(s)'. Bateria negativa dos julgadores NOVOS (cópia efêmera do harness, apagada): 0 detectados · 4 sobreviventes · 1 não executado de 5 — leitor intacto, criação sem válvula, cláusula de formato intacta e censo com valor errado SOBREVIVEM pelo motivo nomeado; criação sobre arquivo existente sai NÃO EXECUTADO · âncora não encontrada. Saídas integrais em specs/016-registro-contra-execucao/prova-de-carga.md §9",
+        "nota": "oráculo: JSON de `--json` → vivo._leitura.censo {pinado, lido, estado} + contagens.problemas + sujeitos com falha · medido: censo lido 0 × pinado 39 (divergente) · 0 problema(s) de julgamento · nenhum sujeito com falha · exit 1 — o kill EXIGE 0 problema(s) de julgamento: é a prova de que só a guarda acusa. RED do gate: a mesma mutação à mão em clone efêmero de d130a04, sem a guarda ⇒ exit 0, 0 problema(s), merges_ate_piso 0, as done CONFORME por ancestralidade (o leitor mudo passava verde; sob ele D016-M19 sobrevivia). Pin medido por dois oráculos: git rev-list --count --merges --first-parent 921977c = 39 = ler_merges. Negativos do julgador: leitor intacto ⇒ SOBREVIVENTE ('censo.estado: esperado divergente · obtido ok · censo.lido: esperado 0 · obtido 39'); expectativa lido=1 ⇒ SOBREVIVENTE ('censo.lido: esperado 1 · obtido 0'). Controles: C0-fecho passa a exigir censo ok (39 = 39) e M24/positivo exige o censo MOVIDO ok (15 = 15) — os mutantes que movem o piso movem o censo junto. LIMITE declarado (dividas_declaradas): leitor que perde merges POSTERIORES ao piso não é coberto pela guarda"
+      }
     }
   ],
   "dividas_declaradas": [
@@ -1693,7 +2123,7 @@
     "p51/M51-16 — as provas (b) plena e (c) do recorte reancorado em 2026-08-29 NÃO foram executadas: P51-PDF1 roda em tests_p50_chromium.js e exige Chromium, ausente na máquina da demanda 013 (CHROME_PATH vazia, cache ms-playwright inexistente). Fecharam (a) unicidade e uma (b) parcial por oráculo de artefato; o harness classificou como NÃO EXECUTADO · gate não pôde ser executado, nunca SOBREVIVENTE. Por isso a ultima_prova do par é a de 2026-08-22, contra a âncora antiga. Fecha no job visual do CI (D5/KI-3); registro em specs/013-integridade-da-campanha/matriz-gate-mutante.md §7",
     "p52/V322-M3 — classificação do não-detectado residual da p52 (T13): o 106/107 do CI NÃO era sobrevivente nem regressão, era ÂNCORA PODRE DE NASCENÇA (ocorrencias=0 já no commit de autoria df5d9f6), de modo que V322-CTXPAR1 nunca chegou a rodar contra a mutação e o relatório somava não executado como não detectado. Reancorado em 2026-08-29 com (a) medida; (b) e (c) pendentes por Chromium, no job visual. A linha agregada 'campanhas P52 (múltiplos)' NÃO é expandida por par nesta demanda — expandir a P52 é demanda própria (T13). Narrativa em specs/013-integridade-da-campanha/matriz-gate-mutante.md §5, §10.4 e §13",
     "core (tests_core_mutants.js) — sem preflight declarado no mutation_map.json (T8): é a REFERÊNCIA do interpretador e ficou fora das edições da demanda 013, que escopou a correção às três harnesses defeituosas. A consequência é impressa pelo stage, nunca omitida — [DÍVIDA] core: sem preflight declarado, âncora podre só aparece na execução da campanha. Enquanto durar, os mutantes do core não têm prova de unicidade de âncora fora da campanha",
-    "Borda 8 · deferimento sem contrapartida — sob MUTATION_DEFER_MISSING=1 (job verify do CI) a campanha exigida sem ambiente vira [DEFER] <harness>: exigida (alvo mudou) — delegada ao job com chromium (job visual), e o stage passa. Cadeia fechada: nada verifica que o job visual de fato executou a campanha delegada, logo um DEFER cujo job irmão falhe, seja pulado ou não rode deixa a campanha sem execução E sem FAIL. Vincular o DEFER à execução efetiva exige mexer em verify.yml e/ou em proteção de branch — fora do escopo da 013 (spec §Riscos 4), demanda própria",
+    "Borda 8 · deferimento sem contrapartida — sob MUTATION_DEFER_MISSING=1 (job verify do CI) a campanha exigida sem ambiente vira [DEFER] <harness>: exigida (alvo mudou) — delegada ao job com chromium (job visual), e o stage passa. Cadeia fechada: nada verifica que o job visual de fato executou a campanha delegada, logo um DEFER cujo job irmão falhe, seja pulado ou não rode deixa a campanha sem execução E sem FAIL. Vincular o DEFER à execução efetiva exige mexer em verify.yml e/ou em proteção de branch — fora do escopo da 013 (spec §Riscos 4), demanda própria · DESFECHO (016, 2026-09-04): credor = proteção de branch com `visual` obrigatório, auditada por D016-PROT1; a promessa continua, a cobrança existe — P2 do portão da Fase 0 (três checks obrigatórios em develop: verify, visual, fecho — E1 — mais up-to-date), lida da API a cada compliance-audit (seção branch-protection). Em 2026-09-04 P2 ainda não foi executada pelo proprietário: D016-PROT1 está VERMELHO AO VIVO por desenho (DESPROTEGIDA · faltam fecho, verify, visual, up-to-date) até o ato dele, antes do merge da 016 (spec §Nascimento sem vermelho crônico). O texto original desta dívida permanece (R2 §5)",
     "p51/M51-01 — classificação da E3 (T022): `gate sem poder discriminante (achado EA-7)`. O par está íntegro em tudo que esta demanda pode consertar — âncora única (preflight 2026-08-29, ocorrencias == 1) e `reason` cujas três alternativas o gate ainda emite (tests_p50_chromium.js:3405/:3408/:3412) — e mesmo assim P51-VIS1 passa sob a mutação: desde c1e3649 (Fase 5.2) a composição de duas colunas da tela de pergunta é governada por ui_p52_workspace_v32.css:70-83, que vence a regra 5.1 de ui_p50_v32.css:693-702 por especificidade e por ordem de inlining (build_v32_html.py:76). O gate afirma uma propriedade que a mutação não consegue mais violar. NÃO é consertado aqui: o remédio é asserção NOVA sobre comportamento de produto (mutar o sítio 5.2 que hoje governa, e/ou gate que detecte regra 5.1 morta), que é outro trabalho e outro dono — spec §Fora de escopo e §Riscos 3. Registrado como EA-7 em .claude/BACKLOG.md; narrativa em specs/013-integridade-da-campanha/matriz-gate-mutante.md §15",
     "P50::M51 — as provas (b) e (c) do `reason` re-derivado na E3 (rot semântica) NÃO foram executadas: P50-PR1 vive em tests_p50_chromium.js e exige Chromium, ausente na máquina da demanda 013 (CHROME_PATH vazia, cache ms-playwright inexistente; a suíte inteira devolve 23 `SKIP … NÃO EXECUTADO (browser indisponível)` e o harness classificaria `NÃO EXECUTADO · gate não pôde ser executado`, nunca SOBREVIVENTE — D1). Fecharam sem Chromium: (a) unicidade (preflight, ocorrencias == 1); (b) parcial — o FORMATO exato da mensagem, medido com o emissor `pr1DiffStyles` extraído do próprio arquivo do gate, mais quatro controles negativos (sem mutação · só M52 · só M53 · estado gate-liberado); (c) por enumeração exaustiva dos 48 `detail.push` de `pr1()` — sob M51 nenhum outro pode disparar, logo neutralizar o bloco :1140-1168 faz o mutante SOBREVIVER. O que falta é a execução em navegador real, no job `visual` do CI (D5/KI-3). Registro em specs/013-integridade-da-campanha/matriz-gate-mutante.md §15",
     "D011 · RAMO attr-removido (remocao de aria-keyshortcuts) — CLASSE: falta cenario, mas o cenario e SINTETICO e NAO e pagavel em produto; ninguem deve tentar. Medido pelo qa-engineer em 2026-08-31, instrumentando o ramo dentro do HTML construido: 0 hits nas TRES fixtures reais da suite (MISTA + toggle + destoggle; zero findings; prioridade->resultados->prioridade) e 2 hits APENAS sob 'mudar respostas por __DEV sem render + cutucao de childList no #app'. Causa fechada: renderPriority reconstroi app.innerHTML a cada render, entao o atributo nunca esta presente quando o decorador roda; e o estado canonico so muda por caminho que chama render(), logo entre duas passadas sem rebuild o indice de um finding NAO PODE mudar. O OBSERVAVEL que o criterio pede (indice >= 9 nao declara atalho) TEM carrasco: D011-M3 e D011-M3B. O que fica sem mutante e o MECANISMO de remocao — e o mecanismo nao e o criterio. Mutante mirado so nele SOBREVIVERIA POR DESENHO, e por isso nao foi escrito.",
@@ -1713,5 +2143,7 @@
     "P51-VIS1 (tests_p50_chromium.js) — FICA SEM MUTANTE PRÓPRIO, e isto é DÍVIDA DECLARADA COM CAUSA, nunca falsa garantia. Com M51-01 aposentado, nenhum mutante da campanha p51 ataca a propriedade 'no desktop o mapa e a pergunta ficam lado a lado'. A propriedade NÃO fica desguardada: quem a mede é o par `D014-M10`/`P52-LAY2`, na camada que HOJE a decide (ui_p52_workspace_v32.css) — e P52-LAY2 já a afirmava antes desta demanda, medindo caixas reais (tests_p52_chromium.js:206-209 e :224-226). P51-VIS1 permanece como SEGUNDA MEDIÇÃO INDEPENDENTE, na camada 5.1: é redundância útil, não cobertura. Mesma linguagem do precedente D011-IDEM1(d). Dívida declarada NUNCA vira mutante sintético: escrever um carrasco para P51-VIS1 hoje exigiria mutar a folha da 5.2 de dentro da campanha da 5.1, acoplando um par da fase anterior a artefato da fase seguinte — que é justamente a rota R1 que o refinamento da 014 contraindicou. ADENDO 2026-09-04 (E13): a frase 'quem a mede é o par D014-M10/P52-LAY2' era FALSA na forma :77 (SOBREVIVENTE no run 33516136516 — a mutação só alterava a largura da coluna 2, que P52-LAY2 não mede) e passa a ser verdadeira com a forma reancorada em :86, que viola exatamente 'lado a lado' (medida FAIL com dois dos três motivos, reprodução não-canônica; fecho canônico no job visual)",
     "D015-TIT1(h2) · CLÁUSULA SENTINELA, SEM MUTANTE — e NÃO a classe da 010. [demanda 015, errata E2 §E2.1] A alínea afirma que o `.section-title` de `#v32prio` nunca recebe `.v32-hidden` em E1..E8. Nenhum estado a falsifica hoje, e a razão é dupla, MEDIDA em 2026-08-31: (i) RUNTIME — `hideLegacyRecommendation` (`ui_v32.js:178-193`) varre FILHOS DIRETOS do escopo e RETORNA em `#v32panel`; o nó é NETO (`#v32panel > #v32support > .section-title`), logo nunca é visitado — simulação direta de M18 no HTML construído deu ZERO diferença observável; (ii) ORÁCULO — `U15` não lê a lista do produto, usa cópia HARDCODED (`tests_ui_m31.js:279-280`), então mutar o array do produto não alcançaria `U15` nem se o runtime mudasse (a frase da spec 'M18 derruba U15 junto' era FALSA e está riscada). A CLASSIFICAÇÃO IMPORTA E NÃO É COSMÉTICA: esta NÃO é a classe 'cláusula defensiva inalcançável por construção' registrada em design-decisions.md pela 010 — aquela é para asserção que NENHUMA mudança pode tornar falsa, e o que ela diz ao leitor é NÃO REPORTE. (h2) é FALSIFICÁVEL e o GATILHO TEM NOME: mudança do ESCOPO DE VARREDURA de `hideLegacyRecommendation`, que JÁ OCORREU UMA VEZ — a 5.2 o moveu de `section.screen` para a seção de apoio (`ui_v32.js:171-177`). O que ela diz ao leitor é REAVALIE QUANDO O GATILHO DISPARAR. Arquivar sentinela como classe-da-010 mata a alínea de abandono. Quem desarma a bomba hoje é (h1), no fonte, e M18 é o único carrasco dela. ATUALIZACAO (2026-09-01): quando esta divida foi escrita, M18 era declarado carrasco de (h1) e NAO existia em harness nem em matriz — a divida AFIRMAVA um carrasco que a campanha nunca executava. Corrigido: PAR EXECUTADO, D015-M18 esta no harness d015 e fechou KILL na campanha de 2026-09-01 (15/15). A sentinela (h2) passa a se apoiar em (h1) com carrasco provado, que era a condicao da particao feita pela errata E2.",
     "D015-GOV1(d) · CLÁUSULA DEFENSIVA INALCANÇÁVEL POR CONSTRUÇÃO, SEM MUTANTE — esta SIM é a classe da 010, registrada em design-decisions.md §Candidatas. [demanda 015] A alínea NOMEIA o estado E6 (sem cenário-alvo declarado) como o caso em que `#pr-target` legitimamente não existe (`ui_target_v32.js:426`), para que a ausência nunca seja lida como regressão de boundary nem feche alínea por vacuidade. Nenhuma mudança pode torná-la falsa: ela só reconhece uma ausência já legítima. NÃO reportar como código morto. CONTRASTE DELIBERADO com D015-TIT1(h2), na mesma demanda e nesta mesma matriz: (h2) é SENTINELA (falsificável, gatilho nomeado, reavaliar) e (d) é DEFENSIVA (infalsificável, não reportar). As duas passam a ser classes DISTINTAS a partir da errata E2 da 015; antes desta demanda estavam confundidas numa só.",
-    "D015-NOSUB1(d) · O LIMITE DO INSTRUMENTO, declarado para que ninguém cite a alínea como prova do que ela não prova. [demanda 015, errata E2 §E2.2] A alínea exige que `txt(#pr-support).length` e `txt(#pr-findings).length` NÃO DIMINUAM contra a âncora imutável. Ela é REDE, NÃO GUARDA: numa entrega ADITIVA não detecta subtração MENOR QUE A PRÓPRIA ADIÇÃO — o texto novo compensa o removido e o saldo continua não negativo. MEDIDO na bateria negativa da Fase 4: M15 na forma ESTREITA (suprimir as opções de UM qid) removeu conteúdo real e (d) NÃO disparou; só a forma AMPLA (os QUATRO qids, queda de 1.139 chars em `#pr-findings` no estado E2) a faz reprovar — por isso M15 foi reatribuído à forma ampla, senão (d) ficaria SEM CARRASCO. É o ESPELHO DA E18 DA 010: lá a contagem de caracteres REVELOU uma subtração de 31%; aqui ela pode MASCARAR uma. As guardas reais de não-subtração são (a), (b) e (c), que comparam CONJUNTOS e apanham a perda de UM item; (d) só apanha o grosseiro."  ]
+    "D015-NOSUB1(d) · O LIMITE DO INSTRUMENTO, declarado para que ninguém cite a alínea como prova do que ela não prova. [demanda 015, errata E2 §E2.2] A alínea exige que `txt(#pr-support).length` e `txt(#pr-findings).length` NÃO DIMINUAM contra a âncora imutável. Ela é REDE, NÃO GUARDA: numa entrega ADITIVA não detecta subtração MENOR QUE A PRÓPRIA ADIÇÃO — o texto novo compensa o removido e o saldo continua não negativo. MEDIDO na bateria negativa da Fase 4: M15 na forma ESTREITA (suprimir as opções de UM qid) removeu conteúdo real e (d) NÃO disparou; só a forma AMPLA (os QUATRO qids, queda de 1.139 chars em `#pr-findings` no estado E2) a faz reprovar — por isso M15 foi reatribuído à forma ampla, senão (d) ficaria SEM CARRASCO. É o ESPELHO DA E18 DA 010: lá a contagem de caracteres REVELOU uma subtração de 31%; aqui ela pode MASCARAR uma. As guardas reais de não-subtração são (a), (b) e (c), que comparam CONJUNTOS e apanham a perda de UM item; (d) só apanha o grosseiro.",
+    "D016-FEC1/FEC2 · LEITOR QUE PERDE MERGES POSTERIORES AO PISO — sem asserção no stage, POR CONSTRUÇÃO; declarado em 2026-09-04 (Fase 6 da 016, spec-validate J1). A guarda de censo do gate (fecho.json → piso.merges_ate_piso = 39, carrasco D016-M33) fecha o leitor MUDO/VAZIO: o censo até o piso é imutável e o gate nu passa a ter dentes por si. O que ela não alcança é o leitor que devolve os 39 anteriores e perde os POSTERIORES (por exemplo `if i < indice: continue`): o censo pós-piso é variável por natureza (0 hoje, cresce a cada merge) e não se pina; e na árvore de hoje 'leitor perde posteriores' é indistinguível de '0 merges após o piso' por qualquer asserção do stage — mesmo depois do merge da 016, uma done mesclada e não encontrada nos merges cai em CONFORME por ancestralidade. Carrasco: SÓ a campanha d016 — D016-M18 (piso 6dad53d: a 015 tem de ser acusada por um merge posterior) e D016-M19 (piso zero: 6 merges posteriores acusados) sobrevivem sob esse leitor; trigger por path de fecho.py (mutation_map → d016.targets). Alternativa avaliada e não adotada por custo: sonda do LEITOR sobre repositório git sintético em tmp (desenho novo, não é 'barato'). Não é EA-20: a propriedade tem carrasco executável; o que fica dito é ONDE ele vive."
+  ]
 }

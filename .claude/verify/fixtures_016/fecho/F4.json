@@ -1,0 +1,57 @@
+{
+  "id": "F4",
+  "modo": "pos",
+  "_descricao": "demanda em validate; merge com mensagem do GitHub em posição ANTERIOR ao piso; red.commit ancestral do piso",
+  "sujeito": "024-antes-do-piso",
+  "estados": {
+    "024-antes-do-piso": {
+      "demanda": "024-antes-do-piso",
+      "phase": "validate",
+      "spec_dir": "specs/024-antes-do-piso",
+      "branch": "feature/024-antes-do-piso",
+      "red": {
+        "status": "proven",
+        "commit": "024c024c024c024c024c024c024c024c024c024c"
+      }
+    }
+  },
+  "merges": [
+    {
+      "sha": "d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4",
+      "data": "2026-08-20T10:00:00-03:00",
+      "msg": "Merge pull request #90 from oflavioc/feature/024-antes-do-piso",
+      "posicao_relativa_ao_piso": "anterior"
+    }
+  ],
+  "ancestralidade": {
+    "024-antes-do-piso": {
+      "resposta": true,
+      "causa": null,
+      "anterior_ao_piso": true
+    }
+  },
+  "artefatos": [],
+  "data_do_commit": "2026-09-04",
+  "registro": {
+    "piso": {
+      "sha": "a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1",
+      "descricao": "piso sintético da sonda — as posições já vêm resolvidas em merges[].posicao_relativa_ao_piso"
+    },
+    "excluidas_por_r13": {},
+    "populacao": {
+      "padrao_branch": "^feature/(\\d{3})-",
+      "formato_merge_pr": "^Merge pull request #(\\d+) from ([^/]+)/(.+)$",
+      "integracoes_de_main": [
+        "^Merge remote-tracking branch 'origin/main' into develop",
+        "^Merge branch 'main' into develop",
+        "^merge: integra "
+      ]
+    }
+  },
+  "origin_develop": {
+    "presente": true,
+    "sha": "0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d",
+    "causa": null,
+    "piso_na_cadeia": true
+  }
+}

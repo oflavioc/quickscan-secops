@@ -88,7 +88,7 @@
       "observacoes_nao_gap": [
         "O1 tasks.md:31 (T061) e plan.md:74 ainda descrevem a forma :77 — errata minima recomendada (tech-lead, aprovacao do usuario, repin); a leitura mais dura (precedente G1 da 015) esta registrada no artefato",
         "O2 serie de repins executada (R0-R16, dois 'R10', + merge) mapeada no artefato — o plan.md mandava registrar no relatorio-final e os quatro ultimos sao posteriores a ele",
-        "O3 termo 'mutante parcialmente inerte' segue fora do CONTEXT.md (product-owner)",
+        "O3 termo 'mutante parcialmente inerte' segue fora do CONTEXT.md (product-owner) || ATUALIZADO em 2026-09-04: o termo ENTROU no CONTEXT.md pela demanda 016 (criterio C9, commit f9b79fc), com o remedio canonico (particao por asset, P52-RA8/P52-RA8B). A pendencia fecha. Registrada aqui porque registro que virou falso e pior que registro ausente - e foi assim que o EA-33 sobreviveu cinco vezes.",
         "O4 d014.targets e superconjunto do estrito de IC-6, por tese da demanda",
         "O5 bullet de §Contratos 'contagem pinada' superado por E9/E12 na propria spec",
         "O6 indecidiveis da arvore: 21 hoje; registro traz 20 (trilha) e 21 (nota de 2026-09-04); pin adiado com pendencia bem-formada",

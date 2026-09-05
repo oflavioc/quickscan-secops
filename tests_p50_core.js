@@ -2730,7 +2730,39 @@ const FROZEN_VISUAL_AUTHORITY = {
   "tests_visual/print.spec.js": "9fe2e998e6151b9fa447c334456605fa68d9c4b1b2469a2d6d5650d58f75565d",
   "tests_visual/session.spec.js": "99956abdd43b0c946d2d9035c75fdeaae7a8bcba9e9d4051f31bb9647b0df499",
   "tests_visual/fixtures.js": "1b3cead911563bcb53192a6b6312851d297ab10a1109ff876d8bf1bfc2c07a86",
-  "playwright.config.js": "9661deed970d595c62bc924708e1eb0b6d09c1c7db60176972819f1ea15b5dcf",
+  /* DEMANDA 016 · registro contra execução · REPIN (EA-38, 2026-09-05).
+     Primeiro repin COM TRILHA deste mapa: o único anterior — `screen.spec.js`,
+     na selagem da 5.1 (4aa1f12), sem trilha — é do processo antigo (R13).
+     ISTO É ASSERÇÃO DE PIN, NÃO DE COMPORTAMENTO: `playwright.config.js` só é
+     lido por `P50-COR4` na alínea (a), como identidade byte a byte; as alíneas
+     (b)-(e) — V4+V5 nominal em `screen.spec.js`, tokens de `ui_ux_v32.css`,
+     paleta dos módulos da Camada 5 e o HTML construído — não leem este
+     arquivo e permanecem byte-idênticas; nenhum outro gate o pina. A
+     AUTORIDADE que o pin guarda não moveu: `BP` (os quatro viewports/projects),
+     `launchOptions`, a resolução de browser (`RESOLVED_BROWSER`, consumida por
+     `tests_visual/fixtures.js`) e o reporter `list` são byte-idênticos; o diff
+     é UMA chave nova, `captureGitInfo: { commit: false, diff: false }`, mais o
+     comentário que a explica.
+     MOTIVO: **EA-38** (`.claude/BACKLOG.md`; reprodução em
+     `specs/016-registro-contra-execucao/prova-de-carga.md` §11). Sob
+     `GITHUB_ACTIONS` + evento `pull_request`, o runner do `@playwright/test`
+     1.62.1 executa `git fetch origin <pull_request.base.sha> --depth=1` para
+     metadados do relatório; com o `base.sha` já no checkout (o piso do fecho),
+     o fetch grava `.git/shallow` e trunca a cadeia first-parent que o stage
+     `fecho` caminha — `ler_merges` lia 0 onde o censo pinado diz 39 e os 13
+     mutantes `ARVORE` da campanha d016 saíam NÃO EXECUTADO no job `visual`.
+     Desligar a captura remove o vetor; só há reporter `list`, logo nenhum
+     consumidor desses metadados se perde. Remédio em `1beae4d`; registry
+     regenerado em `8ec429a`.
+     CONFERIDO ANTES DE REPINAR, e não depois: as 6 entradas deste mapa foram
+     medidas contra o disco e SÓ `playwright.config.js` divergiu — as outras 5
+     (`tests_visual/{screen,print,session}.spec.js`, `tests_visual/fixtures.js`,
+     `tests_icons_m46.js`) saíram byte-idênticas e NÃO são repinadas. O valor
+     novo NÃO nasce aqui: é o que o registry já carrega desde `8ec429a`, e as
+     três fontes concordam nele (disco normalizado LF,
+     `git show HEAD:playwright.config.js` e `pins.json → files`).
+     Identidade anterior: 9661deed970d595c62bc924708e1eb0b6d09c1c7db60176972819f1ea15b5dcf */
+  "playwright.config.js": "3eacc465035e5fdf3136f09e8346ab05de36c8384710f33a780bd297599bf846",
   "tests_icons_m46.js": "f73f96e32951507135c0b36d968fe12e9ffbc268e8ad438ea2e6c861a8b88123"
 };
 

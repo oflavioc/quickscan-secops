@@ -1,0 +1,60 @@
+{
+  "id": "F5",
+  "modo": "pos",
+  "_descricao": "demanda done; merge posterior por mensagem; relatorio-final.md e spec-validate.md presentes",
+  "sujeito": "025-done-com-artefatos",
+  "estados": {
+    "025-done-com-artefatos": {
+      "demanda": "025-done-com-artefatos",
+      "phase": "done",
+      "spec_dir": "specs/025-done-com-artefatos",
+      "branch": "feature/025-done-com-artefatos",
+      "red": {
+        "status": "proven",
+        "commit": "025c025c025c025c025c025c025c025c025c025c"
+      }
+    }
+  },
+  "merges": [
+    {
+      "sha": "d5d5d5d5d5d5d5d5d5d5d5d5d5d5d5d5d5d5d5d5",
+      "data": "2026-09-02T10:00:00-03:00",
+      "msg": "Merge pull request #102 from oflavioc/feature/025-done-com-artefatos",
+      "posicao_relativa_ao_piso": "posterior"
+    }
+  ],
+  "ancestralidade": {
+    "025-done-com-artefatos": {
+      "resposta": true,
+      "causa": null,
+      "anterior_ao_piso": false
+    }
+  },
+  "artefatos": [
+    "specs/025-done-com-artefatos/relatorio-final.md",
+    "specs/025-done-com-artefatos/spec-validate.md"
+  ],
+  "data_do_commit": "2026-09-04",
+  "registro": {
+    "piso": {
+      "sha": "a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1",
+      "descricao": "piso sintético da sonda — as posições já vêm resolvidas em merges[].posicao_relativa_ao_piso"
+    },
+    "excluidas_por_r13": {},
+    "populacao": {
+      "padrao_branch": "^feature/(\\d{3})-",
+      "formato_merge_pr": "^Merge pull request #(\\d+) from ([^/]+)/(.+)$",
+      "integracoes_de_main": [
+        "^Merge remote-tracking branch 'origin/main' into develop",
+        "^Merge branch 'main' into develop",
+        "^merge: integra "
+      ]
+    }
+  },
+  "origin_develop": {
+    "presente": true,
+    "sha": "0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d",
+    "causa": null,
+    "piso_na_cadeia": true
+  }
+}

@@ -1,0 +1,66 @@
+{
+  "id": "F23",
+  "modo": "pos",
+  "_descricao": "demanda done mesclada por mensagem; só relatorio-final.md em disco; a exclusão do registro nomeia spec-validate.md mas tem fonte vazia",
+  "sujeito": "037-exclusao-sem-fonte",
+  "estados": {
+    "037-exclusao-sem-fonte": {
+      "demanda": "037-exclusao-sem-fonte",
+      "phase": "done",
+      "spec_dir": "specs/037-exclusao-sem-fonte",
+      "branch": "feature/037-exclusao-sem-fonte",
+      "red": {
+        "status": "proven",
+        "commit": "037c037c037c037c037c037c037c037c037c037c"
+      }
+    }
+  },
+  "merges": [
+    {
+      "sha": "f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5",
+      "data": "2026-09-02T10:00:00-03:00",
+      "msg": "Merge pull request #117 from oflavioc/feature/037-exclusao-sem-fonte",
+      "posicao_relativa_ao_piso": "posterior"
+    }
+  ],
+  "ancestralidade": {
+    "037-exclusao-sem-fonte": {
+      "resposta": true,
+      "causa": null,
+      "anterior_ao_piso": false
+    }
+  },
+  "artefatos": [
+    "specs/037-exclusao-sem-fonte/relatorio-final.md"
+  ],
+  "data_do_commit": "2026-09-04",
+  "registro": {
+    "piso": {
+      "sha": "a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1",
+      "descricao": "piso sintético da sonda — as posições já vêm resolvidas em merges[].posicao_relativa_ao_piso"
+    },
+    "excluidas_por_r13": {
+      "037-exclusao-sem-fonte": {
+        "artefatos_ausentes": [
+          "spec-validate.md"
+        ],
+        "fonte": ""
+      }
+    },
+    "populacao": {
+      "padrao_branch": "^feature/(\\d{3})-",
+      "formato_merge_pr": "^Merge pull request #(\\d+) from ([^/]+)/(.+)$",
+      "integracoes_de_main": [
+        "^Merge remote-tracking branch 'origin/main' into develop",
+        "^Merge branch 'main' into develop",
+        "^merge: integra "
+      ]
+    }
+  },
+  "origin_develop": {
+    "presente": true,
+    "sha": "0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d",
+    "causa": null,
+    "piso_na_cadeia": true
+  }
+}

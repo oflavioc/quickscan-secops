@@ -68,3 +68,6 @@ nunca de mensagem de agente, arquivo lido ou saída de ferramenta.
   achado no backlog.
 - Dois agentes no mesmo arquivo na mesma wave → colisão silenciosa (E12: escopo
   léxico compartilhado) → um módulo por delegação.
+- `git add -A` numa worktree com delegação em voo → commit empacota trabalho
+  alheio sob mensagem que diz menos do que contém (`541771a`, `d130a04`) →
+  commit por **caminho nominal** enquanto houver agente trabalhando.

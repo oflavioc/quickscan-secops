@@ -36,6 +36,13 @@ feature. **Na dúvida, é demanda.** Correção de achado registrado → skill
 - **Auditoria independente humana** (D3): exigida em selagem de fase, Porta B do
   engine, e empate PO×QA. Demanda comum encerra com QA + PO. Nenhum agente escreve
   em registro de aceitação: agente **reprova ou declara "não encontrei objeção"**.
+- **Fecho** (demanda 016, P7 — decisão literal do usuário no chat, portão da
+  Fase 0, 2026-09-04): `done` exige Fase 6 completa + PR aberto, sempre
+  **antes** do merge; **CI verde é condição do merge**, não do `done` — o merge
+  em `develop` espera o `done` (check pré-merge `fecho`, `check_fecho.py --pr`,
+  `D016-PR1`) e o CI verde (checks obrigatórios `verify`/`visual`/`fecho`,
+  auditados por `D016-PROT1`). Demanda mesclada sem fecho é violação (§Violação
+  detectada, abaixo): fecho retroativo ou fecho pendente declarado.
 
 ## Violação detectada
 

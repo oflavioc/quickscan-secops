@@ -1,0 +1,140 @@
+{
+  "_meta": {
+    "descricao": "Registro do stage `fecho` (demanda 016-registro-contra-execucao, P16.a): piso (com o censo pinado da leitura — `_meta.censo_de_leitura`), exclusões R13 e sonda pinada. Consumido por check_fecho.py (o gate, qa-engineer) e julgado por fecho.py (o instrumento, core-engineer). Exceção aqui é ESTRUTURAL (sem prazo, `fonte` obrigatória) — listada pelo compliance-audit (known-issues, 3ª fonte). Owner: qa-engineer.",
+    "demanda": "016-registro-contra-execucao",
+    "owner": "qa-engineer",
+    "o_que_e_autoral_e_o_que_e_medido": {
+      "autoral": ["piso", "excluidas_por_r13", "populacao", "sonda.casos (o esperado de cada caso)"],
+      "medido_por_execucao": ["_meta.prova_de_carga (wave 5, T061 — pela campanha d016)", "_meta.prova_de_carga_leitura_fase4 (Fase 4 — por git/disco, oráculo independente do gate)", "piso.merges_ate_piso (Fase 6, 2026-09-04 — censo IMUTÁVEL de merges first-parent até o piso, inclusive: `git rev-list --count --merges --first-parent 921977c…` = 39 = fecho.py:ler_merges; asserido pelo gate a cada execução — `_meta.censo_de_leitura`)"],
+      "regra": "Número medido NUNCA é rebaixado para caber no verde (R10 §1). Lido ≠ medido é achado, não ajuste."
+    },
+    "prova_de_carga": {
+      "piso": "MEDIDO 2026-09-04 pela campanha d016 (T060, mutante de árvore D016-M19; reexecutado pelo stage mutation sob árvore limpa no commit e52e573): com o piso zero e5ccd429 (raiz do repositório, commit NÃO-merge — só localizável porque ler_merges percorre a cadeia first-parent inteira, E3), FEC2 acusa 6 merges / 5 branches de feature/NNN sem planning-state — #15 005-onda4-reconciliacao, #14 004-onda3-tdd, #12 002-onda2-papeis-processo, #11 e #10 001-onda1-enforcement, #9 000-estrutura-agentica — 6 problema(s), 0 fora de PR, as 10 done CONFORME, 016 EM VOO. Coincide com _meta.prova_de_carga_leitura_fase4.piso_zero_e5ccd429: nada ajustado. Registro integral: specs/016-registro-contra-execucao/prova-de-carga.md",
+      "exclusoes": "MEDIDO 2026-09-04 pela campanha d016 (D016-M20; reexecutado pelo stage mutation, commit e52e573): sem as três entradas (a chave excluidas_por_r13 renomeada ⇒ o instrumento lê {}), FEC3 acusa 003 (relatorio-final.md, spec-validate.md) · 009 (spec-validate.md) · 010 (spec-validate.md) — 3 demandas / 4 artefatos, 3 problema(s), todas MESCLADA SEM FECHO [artefato-ausente] por mensagem #13/#24/#31. Coincide com _meta.prova_de_carga_leitura_fase4.exclusoes: nada ajustado. C3(b) e C3(c) na árvore: D016-M26 (exclusão para 011 cujo artefato existe ⇒ exclusao-obsoleta) e D016-M27 (fonte vazia na 009 ⇒ global exclusao-malformada + artefato-ausente, 2 problemas)",
+      "fec1": "MEDIDO 2026-09-04 pela campanha d016 (D016-M18; reexecutado pelo stage mutation, commit e52e573): com o piso recuado para 6dad53d e 015 em validate, FEC1 acusa 015-superficies-de-apoio: MESCLADA SEM FECHO (fase validate) · oráculo: mensagem #34 — 1 problema(s), e NENHUMA outra (nove done CONFORME, 016 EM VOO). Metade 'restaurado o piso' (E2) medida à parte em clone efêmero: 015 em validate com o piso vigente 921977c ⇒ ANTERIOR AO PISO (fase validate) · oráculo: mensagem #34, 0 problema(s), exit 0. T4 na árvore: D016-M24 (prazo 2026-01-01 ⇒ fecho_pendente-vencida) e o controle M24/positivo da mesma campanha (prazo == data do commit ⇒ FECHO PENDENTE DECLARADO, exit 0)"
+    },
+    "prova_de_carga_leitura_fase4": {
+      "data": "2026-09-04",
+      "metodo": "censo por git (log --first-parent com %P, sem --merges) e por disco, ANTES de existir o instrumento — é o número que a campanha da wave 5 tem de reproduzir; divergência é achado",
+      "piso_vigente_921977c": "0 merges first-parent posteriores (origin/develop == piso) — FEC1/FEC2 verdes por vácuo na árvore, como a spec declara (E2)",
+      "piso_6dad53d": "24 merges posteriores; 9 de feature/NNN com planning-state (007, 008, 009, 010, 011, 012, 013, 014, 015 — todas done hoje); 0 sem planning-state; 0 fora de PR; 15 fora da população. A cópia com 015 em validate acusa SÓ a 015, por mensagem #34 — o merge #15 (feature/005, sem estado) é a POSIÇÃO DO PISO e não é julgado",
+      "piso_zero_e5ccd429": "raiz do repositório, commit NÃO-merge na posição 66 da cadeia first-parent (67 commits, 39 merges); 39 merges posteriores; 6 merges / 5 branches de feature/NNN sem planning-state: #15 feature/005-onda4-reconciliacao, #14 feature/004-onda3-tdd, #12 feature/002-onda2-papeis-processo, #11 e #10 feature/001-onda1-enforcement, #9 feature/000-estrutura-agentica; 0 fora de PR (3542f9f e 9fdb2b9 casam os padrões de integração de main); 23 fora da população",
+      "exclusoes": "em disco: 003 sem relatorio-final.md e sem spec-validate.md; 009 e 010 sem spec-validate.md; as outras sete done com ambos — 3 demandas / 4 artefatos",
+      "ancestralidade": "os 10 red.commit resolvem por rev-parse --verify sem ambiguidade (inclusive os curtos 5bf4731, 71b4347, f084c02) e são ancestrais de origin/develop E do piso"
+    },
+    "contrato_da_sonda": {
+      "fixtures": "um arquivo por caso, `<id>.json`, SÓ ENTRADAS (o esperado nunca fica na fixture); shape em check_fecho.py (docstring) e plan.md §Contratos",
+      "campos_pinados_por_caso_pos": {
+        "esperado": "veredito do SUJEITO (fixture.sujeito: slug da demanda ou sha do merge) — vocabulário T10",
+        "oraculo": "qual oráculo de T1 respondeu pelo sujeito: mensagem | ancestralidade | null",
+        "codigo": "código fechado do problema atribuído ao sujeito (ver `codigos`) ou null",
+        "problemas": "TOTAL de problemas que o julgador reporta para a fixture inteira (len(problemas)) — controle de não-vacuidade e de acusação a mais"
+      },
+      "campos_pinados_por_caso_pre": {
+        "esperado": "veredito pré-merge — LIBERADO | FECHO PENDENTE | NÃO JULGADO",
+        "codigo": "código fechado do motivo (NÃO JULGADO) ou do problema (FECHO PENDENTE), ou null (LIBERADO)"
+      },
+      "por_que_nao_so_o_veredito": "F7/F8/F9/F10/F13/F15/F17/F23 e P3/P7/P8/P10 são FAIL que o vocabulário T10 de vereditos não distingue entre si nem do caso vizinho; pinar só o veredito deixaria vivo um julgador que reprova pela razão errada (sobrevivente disfarçado, spec 014). O total `problemas` é o par de controle: um julgador que acuse sujeito a mais (o piso, uma integração de main) diverge mesmo com o sujeito certo.",
+      "codigos": [
+        "fecho_pendente-invalida", "fecho_pendente-vencida", "fecho_pendente-obsoleta", "fecho_pendente-prematura",
+        "demanda-fora-da-maquina", "merge-fora-de-pr", "artefato-ausente", "exclusao-obsoleta", "exclusao-malformada",
+        "registro-sem-branch", "piso-invalido", "origin-develop-ausente",
+        "fase-nao-done", "fora-da-populacao", "base-nao-develop", "evento-sem-base"
+      ],
+      "vocabulario_fechado": "o instrumento exporta CODIGOS exatamente igual a esta lista (como VEREDITOS == T10); o gate reprova a sonda se divergir — conjunto fechado + escape nomeado (T10)"
+    },
+    "acrescimos_da_fase4": {
+      "regra": "spec §Contratos: 'a Fase 4 pode acrescentar, nunca renumerar'. Os ids F1–F19 e P1–P7 são os da spec, com o esperado da spec. Sete casos entram porque cada um é a ÚNICA prova executável de uma alínea que, sem ele, nascia sem estado de reprovação (o vazio que o portão da Fase 3 mandou nomear agora):",
+      "F20": "C2(d) — piso que não é SHA de 40 hex ⇒ FAIL piso-invalido (global; os sujeitos saem NÃO DETERMINÁVEL)",
+      "F21": "C2(d) — piso de 40 hex que o leitor não encontra na cadeia first-parent ⇒ FAIL piso-invalido (um SHA de outra branch não pode virar 'piso zero' em silêncio)",
+      "F22": "C1(e), metade pura — o leitor reporta origin/develop ausente e o julgador NÃO pode responder EM VOO para tudo (seria SKIP silencioso); a metade de I/O continua na bateria adversarial (T061)",
+      "F23": "C3(c) — exclusão sem `fonte` NÃO exclui: a demanda cai em artefato-ausente e a exclusão é acusada como malformada (2 problemas)",
+      "P8": "C5(a), negativo dos artefatos — done sem spec-validate.md pré-merge ⇒ FECHO PENDENTE (sem ele, um julgador que ignorasse artefatos pré-merge passaria na sonda)",
+      "P9": "C5(a), cláusula 'ou está em excluidas_por_r13' — positivo da exclusão pré-merge",
+      "P10": "T5 — válvula válida em demanda não-done NÃO libera pré-merge (M10 só cobria done+válvula; um julgador que honrasse a válvula em validate sobreviveria)"
+    },
+    "acrescimos_da_fase6": {
+      "regra": "iteração de correção do spec-validate (2026-09-04, iteração 1 → 2): a mesma regra da Fase 4 — aditivo, ids permanentes, nunca renumerar. Cada caso fecha um gap ou uma observação nomeados em specs/016-registro-contra-execucao/spec-validate.md; o red de cada um está em prova-de-carga.md §9",
+      "F24": "C4(e), gap G3 — prazo '30/09/2026' (dia/mês/ano, fora de AAAA-MM-DD) ⇒ MESCLADA SEM FECHO · mensagem · fecho_pendente-invalida · 1 problema. Sem este caso a cláusula `if not _dia_valido(prazo)` de _valvula não tinha carrasco: removida à mão em clone efêmero de d130a04 (fecho.py, check_fecho.py e fecho.json byte-idênticos aos de 76fd9dc, HEAD do spec-validate), a sonda seguia 33 · 0, exit 0 (medido 2026-09-04). Carrasco: D016-M31 (F24 vira FECHO PENDENTE DECLARADO, 0 problemas). O prazo escolhido não é lexicograficamente menor que a data do commit: sob o mutante o caso cai em 'aceita', não em 'vencida' — o kill é pela alínea (e), não pela (b)",
+      "P11": "C5(b), observação J3 — validate COM os dois artefatos e sem válvula ⇒ FECHO PENDENTE · fase-nao-done. Isola a cláusula de fase: sob D016-M9 este caso LIBERA (a letra da spec, 'o caso PR em validate libera'); P2, sem artefatos, escorregava para artefato-ausente e M9 morria pelo código, não por 'libera'. P2 permanece como segunda divergência de M9"
+    },
+    "censo_de_leitura": {
+      "o_que_e": "piso.merges_ate_piso é o censo IMUTÁVEL de merges first-parent de origin/develop até o piso, INCLUSIVE (a história até o piso não muda). O gate (check_fecho.py) o compara a contagens.merges_ate_piso da árvore real a cada execução: divergência ⇒ FAIL nomeado, exit 1, mesmo com 0 problema(s) de julgamento. É a contagem pinada da sonda (C7) aplicada ao LEITOR — não é veredito: nenhuma demanda é julgada por ele",
+      "por_que": "spec-validate J1 (2026-09-04): um ler_merges que devolva lista vazia com metadados sãos (origin/develop presente, piso na cadeia) deixava a árvore VERDE — exit 0, 0 problema(s), as done CONFORME por ancestralidade, 016 EM VOO, 'até o piso, inclusive: 0' impresso e não comparado — e D016-M19 sobrevivia sob esse leitor. A não-vacuidade da leitura era provada só pela campanha d016 (trigger por path). Com o censo pinado o gate nu tem dentes por si",
+      "medido": "2026-09-04, dois oráculos independentes: `git rev-list --count --merges --first-parent 921977c25e76fe0ed19dae74e17921d37c711ff0` = 39 e fecho.py:ler_merges(piso) → 39 posições anterior+piso. Pinado, não calibrado (R10 §1). Os mutantes de árvore que movem o piso movem o censo junto, medido pelos mesmos dois oráculos: 6dad53d = 15; raiz e5ccd429 = 0 (o piso zero não é merge)",
+      "quando_se_aplica": "só quando o leitor reporta origin/develop presente E piso na cadeia — fora disso o global do julgador (origin-develop-ausente / piso-invalido) já nomeia a causa. Pin ausente ou inválido é FAIL, nunca guarda que some em silêncio. Os registros das fixtures da sonda não trazem a chave: a guarda vive só na árvore real",
+      "o_que_nao_cobre": "leitor que perde merges POSTERIORES ao piso: o censo pós-piso é variável por natureza (cresce a cada merge) e não se pina. Carrasco só na campanha d016 (D016-M18/M19 exigem acusações de merges posteriores ao piso movido). Declarado em mutation-matrix.json → dividas_declaradas",
+      "carrasco": "D016-M33 (leitor mudo: ler_merges devolve [] com metadados sãos ⇒ censo lido 0 ≠ pinado 39, 0 problema(s) de julgamento, exit 1)"
+    }
+  },
+  "piso": {
+    "sha": "921977c25e76fe0ed19dae74e17921d37c711ff0",
+    "merges_ate_piso": 39,
+    "descricao": "merge do PR #39 em develop, 2026-09-04T08:44-03 — último commit de develop anterior à 016 (T2, interpretação de P9). Merge first-parent POSTERIOR a ele é julgado; o piso e o que vem antes contam como ANTERIOR AO PISO. O piso pode ser commit não-merge (o piso zero da prova de carga é a raiz): o leitor o localiza na cadeia first-parent inteira, nunca só em --merges"
+  },
+  "excluidas_por_r13": {
+    "003-marcador-duplicado": {
+      "artefatos_ausentes": ["relatorio-final.md", "spec-validate.md"],
+      "fonte": "fechada sob a Onda 2 (PR #13, 486f3ff, 2026-08-25), antes de existir Fase 6 com spec-validate; R13 'fases seladas sob o processo antigo'; P4 do portão da Fase 0 da 016"
+    },
+    "009-leitura-do-relatorio": {
+      "artefatos_ausentes": ["spec-validate.md"],
+      "fonte": "fecho retroativo 2026-09-04 (PR #37, chore/fecho-009-013) com conformance só no JSON; P4 do portão da Fase 0 da 016 — escrita retroativa opcional, fora da demanda; se acontecer, esta entrada sai no mesmo commit (C3 b)"
+    },
+    "010-recomendacao-sem-vao": {
+      "artefatos_ausentes": ["spec-validate.md"],
+      "fonte": "idem 009 (PR #37); P4 do portão da Fase 0 da 016"
+    }
+  },
+  "populacao": {
+    "padrao_branch": "^feature/(\\d{3})-",
+    "formato_merge_pr": "^Merge pull request #(\\d+) from ([^/]+)/(.+)$",
+    "integracoes_de_main": [
+      "^Merge remote-tracking branch 'origin/main' into develop",
+      "^Merge branch 'main' into develop",
+      "^merge: integra "
+    ],
+    "nota": "compilados UMA vez pelo instrumento a partir deste bloco (R9 §8 aplicado a processo); a junção registro↔git é pela chave `branch` EXATA do planning-state (T1), nunca por prefixo NNN"
+  },
+  "sonda": {
+    "fixtures": ".claude/verify/fixtures_016/fecho/",
+    "total": 35,
+    "casos": [
+      { "id": "F1",  "modo": "pos", "esperado": "MESCLADA SEM FECHO",        "oraculo": "mensagem",       "codigo": null,                        "problemas": 1 },
+      { "id": "F2",  "modo": "pos", "esperado": "MESCLADA SEM FECHO",        "oraculo": "ancestralidade", "codigo": null,                        "problemas": 1 },
+      { "id": "F3",  "modo": "pos", "esperado": "EM VOO",                    "oraculo": null,             "codigo": null,                        "problemas": 0 },
+      { "id": "F4",  "modo": "pos", "esperado": "ANTERIOR AO PISO",          "oraculo": "mensagem",       "codigo": null,                        "problemas": 0 },
+      { "id": "F5",  "modo": "pos", "esperado": "CONFORME",                  "oraculo": "mensagem",       "codigo": null,                        "problemas": 0 },
+      { "id": "F6",  "modo": "pos", "esperado": "FECHO PENDENTE DECLARADO",  "oraculo": "mensagem",       "codigo": null,                        "problemas": 0 },
+      { "id": "F7",  "modo": "pos", "esperado": "MESCLADA SEM FECHO",        "oraculo": "mensagem",       "codigo": "fecho_pendente-vencida",    "problemas": 1 },
+      { "id": "F8",  "modo": "pos", "esperado": "MESCLADA SEM FECHO",        "oraculo": "mensagem",       "codigo": "fecho_pendente-invalida",   "problemas": 1 },
+      { "id": "F9",  "modo": "pos", "esperado": "CONFORME",                  "oraculo": "mensagem",       "codigo": "fecho_pendente-obsoleta",   "problemas": 1 },
+      { "id": "F10", "modo": "pos", "esperado": "EM VOO",                    "oraculo": null,             "codigo": "fecho_pendente-prematura",  "problemas": 1 },
+      { "id": "F11", "modo": "pos", "esperado": "MESCLADA SEM FECHO",        "oraculo": "mensagem",       "codigo": "demanda-fora-da-maquina",   "problemas": 1 },
+      { "id": "F12", "modo": "pos", "esperado": "FORA DA POPULAÇÃO",         "oraculo": "mensagem",       "codigo": null,                        "problemas": 0 },
+      { "id": "F13", "modo": "pos", "esperado": "FORA DA POPULAÇÃO",         "oraculo": null,             "codigo": "merge-fora-de-pr",          "problemas": 1 },
+      { "id": "F14", "modo": "pos", "esperado": "FORA DA POPULAÇÃO",         "oraculo": null,             "codigo": null,                        "problemas": 0 },
+      { "id": "F15", "modo": "pos", "esperado": "MESCLADA SEM FECHO",        "oraculo": "mensagem",       "codigo": "artefato-ausente",          "problemas": 1 },
+      { "id": "F16", "modo": "pos", "esperado": "CONFORME",                  "oraculo": "mensagem",       "codigo": null,                        "problemas": 0 },
+      { "id": "F17", "modo": "pos", "esperado": "CONFORME",                  "oraculo": "mensagem",       "codigo": "exclusao-obsoleta",         "problemas": 1 },
+      { "id": "F18", "modo": "pos", "esperado": "NÃO DETERMINÁVEL",          "oraculo": null,             "codigo": "registro-sem-branch",       "problemas": 1 },
+      { "id": "F19", "modo": "pos", "esperado": "MESCLADA SEM FECHO",        "oraculo": "mensagem",       "codigo": null,                        "problemas": 1 },
+      { "id": "F20", "modo": "pos", "esperado": "NÃO DETERMINÁVEL",          "oraculo": null,             "codigo": "piso-invalido",             "problemas": 1 },
+      { "id": "F21", "modo": "pos", "esperado": "NÃO DETERMINÁVEL",          "oraculo": null,             "codigo": "piso-invalido",             "problemas": 1 },
+      { "id": "F22", "modo": "pos", "esperado": "NÃO DETERMINÁVEL",          "oraculo": null,             "codigo": "origin-develop-ausente",    "problemas": 1 },
+      { "id": "F23", "modo": "pos", "esperado": "MESCLADA SEM FECHO",        "oraculo": "mensagem",       "codigo": "artefato-ausente",          "problemas": 2 },
+      { "id": "F24", "modo": "pos", "esperado": "MESCLADA SEM FECHO",        "oraculo": "mensagem",       "codigo": "fecho_pendente-invalida",   "problemas": 1 },
+      { "id": "P1",  "modo": "pre", "esperado": "LIBERADO",                  "codigo": null },
+      { "id": "P2",  "modo": "pre", "esperado": "FECHO PENDENTE",            "codigo": "fase-nao-done" },
+      { "id": "P3",  "modo": "pre", "esperado": "FECHO PENDENTE",            "codigo": "demanda-fora-da-maquina" },
+      { "id": "P4",  "modo": "pre", "esperado": "NÃO JULGADO",               "codigo": "fora-da-populacao" },
+      { "id": "P5",  "modo": "pre", "esperado": "NÃO JULGADO",               "codigo": "base-nao-develop" },
+      { "id": "P6",  "modo": "pre", "esperado": "NÃO JULGADO",               "codigo": "evento-sem-base" },
+      { "id": "P7",  "modo": "pre", "esperado": "FECHO PENDENTE",            "codigo": "fecho_pendente-obsoleta" },
+      { "id": "P8",  "modo": "pre", "esperado": "FECHO PENDENTE",            "codigo": "artefato-ausente" },
+      { "id": "P9",  "modo": "pre", "esperado": "LIBERADO",                  "codigo": null },
+      { "id": "P10", "modo": "pre", "esperado": "FECHO PENDENTE",            "codigo": "fecho_pendente-prematura" },
+      { "id": "P11", "modo": "pre", "esperado": "FECHO PENDENTE",            "codigo": "fase-nao-done" }
+    ]
+  }
+}

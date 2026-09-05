@@ -1,0 +1,70 @@
+{
+  "id": "F22",
+  "modo": "pos",
+  "_descricao": "refs/remotes/origin/develop ausente no clone (leitor reporta presente=false); duas demandas done com artefatos; lista de merges vazia porque não há o que ler",
+  "sujeito": "038-primeira",
+  "estados": {
+    "038-primeira": {
+      "demanda": "038-primeira",
+      "phase": "done",
+      "spec_dir": "specs/038-primeira",
+      "branch": "feature/038-primeira",
+      "red": {
+        "status": "proven",
+        "commit": "038c038c038c038c038c038c038c038c038c038c"
+      }
+    },
+    "039-segunda": {
+      "demanda": "039-segunda",
+      "phase": "done",
+      "spec_dir": "specs/039-segunda",
+      "branch": "feature/039-segunda",
+      "red": {
+        "status": "proven",
+        "commit": "039c039c039c039c039c039c039c039c039c039c"
+      }
+    }
+  },
+  "merges": [],
+  "ancestralidade": {
+    "038-primeira": {
+      "resposta": null,
+      "causa": "origin/develop ausente",
+      "anterior_ao_piso": false
+    },
+    "039-segunda": {
+      "resposta": null,
+      "causa": "origin/develop ausente",
+      "anterior_ao_piso": false
+    }
+  },
+  "artefatos": [
+    "specs/038-primeira/relatorio-final.md",
+    "specs/038-primeira/spec-validate.md",
+    "specs/039-segunda/relatorio-final.md",
+    "specs/039-segunda/spec-validate.md"
+  ],
+  "data_do_commit": "2026-09-04",
+  "registro": {
+    "piso": {
+      "sha": "a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1",
+      "descricao": "piso sintético da sonda — as posições já vêm resolvidas em merges[].posicao_relativa_ao_piso"
+    },
+    "excluidas_por_r13": {},
+    "populacao": {
+      "padrao_branch": "^feature/(\\d{3})-",
+      "formato_merge_pr": "^Merge pull request #(\\d+) from ([^/]+)/(.+)$",
+      "integracoes_de_main": [
+        "^Merge remote-tracking branch 'origin/main' into develop",
+        "^Merge branch 'main' into develop",
+        "^merge: integra "
+      ]
+    }
+  },
+  "origin_develop": {
+    "presente": false,
+    "sha": null,
+    "causa": "refs/remotes/origin/develop ausente — git fetch origin develop",
+    "piso_na_cadeia": false
+  }
+}

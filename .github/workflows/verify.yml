@@ -42,6 +42,12 @@ jobs:
           MUTATION_DEFER_MISSING: "1"   # campanha chromium exigida é delegada ao job visual
       - name: Auditoria de conformidade da configuração agêntica
         run: bash .claude/verify/compliance-audit.sh
+        env:
+          # D016-PROT1 (Gap G6, spec-validate iteração 2): sem isto o gate lê
+          # /rules/branches anonimamente — 60 req/h por IP, compartilhado entre
+          # runners — e a §Não mensurável 1 da spec nunca é resolvida. O token
+          # de Actions só chega ao passo se for oferecido explicitamente aqui.
+          GITHUB_TOKEN: ${{ github.token }}
 
   visual:
     # Promovido na Onda 4 (calibração fechada na 6ª rodada: 67/37 + 27/27 + 44/44 +
@@ -79,3 +85,18 @@ jobs:
         run: git checkout -- docs_phase5/ 2>/dev/null || true
       - name: Campanhas de mutação com Chromium (deferidas pelo job verify)
         run: python .claude/verify/check_mutation.py
+
+  fecho:
+    # E1 da spec 016: check PRÓPRIO, não passo do `verify`. Um `verify` vermelho a
+    # demanda inteira ensina que vermelho é normal (EA-5); este check vermelho diz
+    # algo verdadeiro: "a demanda ainda não fechou". Sem `needs:` e sem `if:` —
+    # fora de PR de demanda ele RODA e responde `NÃO JULGADO (<motivo>)` (R10 §2).
+    # Direção pós-merge (stage `fecho` do pipeline.yaml) roda no job `verify`.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+      - name: Fecho da demanda antes do merge (D016-PR1 — P16.a)
+        run: python .claude/verify/check_fecho.py --pr

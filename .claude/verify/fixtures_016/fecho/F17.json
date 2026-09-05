@@ -1,0 +1,67 @@
+{
+  "id": "F17",
+  "modo": "pos",
+  "_descricao": "demanda done mesclada por mensagem; os dois artefatos em disco; o registro ainda a exclui por spec-validate.md ausente",
+  "sujeito": "033-exclusao-obsoleta",
+  "estados": {
+    "033-exclusao-obsoleta": {
+      "demanda": "033-exclusao-obsoleta",
+      "phase": "done",
+      "spec_dir": "specs/033-exclusao-obsoleta",
+      "branch": "feature/033-exclusao-obsoleta",
+      "red": {
+        "status": "proven",
+        "commit": "033c033c033c033c033c033c033c033c033c033c"
+      }
+    }
+  },
+  "merges": [
+    {
+      "sha": "f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2",
+      "data": "2026-09-02T10:00:00-03:00",
+      "msg": "Merge pull request #112 from oflavioc/feature/033-exclusao-obsoleta",
+      "posicao_relativa_ao_piso": "posterior"
+    }
+  ],
+  "ancestralidade": {
+    "033-exclusao-obsoleta": {
+      "resposta": true,
+      "causa": null,
+      "anterior_ao_piso": false
+    }
+  },
+  "artefatos": [
+    "specs/033-exclusao-obsoleta/relatorio-final.md",
+    "specs/033-exclusao-obsoleta/spec-validate.md"
+  ],
+  "data_do_commit": "2026-09-04",
+  "registro": {
+    "piso": {
+      "sha": "a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1",
+      "descricao": "piso sintético da sonda — as posições já vêm resolvidas em merges[].posicao_relativa_ao_piso"
+    },
+    "excluidas_por_r13": {
+      "033-exclusao-obsoleta": {
+        "artefatos_ausentes": [
+          "spec-validate.md"
+        ],
+        "fonte": "escrita retroativa opcional (P4) — entrada que deveria ter saído no mesmo commit"
+      }
+    },
+    "populacao": {
+      "padrao_branch": "^feature/(\\d{3})-",
+      "formato_merge_pr": "^Merge pull request #(\\d+) from ([^/]+)/(.+)$",
+      "integracoes_de_main": [
+        "^Merge remote-tracking branch 'origin/main' into develop",
+        "^Merge branch 'main' into develop",
+        "^merge: integra "
+      ]
+    }
+  },
+  "origin_develop": {
+    "presente": true,
+    "sha": "0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d",
+    "causa": null,
+    "piso_na_cadeia": true
+  }
+}

@@ -3,7 +3,7 @@
   "title": "planning-state de uma demanda",
   "description": "Estado da máquina de 7 fases da skill new-demand. Um arquivo por demanda em .claude/project-memory/planning-state/<slug>.json. Validado pelo stage `state`; lido a cada prompt pelo state-eval.",
   "type": "object",
-  "required": ["demanda", "phase", "spec_dir"],
+  "required": ["demanda", "phase", "spec_dir", "branch"],
   "properties": {
     "demanda": { "type": "string", "description": "slug, igual ao diretório em specs/" },
     "phase": {
@@ -12,7 +12,7 @@
     },
     "spec_dir": { "type": "string", "description": "specs/NNN-slug" },
     "brief": { "type": "string", "description": "uma linha sobre a demanda" },
-    "branch": { "type": "string", "description": "feature/NNN-slug (R14)" },
+    "branch": { "type": "string", "description": "feature/NNN-slug (R14). Obrigatório: é a chave de junção registro↔git do stage `fecho` (junção exata; registro sem `branch` é sujeito que nenhum merge alcança — C1 f da demanda 016)" },
     "pr_url": { "type": "string", "description": "PR feature -> develop (aberto na Fase 6)" },
     "tdd_waiver": {
       "type": "object",
@@ -21,6 +21,17 @@
       "properties": {
         "motivo": { "type": "string" },
         "data": { "type": "string" }
+      }
+    },
+    "fecho_pendente": {
+      "type": "object",
+      "description": "Válvula do stage `fecho` (demanda 016, C4): exceção nominal para demanda MESCLADA com phase != done — vira amarelo impresso (FECHO PENDENTE DECLARADO), não vermelho crônico. Só `check_fecho.py` decide com ela; `state-eval` e `compliance-audit` (seção waivers) apenas listam. Semântica em specs/016-registro-contra-execucao/spec.md (T4, T5): `prazo` é comparado à DATA DO COMMIT julgado, nunca ao relógio (R7 §6); em demanda `done` é obsoleta e em demanda não mesclada é prematura — ambas reprovam",
+      "required": ["motivo", "dono", "prazo"],
+      "properties": {
+        "motivo": { "type": "string", "minLength": 1, "description": "por que o fecho não aconteceu — a recusa escrita, não o carimbo" },
+        "dono": { "type": "string", "minLength": 1, "description": "quem paga a dívida (agente ou usuário)" },
+        "prazo": { "type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}$", "description": "dia ISO AAAA-MM-DD; vencida ⇔ prazo < data do commit julgado (T4). Fora do formato não é data, logo não é válvula (C4 e)" },
+        "declarado_em": { "type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}$", "description": "dia ISO AAAA-MM-DD; opcional, recomendado" }
       }
     },
     "refinement": { "$ref": "#/$defs/fase" },

@@ -9,6 +9,15 @@
 > Razão: o termo já estava em uso em três artefatos e no registro de mutantes, e
 > deixá-lo indefinido custava mais que o desvio. Trilha em
 > `specs/015-superficies-de-apoio/spec.md` §E2.1.
+>
+> **Desvio declarado — 2026-09-04.** Os três termos da demanda 016 (*Fecho de
+> demanda*, *Demanda mesclada sem fecho*, *Fecho pendente declarado*) foram
+> resolvidos na Fase 0 (`refinement.md` §Vocabulário, decisão P6 do portão), mas
+> gravados aqui na **Fase 5**, no mesmo PR — e revistos contra o que a demanda
+> construiu (vocabulário fechado de vereditos T10; T4; T5). *Mutante parcialmente
+> inerte* nasceu na errata E7 da 014 (2026-09-01) e entra dois ciclos depois, com
+> a classe estabilizada pelo fecho do `EA-32`. Trilha:
+> `specs/016-registro-contra-execucao/spec.md` C9.
 
 ## Metodologia (produto)
 
@@ -190,6 +199,18 @@ Mutante aplicado, com o gate executado, e ainda assim não reprovado pelo gate e
 motivo esperados — o gate não tem poder discriminante para aquela propriedade.
 _Evitar_: mutante não detectado, falso negativo
 
+**Mutante parcialmente inerte**:
+Mutante que aplica, altera bytes e é DETECTADO pelo gate e motivo esperados, mas
+PARTE da mutação não pode influenciar veredito nenhum — a instância conhecida é
+a regra CSS inserida que perde por ordem para a declaração vencedora da mesma
+folha. Não é sobrevivente, não executado, âncora podre nem equivalente por
+construção: o KILL é real e o perigo é de leitura, porque a matriz sugere
+carrasco para uma propriedade que não tem. Saída canônica: partir por
+propriedade, cada metade atacando a declaração vencedora (`P52-RA8`/`P52-RA8B`,
+`EA-32`).
+_Evitar_: KILL parcial, mutante meio morto, regra morta (é o mecanismo da
+instância, não a classe), desc que promete demais
+
 **Alvo declarado de campanha**:
 Conjunto de paths em `mutation_map.json → targets` que dispara a re-execução de
 um harness por gatilho de path. Deve ser exatamente o conjunto de arquivos que o
@@ -221,6 +242,7 @@ Checagem estática que, para cada mutante de CSS, prova que a declaração resul
 decide ao menos uma propriedade — cascata, sem navegador. Distinta da varredura de
 gate constante (achado EA-20), que mede expressão e alcançabilidade de estado.
 _Evitar_: varredura de gates sem poder discriminante, lint de CSS morto
+
 **Cláusula sentinela**:
 Alínea de gate que não pode falhar no estado atual do produto, mas cujo **gatilho
 de falsificação é nomeado** — existe para apanhar a regressão no dia em que o
@@ -230,6 +252,36 @@ Distinta da *cláusula defensiva inalcançável por construção* (`design-decis
 reporte": sentinela é falsificável, e a sua disposição é "reavalie quando o gatilho
 disparar".
 _Evitar_: cláusula defensiva, código morto, dívida de mutante
+
+**Fecho de demanda**:
+Transição do planning-state para `done`, só legítima com a Fase 6 completa
+(`spec-validate.md` e `relatorio-final.md` em disco, aceite de intenção
+registrado) e o PR aberto — sempre ANTES do merge. É o fecho que libera o check
+pré-merge `fecho` (`D016-PR1`), nunca o merge que produz o fecho; CI verde é
+condição do merge, não do fecho.
+_Evitar_: encerramento, conclusão da demanda, "mover para done", CI verde,
+selagem (é de fase, não de demanda)
+
+**Demanda mesclada sem fecho**:
+Estado em que o merge da branch da demanda já está no histórico de `develop` sem
+que o fecho de demanda exista — planning-state fora de `done`, ou `done` sem os
+artefatos da Fase 6 em disco. É violação medida pela máquina (git × registro,
+stage `fecho`; a história anterior ao piso de `fecho.json` não é julgada, R13),
+nunca demanda em voo; a saída honesta é o fecho retroativo (R4 §Violação
+detectada) ou um fecho pendente declarado.
+_Evitar_: em voo (é OUTRO estado: não mesclada), fase aberta, pendência de
+registro, atraso de estado
+
+**Fecho pendente declarado**:
+Exceção nominal `fecho_pendente {motivo, dono, prazo}` gravada no planning-state
+de uma demanda mesclada sem fecho — e só nela: antes do merge é prematura, em
+demanda `done` é obsoleta, e ambas reprovam. Impressa a cada verificação e
+listada pelo compliance-audit como os waivers; "vencida" é prazo anterior à
+data do commit julgado, nunca ao relógio. Nomeia a dívida enquanto os artefatos
+da Fase 6 não existem — nunca os substitui nem libera merge: o veredito
+pré-merge `FECHO PENDENTE` é reprovação, não válvula.
+_Evitar_: waiver de fecho, done provisório, exceção de merge, licença para mesclar
+
 **Selagem**:
 Ato do auditor humano que congela uma fase: release develop→main com tag anotada;
 a boundary da fase fecha para sempre.

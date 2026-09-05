@@ -498,7 +498,7 @@ com a marca `*(ETn)*`:
   `--merges`: o piso zero `e5ccd429` é a raiz (0 pais) — `--merges` nunca o
   encontra (medido: 0 × 1). §Stage, "Custo estimado", amendado.
 - **ET3** — o retorno de `julgar_pos_merge` tem `globais`, em duas classes:
-  impeditivos (`piso-invalido` | `origin-develop-ausente`) e não impeditivo
+  impeditivos (`piso-invalido` | `origin-develop-ausente` | `historico-raso` **(E016-8)**) e não impeditivo
   (`exclusao-malformada`) — único lugar que o relato imprime (C7; `D016-M27`).
   §Contratos amendado.
 - **ET4** — a varredura sem-rede de T032(v) acusava o próprio gate (R10 §10):

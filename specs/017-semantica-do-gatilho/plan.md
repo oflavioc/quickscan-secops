@@ -14,6 +14,19 @@
 > recusa); os onze `--preflight`; um protótipo descartável do julgador sobre os
 > quatro estados que as waves atravessam; `check_baseline.py` no HEAD; a
 > campanha `d014` completa. Números e caminhos em §Desenho.
+>
+> *(Execução, 2026-09-06 — edição de **registro** depois da W3, HEAD `bc12e28`,
+> autorizada pelo orquestrador; TL. Entra a linha **PP-12** em §Patch-points e
+> notas `*(Execução …)*` onde a execução desmentiu ou estendeu o previsto: §Um
+> dono (julgador, matriz), **P1**, **P5**, §Pins (série executada — onze repins,
+> dois fora da tabela; a frase sobre `[P]` na W3 estava mecanicamente errada),
+> §Waves, Checklist R9 (orçamento), §Prova de carga (`M19`–`M21`), C8 (iv).
+> Nenhum desenho reescrito; texto original intacto. Confirmado sem nota: janela
+> 7 → 2 → 1 → 0 medida degrau a degrau (`3d8fa70`); nenhum `tdd_waiver`
+> (planning-state sem a chave); nenhuma classe de boundary tocada —
+> `git diff --stat 9d617d0..HEAD` = 15 arquivos: os sete da tabela abaixo +
+> `pins.json`, cinco artefatos de `specs/017-…/`, `CONTEXT.md` (Fase 0) e o
+> planning-state. Toda linha citada nas notas foi medida em `bc12e28`.)*
 
 ## Desenho
 
@@ -28,18 +41,19 @@ Arquivos novos só em `specs/017-semantica-do-gatilho/`.
 
 | Arquivo | Mudança | Dono | Wave | Rito (medido) |
 |---|---|---|---|---|
-| `.claude/verify/check_mutation.py` | bloco `---- semântica do gatilho (017) ----` (C1–C6, C8) + retirada do `IC-6` — **um único commit, o red** | `qa-engineer` (é o julgador — R10; precedente T002 da 013) | W1 | pinado (`pins.json:204`); não protegido |
+| `.claude/verify/check_mutation.py` | bloco `---- semântica do gatilho (017) ----` (C1–C6, C8) + retirada do `IC-6` — **um único commit, o red** *(Execução: foram **dois** — o red `adb883f`, único que toca linha executável, e `126dc61`, docstring de `ex_ids_do_harness`, comentário-only, W3 — **PP-12**; repin R8a `bc12e28`)* | `qa-engineer` (é o julgador — R10; precedente T002 da 013) *(Execução: + `doc-writer` em `126dc61`, só docstring)* | W1 *(Execução: + W3, PP-12)* | pinado (`pins.json:204`); não protegido |
 | `.claude/verify/mutation_map.json` | (a) `_meta.sonda_relacao` — **no commit red**; (b) `insumos` em 7 harnesses, frase em `_meta.descricao`, notas datadas em `_trilha` `:41` e `:246` | (a) `qa-engineer` · (b) `build-engineer` — **um autor por wave** (precedente 016 `plan.md:93-95`) | W1 · W2 | pinado (`:267`); não protegido |
 | `tests_014_mutants.js` | `:303` → emissão repo-relativa (D1/C4 c) | `build-engineer` (precedente T006/T009/T011 da 013) | W2 | pinado (`:425`); **não** em `boundary.json`, `PROTECTED` nem `frozenSuites` |
 | `tests_016_mutants.js` | `:555` → idem | `build-engineer` — **outra delegação, outro commit** | W2 | pinado (`:430`); idem |
-| `.claude/verify/mutation-matrix.json` | `dividas_declaradas`: `D017-M17` (fiação) e a família de árvore `D017-M1`…`M9` sem re-execução (credor `EA-42`) | `qa-engineer` | W3 | pinado (`:266`) |
+| `.claude/verify/mutation-matrix.json` | `dividas_declaradas`: `D017-M17` (fiação) e a família de árvore `D017-M1`…`M9` sem re-execução (credor `EA-42`) *(Execução, `1aaccbe`: **três** entradas, não duas — (i) `M17` + `M19` fiação; (ii) `M1`…`M9`, `M20`, `M21` árvore one-shot; (iii) `M10`…`M16`, `M18` **instrumento** em cópia, credor `EA-42` — a classe (iii) não estava prevista aqui; 36 → 39 dívidas, 163 pares intactos; linhas de kill re-medidas sobre o estado B)* | `qa-engineer` | W3 | pinado (`:266`) |
 | `specs/013-integridade-da-campanha/spec.md` | erratas aditivas `IC-6` (×3) e `C1` (C9) | `doc-writer` | W3 | pinado (`:389`) |
 | `.claude/BACKLOG.md` | notas datadas `EA-3`/`EA-44`; achado novo (`ic_estatico`); correção de `:3421` (`:441-442` → `:440-441`) | `doc-writer` | W3 | pinado (`:18`); rito de forma do cabeçalho (`--rule=backlog`) |
 | `specs/017-semantica-do-gatilho/{plan,tasks,red-017,spec-validate,relatorio-final}.md` | artefatos de fase | TL · TL · `qa-engineer` · `qa-engineer` · `doc-writer` | W0 · W0 · W1 · W4 · W4 | rastreado sem pin = FAIL do `baseline` → repin |
 | `.claude/verify/pins.json` | regenerado | `build-engineer`, via `gen_pins.py` | todas | classe `registry` — o rito **é** o `gen_pins.py` |
 
 Dois donos no mesmo arquivo só em **waves distintas** (`mutation_map.json`:
-W1 QA, W2 build). Nenhum harness com `requires: chromium` é tocado. Os oito
+W1 QA, W2 build) *(Execução: também `check_mutation.py` — W1 `qa-engineer`,
+W3 `doc-writer`, PP-12)*. Nenhum harness com `requires: chromium` é tocado. Os oito
 arquivos de raiz que emitem `path.basename` **não são tocados** (D1). Nenhum
 `tdd_waiver` previsto.
 
@@ -140,6 +154,13 @@ o red só existiria em cópia — R3 §4 chama isso de red inauditável (E3).
 | + `tests_014_mutants.js:303` | REL1 10 · REL2 10 — só `d016`; campanha `d014` roda (9/9, ~35 s) | **1** |
 | + `tests_016_mutants.js:555` | **0 · 0 · 0 · 0**, 11/11 `[OK] D017: <h> · gatilho ⊇ conjunto mutado ∪ {harness} (<n>) [· insumos: …]`; campanha `d016` roda (35 + 3, ~22 s+) | **0** |
 
+*(Execução, 2026-09-06: **confirmada** — 7 → 2 → 1 → 0 harnesses vermelhos,
+medidos degrau a degrau depois de `adb883f`, `e26ee90`, `9306d40`, `4f2dc6c`
+(planning-state `3d8fa70`); o red contou 9 problemas por linha — REL1 ×2 + REL2
+×7 (`red-017.md:141`). Entre o red e a W2 entraram dois commits que não tocam
+`targets` nem o que o bloco 017 lê — a errata 3 (`7923701`) e o seu repin
+(`2c79eb2`) — sem mover o estado A.)*
+
 **Custo residual da janela, declarado**: a partir do commit da `d014`, os dois
 harnesses estão no diff contra a base e **toda** execução posterior do stage
 nesta branch (W3, W4, o job `verify` do PR) re-executa `d014` e `d016` — ~1 min
@@ -152,11 +173,11 @@ que fazia a `d016` sair 20/33) está **`resolvido`** (`BACKLOG.md:2500`).
 
 | id | Decisão | Por quê |
 |---|---|---|
-| **P1** | **A tensão da R3 §2 resolve-se por arquivo e por commit: `check_mutation.py` tem um autor (`qa-engineer`) e é editado em exatamente um commit — o red.** O green **não** passa por esse arquivo: nasce em dado (`insumos`, C7) e em emissor (D1), pelo `build-engineer`. Se um implementador precisar de mudança no gate, volta por `DEPENDÊNCIAS` ao `qa-engineer` — o implementador **não edita** o julgador (016 `plan.md:72-73`). | A 013 tolerou green no mesmo arquivo pelo mesmo autor (T004, `tasks.md:113-115`, "é o julgador"); a 016 partiu cada script em gate × instrumento por arquivo (`plan.md:39-44`) porque havia instrumento a escrever. Aqui **não há instrumento**: `mut_relacao` é o julgador puro, gêmeo de `mut_guarda_leitura` (IC-10) e `mut_perdao` (IC-9), e a sonda é o autoteste do gate (IC-9.4/IC-10 são do QA). A separação de poderes fica **mais forte** que nos dois precedentes: nenhum green toca o arquivo do gate. |
+| **P1** | **A tensão da R3 §2 resolve-se por arquivo e por commit: `check_mutation.py` tem um autor (`qa-engineer`) e é editado em exatamente um commit — o red.** O green **não** passa por esse arquivo: nasce em dado (`insumos`, C7) e em emissor (D1), pelo `build-engineer`. Se um implementador precisar de mudança no gate, volta por `DEPENDÊNCIAS` ao `qa-engineer` — o implementador **não edita** o julgador (016 `plan.md:72-73`). | A 013 tolerou green no mesmo arquivo pelo mesmo autor (T004, `tasks.md:113-115`, "é o julgador"); a 016 partiu cada script em gate × instrumento por arquivo (`plan.md:39-44`) porque havia instrumento a escrever. Aqui **não há instrumento**: `mut_relacao` é o julgador puro, gêmeo de `mut_guarda_leitura` (IC-10) e `mut_perdao` (IC-9), e a sonda é o autoteste do gate (IC-9.4/IC-10 são do QA). A separação de poderes fica **mais forte** que nos dois precedentes: nenhum green toca o arquivo do gate. *(Execução, 2026-09-06: "exatamente um commit" **não se confirmou à letra** — houve uma segunda edição, `126dc61`, comentário-only (PP-12), por um terceiro autor (`doc-writer`, não implementador), autorizada pelo escalonamento 4 do `tasks.md`, não por este plano. O que P1 protege ficou de pé: nenhum green tocou o arquivo, nenhuma linha executável mudou fora do red, nenhum implementador o editou — e a prova disso é `so_docstring.py` (linha PP-12), não a promessa.)* |
 | **P2** | **`_meta.sonda_relacao` nasce no commit red, pelo `qa-engineer`** — pin e gate que o lê no mesmo commit (o D4 da 013, aplicado ao pin). O `mutation_map.json` fica com dois autores em duas waves (QA W1, build W2). | Um mapa com `sonda_relacao` e sem gate é inerte; um gate lendo pin ausente é FAIL de instrumento, não o red da demanda. Se o `build-engineer` escrevesse o `15`, o implementador estaria fixando a contagem do autoteste do gate (R3 §2 ao contrário). Precedente exato: 016, `branch_protection.json` (`plan.md:93-95`, "um autor por wave"). |
 | **P3** | **O `IC-6` sai no commit red**, não em edição posterior. `D017-M1`/`M2` (= `M-IC8`/`M-IC9`) morrem **já no red**: a `p51` está em identidade nos quatro estados da tabela (`ok` em A, B, C e D), logo remover `USER_GUIDE.md` de `p51.targets` dispara REL1 e devolver `ui_session_v32.js` dispara REL2 antes de qualquer green. | Alternativa "coexistir e retirar depois" custaria uma segunda edição do julgador pelo mesmo autor, sem red próprio, e um repin a mais — pelo mesmo resultado. Com P3, reverter o commit red **restaura o `IC-6` byte a byte**. |
 | **P4** | **Ordem da wave verde: mapa → `d014` → `d016`.** | Tabela dos quatro estados: C (mapa primeiro) deixa 2 vermelhos que são a história de D1 com o diagnóstico (b) visível na árvore real — prova de carga de C4(b) **fora de cópia**; D (forma primeiro) deixa 7. E a `d016` por último porque é a que mais re-executa (~22 s+) e a que tem a lista de 44 a derivar no commit. |
-| **P5** | **O PR abre ao fim da W2** (estado B), nunca durante a janela. Push da feature é livre a qualquer momento (não dispara CI). | §A janela vermelha, itens 3 e 5. |
+| **P5** | **O PR abre ao fim da W2** (estado B), nunca durante a janela. Push da feature é livre a qualquer momento (não dispara CI). *(Execução, 2026-09-06: **não aconteceu** — em `bc12e28` a branch não tem ref remota (`git for-each-ref refs/remotes` sem entrada de 017) e não há PR (`gh pr list --state all --head feature/017-semantica-do-gatilho` = `[]`); o planning-state (`3d8fa70`) moveu push e PR para a Fase 6. Efeitos: nenhum run de CI desta demanda existe ainda — as campanhas `d014`/`d016` "no job `verify` do PR" (W4) ficam por medir; e o conserto do histórico da W2 (nota em §Pins) pôde ser feito em branch nunca enviada. A janela continua invisível ao CI, agora trivialmente.)* | §A janela vermelha, itens 3 e 5. |
 | **P6** | **Posição do bloco 017**: entre `:463` (`---- integridade: … ----`) e `:465` (`# arquivos mudados em relação à base`) — depois do laço de IC-4 (`IC_PREFLIGHT` completo, `:330-374`), **fora** do `else:` da `p51`, antes de `changed` e do bloco E3, com contador `D017_FAILS` e fecho próprios. Antes de IC-9/IC-10, logo `IC_PREFLIGHT` está intacto (IC-10.4 insere e remove uma chave sintética em `:1301`/`:1310` — depois de nós). | Roda independente de `requires` e de trigger, como a seção da 013 (T7, `:70-75`). Contador próprio é o que permite a C8 exigir `---- integridade: 0 ----` **byte-idêntico** ao HEAD. |
 | **P7** | **A lista `fixture` da `d016` é derivada por `git ls-files .claude/verify/fixtures_016/` no momento do commit**, menos as duas mutadas — nunca digitada (T060 da 016). Medido hoje: 46 − 2 = 44. Se uma fixture entrar entre W1 e W2, a lista muda e o gate acusa `REL2` nomeando — o desenho não depende do número. | `insumos` é dado; dado se deriva, não se copia da spec. |
 | **P8** | **Nenhum caminho novo entra em `targets` por esta demanda** (borda 10). Nota: `ui_v32.css` e `ui_ux_v32.css` — chaves de `PROTECTED` (`tests_p50_core.js:82`, 16 chaves) — entram em `d014.insumos.populacao`; **já são `targets` da `d014` desde a 014** (`mutation_map.json:120-121`); a 017 só os classifica. Zero edição neles. | Boundary sem PARADA, dito com a chave protegida nomeada em vez de omitida. |
@@ -191,13 +212,18 @@ pode** mudar de veredito, e por quê:
 | **PP-9** | reuso de `ic_fontes` (`:156-168`) | `{fontes do cmd}` entra **como o token do `cmd`** (`tests_010_mutants.js`, já na forma D1) — **nunca** `os.path.basename` como o `IC-6` fazia em `:400` | — |
 | **PP-10** | **anti-patch-point**: `ic_path` (`:146-148`) | **proibido** no bloco 017: ela troca `\` por `/` e tira `./` — exatamente a normalização que D1/C4 proíbem no consumidor (R7 §5). Os conjuntos comparam-se **crus**; forma fora do contrato é `FORM1` | FORM1(a) só existe se `ic_path` não for chamada |
 | **PP-11** | `IC_SEM_PREFLIGHT` (`:119`), `IC_PREFLIGHT` (`:280`, `:341`) | consumidos **só em leitura**; a linha `[DÍVIDA] core: sem preflight declarado …` de T8 (`:337-338`) permanece byte-idêntica no bloco da 013 — a 017 imprime a **sua** dívida no bloco 017 (C5) | T8 |
+| **PP-12** *(Execução, 2026-09-06 — não previsto na Fase 2; numeração de `bc12e28`)* | `:1230-1234` — corpo da docstring de `ex_ids_do_harness` (`def` em `:1227`, docstring `:1228-1235`; era `:1230` em `46a812d`) | **Segunda edição do julgador, comentário-only, fora do red.** A docstring dizia *"Mesma escada de IC-5/IC-6"* — descritiva, e falsa desde PP-5/PP-6 (só o IC-5 desce a `ic_estatico` como reserva; o bloco 017 não sobe a escada, PP-10). Passou a nomear a escada **do IC-5** e a dizer, em duas linhas, que o bloco 017 compara os conjuntos crus. Dono `doc-writer` (T037, tipo `doc`, sem red — nenhuma asserção muda), commit `126dc61`, repin **R8a** `bc12e28`; autorizada pelo orquestrador pelo escalonamento 4 do `tasks.md`. **Provada por três comandos, re-medidos nesta edição** (`tasks.md` §Prova mecânica de T037; `so_docstring.py` reextraído de lá, `git hash-object` = `c9267d27…`): **(1)** `python so_docstring.py 126dc61~1 126dc61` ⇒ `árvore sintática sem docstrings IDÊNTICA (20 → 20 docstrings)`, exit 0; **(2)** `git diff -U0 126dc61~1 126dc61 -- .claude/verify/check_mutation.py \| grep '^@@'` ⇒ **uma** linha, `@@ -1230,3 +1230,5 @@ def ex_ids_do_harness(nome):`; **(3)** `ast.get_docstring` da função no HEAD ⇒ `False True` (`IC-6` ausente, `IC-5` presente). **Limite declarado**: o comando (1) **passa se a docstring for apagada** — medido em cópia: `IDÊNTICA (20 → 19 docstrings)`, exit 0; quem reprova a remoção é o `+…,0` do hunk (`@@ -1228,8 +1227,0 @@`) e o `TypeError` do comando (3). Controle: `36073dd × adb883f` (o red) ⇒ `DIVERGENTE (14 → 20)`, exit 1 — o script vê código quando há código. As sete citações de `IC-6` que restam no arquivo (`:65` `:379` `:381` `:456` `:458` `:961` `:1453`) são retrospectivas e ficam; `grep -c 'IC-5/IC-6'` = 0 | **Todos** — nenhuma linha executável muda (comando 1): o julgador é o mesmo programa; IC-5, D017-*, IC-9, IC-10, trigger, campanha |
 
 Tradução de C8 para pontos de código: **(i)** `---- integridade: 0 ----` e
 todas as 41 linhas `[OK]`/`[DÍVIDA]` de IC-1/IC-2/IC-4/IC-5 idênticas à linha de
 base do HEAD, **menos** a linha `IC-6`; **(ii)** blocos IC-9 e IC-10 idênticos
 (`:475-1326` não tocados); **(iii)** `:1332-1421` byte-idênticos; **(iv)** o
 único diff fora de PP-1…PP-8 é vazio (`git diff` do commit red contra `36073dd`
-restrito ao arquivo mostra só esses hunks).
+restrito ao arquivo mostra só esses hunks). *(Execução, 2026-09-06: (iv) vale
+para o commit red; no HEAD `bc12e28` o `git diff f790a20 HEAD --
+.claude/verify/check_mutation.py` tem **um** hunk a mais, o de PP-12 —
+`@@ -1230,3 +1230,5 @@ def ex_ids_do_harness(nome):` —, provado
+comentário-only; T040 (iv) já o espera.)*
 
 ### Medição do gatilho — o que cada edição dispara, e onde fecha
 
@@ -240,6 +266,37 @@ pinados)**. A tabela abaixo é esse par, previsto.
 | **R8** | notas e achado no BACKLOG | `.claude/BACKLOG.md` | W3 |
 | **R9** | fechamento | `spec-validate.md`, `relatorio-final.md` | W4 |
 
+*(Execução, 2026-09-06 — a série medida até a W3, pelo par (commit → chaves de
+`pins.json` que mudaram), extraído com `git show <repin> -- .claude/verify/pins.json`:)*
+
+| Repin | Commit | Fecha o commit de | Chaves que mudaram |
+|---|---|---|---|
+| R0 | `f790a20` | `4b74e3a` (plano) | `CONTEXT.md`, `plan.md`, `refinement.md`, `spec.md` — como previsto |
+| R1 | `d9a43d9` | `f56d4fd` (tasks) **+ `759752c`** (erratas 1–2 na spec, W0) | `spec.md`, `tasks.md` — **dois commits de conteúdo, um repin**; a tabela previa só `tasks.md` |
+| R2 | `985c386` | `adb883f` (red) | `check_mutation.py`, `mutation_map.json`, `red-017.md` — como previsto |
+| **R2a** | `2c79eb2` | `7923701` (errata 3 — sexta causa do `INS1`, `M20`/`M21`) | `spec.md`, `tasks.md` — **fora da tabela** |
+| R3 | `953df79` | `e26ee90` | `mutation_map.json` |
+| R4 | `7cc3d86` | `9306d40` | `tests_014_mutants.js` |
+| R5 | `14d2046` | `4f2dc6c` | `tests_016_mutants.js` |
+| R6 | `0d3cce5` | `1aaccbe` | `mutation-matrix.json` |
+| R7 | `a45d697` | `4f605c1` | `specs/013-integridade-da-campanha/spec.md` |
+| R8 | `8f61eb8` | `6a0c7a9` | `.claude/BACKLOG.md` |
+| **R8a** | `bc12e28` | `126dc61` (PP-12) | `check_mutation.py` — **fora da tabela** |
+| R9 | — | pendente (W4) | — |
+
+*Onze executados, doze com R9 — o plano previu dez. **O que não se confirmou**:
+as duas classes de desvio previstas abaixo ((a) merge de `develop`, (b) iteração
+do `spec-validate`) não ocorreram até aqui; os dois extras vieram de classes que
+o plano **não** previu — **errata de spec depois do red** (R2a: o red revelou
+uma causa que C3 não listava, e a errata foi escolhida sobre afrouxar o gate) e
+**segunda edição comentário-only do julgador** (R8a, PP-12). Um terceiro fato de
+processo, registrado no planning-state (`3d8fa70`): T023/T026 foram delegadas
+juntas e o `build-engineer` commitou as duas antes do repin — o commit da `d014`
+ficou com registry defasado; o orquestrador **recusou fundir R4/R5** e refez a
+branch local, nunca enviada (reset, R4, cherry-pick do commit da `d016`
+preservando autor e mensagem, R5). O histórico final tem o par por commit; a
+lição é "um commit de conteúdo por delegação quando há repin", não "fundir".*
+
 **Desvios previstos por classe, não por número** (os dois que toda demanda
 recente teve): (a) **merge de `develop` na feature** se a `develop` andar antes
 do merge — repin próprio, resolvendo `pins.json` **por regeneração**, nunca à
@@ -249,7 +306,15 @@ mão (013 T023); (b) **iteração de correção do `spec-validate`** (008 itera�
 silenciados. `[P]` na W3 **não** funde repins: cada agente commita só o próprio
 arquivo (`git add` nominal) e cada commit recebe o seu — a serialização é do
 `build-engineer`, que executa os três em sequência depois de os três conteúdos
-estarem na árvore.
+estarem na árvore. *(Execução, 2026-09-06: esta frase estava **mecanicamente
+errada** — `gen_pins.py` pina blobs de HEAD e recusa qualquer pendência fora de
+`pins.json` (`.claude/verify/gen_pins.py:71-79`, medido); com três conteúdos já
+em HEAD, o primeiro repin cobriria os três e os outros dois seriam vazios —
+exatamente a fusão que a frase promete evitar. A Fase 3 corrigiu (`tasks.md`
+§`[P]` — onde é verdade; decisão (1) do portão): W3 **serial**, conteúdo →
+repin, três vezes — e foi assim que rodou (`1aaccbe` → `0d3cce5`, `4f605c1` →
+`a45d697`, `6a0c7a9` → `8f61eb8`), com T037 → T038 (PP-12, R8a) inseridos antes
+de T036. Decisão de desenho desmentida, não defasagem de registro.)*
 
 ## Boundary
 
@@ -283,7 +348,11 @@ semântica** (§8) — a relação gatilho × conjunto mutado tem **um** julgado
 não módulo, e cresce por **blocos com contador e fecho próprios** (013 IC-9,
 IC-10, agora 017) — justificativa registrada, não licença; se um quarto bloco
 vier, a extração por bloco é a conversa a ter, e ela é do TL, não de quem
-implementa.
+implementa. *(Execução, 2026-09-06: o red `adb883f` acrescentou +380/−30 linhas
+— 1.421 → 1.771 — e `bc12e28` tem **1.773**: +352 líquidas, não ~200; o
+previsto estava subestimado em ~150 linhas. A justificativa registrada não muda
+de natureza — um bloco com contador e fecho próprios —, mas a conversa sobre
+extração por bloco está mais próxima do que este parágrafo sugeria.)*
 
 ## Waves
 
@@ -292,14 +361,15 @@ implementação; registro (pin da sonda) junto do gate que o lê; contrato (form
 D1) antes do consumidor fechar verde**. Escrita e medição **nunca na mesma
 delegação** — `check_mutation.py:57-61` recusa árvore suja, e por isso toda
 medição vem depois do commit. `[P]` só na W3, entre arquivos que **não medem
-nada**.
+nada**. *(Execução: a W3 rodou **serial** — o `[P]` caiu na Fase 3; ver a nota
+em §Pins.)*
 
 | Wave | Tarefas (resumo) | Dono | Depende de |
 |---|---|---|---|
 | **W0** | Portões: commit deste `plan.md` → **R0** (fecha a dívida medida: `CONTEXT.md` + `refinement.md` + `spec.md` + `plan.md`); `tasks.md` → **R1**; planning-state `plan → tasks → red` (orquestrador, sem repin) | TL · `build-engineer` · orquestrador | aprovação literal do usuário, no chat, em cada portão |
 | **W1** | **RED do julgador** — uma delegação, um commit: `check_mutation.py` (PP-1…PP-8) + `_meta.sonda_relacao` (P2) + `red-017.md`. Executar em árvore limpa e registrar: REL2 70 em 7 harnesses; REL1 12 (falsos) com o diagnóstico (b) em `d014`/`d016`; INS1 e FORM1(a) **verdes por vácuo — declarados**; CORE1 impressa; SONDA1 15/15; IC-1/2/4/5/9/10 idênticos à linha de base; **nenhuma** linha `IC-6`. Em cópia efêmera: `D017-M1`/`M2` (= `M-IC8`/`M-IC9`, P3), `M5`–`M7`, `M9`, `M10`–`M16`, `M18` mortos; `M17` **sobrevive à sonda** e morre por `M2` — declarado. Commit `test(017): red — …` → **R2**; `red.status: proven` com o SHA | `qa-engineer` · `build-engineer` (R2) · orquestrador | W0 |
-| **W2** | **GREEN, sequencial, um arquivo por delegação, medição depois de cada commit** (P4): (a) `mutation_map.json` — `insumos` nos 7 (tabela C7 da spec; `d016` derivada por P7), frase em `_meta.descricao`, notas datadas em `_trilha` `:41`/`:246` → medir: **2 vermelhos** (`d014` 2/2, `d016` 10/10, ambos com o diagnóstico) → **R3**; (b) `tests_014_mutants.js:303` → medir: **1 vermelho** (`d016`), campanha `d014` 9/9 → **R4**; (c) `tests_016_mutants.js:555` → medir: **11/11 verde**, campanha `d016` 35/35 + 3 → **R5**. `D017-M3` (remover `.claude/verify/regra_morta.js` de `d014.targets`), `M4` (retirar `fixture` da `d010`) e `M8` (reverter a emissão da `d014` em cópia) medidos **aqui**, pós-green, pelo QA. Push; **abrir o PR** (P5) | `build-engineer` (escreve) · `qa-engineer` (mede, nada escreve — R3 §2) | W1 (red commitado) |
-| **W3** | **Registros `[P]`**: `mutation-matrix.json` — `dividas_declaradas` (`D017-M17`; família de árvore sem re-execução, credor `EA-42`; molde: a entrada `EA41-EOL0/EOL1`) → **R6** ∥ erratas `IC-6` (`:116`, `:194`, `:231-232`) e `C1` (`:205-226`) na spec da 013, forma de `:462-495`, com os SHAs do red e da W2 → **R7** ∥ `BACKLOG.md`: notas `EA-3`/`EA-44`, achado `ic_estatico` (`:171-182`), correção `:3421` → **R8** (rito `--rule=backlog` antes do commit) | `qa-engineer` ∥ `doc-writer` (dois commits) · `build-engineer` (R6–R8 em sequência) | W2 (os SHAs que as erratas citam existem) |
+| **W2** | **GREEN, sequencial, um arquivo por delegação, medição depois de cada commit** (P4): (a) `mutation_map.json` — `insumos` nos 7 (tabela C7 da spec; `d016` derivada por P7), frase em `_meta.descricao`, notas datadas em `_trilha` `:41`/`:246` → medir: **2 vermelhos** (`d014` 2/2, `d016` 10/10, ambos com o diagnóstico) → **R3**; (b) `tests_014_mutants.js:303` → medir: **1 vermelho** (`d016`), campanha `d014` 9/9 → **R4**; (c) `tests_016_mutants.js:555` → medir: **11/11 verde**, campanha `d016` 35/35 + 3 → **R5**. `D017-M3` (remover `.claude/verify/regra_morta.js` de `d014.targets`), `M4` (retirar `fixture` da `d010`) e `M8` (reverter a emissão da `d014` em cópia) medidos **aqui**, pós-green, pelo QA. Push; **abrir o PR** (P5) *(Execução: 7 → 2 → 1 → 0 confirmado (`3d8fa70`); push e PR **não** feitos na W2 — ver P5)* | `build-engineer` (escreve) · `qa-engineer` (mede, nada escreve — R3 §2) | W1 (red commitado) |
+| **W3** | **Registros `[P]`**: `mutation-matrix.json` — `dividas_declaradas` (`D017-M17`; família de árvore sem re-execução, credor `EA-42`; molde: a entrada `EA41-EOL0/EOL1`) → **R6** ∥ erratas `IC-6` (`:116`, `:194`, `:231-232`) e `C1` (`:205-226`) na spec da 013, forma de `:462-495`, com os SHAs do red e da W2 → **R7** ∥ `BACKLOG.md`: notas `EA-3`/`EA-44`, achado `ic_estatico` (`:171-182`), correção `:3421` → **R8** (rito `--rule=backlog` antes do commit) *(Execução: **serial**, conteúdo → repin ×3, e mais T037 → T038 — docstring de `check_mutation.py`, PP-12, `126dc61` → R8a `bc12e28` — antes de T036; ver §Pins)* | `qa-engineer` ∥ `doc-writer` (dois commits) · `build-engineer` (R6–R8 em sequência) | W2 (os SHAs que as erratas citam existem) |
 | **W4** | **Validação**: pipeline completo (skill `verify`, contagens citadas); **regressão C8 por diff** das linhas IC contra a linha de base do HEAD `36073dd`; campanhas `d014`/`d016` no job `verify` do PR; `spec-validate` → `spec-validate.md`; aceite de intenção do PO ("não encontrei objeção" ou reprova); `relatorio-final.md` com **repins executados × previstos**; commit de fechamento → **R9**. **Merge é do usuário** | `qa-engineer` · `product-owner` · `doc-writer` · `build-engineer` | W3 |
 
 **Tipagem prevista** (R3 — a matriz final é do `tasks.md`): W1 `feature` (o red
@@ -321,6 +391,14 @@ transforma isto na tabela gate · estado · produzido em · medido em):
 | `D017-CORE1` | linha impressa (o `core` existe) | `M14`, sonda ix | sonda |
 | `D017-SONDA1` | 15/15 verde | `M10`–`M16`, `M18`; `M17` sobrevive → `M2` | sonda + cópia |
 
+*(Execução, 2026-09-06: a spec ganhou **três** mutantes por errata depois deste
+plano — `D017-M19` (W0, errata 1: fiação do ramo `[NOTA]` de C1, morre sob o
+estado NOTA em cópia; `_meta.sonda_relacao.total` continua 15, medido) e
+`D017-M20`/`M21` (errata 3, pós-red: sexta causa de `INS1` e `FORM1(a)` com
+elemento não-string/vazio, medidos em T022). Nenhuma linha desta tabela muda de
+carrasco; os três estão em `dividas_declaradas` (`1aaccbe`) — `M19` como fiação,
+`M20`/`M21` como árvore one-shot.)*
+
 ## Riscos e rollback
 
 | Risco | Detecção (gate) | Reversão |
@@ -331,7 +409,7 @@ transforma isto na tabela gate · estado · produzido em · medido em):
 | **`_arqs51` removida quebra o IC-5** | Regressão C8: IC-5 usa só `_ids51`/`_oraculo` (`:425-444`); a linha de base tem `19/19` e `19 par(es)` para comparar | revert do commit red |
 | **Bloco 017 conta em `IC_FAILS`** por reuso de `ic_fail` | C8: `---- integridade: 0 ----` deixaria de ser byte-idêntico no red | PP-7: `d017_fail` próprio — verificado pelo diff do red |
 | **Campanhas `d014`/`d016` re-executam em toda medição** após W2 | esperado; ~1 min por `verify`; no CI, no job `verify` | nenhuma — é R3 §5 |
-| **Repin fora de R0–R9** (merge de `develop`; iteração do `spec-validate`) | stage `baseline` FAIL — impossível de silenciar | repin próprio + registro no relatório final |
+| **Repin fora de R0–R9** (merge de `develop`; iteração do `spec-validate`) *(Execução: dois — R2a, R8a —, de classes **não** previstas; ver §Pins)* | stage `baseline` FAIL — impossível de silenciar | repin próprio + registro no relatório final |
 | **`_trilha` da `d016` cita `:1287`** e o laço está em `:1333` | nota datada em W2(a) — não se reescreve a trilha (R2 §5) | — |
 | **Protótipo vira produção** | R3 §2: o `mut_relacao` do protótipo é do TL e **não** é o gate; o `qa-engineer` escreve o seu a partir da spec; o protótipo não está na árvore | — |
 

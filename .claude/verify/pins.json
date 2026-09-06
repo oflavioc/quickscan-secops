@@ -1,8 +1,8 @@
 {
   "_meta": {
     "descricao": "Registry único de pins — fonte de identidade dos artefatos (R8). Hashes = SHA-256 dos blobs de HEAD. Alterar arquivo pinado exige regenerar este registry no MESMO PR, com motivo no commit.",
-    "gerado_de_head": "930a08301f65cf3c5ceb4dbedea5f445925ccd6f",
-    "gerado_em": "2026-09-05",
+    "gerado_de_head": "4b74e3a515a509931308111043a29334deda043e",
+    "gerado_em": "2026-09-06",
     "exclusoes": [
       "docs_phase5/**",
       ".claude/project-memory/** (estado de processo — muda por fase; validado pelo stage state, não por pin)",
@@ -275,7 +275,7 @@
     ".gitignore": "f12379e20604234d2c80ed8486cefa9c6fc22034e89c1fa79c239e6ae0665079",
     "AGENTS.md": "267c0b98ae9f6fa4289be88e95b72393be936951625be2917ae08fe0cb3e9671",
     "CLAUDE.md": "46bc87e937d6ac560e0445f30626257d2347b6001408300230d0955bdfee9b1d",
-    "CONTEXT.md": "8184b821c300a00eb393f2321ac7be86ee7717deb9d0865a8933ecbad2f21b07",
+    "CONTEXT.md": "df4c734cb4179fd49af2e848a39e8f9fd14d98ef109f2b184197f54f596bd603",
     "ICON_ASSET_DECISIONS_V32.md": "f14494c78ae40af88f8a2adf49e30f314a6800736b11607d3382e0a31d5cce80",
     "LICENSE": "1ddd9deeecd23a1cece8a3aee60c77f4168295535ea4d7cc0102c55d8e777c49",
     "MANIFEST.sha256": "defd52d1cfc57e6ca5a9ebcce8b620a080772b6ea62753f987c5a58f8ccf38c6",
@@ -411,6 +411,9 @@
     "specs/016-registro-contra-execucao/spec.md": "8e1e7364b11e6c3074ee7097e57df8232ea37e0ea7a73c69793586b4c3cab9b6",
     "specs/016-registro-contra-execucao/tasks.md": "a946424399dc2b7cbaa4d896be80b49900aa4ae37b5ddfcba65061c3d97c4b19",
     "specs/016-registro-contra-execucao/trilha-do-commit-541771a.md": "af82eeafaf044481b7a9fd0161e96d27b89292d283b173665868c24fb282a4f8",
+    "specs/017-semantica-do-gatilho/plan.md": "e1819945887b4dfa067f05775fa42f4068b6a8e056bc0720e79e50b7f1c63edd",
+    "specs/017-semantica-do-gatilho/refinement.md": "c9d6697cf6488e121ef6cf239817098f1764d0c7e4594ba555e19638c93366e6",
+    "specs/017-semantica-do-gatilho/spec.md": "49446575a983a5cde03d57000f9ead4c17a2f0791a3f55164022b692a4eba47c",
     "specs/PHASE_5_0_REV_A.md": "22e729174c6a3c5dd620da5330b03eb96d9eb6fc6e64eba097c2bde55eb0a510",
     "specs/PHASE_5_0_REV_B.md": "4f1583c733df62a9452aa7b218d962e40d781bb8d30dfc3179ad6e1ef004619b",
     "synthetic_session_examples/exemplo-completo.json": "8970e68ca0ce6a6885b62a911532a0598c9c5bca1bb783089fb085ba858a314d",

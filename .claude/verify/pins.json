@@ -1,7 +1,7 @@
 {
   "_meta": {
     "descricao": "Registry único de pins — fonte de identidade dos artefatos (R8). Hashes = SHA-256 dos blobs de HEAD. Alterar arquivo pinado exige regenerar este registry no MESMO PR, com motivo no commit.",
-    "gerado_de_head": "20dafaf7673201526c96d604efd602b37e2c3108",
+    "gerado_de_head": "9d809f2173ec21c7d39e467c1bf5c8b06a8c4cde",
     "gerado_em": "2026-09-05",
     "exclusoes": [
       "docs_phase5/**",
@@ -15,7 +15,7 @@
     "baseline_core_zip_sha256": "625079c462be7d44ffd69b1cd85f256382322bd0555ae4b548f21bf30ee5b89d"
   },
   "files": {
-    ".claude/BACKLOG.md": "f9fa841bff7a17827ace5b0f6011158c4eb8d5f724e8d687e98acd2cf4bae638",
+    ".claude/BACKLOG.md": "c22733e6593be8fb9e50d38c054d0504746d2902032c09df5920b75efa0f8442",
     ".claude/agent-memory/README.md": "2f868716c8785119c1d6a02a7715f7b5058ab968f55951410fc82fc45b960a93",
     ".claude/agent-memory/build-engineer/MEMORY.md": "5ed47a73226fea6613b44c2ce70b26e95415033bafbd69a3ada20fa7df0bf950",
     ".claude/agent-memory/build-engineer/feedback_escopo_de_scanner_nos_dois_sentidos.md": "a07b03eb0687bc4f08ff02375684b8441f8d434384c415a3e25b1fe233007527",
@@ -195,6 +195,7 @@
     ".claude/verify/check_boundary.py": "2441e32e6bd5477d4a9bec027345d74be26b7e260de245e49dfe5d6b0d853633",
     ".claude/verify/check_branch_protection.py": "154d04818252c921aea2b54b6d08ae00c66c94950a8f825a2ee58e0cfb480c7a",
     ".claude/verify/check_build.py": "65c8f33185cbaee3dcba03ce88d7935a982176814c9a2802540f2c49af51d924",
+    ".claude/verify/check_eol_text.py": "6a2195af5d229c04b7bc0d83126f0ce4cdf682fc0f4fe891d9f9c6cd231d2da3",
     ".claude/verify/check_evidence_bridge.py": "f79bfb9021c1d4e2fa1adb3a25035d5e032b854ae8695af2d9b73311d271e62a",
     ".claude/verify/check_fecho.py": "20a1c78157e665cc1927beef96adac18481a669bc5c171a8b017a5e06ea87881",
     ".claude/verify/check_lint_arch.py": "ef3b65187a895b7b9d4d970a5763974d3e72345eca98bf9625457397c0f0fe8a",
@@ -257,13 +258,14 @@
     ".claude/verify/fixtures_016/protecao/sem_rede.json": "7987bcbdd3ffa971ff1b120080b495df6791a960398556ae5bdf131d31c67520",
     ".claude/verify/fixtures_016/protecao/sem_visual.json": "8b6c64fdb2885746a551a86eca233ad9aa26c7930b356aa846dc2033665ee11a",
     ".claude/verify/fixtures_016/protecao/strict_false.json": "57ff89596b704a525d32c8cabb711bb2815ce502baa3ad15b6d93486c6b38658",
+    ".claude/verify/fixtures_ea41/sujeito.md": "262a9384484bcb42afe36eb3b910275619f84d68e8404f3fc1b20fc1d8f21f30",
     ".claude/verify/gen_evidence_bridge.py": "1cb4d6cc0ad7ae4e6a801286202c637a6cfb527475e92a84e6197449c4209cf2",
     ".claude/verify/gen_pins.py": "730043800a41b4cfbb799945dd6499df8ba1375096f5f748df01c8c2d12a407a",
     ".claude/verify/invariants.json": "b8571facafbe6098cc643886cd158f877dd702c0cba6ca5addff34fc3e10bee6",
     ".claude/verify/known_issues.json": "9f4ac86a8e20443935cc03efeca3668d9774824d84778f2db930b185b1971818",
-    ".claude/verify/mutation-matrix.json": "c310a9b27a9218933208a6b0c8cb4de0f2ca883c491709dac3a00817ba85e29e",
-    ".claude/verify/mutation_map.json": "f28a5f5835dec3ce95a14182e978aca634356cdfee3747597a6908078d534112",
-    ".claude/verify/pipeline.yaml": "a0e9c16b32d24fb4254a3cc9e0ad0ff62c9a946b2de130d75d58650f23ada2e6",
+    ".claude/verify/mutation-matrix.json": "acca85aa9df15c369d464883a1ade98fefc3912094ef938d622538b3d415fbcf",
+    ".claude/verify/mutation_map.json": "a70e3b992bec483bc11c1f7bc87727d3a93e6cc4a80a0231f5ad8556e599736c",
+    ".claude/verify/pipeline.yaml": "b2c1d57b8578b13b5cfe045bfb064a36643cbfd4a998460aa80c4aaf59bfbd0b",
     ".claude/verify/regra_morta.js": "bfe0944b5088c40c346d63ca39f2dda0795524818b8ead46ceabc7b57f5a5616",
     ".claude/verify/regra_morta.json": "4127bdf2520ab8c15f98c69f0913ef61f77591d506b33e64530c0517359fbd13",
     ".claude/verify/regra_morta_seletor.js": "67723c7515264a81ef375910ee357ba944af47ae0d9cc9de6338a8bda3e68a9b",
@@ -427,6 +429,7 @@
     "tests_015_mutants.js": "47c4b5325fa1990cfa9e753cd28e94af538239190d37623cb7afcff99b5ee20a",
     "tests_016_mutants.js": "287866a7dd528a670811acd308f0b4bfe135ec12597b6bc87d430a9904950a69",
     "tests_core_mutants.js": "8a0502c2d7f34832722059435f2ccf4d7889614769526b645d4e2a720732af7e",
+    "tests_ea41_mutants.js": "1ce0c3c7444cf4eae710e9ad714fd7fb0b58cb3c0136afce7842e1af6be07301",
     "tests_icons_m46.js": "f73f96e32951507135c0b36d968fe12e9ffbc268e8ad438ea2e6c861a8b88123",
     "tests_journey_m45.js": "84d99be32e122f867dc1620cd1f49e4f3ae9795a32185cc75aa246d8682941f5",
     "tests_m42_m86.js": "d263ee641d699e3c99d71e7c23c4923b3444ca3fdce86a6d5eebdd71e14273ee",

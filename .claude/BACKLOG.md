@@ -453,6 +453,36 @@ encontrou-se este defeito nele.
   silencioso é FAIL") — a disciplina existe para o ambiente e falta para a
   cobertura.
 
+### Correção do próprio texto (revisão do `qa-engineer`, 2026-09-05)
+
+Os números acima — **11 de 14 `check_*.py`** e **17 de 35 `tests_*.js`** fora
+de qualquer `targets` — são **teto, não contagem de defeito**: nenhuma
+declaração no repositório afirma que um arquivo *deve* ser alvo de campanha
+(não existe um `boundary.json` da cobertura de mutação). O instrumento que
+este achado pede é, primeiro, uma **declaração de população** — no espírito
+do `boundary.json` de R6 — e só depois a diferença entre essa população
+declarada e os `targets` reais. Sem a declaração, "11 de 14" e "17 de 35"
+medem o universo de arquivos candidatos, não o universo de arquivos que
+deveriam estar cobertos. Isso não muda o efeito medido: os seis órfãos
+citados acima continuam órfãos, e a fração de fundo (14 `check_*.py`, 35
+`tests_*.js`) segue válida como teto — apenas o tamanho do problema deixa de
+parecer maior e mais mecânico do que é.
+
+**Reproduzido nesta sessão**: `python .claude/verify/check_mutation.py` segue
+emitindo **12×** `[OK] … campanha não exigida` (um por harness declarado:
+`d010`, `d009`, `core`, `p50`, `p51`, `p52`, `d014`, `d011`, `d014vis`,
+`d015`, `d016`, `ea41`) e fecha em `---- integridade: 0 problema(s) nomeado(s)
+----` seguido de `mutation: 0 campanha(s) executada(s) · 0 problema(s)` — o
+achado reproduz e continua `aberto`.
+
+**Deriva de citação, dentro do próprio achado que fala de registro
+apodrecido (família `EA-31`)**: a cadeia acima cita
+`.claude/verify/check_mutation.py:58-59` e `:61` para o laço de trigger e o
+`[OK] … campanha não exigida`; medido nesta sessão, esse trecho hoje é o
+guard de árvore suja (`git status --porcelain`), sem relação com o laço. O
+laço `for name, h in MAP.items(): due = …` e o `[OK] … campanha não exigida`
+vivem hoje em `check_mutation.py:1332-1335`.
+
 ### Achado-irmão (autoria da demanda 009 — citado, não registrado aqui)
 
 No mesmo dia, a sessão da demanda 009 encontrou o defeito complementar da
@@ -504,239 +534,303 @@ exige spec (R4). A abrir quando o proprietário decidir. Este registro
 descreve o defeito e a cadeia verificada — **não propõe o desenho da
 correção**; o desenho, se a demanda abrir, é da spec.
 
-## EA-4 — Âncora de mutante apodrece em silêncio; o aviso existe, mas só quando alguém puxa o gatilho
+## ~~EA-4 — Âncora de mutante apodrece em silêncio; o aviso existe, mas só quando alguém puxa o gatilho~~
 
-**Status**: `aberto`
+**Status**: `refutado`
 
-**Aberto em**: 2026-08-29. **Autoria da sessão da demanda 009**, que encontrou o
-defeito no mesmo dia do `EA-3` e o descreveu como o irmão complementar dele; o
-registro do `EA-3` já reservou nominalmente este id ("será registrado como
-`EA-4` quando a 009 fechar", §Achado-irmão). O id é alocado aqui, na série
-`EA-*`. A cadeia abaixo foi **re-verificada nesta árvore**
-(`feature/013-integridade-da-campanha`, demanda 013), não herdada de relato
-(R2 §4).
+~~**Aberto em**: 2026-08-29. **Autoria da sessão da demanda 009**, que encontrou o~~
+~~defeito no mesmo dia do `EA-3` e o descreveu como o irmão complementar dele; o~~
+~~registro do `EA-3` já reservou nominalmente este id ("será registrado como~~
+~~`EA-4` quando a 009 fechar", §Achado-irmão). O id é alocado aqui, na série~~
+~~`EA-*`. A cadeia abaixo foi **re-verificada nesta árvore**~~
+~~(`feature/013-integridade-da-campanha`, demanda 013), não herdada de relato~~
+~~(R2 §4).~~
 
-### O que o sistema faz quando falha — é isto que o separa dos vizinhos
+~~### O que o sistema faz quando falha — é isto que o separa dos vizinhos~~
 
-O harness **avisa**: `ERRO <id> · alvo não encontrado em <arquivo>`. Honesto — e
-**tardio**, porque o aviso só sai quando a campanha roda, e a campanha só roda
-quando o gatilho de path dispara **e** o ambiente existe. Contraste dentro da
-mesma família: `EA-3` é o verde que **mente por omissão** (arquivo fora de
-`targets` nunca entra em campanha alguma, e o stage diz `[OK] … campanha não
-exigida`); `EA-5` é o número que **afirma o que não mediu**.
+~~O harness **avisa**: `ERRO <id> · alvo não encontrado em <arquivo>`. Honesto — e~~
+~~**tardio**, porque o aviso só sai quando a campanha roda, e a campanha só roda~~
+~~quando o gatilho de path dispara **e** o ambiente existe. Contraste dentro da~~
+~~mesma família: `EA-3` é o verde que **mente por omissão** (arquivo fora de~~
+~~`targets` nunca entra em campanha alguma, e o stage diz `[OK] … campanha não~~
+~~exigida`); `EA-5` é o número que **afirma o que não mediu**.~~
 
-### Cadeia arquivo:linha → efeito
+~~### Cadeia arquivo:linha → efeito~~
 
-- **`tests_p51_mutants.js:196-198`** (estado anterior à demanda 013 — lido em
-  `b725820`): o laço da campanha conta as ocorrências da âncora no alvo
-  (`const n = src.split(m.find).length - 1;`) e, com `n < 1`, imprime
-  `ERRO  <id> · alvo não encontrado em <arquivo>`, empurra
-  `{ id, detected: false, why: "alvo não encontrado" }` e segue para o próximo
-  mutante. Mesma família nas outras harnesses: `tests_p52_mutants.js:36-38`
-  registra que, antes da 013, havia um rótulo `"NÃO APLICÁVEL"` para âncora
-  podre "e todo o resto caía em `NÃO DETECTADO`".
-- **`.claude/verify/check_mutation.py`, laço de trigger** — `due = changed is
-  None or any(t in changed for t in h["targets"])`: a campanha só é **exigida**
-  quando um alvo declarado muda em relação à base. Sem mudança, o harness nem é
-  invocado, e a contagem de âncoras de `tests_p51_mutants.js:196-198` não
-  acontece.
-- **`.claude/verify/mutation_map.json → harnesses.*.requires`**: `p50`, `p51` e
-  `p52` exigem `chromium` — ausente na máquina do proprietário e no job `verify`
-  do CI. Sob `MUTATION_DEFER_MISSING=1` a campanha exigida vira `[DEFER]`
-  nomeado e o stage passa; a contagem de âncoras, de novo, não acontece.
-- **Efeito**: entre um gatilho e o seguinte, a âncora pode ter deixado de casar
-  com o texto do módulo há meses sem que nenhuma máquina diga isso. O aviso
-  existe; o que falta é verificação que **não dependa de alguém acionar a
-  campanha**.
+~~- **`tests_p51_mutants.js:196-198`** (estado anterior à demanda 013 — lido em~~
+~~  `b725820`): o laço da campanha conta as ocorrências da âncora no alvo~~
+~~  (`const n = src.split(m.find).length - 1;`) e, com `n < 1`, imprime~~
+~~  `ERRO  <id> · alvo não encontrado em <arquivo>`, empurra~~
+~~  `{ id, detected: false, why: "alvo não encontrado" }` e segue para o próximo~~
+~~  mutante. Mesma família nas outras harnesses: `tests_p52_mutants.js:36-38`~~
+~~  registra que, antes da 013, havia um rótulo `"NÃO APLICÁVEL"` para âncora~~
+~~  podre "e todo o resto caía em `NÃO DETECTADO`".~~
+~~- **`.claude/verify/check_mutation.py`, laço de trigger** — `due = changed is~~
+~~  None or any(t in changed for t in h["targets"])`: a campanha só é **exigida**~~
+~~  quando um alvo declarado muda em relação à base. Sem mudança, o harness nem é~~
+~~  invocado, e a contagem de âncoras de `tests_p51_mutants.js:196-198` não~~
+~~  acontece.~~
+~~- **`.claude/verify/mutation_map.json → harnesses.*.requires`**: `p50`, `p51` e~~
+~~  `p52` exigem `chromium` — ausente na máquina do proprietário e no job `verify`~~
+~~  do CI. Sob `MUTATION_DEFER_MISSING=1` a campanha exigida vira `[DEFER]`~~
+~~  nomeado e o stage passa; a contagem de âncoras, de novo, não acontece.~~
+~~- **Efeito**: entre um gatilho e o seguinte, a âncora pode ter deixado de casar~~
+~~  com o texto do módulo há meses sem que nenhuma máquina diga isso. O aviso~~
+~~  existe; o que falta é verificação que **não dependa de alguém acionar a~~
+~~  campanha**.~~
 
-### Evidência medida na demanda 013
+~~### Evidência medida na demanda 013~~
 
-- **Oito âncoras podres em 180**, na primeira varredura das três harnesses:
-  quatro já conhecidas (`M51-03`, `M51-16`, `M51-18`, `M51-20`) e **quatro que
-  só o preflight revelou** — `p50/M13`, `p50/M23`, `p50/M35`, `p52/V322-M3`.
-  `M35` é a **única ambígua** (`ocorrencias=2`); as outras sete são
-  `ocorrencias=0`.
-- **`M13`, `M23` e `M51-03` apodreceram no MESMO commit**: `4aa1f12`
-  (`feat(phase5): complete Phase 5.1 UAT, executive report, user guide and
-  errata`, 2026-08-22) — três âncoras, um alvo (`ui_p50_shell_v32.js`), uma
-  reescrita. Confirmado por arqueologia `git log -S`
-  (`specs/013-integridade-da-campanha/matriz-gate-mutante.md` §9).
-- **`V322-M3` nasceu podre**: `ocorrencias=0` no próprio commit de autoria,
-  `df5d9f6` (`fix(v3.2.2): finalize context keyboard and transition UX`,
-  2026-08-25). O gate `V322-CTXPAR1` **nunca** rodou contra esta mutação. É o
-  que explica o `106/107` do CI — **não era sobrevivente nem regressão**; era um
-  mutante que nunca existiu na prática, somado como não-detectado por um
-  relatório de dois estados (ver `EA-5`).
-- Nenhuma das oito respondeu "propriedade morta": as oito deram **reancorar**,
-  com gate e propriedade vivos. Âncora podre não é propriedade extinta — e é por
-  isso que o defeito é de **instrumento**, não de desenho do mutante.
+~~- **Oito âncoras podres em 180**, na primeira varredura das três harnesses:~~
+~~  quatro já conhecidas (`M51-03`, `M51-16`, `M51-18`, `M51-20`) e **quatro que~~
+~~  só o preflight revelou** — `p50/M13`, `p50/M23`, `p50/M35`, `p52/V322-M3`.~~
+~~  `M35` é a **única ambígua** (`ocorrencias=2`); as outras sete são~~
+~~  `ocorrencias=0`.~~
+~~- **`M13`, `M23` e `M51-03` apodreceram no MESMO commit**: `4aa1f12`~~
+~~  (`feat(phase5): complete Phase 5.1 UAT, executive report, user guide and~~
+~~  errata`, 2026-08-22) — três âncoras, um alvo (`ui_p50_shell_v32.js`), uma~~
+~~  reescrita. Confirmado por arqueologia `git log -S`~~
+~~  (`specs/013-integridade-da-campanha/matriz-gate-mutante.md` §9).~~
+~~- **`V322-M3` nasceu podre**: `ocorrencias=0` no próprio commit de autoria,~~
+~~  `df5d9f6` (`fix(v3.2.2): finalize context keyboard and transition UX`,~~
+~~  2026-08-25). O gate `V322-CTXPAR1` **nunca** rodou contra esta mutação. É o~~
+~~  que explica o `106/107` do CI — **não era sobrevivente nem regressão**; era um~~
+~~  mutante que nunca existiu na prática, somado como não-detectado por um~~
+~~  relatório de dois estados (ver `EA-5`).~~
+~~- Nenhuma das oito respondeu "propriedade morta": as oito deram **reancorar**,~~
+~~  com gate e propriedade vivos. Âncora podre não é propriedade extinta — e é por~~
+~~  isso que o defeito é de **instrumento**, não de desenho do mutante.~~
 
-### O que a demanda 013 mudou, e o que este registro não decide
+~~### O que a demanda 013 mudou, e o que este registro não decide~~
 
-A 013 introduziu `--preflight` (contrato C1) em `p50`/`p51`/`p52` e a asserção
-`IC-4` no stage `mutation`, que conta as ocorrências de cada âncora **fora** do
-laço de trigger e **independente de `requires`**. Foi esse instrumento que
-produziu os números acima. O `core` segue **sem** preflight — dívida declarada e
-impressa pelo stage (`[DÍVIDA] core: sem preflight declarado — âncora podre só
-aparece na execução da campanha`), registrada em
-`.claude/verify/mutation-matrix.json → dividas_declaradas`. **Se isso fecha o
-`EA-4`, quem declara é o `qa-engineer`, por execução citável, em fix-finding**;
-este registro descreve o defeito e a cadeia e não decide PASS/FAIL (R12 — papel
-do `doc-writer`).
+~~A 013 introduziu `--preflight` (contrato C1) em `p50`/`p51`/`p52` e a asserção~~
+~~`IC-4` no stage `mutation`, que conta as ocorrências de cada âncora **fora** do~~
+~~laço de trigger e **independente de `requires`**. Foi esse instrumento que~~
+~~produziu os números acima. O `core` segue **sem** preflight — dívida declarada e~~
+~~impressa pelo stage (`[DÍVIDA] core: sem preflight declarado — âncora podre só~~
+~~aparece na execução da campanha`), registrada em~~
+~~`.claude/verify/mutation-matrix.json → dividas_declaradas`. **Se isso fecha o~~
+~~`EA-4`, quem declara é o `qa-engineer`, por execução citável, em fix-finding**;~~
+~~este registro descreve o defeito e a cadeia e não decide PASS/FAIL (R12 — papel~~
+~~do `doc-writer`).~~
 
-## EA-5 — Harness que não rodou reporta `NÃO DETECTADO`: o número não distingue "não executei" de "executei e escapou"
+### Refutado no fix-finding (2026-09-05), riscado e mantido (R2 §5)
 
-**Status**: `aberto`
+A `spec.md` da demanda 013 já previa o fecho no mesmo PR
+(`specs/013-integridade-da-campanha/spec.md:309`); o rito `aberto → resolvido`
+nunca foi executado — o `qa-engineer` assume a falha como sua, na revisão de
+2026-09-05, e este registro documenta a medição.
 
-**Aberto em**: 2026-08-29. Nasceu do red da demanda 013 (cenário IC-3(a),
-`specs/013-integridade-da-campanha/red-integridade.md:119-149`), medido em
-worktree efêmera e descartada, com as harnesses **intocadas**.
+Hoje o **`IC-4`** confere **305/305 âncoras únicas em 11 harnesses**, a cada
+execução do stage, sem gatilho e sem depender de `requires`
+(`check_mutation.py:337`, `:374`; a exclusão do `core` é o `IC_SEM_PREFLIGHT`
+em `:119`). Soma refeita nesta sessão sobre a saída medida do próprio stage
+(`python .claude/verify/check_mutation.py`): `d009` 19 + `d010` 24 + `d011` 19
++ `d014` 9 + `d014vis` 1 + `d015` 15 + `d016` 35 + `ea41` 3 + `p50` 53 +
+`p51` 19 + `p52` 108 = **305**. O instrumento propagou sozinho para os 8
+harnesses nascidos depois de `p50`/`p51`/`p52`.
 
-### O que o sistema faz quando falha
+**O residual, nomeado para que riscar não vire ilusão**: o `core` fica de fora
+por escopo declarado da própria 013 (T8,
+`specs/013-integridade-da-campanha/spec.md:38`, `:441-442`) e não tem
+preflight — registrado como **`EA-44`**, ao final deste arquivo, junto com o
+`d009` (**`EA-45`**), que nunca recebeu o vocabulário de três estados que
+fecha este achado e o `EA-5`.
 
-**Afirma.** `EA-3` cala (verde por omissão) e `EA-4` avisa tarde; `EA-5` produz
-um **veredito sobre um gate que nunca rodou** e o soma numa razão `D/T` que tem
-a aparência de medição. É o único dos três que é **desonesto** no sentido
-estrito: a saída não é incompleta, é falsa.
+## ~~EA-5 — Harness que não rodou reporta `NÃO DETECTADO`: o número não distingue "não executei" de "executei e escapou"~~
 
-### Cadeia arquivo:linha → efeito
+**Status**: `refutado`
 
-Lida no estado anterior à demanda 013 (`b725820`), na `p51`; a mesma forma de
-dois estados valia nas quatro harnesses:
+~~**Aberto em**: 2026-08-29. Nasceu do red da demanda 013 (cenário IC-3(a),~~
+~~`specs/013-integridade-da-campanha/red-integridade.md:119-149`), medido em~~
+~~worktree efêmera e descartada, com as harnesses **intocadas**.~~
 
-- **`tests_p51_mutants.js:185-188`** — `run(cmd)` embrulha `execSync` num
-  `try/catch` e devolve `{ code, out }`, com `out` juntando stdout e stderr. O
-  código de saída **é** capturado ali.
-- **`tests_p51_mutants.js:201-203`** — o laço chama `const r = run(m.cmd);`,
-  procura em `r.out` a linha `FAIL  <gate>` e conclui
-  `const detectado = !!linhaFail && m.reason.test(linhaFail);`. **`r.code` nunca
-  é lido.** Interpretador ausente, build quebrado, suíte que não emitiu a linha
-  do gate esperado e gate que rodou e passou produzem todos `linhaFail === ""` —
-  **indistinguíveis**.
-- **`tests_p51_mutants.js:209`** — imprime `NÃO DETECTADO <id> · <desc>`, o
-  mesmo rótulo que um mutante genuinamente sobrevivente recebe.
-- **`tests_p51_mutants.js:214`** — `MUTATION TESTING (Phase 5.1): <ok>/<total>
-  mutantes detectados pelo gate e motivo esperados`: o denominador conta o que
-  nunca foi medido, e a frase afirma "detectados pelo gate e motivo esperados"
-  sobre execuções em que gate nenhum foi consultado.
-- **Efeito**: a campanha reporta cobertura que não exerceu. Um `0/1` de ambiente
-  ausente é tipograficamente idêntico a um `0/1` de gate sem poder
-  discriminante — e o segundo é defeito grave, enquanto o primeiro é apenas uma
-  máquina errada. Quem lê a razão não tem como separar os dois.
+~~### O que o sistema faz quando falha~~
 
-### Evidência medida na demanda 013
+~~**Afirma.** `EA-3` cala (verde por omissão) e `EA-4` avisa tarde; `EA-5` produz~~
+~~um **veredito sobre um gate que nunca rodou** e o soma numa razão `D/T` que tem~~
+~~a aparência de medição. É o único dos três que é **desonesto** no sentido~~
+~~estrito: a saída não é incompleta, é falsa.~~
 
-- **Cenário IC-3(a)** (`red-integridade.md:129`): worktree efêmera em `3e43a15`,
-  `PATH` reduzido a `nodejs` + `System32` — nem `python` nem `python3` resolvem,
-  verificado —, `MUT_ONLY=M51-01`. A `p51` imprimiu `NÃO DETECTADO M51-01 · …`
-  seguido de `MUTATION TESTING (Phase 5.1): 0/1 mutantes detectados pelo gate e
-  motivo esperados`, exit 1, `git status --porcelain` vazio. **O gate
-  `P51-VIS1` não chegou a ser invocado**: o build inicial nem rodou.
-- **Um mutante foi medido, não os vinte.** A execução da campanha completa era
-  proibida naquela wave; o cenário isolou `M51-01` justamente para não disparar
-  campanha. A generalização — numa máquina Windows, onde o literal `python3` do
-  harness não resolve, os vinte mutantes da `p51` cairiam no mesmo rótulo — é
-  **inferência da cadeia acima**, não medição, e fica marcada como tal.
-- **Divergência registrada no mesmo cenário**: `p50` e `p52` **abortam** (exceção
-  não capturada em `build()` na `p50`; `MUTATION P52: falha fatal` na `p52`).
-  As duas formas violam o vocabulário, mas em direções opostas — a `p51`
-  **inventa veredito**, `p50`/`p52` **não chegam a falar**. Defeitos diferentes,
-  remédios diferentes; registrado para que o conserto de um não seja lido como
-  conserto do outro.
-- **Efeito agregado observado no CI**: o `106/107` da `p52` contava `V322-M3`
-  como não-detectado quando `V322-CTXPAR1` jamais rodou contra a mutação —
-  âncora podre de nascença (`EA-4`). A aritmética estava certa; o significado,
-  errado.
+~~### Cadeia arquivo:linha → efeito~~
 
-### O que a demanda 013 mudou, e o que este registro não decide
+~~Lida no estado anterior à demanda 013 (`b725820`), na `p51`; a mesma forma de~~
+~~dois estados valia nas quatro harnesses:~~
 
-A 013 substituiu os dois rótulos por um **vocabulário fechado de três estados**
-— `DETECTADO` · `SOBREVIVENTE` · `NÃO EXECUTADO`, este último sempre com **uma**
-causa de conjunto fechado (`interpretador ausente`, `âncora não encontrada`,
-`âncora ambígua`, `rebuild falhou`, `gate não pôde ser executado`) — nas três
-harnesses defeituosas, com a regra de que um número não medido não é impresso.
-O `core` ficou fora por decisão de escopo (é a referência do interpretador).
-**Se isso fecha o `EA-5`, quem declara é o `qa-engineer`**, por execução
-citável; este registro não decide PASS/FAIL.
+~~- **`tests_p51_mutants.js:185-188`** — `run(cmd)` embrulha `execSync` num~~
+~~  `try/catch` e devolve `{ code, out }`, com `out` juntando stdout e stderr. O~~
+~~  código de saída **é** capturado ali.~~
+~~- **`tests_p51_mutants.js:201-203`** — o laço chama `const r = run(m.cmd);`,~~
+~~  procura em `r.out` a linha `FAIL  <gate>` e conclui~~
+~~  `const detectado = !!linhaFail && m.reason.test(linhaFail);`. **`r.code` nunca~~
+~~  é lido.** Interpretador ausente, build quebrado, suíte que não emitiu a linha~~
+~~  do gate esperado e gate que rodou e passou produzem todos `linhaFail === ""` —~~
+~~  **indistinguíveis**.~~
+~~- **`tests_p51_mutants.js:209`** — imprime `NÃO DETECTADO <id> · <desc>`, o~~
+~~  mesmo rótulo que um mutante genuinamente sobrevivente recebe.~~
+~~- **`tests_p51_mutants.js:214`** — `MUTATION TESTING (Phase 5.1): <ok>/<total>~~
+~~  mutantes detectados pelo gate e motivo esperados`: o denominador conta o que~~
+~~  nunca foi medido, e a frase afirma "detectados pelo gate e motivo esperados"~~
+~~  sobre execuções em que gate nenhum foi consultado.~~
+~~- **Efeito**: a campanha reporta cobertura que não exerceu. Um `0/1` de ambiente~~
+~~  ausente é tipograficamente idêntico a um `0/1` de gate sem poder~~
+~~  discriminante — e o segundo é defeito grave, enquanto o primeiro é apenas uma~~
+~~  máquina errada. Quem lê a razão não tem como separar os dois.~~
 
-## EA-6 — Pré-condição decorativa: o requisito `python` era declarado por quatro harnesses e não podia reprovar em nenhum
+~~### Evidência medida na demanda 013~~
 
-**Status**: `aberto`
+~~- **Cenário IC-3(a)** (`red-integridade.md:129`): worktree efêmera em `3e43a15`,~~
+~~  `PATH` reduzido a `nodejs` + `System32` — nem `python` nem `python3` resolvem,~~
+~~  verificado —, `MUT_ONLY=M51-01`. A `p51` imprimiu `NÃO DETECTADO M51-01 · …`~~
+~~  seguido de `MUTATION TESTING (Phase 5.1): 0/1 mutantes detectados pelo gate e~~
+~~  motivo esperados`, exit 1, `git status --porcelain` vazio. **O gate~~
+~~  `P51-VIS1` não chegou a ser invocado**: o build inicial nem rodou.~~
+~~- **Um mutante foi medido, não os vinte.** A execução da campanha completa era~~
+~~  proibida naquela wave; o cenário isolou `M51-01` justamente para não disparar~~
+~~  campanha. A generalização — numa máquina Windows, onde o literal `python3` do~~
+~~  harness não resolve, os vinte mutantes da `p51` cairiam no mesmo rótulo — é~~
+~~  **inferência da cadeia acima**, não medição, e fica marcada como tal.~~
+~~- **Divergência registrada no mesmo cenário**: `p50` e `p52` **abortam** (exceção~~
+~~  não capturada em `build()` na `p50`; `MUTATION P52: falha fatal` na `p52`).~~
+~~  As duas formas violam o vocabulário, mas em direções opostas — a `p51`~~
+~~  **inventa veredito**, `p50`/`p52` **não chegam a falar**. Defeitos diferentes,~~
+~~  remédios diferentes; registrado para que o conserto de um não seja lido como~~
+~~  conserto do outro.~~
+~~- **Efeito agregado observado no CI**: o `106/107` da `p52` contava `V322-M3`~~
+~~  como não-detectado quando `V322-CTXPAR1` jamais rodou contra a mutação —~~
+~~  âncora podre de nascença (`EA-4`). A aritmética estava certa; o significado,~~
+~~  errado.~~
 
-**Aberto em**: 2026-08-29. Encontrado pelo `product-owner` na Fase 0 da demanda
-013, ao conferir a evidência do refinamento, e re-verificado nesta árvore.
+~~### O que a demanda 013 mudou, e o que este registro não decide~~
 
-### O que o sistema faz quando falha — e por que é o mais difícil de enxergar
+~~A 013 substituiu os dois rótulos por um **vocabulário fechado de três estados**~~
+~~— `DETECTADO` · `SOBREVIVENTE` · `NÃO EXECUTADO`, este último sempre com **uma**~~
+~~causa de conjunto fechado (`interpretador ausente`, `âncora não encontrada`,~~
+~~`âncora ambígua`, `rebuild falhou`, `gate não pôde ser executado`) — nas três~~
+~~harnesses defeituosas, com a regra de que um número não medido não é impresso.~~
+~~O `core` ficou fora por decisão de escopo (é a referência do interpretador).~~
+~~**Se isso fecha o `EA-5`, quem declara é o `qa-engineer`**, por execução~~
+~~citável; este registro não decide PASS/FAIL.~~
 
-**Nada.** Não cala como o `EA-3`, não avisa tarde como o `EA-4`, não mente como
-o `EA-5`: **deixa passar**. É um portão que sempre abre. E a assimetria que o
-torna perigoso está registrada mais abaixo — **ele nunca mordeu**, porque o
-binário sempre existiu onde se mediu.
+### Refutado no fix-finding (2026-09-05), riscado e mantido (R2 §5)
 
-### Cadeia arquivo:linha → efeito
+A demanda 013 substituiu os dois rótulos pelo vocabulário fechado de três
+estados — `DETECTADO` · `SOBREVIVENTE` · `NÃO EXECUTADO`, este último sempre
+com uma causa do conjunto fechado (`interpretador ausente`, `âncora não
+encontrada`, `âncora ambígua`, `rebuild falhou`, `gate não pôde ser
+executado`) — nas três harnesses defeituosas (`p50`, `p51`, `p52`).
 
-- **`.claude/verify/check_mutation.py:30-31`** (estado até `e27761d`, lido nesta
-  árvore): dentro de `have(req)`, `if req == "python":` / `return True` —
-  literal, sem consultar o disco. Os irmãos tinham dentes: `node` resolvia por
-  `shutil.which` e `chromium` conferia `CHROME_PATH` e o cache `ms-playwright`.
-  A lacuna era **nominal a um requisito**, não estrutural.
-- **`.claude/verify/mutation_map.json → harnesses.*.requires`**: **os quatro**
-  harnesses — `core`, `p50`, `p51`, `p52` — declaram `python`. Conferido nesta
-  árvore.
-- **`.claude/verify/check_mutation.py`, laço de trigger** —
-  `missing = [r for r in h["requires"] if not have(r)]`: como `have("python")`
-  era sempre `True`, `python` **nunca** entrava em `missing`. O
-  `[FAIL] <harness>: campanha EXIGIDA (alvo mudou) mas ambiente sem …` e o
-  `[DEFER] <harness>: … delegada ao job com …` eram, **para `python`**,
-  inalcançáveis por construção.
-- **Efeito**: a única pré-condição capaz de barrar uma campanha **antes** de ela
-  começar a produzir números era decorativa. Quatro declarações de requisito,
-  nenhuma asserção por trás.
+**Medido nesta sessão**, em execução direta (o próprio código garante que
+nenhum arquivo é tocado quando o interpretador falta, antes de mutar —
+`tests_p51_mutants.js:381-387`, IC-3(a)), com `MUTATION_PY=inexistente`:
+`p51` **19×**, `p50` **53×** e `p52` **108×** `NÃO EXECUTADO · interpretador
+ausente`, a razão `DETECTADO`/`SOBREVIVENTE` impressa **0 vezes** nas três,
+exit 1 nas três, `git status --porcelain` limpo antes e depois de cada
+execução. A cadeia original do achado (`tests_p51_mutants.js:185-209`, o
+veredito de dois estados que nunca lia `r.code`) não existe mais nesse trecho.
 
-### EA-6 habilita o EA-5 — a cadeia causal, registrada porque senão se perde
+Confirmado também por contagem independente do vocabulário no fonte:
+`grep -c 'NÃO EXECUTADO'` dá **5** em `tests_p51_mutants.js`, **7** em
+`tests_p50_mutants.js`, **7** em `tests_p52_mutants.js` — e **0** em
+`tests_core_mutants.js` e `tests_009_mutants.js`. Essa ausência nos dois
+últimos não é ruído: é exatamente o residual registrado em **`EA-44`**
+(`core`) e **`EA-45`** (`d009`), ao final deste arquivo.
 
-Os harnesses invocavam o interpretador por **literal** (`python3
-build_v32_html.py`), nome que não resolve no Windows. Numa máquina Windows a
-campanha era, por construção, incapaz de reconstruir o HTML — e portanto de
-consultar gate nenhum. Com dentes no `have()`, o `check_mutation.py` teria
-**parado no portão e nomeado o ausente** (`[FAIL] p51: … ambiente sem python`),
-e a execução nunca teria chegado ao laço do harness que imprime `NÃO
-DETECTADO`. Os `NÃO DETECTADO` do `EA-5` **só existem porque a pré-condição
-deixou passar**: um é a porta, o outro é o que acontece depois dela.
+## ~~EA-6 — Pré-condição decorativa: o requisito `python` era declarado por quatro harnesses e não podia reprovar em nenhum~~
 
-A consequência prática para quem for consertar: **os dois remédios não se
-substituem**. Consertar só o `EA-5` deixa o portão aberto — a campanha continua
-sendo admitida em ambiente que não a sustenta, só que agora com rótulo correto.
-Consertar só o `EA-6` deixa o relatório de dois estados intacto para **toda
-outra** causa de não-execução: rebuild quebrado, filtro que não seleciona gate
-nenhum, suíte que não emite a linha esperada. A pré-condição cobre um caso; o
-vocabulário cobre a classe.
+**Status**: `refutado`
 
-### A assimetria que o torna perigoso: hoje não morde
+~~**Aberto em**: 2026-08-29. Encontrado pelo `product-owner` na Fase 0 da demanda~~
+~~013, ao conferir a evidência do refinamento, e re-verificado nesta árvore.~~
 
-`python3` existe no CI (Linux) e `python` existe na máquina do proprietário
-(Windows). Nas duas, `return True` e um `have()` com dentes devolvem **o mesmo
-resultado** — e devolveram, em toda execução observada até aqui. O defeito só se
-manifesta onde o interpretador falta, que é exatamente o caso em que ele
-importaria. **Gate que nunca falhou não acumula confiança: acumula a ilusão de
-que a pré-condição está sendo verificada.** É o mesmo formato do `EA-1` — prosa
-declara proteção que a máquina não sustenta — um nível abaixo: **JSON declara
-requisito que a função não sustenta.**
+~~### O que o sistema faz quando falha — e por que é o mais difícil de enxergar~~
 
-### Estado atual, e o que este registro não decide
+~~**Nada.** Não cala como o `EA-3`, não avisa tarde como o `EA-4`, não mente como~~
+~~o `EA-5`: **deixa passar**. É um portão que sempre abre. E a assimetria que o~~
+~~torna perigoso está registrada mais abaixo — **ele nunca mordeu**, porque o~~
+~~binário sempre existiu onde se mediu.~~
 
-A **T004 da demanda 013** (commit `d126753`, `fix(013): T004 — green de IC-2, o
-requisito python passa a ter dentes`) trocou o `return True` por
-`shutil.which(mutation_py_bin())`, e a asserção `IC-2` do stage `mutation` mede
-a propriedade de forma adversarial: com `MUTATION_PY` apontando para um binário
-inexistente, `have("python")` **tem de** dizer não. **Nada disso é veredito
-deste registro** — se o green de `IC-2` fecha o `EA-6`, quem declara é o
-`qa-engineer`, por execução citável, em fix-finding. Fica registrado o que
-permanece independentemente dessa decisão: **não existe varredura que procure a
-família** — requisito declarado em `requires` sem asserção que o sustente. O
-próximo requisito decorativo nasceria do mesmo jeito e ficaria igualmente
-invisível, porque o sinal de que ele é decorativo é justamente **a ausência de
-qualquer falha na sua história**.
+~~### Cadeia arquivo:linha → efeito~~
+
+~~- **`.claude/verify/check_mutation.py:30-31`** (estado até `e27761d`, lido nesta~~
+~~  árvore): dentro de `have(req)`, `if req == "python":` / `return True` —~~
+~~  literal, sem consultar o disco. Os irmãos tinham dentes: `node` resolvia por~~
+~~  `shutil.which` e `chromium` conferia `CHROME_PATH` e o cache `ms-playwright`.~~
+~~  A lacuna era **nominal a um requisito**, não estrutural.~~
+~~- **`.claude/verify/mutation_map.json → harnesses.*.requires`**: **os quatro**~~
+~~  harnesses — `core`, `p50`, `p51`, `p52` — declaram `python`. Conferido nesta~~
+~~  árvore.~~
+~~- **`.claude/verify/check_mutation.py`, laço de trigger** —~~
+~~  `missing = [r for r in h["requires"] if not have(r)]`: como `have("python")`~~
+~~  era sempre `True`, `python` **nunca** entrava em `missing`. O~~
+~~  `[FAIL] <harness>: campanha EXIGIDA (alvo mudou) mas ambiente sem …` e o~~
+~~  `[DEFER] <harness>: … delegada ao job com …` eram, **para `python`**,~~
+~~  inalcançáveis por construção.~~
+~~- **Efeito**: a única pré-condição capaz de barrar uma campanha **antes** de ela~~
+~~  começar a produzir números era decorativa. Quatro declarações de requisito,~~
+~~  nenhuma asserção por trás.~~
+
+~~### EA-6 habilita o EA-5 — a cadeia causal, registrada porque senão se perde~~
+
+~~Os harnesses invocavam o interpretador por **literal** (`python3~~
+~~build_v32_html.py`), nome que não resolve no Windows. Numa máquina Windows a~~
+~~campanha era, por construção, incapaz de reconstruir o HTML — e portanto de~~
+~~consultar gate nenhum. Com dentes no `have()`, o `check_mutation.py` teria~~
+~~**parado no portão e nomeado o ausente** (`[FAIL] p51: … ambiente sem python`),~~
+~~e a execução nunca teria chegado ao laço do harness que imprime `NÃO~~
+~~DETECTADO`. Os `NÃO DETECTADO` do `EA-5` **só existem porque a pré-condição~~
+~~deixou passar**: um é a porta, o outro é o que acontece depois dela.~~
+
+~~A consequência prática para quem for consertar: **os dois remédios não se~~
+~~substituem**. Consertar só o `EA-5` deixa o portão aberto — a campanha continua~~
+~~sendo admitida em ambiente que não a sustenta, só que agora com rótulo correto.~~
+~~Consertar só o `EA-6` deixa o relatório de dois estados intacto para **toda~~
+~~outra** causa de não-execução: rebuild quebrado, filtro que não seleciona gate~~
+~~nenhum, suíte que não emite a linha esperada. A pré-condição cobre um caso; o~~
+~~vocabulário cobre a classe.~~
+
+~~### A assimetria que o torna perigoso: hoje não morde~~
+
+~~`python3` existe no CI (Linux) e `python` existe na máquina do proprietário~~
+~~(Windows). Nas duas, `return True` e um `have()` com dentes devolvem **o mesmo~~
+~~resultado** — e devolveram, em toda execução observada até aqui. O defeito só se~~
+~~manifesta onde o interpretador falta, que é exatamente o caso em que ele~~
+~~importaria. **Gate que nunca falhou não acumula confiança: acumula a ilusão de~~
+~~que a pré-condição está sendo verificada.** É o mesmo formato do `EA-1` — prosa~~
+~~declara proteção que a máquina não sustenta — um nível abaixo: **JSON declara~~
+~~requisito que a função não sustenta.**~~
+
+~~### Estado atual, e o que este registro não decide~~
+
+~~A **T004 da demanda 013** (commit `d126753`, `fix(013): T004 — green de IC-2, o~~
+~~requisito python passa a ter dentes`) trocou o `return True` por~~
+~~`shutil.which(mutation_py_bin())`, e a asserção `IC-2` do stage `mutation` mede~~
+~~a propriedade de forma adversarial: com `MUTATION_PY` apontando para um binário~~
+~~inexistente, `have("python")` **tem de** dizer não. **Nada disso é veredito~~
+~~deste registro** — se o green de `IC-2` fecha o `EA-6`, quem declara é o~~
+~~`qa-engineer`, por execução citável, em fix-finding. Fica registrado o que~~
+~~permanece independentemente dessa decisão: **não existe varredura que procure a~~
+~~família** — requisito declarado em `requires` sem asserção que o sustente. O~~
+~~próximo requisito decorativo nasceria do mesmo jeito e ficaria igualmente~~
+~~invisível, porque o sinal de que ele é decorativo é justamente **a ausência de~~
+~~qualquer falha na sua história**.~~
+
+### Refutado no fix-finding (2026-09-05), riscado e mantido (R2 §5)
+
+A **T004** da demanda 013 (commit `d126753`) trocou o `return True` por
+`shutil.which(mutation_py_bin())`. Confirmado no HEAD desta sessão
+(`check_mutation.py:39-49`): `have()` tem dentes para `python`, `node` e
+`chromium`. Medido ao vivo nesta sessão — `python .claude/verify/check_mutation.py`
+imprimiu `[OK]   IC-2: requisito "python" reprova com interpretador ausente
+(MUTATION_PY=mutation-py-inexistente-013 ⇒ have("python") = False)` — a
+asserção `IC-2` mede a propriedade de forma adversarial, a cada execução do
+stage.
+
+O que este registro NÃO risca: a ausência de uma varredura que procure a
+família (requisito declarado em `requires` sem asserção que o sustente) segue
+verdadeira em tese, mas nenhuma instância nova foi encontrada nesta revisão —
+abrir achado sem instância seria especular. Fica só citada, não reaberta.
+
 ## EA-7 — Gate verde que já não pode reprovar: a Fase 5.2 assumiu a composição que o mutante da 5.1 ataca
 
 **Status**: `aberto`
@@ -1514,7 +1608,10 @@ não tem trigger que a re-execute não é prova — é lembrança.*
 - **`specs/015-superficies-de-apoio/spec-validate.md:67`** — o gap **G2**: os dois
   **não estavam no harness, não tinham par na matriz e não constavam de
   `dividas_declaradas`**. Achado por **leitura**, na Fase 6, não por gate.
-- **A cadeia própria é uma ausência** — `.claude/verify/check_mutation.py:376-433`:
+- **A cadeia própria é uma ausência** — `.claude/verify/check_mutation.py:376-433`
+  (deriva de citação medida nesta sessão: a seção `IC-5`/`IC-6` vai hoje até
+  `:462`, não `:433` — a família `EA-31` acontecendo dentro do próprio achado
+  que a nomeia):
   `IC-5`/`IC-6` comparam harness ↔ matriz **nominalmente à `p51`**, por decisão
   registrada; **nenhuma cláusula** compara *mutante declarado em spec* com *par na
   matriz* para os demais harnesses, e `.claude/verify/mutation_map.json` só
@@ -1615,7 +1712,8 @@ deriva de citação é sintoma da família `EA-31`.
   **Medido por mim em 2026-09-01, e o caso é maior que o citado**: são **16** pares
   `p51` com data `2026-08-22` e **4** com `2026-08-29`, sob uma campanha `p51`
   executada em 2026-08-31.
-- **A ausência** — `.claude/verify/check_mutation.py:376-433`: `IC-5`/`IC-6` são
+- **A ausência** — `.claude/verify/check_mutation.py:376-433` (deriva de
+  citação medida nesta sessão: a seção vai hoje até `:462`): `IC-5`/`IC-6` são
   nominais à `p51` e comparam **conjuntos**, não **datas**; nenhuma cláusula
   compara `ultima_prova.data` com a data da execução que cobriu o par, e linha
   agregada não tem data por par para comparar.
@@ -1684,9 +1782,10 @@ citar junto porque o remédio (dono único) é da mesma natureza.
 - **`.claude/verify/pipeline.yaml`** — **nenhum stage** compara registro com
   execução: nem spec ↔ harness, nem `ultima_prova` ↔ data de execução, nem
   ocorrências vivas de uma afirmação já riscada.
-- **`.claude/verify/check_mutation.py:376-433`** — o mais perto que existe:
-  `IC-5`/`IC-6` comparam harness ↔ matriz, **nominalmente à `p51`**, por conjunto e
-  não por data.
+- **`.claude/verify/check_mutation.py:376-433`** (deriva de citação medida
+  nesta sessão: a seção vai hoje até `:462` — esta família, dentro do próprio
+  achado que a nomeia) — o mais perto que existe: `IC-5`/`IC-6` comparam
+  harness ↔ matriz, **nominalmente à `p51`**, por conjunto e não por data.
 - **R2 §1** (todo PASS cita execução) e **R2 §5** (refutação permanece riscada)
   **não têm verificador algum** — a mesma forma de dívida que o `EA-17` registrou
   para a R9 §6.
@@ -3217,6 +3316,34 @@ re-executasse. A frase que ficou: **"prova que vive só na bateria efêmera
 EVAPORA"**. Este achado é a mesma classe, achada pelo autor do instrumento
 contra o próprio instrumento.
 
+### Reclassificação (revisão do `qa-engineer`, 2026-09-05): eixo C, detector de eixo A
+
+A classificação acima tratou o `EA-42` como instância da família do `EA-28`
+(eixo C — o registro da prova não é comparado com a execução da prova,
+`EA-31`). Revisto: o **fato** é mesmo do eixo C — a prova (8/8 mortos)
+existiu, foi executada, e o que a sustenta é uma linha de
+`dividas_declaradas` sem par nem gatilho, a mesma forma do `EA-28`. Mas o
+**detector** que fecharia o caso é do eixo A (cobertura do mapa, `EA-3`): a
+única chave mecânica possível seria "julgador declarado em `pipeline.yaml`
+que é mutado por algum harness", e essa chave não discrimina hoje. Medido
+nesta sessão contra `mutation_map.json`: dos **14** `check_*.py`, **3** são
+`targets` de algum harness (`check_branch_protection.py`,
+`check_eol_text.py`, `check_fecho.py`) e **11** não são `target` de harness
+nenhum. Dos três que são `targets`, apenas **`check_fecho.py`** é de fato
+**mutado** por um par (`M16`/`M29` de `tests_016_mutants.js`, "mutantes do
+próprio gate"); **`check_eol_text.py`** é `target` (mudá-lo redispara a
+campanha `ea41`) mas **não** é mutado por nenhum `MUTANTS` do harness — a
+campanha `ea41` muta a árvore/índice que o gate lê, nunca o fonte do gate. A
+mesma chave ("é `target`?") que fecharia o `check_fecho.py` deixaria o
+`check_eol_text.py` — o objeto deste próprio achado — do lado de fora.
+
+**A consequência prática, que é o que importa registrar**: portar os 8
+mutantes de instrumento (o remédio já proposto abaixo) fecha **a instância**
+do `EA-42` e não fecha **a classe** — o próximo julgador que ganhar prova só
+em bateria efêmera continuará invisível ao mesmo detector, porque não existe
+hoje um oráculo que separe "gate com par possível na matriz" de "gate sem
+`target` algum".
+
 ### Por que isto é achado, e não só dívida na matriz
 
 `EA41-EOL0/EOL1` já está escrito em `dividas_declaradas`
@@ -3278,3 +3405,120 @@ objeto git não existe e o `rmtree` limpa sem erro.
 (`os.chmod` + retry) antes de remover, em vez de `ignore_errors=True`.
 Arquivo **pinado** (`check_eol_text.py`, registry R8) — repin no mesmo PR.
 Dono `qa-engineer`, `fix-finding` próprio.
+
+## EA-44 — o `core` ficou fora do vocabulário fechado da 013: ambiente incompleto sai como "gate sem poder discriminante", um falso eixo D
+
+**Status**: `aberto`
+
+**Aberto em**: 2026-09-05. Nasceu como o residual nomeado no fecho de
+`EA-4`/`EA-5`/`EA-6` — riscar os três sem nomear o que sobra trocaria um
+achado por uma ilusão de cobertura completa.
+
+### Cadeia arquivo:linha → efeito
+
+- **`.claude/verify/check_mutation.py:119`** — `IC_SEM_PREFLIGHT = ("core",)`:
+  o `core` fica fora do preflight (`IC-4`) por escopo declarado da demanda 013
+  (T8, `specs/013-integridade-da-campanha/spec.md:38`, `:441-442` — ele é a
+  referência do interpretador, e tocá-lo era o próprio risco que a demanda
+  existia para conter). Sem preflight, uma âncora podre nele só aparece na
+  execução da campanha — medido nesta sessão, `[DÍVIDA] core: sem preflight
+  declarado — âncora podre só aparece na execução da campanha`
+  (`bash .claude/verify/run.sh --stage=mutation`).
+- **`tests_core_mutants.js:76-79`** — quando o `find` não casa mais com o
+  módulo (âncora podre), o harness imprime `FAIL  <id> — find-string não
+  aplica (módulo mudou: mantenha o mutante, R10)` e empurra o id para
+  `escaped`; a linha de fecho, **`:96`** (`CORE MUTATION: <n> KILL · <m>
+  escaparam de <total>`), conta esse caso como "escapou" — o mesmo rótulo de
+  um mutante que rodou e sobreviveu de verdade. Âncora ausente e mutante
+  sobrevivente ficam **indistinguíveis** na única linha que alguém lê
+  primeiro.
+- **`tests_core_mutants.js:84-88`** — `const dead = code !== 0 &&
+  m.reason.test(out);`, seguido de `console.log((dead ? "KILL " : "FAIL ") …
+  (dead ? "matou (exit " + code + ")" : "NÃO matou — gate sem poder
+  discriminante"))`. Esta bifurcação não distingue **por quê** `code !== 0`
+  é falso ou o `reason` não casa: rebuild quebrado, comando do gate
+  indisponível, ambiente incompleto (o `qa-engineer` cita ausência de
+  `node_modules` como cenário concreto) e mutante genuinamente sobrevivente
+  produzem a MESMA linha `"NÃO matou — gate sem poder discriminante"`.
+  Confirmado por leitura do código nesta sessão — a bifurcação é estrutural,
+  não depende de reproduzir o cenário específico ao vivo (retirar
+  `node_modules` desta árvore seria destrutivo e está fora do escopo deste
+  PR).
+- **`.claude/verify/check_mutation.py:573-580`** — `mut_relata` já nomeia o
+  efeito, mas só a metade que o stage enxerga: "harness cujo fecho tem
+  formato próprio (`core`, sem o `emitir()` de T4/T5, logo sem estado por
+  mutante para relatar — dívida de T8)" imprime `NÃO NOMEADOS` no relato
+  por-mutante do stage — mas isso não alcança a linha de fecho do PRÓPRIO
+  harness (`:96`), que é onde a ambiguidade tipo-`EA-5` realmente mora.
+- **Efeito** — o `core` é o único harness da casa em que uma falha de
+  eixo B (instrumento: âncora podre, ambiente incompleto) e uma falha de
+  eixo D genuína (gate sem poder discriminante) chegam ao leitor pela MESMA
+  frase. Consertar o `EA-5` nos outros harnesses não alcança este: o `core`
+  nunca emitiu o vocabulário de três estados para começar.
+
+### O que este registro não decide
+
+Se o remédio é dar ao `core` o mesmo preflight (`IC-4`) e vocabulário fechado
+(T4/T5) que `p50`/`p51`/`p52` ganharam na 013, ou um instrumento de forma
+diferente (a dívida declarada já nomeia a lacuna): `tech-lead` com
+`qa-engineer`. Abrir demanda é do orquestrador (R4); isto não é
+`fix-finding` — é comportamento novo de instrumento (R10, "Nascimento de um
+gate").
+
+## EA-45 — o resíduo do `d009`: nascido em branch paralela, nunca recebeu o vocabulário de três estados da 013
+
+**Status**: `aberto`
+
+**Aberto em**: 2026-09-05. Segundo residual nomeado no fecho de
+`EA-4`/`EA-5`/`EA-6` — mecanismo distinto do `EA-44`: `d009` TEM preflight
+(`IC-4` o cobre — medido nesta sessão, `IC-4: d009: 19 âncora(s) com
+ocorrencias == 1 (preflight, C1)`); o que falta é o vocabulário de runtime.
+
+### Cadeia arquivo:linha → efeito
+
+- **`tests_009_mutants.js:483-486`** — a checagem de interpretador
+  (`resolvePy`) só existe dentro do bloco `--preflight` (`:434-478`); o modo
+  de campanha principal (`main()`, a partir de `:486`) nunca a consulta.
+- **`tests_009_mutants.js:507`** — `main()` chama `build()` como primeiro
+  efeito, ANTES de tocar qualquer mutante. **Medido nesta sessão**, execução
+  direta com `MUTATION_PY=inexistente node tests_009_mutants.js`: exceção
+  não capturada (`node:child_process:1017`, `throw err;`), exit 1, **zero**
+  linhas `KILL`/`ESCAPOU`/`FALHA DO HARNESS` na saída, `git status
+  --porcelain` limpo antes e depois — o crash acontece antes de qualquer
+  `fs.writeFileSync` em arquivo de produto, por isso é seguro reproduzir.
+  Nenhuma das harnesses irmãs — `p50`/`p51`/`p52` — se comporta assim: as
+  três têm o `IC-3(a)` que intercepta o interpretador ausente e emite `NÃO
+  EXECUTADO` para cada mutante, sem exceção (ver refutação do `EA-5` acima,
+  mesma sessão: `p51` 19×, `p50` 53×, `p52` 108×, todas com o vocabulário
+  fechado e exit 1 controlado).
+- **`tests_009_mutants.js:503`** (`FALHA DO HARNESS`) e **`:544`**
+  (`KILL`/`ESCAPOU`) — o vocabulário PRÓPRIO do `d009`, herdado do formato
+  pré-013 (o mesmo formato de dois estados que a refutação do `EA-5` mediu
+  em `p50`/`p51`/`p52`). Nunca migrado.
+- **`.claude/verify/check_mutation.py:496`** — `RE_MUT_LINHA =
+  re.compile(r"^(DETECTADO|SOBREVIVENTE|NÃO EXECUTADO)  (\S+) · (.*)$")`: o
+  julgador só reconhece o vocabulário fechado de T4/T5. Nenhuma linha
+  `KILL`/`ESCAPOU`/`FALHA DO HARNESS` casa — confirmado por leitura de
+  `mut_ler` (`:550-567`) e `mut_relata` (`:570-580`, cujo comentário em
+  `:574-577` nomeia só o `core`, mas cuja condição — `if not todos:`,
+  `:573` — vale para qualquer harness que não emita o vocabulário fechado,
+  `d009` incluído): quando o stage executa a campanha real do `d009`, o
+  relato por-mutante cai no mesmo `NÃO NOMEADOS em \`d009\`` que o `core`
+  recebe. Não reexecutei a campanha real do `d009` para forçar esse
+  caminho ao vivo (exigiria alterar um dos seus alvos para disparar o
+  trigger, fora do escopo deste PR); a conclusão vem de leitura direta do
+  código dos dois lados (harness e julgador), não de memória.
+- **Efeito** — dois defeitos empilhados no mesmo harness: (i) sem
+  `IC-3(a)`, uma campanha de `d009` num ambiente sem o interpretador certo
+  estoura em vez de reportar `NÃO EXECUTADO`; (ii) mesmo com o interpretador
+  presente e a campanha rodando até o fim, o resultado por-mutante não é
+  lido pelo julgador do stage — o veredito agregado (`ran`/`fails`) ainda é
+  correto (vem do `returncode` do processo), mas a identidade de QUAL
+  mutante sobreviveu, se algum sobreviver, não chega ao relatório do stage.
+
+### O que este registro não decide
+
+Portar `d009` para o padrão T4/T5 (`tests_p50_mutants.js`/
+`tests_p51_mutants.js`/`tests_p52_mutants.js` como referência) é
+comportamento novo de instrumento, não `fix-finding`: `tech-lead` com
+`qa-engineer` desenham, o orquestrador abre a demanda (R4).

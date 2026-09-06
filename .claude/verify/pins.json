@@ -1,7 +1,7 @@
 {
   "_meta": {
     "descricao": "Registry único de pins — fonte de identidade dos artefatos (R8). Hashes = SHA-256 dos blobs de HEAD. Alterar arquivo pinado exige regenerar este registry no MESMO PR, com motivo no commit.",
-    "gerado_de_head": "126dc61e09486f40559b5b78e82ab1575b13b3ea",
+    "gerado_de_head": "d643d8d4b597765bcf2e5eda494179527e02cabe",
     "gerado_em": "2026-09-06",
     "exclusoes": [
       "docs_phase5/**",
@@ -411,7 +411,7 @@
     "specs/016-registro-contra-execucao/spec.md": "8e1e7364b11e6c3074ee7097e57df8232ea37e0ea7a73c69793586b4c3cab9b6",
     "specs/016-registro-contra-execucao/tasks.md": "a946424399dc2b7cbaa4d896be80b49900aa4ae37b5ddfcba65061c3d97c4b19",
     "specs/016-registro-contra-execucao/trilha-do-commit-541771a.md": "af82eeafaf044481b7a9fd0161e96d27b89292d283b173665868c24fb282a4f8",
-    "specs/017-semantica-do-gatilho/plan.md": "e1819945887b4dfa067f05775fa42f4068b6a8e056bc0720e79e50b7f1c63edd",
+    "specs/017-semantica-do-gatilho/plan.md": "e1c2202548b420f7f387a7551dbf7517f5f1e2b2c1447c4182cc4d75cb8ca160",
     "specs/017-semantica-do-gatilho/red-017.md": "7a5aedded1908fe3016c0cffdef0d450c75d2fe524380395695039a161b5f592",
     "specs/017-semantica-do-gatilho/refinement.md": "c9d6697cf6488e121ef6cf239817098f1764d0c7e4594ba555e19638c93366e6",
     "specs/017-semantica-do-gatilho/spec.md": "7dcd9fa4179e1e751f857e6883acaa7458f5ec9bde6928c1dbfdd412dc39bdf0",

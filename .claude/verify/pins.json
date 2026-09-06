@@ -1,7 +1,7 @@
 {
   "_meta": {
     "descricao": "Registry único de pins — fonte de identidade dos artefatos (R8). Hashes = SHA-256 dos blobs de HEAD. Alterar arquivo pinado exige regenerar este registry no MESMO PR, com motivo no commit.",
-    "gerado_de_head": "6a0c7a9dba72ab2e6a9f1bfa1383339e3e662706",
+    "gerado_de_head": "126dc61e09486f40559b5b78e82ab1575b13b3ea",
     "gerado_em": "2026-09-06",
     "exclusoes": [
       "docs_phase5/**",
@@ -201,7 +201,7 @@
     ".claude/verify/check_lint_arch.py": "ef3b65187a895b7b9d4d970a5763974d3e72345eca98bf9625457397c0f0fe8a",
     ".claude/verify/check_m41.py": "f5f59097ab1510d6bbd0a3e63272e00da95bb65c818c23a7fff2141e8f5d9b4f",
     ".claude/verify/check_markers.py": "5623d9cb3203cf16a307014a4255bc3d8ecf08e469eaf2f110927802a9b2fe7c",
-    ".claude/verify/check_mutation.py": "b616852c0e9901dd810b97cfcb09e33321c7d0d249fc02a726d3c8daef09ecd4",
+    ".claude/verify/check_mutation.py": "ee9e36bfd14f5810fe9e9ab9399203b971d398487e24de3a172433166460d34c",
     ".claude/verify/check_state.py": "934999bd6e989bd09e17d322b65ac1c92fece5db85d409558b28de5b6b2fc212",
     ".claude/verify/check_suites.py": "457516eae3a5f98ac894a13fb6283f30a2f5e5dce158d24fced5295fd1978dfe",
     ".claude/verify/check_tdd.py": "1077e9025a9559f34e23658bba12a98ac6fb65c718d057a62687251671de2ce9",

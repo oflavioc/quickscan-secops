@@ -1227,9 +1227,11 @@ def ex_fail(alvo, causa):
 def ex_ids_do_harness(nome):
     """(ids declarados pelo harness, oráculo que respondeu).
 
-    Mesma escada de IC-5/IC-6: preflight (C1) primeiro, leitura estática do
-    fonte como reserva. Quem responde nunca fica implícito — o oráculo sai
-    impresso junto do veredito.
+    Mesma escada do IC-5: preflight (C1) primeiro, e leitura estática do
+    fonte como reserva quando ele não responde. Quem respondeu nunca fica
+    implícito — o oráculo sai impresso junto do veredito. O bloco 017 (a
+    semântica do gatilho) não sobe esta escada: ali os conjuntos se
+    comparam crus, sem reserva estática (PP-10).
     """
     d = IC_PREFLIGHT.get(nome)
     if d:

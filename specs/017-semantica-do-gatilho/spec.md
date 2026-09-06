@@ -115,7 +115,7 @@ Vocabulário de **saída** do bloco (tokens normativos; a forma final da linha �
 `E016-5`): `conjunto mutado fora do gatilho` (REL1) · `alvo fantasma (sem razão
 de classe)` (REL2) · causas fechadas de INS1: `classe fora do vocabulário`,
 `classe sem membros`, `razão sem gatilho`, `insumo que é conjunto mutado`,
-`path em duas classes` · `path fora da forma canônica` (FORM1) · `relação
+`path em duas classes` *(Errata `INS1(f)` · Fase 4: e a **sexta**, estrutural — `insumos malformado — não é objeto classe → [paths]: <tipo>`, sem `<classe> (<paths>)`; §Erratas da Fase 4)* · `path fora da forma canônica` (FORM1) *(Errata `INS1(f)` · Fase 4: também para elemento **não-string** — impresso por `repr` — ou **vazio**)* · `relação
 gatilho × conjunto mutado NÃO MEDIDA — sem preflight (credor: EA-44)` (CORE1) ·
 diagnóstico anexo `forma do path? mesmo basename nos dois lados: <nome>`.
 
@@ -135,8 +135,8 @@ intacto. Nenhum stage novo, nenhuma suíte contada nova.
 |---|---|---|---|
 | **C1** | **Conjunto mutado contido no gatilho — faltante é FAIL sem exceção** (P1.2, borda 6). Para todo harness com preflight: `(arquivos_mutados ∪ {fontes do cmd}) − targets = ∅`, comparação de strings **após** C4. O próprio harness fora do gatilho é faltante como qualquer outro | **`D017-REL1`** · `check_mutation.py` · por harness: `[FAIL] D017-REL1: <h> · conjunto mutado fora do gatilho: <paths>`; verde ⇒ contribui para a linha `[OK] D017: <h> · gatilho ⊇ conjunto mutado ∪ {harness} (<n>)`. Preflight que fracassou ⇒ `[NOTA] D017: <h> · não medida — IC-4 já o nomeou` (nunca FAIL duplicado, precedente IC-10.1 `:1195`) | **`D017-M1`** (= `M-IC8`, regressão): remover `USER_GUIDE.md` de `p51.targets` (`:79`) → FAIL nomeando `p51` e o path. **`D017-M3`**: remover `.claude/verify/regra_morta.js` de `d014.targets` (`:128`) → FAIL nomeando o path **aninhado** (pós-green: exige D1 aplicada). Sonda ii/viii. **Nasce verde 11/11** (Medição A) — os carrascos são os dois mutantes em cópia efêmera e a sonda, declarado na guarda de tautologia. *(Errata `D017-M19` · Fase 3: o ramo `[NOTA]` desta célula ganha carrasco próprio — `D017-M19`, mutante de fiação, morto em cópia sob o estado NOTA; §Erratas da Fase 3)* |
 | **C2** | **Excedente sem razão de classe é alvo fantasma — FAIL nomeando o path** (P1.3, borda 5). `fantasma = targets − (arquivos_mutados ∪ {fontes}) − ⋃ insumos[classe válida]` = ∅. Excedente **com** razão passa e é **nomeado** por classe e contagem na linha `[OK]` | **`D017-REL2`** · `check_mutation.py` · `[FAIL] D017-REL2: <h> · alvo fantasma (sem razão de classe): <paths>`; verde ⇒ `[OK] D017: <h> · … · insumos: oraculo <k>, fixture <k>, …` | **`D017-M2`** (= `M-IC9`, regressão): devolver `ui_session_v32.js` a `p51.targets` → FAIL `alvo fantasma`. **`D017-M4`**: remover a classe `fixture` dos `insumos` da `d010` → `fixtures_010_vao.js` vira fantasma. Sonda iii. **Red natural: 7 de 11 vermelhos, 58 fantasmas**, até C7 |
-| **C3** | **Razão de classe bem formada** (P1.4, bordas 1 e 7): (a) classe ∈ vocabulário fechado; (b) lista não vazia de strings; (c) todo path de `insumos` ∈ `targets` — razão sem gatilho é contradição; (d) nenhum path de `insumos` ∈ `arquivos_mutados ∪ {fontes}` — mutado **e** insumo é dupla classificação, e a mais forte vence sem declaração; (e) um path em uma só classe. Entradas inválidas ficam **fora** do cômputo de C2 (um FAIL por causa; os paths saem nomeados na causa de INS1, não repetidos como fantasma) | **`D017-INS1`** · `check_mutation.py` · `[FAIL] D017-INS1: <h> · <causa fechada>: <classe> (<paths>)` | **`D017-M5`**: classe `endurece_trigger` nos `insumos` da `d010` → (a). **`D017-M6`**: `ui_v32.js` declarado `populacao` em `d015.insumos` → (d). **`D017-M7`**: `tests_p50_core.js` declarado `oraculo` em `p51.insumos` **sem** entrar em `targets` → (c). Sonda v/vi/vii/xii/xiii. **Nasce verde por vácuo** (nenhum `insumos` existe hoje) — declarado |
-| **C4** | **Forma canônica do path antes de comparar** (D1, borda 8): (a) todo elemento de `targets`, `arquivos_mutados` e `insumos` sem `\`, sem prefixo `./` ou `/`, sem segmento `..` — violação é FAIL nomeando o conjunto e o path; **nenhuma normalização** no consumidor; (b) quando um faltante e um fantasma do mesmo harness compartilham basename, a mensagem de C1/C2 leva o diagnóstico `forma do path? mesmo basename nos dois lados: <nome> — C1 exige path relativo à raiz`; (c) `d014` e `d016` passam a emitir repo-relativo (`tests_014_mutants.js:303`, `tests_016_mutants.js:555`: `path.relative(HERE, f).split(path.sep).join("/")` ou equivalente) e C1 fecha verde neles **com** os paths aninhados | **`D017-FORM1`** · `check_mutation.py` · (a) `[FAIL] D017-FORM1: <h>/<conjunto> · path fora da forma canônica: <path>` com `<conjunto>` ∈ {`targets`, `arquivos_mutados`, `insumos`}; (b) diagnóstico anexo às linhas de REL1/REL2; (c) `--preflight` da `d014` contém `.claude/verify/regra_morta.js` e `.claude/verify/regra_morta_seletor.js`; o da `d016` contém os 10 paths com diretório, e REL1 = ∅ nos dois | **`D017-M8`**: reverter a emissão da `d014` para `path.basename(m.file)` em cópia efêmera → REL1 `regra_morta.js` + REL2 `.claude/verify/regra_morta.js` **com** o diagnóstico (b). **É o estado de hoje** — red natural medido: `d014` 6/2, `d016` 55/10. **`D017-M9`**: `.claude\verify\regra_morta.js` em `arquivos_mutados` da cópia → (a). Sonda xi/xiv. (a) nasce verde por vácuo — declarado |
+| **C3** | **Razão de classe bem formada** (P1.4, bordas 1 e 7): (a) classe ∈ vocabulário fechado; (b) lista não vazia de strings; (c) todo path de `insumos` ∈ `targets` — razão sem gatilho é contradição; (d) nenhum path de `insumos` ∈ `arquivos_mutados ∪ {fontes}` — mutado **e** insumo é dupla classificação, e a mais forte vence sem declaração; (e) um path em uma só classe. Entradas inválidas ficam **fora** do cômputo de C2 (um FAIL por causa; os paths saem nomeados na causa de INS1, não repetidos como fantasma) *(Errata `INS1(f)` · Fase 4: **(f)** `insumos` **presente e não-objeto** — lista, string, número, booleano —, a pré-condição estrutural de (a)–(e): nomeado com o **tipo** e tratado como `{}` no resto do cômputo, de modo que os excedentes que a razão malformada cobriria **saem em REL2**; `null` ≡ ausente ≡ `{}` (borda 9), medido. As causas fechadas passam a **seis**. Carrasco `D017-M20` em cópia (T022), fora da sonda — §Erratas da Fase 4)* | **`D017-INS1`** · `check_mutation.py` · `[FAIL] D017-INS1: <h> · <causa fechada>: <classe> (<paths>)` *(Errata `INS1(f)` · Fase 4: para (f) a forma é `[FAIL] D017-INS1: <h> · insumos malformado — não é objeto classe → [paths]: <tipo>` — sem classe nem paths, porque não há objeto de onde tirá-los)* | **`D017-M5`**: classe `endurece_trigger` nos `insumos` da `d010` → (a). **`D017-M6`**: `ui_v32.js` declarado `populacao` em `d015.insumos` → (d). **`D017-M7`**: `tests_p50_core.js` declarado `oraculo` em `p51.insumos` **sem** entrar em `targets` → (c). Sonda v/vi/vii/xii/xiii. **Nasce verde por vácuo** (nenhum `insumos` existe hoje) — declarado. *(Errata `INS1(f)` · Fase 4: **`D017-M20`** — `d010.insumos` trocado por `[]` em cópia, no **estado C** (T022) → (f) `list` **e** REL2 com os dois paths que a razão cobria; medido no protótipo da errata)* |
+| **C4** | **Forma canônica do path antes de comparar** (D1, borda 8): (a) todo elemento de `targets`, `arquivos_mutados` e `insumos` sem `\`, sem prefixo `./` ou `/`, sem segmento `..` — violação é FAIL nomeando o conjunto e o path; **nenhuma normalização** no consumidor; *(Errata `INS1(f)` · Fase 4: e **elemento não-string ou string vazia** — a pré-condição de "path" —, impresso por `repr` quando não-string e cru quando vazio (medido: a linha termina em `: ` sem sujeito — candidata **de forma** no relatório final, não conserto); `fontes` (o token do `cmd`, PP-9) segue **fora** de FORM1, como a lista dos três conjuntos diz. Carrasco `D017-M21` em cópia (T022))* (b) quando um faltante e um fantasma do mesmo harness compartilham basename, a mensagem de C1/C2 leva o diagnóstico `forma do path? mesmo basename nos dois lados: <nome> — C1 exige path relativo à raiz`; (c) `d014` e `d016` passam a emitir repo-relativo (`tests_014_mutants.js:303`, `tests_016_mutants.js:555`: `path.relative(HERE, f).split(path.sep).join("/")` ou equivalente) e C1 fecha verde neles **com** os paths aninhados | **`D017-FORM1`** · `check_mutation.py` · (a) `[FAIL] D017-FORM1: <h>/<conjunto> · path fora da forma canônica: <path>` com `<conjunto>` ∈ {`targets`, `arquivos_mutados`, `insumos`}; (b) diagnóstico anexo às linhas de REL1/REL2; (c) `--preflight` da `d014` contém `.claude/verify/regra_morta.js` e `.claude/verify/regra_morta_seletor.js`; o da `d016` contém os 10 paths com diretório, e REL1 = ∅ nos dois | **`D017-M8`**: reverter a emissão da `d014` para `path.basename(m.file)` em cópia efêmera → REL1 `regra_morta.js` + REL2 `.claude/verify/regra_morta.js` **com** o diagnóstico (b). **É o estado de hoje** — red natural medido: `d014` 6/2, `d016` 55/10. **`D017-M9`**: `.claude\verify\regra_morta.js` em `arquivos_mutados` da cópia → (a). Sonda xi/xiv. (a) nasce verde por vácuo — declarado. *(Errata `INS1(f)` · Fase 4: **`D017-M21`** — `7` e `""` acrescentados a `d010.targets` em cópia, no **estado C** (T022) → duas linhas FORM1 em `d010/targets`, **nenhum** `[OK] D017: d010`, **nenhum** REL2 da `d010`; medido)* |
 | **C5** | **`core` sem preflight: dívida com credor, nunca `[OK]`, nunca silêncio** (P1.7, borda 4). Para todo nome em `IC_SEM_PREFLIGHT` (`:119`) a relação sai como não medida; a lista é fechada por construção — harness novo sem `preflight: true` já reprova IC-4 (`:283-287` → `:343`). `tests_core_mutants.js` **não é tocado** | **`D017-CORE1`** · `check_mutation.py` · `[DÍVIDA] core: relação gatilho × conjunto mutado NÃO MEDIDA — sem preflight (credor: EA-44)`, impressa **no bloco da 017**; a linha `[DÍVIDA] core: sem preflight declarado …` de T8 (`:337-338`) permanece **byte-idêntica** no bloco da 013 — são duas consequências da mesma causa, em dois blocos, e a rota aditiva evita amendar um literal normativo da 013 (`spec.md:38`) que esta demanda não reabre; nenhuma linha `[OK] D017: core` | **`D017-M14`**: julgador devolve `ok` para conjunto mutado `None` → sonda ix. O estado da árvore **alcança** a linha (o `core` existe); o estado "core como OK" só é alcançável por mutante de instrumento — declarado |
 | **C6** | **O julgador não mente — sonda em processo com contagem pinada em dado** (D5). `mut_relacao(...)` é função **pura** (sem I/O; recebe `targets`, `insumos`, `arquivos_mutados` ou `None`, fontes do harness; devolve `{estado, faltante, fantasma, insumos_ok, problemas, forma}`), exercitada sobre **15 cenários sintéticos** (§Comportamento) antes da árvore real; cada veredito comparado ao esperado; `len(cenários)` comparado a `mutation_map.json → _meta.sonda_relacao.total` | **`D017-SONDA1`** · `check_mutation.py` + `mutation_map.json` · `[OK] D017-SONDA1: mut_relacao discrimina nos 15 cenários da sonda (pinado: _meta.sonda_relacao.total)`; divergência ⇒ `[FAIL] D017-SONDA1: cenário <n> · esperado … · obtido …`; `total ≠ pinado` ⇒ FAIL nomeando as duas contagens | **`D017-M10`** ignora `insumos` → iv/xv · **`D017-M11`** fantasma vira nota → iii · **`D017-M12`** aceita qualquer string como classe → v · **`D017-M13`** compara por basename → xi · **`D017-M15`** não exige o harness no gatilho → viii · **`D017-M16`** não vê dupla classificação → vi · **`D017-M18`** sonda encurtada (um cenário a menos) → `14 ≠ 15`. **`D017-M17`** (fiação: julgador correto que o laço não consome / contador não sobe) **sobrevive à sonda** — declarado em `dividas_declaradas`, morre por `D017-M2` em cópia efêmera (precedente `M-IC19`). *(Errata `D017-M19` · Fase 3: `D017-M19` — o ramo `[NOTA]` da fiação — também sobrevive à sonda por desenho e morre em cópia sob o estado NOTA; mesma família de `M17` em `dividas_declaradas`)* |
 | **C7** | **As 58 razões migram para `insumos` nesta demanda — o vermelho de C2 não nasce crônico** (P1.3; `EA-5` como custo a evitar). Sete harnesses recebem a chave (Medição B, tabela em §Contratos); `p50`/`p51`/`p52`/`d014vis` não recebem nada; as `_trilha`s **não são reescritas** (R2 §5) — `d009` (`:41`, "precedente p52" é falsa analogia) e `d016` (`:246`, `:1287` → `:1333`) ganham **nota datada** de uma linha | **`D017-REL2` verde nos 11**, **`D017-INS1` verde nos 11**, com a linha `[OK] D017: <h> · … · insumos: …` nomeando classe e contagem em 7 harnesses e sem sufixo nos 4 de identidade; `insumos` do `d016` com **44** `fixture` derivadas de `git ls-files .claude/verify/fixtures_016/` menos as duas mutadas (nunca digitadas — precedente T060 da 016) | **`D017-M4`** (acima) é o carrasco da migração: retirar uma classe migrada reacende C2. A segunda cobrança do refinamento (fantasma que passa) é `D017-M2` |
@@ -145,7 +145,7 @@ intacto. Nenhum stage novo, nenhuma suíte contada nova.
 
 **Nascimento de gate (R10)**: **positivo** = C7 (11/11 verdes com insumos
 nomeados) e sonda i/iv/x/xv; **negativo** = C2 no estado de hoje (58 fantasmas
-em 7 harnesses), C4(b) no estado de hoje (`d014`/`d016`), `D017-M1`…`M7` *(e `D017-M19` sob o estado NOTA — Errata `D017-M19` · Fase 3)*;
+em 7 harnesses), C4(b) no estado de hoje (`d014`/`d016`), `D017-M1`…`M7` *(e `D017-M19` sob o estado NOTA — Errata `D017-M19` · Fase 3)* *(e `D017-M20`/`M21` — Errata `INS1(f)` · Fase 4; `M21`, elemento vazio e não-string, é adversarial da mesma família de `M9`)*;
 **adversarial** = `D017-M9` (barra invertida), sonda v (classe inventada), vi
 (dupla classificação), vii (razão sem gatilho), xi (basename × repo-relativo);
 **regressão** = `M-IC8`/`M-IC9` re-mortos (C8), IC-1/2/4/5/9/10 com vereditos
@@ -164,8 +164,8 @@ alcançável em que a alínea falha? Onde a resposta é "só por mutante", está
 |---|---|---|---|
 | `D017-REL1` | **verde 11/11** (semântico) | **Sim, em cópia**: `D017-M1` (hoje) e `D017-M3` (pós-green). E o estado real de `d014`/`d016` sob a comparação literal **é** um faltante — falso por forma, o que C4 diagnostica | Carrasco em cópia efêmera + sonda ii/viii; a árvore não tem faltante real — dito, não maquiado |
 | `D017-REL2` | **vermelho 7/11** | Sim — é o red natural (58) | Fecha por C7, nunca por afrouxar |
-| `D017-INS1` (a)–(e) | **verde por vácuo** (nenhum `insumos` hoje) | Só por mutante: `M5`/`M6`/`M7` em cópia e sonda v/vi/vii/xii/xiii | Discriminante é **exclusivamente** sonda + mutantes; nenhum estado real de hoje a reprova — declarado |
-| `D017-FORM1` (a) | verde por vácuo | Só por mutante: `M9`, sonda xiv | Idem; a razão de existir é o Windows (`path.relative` com `\`), que o CI nunca vê |
+| `D017-INS1` (a)–(e) *(Errata `INS1(f)` · Fase 4: (a)–**(f)**)* | **verde por vácuo** (nenhum `insumos` hoje) | Só por mutante: `M5`/`M6`/`M7` em cópia e sonda v/vi/vii/xii/xiii *(Errata `INS1(f)` · Fase 4: (f) só por `M20` em cópia, T022 — a sonda **não** a vê: cenário novo moveria o pin e seria segunda edição do julgador)* | Discriminante é **exclusivamente** sonda + mutantes; nenhum estado real de hoje a reprova — declarado *(idem para (f): carrasco `M20`, one-shot, credor `EA-42`)* |
+| `D017-FORM1` (a) | verde por vácuo | Só por mutante: `M9`, sonda xiv *(Errata `INS1(f)` · Fase 4: + `M21` em cópia para elemento não-string/vazio, T022 — também fora da sonda)* | Idem; a razão de existir é o Windows (`path.relative` com `\`), que o CI nunca vê |
 | `D017-FORM1` (b)(c) | **vermelho hoje** (`d014` 6/2, `d016` 55/10) | Sim — `D017-M8` é o estado atual | Fecha pela migração D1 |
 | `D017-CORE1` | linha impressa hoje | A linha é alcançada pela árvore; a **falha** ("core como OK") só por mutante: `M14`, sonda ix | Lista fechada por construção (IC-4 `:283-287`, `:343`) — não há segundo harness sem preflight possível |
 | `D017-SONDA1` | verde | Sim — qualquer `M10`…`M16`, `M18` | `M17` (fiação) declarado sobrevivente da sonda, morto por `M2` em cópia |
@@ -189,7 +189,7 @@ externo continua sendo o `--preflight` que IC-4 já invocou.
 | Faltante | `[FAIL] D017-REL1: <h> · conjunto mutado fora do gatilho: <paths>` |
 | Fantasma | `[FAIL] D017-REL2: <h> · alvo fantasma (sem razão de classe): <paths>` |
 | Faltante e fantasma com mesmo basename | as duas linhas acima + ` [forma do path? mesmo basename nos dois lados: <nome> — C1 exige path relativo à raiz]` |
-| `insumos` malformado | `[FAIL] D017-INS1: <h> · <causa fechada>: <classe> (<paths>)` — os paths dessa entrada **não** reaparecem em REL2 |
+| `insumos` malformado | `[FAIL] D017-INS1: <h> · <causa fechada>: <classe> (<paths>)` — os paths dessa entrada **não** reaparecem em REL2 *(Errata `INS1(f)` · Fase 4: esta linha é a das causas (a)–(e); para **(f)** — `insumos` não-objeto — a linha é `[FAIL] D017-INS1: <h> · insumos malformado — não é objeto classe → [paths]: <tipo>` e os excedentes que a razão cobriria **reaparecem** em REL2, porque não há razão válida a subtrair)* |
 | Path fora da forma | `[FAIL] D017-FORM1: <h>/<conjunto> · path fora da forma canônica: <path>` — o path **não** entra na comparação (evita cascata) |
 | `core` | `[DÍVIDA] core: relação gatilho × conjunto mutado NÃO MEDIDA — sem preflight (credor: EA-44)` |
 | Preflight fracassou (IC-4 já FAIL) | `[NOTA] D017: <h> · não medida — preflight fracassou e IC-4 já o nomeou` *(Errata `D017-M19` · Fase 3: carrasco `D017-M19`; o prefixo `[NOTA] D017: <h> · não medida` é o que a prova de morte mede)* |
@@ -227,7 +227,7 @@ externo continua sendo o `--preflight` que IC-4 já invocou.
 | 6 | mutado fora | C1 |
 | 7 | razão coletiva | D2/C3: uma classe, n membros |
 | 8 | forma do path | D1/C4 |
-| 9 | identidade | `insumos` ausente ≡ `{}`; nada muda para os quatro |
+| 9 | identidade | `insumos` ausente ≡ `{}`; nada muda para os quatro *(Errata `INS1(f)` · Fase 4: `null` ≡ ausente — medido; `[]`, `""`, número **não** são identidade — são (f), nomeados com o tipo)* |
 | 10 | mutante de worktree efêmera sobre `PROTECTED` (`D011-M6`/`M8`, `D015-M16`) | fora do conjunto mutado e fora do gatilho; a raia é da matriz. Nenhum path protegido entra em `targets` por esta demanda |
 | 11 | `receipts` | fora da relação; o bloco não os lê |
 | 12 | gatilho incompleto (`build_v32_html.py` fora de `p50`…) | **fora** — `EA-3` (D3) |
@@ -275,7 +275,9 @@ Migração nesta demanda: `d014`, `d016` (D1).
 ```
 
 - `insumos`: objeto `classe → [paths]`; classes do §Vocabulário fechado; regras
-  (a)–(e) de C3; ausente ≡ `{}`. Paths na forma de D1.
+  (a)–(e) de C3; ausente ≡ `{}`. Paths na forma de D1. *(Errata `INS1(f)` ·
+  Fase 4: regras (a)–**(f)**; valor **presente** que não é objeto é (f), nomeado
+  com o tipo, nunca coagido em silêncio; `null` ≡ ausente.)*
 - `_meta.sonda_relacao`: `{ "total": 15, "descricao": "<o que pina e por quê; ids
   i–xv; acréscimo só por errata da 017>" }` — o pin da contagem de C6 (R10 §3:
   contagem em registro, não em prosa nem no corpo do gate).
@@ -318,7 +320,7 @@ laço — é por isso que `D017-M17` existe e é declarado.
 | `tests_016_mutants.js` | `:555` → emissão repo-relativa (D1/C4 c) | `:430` | `d016` · local |
 | `specs/013-integridade-da-campanha/spec.md` | erratas `IC-6` e `C1` (C9) | `:389` | nenhuma |
 | `.claude/BACKLOG.md` | notas `EA-3`/`EA-44`; achado `ic_estatico`; correção `:441-442` (C9) | `:18` | nenhuma |
-| `.claude/verify/mutation-matrix.json` | `dividas_declaradas`: `D017-M17` (fiação, carrasco `D017-M2` em cópia) e a não re-execução da família de árvore (credor `EA-42`) *(Errata `D017-M19` · Fase 3: mais `D017-M19`, fiação, carrasco em cópia sob o estado NOTA — mesma família de `M17`)* | `:266` | nenhuma |
+| `.claude/verify/mutation-matrix.json` | `dividas_declaradas`: `D017-M17` (fiação, carrasco `D017-M2` em cópia) e a não re-execução da família de árvore (credor `EA-42`) *(Errata `D017-M19` · Fase 3: mais `D017-M19`, fiação, carrasco em cópia sob o estado NOTA — mesma família de `M17`)* *(Errata `INS1(f)` · Fase 4: a família one-shot de árvore ganha `D017-M20`/`M21`, mortos em cópia na W2 — T022)* | `:266` | nenhuma |
 | `specs/017-semantica-do-gatilho/*` | esta spec, `plan.md`, `tasks.md`, `red-017.md`, `spec-validate.md`, `relatorio-final.md` | novos — arquivo rastreado sem pin é FAIL do `baseline` | nenhuma |
 
 **Não mudam**: `tests_core_mutants.js` (T8, `EA-44`); os oito harnesses de raiz e
@@ -378,6 +380,7 @@ Identificação pelo **objeto** amendado, no precedente da 013 ("id do gap, nunc
 6. **Não re-execução da família de árvore** (`D017-M1`…`M9`): credor `EA-42`;
    a sonda (C6) é a metade que roda sempre. *(Errata `D017-M19` · Fase 3: vale
    também para `D017-M19` e para o estado NOTA que o alimenta — one-shot em cópia.)*
+   *(Errata `INS1(f)` · Fase 4: e para `D017-M20`/`M21`, mortos em cópia na W2.)*
 
 ## Cross-check (obrigatório)
 
@@ -634,3 +637,125 @@ e a frase de §Tipagem auditável (`:79-82`) que o cita recebe a mesma nota.
 Nenhuma tarefa, dono, tipo ou wave muda: o `tasks.md` já estava do lado certo.
 
 **Classe**: `spec-errada` (um bullet e uma célula) — processo; nenhuma asserção muda.
+
+## Erratas da Fase 4 (2026-09-06)
+
+> Escrita pelo `tech-lead` **depois do red** — commit `adb883f` (`R2` em
+> `985c386`, `red.status: proven` em `46a812d`) — a partir de uma candidata que o
+> `qa-engineer` devolveu em [red-017.md](red-017.md) §4 itens 6–7 e nas
+> DEPENDÊNCIAS de T010. Diferente das duas da Fase 3, **esta alcança um gate que
+> já existe e está commitado**: não muda um byte de `check_mutation.py` nem de
+> `mutation_map.json`; a spec alcança o que o red provou. Linhas citadas na
+> numeração de `46a812d` para esta spec e o `tasks.md` (byte-idênticos desde
+> `759752c` — `git diff --stat` vazio, medido) e de `adb883f` para
+> `check_mutation.py` (idêntico em `46a812d`) — todas anteriores a esta seção
+> existir. **Tudo o que se afirma sobre o instrumento foi executado**, em clone
+> efêmero de `46a812d` com `origin/develop` pinado em `9d617d0` e
+> `MUTATION_DEFER_MISSING=1`, um commit efêmero por estado, `git reset --hard`
+> entre eles; o clone terminou limpo em `46a812d`.
+>
+> **Quem decidiu**: o orquestrador, na Fase 4, sob a autoridade delegada de
+> 2026-08-29 — o `qa-engineer` ofereceu **duas rotas** (errata aditiva ou retirar a
+> sexta causa do gate) e o orquestrador **escolheu a errata**; a razão está escrita
+> abaixo para poder ser cobrada. O `tech-lead` não leu o chat e não afirma mais do
+> que isso. **Esta errata não pede ratificação do proprietário** pelos quatro
+> testes de sempre: nenhuma asserção enfraquece (uma causa a mais, um elemento a
+> mais reprovado — só fortalece), nenhuma boundary se move, nenhum veredito de gate
+> alheio muda, e o gate **não é tocado** — se a leitura do proprietário for outra,
+> reverter o commit desta seção é barato: **nenhuma redação original foi apagada**
+> (R2 §5); cada ponto tocado leva nota inline `*(Errata \`INS1(f)\` · Fase 4)*`.
+>
+> **O que não é reaberto**: D1–D5; C1, C2, C5–C9 e as asserções de REL1/REL2/
+> CORE1/SONDA1; os 15 cenários da sonda e `_meta.sonda_relacao.total = 15`
+> (`M20`/`M21` **não** são cenários — abaixo); `IC-*`; as erratas a aplicar na 013
+> (C9); as duas Erratas da Fase 3; P1–P8 do plano; PP-1…PP-11; o commit red
+> `adb883f` e o `red-017.md` (fechado e repinado — não se reabre; o que nasce
+> aqui é registrado adiante, como `M3`/`M4`/`M8`). Identificação pelo **objeto**
+> amendado: **Errata `INS1(f)`** — a sexta causa de `D017-INS1`, e, na mesma
+> errata porque é a mesma família (pré-condição estrutural antes das causas
+> fechadas), a extensão de `FORM1(a)`.
+
+### Errata `INS1(f)` — a sexta causa de `D017-INS1` e a extensão de `FORM1(a)`
+
+**O que dizia.** C3 (`:138`) fecha `D017-INS1` em **cinco** causas, (a)–(e), todas
+pressupondo que `insumos` **é** um objeto `classe → [paths]`; §Vocabulário fechado
+(`:116-118`) lista os cinco tokens de saída; §Contratos C2 (`:277-278`) diz
+"objeto …; regras (a)–(e); ausente ≡ `{}`" e nada sobre valor presente que não é
+objeto; §Comportamento (`:192`) dá uma só forma de linha para "`insumos`
+malformado", com `<classe> (<paths>)`. C4(a) (`:139`) fecha `FORM1(a)` em quatro
+violações de forma — `\`, `./`, `/` inicial, `..` — sobre "todo elemento", sem
+dizer o que é um elemento que **não é string** ou é a **string vazia**.
+
+**Fato medido — o gate que nasceu no red** (`check_mutation.py`, `adb883f`):
+`mut_relacao` emite uma **sexta** causa em `:565-570` — `insumos malformado — não
+é objeto classe → [paths]: <tipo>` — quando `insumos` está presente e não é
+`dict`, e então o trata como `{}` (o comentário do próprio gate, `:566-567`,
+declara-a "fora das cinco causas fechadas de C3"); `d017_forma_ok` (`:501-509`)
+devolve `False` para não-string e para `""`, e `_canonicos` (`:548-556`) imprime
+não-string por `repr` e string crua. `null` cai em `ins = {} if insumos is None`
+(`:564`) — identidade. O `red-017.md` §4 itens 6–7 registrou os dois e ofereceu as
+rotas. Executado em cópia (harness `d010`; estado A = 9 problemas, exit 1):
+
+| Entrada em cópia | O que o instrumento imprimiu (linhas da `d010`/`p50`) | fecho 017 |
+|---|---|---|
+| A — referência | `[FAIL] D017-REL2: d010 · alvo fantasma (sem razão de classe): fixtures_010_vao.js, tests_010_vao.js` | 9 |
+| `d010.insumos = []` | `[FAIL] D017-INS1: d010 · insumos malformado — não é objeto classe → [paths]: list` **e** a REL2 de A | 10 |
+| `d010.insumos = "oraculo"` | idem, com `str` | 10 |
+| `d010.insumos = null` | **igual a A** — identidade (borda 9) | 9 |
+| `d010.targets + [7, ""]` | `[FAIL] D017-FORM1: d010/targets · path fora da forma canônica: 7` · `[FAIL] D017-FORM1: d010/targets · path fora da forma canônica: ` (vazio: **nada** após `: `) · a REL2 de A | 11 |
+| `d010` com `insumos` válidos (C7 só nela — o estado C da `d010`) | `[OK]   D017: d010 · gatilho ⊇ conjunto mutado ∪ {harness} (3) · insumos: oraculo 1, fixture 1` | 8 |
+| estado C da `d010` + `insumos = []` — **`D017-M20`** | INS1 `list` **e** `[FAIL] D017-REL2: d010 · alvo fantasma (sem razão de classe): fixtures_010_vao.js, tests_010_vao.js` — os dois paths que a razão cobria voltam a fantasma | 10 (= 8 + 2) |
+| estado C da `d010` + `targets + [7, ""]` — **`D017-M21`** | as duas FORM1 acima; **nenhum** REL2; **nenhum** `[OK] D017: d010` | 10 (= 8 + 2) |
+| `p50.insumos = []` (harness em **identidade**) + `d010.insumos = []` — gate íntegro | `[FAIL] D017-INS1: p50 · insumos malformado — não é objeto classe → [paths]: list` — nomeado | 11 |
+| **contrafactual — a rota de remoção** (sexta causa retirada em cópia; não-objeto coagido a `{}` em silêncio) + os mesmos `[]` | `[OK]   D017: p50 · gatilho ⊇ conjunto mutado ∪ {harness} (5)` — **passa calado**; `d010`: só `[FAIL] D017-REL2: d010 · alvo fantasma (sem razão de classe): …` — a razão **existe** e está malformada: **causa errada** | 9 (= A) |
+
+**Por que errata, e não remoção** — a razão do orquestrador, conferida contra a
+medição, para ser cobrada:
+
+1. **Remover a sexta causa faria `insumos: []` passar calado, e silêncio é FAIL
+   pela R10 §2.** Não é hipótese: a última linha da tabela é a rota de remoção
+   executada — num harness em identidade (`p50`) o `[]` vira `[OK]`, e num
+   harness com excedentes (`d010`) a linha que sai atribui a falha a "sem razão de
+   classe" quando a razão foi escrita e está quebrada — o instrumento dizendo
+   outra coisa do que aconteceu, a família de `E016-5`/`EA-31`, dentro da demanda
+   que existe para instrumentar registro contra execução.
+2. **Ajustar o gate para caber na spec seria ajustar o objeto à régua — o inverso
+   do que a R10 §1 manda.** A régua é a spec; quando a spec descreve menos do que
+   o gate corretamente mede, quem se corrige é a régua, por errata com id, e o
+   gate fica. É a direção permitida de R10 §1 (fortalecer), a mesma das Erratas
+   `D017-M19` e `_meta.sonda_relacao`.
+3. **A alternativa "nem errata nem remoção"** — deixar a causa no gate e fora da
+   spec — é a **observação sem id** que a Errata `D017-M19` já recusou: o
+   `spec-validate` extrai exigências da spec (`SKILL.md` passo 1) e classificaria a
+   sexta linha do executável como `implementação-divergente`, a classe mais cara
+   ("divergência pesa mais que ausência", passo 4), sem que nada estivesse errado.
+
+**O que passa a valer.**
+
+| Campo | Registro |
+|---|---|
+| **C3 (f)** — sexta causa fechada de `D017-INS1` | `insumos` **presente e não-objeto** (lista, string, número, booleano): FAIL nomeando o **tipo** — `[FAIL] D017-INS1: <h> · insumos malformado — não é objeto classe → [paths]: <tipo>` — sem `<classe> (<paths>)`, porque não há objeto de onde tirá-los; no resto do cômputo o valor é `{}`, logo os excedentes que a razão cobriria **saem em REL2** (é o esperado: não há razão válida a subtrair). É a **pré-condição estrutural** de (a)–(e). As causas fechadas de INS1 são **seis**; os seis tokens estão em §Vocabulário fechado |
+| **Identidade** (borda 9, C2) | `insumos` **ausente** ≡ `null` ≡ `{}` — medido; nenhum dos quatro harnesses de identidade muda. `[]`, `""`, `0`, `false` **não** são identidade: são (f) |
+| **C4(a)** — extensão de `FORM1(a)` | Elemento **não-string** ou **string vazia** em `targets`, `arquivos_mutados` ou `insumos` é `path fora da forma canônica` — nomeado por `repr` quando não-string (`7`) e cru quando vazio — e fica **fora** da comparação como os quatro casos originais. `fontes` (o token do `cmd`, PP-9) continua **fora** de FORM1 — a spec sempre listou só os três conjuntos, e um `cmd` com `./` cairia em REL1+REL2 com o diagnóstico de basename (red §4 item 7). **Observação de forma, medida**: para `""` a linha termina em `: ` sem sujeito (`check_mutation.py:554`, `txt = p if isinstance(p, str) else repr(p)`). A alínea **reprova e nomeia o conjunto** — R10 §2 satisfeita —; a forma vai como **candidata** ao relatório final (T042), não como conserto: consertar seria a segunda edição do julgador (escalonamento 4 do `tasks.md`), fora desta errata |
+| **`D017-M20`** — carrasco de (f) | Mutante de **árvore** sobre `mutation_map.json`, em cópia, no **estado C** (depois de T020): `d010.insumos` trocado por `[]`. **Morte** = presença de `[FAIL] D017-INS1: d010 · insumos malformado — não é objeto classe → [paths]: list` **e** de `[FAIL] D017-REL2: d010 · alvo fantasma (sem razão de classe): fixtures_010_vao.js, tests_010_vao.js`; fecho do bloco **+2** sobre o do estado C. Sob a rota de remoção só a REL2 apareceria — é exatamente o que o distingue |
+| **`D017-M21`** — carrasco da extensão de FORM1(a) | Mutante de árvore, cópia, estado C: `7` e `""` acrescentados a `d010.targets`. **Morte** = `[FAIL] D017-FORM1: d010/targets · path fora da forma canônica: 7` **e** `[FAIL] D017-FORM1: d010/targets · path fora da forma canônica: ` (duas linhas, `grep -c '^\[FAIL\] D017-FORM1: d010/targets'` = 2), `grep -c '^\[OK\] *D017: d010'` = 0, **nenhuma** REL2 da `d010`; fecho **+2** |
+| **Onde vivem** | **T022** (W2, `qa-engineer`, em cópia — a tarefa que já mata `M4` sobre o mapa), com a saída guardada para o **relatório final** (T042), como `M3`/`M4`/`M8`: `red-017.md` está fechado e repinado e não se reabre. `mutation-matrix.json → dividas_declaradas`, **família one-shot de árvore, ao lado de `M1…M9`** (T030 (ii)); credor `EA-42`. Ids **permanentes**, na série `D017-M<n>` |
+| **O que não é** | **Não é cenário da sonda**: `_meta.sonda_relacao.total` continua **15** — um cenário xvi exigiria editar `D017_CENARIOS` e o pin, isto é, segunda edição do julgador com red próprio (escalonamento 4); se um dia entrar, é errata desta spec **com id de cenário**, movendo o pin no mesmo commit (§Os 15 cenários). **Não muda** `mut_relacao`, PP-1…PP-11, nenhuma linha de `check_mutation.py`, nenhuma forma de linha já fixada pelo red (§4 do `red-017.md`), nem a precedência (e) > (d) > (c) entre causas por path (red §4 item 8 — forma fixada pelo executável, não critério). **Não reabre** o `red-017.md` |
+| **Classe** | `spec-errada` por **omissão** (a spec descrevia cinco causas onde o gate corretamente mede seis; "todo elemento" sem dizer o que é elemento) — **fortalecimento**; nenhuma asserção enfraquecida; o gate não muda |
+
+**Pontos tocados com nota inline** (numeração de `46a812d`, anterior a esta
+seção): §Vocabulário fechado (`:116-118`), célula de C3 — critério, gate e
+mutante (`:138`), célula de C4 — critério e mutante (`:139`), §Nascimento de gate
+(`:148`), §Guarda de tautologia — linhas de INS1 e FORM1(a) (`:167`, `:168`),
+§Comportamento (`:192`), borda 9 (`:230`), §Contratos C2 (`:277-278`),
+§Arquivos rastreados — linha da matriz (`:321`), Risco 6 (`:378-380`).
+
+**Efeito no `tasks.md`** — **consolidado no mesmo commit** (não deixado "por
+consolidar", lição da W0): T022 (`M20`/`M21` em cópia, estado C, com as linhas
+esperadas), T030 (ii) (família one-shot `M1…M9, M20, M21`), T042 (candidata de
+forma de `""`; saídas de `M20`/`M21`), §O estado do mundo (linhas de INS1 e
+FORM1(a)), §Vácuos declarados 1, §O que cada tarefa deixa medível (T022), §Onde o
+`spec-validate` vai olhar (linha C1–C6). Nada renumerado; nenhum dono, tipo ou
+wave muda. Fora desta errata e no mesmo commit, o `tasks.md` recebe **T037/T038**
+(docstring de `ex_ids_do_harness` — decisão do orquestrador, não errata desta
+spec: não há critério que a docstring viole; é C8 (iv) que ganha um patch-point).

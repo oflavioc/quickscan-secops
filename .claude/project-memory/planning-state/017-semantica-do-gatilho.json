@@ -1,6 +1,6 @@
 {
   "demanda": "017-semantica-do-gatilho",
-  "phase": "tasks",
+  "phase": "red",
   "spec_dir": "specs/017-semantica-do-gatilho",
   "branch": "feature/017-semantica-do-gatilho",
   "brief": "A palavra targets significa duas coisas incompativeis no repositorio: em mutation_map.json e o que REDISPARA a campanha; na assercao IC-6 de check_mutation.py e o que a campanha MUTA. O CONTEXT.md:214-218 carrega as duas em frases consecutivas do mesmo verbete. Generalizar o IC-6 nasce vermelho em 7 de 11 harnesses com preflight (medido pelo orquestrador no HEAD 9d617d0; o brief dizia 6, numero de segunda mao sobre arvore anterior ao merge da ea41), todos por excedentes que sao gatilhos legitimos declarados por escrito. Enquanto as duas semanticas coexistirem, qualquer instrumento dos eixos A (cobertura do mapa) e C (registro contra execucao) nasce ambiguo. Pre-condicao de EA-3, EA-28, EA-30, EA-31 e EA-42.",
@@ -20,7 +20,11 @@
     "approved_at": "2026-09-06"
   },
   "tasks": {
-    "status": "awaiting_approval",
-    "notes": "tasks.md do tech-lead: 30 tarefas em 5 waves, quase tudo SERIAL POR MEDICAO e nao por cautela. Achado da propria fase que corrigiu o plano: gen_pins.py:72-79 recusa QUALQUER pendencia fora de pins.json — planning-state e arquivo nao rastreado inclusos — e check_mutation.py:57-61 recusa porcelain sujo; logo repin interleaved com escritores paralelos e IMPOSSIVEL, e a W3 que o plano marcava [P] e necessariamente serial. Unico [P] real: T041 (product-owner, que nao escreve arquivo) com T042 (doc-writer). Tipagem confirmada linha a linha com razao, zero waiver, zero refactor. TRAVA do mutation_map.json marcada em matriz arquivo x wave x dono: QA escreve so _meta.sonda_relacao no red (W1), build-engineer escreve insumos (W2) e nao comeca antes de T013. Dez repins como tarefas amarradas ao commit anterior (R1..R10; R0 ja feito em f790a20). Monotonicidade 7->2->1->0 conferida intacta: nenhum commit interposto toca targets — pins.json, specs/** e o planning-state da 017 nao estao em targets nenhum (grep vazio). Sete defasagens do spec-validate PRE-DECLARADAS, que e o que faltou a 015 (fechou 34/36 porque o tasks.md era anterior as erratas)."
+    "status": "approved",
+    "notes": "tasks.md do tech-lead: 30 tarefas em 5 waves, quase tudo SERIAL POR MEDICAO e nao por cautela. Achado da propria fase que corrigiu o plano: gen_pins.py:72-79 recusa QUALQUER pendencia fora de pins.json — planning-state e arquivo nao rastreado inclusos — e check_mutation.py:57-61 recusa porcelain sujo; logo repin interleaved com escritores paralelos e IMPOSSIVEL, e a W3 que o plano marcava [P] e necessariamente serial. Unico [P] real: T041 (product-owner, que nao escreve arquivo) com T042 (doc-writer). Tipagem confirmada linha a linha com razao, zero waiver, zero refactor. TRAVA do mutation_map.json marcada em matriz arquivo x wave x dono: QA escreve so _meta.sonda_relacao no red (W1), build-engineer escreve insumos (W2) e nao comeca antes de T013. Dez repins como tarefas amarradas ao commit anterior (R1..R10; R0 ja feito em f790a20). Monotonicidade 7->2->1->0 conferida intacta: nenhum commit interposto toca targets — pins.json, specs/** e o planning-state da 017 nao estao em targets nenhum (grep vazio). Sete defasagens do spec-validate PRE-DECLARADAS, que e o que faltou a 015 (fechou 34/36 porque o tasks.md era anterior as erratas). APROVADO pelo usuario no chat em 2026-09-06 ('Prossiga' — aprovacao literal, R4), junto com as cinco decisoes do orquestrador sobre as dependencias devolvidas: (1) W3 SERIAL, sem fundir repins — fundir e o desvio que as demandas 008 e 015 pagaram; (2) o ramo '[NOTA] preflight fracassou' GANHA ID PROPRIO (D017-M19), por errata antes do red, contra a proposta de observacao sem id no relatorio: este repositorio tem tres achados abertos (EA-28, EA-30, EA-42) cujo conteudo inteiro e 'prova que viveu so num relatorio evaporou', e observacao sem id tem essa forma; (3) o dono de _meta.sonda_relacao vira ERRATA e nao nota — a contagem pinada tem de existir quando o gate nasce, senao o gate nao tem contra o que asserir, logo nao e desvio e sim correcao da spec; (4) planning-state commitado antes do R1; (5) sequencia da W0 aceita.",
+    "approved_at": "2026-09-06"
+  },
+  "red": {
+    "status": "in_progress"
   }
 }

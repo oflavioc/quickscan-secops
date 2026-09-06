@@ -133,19 +133,19 @@ intacto. Nenhum stage novo, nenhuma suíte contada nova.
 
 | # | Critério | Gate (id · arquivo · asserção) | Mutante previsto |
 |---|---|---|---|
-| **C1** | **Conjunto mutado contido no gatilho — faltante é FAIL sem exceção** (P1.2, borda 6). Para todo harness com preflight: `(arquivos_mutados ∪ {fontes do cmd}) − targets = ∅`, comparação de strings **após** C4. O próprio harness fora do gatilho é faltante como qualquer outro | **`D017-REL1`** · `check_mutation.py` · por harness: `[FAIL] D017-REL1: <h> · conjunto mutado fora do gatilho: <paths>`; verde ⇒ contribui para a linha `[OK] D017: <h> · gatilho ⊇ conjunto mutado ∪ {harness} (<n>)`. Preflight que fracassou ⇒ `[NOTA] D017: <h> · não medida — IC-4 já o nomeou` (nunca FAIL duplicado, precedente IC-10.1 `:1195`) | **`D017-M1`** (= `M-IC8`, regressão): remover `USER_GUIDE.md` de `p51.targets` (`:79`) → FAIL nomeando `p51` e o path. **`D017-M3`**: remover `.claude/verify/regra_morta.js` de `d014.targets` (`:128`) → FAIL nomeando o path **aninhado** (pós-green: exige D1 aplicada). Sonda ii/viii. **Nasce verde 11/11** (Medição A) — os carrascos são os dois mutantes em cópia efêmera e a sonda, declarado na guarda de tautologia |
+| **C1** | **Conjunto mutado contido no gatilho — faltante é FAIL sem exceção** (P1.2, borda 6). Para todo harness com preflight: `(arquivos_mutados ∪ {fontes do cmd}) − targets = ∅`, comparação de strings **após** C4. O próprio harness fora do gatilho é faltante como qualquer outro | **`D017-REL1`** · `check_mutation.py` · por harness: `[FAIL] D017-REL1: <h> · conjunto mutado fora do gatilho: <paths>`; verde ⇒ contribui para a linha `[OK] D017: <h> · gatilho ⊇ conjunto mutado ∪ {harness} (<n>)`. Preflight que fracassou ⇒ `[NOTA] D017: <h> · não medida — IC-4 já o nomeou` (nunca FAIL duplicado, precedente IC-10.1 `:1195`) | **`D017-M1`** (= `M-IC8`, regressão): remover `USER_GUIDE.md` de `p51.targets` (`:79`) → FAIL nomeando `p51` e o path. **`D017-M3`**: remover `.claude/verify/regra_morta.js` de `d014.targets` (`:128`) → FAIL nomeando o path **aninhado** (pós-green: exige D1 aplicada). Sonda ii/viii. **Nasce verde 11/11** (Medição A) — os carrascos são os dois mutantes em cópia efêmera e a sonda, declarado na guarda de tautologia. *(Errata `D017-M19` · Fase 3: o ramo `[NOTA]` desta célula ganha carrasco próprio — `D017-M19`, mutante de fiação, morto em cópia sob o estado NOTA; §Erratas da Fase 3)* |
 | **C2** | **Excedente sem razão de classe é alvo fantasma — FAIL nomeando o path** (P1.3, borda 5). `fantasma = targets − (arquivos_mutados ∪ {fontes}) − ⋃ insumos[classe válida]` = ∅. Excedente **com** razão passa e é **nomeado** por classe e contagem na linha `[OK]` | **`D017-REL2`** · `check_mutation.py` · `[FAIL] D017-REL2: <h> · alvo fantasma (sem razão de classe): <paths>`; verde ⇒ `[OK] D017: <h> · … · insumos: oraculo <k>, fixture <k>, …` | **`D017-M2`** (= `M-IC9`, regressão): devolver `ui_session_v32.js` a `p51.targets` → FAIL `alvo fantasma`. **`D017-M4`**: remover a classe `fixture` dos `insumos` da `d010` → `fixtures_010_vao.js` vira fantasma. Sonda iii. **Red natural: 7 de 11 vermelhos, 58 fantasmas**, até C7 |
 | **C3** | **Razão de classe bem formada** (P1.4, bordas 1 e 7): (a) classe ∈ vocabulário fechado; (b) lista não vazia de strings; (c) todo path de `insumos` ∈ `targets` — razão sem gatilho é contradição; (d) nenhum path de `insumos` ∈ `arquivos_mutados ∪ {fontes}` — mutado **e** insumo é dupla classificação, e a mais forte vence sem declaração; (e) um path em uma só classe. Entradas inválidas ficam **fora** do cômputo de C2 (um FAIL por causa; os paths saem nomeados na causa de INS1, não repetidos como fantasma) | **`D017-INS1`** · `check_mutation.py` · `[FAIL] D017-INS1: <h> · <causa fechada>: <classe> (<paths>)` | **`D017-M5`**: classe `endurece_trigger` nos `insumos` da `d010` → (a). **`D017-M6`**: `ui_v32.js` declarado `populacao` em `d015.insumos` → (d). **`D017-M7`**: `tests_p50_core.js` declarado `oraculo` em `p51.insumos` **sem** entrar em `targets` → (c). Sonda v/vi/vii/xii/xiii. **Nasce verde por vácuo** (nenhum `insumos` existe hoje) — declarado |
 | **C4** | **Forma canônica do path antes de comparar** (D1, borda 8): (a) todo elemento de `targets`, `arquivos_mutados` e `insumos` sem `\`, sem prefixo `./` ou `/`, sem segmento `..` — violação é FAIL nomeando o conjunto e o path; **nenhuma normalização** no consumidor; (b) quando um faltante e um fantasma do mesmo harness compartilham basename, a mensagem de C1/C2 leva o diagnóstico `forma do path? mesmo basename nos dois lados: <nome> — C1 exige path relativo à raiz`; (c) `d014` e `d016` passam a emitir repo-relativo (`tests_014_mutants.js:303`, `tests_016_mutants.js:555`: `path.relative(HERE, f).split(path.sep).join("/")` ou equivalente) e C1 fecha verde neles **com** os paths aninhados | **`D017-FORM1`** · `check_mutation.py` · (a) `[FAIL] D017-FORM1: <h>/<conjunto> · path fora da forma canônica: <path>` com `<conjunto>` ∈ {`targets`, `arquivos_mutados`, `insumos`}; (b) diagnóstico anexo às linhas de REL1/REL2; (c) `--preflight` da `d014` contém `.claude/verify/regra_morta.js` e `.claude/verify/regra_morta_seletor.js`; o da `d016` contém os 10 paths com diretório, e REL1 = ∅ nos dois | **`D017-M8`**: reverter a emissão da `d014` para `path.basename(m.file)` em cópia efêmera → REL1 `regra_morta.js` + REL2 `.claude/verify/regra_morta.js` **com** o diagnóstico (b). **É o estado de hoje** — red natural medido: `d014` 6/2, `d016` 55/10. **`D017-M9`**: `.claude\verify\regra_morta.js` em `arquivos_mutados` da cópia → (a). Sonda xi/xiv. (a) nasce verde por vácuo — declarado |
 | **C5** | **`core` sem preflight: dívida com credor, nunca `[OK]`, nunca silêncio** (P1.7, borda 4). Para todo nome em `IC_SEM_PREFLIGHT` (`:119`) a relação sai como não medida; a lista é fechada por construção — harness novo sem `preflight: true` já reprova IC-4 (`:283-287` → `:343`). `tests_core_mutants.js` **não é tocado** | **`D017-CORE1`** · `check_mutation.py` · `[DÍVIDA] core: relação gatilho × conjunto mutado NÃO MEDIDA — sem preflight (credor: EA-44)`, impressa **no bloco da 017**; a linha `[DÍVIDA] core: sem preflight declarado …` de T8 (`:337-338`) permanece **byte-idêntica** no bloco da 013 — são duas consequências da mesma causa, em dois blocos, e a rota aditiva evita amendar um literal normativo da 013 (`spec.md:38`) que esta demanda não reabre; nenhuma linha `[OK] D017: core` | **`D017-M14`**: julgador devolve `ok` para conjunto mutado `None` → sonda ix. O estado da árvore **alcança** a linha (o `core` existe); o estado "core como OK" só é alcançável por mutante de instrumento — declarado |
-| **C6** | **O julgador não mente — sonda em processo com contagem pinada em dado** (D5). `mut_relacao(...)` é função **pura** (sem I/O; recebe `targets`, `insumos`, `arquivos_mutados` ou `None`, fontes do harness; devolve `{estado, faltante, fantasma, insumos_ok, problemas, forma}`), exercitada sobre **15 cenários sintéticos** (§Comportamento) antes da árvore real; cada veredito comparado ao esperado; `len(cenários)` comparado a `mutation_map.json → _meta.sonda_relacao.total` | **`D017-SONDA1`** · `check_mutation.py` + `mutation_map.json` · `[OK] D017-SONDA1: mut_relacao discrimina nos 15 cenários da sonda (pinado: _meta.sonda_relacao.total)`; divergência ⇒ `[FAIL] D017-SONDA1: cenário <n> · esperado … · obtido …`; `total ≠ pinado` ⇒ FAIL nomeando as duas contagens | **`D017-M10`** ignora `insumos` → iv/xv · **`D017-M11`** fantasma vira nota → iii · **`D017-M12`** aceita qualquer string como classe → v · **`D017-M13`** compara por basename → xi · **`D017-M15`** não exige o harness no gatilho → viii · **`D017-M16`** não vê dupla classificação → vi · **`D017-M18`** sonda encurtada (um cenário a menos) → `14 ≠ 15`. **`D017-M17`** (fiação: julgador correto que o laço não consome / contador não sobe) **sobrevive à sonda** — declarado em `dividas_declaradas`, morre por `D017-M2` em cópia efêmera (precedente `M-IC19`) |
+| **C6** | **O julgador não mente — sonda em processo com contagem pinada em dado** (D5). `mut_relacao(...)` é função **pura** (sem I/O; recebe `targets`, `insumos`, `arquivos_mutados` ou `None`, fontes do harness; devolve `{estado, faltante, fantasma, insumos_ok, problemas, forma}`), exercitada sobre **15 cenários sintéticos** (§Comportamento) antes da árvore real; cada veredito comparado ao esperado; `len(cenários)` comparado a `mutation_map.json → _meta.sonda_relacao.total` | **`D017-SONDA1`** · `check_mutation.py` + `mutation_map.json` · `[OK] D017-SONDA1: mut_relacao discrimina nos 15 cenários da sonda (pinado: _meta.sonda_relacao.total)`; divergência ⇒ `[FAIL] D017-SONDA1: cenário <n> · esperado … · obtido …`; `total ≠ pinado` ⇒ FAIL nomeando as duas contagens | **`D017-M10`** ignora `insumos` → iv/xv · **`D017-M11`** fantasma vira nota → iii · **`D017-M12`** aceita qualquer string como classe → v · **`D017-M13`** compara por basename → xi · **`D017-M15`** não exige o harness no gatilho → viii · **`D017-M16`** não vê dupla classificação → vi · **`D017-M18`** sonda encurtada (um cenário a menos) → `14 ≠ 15`. **`D017-M17`** (fiação: julgador correto que o laço não consome / contador não sobe) **sobrevive à sonda** — declarado em `dividas_declaradas`, morre por `D017-M2` em cópia efêmera (precedente `M-IC19`). *(Errata `D017-M19` · Fase 3: `D017-M19` — o ramo `[NOTA]` da fiação — também sobrevive à sonda por desenho e morre em cópia sob o estado NOTA; mesma família de `M17` em `dividas_declaradas`)* |
 | **C7** | **As 58 razões migram para `insumos` nesta demanda — o vermelho de C2 não nasce crônico** (P1.3; `EA-5` como custo a evitar). Sete harnesses recebem a chave (Medição B, tabela em §Contratos); `p50`/`p51`/`p52`/`d014vis` não recebem nada; as `_trilha`s **não são reescritas** (R2 §5) — `d009` (`:41`, "precedente p52" é falsa analogia) e `d016` (`:246`, `:1287` → `:1333`) ganham **nota datada** de uma linha | **`D017-REL2` verde nos 11**, **`D017-INS1` verde nos 11**, com a linha `[OK] D017: <h> · … · insumos: …` nomeando classe e contagem em 7 harnesses e sem sufixo nos 4 de identidade; `insumos` do `d016` com **44** `fixture` derivadas de `git ls-files .claude/verify/fixtures_016/` menos as duas mutadas (nunca digitadas — precedente T060 da 016) | **`D017-M4`** (acima) é o carrasco da migração: retirar uma classe migrada reacende C2. A segunda cobrança do refinamento (fantasma que passa) é `D017-M2` |
 | **C8** | **`IC-6` substituído sem enfraquecimento** (D4): o bloco `:395-412` sai; `M-IC8`/`M-IC9` são re-executados contra o gate novo e morrem (`D017-M1`/`M2`); `IC-5` intacto (`:414-461`); cabeçalho `:64-67` e comentário `:376-379` atualizados; id `IC-6` reservado; nenhuma outra asserção de `check_mutation.py` muda de veredito | `red-017.md` (tabela dos dois, com saída) + regressão executada: `python .claude/verify/check_mutation.py` no HEAD final imprime `IC-1`, `IC-2`, `IC-4`, `IC-5`, `IC-9`, `IC-10` com os **mesmos vereditos** do HEAD `abdddd0` (0 problemas na seção de integridade) e **nenhuma** linha `IC-6` | `D017-M1`/`M2` **são** a prova — os mesmos dois estados que a 013 usou como red natural, agora contra `D017-REL1`/`REL2` |
 | **C9** | **Erratas aditivas na spec da 013 e registros** (P1.12; R2 §5): errata `IC-6` (três pontos: `:116`, `:194`, `:231-232`) e errata `C1` (`:205-226`), na forma da §Erratas da própria 013 (`:462-495`: nota inline em cada ponto + seção única), **sem apagar redação original**; `BACKLOG.md`: nota datada em `EA-3` (o que a 017 deixou pronto) e em `EA-44` (credor nomeado pela linha do stage); achado novo para os dois pontos cegos de `ic_estatico` (`check_mutation.py:171-182`; refinamento §Divergências 4); correção da citação de `EA-44` (`spec.md:441-442` → `:440-441`, divergência 5) | `spec-validate` da Fase 6 — leitura: cada ponto tocado cita `(Errata IC-6 · demanda 017)` / `(Errata C1 · demanda 017)` e aponta para esta spec; `specs/013-…/spec.md` e `BACKLOG.md` são pinados (`pins.json:389`, `:18`) — `gen_pins.py` no mesmo PR, commit separado | — (tipo `doc`, R3; sem red) |
 
 **Nascimento de gate (R10)**: **positivo** = C7 (11/11 verdes com insumos
 nomeados) e sonda i/iv/x/xv; **negativo** = C2 no estado de hoje (58 fantasmas
-em 7 harnesses), C4(b) no estado de hoje (`d014`/`d016`), `D017-M1`…`M7`;
+em 7 harnesses), C4(b) no estado de hoje (`d014`/`d016`), `D017-M1`…`M7` *(e `D017-M19` sob o estado NOTA — Errata `D017-M19` · Fase 3)*;
 **adversarial** = `D017-M9` (barra invertida), sonda v (classe inventada), vi
 (dupla classificação), vii (razão sem gatilho), xi (basename × repo-relativo);
 **regressão** = `M-IC8`/`M-IC9` re-mortos (C8), IC-1/2/4/5/9/10 com vereditos
@@ -169,6 +169,7 @@ alcançável em que a alínea falha? Onde a resposta é "só por mutante", está
 | `D017-FORM1` (b)(c) | **vermelho hoje** (`d014` 6/2, `d016` 55/10) | Sim — `D017-M8` é o estado atual | Fecha pela migração D1 |
 | `D017-CORE1` | linha impressa hoje | A linha é alcançada pela árvore; a **falha** ("core como OK") só por mutante: `M14`, sonda ix | Lista fechada por construção (IC-4 `:283-287`, `:343`) — não há segundo harness sem preflight possível |
 | `D017-SONDA1` | verde | Sim — qualquer `M10`…`M16`, `M18` | `M17` (fiação) declarado sobrevivente da sonda, morto por `M2` em cópia |
+| C1 · ramo `[NOTA]` (preflight fracassou) *(Errata `D017-M19` · Fase 3)* | **não alcançado** na árvore (11/11 preflights válidos, Medição A) | **Sim** — por ambiente (`have("node")` falso, `check_mutation.py:288-289`, sem mutação alguma) e por estado em cópia (estado NOTA: stdout vazio no `--preflight`, causa `:310-312`, medido); a **falha** da alínea (linha ausente · `[OK]` falso · `[FAIL] D017-*` duplicado) só por mutante: `D017-M19` | Não é cláusula defensiva: dez retornos `None` em `ic_preflight` (`:285-325`) alcançam o ramo. Carrasco `M19` × estado NOTA em cópia, one-shot (credor `EA-42`); fora da sonda porque a distinção é do laço, não de `mut_relacao` |
 
 ## Comportamento especificado
 
@@ -191,7 +192,7 @@ externo continua sendo o `--preflight` que IC-4 já invocou.
 | `insumos` malformado | `[FAIL] D017-INS1: <h> · <causa fechada>: <classe> (<paths>)` — os paths dessa entrada **não** reaparecem em REL2 |
 | Path fora da forma | `[FAIL] D017-FORM1: <h>/<conjunto> · path fora da forma canônica: <path>` — o path **não** entra na comparação (evita cascata) |
 | `core` | `[DÍVIDA] core: relação gatilho × conjunto mutado NÃO MEDIDA — sem preflight (credor: EA-44)` |
-| Preflight fracassou (IC-4 já FAIL) | `[NOTA] D017: <h> · não medida — preflight fracassou e IC-4 já o nomeou` |
+| Preflight fracassou (IC-4 já FAIL) | `[NOTA] D017: <h> · não medida — preflight fracassou e IC-4 já o nomeou` *(Errata `D017-M19` · Fase 3: carrasco `D017-M19`; o prefixo `[NOTA] D017: <h> · não medida` é o que a prova de morte mede)* |
 | Sonda | `[OK] D017-SONDA1: mut_relacao discrimina nos 15 cenários …` ou `[FAIL] D017-SONDA1: cenário <n> · …` |
 
 ### Os 15 cenários da sonda (ids permanentes; acréscimo é errata com id, e move `_meta.sonda_relacao.total`)
@@ -282,6 +283,10 @@ Migração nesta demanda: `d014`, `d016` (D1).
   `preflight` e `receipts`); a chave `targets` **não** é renomeada (P1.13).
 - Dono: `build-engineer` (precedente C2 da 013 e T060 da 016 para o mapa);
   consumidor: `check_mutation.py`. Pinado (`pins.json:267`).
+  *(Errata `_meta.sonda_relacao` · Fase 3: o dono acima vale para `insumos`, a
+  frase em `_meta.descricao` e as notas em `_trilha` — W2. **`_meta.sonda_relacao`
+  nasce no commit red, pelo `qa-engineer`**, no mesmo commit do gate que o lê
+  (`D017-SONDA1`); um autor por wave. §Erratas da Fase 3.)*
 
 Migração das razões (C7) — o conteúdo exato que entra:
 
@@ -313,7 +318,7 @@ laço — é por isso que `D017-M17` existe e é declarado.
 | `tests_016_mutants.js` | `:555` → emissão repo-relativa (D1/C4 c) | `:430` | `d016` · local |
 | `specs/013-integridade-da-campanha/spec.md` | erratas `IC-6` e `C1` (C9) | `:389` | nenhuma |
 | `.claude/BACKLOG.md` | notas `EA-3`/`EA-44`; achado `ic_estatico`; correção `:441-442` (C9) | `:18` | nenhuma |
-| `.claude/verify/mutation-matrix.json` | `dividas_declaradas`: `D017-M17` (fiação, carrasco `D017-M2` em cópia) e a não re-execução da família de árvore (credor `EA-42`) | `:266` | nenhuma |
+| `.claude/verify/mutation-matrix.json` | `dividas_declaradas`: `D017-M17` (fiação, carrasco `D017-M2` em cópia) e a não re-execução da família de árvore (credor `EA-42`) *(Errata `D017-M19` · Fase 3: mais `D017-M19`, fiação, carrasco em cópia sob o estado NOTA — mesma família de `M17`)* | `:266` | nenhuma |
 | `specs/017-semantica-do-gatilho/*` | esta spec, `plan.md`, `tasks.md`, `red-017.md`, `spec-validate.md`, `relatorio-final.md` | novos — arquivo rastreado sem pin é FAIL do `baseline` | nenhuma |
 
 **Não mudam**: `tests_core_mutants.js` (T8, `EA-44`); os oito harnesses de raiz e
@@ -328,8 +333,8 @@ identificadores, não termos); `known_issues.json`; `invariants.json`;
 
 | Entrega | Tipo previsto | Dono previsto | Red? |
 |---|---|---|---|
-| Bloco D017 em `check_mutation.py` (C1–C6, C8) — o gate **é** o instrumento | `feature` | `qa-engineer` (precedente T002 da 013: o julgador nasce no red) | **sim** — red natural: REL2 7/11, FORM1(b) em `d014`/`d016`; `D017-M1`/`M2`/`M5`–`M9` e a sonda em cópia, registrados em `red-017.md` |
-| `insumos` + `_meta.sonda_relacao` + notas datadas no mapa (C7) | `fix` | `build-engineer` (C2 da 013; um arquivo, um dono) | verde de REL2/INS1 medido por quem não escreveu o gate |
+| Bloco D017 em `check_mutation.py` (C1–C6, C8) — o gate **é** o instrumento *(+ `_meta.sonda_relacao` no mesmo commit — Errata `_meta.sonda_relacao` · Fase 3)* | `feature` | `qa-engineer` (precedente T002 da 013: o julgador nasce no red) | **sim** — red natural: REL2 7/11, FORM1(b) em `d014`/`d016`; `D017-M1`/`M2`/`M5`–`M9` e a sonda em cópia, registrados em `red-017.md` |
+| `insumos` + `_meta.sonda_relacao` + notas datadas no mapa (C7) *(Errata `_meta.sonda_relacao` · Fase 3: `_meta.sonda_relacao` sai desta linha e vai para a de cima — o pin nasce no red; `insumos` e notas ficam aqui, com o `build-engineer`, na W2)* | `fix` | `build-engineer` (C2 da 013; um arquivo, um dono) | verde de REL2/INS1 medido por quem não escreveu o gate |
 | Emissão repo-relativa em `d014` e `d016` (D1/C4 c) | `fix` | `build-engineer` (precedente T006/T009/T011 da 013: o implementador de C1 nos harnesses) — **um harness por delegação** | verde de REL1/FORM1 nos dois, por execução do stage |
 | Erratas na 013, notas no `BACKLOG`, achado novo (C9) | `doc` | `doc-writer` | não |
 | `dividas_declaradas` na matriz | `chore` | `qa-engineer` | não |
@@ -371,7 +376,8 @@ Identificação pelo **objeto** amendado, no precedente da 013 ("id do gap, nunc
 5. **`ic_estatico` continua como reserva do IC-5** (`:171-182`, dois pontos
    cegos): não afeta D017 (que só consome C1) — achado em C9, não conserto aqui.
 6. **Não re-execução da família de árvore** (`D017-M1`…`M9`): credor `EA-42`;
-   a sonda (C6) é a metade que roda sempre.
+   a sonda (C6) é a metade que roda sempre. *(Errata `D017-M19` · Fase 3: vale
+   também para `D017-M19` e para o estado NOTA que o alimenta — one-shot em cópia.)*
 
 ## Cross-check (obrigatório)
 
@@ -459,3 +465,172 @@ Acrescentado por esta spec:
 - **Normalizar paths no consumidor** — recusado por desenho (D1, R7 §5).
 - **Re-execução automática da família de mutantes de árvore** (`D017-M1`…`M9`) —
   `EA-42`.
+
+## Erratas da Fase 3 (2026-09-06)
+
+> Escritas pelo `tech-lead` na **W0**, antes do red, a partir de duas
+> DEPENDÊNCIAS que o próprio [tasks.md](tasks.md) devolveu ao portão da Fase 3
+> (§Vácuos declarados, item 2; §Onde o `spec-validate` vai olhar, item (a)).
+> Nenhuma corrige código: nenhuma asserção `D017-*` muda, nenhum veredito de gate
+> alheio muda, nenhuma boundary se move. A primeira **acrescenta** um carrasco
+> (fortalece — R10 §1 na direção permitida); a segunda corrige **quem escreve um
+> pin e quando** (processo). Linhas citadas na numeração do HEAD `f56d4fd` para
+> esta spec, o `plan.md` e o `tasks.md`, e de `9d617d0` para `check_mutation.py`
+> e `tests_p50_mutants.js` (byte-idênticos em `f56d4fd` — `git diff --stat`
+> vazio, medido) — todas anteriores a esta seção existir.
+>
+> **Quem decidiu**: o orquestrador, no portão da Fase 3 — decisões (2) e (3) das
+> cinco que acompanharam o `tasks.md` —, apresentadas ao usuário e cobertas pelo
+> **"Prossiga"** de 2026-09-06 (aprovação literal, R4), conforme o registro em
+> `planning-state → tasks.notes`. O `tech-lead` não leu o chat e não afirma mais
+> do que o registro diz; se a leitura do proprietário for outra, reverter o
+> commit desta seção é barato — **nenhuma redação original foi apagada** (R2 §5):
+> cada ponto tocado leva nota inline `*(Errata … · Fase 3)*` e a redação anterior
+> está citada abaixo.
+>
+> **O que não é reaberto**: D1–D5; as asserções de C1–C9 e os seis gates
+> `D017-*`; os 15 cenários da sonda e `_meta.sonda_relacao.total = 15` (`D017-M19`
+> não é cenário — abaixo); `IC-*`; as erratas a aplicar na 013 (C9); P1–P8 do
+> plano; o portão da Fase 1 (D4). Identificação pelo **objeto** amendado
+> (precedente da 013, `spec.md:492-493`): **Errata `D017-M19`** e **Errata
+> `_meta.sonda_relacao`**.
+
+### Errata `D017-M19` — o ramo `[NOTA]` de C1 ganha carrasco
+
+**O que dizia.** A célula de C1 (`:136`) define o ramo *"Preflight que fracassou
+⇒ `[NOTA] D017: <h> · não medida — IC-4 já o nomeou` (nunca FAIL duplicado,
+precedente IC-10.1 `:1195`)"*, e §Comportamento (`:194`) o repete na forma mais
+específica — mas **nenhum dos dezoito mutantes** `D017-M1`…`M18` (`:136-143`) o
+exercita, §Guarda de tautologia (`:163-171`) não tem linha para ele, e a sonda
+**não pode** vê-lo: `mut_relacao` recebe `None` tanto para o `core` quanto para
+um preflight fracassado (C5, `:299-304`; cenário ix), e quem distingue os dois é
+o **laço**, pela pertença a `IC_SEM_PREFLIGHT` (plano PP-7, `plan.md:189`). O
+`tasks.md` (§Vácuos 2, `:152-158`) declarou o vácuo e propôs **observação sem
+id** em `red-017.md`.
+
+**Por que observação sem id foi recusada** (decisão do orquestrador, escrita aqui
+para não voltar): `EA-28`, `EA-30` e `EA-42` são três achados abertos cujo
+conteúdo inteiro é *prova que viveu só num relatório evaporou* — e observação sem
+id num relatório de red tem exatamente essa forma. Um id custa uma linha agora;
+depois do red custaria uma errata e uma explicação.
+
+**Alcançabilidade — medida por execução, não raciocinada.** O ramo é alcançado
+sempre que `ic_preflight` devolve `(None, causa)` para harness fora de
+`IC_SEM_PREFLIGHT`: o laço grava `IC_PREFLIGHT[h] = None` **e** imprime `[FAIL]
+IC-4` (`check_mutation.py:340-344`). Há **dez** retornos assim (`:285-325`):
+`preflight` não declarado (`:285`); **`node` ausente** (`:288-289`); nenhum fonte
+lê `--preflight` (`:295`); timeout (`:305`); exceção (`:307`); **stdout vazio**
+(`:310-312`); stdout não-JSON (`:313-317`); JSON não-objeto (`:318`); chave de C1
+ausente (`:320-323`); `mutantes`/`arquivos_mutados` não-lista (`:324-325`). Um
+deles é **puramente ambiental** — `have("node")` é `shutil.which("node")`
+(`:39-41`) — e alcança o ramo nos onze harnesses **sem mutação alguma**; a 013
+já fixou que `MUTATION_DEFER_MISSING=1` não delega o preflight (Errata G1 da
+013, `spec.md:525-529`). Conclusão: **há estado alcançável, o mutante morde, e o
+ramo não é cláusula defensiva** — nem a classe da 010 (*inalcançável por
+construção*, `design-decisions.md` §Candidatas) nem a sentinela da 015 (E2,
+`spec.md:157-164`). É uma alínea comum que **hoje não é alcançada na árvore**
+(11/11 preflights válidos, Medição A) — a situação de `INS1` e `FORM1(a)`, com o
+mesmo tratamento: vácuo declarado + carrasco em cópia. O que se recusa é o par
+vazio; a dívida com razão só seria a saída se a alcançabilidade tivesse dado
+negativo, e deu positivo.
+
+**Correção de fato ao enunciado do estado** (executado em clone efêmero de
+`f56d4fd`, `MUTATION_DEFER_MISSING=1`, `origin/develop` pinado no HEAD do clone
+para nenhuma campanha disparar). O `tasks.md` (T010, `:30`; §Vácuos 2) escreve
+*"harness da cópia com `--preflight` saindo 1"*. **Não basta.** Duas variantes
+sobre `tests_p50_mutants.js:896`:
+
+| Variante | Edição em cópia | `[FAIL] IC-4: p50 · …` medido | `IC_PREFLIGHT["p50"]` | O bloco 017 |
+|---|---|---|---|---|
+| **A — estado NOTA** | `process.exit(preflight(selecionar().sel));` → `process.exit(1);` (nada vai a stdout: `:846`, `:878`) | `preflight não emitiu nada em stdout — C1 exige UM objeto JSON em stdout (texto humano vai para stderr)` · `---- integridade: 1 problema(s) nomeado(s) ----` · `0 campanha(s)` · exit 1 | **`None`** (`:310-312` → `:341`) | imprime `[NOTA]` — **é o estado** |
+| **B — "saindo 1"** | `preflight(selecionar().sel); process.exit(1);` (JSON válido em stdout, exit 1) | `C1: exit 1 incoerente com o conteúdo — exit 0 sse interpretador resolvido e todo estado == 'ok'` **e, na linha seguinte,** `[OK]   IC-4: p50: 53 âncora(s) com ocorrencias == 1 (preflight, C1)` | **`dict`** (`:326` guarda o returncode e devolve os dados; a reprova vem de `:354-356`) | **mede** `p50` normalmente — o ramo `[NOTA]` **não** é alcançado |
+
+O estado é *"`ic_preflight` devolve `None`"*, e a forma canônica de produzi-lo em
+cópia é a variante **A**. O estado NOTA é um run à parte da regressão C8: com
+ele, `---- integridade: 1 ----` (o IC-4 do `p50`) — C8 mede-se sem ele.
+
+**O que passa a valer.**
+
+| Campo | Registro |
+|---|---|
+| **Estado NOTA** (alimenta o mutante; **não é mutante** — sob ele o gate íntegro está certo ao imprimir `[NOTA]`) | Em cópia efêmera (R7 §3), num harness **em identidade no estado A**, para o fecho do bloco ser comparável — canônico **`p50`**, variante A acima. Outro harness em identidade (`p52`, `d014vis`) serve, registrado; `p51` evita-se por já carregar `M1`/`M2`. Não se escolhe harness vermelho no estado A (a sua linha `[FAIL] D017-REL2` sumiria e confundiria a contagem) |
+| **`D017-M19`** — mutante de **fiação**, sobre o bloco 017 de `check_mutation.py`, em cópia | O laço perde a distinção *"valor `None` com nome presente"* (PP-7): o ramo `[NOTA]` sai e o harness segue para a comparação com conjunto mutado vazio — `IC_PREFLIGHT.get(nome) or []` ou equivalente. Forma alternativa, equivalente para o critério: ramo removido e `mut_relacao(None, …)` chamada, ficando a fiação a tratar `nao_medido` fora do `core` como estiver (silêncio; `[DÍVIDA]` com credor `EA-44`, que é do `core` e não de um preflight quebrado; ou `[OK]`). O QA escolhe uma forma e **registra qual** |
+| **Alínea que o mata** | C1, ramo `[NOTA]`: *harness cujo preflight fracassou é **nomeado** como não medido, **uma** vez, e não recebe `[OK] D017` nem `[FAIL] D017-*` (FAIL duplicado)*. É R10 §2 (E6, SKIP silencioso) e o precedente IC-10.1 (`:1192-1197`) aplicados ao bloco |
+| **Prova de morte** (cópia, estado A + estado NOTA, `MUTATION_DEFER_MISSING=1`) | Pré-condição do estado, **nos dois lados**: `grep -c '^\[FAIL\] IC-4: p50 ·'` = **1**. Gate íntegro: `grep -c '^\[NOTA\] D017: p50 · não medida'` = **1** · `grep -c '^\[OK\] *D017: p50'` = **0** · `grep -c '^\[FAIL\] D017-[A-Z0-9]*: p50'` = **0** · fecho `---- semântica do gatilho: <n> problema(s) nomeado(s) ----` com o **mesmo `<n>`** do estado A sem o estado NOTA (harness não medido contribui zero). Sob `M19`: `[NOTA]` = **0** e **pelo menos uma** forma proibida aparece — na forma `or []`, `[FAIL] D017-REL2: p50 · alvo fantasma (sem razão de classe): ui_p50_results_v32.js, ui_p50_shell_v32.js, ui_p50_suff_v32.js, ui_p50_v32.css` (os quatro `targets` que não são o harness — `arquivos_mutados` medido da `p50`) e `<n>` sobe; na forma alternativa, silêncio ou a linha errada. Qualquer uma das quatro é morte; a que apareceu vai à tabela de `red-017.md` **com a saída**. O grep usa o **prefixo comum** às duas redações da NOTA (`tasks.md` §Vácuos 3, defasagem (d)) — a forma final da linha segue sendo extraída do executável no `spec-validate` (E016-5) |
+| **Onde vive** | `red-017.md`, tabela de mutantes, com id, como `M1`…`M18` (T010); `mutation-matrix.json → dividas_declaradas`, **família fiação, ao lado de `D017-M17`** (T030 (i)): sobrevive à sonda por desenho, morto one-shot em cópia, não re-executado por campanha — credor `EA-42` |
+| **O que não é** | **Não é cenário da sonda**: `_meta.sonda_relacao.total` continua **15** — §Os 15 cenários (`:197`) diz que acréscimo de *cenário* move o total; `M19` é mutante, e não pode virar cenário porque `mut_relacao` não vê a pertença a `IC_SEM_PREFLIGHT` (C5). Não muda C5, PP-7, `ic_nota` (`:135-136`) nem a forma da linha |
+| **Classe** | `spec-errada` por omissão (alínea sem carrasco nomeado) — fortalecimento; nenhuma asserção muda |
+
+**Pontos tocados com nota inline**: célula de C1 (`:136`), célula de C6 (`:141`),
+§Nascimento de gate (`:148`), §Guarda de tautologia (linha nova após `:171`),
+§Comportamento (`:194`), §Arquivos rastreados — linha da matriz (`:316`), Risco 6
+(`:373-374`).
+
+**Efeito no `tasks.md`** — fora desta errata, registrado para o `spec-validate`
+ler a verdade **na spec**: o TL só tocou o `tasks.md` no item (a) (instrução do
+orquestrador nesta W0). Ficam por consolidar, por decisão do orquestrador
+(DEPENDÊNCIAS): T010 *"Observação sem id"* → `D017-M19` com o estado NOTA na
+variante A (stdout vazio, não "exit 1"); §Vácuos 2 → resolvido; T030 (i) → `M19`
+ao lado de `M17`; T042 → perde a candidata *"ramo `[NOTA]` sem carrasco"*;
+§O estado do mundo → linha do ramo `[NOTA]`; §O que cada tarefa deixa medível,
+T010 → os greps acima.
+
+### Errata `_meta.sonda_relacao` — o pin da sonda nasce no red, pelo `qa-engineer`
+
+**O que dizia.** §Contratos C2 (`:283-284`): *"Dono: `build-engineer`
+(precedente C2 da 013 e T060 da 016 para o mapa); consumidor:
+`check_mutation.py`"* — para o `mutation_map.json` inteiro, `_meta.sonda_relacao`
+incluído. §Tipagem prevista (`:332`): *"`insumos` + `_meta.sonda_relacao` +
+notas datadas no mapa (C7) | `fix` | `build-engineer`"*. O plano (P2,
+`plan.md:156`; §Owner do estado, `:51`; §Um dono por arquivo, `:32`) e o
+`tasks.md` (T010, `:30`; TRAVA, `:100-107`) dão o pin ao `qa-engineer`, **no
+commit red**; o `tasks.md` (`:251-256`) declarou a diferença como defasagem (a)
+e propôs nota, não errata.
+
+**O que passa a dizer.** `_meta.sonda_relacao` (`total` e `descricao`) **nasce
+no commit red, pelo `qa-engineer`**, no mesmo commit do bloco 017 que o lê
+(`D017-SONDA1`). `insumos`, a frase em `_meta.descricao` e as notas datadas em
+`_trilha` continuam do **`build-engineer`**, na W2. O arquivo tem **um autor por
+wave** (TRAVA do `tasks.md`; o precedente 016 — "um autor por wave" — está
+citado em `plan.md:32` e `:156`). Depois do red, o `total` só se move por errata
+desta spec com id de cenário (§Os 15 cenários) — inalterado.
+
+**Por que é correção da spec, e não desvio do plano** — a razão do orquestrador,
+conferida contra o texto:
+
+1. **A contagem pinada tem de existir quando o gate nasce.** C6 (`:141`) manda
+   comparar `len(cenários)` a `_meta.sonda_relacao.total` e fixa *"`total ≠
+   pinado` ⇒ FAIL nomeando as duas contagens"*; a linha do red em §Janela do
+   plano (`:138`) e o estado A do `tasks.md` (T010, `:30`) exigem `[OK]
+   D017-SONDA1: … 15 cenários …` **no commit red**. Com o `build-engineer` como
+   dono, o pin só existiria na W2: o red nasceria com `D017-SONDA1` **vermelho
+   por pin ausente** — FAIL de instrumento, não o red da demanda (REL2/FORM1),
+   que `red-017.md` teria de explicar. A spec era **internamente contraditória**:
+   C6, D5 (`:35`) e o estado A pressupõem o pin no red; §Contratos C2 o entregava
+   a quem só escreve depois. A errata resolve a contradição **a favor das
+   cláusulas que a própria spec já fixava** — a forma da Errata G1 da 013
+   (`spec.md:475-476`).
+2. **R3 §2 é honrada, não contornada.** O pin é o **registro canônico da
+   asserção do próprio gate** (R10 §3: contagem em registro, não em prosa nem no
+   corpo do gate) — autoteste, não implementação. Se o `build-engineer`
+   escrevesse o `15`, o implementador estaria fixando a contagem do autoteste do
+   gate (P2). O precedente correto para **pin de sonda** é a 016: `fecho.json →
+   sonda.total` e `branch_protection.json → sonda.total` nasceram pelo
+   `qa-engineer`, na W1, tipo `feature`
+   (`specs/016-registro-contra-execucao/tasks.md:13-14`; `fecho.json:3` declara
+   `Owner: qa-engineer`). O precedente que o texto original citava — C2 da 013 e
+   T060 da 016 — é sobre **entradas de harness** no mapa (`targets`,
+   `preflight`, `requires`), que **continuam** do `build-engineer`; D5 já
+   apontava a 016 como o precedente da contagem pinada.
+3. **Nada de asserção muda.** `D017-SONDA1`, o valor `15`, a forma da chave
+   (`{ "total": 15, "descricao": … }`) e o consumidor são os de C6 e §Contratos.
+
+**Pontos tocados com nota inline**: §Contratos C2 (`:283-284`), §Tipagem
+prevista (`:331` e `:332`).
+
+**Efeito no `tasks.md`**: o item (a) de §Onde o `spec-validate` vai olhar
+(`:251-256`) está **riscado com a razão** — não renumerado; (b)–(g) permanecem —
+e a frase de §Tipagem auditável (`:79-82`) que o cita recebe a mesma nota.
+Nenhuma tarefa, dono, tipo ou wave muda: o `tasks.md` já estava do lado certo.
+
+**Classe**: `spec-errada` (um bullet e uma célula) — processo; nenhuma asserção muda.

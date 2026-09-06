@@ -534,6 +534,21 @@ exige spec (R4). A abrir quando o proprietário decidir. Este registro
 descreve o defeito e a cadeia verificada — **não propõe o desenho da
 correção**; o desenho, se a demanda abrir, é da spec.
 
+### Nota datada (demanda 017, 2026-09-06)
+
+A demanda 017 (`specs/017-semantica-do-gatilho/spec.md`, D3) **não fecha**
+este achado — continua `aberto`, com a mesma população/órfão/"11 de 14 ·
+17 de 35" sem dono — mas deixa pronto o insumo que a correção vai precisar:
+(i) a classificação de cada path do gatilho em `mutado` / `harness` /
+`insumo(<classe>)`, devolvida como **dado** por `mut_relacao` (função pura,
+`check_mutation.py`), por harness; (ii) a forma canônica de path (D1), sem a
+qual a união entre harnesses não é comparável com `git ls-files`; (iii)
+`insumos` em `mutation_map.json` (sete harnesses), que impede o instrumento
+de contar oráculo/fixture como cobertura de mutação — a confusão que este
+próprio achado nomeia. Nenhuma das três uniões (`⋃ mutados`, `⋃ targets`,
+população declarada) é calculada pela 017 — ver `specs/017-semantica-do-gatilho/spec.md`
+§"O que fica pronto para o `EA-3` (D3)".
+
 ## ~~EA-4 — Âncora de mutante apodrece em silêncio; o aviso existe, mas só quando alguém puxa o gatilho~~
 
 **Status**: `refutado`
@@ -3418,9 +3433,12 @@ achado por uma ilusão de cobertura completa.
 
 - **`.claude/verify/check_mutation.py:119`** — `IC_SEM_PREFLIGHT = ("core",)`:
   o `core` fica fora do preflight (`IC-4`) por escopo declarado da demanda 013
-  (T8, `specs/013-integridade-da-campanha/spec.md:38`, `:441-442` — ele é a
+  (T8, `specs/013-integridade-da-campanha/spec.md:38`, `:440-441` — ele é a
   referência do interpretador, e tocá-lo era o próprio risco que a demanda
-  existia para conter). Sem preflight, uma âncora podre nele só aparece na
+  existia para conter). *(Correção de citação, demanda 017, 2026-09-06: a
+  referência apontava `:441-442`, que hoje cai um bullet adiante ("Stage
+  novo…"); medido — a frase citada vive em `:440-441`.)* Sem preflight, uma
+  âncora podre nele só aparece na
   execução da campanha — medido nesta sessão, `[DÍVIDA] core: sem preflight
   declarado — âncora podre só aparece na execução da campanha`
   (`bash .claude/verify/run.sh --stage=mutation`).
@@ -3464,6 +3482,18 @@ diferente (a dívida declarada já nomeia a lacuna): `tech-lead` com
 `qa-engineer`. Abrir demanda é do orquestrador (R4); isto não é
 `fix-finding` — é comportamento novo de instrumento (R10, "Nascimento de um
 gate").
+
+### Nota datada (demanda 017, 2026-09-06)
+
+Este achado passou a ser **credor nomeado no código**, não só no backlog: o
+bloco `---- semântica do gatilho (017) ----` (`check_mutation.py`) declara
+`D017_CREDOR_CORE = "EA-44"` (`:488`) e imprime, para o `core`,
+`[DÍVIDA] core: relação gatilho × conjunto mutado NÃO MEDIDA — sem preflight
+(credor: EA-44)` — medido em `red-017.md` e na árvore real
+(`specs/017-semantica-do-gatilho/tasks.md`, T012/T028). A 017 **não fecha**
+este achado (não dá preflight ao `core` nem toca `tests_core_mutants.js`) —
+apenas nomeia, na saída do stage, quem tem de resolvê-lo. `check_mutation.py:476`
+e `:531` citam o mesmo credor no comentário e no contrato de `mut_relacao`.
 
 ## EA-45 — o resíduo do `d009`: nascido em branch paralela, nunca recebeu o vocabulário de três estados da 013
 
@@ -3522,3 +3552,62 @@ Portar `d009` para o padrão T4/T5 (`tests_p50_mutants.js`/
 `tests_p51_mutants.js`/`tests_p52_mutants.js` como referência) é
 comportamento novo de instrumento, não `fix-finding`: `tech-lead` com
 `qa-engineer` desenham, o orquestrador abre a demanda (R4).
+
+## EA-46 — `ic_estatico` tem dois pontos cegos de regex, e hoje nenhum chamador os alcança
+
+**Status**: `aberto`
+
+**Aberto em**: 2026-09-06. Observado durante a demanda 017 (T034,
+`doc-writer`), ao ler `ic_estatico` para escrever a nota de `EA-3` sobre a
+classificação de path que a 017 deixa pronta — não é achado da 017, que não
+toca este trecho.
+
+### Cadeia arquivo:linha → efeito
+
+- **`.claude/verify/check_mutation.py:181`** — `fmap = dict(re.findall(r'(\w+)\s*:\s*path\.join\(HERE,\s*"([^"]+)"\s*\)', src))`
+  só casa a forma de **objeto literal** `chave: path.join(HERE, "arquivo")` —
+  a forma que `tests_p51_mutants.js:40-45` usa (`const F = { css:
+  path.join(HERE, "ui_p50_v32.css"), … }`). **Não casa**
+  `const X = path.join(HERE, "arquivo")` — a forma que `tests_core_mutants.js`
+  (`:24-26`), `tests_p50_mutants.js` (`:54-58`), `tests_p52_mutants.js`
+  (`:60-69`), `tests_009_leitura.js` (`:52-58`), `tests_010_vao.js` (`:63,65`),
+  `tests_011_prioridade.js` (`:61`) e `tests_014_mutants_visual.js`
+  (`:89-92`) usam — confirmado por leitura direta dos oito arquivos nesta
+  sessão. `tests_015_apoio.js:123` usa uma terceira forma
+  (`HTML_OVERRIDE || path.join(HERE, HTML_NOME)`), também fora da forma que
+  o regex casa. `tests_016_mutants.js` usa uma **quarta**: `path.join(V,
+  "...")` (`:141-150`), onde `V = path.join(HERE, ".claude", "verify")`
+  (`:138`) — a indireção de dois níveis falha mesmo se a forma fosse
+  objeto-literal, porque o primeiro argumento não é o literal `HERE`.
+- **`.claude/verify/check_mutation.py:182`** — `usados = set(re.findall(r"\bfile\s*:\s*F\.(\w+)", src))`
+  só casa `file: F.<nome>` literal dentro do próprio objeto do mutante — a
+  forma de `tests_p51_mutants.js:152` (`file: F.shell, gate: …`). **Não vê**
+  arquivo passado por helper: `tests_016_mutants.js:197`
+  (`const em = (file, e) => Object.assign({}, e, { file });`) e `:396`
+  (`edicoes: [em(F.ps016, valvulaApos(…))]`) — o `file` chega pelo primeiro
+  argumento de `em(...)`, nunca como `file: F.ps016` literal no fonte.
+- **Efeito medido, e o que NÃO é medido**: as duas regexes alimentam o
+  **segundo** elemento da tupla que `ic_estatico` devolve (`arquivos
+  mutados` por leitura estática) — `check_mutation.py:183-184`. **Nenhum dos
+  dois chamadores de `ic_estatico` hoje consome esse segundo elemento**:
+  `:394` (`IC-5`, reserva da `p51`) e `:1241` (`ex_ids_do_harness`, reserva
+  de `IC-9` para qualquer harness) usam só `[0]` (a lista de ids via
+  `RE_IC_ID`, `:111`, que **não** tem os pontos cegos acima — ela casa
+  `id: "..."` em qualquer estilo de declaração). Os dois pontos cegos são
+  **reais e verificados**, mas **hoje sem efeito observável**: o código que
+  os alcançaria está escrito e nunca é chamado. O risco é para o dia em que
+  alguém precisar do segundo elemento (por exemplo, para estender a
+  identidade de `arquivos_mutados` a um harness sem preflight) — nesse dia,
+  a reserva estática mentiria por omissão para sete dos onze harnesses
+  declarados, sem aviso (o retorno seria `[]`, indistinguível de "harness
+  não muta nada").
+
+### O que este registro não decide
+
+Se o remédio é generalizar as duas regexes (aceitar `const`/`let`/`var` e
+indireção de uma variável, e reconhecer chamada de helper por posição) ou
+declarar a segunda peça do retorno como código morto e removê-la enquanto
+nada a consome: `qa-engineer` (autor do gate) decide, com o `tech-lead` se
+a resposta for "generalizar" (comportamento novo de instrumento, R4). Não é
+`fix-finding` — não há asserção hoje que dependa do segundo elemento para
+mudar de veredito.

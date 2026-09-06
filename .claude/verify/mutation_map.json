@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "descricao": "Mapa harness→alvos do trigger de mutação por path (Onda 3, E7). check_mutation.py compara os arquivos tocados (diff contra a base) com os alvos de cada harness e re-executa APENAS as campanhas cujos alvos mudaram — mata o padrão 'campanha one-shot stale'. requires declara o ambiente (harness sem o requisito é reportado por nome, nunca pulado em silêncio). Campo receipts: artefatos-recibo que o harness legado grava por design (rastreados); o runner os restaura após capturar o resultado — o registro canônico vivo é mutation-matrix.json. Campo preflight (demanda 013, contrato C2): o harness responde a `<cmd> --preflight` emitindo o objeto JSON de C1 em stdout — resolve o interpretador e conta as ocorrências de cada âncora, sem mutar, sem reconstruir e sem escrever nada. A chave só é declarada no MESMO commit em que o harness passa a ler `--preflight` em argv; harness sem a chave tem a ausência de preflight impressa como dívida declarada, nunca omitida.",
+    "descricao": "Mapa harness→alvos do trigger de mutação por path (Onda 3, E7). check_mutation.py compara os arquivos tocados (diff contra a base) com os alvos de cada harness e re-executa APENAS as campanhas cujos alvos mudaram — mata o padrão 'campanha one-shot stale'. requires declara o ambiente (harness sem o requisito é reportado por nome, nunca pulado em silêncio). Campo receipts: artefatos-recibo que o harness legado grava por design (rastreados); o runner os restaura após capturar o resultado — o registro canônico vivo é mutation-matrix.json. Campo preflight (demanda 013, contrato C2): o harness responde a `<cmd> --preflight` emitindo o objeto JSON de C1 em stdout — resolve o interpretador e conta as ocorrências de cada âncora, sem mutar, sem reconstruir e sem escrever nada. A chave só é declarada no MESMO commit em que o harness passa a ler `--preflight` em argv; harness sem a chave tem a ausência de preflight impressa como dívida declarada, nunca omitida. Campo insumos (demanda 017, D2/C7): objeto classe → [paths], vocabulário fechado (oraculo, fixture, populacao, declaracao — spec 017 §Vocabulário fechado), que nomeia a razão de um excedente do gatilho sobre o conjunto mutado ser insumo de prova — nunca alvo fantasma; ausência da chave equivale a {} (identidade), e é o caso dos harnesses em identidade (p50, p51, p52, d014vis).",
     "onda": 3,
     "sonda_relacao": {
       "total": 15,
@@ -18,6 +18,14 @@
                 "fixtures_010_vao.js",
                 "tests_010_mutants.js"
           ],
+          "insumos": {
+                "oraculo": [
+                      "tests_010_vao.js"
+                ],
+                "fixture": [
+                      "fixtures_010_vao.js"
+                ]
+          },
           "requires": [
                 "node",
                 "python"
@@ -38,11 +46,19 @@
         "tests_009_leitura.js",
         "fixtures_009_leitura.js"
       ],
+      "insumos": {
+        "oraculo": [
+          "tests_009_leitura.js"
+        ],
+        "fixture": [
+          "fixtures_009_leitura.js"
+        ]
+      },
       "requires": [
         "node",
         "python"
       ],
-      "_trilha": "demanda 009-leitura-do-relatorio · T018 (wave 6), registrada no MESMO commit da criação de tests_009_mutants.js. 18 mutantes: D009-M1, D009-M2, D009-M4..D009-M19 — o M3 da spec NÃO é mutante desta campanha, permanece P52-M3 no harness p52 (mutação e oráculo são da 5.2; a 009 só reescreveu o registro dele). Nenhum requires chromium: nenhum gate de tests_009_leitura.js mede geometria. ALVOS ALÉM DOS 6 MÓDULOS DE PRODUTO + HARNESS que tasks.md T018 lista: tests_009_leitura.js e fixtures_009_leitura.js entram porque são o ORÁCULO e a fixture da campanha — mexer neles muda o que a campanha prova. Precedente: o harness p52 já lista tests_p52_chromium.js entre os alvos. Desvio declarado que ENDURECE o trigger (mais re-execução, nunca menos). [2026-08-30 · demanda 013, E1 no d009] A contagem \"18 mutantes\" acima é ANTERIOR ao D009-M20, que a rodada 2 acrescentou (âncora que só passou a existir com a correção e77b7b5): são 19 — D009-M1, D009-M2, D009-M4..D009-M20, e é isso que mutation-matrix.json já registra (19 KILL / 19). O oráculo da contagem passa a ser o preflight (contrato C1), não este comentário. \"preflight\": true declarado no MESMO commit em que tests_009_mutants.js passou a ler --preflight em argv (D4)."
+      "_trilha": "demanda 009-leitura-do-relatorio · T018 (wave 6), registrada no MESMO commit da criação de tests_009_mutants.js. 18 mutantes: D009-M1, D009-M2, D009-M4..D009-M19 — o M3 da spec NÃO é mutante desta campanha, permanece P52-M3 no harness p52 (mutação e oráculo são da 5.2; a 009 só reescreveu o registro dele). Nenhum requires chromium: nenhum gate de tests_009_leitura.js mede geometria. ALVOS ALÉM DOS 6 MÓDULOS DE PRODUTO + HARNESS que tasks.md T018 lista: tests_009_leitura.js e fixtures_009_leitura.js entram porque são o ORÁCULO e a fixture da campanha — mexer neles muda o que a campanha prova. Precedente: o harness p52 já lista tests_p52_chromium.js entre os alvos. Desvio declarado que ENDURECE o trigger (mais re-execução, nunca menos). [2026-08-30 · demanda 013, E1 no d009] A contagem \"18 mutantes\" acima é ANTERIOR ao D009-M20, que a rodada 2 acrescentou (âncora que só passou a existir com a correção e77b7b5): são 19 — D009-M1, D009-M2, D009-M4..D009-M20, e é isso que mutation-matrix.json já registra (19 KILL / 19). O oráculo da contagem passa a ser o preflight (contrato C1), não este comentário. \"preflight\": true declarado no MESMO commit em que tests_009_mutants.js passou a ler --preflight em argv (D4). [2026-09-06 · demanda 017 (C7): insumos = oraculo (tests_009_leitura.js), fixture (fixtures_009_leitura.js); o precedente p52 citado acima é falsa analogia — a p52 muta tests_p52_chromium.js, que é conjunto mutado, não oráculo/fixture de outra campanha (spec 017 Medição A)]."
     },
     "core": {
       "cmd": "node tests_core_mutants.js",
@@ -132,6 +148,14 @@
         ".claude/verify/regra_morta.js",
         ".claude/verify/regra_morta_seletor.js"
       ],
+      "insumos": {
+        "populacao": [
+          "ui_v32.css",
+          "ui_ux_v32.css",
+          "ui_p52_workspace_v32.css",
+          "ui_d011_prioridade_v32.css"
+        ]
+      },
       "requires": [
         "node",
         "python"
@@ -148,6 +172,11 @@
         "tests_011_prioridade.js",
         "tests_011_mutants.js"
       ],
+      "insumos": {
+        "oraculo": [
+          "tests_011_prioridade.js"
+        ]
+      },
       "requires": [
         "node",
         "python"
@@ -177,6 +206,14 @@
         "fixtures_015_apoio.js",
         "tests_015_mutants.js"
       ],
+      "insumos": {
+        "oraculo": [
+          "tests_015_apoio.js"
+        ],
+        "fixture": [
+          "fixtures_015_apoio.js"
+        ]
+      },
       "requires": [
         "node",
         "python"
@@ -243,11 +280,62 @@
             ".claude/verify/fixtures_016/protecao/strict_false.json",
             "tests_016_mutants.js"
         ],
+        "insumos": {
+            "fixture": [
+                ".claude/verify/fixtures_016/fecho/F1.json",
+                ".claude/verify/fixtures_016/fecho/F10.json",
+                ".claude/verify/fixtures_016/fecho/F11.json",
+                ".claude/verify/fixtures_016/fecho/F12.json",
+                ".claude/verify/fixtures_016/fecho/F13.json",
+                ".claude/verify/fixtures_016/fecho/F14.json",
+                ".claude/verify/fixtures_016/fecho/F15.json",
+                ".claude/verify/fixtures_016/fecho/F16.json",
+                ".claude/verify/fixtures_016/fecho/F17.json",
+                ".claude/verify/fixtures_016/fecho/F18.json",
+                ".claude/verify/fixtures_016/fecho/F19.json",
+                ".claude/verify/fixtures_016/fecho/F2.json",
+                ".claude/verify/fixtures_016/fecho/F20.json",
+                ".claude/verify/fixtures_016/fecho/F21.json",
+                ".claude/verify/fixtures_016/fecho/F22.json",
+                ".claude/verify/fixtures_016/fecho/F23.json",
+                ".claude/verify/fixtures_016/fecho/F24.json",
+                ".claude/verify/fixtures_016/fecho/F25.json",
+                ".claude/verify/fixtures_016/fecho/F26.json",
+                ".claude/verify/fixtures_016/fecho/F3.json",
+                ".claude/verify/fixtures_016/fecho/F4.json",
+                ".claude/verify/fixtures_016/fecho/F6.json",
+                ".claude/verify/fixtures_016/fecho/F7.json",
+                ".claude/verify/fixtures_016/fecho/F8.json",
+                ".claude/verify/fixtures_016/fecho/F9.json",
+                ".claude/verify/fixtures_016/fecho/P1.json",
+                ".claude/verify/fixtures_016/fecho/P10.json",
+                ".claude/verify/fixtures_016/fecho/P11.json",
+                ".claude/verify/fixtures_016/fecho/P2.json",
+                ".claude/verify/fixtures_016/fecho/P3.json",
+                ".claude/verify/fixtures_016/fecho/P4.json",
+                ".claude/verify/fixtures_016/fecho/P5.json",
+                ".claude/verify/fixtures_016/fecho/P6.json",
+                ".claude/verify/fixtures_016/fecho/P7.json",
+                ".claude/verify/fixtures_016/fecho/P8.json",
+                ".claude/verify/fixtures_016/fecho/P9.json",
+                ".claude/verify/fixtures_016/protecao/classic_off.json",
+                ".claude/verify/fixtures_016/protecao/classic_on.json",
+                ".claude/verify/fixtures_016/protecao/esperado_ruleset.json",
+                ".claude/verify/fixtures_016/protecao/hoje.json",
+                ".claude/verify/fixtures_016/protecao/http_403.json",
+                ".claude/verify/fixtures_016/protecao/sem_rede.json",
+                ".claude/verify/fixtures_016/protecao/sem_visual.json",
+                ".claude/verify/fixtures_016/protecao/strict_false.json"
+            ],
+            "declaracao": [
+                ".claude/verify/branch_protection.json"
+            ]
+        },
         "requires": [
             "node",
             "python"
         ],
-        "_trilha": "demanda 016-registro-contra-execucao · T060 (wave 5), registrada no MESMO commit da criacao de tests_016_mutants.js (D4 da 013: a chave `preflight` sem o modo `--preflight` em argv derrubaria IC-4 e o stage inteiro mesmo com a campanha verde — o harness le `--preflight` desde o nascimento). 30 MUTANTES: D016-M1..M16 (previstos na spec §Criterios), M17 (errata E1: dois dos tres contextos bastam), M18..M28 de ARVORE (o estado do mundo que faz o gate NU reprovar, produzido por mutacao de fecho.json / planning-state / fixture e medido por `check_fecho.py --json`), M29 (laco da sonda vazio no gate de protecao — C7 do D016-PROT1, irmao de M16) e M30 (fixture de protecao removida — irmao de M22). Mais TRES CONTROLES VERDES que nao sao mutantes e nao entram na contagem do preflight: C0-fecho e C0-protecao (baseline verde antes de mutar — kill contra baseline vermelho nao e atribuivel) e M24/positivo (valvula VALIDA sobre o cenario de M18, prazo == data do commit: FECHO PENDENTE DECLARADO, exit 0 — o controle de que FEC4 alcanca o verde e de que T4 le a data do commit na arvore). SEM chromium: nenhum gate D016-* mede geometria; python em requires porque a campanha EXECUTA os dois gates Python (interpretador por MUTATION_PY ou padrao da plataforma, resolvido no preflight — contrato C1). ORACULO ESTRUTURADO, nunca regex sobre prosa PT-BR (R10 §6): mutantes de instrumento/gate leem o JSON de `--sonda` e pinam os IDS DE CASO que tem de divergir E o valor obtido no campo que a spec nomeia (F19 vira EM VOO para M1; http_403 vira PROTEGIDA para M12…); kill exige instrumento PRESENTE sob a mutacao (replica que nao importa e NAO EXECUTADO · rebuild falhou, nunca DETECTADO por crash) e `obtido` que seja veredito, nao excecao. Mutantes de arvore leem o JSON de `--json` e pinam sujeito (id, veredito, codigo, oraculo, #PR), total de problemas E isolamento (nenhum outro sujeito com falha) — 'e nenhuma outra' e assercao, nao sorte. MUTANTE MULTI-ARQUIVO (M18/M24: fecho.json + planning-state 015): o preflight emite `ocorrencias` = 1 sse TODA ancora do mutante tem exatamente 1 ocorrencia (0 se alguma falta, max se alguma e ambigua) e lista cada edicao em `edicoes`; mutante de REMOCAO (M22/M30) tem como ancora a existencia do arquivo (1 sse existe). M21 (valvula na 016 em voo) esta AMARRADO AO CICLO DE VIDA da 016: hoje mede C4(d) — EM VOO + fecho_pendente-prematura; quando a 016 passar a done (T084) o mesmo estado e EM VOO + fecho_pendente-obsoleta (decisao 3 do instrumento: done pre-empta) e depois do merge CONFORME + obsoleta (C4 c); o julgador do harness aceita SO essas tres combinacoes acopladas a fase/posicao — uma valvula na 016 nunca e legitima, e o mutante morre em qualquer ponto do ciclo sem reancoragem; se um dia sobreviver, e porque a arvore passou a ADMITIR a valvula (016 mesclada sem fecho), que e exatamente o sinal. M28 (valvula na 015, done e mesclada) e o carrasco PERMANENTE de C4(c) na arvore. TARGETS = 51 entradas, UMA A UMA (check_mutation.py:1287 casa por pertinencia exata; `fixtures_016/**` nao casa nada): os 4 scripts, os 2 registros, as 42 fixtures obtidas por `git ls-files .claude/verify/fixtures_016/` (o tasks.md dizia 35 e 42 entradas — foi escrito antes dos 7 acrescimos da Fase 4: F20-F23, P8-P10), o proprio harness E os dois planning-states que a campanha MUTA (015 e 016) — desvio declarado que ENDURECE o trigger (precedente d009/d010/d014): campanha que nao re-executa quando o proprio arquivo mutado muda e o EA-7 dentro do remedio; o custo e a d016 rodar em todo PR que toque esses dois estados, ~1 min. Mutacao in-place + gate + restauracao por bytes e SHA-256 sob try/finally + `git status --porcelain` escopado aos arquivos mutados (R7 §3). Vocabulario de tres estados (DETECTADO/SOBREVIVENTE/NAO EXECUTADO com causa do conjunto fechado de T4 da 013). Preflight e campanha executados em T060 sob arvore limpa; a primeira execucao esta registrada em specs/016-registro-contra-execucao/prova-de-carga.md (R2 §1), com sobrevivente ou sem. [2026-09-04 · Fase 6, iteracao de correcao do spec-validate (G3, J1, J3, J4)] 33 MUTANTES: entram D016-M31 (instrumento: clausula de formato do prazo desligada — carrasco de C4 e, morre em F24, caso NOVO da sonda; medido em clone de d130a04 (fecho.py identico ao de 76fd9dc) que sem F24 a sonda seguia 33 · 0 sob essa mutacao), D016-M32 (arvore: CRIA o planning-state sintetico 999-sintetica-d016.json com valvula valida — carrasco PERMANENTE de C4 d, a perda nomeada de M21 apos o done; ancora = AUSENCIA do arquivo, 1 sse nao existe; restauracao = unlink conferido) e D016-M33 (LEITOR: ler_merges devolve [] com metadados saos — a sonda nao ve leitor; quem mata e a guarda de censo do gate nu, fecho.json → piso.merges_ate_piso = 39, e o kill exige 0 problema(s) de julgamento: sem a guarda a arvore ficava verde, medido). A sonda passa de 33 para 35 casos (F24 e P11; P11 isola a clausula de fase e M9 passa a morrer por P11 → LIBERADO, a letra da spec, com P2 como segunda divergencia). M18/M19/M24 e o controle positivo movem piso E censo pinado juntos (6dad53d = 15, raiz e5ccd429 = 0 — dois oraculos, git rev-list e ler_merges). TARGETS = 54: +F24.json, +P11.json e +999-sintetica-d016.json (nao existe no repositorio — entra para que um commit que o crie redispare a campanha e M32 saia NAO EXECUTADO em vez de escrever por cima). Registro da execucao: prova-de-carga.md §9. [2026-09-05 · fix-finding EA-39 (errata E016-8), commit RED do qa-engineer] TARGETS = 56: +F25.json e +F26.json (sonda 35 → 37; codigos 16 → 17 com historico-raso — a divergencia CODIGOS do instrumento ≠ registro e F25/F26 divergentes SAO o red). Os pares D016-M34 (julgador ignora cadeia_integra ⇒ F25 volta a EM VOO · 0) e D016-M35 (precedencia trocada ⇒ F26 volta a piso-invalido) entram no harness e na matriz com o green de fecho.py (T094/T096), nunca antes: ancorar em codigo que nao existe seria ancora podre no preflight (IC-4). A metade do LEITOR (deteccao do clone raso em ler_merges) NAO tem mutante de arvore, por razao medida: .git/shallow e invisivel as tres guardas de restauracao do harness, `git fetch --depth=1` numa worktree muta o .git COMPARTILHADO pelas nove worktrees desta maquina e `--unshallow` falha em repositorio completo — divida declarada em mutation-matrix.json com carrasco nomeado: bateria adversarial de I/O em clone efemero com origin = GitHub (prova-de-carga.md §12), reexecutada a cada mudanca de ler_merges. D016-M33 nao muda: a ancora `return {\"merges\": merges, \"origin_develop\": od}` continua unica (preflight ocorrencias == 1) e os campos novos sao populados ANTES dela."
+        "_trilha": "demanda 016-registro-contra-execucao · T060 (wave 5), registrada no MESMO commit da criacao de tests_016_mutants.js (D4 da 013: a chave `preflight` sem o modo `--preflight` em argv derrubaria IC-4 e o stage inteiro mesmo com a campanha verde — o harness le `--preflight` desde o nascimento). 30 MUTANTES: D016-M1..M16 (previstos na spec §Criterios), M17 (errata E1: dois dos tres contextos bastam), M18..M28 de ARVORE (o estado do mundo que faz o gate NU reprovar, produzido por mutacao de fecho.json / planning-state / fixture e medido por `check_fecho.py --json`), M29 (laco da sonda vazio no gate de protecao — C7 do D016-PROT1, irmao de M16) e M30 (fixture de protecao removida — irmao de M22). Mais TRES CONTROLES VERDES que nao sao mutantes e nao entram na contagem do preflight: C0-fecho e C0-protecao (baseline verde antes de mutar — kill contra baseline vermelho nao e atribuivel) e M24/positivo (valvula VALIDA sobre o cenario de M18, prazo == data do commit: FECHO PENDENTE DECLARADO, exit 0 — o controle de que FEC4 alcanca o verde e de que T4 le a data do commit na arvore). SEM chromium: nenhum gate D016-* mede geometria; python em requires porque a campanha EXECUTA os dois gates Python (interpretador por MUTATION_PY ou padrao da plataforma, resolvido no preflight — contrato C1). ORACULO ESTRUTURADO, nunca regex sobre prosa PT-BR (R10 §6): mutantes de instrumento/gate leem o JSON de `--sonda` e pinam os IDS DE CASO que tem de divergir E o valor obtido no campo que a spec nomeia (F19 vira EM VOO para M1; http_403 vira PROTEGIDA para M12…); kill exige instrumento PRESENTE sob a mutacao (replica que nao importa e NAO EXECUTADO · rebuild falhou, nunca DETECTADO por crash) e `obtido` que seja veredito, nao excecao. Mutantes de arvore leem o JSON de `--json` e pinam sujeito (id, veredito, codigo, oraculo, #PR), total de problemas E isolamento (nenhum outro sujeito com falha) — 'e nenhuma outra' e assercao, nao sorte. MUTANTE MULTI-ARQUIVO (M18/M24: fecho.json + planning-state 015): o preflight emite `ocorrencias` = 1 sse TODA ancora do mutante tem exatamente 1 ocorrencia (0 se alguma falta, max se alguma e ambigua) e lista cada edicao em `edicoes`; mutante de REMOCAO (M22/M30) tem como ancora a existencia do arquivo (1 sse existe). M21 (valvula na 016 em voo) esta AMARRADO AO CICLO DE VIDA da 016: hoje mede C4(d) — EM VOO + fecho_pendente-prematura; quando a 016 passar a done (T084) o mesmo estado e EM VOO + fecho_pendente-obsoleta (decisao 3 do instrumento: done pre-empta) e depois do merge CONFORME + obsoleta (C4 c); o julgador do harness aceita SO essas tres combinacoes acopladas a fase/posicao — uma valvula na 016 nunca e legitima, e o mutante morre em qualquer ponto do ciclo sem reancoragem; se um dia sobreviver, e porque a arvore passou a ADMITIR a valvula (016 mesclada sem fecho), que e exatamente o sinal. M28 (valvula na 015, done e mesclada) e o carrasco PERMANENTE de C4(c) na arvore. TARGETS = 51 entradas, UMA A UMA (check_mutation.py:1287 casa por pertinencia exata; `fixtures_016/**` nao casa nada): os 4 scripts, os 2 registros, as 42 fixtures obtidas por `git ls-files .claude/verify/fixtures_016/` (o tasks.md dizia 35 e 42 entradas — foi escrito antes dos 7 acrescimos da Fase 4: F20-F23, P8-P10), o proprio harness E os dois planning-states que a campanha MUTA (015 e 016) — desvio declarado que ENDURECE o trigger (precedente d009/d010/d014): campanha que nao re-executa quando o proprio arquivo mutado muda e o EA-7 dentro do remedio; o custo e a d016 rodar em todo PR que toque esses dois estados, ~1 min. Mutacao in-place + gate + restauracao por bytes e SHA-256 sob try/finally + `git status --porcelain` escopado aos arquivos mutados (R7 §3). Vocabulario de tres estados (DETECTADO/SOBREVIVENTE/NAO EXECUTADO com causa do conjunto fechado de T4 da 013). Preflight e campanha executados em T060 sob arvore limpa; a primeira execucao esta registrada em specs/016-registro-contra-execucao/prova-de-carga.md (R2 §1), com sobrevivente ou sem. [2026-09-04 · Fase 6, iteracao de correcao do spec-validate (G3, J1, J3, J4)] 33 MUTANTES: entram D016-M31 (instrumento: clausula de formato do prazo desligada — carrasco de C4 e, morre em F24, caso NOVO da sonda; medido em clone de d130a04 (fecho.py identico ao de 76fd9dc) que sem F24 a sonda seguia 33 · 0 sob essa mutacao), D016-M32 (arvore: CRIA o planning-state sintetico 999-sintetica-d016.json com valvula valida — carrasco PERMANENTE de C4 d, a perda nomeada de M21 apos o done; ancora = AUSENCIA do arquivo, 1 sse nao existe; restauracao = unlink conferido) e D016-M33 (LEITOR: ler_merges devolve [] com metadados saos — a sonda nao ve leitor; quem mata e a guarda de censo do gate nu, fecho.json → piso.merges_ate_piso = 39, e o kill exige 0 problema(s) de julgamento: sem a guarda a arvore ficava verde, medido). A sonda passa de 33 para 35 casos (F24 e P11; P11 isola a clausula de fase e M9 passa a morrer por P11 → LIBERADO, a letra da spec, com P2 como segunda divergencia). M18/M19/M24 e o controle positivo movem piso E censo pinado juntos (6dad53d = 15, raiz e5ccd429 = 0 — dois oraculos, git rev-list e ler_merges). TARGETS = 54: +F24.json, +P11.json e +999-sintetica-d016.json (nao existe no repositorio — entra para que um commit que o crie redispare a campanha e M32 saia NAO EXECUTADO em vez de escrever por cima). Registro da execucao: prova-de-carga.md §9. [2026-09-05 · fix-finding EA-39 (errata E016-8), commit RED do qa-engineer] TARGETS = 56: +F25.json e +F26.json (sonda 35 → 37; codigos 16 → 17 com historico-raso — a divergencia CODIGOS do instrumento ≠ registro e F25/F26 divergentes SAO o red). Os pares D016-M34 (julgador ignora cadeia_integra ⇒ F25 volta a EM VOO · 0) e D016-M35 (precedencia trocada ⇒ F26 volta a piso-invalido) entram no harness e na matriz com o green de fecho.py (T094/T096), nunca antes: ancorar em codigo que nao existe seria ancora podre no preflight (IC-4). A metade do LEITOR (deteccao do clone raso em ler_merges) NAO tem mutante de arvore, por razao medida: .git/shallow e invisivel as tres guardas de restauracao do harness, `git fetch --depth=1` numa worktree muta o .git COMPARTILHADO pelas nove worktrees desta maquina e `--unshallow` falha em repositorio completo — divida declarada em mutation-matrix.json com carrasco nomeado: bateria adversarial de I/O em clone efemero com origin = GitHub (prova-de-carga.md §12), reexecutada a cada mudanca de ler_merges. D016-M33 nao muda: a ancora `return {\"merges\": merges, \"origin_develop\": od}` continua unica (preflight ocorrencias == 1) e os campos novos sao populados ANTES dela. [2026-09-06 · demanda 017 (C7): insumos = fixture (44 paths de git ls-files .claude/verify/fixtures_016/ menos fecho/F5.json e protecao/sem_fecho.json, que sao conjunto mutado), declaracao (.claude/verify/branch_protection.json); os enderecos :41/:246 da spec 017 sao anteriores a estas insercoes — conferir por chave, harnesses.d009._trilha e harnesses.d016._trilha]."
     },
     "ea41": {
       "cmd": "node tests_ea41_mutants.js",
@@ -258,6 +346,14 @@
         ".gitattributes",
         "tests_ea41_mutants.js"
       ],
+      "insumos": {
+        "oraculo": [
+          ".claude/verify/check_eol_text.py"
+        ],
+        "declaracao": [
+          ".gitattributes"
+        ]
+      },
       "requires": [
         "node",
         "python"

@@ -1,6 +1,6 @@
 {
   "demanda": "017-semantica-do-gatilho",
-  "phase": "red",
+  "phase": "implement",
   "spec_dir": "specs/017-semantica-do-gatilho",
   "branch": "feature/017-semantica-do-gatilho",
   "brief": "A palavra targets significa duas coisas incompativeis no repositorio: em mutation_map.json e o que REDISPARA a campanha; na assercao IC-6 de check_mutation.py e o que a campanha MUTA. O CONTEXT.md:214-218 carrega as duas em frases consecutivas do mesmo verbete. Generalizar o IC-6 nasce vermelho em 7 de 11 harnesses com preflight (medido pelo orquestrador no HEAD 9d617d0; o brief dizia 6, numero de segunda mao sobre arvore anterior ao merge da ea41), todos por excedentes que sao gatilhos legitimos declarados por escrito. Enquanto as duas semanticas coexistirem, qualquer instrumento dos eixos A (cobertura do mapa) e C (registro contra execucao) nasce ambiguo. Pre-condicao de EA-3, EA-28, EA-30, EA-31 e EA-42.",
@@ -36,5 +36,18 @@
       "D017-SONDA1"
     ],
     "notes": "RED PROVADO EM DUAS METADES, e a distincao importa. VERMELHO NA ARVORE REAL: D017-REL2 em 7 harnesses (70 fantasmas literais) e D017-REL1 + FORM1(b) em d014 e d016 (12 faltantes falsos, com o diagnostico de forma na propria linha). Fecho do bloco: 9 problemas, exit 1 — exatamente a tabela da janela que o plano previu. VERMELHO SO POR MUTANTE EM COPIA EFEMERA: D017-INS1, FORM1(a), CORE1 e SONDA1 nascem verdes (os dois do meio por VACUO, porque nenhum insumos existe ainda), e cada um teve carrasco EXECUTADO, nao declarado — M1, M5, M6, M7, M9, M14, e M10..M16/M18 na sonda. Era a armadilha desta fase: assercao que nasce verde sem carrasco executado e tautologia com nome de gate, que e o EA-20. D017-M17 e M19 sobrevivem a sonda por desenho e morreram na copia, com credor EA-42 — nao foram forcados a morrer no instrumento errado. Regressao C8 medida por diff antes do commit: as 64 linhas de IC saem byte-identicas ao HEAD anterior, sem linha IC-6, com uma unica divergencia esperada (o contador de problemas somando o bloco novo). 18 runs de bateria, 250 s. Bloco IC-6 retirado cirurgicamente: o PP-5 preservou o que o IC-5 partilhava."
+  },
+  "implement": {
+    "waves_done": [
+      "W0 (erratas 1 e 2, R1)",
+      "W1 (red: bloco 017, IC-6 retirado, _meta.sonda_relacao; R2)",
+      "errata 3 (sexta causa do INS1; R2a)",
+      "W2 (insumos nos sete harnesses R3; forma canonica d014 R4 e d016 R5)"
+    ],
+    "pending": [
+      "W3 (matriz de mutantes, erratas na spec da 013, notas no BACKLOG, T037 docstring)",
+      "Fase 6 (spec-validate, aceite do PO, PR)"
+    ],
+    "notes": "Janela vermelha fechada 7 -> 2 -> 1 -> 0, medida degrau a degrau como o prototipo da Fase 2 previu. Pipeline COMPLETO 17 PASS · 0 FAIL; bloco do gate: 'semantica do gatilho: 0 problema(s)'. NOTA DE PROCESSO: pedi T023 e T026 numa delegacao so dizendo que repinaria apos cada um; o build-engineer commitou os dois antes de voltar (corretamente, foi o que pedi) e o commit do d014 ficou com registry defasado. Recusei fundir R4 e R5 — e o desvio que as 008 e 015 pagaram e que eu ja tinha recusado no portao da Fase 3 — e refiz na branch local nao enviada: reset, R4, cherry-pick do commit do d016 preservando autor e mensagem, R5. Cada commit da branch volta a ter registry consistente. Uma correcao do build-engineer em mim: a frase-resumo da minha delegacao dizia 'D017-REL2 verde nos onze' apos T020, e esta errado — FORM1(b) e diagnostico ANEXADO a REL1 e REL2, entao enquanto a forma diverge o mesmo arquivo e faltante e fantasma ao mesmo tempo. Ele seguiu o tasks.md, a fonte aprovada, em vez do meu resumo."
   }
 }

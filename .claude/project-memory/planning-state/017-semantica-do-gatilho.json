@@ -1,0 +1,11 @@
+{
+  "demanda": "017-semantica-do-gatilho",
+  "phase": "refinement",
+  "spec_dir": "specs/017-semantica-do-gatilho",
+  "branch": "feature/017-semantica-do-gatilho",
+  "brief": "A palavra targets significa duas coisas incompativeis no repositorio: em mutation_map.json e o que REDISPARA a campanha; na assercao IC-6 de check_mutation.py e o que a campanha MUTA. O CONTEXT.md:214-218 carrega as duas em frases consecutivas do mesmo verbete. Generalizar o IC-6 nasce vermelho em 7 de 11 harnesses com preflight (medido pelo orquestrador no HEAD 9d617d0; o brief dizia 6, numero de segunda mao sobre arvore anterior ao merge da ea41), todos por excedentes que sao gatilhos legitimos declarados por escrito. Enquanto as duas semanticas coexistirem, qualquer instrumento dos eixos A (cobertura do mapa) e C (registro contra execucao) nasce ambiguo. Pre-condicao de EA-3, EA-28, EA-30, EA-31 e EA-42.",
+  "refinement": {
+    "status": "awaiting_approval",
+    "notes": "Fase 0 escrita pelo product-owner. A pergunta certa NAO era qual semantica vence: sao dois conceitos com dois nomes ja existentes na maquina (targets no mapa; arquivos_mutados no contrato C1), e o IC-6 e o unico ponto que afirma identidade. Relacao recomendada: INCLUSAO COM RAZAO DE CLASSE legivel por maquina. Argumento mais curto: R3 §5 (tdd.md:17) EXIGE o gate no gatilho, e a identidade do glossario proibia isso. O defeito de vocabulario esta em CONTEXT.md:214-218, verbete que o proprio PO cunhou na Fase 0 da 013. Tres medicoes canonicas feitas pelo orquestrador (o PO nao tem Bash e disse isso, fazendo por leitura estatica de expressao): (1) ea41 e o setimo vermelho, confirmado; (2) 7 de 11 com preflight, nao 6 — d010 exc2, d009 exc2, d014 exc4, d011 exc1, d015 exc2, d016 exc45, ea41 exc3+falt1; p50/p51/p52/d014vis verdes; FALTANTE ZERO em todos exceto o falso da ea41, ou seja a doenca original esta curada; (3) p52 muta tests_p52_chromium.js — o precedente que a d009 invocou e falsa analogia. Defeito de forma confirmado AO VIVO: 10 harnesses emitem basename, ea41 emite path repo-relativo, e a comparacao literal produz faltante FALSO. 13 perguntas com recomendacao, 12 bordas, 4 verbetes novos no CONTEXT.md com o anterior riscado."
+  }
+}

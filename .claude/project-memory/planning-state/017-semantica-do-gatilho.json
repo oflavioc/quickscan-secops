@@ -1,6 +1,6 @@
 {
   "demanda": "017-semantica-do-gatilho",
-  "phase": "implement",
+  "phase": "validate",
   "spec_dir": "specs/017-semantica-do-gatilho",
   "branch": "feature/017-semantica-do-gatilho",
   "brief": "A palavra targets significa duas coisas incompativeis no repositorio: em mutation_map.json e o que REDISPARA a campanha; na assercao IC-6 de check_mutation.py e o que a campanha MUTA. O CONTEXT.md:214-218 carrega as duas em frases consecutivas do mesmo verbete. Generalizar o IC-6 nasce vermelho em 7 de 11 harnesses com preflight (medido pelo orquestrador no HEAD 9d617d0; o brief dizia 6, numero de segunda mao sobre arvore anterior ao merge da ea41), todos por excedentes que sao gatilhos legitimos declarados por escrito. Enquanto as duas semanticas coexistirem, qualquer instrumento dos eixos A (cobertura do mapa) e C (registro contra execucao) nasce ambiguo. Pre-condicao de EA-3, EA-28, EA-30, EA-31 e EA-42.",
@@ -39,15 +39,20 @@
   },
   "implement": {
     "waves_done": [
-      "W0 (erratas 1 e 2, R1)",
+      "W0 (erratas 1 e 2; R1)",
       "W1 (red: bloco 017, IC-6 retirado, _meta.sonda_relacao; R2)",
       "errata 3 (sexta causa do INS1; R2a)",
-      "W2 (insumos nos sete harnesses R3; forma canonica d014 R4 e d016 R5)"
+      "W2 (insumos R3; forma canonica d014 R4, d016 R5)",
+      "W3 (matriz R6; erratas na 013 R7; BACKLOG R8; docstring R8a; plano R8b)"
     ],
     "pending": [
-      "W3 (matriz de mutantes, erratas na spec da 013, notas no BACKLOG, T037 docstring)",
-      "Fase 6 (spec-validate, aceite do PO, PR)"
+      "Fase 6: iteracao 2 do spec-validate apos G1-G4, aceite do PO, relatorio final"
     ],
     "notes": "Janela vermelha fechada 7 -> 2 -> 1 -> 0, medida degrau a degrau como o prototipo da Fase 2 previu. Pipeline COMPLETO 17 PASS · 0 FAIL; bloco do gate: 'semantica do gatilho: 0 problema(s)'. NOTA DE PROCESSO: pedi T023 e T026 numa delegacao so dizendo que repinaria apos cada um; o build-engineer commitou os dois antes de voltar (corretamente, foi o que pedi) e o commit do d014 ficou com registry defasado. Recusei fundir R4 e R5 — e o desvio que as 008 e 015 pagaram e que eu ja tinha recusado no portao da Fase 3 — e refiz na branch local nao enviada: reset, R4, cherry-pick do commit do d016 preservando autor e mensagem, R5. Cada commit da branch volta a ter registry consistente. Uma correcao do build-engineer em mim: a frase-resumo da minha delegacao dizia 'D017-REL2 verde nos onze' apos T020, e esta errado — FORM1(b) e diagnostico ANEXADO a REL1 e REL2, entao enquanto a forma diverge o mesmo arquivo e faltante e fantasma ao mesmo tempo. Ele seguiu o tasks.md, a fonte aprovada, em vez do meu resumo."
+  },
+  "pr_url": "https://github.com/oflavioc/quickscan-secops/pull/48",
+  "validate": {
+    "status": "in_progress",
+    "notes": "Iteracao 1: 69/73 = 94,5%. Quatro nao conformes, TODOS em arquivo de registro, NENHUM no gate. G1 e o caso de manual: a Errata C1 escrita na spec da 013 diz 'nao ha nova obrigacao de quem escreve o preflight' — o OPOSTO da forma canonica D1 que a 017 mandou gravar. A prova mecanica de aditividade passou (0 removidas, exit 0) enquanto o conteudo divergia, e isso NAO e falha da prova: o tasks.md declarou esse limite quando ela foi escrita ('prova estrutura, nao sentido'). O defeito caiu no ponto cego documentado. G2: falta a frase que estende o C2. G3: 'sete harnesses com preflight' onde o bloco corre em onze. G4: a prosa do D3 promete retorno mais rico que o contrato C5 honrado. CI run 34066877538: verify pass, visual pass (bloco 017 inteiro nas linhas 790-804, 2 campanhas 0 problemas), fecho fail POR DESENHO — a regra C8 da 016 bloqueando merge de demanda em fase implement. As quatro alineas que nascem verdes tem carrasco citavel no repositorio, conferido: nao repetiu o G2 da 015."
   }
 }

@@ -30,7 +30,7 @@ Link: [refinement.md](refinement.md) §Enquadramento de produto.
 |---|---|---|
 | **D1** | **Forma canônica do path: relativa à raiz do repositório, separador `/`, sem `./`, sem `..`, sem `/` inicial — a forma de `git diff --name-only`.** Vale para `targets`, `arquivos_mutados` e `insumos`. É **errata aditiva do C1 da 013** (`specs/013-integridade-da-campanha/spec.md:205-226` não fixa forma; o exemplo só tem arquivos da raiz) e **entra nesta demanda** como pré-condição de C1/C2 abaixo — sem ela o gate mente (§Correção de fato: 12 faltantes falsos). **Quem migra é o emissor**, e só onde o **valor** emitido viola a forma: `d014` (`tests_014_mutants.js:303`, 2 paths sob `.claude/verify/`) e `d016` (`tests_016_mutants.js:555`, 10 paths sob `.claude/`). Os outros oito que usam `path.basename(m.file)` (`tests_009_mutants.js:441`, `010:381`, `011:395`, `014_visual:237`, `015:294`, `p50:855`, `p51:321`, `p52:1512`) mutam **só arquivos da raiz**, onde basename ≡ path relativo — o valor já é canônico e eles **não são tocados**; a `ea41` já emite repo-relativo (`tests_ea41_mutants.js:114`, `:263`). O consumidor **não normaliza**: rejeita forma fora do contrato (C4), porque normalizar esconderia no Windows o `\` que o CI Linux nunca veria (R7 §5 — determinismo por construção, não por plataforma) | Preflight executado 11/11; `git diff --name-only` é a forma de `changed` (`check_mutation.py:471`) e do laço de trigger (`:1333`). Rito: os dois harnesses são **pinados** (`pins.json:425`, `:430`), **não** estão em `boundary.json`, `PROTECTED` (`tests_p50_core.js:82`) nem `frozenSuites` (`:473-476`); `requires: node, python` nos dois — a campanha que eles redisparam **fecha localmente** (§Contratos, tabela do gatilho). Nenhum harness com `requires: chromium` é tocado, como o §Fora de escopo do refinamento exige |
 | **D2** | **A razão de classe mora numa chave irmã de `targets`: `insumos`, objeto `classe → [paths]`, com vocabulário fechado de quatro classes** (`oraculo`, `fixture`, `populacao`, `declaracao` — §Vocabulário fechado). Nem campo por arquivo (45 razões na `d016` que ninguém lê), nem uma razão por harness (rótulo), nem anotar `targets` (o laço de trigger lê lista plana, `:1333`; INV-10 e P1.13 mantêm a chave). A classe **é** o nome da relação: cada uma responde "o que muda na prova se este arquivo mudar?" de um jeito, e todo membro responde igual (borda 7). `"endurece o trigger"` não é classe — é efeito; classe fora do vocabulário reprova (C3). `insumos` ausente ≡ `{}` (identidade, borda 9 — `p50`/`p51`/`p52`/`d014vis` não mudam) | Os 58 excedentes semânticos de hoje cabem **58/58** nas quatro classes (§Correção de fato, última tabela). Precedente de forma: `preflight` e `receipts` são chaves irmãs de `targets` no mesmo objeto (`mutation_map.json:9`, `:71-73`), consumidas por `check_mutation.py` |
-| **D3** | **A "declaração de população" do `EA-3` não entra** (voto do PO acompanhado). O que a 017 **deixa pronto** para ela: (i) a distinção **coberto** (∈ conjunto mutado de algum harness) × **vigiado** (∈ gatilho de algum harness) como **dado** — o julgador puro devolve, por harness, a classificação de cada path em `mutado` / `harness` / `insumo(classe)`; (ii) a forma canônica (D1), sem a qual a união entre harnesses não é comparável com `git ls-files`; (iii) `insumos` como o registro que impede o `EA-3` de contar oráculo como cobertura. A população em si, o órfão e o "11 de 14 / 17 de 35" (`BACKLOG.md:393` e a §Correção do próprio texto do achado) continuam do `EA-3` | Borda 12 do refinamento: a 017 torna o gatilho **verdadeiro**, não **completo** |
+| **D3** | **A "declaração de população" do `EA-3` não entra** (voto do PO acompanhado). O que a 017 **deixa pronto** para ela: (i) a distinção **coberto** (∈ conjunto mutado de algum harness) × **vigiado** (∈ gatilho de algum harness) como **dado** — o julgador puro devolve, por harness, a classificação de cada path em `mutado` / `harness` / `insumo(classe)` *(Errata `D3(i)` · Fase 6: o julgador **não devolve** `mutado`/`harness` — devolve `insumos_ok` (C5, honrado); as três posições são **deriváveis**, por harness, do retorno C5 mais os argumentos `arquivos_mutados` (C1) e `fontes` (PP-9), sob `estado == "ok"` — `targets = (arquivos_mutados ∪ fontes) ⊔ ⋃insumos_ok`, medido 11/11; §Erratas da Fase 6)*; (ii) a forma canônica (D1), sem a qual a união entre harnesses não é comparável com `git ls-files`; (iii) `insumos` como o registro que impede o `EA-3` de contar oráculo como cobertura. A população em si, o órfão e o "11 de 14 / 17 de 35" (`BACKLOG.md:393` e a §Correção do próprio texto do achado) continuam do `EA-3` | Borda 12 do refinamento: a 017 torna o gatilho **verdadeiro**, não **completo** |
 | **D4** | **O `IC-6` é substituído, não enfraquecido, e isto é o que o portão desta Fase ratifica.** O bloco nominal (`check_mutation.py:395-412`) sai; entram `D017-REL1`/`REL2`/`INS1`/`FORM1` sobre todo harness com preflight. Para a `p51` **hoje** (identidade, sem `insumos`) os dois predicados são **idênticos**; o único estado que era FAIL e passa a OK é "excedente com razão de classe válida" — a decisão de produto P1.1/P1.3, exigida por R3 §5. Os dois mutantes que fizeram o `IC-6` nascer (`M-IC8`, `M-IC9`, `spec.md:116` da 013) **continuam mortos**, re-executados contra o gate novo (`D017-M1`/`M2`). O id `IC-6` fica **reservado** (R12), a linha `[OK] IC-6` deixa de existir, e a 013 recebe **errata aditiva** (§Erratas a aplicar na 013). Manter o `IC-6` ao lado do gate novo não é opção: proibiria a `p51` de vigiar o próprio oráculo — a Necessidade do refinamento | `IC-6` foi aprovado **sob delegação** (`a052617`, cabeçalho de §Erratas da 013); a superação vem por **spec aprovada pelo usuário**, o rito mais forte. R10 §1 proíbe afrouxar *para passar*; aqui a regra muda por decisão registrada e os carrascos originais seguem vivos — é fortalecimento (o excedente passa a exigir razão estruturada onde antes bastava… nada, porque a asserção só existia para um harness) |
 | **D5** | **Onde vive a prova de que o julgador não mente**: (a) **sonda em processo** com dados sintéticos e **contagem pinada em dado** (`mutation_map.json → _meta.sonda_relacao.total`, R10 §3 — a 013 pinou "7 cenários" só em prosa; a 016 pinou `sonda.total` em `fecho.json`, e é esse o precedente seguido), executada a cada run do stage — a metade **permanente**; (b) **mutantes de árvore** sobre o mapa e sobre cópia efêmera dos harnesses, mortos no red e registrados em `red-017.md` — a metade **one-shot**, cuja não re-execução tem credor nomeado: `EA-42` (`BACKLOG.md:3276`, "bateria efêmera de instrumento"). O `core` **não recebe** julgamento: sai como dívida com credor `EA-44` (`BACKLOG.md:3409`), P1.7 | Precedentes `IC-9.4` (`check_mutation.py:994-1090`) e `IC-10` (`:1150-1282`): julgador puro + cenários sintéticos + `len(...)` impresso; `M-IC19` como o mutante de **fiação** que a sonda não vê e a árvore mata |
 
@@ -240,6 +240,17 @@ mutado como coberto. Um instrumento de população precisa só de: `⋃ mutados`
 (coberto), `⋃ targets` (vigiado) e `git ls-files` da população declarada, todos
 na forma canônica de D1. Nenhuma dessas três uniões é calculada aqui.
 
+*(Errata `D3(i)` · Fase 6: a primeira frase prometia mais do que C5 contrata — o
+**retorno** devolve só a terceira posição, `insumo(<classe>)`, em `insumos_ok`;
+`mutado` e `harness` são os **argumentos** `arquivos_mutados` (C1) e `fontes`
+(PP-9, o token do `cmd`). O que fica pronto é a classificação **derivável**: sob
+`estado == "ok"`, `targets = (arquivos_mutados ∪ fontes) ⊔ ⋃insumos_ok` — medido
+nos onze harnesses com preflight, com `arquivos_mutados ∩ fontes = ∅` nos onze
+(propriedade da árvore de hoje, **não** exigida pelo julgador); `estado == "ok"` é
+a pré-condição da derivação, não a identidade (controle N1 da errata). As duas
+frases seguintes — as três uniões, a forma D1, "nenhuma é calculada aqui" —
+permanecem como estão. §Erratas da Fase 6.)*
+
 ## Contratos
 
 Nenhum bridge de runtime, payload de sessão ou estado de módulo de produto —
@@ -308,7 +319,12 @@ Migração das razões (C7) — o conteúdo exato que entra:
 `{ estado: "ok" | "fail" | "nao_medido", faltante: [paths], fantasma: [paths],
 insumos_ok: {classe: [paths]}, problemas: [(gate, alvo, causa)], forma: [basenames
 em diagnóstico], credor?: "EA-44" }`. Sem I/O; a fiação (imprimir, contar) é do
-laço — é por isso que `D017-M17` existe e é declarado.
+laço — é por isso que `D017-M17` existe e é declarado. *(Errata `D3(i)` · Fase 6:
+este contrato é a **régua** da errata, não o objeto dela — foi honrado pela
+docstring de `check_mutation.py:528-531`, pelo laço e pela sonda; **não muda**.
+D3(i) e §O que fica pronto foram alinhados a ele: nenhuma chave `mutado`/`harness`
+existe nem passa a existir; a classificação do gatilho em três posições é
+derivável deste retorno mais os argumentos — §Erratas da Fase 6.)*
 
 ### Arquivos rastreados que mudam (pinados → `gen_pins.py` no MESMO PR, em commit separado após cada commit de conteúdo — R8 §1)
 
@@ -319,7 +335,7 @@ laço — é por isso que `D017-M17` existe e é declarado.
 | `tests_014_mutants.js` | `:303` → emissão repo-relativa (D1/C4 c) | `:425` | `d014` · local |
 | `tests_016_mutants.js` | `:555` → emissão repo-relativa (D1/C4 c) | `:430` | `d016` · local |
 | `specs/013-integridade-da-campanha/spec.md` | erratas `IC-6` e `C1` (C9) | `:389` | nenhuma |
-| `.claude/BACKLOG.md` | notas `EA-3`/`EA-44`; achado `ic_estatico`; correção `:441-442` (C9) | `:18` | nenhuma |
+| `.claude/BACKLOG.md` | notas `EA-3`/`EA-44`; achado `ic_estatico`; correção `:441-442` (C9) *(Errata `D3(i)` · Fase 6: a nota datada de `EA-3` (`:539-547` em `0861f90`, T034) herdou a frase de D3(i) — "devolvida como dado por `mut_relacao`" — e recebe **segunda edição** alinhada: "derivável do retorno C5 (`insumos_ok`) e dos argumentos (`arquivos_mutados`, `fontes`), por harness, sob `estado == ok`"; `doc-writer`, commit próprio (T044: um commit por arquivo), repin com rótulo novo)* | `:18` | nenhuma |
 | `.claude/verify/mutation-matrix.json` | `dividas_declaradas`: `D017-M17` (fiação, carrasco `D017-M2` em cópia) e a não re-execução da família de árvore (credor `EA-42`) *(Errata `D017-M19` · Fase 3: mais `D017-M19`, fiação, carrasco em cópia sob o estado NOTA — mesma família de `M17`)* *(Errata `INS1(f)` · Fase 4: a família one-shot de árvore ganha `D017-M20`/`M21`, mortos em cópia na W2 — T022)* | `:266` | nenhuma |
 | `specs/017-semantica-do-gatilho/*` | esta spec, `plan.md`, `tasks.md`, `red-017.md`, `spec-validate.md`, `relatorio-final.md` | novos — arquivo rastreado sem pin é FAIL do `baseline` | nenhuma |
 
@@ -759,3 +775,179 @@ FORM1(a)), §Vácuos declarados 1, §O que cada tarefa deixa medível (T022), §
 wave muda. Fora desta errata e no mesmo commit, o `tasks.md` recebe **T037/T038**
 (docstring de `ex_ids_do_harness` — decisão do orquestrador, não errata desta
 spec: não há critério que a docstring viole; é C8 (iv) que ganha um patch-point).
+
+## Erratas da Fase 6 (2026-09-08)
+
+> Escrita pelo `tech-lead` **depois da iteração 1 do `spec-validate`**
+> ([spec-validate.md](spec-validate.md), commit `cb709d2`, repin R9 `265c56e`;
+> 69/73, medido no HEAD `5818b1c`), a partir do gap **G4** (`spec-validate.md:25`,
+> `:176`, `:435`) — o único dos quatro gaps que caiu sobre **esta** spec: G1–G3
+> eram registros na spec da 013, corrigidos pelo `doc-writer` em `0fe7e75` (repin
+> R10 `0861f90`). Diferente das erratas das Fases 3 e 4, **esta não alcança
+> comportamento nenhum**: nenhum gate ganha ou perde alínea, nenhum mutante nasce;
+> corrige uma **descrição** (D3, item (i)) que prometia mais do que o contrato C5
+> — que a implementação **honrou**. Linhas citadas na numeração de `0861f90` para
+> esta spec, `check_mutation.py`, `.claude/BACKLOG.md` e `spec-validate.md` —
+> todas anteriores a esta seção existir. **Tudo o que se afirma sobre o
+> instrumento foi executado** em 2026-09-08 nesta worktree (`phase5-014`,
+> `0861f90`): o julgador **real** (`check_mutation.py:486-627`, carregado por
+> `exec` do bloco, sem importar o script — que imprimiria e mutaria) sobre os
+> `arquivos_mutados` de `<cmd> --preflight` dos **onze** harnesses com preflight
+> (exit 0 nos onze), em memória; porcelain vazio antes e depois; o protótipo é
+> descartável e não está na árvore.
+>
+> **Quem decidiu**: o orquestrador, na Fase 6, **sob a autoridade delegada de
+> 2026-08-29 — não aprovado pessoalmente pelo proprietário**. T044 do
+> [tasks.md](tasks.md) prescreve, para gap `spec-errada`, "errata na spec, TL/PO,
+> **com aprovação do usuário**"; a aprovação disponível é a delegada, e esta seção
+> o diz para que a trilha distinga as duas coisas. O `qa-engineer` recomendou a
+> mesma rota (`spec-validate.md:435`), com a razão que está escrita abaixo para
+> poder ser cobrada. O `tech-lead` não leu o chat e não afirma mais do que isso.
+> Pelos quatro testes de sempre a errata cabe sob delegação: **nenhuma asserção
+> enfraquece** (nenhuma muda), **nenhuma boundary se move**, **nenhum veredito de
+> gate alheio muda**, e `check_mutation.py` **não é tocado** — se a leitura do
+> proprietário for outra, reverter o commit desta seção é barato: **nenhuma
+> redação original foi apagada** (R2 §5); cada ponto tocado leva nota inline
+> `*(Errata \`D3(i)\` · Fase 6)*` e a redação anterior está citada abaixo.
+>
+> **O que não é reaberto**: D1, D2, D4, D5 e os itens (ii) e (iii) de D3; C1–C9 e
+> as asserções dos seis gates `D017-*`; **C5 — que é a régua desta errata, não o
+> objeto dela**; os 15 cenários da sonda e `_meta.sonda_relacao.total = 15`;
+> `IC-*`; as erratas aplicadas na 013 (C9, `0fe7e75`); as três erratas das Fases 3
+> e 4; P1–P8 do plano; PP-1…PP-12; o commit red `adb883f` e o `red-017.md`; a
+> iteração 1 do `spec-validate.md` (a iteração 2 é do `qa-engineer`, T044).
+> Identificação pelo **objeto** amendado: **Errata `D3(i)`** — a frase de D3 sobre
+> o que o julgador *devolve*, e a §"O que fica pronto para o `EA-3`" que a
+> desdobra.
+
+### Errata `D3(i)` — o que o julgador devolve e o que fica derivável
+
+**O que dizia.** D3 (`:33`), item (i): *"a distinção **coberto** (∈ conjunto
+mutado de algum harness) × **vigiado** (∈ gatilho de algum harness) como **dado**
+— o julgador puro devolve, por harness, a classificação de cada path em `mutado` /
+`harness` / `insumo(classe)`"*. §O que fica pronto para o `EA-3` (`:237-241`):
+*"O retorno de `mut_relacao` classifica cada path do gatilho em exatamente uma de
+três posições — `mutado`, `harness`, `insumo(<classe>)` — e cada path do conjunto
+mutado como coberto."* A nota datada de `EA-3` no BACKLOG
+(`.claude/BACKLOG.md:542-544`, escrita por T034 a partir de D3) herda a frase:
+*"a classificação de cada path do gatilho em `mutado` / `harness` /
+`insumo(<classe>)`, devolvida como **dado** por `mut_relacao`"*. Fora desses três
+pontos, ninguém repete a promessa: `plan.md:67` diz "retorno de `mut_relacao`
+(contrato C5)"; T034 aponta para "os três itens de D3 da spec" sem os transcrever.
+
+**O que o contrato fixa — e a implementação honrou.** C5 (`:306-311`):
+`{ estado, faltante, fantasma, insumos_ok: {classe: [paths]}, problemas, forma,
+credor? }`; C6 (`:141`) repete o mesmo conjunto de chaves. A docstring do julgador
+(`check_mutation.py:528-531`) promete exatamente isso e a função cumpre — medido
+sobre a `d010` real: chaves do retorno = `estado`, `faltante`, `fantasma`, `forma`,
+`insumos_ok`, `problemas` (+ `credor`, só em `nao_medido`); `"mutado" in retorno
+= False`; `"harness" in retorno = False`. **Consumidores** do retorno, por grep de
+`mut_relacao`/`insumos_ok` sobre `*.js`, `*.py`, `*.json`, `*.md` da árvore: nove
+arquivos, dos quais **um só é código** — `check_mutation.py`; os outros oito são
+registros (`mutation_map.json`, `mutation-matrix.json`, `BACKLOG.md` e os cinco
+artefatos desta demanda). No código, o único leitor é o laço (`:794-811`), que lê
+`estado`, `problemas`, `insumos_ok` e `credor` — nenhuma posição `mutado` ou
+`harness` —, e o `(<n>)` da linha `[OK] D017` é `len(set(_mutados017 or []) |
+set(_fontes017))` (`:805`): **o próprio gate já deriva `mutado ∪ harness` dos
+argumentos, não do retorno**. Não há consumidor para as duas posições.
+
+**Por que a promessa era grande demais, e não falsa — a derivação, medida.**
+`mut_relacao` recebe `targets`, `insumos`, `arquivos_mutados`, `fontes` e devolve
+`insumos_ok`. Se `estado == "ok"`, por construção do julgador: `faltante = ∅` ⇒
+`arquivos_mutados ∪ fontes ⊆ targets` (`:560-561`); `fantasma = ∅` e nenhuma causa
+de INS1 ⇒ todo excedente de `targets` está em `insumos_ok` (`:562`, `:615-616`);
+todo path de `insumos_ok` está em `targets` e **fora** de `arquivos_mutados ∪
+fontes` (`:601-603`, causas (c)/(d)) e em uma só classe (`:578-580`, causa (e)).
+Logo **`targets = (arquivos_mutados ∪ fontes) ⊔ ⋃insumos_ok`**: a posição
+`insumo(<classe>)` **é devolvida** (`insumos_ok`, com a classe); `mutado` e
+`harness` são **os argumentos** `arquivos_mutados` (C1, o JSON do preflight) e
+`fontes` (PP-9, `ic_fontes`, `:158-170`). Executado nos onze:
+
+| Harness | exit `--preflight` | `targets` | `arquivos_mutados` | `fontes` | `insumos_ok` | `estado` | `targets = (mutados ∪ fontes) ⊔ ⋃insumos_ok` | `mutados ∩ fontes` |
+|---|---|---|---|---|---|---|---|---|
+| `d009` | 0 | 9 | 6 | 1 | oraculo 1 · fixture 1 | ok | sim | ∅ |
+| `d010` | 0 | 5 | 2 | 1 | oraculo 1 · fixture 1 | ok | sim | ∅ |
+| `d011` | 0 | 5 | 3 | 1 | oraculo 1 | ok | sim | ∅ |
+| `d014` | 0 | 10 | 5 | 1 | populacao 4 | ok | sim | ∅ |
+| `d014vis` | 0 | 2 | 1 | 1 | — | ok | sim | ∅ |
+| `d015` | 0 | 4 | 1 | 1 | oraculo 1 · fixture 1 | ok | sim | ∅ |
+| `d016` | 0 | 56 | 10 | 1 | fixture 44 · declaracao 1 | ok | sim | ∅ |
+| `ea41` | 0 | 4 | 1 | 1 | oraculo 1 · declaracao 1 | ok | sim | ∅ |
+| `p50` | 0 | 5 | 4 | 1 | — | ok | sim | ∅ |
+| `p51` | 0 | 7 | 6 | 1 | — | ok | sim | ∅ |
+| `p52` | 0 | 9 | 8 | 1 | — | ok | sim | ∅ |
+
+**11/11** — identidade, disjunção e `ok` (o mapa tem **12** harnesses: 11 com
+preflight, `core` sem; **7** com `insumos`: `d009`, `d010`, `d011`, `d014`,
+`d015`, `d016`, `ea41` — contados do JSON, não de cabeça). Nas uniões — calculadas
+**no protótipo**, nunca pelo bloco; D3 continua valendo e a linha 5 do
+`spec-validate.md:175` continua verdadeira —: `⋃ arquivos_mutados` (**coberto**) =
+**29** paths; `⋃ targets` (**vigiado**) = **95**; `⋃ fontes` = 11; `⋃ insumos_ok`
+= 58 paths distintos (oraculo 5 · fixture 47 · populacao 4 · declaracao 2 — os 58
+excedentes semânticos da Medição A, sem resíduo, como a Medição B previu);
+`vigiado − coberto` = **66** = `(⋃ fontes ∪ ⋃ insumos_ok) − ⋃ arquivos_mutados`,
+confere; `coberto ⊆ vigiado` (C1, harness a harness). **O dado que um booleano
+não daria e o C5 dá**: três paths são `populacao` na `d014` **e** conjunto mutado
+de outro harness — `ui_d011_prioridade_v32.css`, `ui_p52_workspace_v32.css`,
+`ui_ux_v32.css`; para a `d014` são insumo, para a união são cobertos. É a classe
+**por harness** em `insumos_ok` que permite ao `EA-3` decidir isso, e é por isso
+que o item (iii) de D3 existe. Nenhum `fontes` é conjunto mutado de outro harness
+(0 de 11).
+
+**Controle negativo** — a prova testada contra o que ela deve recusar (em memória,
+`d010`): **(N2)** `zz_extra_017.js` acrescentado a `targets` ⇒ `estado = fail`,
+`fantasma = [zz_extra_017.js]`, a identidade **não** vale — a identidade não é
+tautologia. **(N1)** `fixtures_010_vao.js` retirado de `targets` (insumo declarado
+sem gatilho) ⇒ `estado = fail`, `problemas = [(D017-INS1, razão sem gatilho)]`, e
+a identidade **vale** mesmo assim (o insumo inválido sai de `insumos_ok`).
+Conclusão para quem for consumir: **`estado == "ok"` é a pré-condição da
+derivação, não a identidade** — um instrumento que lesse só os argumentos
+aceitaria em silêncio uma razão contraditória; o que torna a derivação confiável
+é o veredito de C5.
+
+**Por que errata, e não segunda edição do julgador** — a razão do orquestrador e
+do `qa-engineer` (`spec-validate.md:435`), conferida contra a medição, para ser
+cobrada:
+
+1. **O contrato foi cumprido; a descrição prometeu mais.** C5 é o contrato
+   aprovado no portão da Fase 1 e é o que C6, a sonda (`D017-SONDA1`, 15
+   cenários — `d017_cen` compara **chaves** do retorno, `:650`) e o laço medem;
+   D3(i) é prosa de decisão que o descreveu com o verbo errado — "devolve" onde é
+   "torna derivável". Quando prosa e contrato honrado divergem, quem se corrige é
+   a prosa. É a direção **inversa** da Errata `INS1(f)`: lá o executável media
+   **mais** do que a régua e a régua subiu; aqui a régua descreveu **mais** do que
+   contratou e a descrição desce até o contrato.
+2. **Devolver `mutado`/`harness` seria uma segunda edição executável de
+   `mut_relacao`** — forma de retorno nova, red próprio, mutante próprio, repin —
+   **sem consumidor**: nenhum código lê essas posições (medido acima) e o gate já
+   as deriva dos argumentos em `:805`. É o escalonamento 4 do `tasks.md`, pago por
+   causa de uma frase.
+3. **A alternativa "aceitar derivável e registrar só no `spec-validate`"** (rota
+   (ii) de `spec-validate.md:435`) deixaria `spec.md:33` e `:237-238` afirmando o
+   que o retorno não faz — a **observação sem id** que as Erratas `D017-M19` e
+   `INS1(f)` já recusaram; o próximo leitor da tabela de decisões (quem abrir o
+   `EA-3`) escreveria um consumidor contra chaves que não existem.
+
+**O que passa a valer.**
+
+| Campo | Registro |
+|---|---|
+| **D3 (i)** | O que a 017 deixa pronto para o `EA-3` é a distinção coberto × vigiado como dado **derivável, por harness, do contrato C5 mais os argumentos do julgador**: `insumo(<classe>)` = `insumos_ok` (devolvido, com a classe); `mutado` = `arquivos_mutados` (C1, argumento); `harness` = `fontes` (PP-9, argumento). Sob `estado == "ok"`, `targets = (arquivos_mutados ∪ fontes) ⊔ ⋃insumos_ok` — medido 11/11. O julgador **não devolve** as posições `mutado`/`harness`; não há consumidor para elas |
+| **§O que fica pronto** | "O retorno classifica cada path em exatamente uma de três posições" passa a: **o retorno C5, lido junto com os argumentos, classifica** — `insumos_ok` dá a terceira posição, os argumentos dão as duas primeiras, `estado == "ok"` é a **pré-condição** (N1). `mutado` e `harness` são disjuntos nos onze harnesses de hoje (`arquivos_mutados ∩ fontes = ∅`, medido), mas o julgador **não o exige** — um harness que mutasse o próprio arquivo estaria nas duas; se o `EA-3` precisar dessa exigência, é critério dele. O resto do parágrafo — as três uniões, a forma D1, "nenhuma é calculada aqui" — permanece |
+| **C5** | **Não muda** — é a régua. Ganha nota inline (`:311`) dizendo-o, para que quem leia o contrato saiba que D3(i) foi alinhado a ele e não o contrário |
+| **`.claude/BACKLOG.md` — nota de `EA-3`** (`:539-547`, T034) | Recebe **segunda edição** alinhada, item (i): "derivável do retorno C5 (`insumos_ok`) e dos argumentos (`arquivos_mutados`, `fontes`), por harness, sob `estado == ok`" no lugar de "devolvida como dado por `mut_relacao`". Dono: `doc-writer` (dono do arquivo — T044: um commit por arquivo), repin próprio com rótulo novo. Fora do commit desta seção; a linha `:322` desta spec leva a nota |
+| **O que não é** | **Não muda** `mut_relacao`, nenhuma linha de `check_mutation.py`, `mutation_map.json`, a sonda ou o pin `15`; **não** é cenário; **não** cria consumidor nem união (D3 e a linha 5 do `spec-validate.md:175` seguem verdadeiras); **não** reabre `red-017.md` nem a iteração 1 do `spec-validate.md`; **não** toca o `tasks.md` — nada nele é desmentido: T044 (condicional, "spec-errada ⇒ errata na spec, TL") é o que esta seção executa para o G4, T045 (repin, rótulo novo) e a iteração 2 do `spec-validate` (QA) seguem como escritas. Repin desta spec: rótulo **novo**, nunca reuso — R9 foi `265c56e`, R10 foi `0861f90`; o próximo livre se mede no commit |
+| **Classe** | `spec-errada` por **excesso de promessa** na prosa de decisão: o contrato C5 estava certo e foi honrado; D3(i) e §O que fica pronto descreveram um retorno que C5 nunca definiu. Nenhuma asserção muda; a promessa ao `EA-3` fica **menor e verdadeira** — derivável, com a pré-condição dita e a prova de que a derivação fecha na árvore de hoje |
+
+**Pontos tocados com nota inline** (numeração de `0861f90`, anterior a esta
+seção): célula de D3 (`:33`), §O que fica pronto para o `EA-3` (`:237-241`,
+parágrafo novo abaixo do original), §Contratos C5 (`:308-311`), §Arquivos
+rastreados — linha do `BACKLOG.md` (`:322`).
+
+**Efeito no `spec-validate` (iteração 2, `qa-engineer`)** — a linha 6 da tabela
+de decisões (`spec-validate.md:176`) reavalia-se contra D3(i) amendado: o que a
+spec agora exige — retorno C5 + derivabilidade sob `ok` — é o que a leitura de
+`mut_relacao` já mostrou; a linha 5 (`:175`) não muda. A nota de `EA-3` só fecha
+depois do commit do `doc-writer`. O registro de repins reais (par commit →
+arquivo, R10 e os que esta iteração acrescentar) é do `relatorio-final.md`
+(T042, ainda não escrito em `0861f90`).

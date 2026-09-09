@@ -61,7 +61,9 @@ if dirty:
     sys.exit(1)
 
 # ═══════════════════════════════════════════════════════════════════════════
-# SEÇÃO DE INTEGRIDADE DA CAMPANHA — demanda 013 (IC-1 · IC-2 · IC-4 · IC-5 · IC-6)
+# SEÇÃO DE INTEGRIDADE DA CAMPANHA — demanda 013 (IC-1 · IC-2 · IC-4 · IC-5)
+# [017] IC-6 saiu daqui: substituído pelo bloco `---- semântica do gatilho (017) ----`
+#       abaixo (D017-REL1/REL2/INS1/FORM1, todo harness com preflight); id RESERVADO.
 #
 # Definição normativa de cada asserção: specs/013-integridade-da-campanha/spec.md
 # §"Critérios de aceite → gates" (IC-1…IC-8) e §Contratos (C1…C4). Aqui mora só
@@ -172,7 +174,7 @@ def ic_estatico(caminho):
     """Ids e arquivos mutados lidos do FONTE do harness — oráculo de RESERVA.
 
     O oráculo do contrato é o preflight (C1). Enquanto nenhum harness responde a
-    C1, IC-5 e IC-6 ficariam 'não medidos' — e não medir em silêncio é FAIL
+    C1, o IC-5 ficaria 'não medido' — e não medir em silêncio é FAIL
     (R10 §2). A reserva mede e o relatório NOMEIA qual oráculo respondeu.
     """
     src = open(caminho, encoding="utf-8", errors="replace").read()
@@ -373,43 +375,24 @@ for _nome, _h in sorted(MAP.items()):
     if not _ruins:
         ic_ok("IC-4", f"{_nome}: {len(_muts)} âncora(s) com ocorrencias == 1 (preflight, C1)")
 
-# ── IC-5 e IC-6 · nominais à p51 (T11/borda 10: sem laço genérico) ───────────
-# A checagem GENÉRICA de alvo órfão é do EA-3, que vive em branch que este
-# worktree não enxerga; escrever o laço genérico aqui seria conflito de merge no
-# pior arquivo possível.
+# ── IC-5 · nominal à p51 (T11/borda 10: sem laço genérico) ──────────────────
+# [017] O IC-6 que vivia aqui (identidade `p51.targets ≡ arquivos mutados ∪
+# {harness}`) foi SUBSTITUÍDO por D017-REL1/REL2/INS1/FORM1 — bloco `semântica
+# do gatilho (017)` abaixo, genérico a todo harness com preflight; id IC-6
+# RESERVADO (R12). A checagem de alvo órfão/população continua sendo do EA-3.
 _h51 = MAP.get("p51")
 if _h51 is None:
-    ic_fail("IC-5/IC-6", "p51", "harness p51 ausente do mutation_map.json — as asserções "
-                                "nominais à p51 ficam sem objeto")
+    ic_fail("IC-5", "p51", "harness p51 ausente do mutation_map.json — a asserção "
+                           "nominal à p51 fica sem objeto")
 else:
     _d51 = IC_PREFLIGHT.get("p51")
     if _d51:
         _ids51 = [m.get("id", "?") for m in _d51["mutantes"]]
-        _arqs51 = [str(a) for a in _d51.get("arquivos_mutados") or []]
         _oraculo = "preflight (C1)"
     else:
         _f51 = [f for f in ic_fontes(_h51) if os.path.exists(f)]
-        _ids51, _arqs51 = ic_estatico(_f51[0]) if _f51 else ([], [])
+        _ids51 = ic_estatico(_f51[0])[0] if _f51 else []
         _oraculo = "leitura estática do fonte (reserva — p51 não responde a C1)"
-
-    # IC-6 · alvo declarado verdadeiro
-    if not _arqs51:
-        ic_fail("IC-6", "p51.targets", "arquivos mutados não puderam ser determinados por "
-                                       "oráculo nenhum (nem preflight, nem leitura do fonte)")
-    else:
-        _esperado = set(_arqs51) | {os.path.basename(f) for f in ic_fontes(_h51)}
-        _declarado = set(_h51.get("targets") or [])
-        _excedente = sorted(_declarado - _esperado)
-        _faltante = sorted(_esperado - _declarado)
-        if _excedente:
-            ic_fail("IC-6", "p51.targets", "alvo declarado que o harness não muta: " +
-                    ", ".join(_excedente) + f" [oráculo: {_oraculo}]")
-        if _faltante:
-            ic_fail("IC-6", "p51.targets", "alvo mutado ausente de targets: " +
-                    ", ".join(_faltante) + f" [oráculo: {_oraculo}]")
-        if not _excedente and not _faltante:
-            ic_ok("IC-6", f"p51.targets ≡ arquivos mutados ∪ {{harness}} "
-                          f"({len(_esperado)} caminhos) [oráculo: {_oraculo}]")
 
     # IC-5 · matriz da P51 verdadeira
     try:
@@ -461,6 +444,373 @@ else:
             ic_ok("IC-5", f"registro de {len(_pares51)} par(es) p51 resolve no disco")
 
 print(f"---- integridade: {IC_FAILS} problema(s) nomeado(s) ----")
+
+# ═══════════════════════════════════════════════════════════════════════════
+# SEMÂNTICA DO GATILHO — demanda 017 (D017-REL1 · REL2 · INS1 · FORM1 · CORE1 · SONDA1)
+#
+# Definição normativa: specs/017-semantica-do-gatilho/spec.md — §"Critérios de
+# aceite → gates" (C1…C8), §Vocabulário fechado, §Os 15 cenários da sonda e
+# §Contratos (C1 errata · C2 estendido · C5). Aqui mora só a execução — nenhum
+# critério nasce neste arquivo.
+#
+# O que SUBSTITUI (D4 da 017): a identidade nominal à p51 do IC-6
+# (`p51.targets ≡ arquivos mutados ∪ {harness}`, id RESERVADO — a linha
+# `[OK]/[FAIL] IC-6` deixou de existir neste commit; M-IC8/M-IC9 continuam
+# mortos, re-executados como D017-M1/M2 em red-017.md). No lugar, para TODO
+# harness com preflight: `targets ⊇ arquivos_mutados ∪ {harness}` — faltante é
+# FAIL sem exceção (REL1); excedente sem razão de classe é alvo fantasma (REL2);
+# excedente com razão de classe válida em `insumos` passa e sai NOMEADO por
+# classe e contagem (INS1 valida a razão: vocabulário fechado, lista não vazia,
+# razão com gatilho, insumo que não é conjunto mutado, um path numa só classe);
+# tudo sobre paths na forma canônica D1 (FORM1), SEM normalização no consumidor
+# — PP-10: `ic_path` é PROIBIDA neste bloco (R7 §5: o `\` do Windows tem de
+# reprovar aqui, antes do CI que nunca o veria).
+#
+# Bloco ADITIVO com contador PRÓPRIO (`D017_FAILS`/`d017_fail`) e fecho próprio:
+# a linha `---- integridade: N ----` da 013 continua contando só o que sempre
+# contou (C8 exige-a byte-idêntica). Consome IC_PREFLIGHT (C1) e IC_SEM_PREFLIGHT
+# só em LEITURA (PP-11); não escreve, não muta, não executa suíte, não invoca
+# processo — o único processo externo continua sendo o `--preflight` do IC-4.
+#
+# Julgador PURO (`mut_relacao`, contrato C5 da 017) × FIAÇÃO (o laço): imprimir,
+# contar e distinguir `core` (sem preflight — dívida, credor EA-44) de preflight
+# fracassado (`[NOTA]`, IC-4 já nomeou) é do laço. Por isso D017-M17 e D017-M19
+# (mutantes de fiação) sobrevivem à sonda POR DESENHO e morrem em cópia efêmera
+# (red-017.md; família declarada em mutation-matrix.json → dividas_declaradas,
+# credor EA-42). A dívida do `core` passa pelo julgador de propósito: se um
+# mutante o fizer devolver `ok` para `None` (D017-M14), a sonda (cenário ix)
+# acusa e a árvore mostra o `[OK] D017: core` falso — nunca silêncio (R10 §2).
+# ═══════════════════════════════════════════════════════════════════════════
+print("---- semântica do gatilho (017) ----")
+
+D017_FAILS = 0
+D017_CLASSES = ("oraculo", "fixture", "populacao", "declaracao")   # vocabulário fechado (D2)
+D017_CREDOR_CORE = "EA-44"                                          # C5 da spec / T8 da 013
+D017_BARRA = chr(92)   # a barra invertida, montada por código — nunca por escape no fonte
+D017_DIAG = (" [forma do path? mesmo basename nos dois lados: {} — C1 exige path "
+             "relativo à raiz]")
+
+
+def d017_fail(gate, alvo, causa):
+    """Contador PRÓPRIO — nunca `ic_fail`: `---- integridade: N ----` é da 013 (C8)."""
+    global D017_FAILS
+    D017_FAILS += 1
+    print(f"[FAIL] {gate}: {alvo} · {causa}")
+
+
+def d017_forma_ok(p):
+    """Forma canônica D1 (C4 a): string não vazia, sem barra invertida, sem prefixo
+    `./` nem `/`, sem segmento `..`. NENHUMA normalização: o que está fora da forma
+    é FAIL nomeado (FORM1) e fica FORA da comparação — evita a cascata REL1/REL2."""
+    if not isinstance(p, str) or not p:
+        return False
+    if D017_BARRA in p or p.startswith("./") or p.startswith("/"):
+        return False
+    return ".." not in p.split("/")
+
+
+def d017_base(p):
+    """Basename POSIX por `/` — não `os.path.basename`, que no Windows também parte
+    em barra invertida e esconderia exatamente a forma que FORM1 tem de acusar."""
+    return str(p).rsplit("/", 1)[-1]
+
+
+def mut_relacao(targets, insumos, arquivos_mutados, fontes):
+    """Relação gatilho × conjunto mutado — contrato C5 da 017. FUNÇÃO PURA.
+
+      targets          — `harnesses.<h>.targets` do mapa (lista de paths)
+      insumos          — `harnesses.<h>.insumos` (objeto classe → [paths]) ou None (≡ {})
+      arquivos_mutados — `arquivos_mutados` do JSON de C1 (preflight), ou None quando
+                         oráculo nenhum respondeu (harness sem preflight — `core`)
+      fontes           — arquivos-fonte do harness derivados do `cmd` (ic_fontes, PP-9):
+                         entram como o TOKEN do cmd, nunca por basename
+
+    Devolve {"estado": "ok" | "fail" | "nao_medido", "faltante": [paths],
+             "fantasma": [paths], "insumos_ok": {classe: [paths]},
+             "problemas": [(gate, sub_alvo, causa)], "forma": [basenames],
+             "credor"?: "EA-44"}.
+    `sub_alvo` é o <conjunto> de FORM1 (targets · arquivos_mutados · insumos) ou
+    None; quem prefixa o nome do harness é o laço (a função não o conhece).
+    Sem I/O e sem leitura de disco — existência não é exigida (bordas 2 e 3);
+    sem normalização de path (PP-10). Entradas de `insumos` inválidas (C3 a–e)
+    saem nomeadas UMA vez, na causa de INS1, e ficam fora do cômputo de C2 —
+    não reaparecem como fantasma. Entre as causas por path, a mais forte vence:
+    (e) duas classes > (d) insumo que é conjunto mutado > (c) razão sem gatilho.
+    """
+    out = {"estado": "ok", "faltante": [], "fantasma": [], "insumos_ok": {},
+           "problemas": [], "forma": []}
+    if arquivos_mutados is None:
+        out["estado"] = "nao_medido"
+        out["credor"] = D017_CREDOR_CORE
+        return out
+    probs = out["problemas"]
+
+    def _canonicos(conj, nome):
+        ok = []
+        for p in (conj if isinstance(conj, (list, tuple)) else []):
+            if d017_forma_ok(p):
+                ok.append(p)
+            else:
+                txt = p if isinstance(p, str) else repr(p)
+                probs.append(("D017-FORM1", nome, f"path fora da forma canônica: {txt}"))
+        return ok
+
+    alvos = set(_canonicos(targets, "targets"))
+    mutados = set(_canonicos(arquivos_mutados, "arquivos_mutados"))
+    esperado = mutados | set(fontes or [])
+    faltante = sorted(esperado - alvos)
+    excedente = alvos - esperado
+
+    ins = {} if insumos is None else insumos
+    if not isinstance(ins, dict):
+        # Fora das cinco causas fechadas de C3 (a–e), que pressupõem o objeto:
+        # pré-condição estrutural de C2 estendido, nomeada em vez de engolida.
+        probs.append(("D017-INS1", None, "insumos malformado — não é objeto classe → [paths]: "
+                                         f"{type(ins).__name__}"))
+        ins = {}
+    invalidos = set()
+    ocorr = {}
+    for classe, membros in ins.items():
+        if classe in D017_CLASSES and isinstance(membros, list):
+            for p in membros:
+                if isinstance(p, str):
+                    ocorr.setdefault(p, set()).add(classe)
+    duplos = {}
+    for p, cls in ocorr.items():
+        if len(cls) > 1:
+            duplos.setdefault(", ".join(sorted(cls, key=D017_CLASSES.index)), []).append(p)
+    for cls, ps in duplos.items():
+        probs.append(("D017-INS1", None, f"path em duas classes: {cls} ({', '.join(sorted(ps))})"))
+        invalidos.update(ps)
+    for classe, membros in ins.items():
+        lista = membros if isinstance(membros, list) else []
+        nomes = [p if isinstance(p, str) else repr(p) for p in lista]
+        if not isinstance(membros, list):
+            nomes = [repr(membros)]
+        if classe not in D017_CLASSES:
+            probs.append(("D017-INS1", None, f"classe fora do vocabulário: {classe} ({', '.join(nomes)})"))
+            invalidos.update(p for p in lista if isinstance(p, str))
+            continue
+        if not lista:
+            probs.append(("D017-INS1", None, f"classe sem membros: {classe} ({', '.join(nomes)})"))
+            continue
+        ok, mutado_e_insumo, sem_gatilho = [], [], []
+        for p in _canonicos(lista, "insumos"):
+            if p in invalidos:
+                continue                      # já nomeado em "path em duas classes"
+            if p in esperado:
+                mutado_e_insumo.append(p)
+            elif p not in alvos:
+                sem_gatilho.append(p)
+            else:
+                ok.append(p)
+        if mutado_e_insumo:
+            probs.append(("D017-INS1", None, f"insumo que é conjunto mutado: {classe} "
+                                             f"({', '.join(mutado_e_insumo)})"))
+        if sem_gatilho:
+            probs.append(("D017-INS1", None, f"razão sem gatilho: {classe} ({', '.join(sem_gatilho)})"))
+        invalidos.update(mutado_e_insumo + sem_gatilho)
+        if ok:
+            out["insumos_ok"][classe] = ok
+    cobertos = {p for ps in out["insumos_ok"].values() for p in ps}
+    fantasma = sorted(excedente - cobertos - invalidos)
+    forma = sorted({d017_base(p) for p in faltante} & {d017_base(p) for p in fantasma})
+    diag = D017_DIAG.format(", ".join(forma)) if forma else ""
+    if faltante:
+        probs.append(("D017-REL1", None, "conjunto mutado fora do gatilho: " + ", ".join(faltante) + diag))
+    if fantasma:
+        probs.append(("D017-REL2", None, "alvo fantasma (sem razão de classe): " + ", ".join(fantasma) + diag))
+    out["faltante"], out["fantasma"], out["forma"] = faltante, fantasma, forma
+    out["estado"] = "fail" if probs else "ok"
+    return out
+
+
+# ── D017-SONDA1 · o julgador não mente (C6/D5): 15 cenários SINTÉTICOS, contagem
+# pinada em DADO (`mutation_map.json → _meta.sonda_relacao.total`, R10 §3), antes da
+# árvore real. Ids i–xv são permanentes; acréscimo é errata da spec 017 e move o pin.
+D017_SONDA_H = "tests_sonda017_mutants.js"      # o "harness" sintético (fonte do cmd)
+D017_SONDA_M = ["mod_a_017.js", "mod_b_017.js"]  # conjunto mutado sintético
+D017_SONDA_O = "oraculo_017.js"                  # o excedente com/sem razão
+# xv — a Necessidade do refinamento como caso da sonda: os seis de
+# `node tests_p51_mutants.js --preflight` (arquivos_mutados, 2026-09-06), como DADO.
+D017_P51_MUTADOS = ["USER_GUIDE.md", "ui_journey_v32.js", "ui_p50_results_v32.js",
+                    "ui_p50_shell_v32.js", "ui_p50_v32.css", "ui_v32.js"]
+D017_REL1_T = ("D017-REL1", None, "conjunto mutado fora do gatilho")
+D017_REL2_T = ("D017-REL2", None, "alvo fantasma (sem razão de classe)")
+
+
+def d017_ins1_t(causa):
+    return ("D017-INS1", None, causa)
+
+
+def d017_form1_t(conjunto):
+    return ("D017-FORM1", conjunto, "path fora da forma canônica")
+
+
+def d017_cen(rotulo, targets, insumos, mutados, fontes, **quer):
+    """(rótulo, entrada de C5, veredito esperado). Só os campos citados em `quer`
+    são comparados; `problemas` compara (gate, sub_alvo, causa até o primeiro ':')."""
+    return (rotulo, {"targets": targets, "insumos": insumos,
+                     "arquivos_mutados": mutados, "fontes": fontes}, quer)
+
+
+_S017_H = [D017_SONDA_H]
+_S017_M = list(D017_SONDA_M)
+_S017_MH = _S017_M + _S017_H
+_S017_O = D017_SONDA_O
+D017_CENARIOS = [
+    d017_cen("i · identidade: targets = mutados ∪ {harness}, sem insumos",
+             _S017_MH, None, _S017_M, _S017_H,
+             estado="ok", faltante=[], fantasma=[], insumos_ok={}, forma=[], problemas=[]),
+    d017_cen("ii · um mutado fora de targets",
+             [_S017_M[0]] + _S017_H, None, _S017_M, _S017_H,
+             estado="fail", faltante=[_S017_M[1]], fantasma=[], problemas=[D017_REL1_T]),
+    d017_cen("iii · um excedente sem insumos",
+             _S017_MH + [_S017_O], None, _S017_M, _S017_H,
+             estado="fail", faltante=[], fantasma=[_S017_O], problemas=[D017_REL2_T]),
+    d017_cen("iv · excedente coberto por insumos.oraculo",
+             _S017_MH + [_S017_O], {"oraculo": [_S017_O]}, _S017_M, _S017_H,
+             estado="ok", fantasma=[], insumos_ok={"oraculo": [_S017_O]}, problemas=[]),
+    d017_cen("v · classe fora do vocabulário (endurece_trigger) — REL2 vazio, um FAIL por causa",
+             _S017_MH + [_S017_O], {"endurece_trigger": [_S017_O]}, _S017_M, _S017_H,
+             estado="fail", fantasma=[], insumos_ok={},
+             problemas=[d017_ins1_t("classe fora do vocabulário")]),
+    d017_cen("vi · insumo que também é conjunto mutado",
+             _S017_MH, {"populacao": [_S017_M[0]]}, _S017_M, _S017_H,
+             estado="fail", faltante=[], fantasma=[], insumos_ok={},
+             problemas=[d017_ins1_t("insumo que é conjunto mutado")]),
+    d017_cen("vii · razão sem gatilho (insumo ausente de targets)",
+             _S017_MH, {"oraculo": [_S017_O]}, _S017_M, _S017_H,
+             estado="fail", faltante=[], fantasma=[], insumos_ok={},
+             problemas=[d017_ins1_t("razão sem gatilho")]),
+    d017_cen("viii · o próprio harness ausente de targets",
+             list(_S017_M), None, _S017_M, _S017_H,
+             estado="fail", faltante=list(_S017_H), fantasma=[], problemas=[D017_REL1_T]),
+    d017_cen("ix · sem preflight (mutados = None) — não medido, com credor",
+             _S017_MH, None, None, _S017_H,
+             estado="nao_medido", credor=D017_CREDOR_CORE, faltante=[], fantasma=[], problemas=[]),
+    d017_cen("x · path inexistente no disco, em mutados E em targets (criado/removido)",
+             _S017_MH + ["criado_017.json"], None, _S017_M + ["criado_017.json"], _S017_H,
+             estado="ok", faltante=[], fantasma=[], problemas=[]),
+    d017_cen("xi · basename × repo-relativo (regra_morta.js) — diagnóstico de forma",
+             [".claude/verify/regra_morta.js"] + _S017_H, None, ["regra_morta.js"], _S017_H,
+             estado="fail", faltante=["regra_morta.js"], fantasma=[".claude/verify/regra_morta.js"],
+             forma=["regra_morta.js"], problemas=[D017_REL1_T, D017_REL2_T]),
+    d017_cen("xii · classe com lista vazia",
+             _S017_MH, {"fixture": []}, _S017_M, _S017_H,
+             estado="fail", insumos_ok={}, problemas=[d017_ins1_t("classe sem membros")]),
+    d017_cen("xiii · mesmo path em oraculo e fixture",
+             _S017_MH + [_S017_O], {"oraculo": [_S017_O], "fixture": [_S017_O]}, _S017_M, _S017_H,
+             estado="fail", fantasma=[], insumos_ok={},
+             problemas=[d017_ins1_t("path em duas classes")]),
+    d017_cen("xiv · forma: barra invertida em mutados, ./ em targets, .. em insumos — cada um excluído da comparação",
+             [_S017_M[0], "./extra_017.js"] + _S017_H, {"fixture": ["../fx_017.js"]},
+             [_S017_M[0], "sub" + D017_BARRA + "mod_b_017.js"], _S017_H,
+             estado="fail", faltante=[], fantasma=[], insumos_ok={},
+             problemas=[d017_form1_t("targets"), d017_form1_t("arquivos_mutados"),
+                        d017_form1_t("insumos")]),
+    d017_cen("xv · p51 com o próprio oráculo no gatilho, com razão de classe (a Necessidade)",
+             D017_P51_MUTADOS + ["tests_p51_mutants.js", "tests_p50_core.js"],
+             {"oraculo": ["tests_p50_core.js"]}, D017_P51_MUTADOS, ["tests_p51_mutants.js"],
+             estado="ok", faltante=[], fantasma=[], insumos_ok={"oraculo": ["tests_p50_core.js"]},
+             problemas=[]),
+]
+
+
+def d017_token(causa):
+    return str(causa).split(":", 1)[0].strip()
+
+
+def d017_norm(campo, valor):
+    """Forma comparável do campo de C5 — listas ordenadas, `problemas` reduzido a
+    (gate, sub_alvo, causa fechada)."""
+    if campo == "problemas":
+        itens = []
+        for t in (valor or []):
+            t = list(t) if isinstance(t, (list, tuple)) else [repr(t)]
+            g, a, c = (t + [None, None, None])[:3]
+            itens.append((str(g), "" if a is None else str(a), d017_token(c)))
+        return sorted(itens)
+    if isinstance(valor, dict):
+        return {str(k): sorted(str(x) for x in (v or [])) for k, v in valor.items()}
+    if isinstance(valor, (list, tuple, set)):
+        return sorted(str(x) for x in valor)
+    return valor
+
+
+_meta017 = {}
+try:
+    _meta017 = json.load(open(".claude/verify/mutation_map.json", encoding="utf-8")).get("_meta") or {}
+except Exception as _e017:
+    d017_fail("D017-SONDA1", "mutation_map.json", f"_meta não pôde ser lido: {type(_e017).__name__}: {_e017}")
+_sr017 = _meta017.get("sonda_relacao")
+_pin017 = _sr017.get("total") if isinstance(_sr017, dict) else None
+_sonda017_maus = 0
+if _pin017 != len(D017_CENARIOS):
+    d017_fail("D017-SONDA1", "_meta.sonda_relacao.total",
+              f"{len(D017_CENARIOS)} cenário(s) na sonda ≠ {_pin017!r} pinado(s) em "
+              "mutation_map.json → _meta.sonda_relacao.total (acréscimo de cenário só por "
+              "errata da spec 017, movendo o pin no mesmo commit)")
+    _sonda017_maus += 1
+for _rot017, _ent017, _quer017 in D017_CENARIOS:
+    try:
+        _got017 = mut_relacao(_ent017["targets"], _ent017["insumos"],
+                              _ent017["arquivos_mutados"], _ent017["fontes"])
+    except Exception as _err017:
+        d017_fail("D017-SONDA1", f"cenário {_rot017}",
+                  f"esperado dict de C5 · obtido {type(_err017).__name__}: {_err017}")
+        _sonda017_maus += 1
+        continue
+    if not isinstance(_got017, dict):
+        d017_fail("D017-SONDA1", f"cenário {_rot017}",
+                  f"esperado dict de C5 · obtido {type(_got017).__name__}")
+        _sonda017_maus += 1
+        continue
+    for _k017, _v017 in _quer017.items():
+        _esp = d017_norm(_k017, _v017)
+        _obt = d017_norm(_k017, _got017.get(_k017))
+        if _obt != _esp:
+            d017_fail("D017-SONDA1", f"cenário {_rot017}",
+                      f"esperado {_k017} = {_esp!r} · obtido {_obt!r}")
+            _sonda017_maus += 1
+if not _sonda017_maus:
+    ic_ok("D017-SONDA1", f"mut_relacao discrimina nos {len(D017_CENARIOS)} cenários da sonda "
+                         f"(pinado: _meta.sonda_relacao.total = {_pin017})")
+
+# ── o laço (fiação): TODO harness do mapa, por propriedade — nunca lista nominal
+for _nome017, _h017 in sorted(MAP.items()):
+    _fontes017 = ic_fontes(_h017)                # PP-9: o token do cmd, já na forma D1
+    if _nome017 in IC_SEM_PREFLIGHT:
+        _mutados017 = None                       # T8: sem oráculo, sem julgamento — dívida
+    else:
+        _pf017 = IC_PREFLIGHT.get(_nome017)
+        if _pf017 is None:
+            # Preflight fracassou: IC-4 já nomeou o FAIL. Aqui o não medido é NOMEADO
+            # uma vez — nem [OK] falso nem FAIL duplicado (precedente IC-10.1).
+            # Carrasco desta distinção: D017-M19 (fiação), em cópia, sob o estado NOTA.
+            ic_nota("D017", f"{_nome017} · não medida — preflight fracassou e IC-4 já o nomeou")
+            continue
+        _mutados017 = list(_pf017.get("arquivos_mutados") or [])
+    _rel017 = mut_relacao(_h017.get("targets"), _h017.get("insumos"), _mutados017, _fontes017)
+    if _rel017["estado"] == "nao_medido":
+        ic_divida(_nome017, "relação gatilho × conjunto mutado NÃO MEDIDA — sem preflight "
+                            f"(credor: {_rel017.get('credor', '?')})")
+        continue
+    for _gate017, _sub017, _causa017 in _rel017["problemas"]:
+        d017_fail(_gate017, f"{_nome017}/{_sub017}" if _sub017 else _nome017, _causa017)
+    if _rel017["estado"] == "ok":
+        # `or []`: no caminho real o conjunto é lista; só um julgador mutado (D017-M14,
+        # `ok` para None) chega aqui com None — e a árvore tem de MOSTRAR o [OK] falso
+        # que a sonda ix acusa, não morrer num TypeError sem nome.
+        _n017 = len(set(_mutados017 or []) | set(_fontes017))
+        _suf017 = ""
+        if _rel017["insumos_ok"]:
+            _suf017 = " · insumos: " + ", ".join(
+                f"{c} {len(_rel017['insumos_ok'][c])}" for c in D017_CLASSES
+                if c in _rel017["insumos_ok"])
+        ic_ok("D017", f"{_nome017} · gatilho ⊇ conjunto mutado ∪ {{harness}} ({_n017}){_suf017}")
+
+print(f"---- semântica do gatilho: {D017_FAILS} problema(s) nomeado(s) ----")
 
 # arquivos mudados em relação à base
 changed = None
@@ -877,9 +1227,11 @@ def ex_fail(alvo, causa):
 def ex_ids_do_harness(nome):
     """(ids declarados pelo harness, oráculo que respondeu).
 
-    Mesma escada de IC-5/IC-6: preflight (C1) primeiro, leitura estática do
-    fonte como reserva. Quem responde nunca fica implícito — o oráculo sai
-    impresso junto do veredito.
+    Mesma escada do IC-5: preflight (C1) primeiro, e leitura estática do
+    fonte como reserva quando ele não responde. Quem respondeu nunca fica
+    implícito — o oráculo sai impresso junto do veredito. O bloco 017 (a
+    semântica do gatilho) não sobe esta escada: ali os conjuntos se
+    comparam crus, sem reserva estática (PP-10).
     """
     d = IC_PREFLIGHT.get(nome)
     if d:
@@ -1325,7 +1677,7 @@ else:
 
 print(f"---- guarda de leitura parcial: {GP_FAILS} problema(s) nomeado(s) ----")
 
-fails = IC_FAILS + EX_FAILS + GP_FAILS  # [013] integridade (IC-1…IC-6) + exceção
+fails = IC_FAILS + D017_FAILS + EX_FAILS + GP_FAILS  # [013] integridade (IC-1…IC-5) + [017] semântica do gatilho (D017) + exceção
                              # nominal (IC-9) + guarda de leitura parcial (IC-10),
                              # cada bloco com o seu contador e o seu fecho nomeado
 ran = 0

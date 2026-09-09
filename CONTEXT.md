@@ -211,11 +211,50 @@ propriedade, cada metade atacando a declaração vencedora (`P52-RA8`/`P52-RA8B`
 _Evitar_: KILL parcial, mutante meio morto, regra morta (é o mecanismo da
 instância, não a classe), desc que promete demais
 
-**Alvo declarado de campanha**:
-Conjunto de paths em `mutation_map.json → targets` que dispara a re-execução de
+**~~Alvo declarado de campanha~~** (riscado em 2026-09-05, Fase 0 da demanda 017):
+~~Conjunto de paths em `mutation_map.json → targets` que dispara a re-execução de
 um harness por gatilho de path. Deve ser exatamente o conjunto de arquivos que o
-harness muta, mais o próprio harness.
-_Evitar_: arquivo do mutante, escopo da campanha
+harness muta, mais o próprio harness.~~
+Riscado porque a segunda frase afirmava **identidade** entre o que dispara e o
+que é mutado — relação que só `p50`, `p51`, `p52` e `d014vis` cumprem; sete dos
+onze harnesses com preflight declaram gatilho maior que o conjunto mutado, com
+razão escrita na `_trilha`, e R3 §5 exige o **gate** no gatilho. A primeira
+frase estava certa e sobrevive como *Gatilho de campanha*; a segunda virou
+*Conjunto mutado* (contido, não idêntico). Trilha:
+`specs/017-semantica-do-gatilho/refinement.md` §Vocabulário.
+
+**Gatilho de campanha**:
+Conjunto de paths em `mutation_map.json → harnesses.<h>.targets` cuja mudança no
+diff contra a base re-executa o harness (`check_mutation.py`, pertinência exata,
+sem glob). Contém o conjunto mutado e o próprio harness; todo elemento além
+disso é insumo de prova com razão declarada. Diz o que a campanha VIGIA, nunca o
+que ela prova. A chave JSON permanece `targets` (INV-10); só a prosa muda.
+_Evitar_: alvo, alvos, targets (em prosa), escopo da campanha, cobertura
+
+**Conjunto mutado**:
+Arquivos cujos bytes ou existência a campanha altera ao executar — o que o
+harness emite em `arquivos_mutados` (contrato C1 da 013), incluindo o que ela
+cria ou remove. É aquilo SOBRE o que a campanha prova e está sempre contido no
+gatilho; arquivo mutado fora do gatilho é defeito sem exceção.
+_Evitar_: alvos, arquivos do mutante, targets, MUTABLE / CRIAVEIS (nomes de código)
+
+**Insumo de prova**:
+Arquivo que a campanha não muta mas de que o poder da prova depende — oráculo
+(suíte de gate), fixture, declaração (`.gitattributes`), julgador, registro que o
+gate lê. Entra no gatilho com razão de CLASSE declarada e legível por máquina:
+mudar nele muda o que a campanha prova, não o que ela muta. Arquivo que é mutado
+E insumo classifica-se como conjunto mutado — uma classificação por arquivo.
+_Evitar_: alvo extra, desvio declarado, endurecimento do trigger, excedente (é o
+rótulo do sintoma no `IC-6`, que pressupõe identidade)
+
+**Alvo fantasma**:
+Path no gatilho que não é conjunto mutado nem insumo de prova com razão —
+dispara a campanha por mudança que não altera o que ela muta nem o que ela
+prova. Instância histórica: `ui_session_v32.js` em `p51.targets` até a 013
+(`M-IC9`). Distinto do arquivo órfão de campanha (`EA-3`), que está fora de todo
+gatilho.
+_Evitar_: alvo declarado que o harness não muta (mensagem do `IC-6`, que acusa
+também o insumo legítimo), excedente, alvo morto
 
 **Regra morta**:
 Declaração CSS que permanece no arquivo e não decide nenhuma propriedade

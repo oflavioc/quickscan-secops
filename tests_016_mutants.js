@@ -552,7 +552,7 @@ function preflight(sel) {
     harness: "d016",
     arquivo: path.basename(__filename),
     interpretador: { nome: PY, origem: PY_ORIGEM, resolvido: !!binario },
-    arquivos_mutados: Array.from(new Set(MUTABLE.concat(CRIAVEIS).map(f => path.basename(f)))).sort(),
+    arquivos_mutados: Array.from(new Set(MUTABLE.concat(CRIAVEIS).map(f => path.relative(HERE, f).split(path.sep).join("/")))).sort(),
     controles: CONTROLES.map(c => c.id),
     mutantes: []
   };

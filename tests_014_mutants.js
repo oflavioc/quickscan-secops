@@ -299,8 +299,10 @@ function preflight(sel) {
     arquivo: path.basename(__filename),
     interpretador: { nome: PY, origem: PY_ORIGEM, resolvido: !!binario },
     /* O que o harness realmente muta — a razão de `.claude/verify/regra_morta*.js`
-       estarem nos targets do mapa (desvio declarado que ENDURECE o trigger). */
-    arquivos_mutados: Array.from(new Set(MUTANTS.map(m => path.basename(m.file)))).sort(),
+       estarem nos targets do mapa (desvio declarado que ENDURECE o trigger). Sob
+       D1, os dois paths acima são conjunto mutado na forma canônica (repo-relativa,
+       separador `/`) — mesma linha, mesmo commit (Errata C4 c · demanda 017). */
+    arquivos_mutados: Array.from(new Set(MUTANTS.map(m => path.relative(HERE, m.file).split(path.sep).join("/")))).sort(),
     mutantes: []
   };
   for (const m of sel) {

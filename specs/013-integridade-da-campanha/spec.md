@@ -113,7 +113,7 @@ IC-7 é o stage `baseline`; IC-8 é a execução da campanha, canônica no job
 | **IC-3** | **Três estados com causa nomeada, e nenhum número não medido**: relatório com `DETECTADO`/`SOBREVIVENTE`/`NÃO EXECUTADO`+causa; com `U > 0` não há razão `D/T` impressa e o exit é ≠ 0; abortando no preflight **nada é mutado** (árvore limpa) | `mutation` · as três harnesses, em **worktree efêmera** · (a) `MUTATION_PY=py-inexistente node tests_pXX_mutants.js` ⇒ `NÃO EXECUTADO · interpretador ausente` para todos, sem razão `D/T`, exit ≠ 0, `git status --porcelain` vazio; (b) uma âncora corrompida na cópia ⇒ `NÃO EXECUTADO · âncora não encontrada` nomeando o mutante | **M-IC4**: reintroduzir o `run()` que engole a exceção (`tests_p51_mutants.js:186-187`, `code:-1`) e rotula `NÃO DETECTADO` (`:209`) → o cenário (a) volta a imprimir veredito e razão → morto pelos dois cenários |
 | **IC-4** | **Âncora única, provada antes de mutar**: para todo mutante de harness com preflight, `ocorrencias == 1` no arquivo-alvo; `0` ⇒ `âncora não encontrada`, `≥2` ⇒ `âncora ambígua`; ambos reprovam o stage, nomeando mutante, arquivo e contagem | `mutation` · `check_mutation.py` + `<cmd> --preflight` de cada harness · JSON com `mutantes[].ocorrencias`; stage FAIL se qualquer `!= 1`. Cobre os 20 da `p51`, os 53 da `p50` e os da `p52` | **M-IC5**: apontar a `find` de `M51-18` para `const overall = suff && scored.length ? Math.round(…)` — texto **idêntico** em `ui_v32.js:131` (`legacySnapshot`) e `:1026` (relatório) → `âncora ambígua (n=2)`. É a prova executável da borda 4 e a **contraprova da reancoragem ingênua** |
 | **IC-5** | **Matriz da P51 verdadeira**: todo mutante declarado pelo harness `p51` tem **um par** em `mutation-matrix.json`; par com `ultima_prova.resultado != "KILL"` tem `classificacao` do vocabulário fechado; `ultima_prova.registro` aponta para **arquivo existente**; mutante aposentado **não** está nos pares e **está** em `dividas_declaradas` com razão | `mutation` · `check_mutation.py` (asserção **nominal à `p51`**) + `check_tdd.py` (estrutura dos pares, gate existente) · conjunto de ids do preflight ≡ conjunto de `mutante` dos pares `p51`; caminhos de `registro` resolvidos no disco | **M-IC6**: remover um par (ou devolver a linha agregada `"campanhas P51 (múltiplos)"`, `mutation-matrix.json:62-72`) → FAIL `mutante sem par na matriz`. **M-IC7**: `registro` apontando para caminho inexistente → FAIL |
-| **IC-6** | **Alvo declarado verdadeiro (`p51`, nominal)**: `mutation_map.json → harnesses.p51.targets` ≡ arquivos que o harness realmente muta **∪** `{tests_p51_mutants.js}` | `mutation` · `check_mutation.py` · comparação de conjuntos entre `targets` e `arquivos_mutados` do preflight da `p51`; divergência em qualquer direção ⇒ FAIL nomeando o excedente e o faltante | **M-IC8**: remover `USER_GUIDE.md` dos `targets` (o **estado de hoje**, causa direta do apodrecimento de `M51-20`) → FAIL `alvo mutado ausente de targets`. **M-IC9**: devolver `ui_session_v32.js` → FAIL `alvo declarado que o harness não muta`. **Red natural** |
+| **IC-6** | **Alvo declarado verdadeiro (`p51`, nominal)**: `mutation_map.json → harnesses.p51.targets` ≡ arquivos que o harness realmente muta **∪** `{tests_p51_mutants.js}` | `mutation` · `check_mutation.py` · comparação de conjuntos entre `targets` e `arquivos_mutados` do preflight da `p51`; divergência em qualquer direção ⇒ FAIL nomeando o excedente e o faltante | **M-IC8**: remover `USER_GUIDE.md` dos `targets` (o **estado de hoje**, causa direta do apodrecimento de `M51-20`) → FAIL `alvo mutado ausente de targets`. **M-IC9**: devolver `ui_session_v32.js` → FAIL `alvo declarado que o harness não muta`. **Red natural** *(Errata IC-6 · demanda 017: em 2026-09-06, IC-6 foi substituído pelo bloco `---- semântica do gatilho (017) ----` (`check_mutation.py`, gates `D017-REL1`/`D017-REL2`/`D017-INS1`/`D017-FORM1`), genérico a todo harness com preflight via `insumos` — não mais nominal à `p51`; especificação completa em `specs/017-semantica-do-gatilho/spec.md` §Critérios; id `IC-6` fica reservado (R12), nunca reatribuído. `M-IC8`/`M-IC9` seguem vivos, agora como mutantes de árvore `D017-M1`/`D017-M2`, mortos no red `adb883f` — ver §Erratas da demanda 017)* |
 | **IC-7** | **Identidade coerente e produto byte-intacto**: `gen_pins.py` no mesmo PR cobrindo todo arquivo pinado alterado (R8 §1); zero rastreado-sem-pin; engine, Camada 1, HTML gerado, módulos `ui_*` e `USER_GUIDE.md` byte-idênticos ao base `077282f` | `baseline` · `check_baseline.py` · 0 divergência, exit 0. Reforço: `build` (HTML reproduzido byte a byte), `P50-GOV1` (`tests_p50_core.js:231`, protegidos byte-a-byte) e `git diff --stat 077282f..HEAD` sem nenhum path de produto | — (gates existentes; o esquecimento **é** o FAIL do stage — R8 §1) |
 | **IC-8** | **Campanha `p51` conclui e as quatro reancoradas morrem pelo gate e motivo esperados**: zero `NÃO EXECUTADO`, zero `SOBREVIVENTE` entre `M51-03`/`M51-16`/`M51-18`/`M51-20`, cada uma com a linha `FAIL <gate esperado>` casando o `reason` | campanha `p51` · `node tests_p51_mutants.js` no job `visual` do CI (requer Chromium: `P51-VIS1`/`VIS2`/`PDF1` usam `tests_p50_chromium.js`) · saída por mutante + exit 0. Fora do CI, o relato honesto é `NÃO EXECUTADO` nomeado — nunca um número | **Os quatro mutantes de hoje são o red natural**: com as âncoras como estão, a campanha reporta `NÃO EXECUTADO · âncora não encontrada` para as quatro. Prova (c) de T9 por âncora: neutralizada a asserção do gate em worktree efêmera, o mutante **sobrevive** — sem isso a morte é coincidência |
 | **IC-9** *(addendum de 2026-08-30 — linha inserida pela Errata G2 de 2026-09-01; ratificação nominal do proprietário, ver §Erratas da Fase 6)* | **Exceção nominal de mutante sobrevivente — nominal, com prazo, impressa, e que morre com a própria razão**: toda entrada `lint == "mutation-sobrevivente"` de `known_issues.json` nomeia **um** harness, **um** id de mutante e **um** gate, sem curinga, com `motivo` e `remocao_prevista` não vazios (**IC-9.1**); o harness existe no `mutation_map.json` e declara aquele mutante (**IC-9.2**); o par existe em `mutation-matrix.json`, o gate declarado é o do par e `ultima_prova.resultado != "KILL"` — exceção **obsoleta reprova** (**IC-9.3**); o perdão do laço de campanha **discrimina** (perdoa o nomeado, reprova vizinho e harness alheio, não perdoa `NÃO EXECUTADO` nem campanha vazia, reprova quando o nomeado volta a `DETECTADO`) e **imprime** o que perdoou (**IC-9.4**) | `mutation` · `check_mutation.py` · bloco **aditivo** `---- exceção nominal ----`, contador e fecho próprios; contrato **C5** (`mut_perdao`, como enunciado em `red-excecao-nominal.md`); IC-9.4 medida por sonda em processo (7 cenários); primeira entrada: `KI-4` (`p51`/`M51-01`/`P51-VIS1`, `remocao_prevista` amarrada ao merge da 014) | **M-IC10**…**M-IC18**, um por cláusula, mortos no red `2f60e2c` (tabela em `red-excecao-nominal.md`); **M-IC19** (`mut_perdao` correto que o laço nunca consome) **sobrevive a IC-9** — declarado, morre no job `visual` (campanha `p51` verde sem linha `[EXCEÇÃO]` impressa) |
@@ -191,7 +191,7 @@ E2 nominal da `p51`. Ver §Erratas da Fase 6.)*
 | 7 — o gate falharia de qualquer jeito | Prova (c) de T9: mutante **sobrevive** com a asserção neutralizada, em worktree efêmera (T10) |
 | 8 — campanha exigida sem ambiente sob `MUTATION_DEFER_MISSING=1` | `DEFER` nomeado **preservado** (IC-2, cenário do CI). O fechamento da borda — vincular o `DEFER` do job `verify` à execução no job `visual` — **não** entra: exige mudar `verify.yml`/proteção de branch, que é ampliação de escopo. Fica em §Riscos como escalonamento nomeado |
 | 9 — requisito que nunca reprova | T1/T2; IC-2, com o código de hoje como M-IC3 |
-| 10 — arquivo mutado ausente dos `targets` | T11; IC-6 **nominal à `p51`**. A checagem genérica permanece do EA-3 |
+| 10 — arquivo mutado ausente dos `targets` | T11; IC-6 **nominal à `p51`**. A checagem genérica permanece do EA-3 *(Errata IC-6 · demanda 017: a checagem deixou de ser nominal à `p51` — `D017-REL1`/`D017-REL2` cobrem **todo** harness com preflight declarado em `mutation_map.json` (hoje **onze**: `d009`, `d010`, `d011`, `d014`, `d014vis`, `d015`, `d016`, `ea41`, `p50`, `p51`, `p52`; **sete** deles — todos menos `d014vis`, `p50`, `p51`, `p52` — declaram razão de classe em `insumos`); a checagem de população/órfão fora do gatilho continua do EA-3 — ver §Erratas da demanda 017)* |
 | 11 — perder `P50_NO_EVIDENCE=1` na migração | T3: supressão **por construção**, não por lembrança de autor. Regressão coberta pela guarda de acervo da `p50`/`p52` e por `check_mutation.py:92-96` |
 | 12 — crash entre mutar e restaurar | Preservado sem enfraquecer: árvore limpa como pré-condição (`check_mutation.py:39-44`) e restauração conferida por SHA (`tests_p51_mutants.js:206-207`). O preflight **reduz** a exposição: aborta antes de mutar |
 | 13 — campanha verde sem registro durável | T12: matriz por par + `matriz-gate-mutante.md`; **zero** byte de evidência de volta ao índice |
@@ -223,13 +223,13 @@ demanda são de **instrumento**:
 - `estado` ∈ `ok` · `nao_executavel`; `causa` obrigatória quando `nao_executavel`,
   do conjunto fechado de T4. Exit 0 sse `resolvido == true` e todo `estado == "ok"`.
 - **Não escreve arquivo, não muta, não reconstrói, não executa gate** (R7 §3).
-- Texto humano vai para **stderr**; stdout carrega **só** o JSON.
+- Texto humano vai para **stderr**; stdout carrega **só** o JSON. *(Errata C1 · demanda 017: `arquivos_mutados` de todo harness com preflight passou a alimentar também o bloco `---- semântica do gatilho (017) ----` (`D017-REL1`/`D017-REL2`), que generaliza a comparação antes nominal ao `p51` (IC-6); o formato estrutural deste JSON não muda, mas quem o escreve ganhou obrigação nova — emitir cada path de `arquivos_mutados` na forma canônica de D1 (relativa à raiz, `/`, sem `./`, `..` nem `/` inicial), cumprida por `d014` (`9306d40`) e `d016` (`4f2dc6c`) — ver §Erratas da demanda 017)*
 
 ### C2 · `mutation_map.json`
 
 Chave nova `"preflight": true` em `p50`/`p51`/`p52` (contrato: `<cmd> --preflight`
 emite C1); ausente/`false` em `core` ⇒ dívida impressa (T8). `targets` da `p51`
-reconciliados (T11). `receipts` **não** ganha entrada para a `p51` (T12).
+reconciliados (T11). `receipts` **não** ganha entrada para a `p51` (T12). *(Errata IC-6 · demanda 017: os `targets` continuam reconciliados por T11 para fins de C2; quem confere `targets` contra o preflight, para todo harness, deixou de ser o IC-6 nominal à `p51` e passou a ser `D017-REL1`/`D017-REL2`; desde a 017, `mutation_map.json` ganhou a chave irmã `insumos` — `targets` **pode conter insumos de prova com razão de classe** (oráculo, fixture, população, declaração), que C2 passa a exigir bem formada (`D017-INS1`) — C2 estendido em `specs/017-semantica-do-gatilho/spec.md` §Contratos, C2 — ver §Erratas da demanda 017)*
 Dono: `build-engineer`; consumidor: `check_mutation.py`.
 
 ### C3 · `mutation-matrix.json` — par expandido da P51
@@ -619,4 +619,108 @@ declarado`), com dono (`qa-engineer`) e rota; **não é fechado por texto** e n�
 - Não enfraquece asserção alguma; nenhuma invariante R1 é tangenciada; nenhuma
   superfície protegida (R6).
 - `spec.md` é pinada (`pins.json`): esta errata exige `gen_pins.py` no mesmo PR
+  (R8 §1), com o motivo no commit.
+
+## Erratas da demanda 017 (2026-09-06)
+
+> Escritas pelo `doc-writer` (T032 da demanda 017), por decisão **do usuário**,
+> tomada no portão da Fase 1 da 017 (2026-09-06, aprovação do `spec.md` da 017,
+> commit `36073dd`) — nunca decisão do `tech-lead`, que só propõe. A demanda 017
+> ("semântica do gatilho") substituiu o `IC-6` desta spec por um mecanismo
+> genérico (`D017-REL1`/`D017-REL2`, bloco `---- semântica do gatilho (017) ----`
+> em `check_mutation.py`), e esta seção é o registro dessa substituição contra o
+> texto normativo que a criou. **O que não se reabre aqui**: as entregas
+> `E1`–`E4`, as erratas `G1`–`G3` já registradas acima, as decisões técnicas
+> `T1`–`T12`, e os critérios `IC-1`…`IC-5`, `IC-7`…`IC-10` — nenhum deles muda de
+> comportamento ou de veredito por causa da 017; só `IC-6` é afetado, e só no
+> que diz respeito a **quem** faz a checagem de alvo mutado contra `targets`.
+> Como nas erratas G1/G2, **nenhuma redação original é apagada** (R2 §5): cada
+> ponto tocado carrega a nota inline **além** do texto que já estava lá, e esta
+> seção não reescreve as decisões técnicas — só registra o que as substituiu.
+
+### Errata IC-6 — o gate deixa de ser nominal à `p51`
+
+**O que dizia** (T11, IC-6, borda 10, C2): a checagem de "alvo mutado ausente
+dos `targets`" era **nominal à `p51`** — `mutation_map.json → harnesses.p51.targets`
+comparado a `arquivos_mutados` só daquele harness; checagem genérica ficava
+para o EA-3 (achado então em branch que a 013 não enxergava).
+
+**O que passa a dizer**: `IC-6` foi **substituído**, em `check_mutation.py`, pelo
+bloco `---- semântica do gatilho (017) ----` — gates `D017-REL1` (arquivo mutado
+fora do gatilho), `D017-REL2` (alvo declarado fantasma), `D017-INS1` (razão de
+classe malformada) e `D017-FORM1` (path fora da forma canônica) —, que
+generaliza a mesma pergunta a **todo** harness com preflight declarado no mapa
+(hoje **onze**: `d009`, `d010`, `d011`, `d014`, `d014vis`, `d015`, `d016`,
+`ea41`, `p50`, `p51`, `p52`; **sete** deles — todos menos `d014vis`, `p50`,
+`p51`, `p52` — declaram razão de classe em `mutation_map.json →
+harnesses.*.insumos`), não só à `p51`. Especificação completa em
+`specs/017-semantica-do-gatilho/spec.md` §Critérios (C1–C4). O id `IC-6` fica
+**reservado** (R12) — nunca reatribuído a outro critério. Os dois mutantes
+que provavam T11 (`M-IC8`: `USER_GUIDE.md` fora de `targets`; `M-IC9`:
+`ui_session_v32.js` de volta) sobrevivem como mutantes de árvore da 017
+(`D017-M1`/`D017-M2` respectivamente), mortos em cópia no red da 017
+(commit `adb883f`, `specs/017-semantica-do-gatilho/red-017.md`).
+
+**Por que a direção é esta, e não afrouxar nada**: a checagem nominal à `p51`
+nunca foi generalizada porque, na época da 013, o laço genérico vivia numa
+branch paralela invisível a este worktree (nota de T11 nesta mesma spec). A 017
+resolveu essa dívida diretamente — generalizando por `insumos`, não por lista
+nominal — sem tocar `p51` de modo diferente das outras dez. Nenhuma asserção
+foi enfraquecida (R10 §1): a cobertura **cresceu** de um harness (`p51`) para
+onze.
+
+**Medido** (harnesses onde o gate agora corre e correção efetiva da forma dos
+paths): `mutation_map.json → insumos` entrou no mapa em `e26ee90`
+(`mutation_map.json`, 99+/3−) — não nos dois commits abaixo, que tocam só os
+harnesses; `tests_014_mutants.js` (commit `9306d40`) e `tests_016_mutants.js`
+(commit `4f2dc6c`) corrigiram a emissão de `arquivos_mutados` para a forma
+canônica de path (D1) exigida por `D017-REL1`/`D017-FORM1` *(correção
+2026-09-09, spec-validate.md O-1: a redação anterior atribuía a chave
+`insumos` a `9306d40`/`4f2dc6c` — os dois tocam só `tests_014_mutants.js` e
+`tests_016_mutants.js` respectivamente, `git show --stat`)*.
+
+### Errata C1 — o consumidor de `arquivos_mutados` deixa de ser só o IC-6
+
+**O que dizia** (C1): "Dono: cada harness (escreve). Consumidor único:
+`check_mutation.py`" — na prática, o único ponto de `check_mutation.py` que lia
+`arquivos_mutados` para comparar com `targets` era o `IC-6`, nominal à `p51`.
+
+**O que passa a dizer**: o **formato estrutural** do JSON do preflight (C1) não
+muda — mesmo objeto, mesmos campos, mesma regra de `estado`/`causa`. O que
+muda — e **é** obrigação nova de quem escreve o preflight, não só de quem o lê
+— é a **forma de cada path** dentro de `arquivos_mutados` (e de `targets`/
+`insumos`): D1 exige relativa à raiz do repositório, separador `/`, sem `./`,
+sem `..`, sem `/` inicial (`specs/017-semantica-do-gatilho/spec.md` §Decisões
+técnicas, D1). *(Errata C1 · demanda 017, segunda edição 2026-09-09 — conteúdo
+mínimo completo, `spec.md:377` da 017: a forma canônica **inclui** arquivos
+que a campanha **cria** ou **remove** (existência) — a `d016` emite
+`999-sintetica-d016.json` (criado) e `F5.json`/`sem_fecho.json` (removidos); o
+exemplo de C1 (`:207-220`, acima) **permanece válido** porque todos os paths
+ali estão na raiz; `mutantes[].arquivo` e `edicoes[].arquivo` **não** são
+alcançados por esta forma — consumidor humano, mensagens de `IC-4` — se um
+dia forem comparados por máquina, a errata é dessa demanda,
+`specs/017-semantica-do-gatilho/spec.md:262-266`)*. Nove dos onze harnesses de
+preflight já emitiam a forma canônica — oito por mutarem só arquivos da raiz
+(basename ≡ path relativo) e a `ea41` por já emitir repo-relativo diretamente;
+`d014` (`tests_014_mutants.js:305`, commit `9306d40`) e `d016`
+(`tests_016_mutants.js:555`, commit `4f2dc6c`) **tiveram** de migrar a emissão
+— sem essa migração o gate novo (`D017-REL1`/`D017-REL2`) mentia (12
+faltantes falsos, medido na Fase 1 da 017, §Correção de fato) *(correção
+2026-09-09, spec-validate.md O-2: sob emissão por basename, `FORM1` não
+dispara — basename já é forma canônica; quem mentia era `REL1`/`REL2`)*.
+`arquivos_mutados` de **todo** harness com preflight agora alimenta também o bloco
+`D017-REL1`/`D017-REL2`, que substituiu o consumo que era exclusivo do `IC-6`.
+
+**Autorização**: a mesma do portão da Fase 1 da 017 (usuário, 2026-09-06,
+`36073dd`) que aprovou a substituição do `IC-6` — não é uma segunda decisão.
+
+### O que esta seção não faz
+
+- Não reabre `E1`–`E4`, `G1`–`G3`, `T1`–`T12` nem `IC-1`…`IC-5`/`IC-7`…`IC-10`.
+- Não apaga redação original em ponto nenhum — cada nota inline soma-se ao texto
+  que já estava lá (verificado por `aditiva_013.py`, `specs/017-semantica-do-gatilho/tasks.md`
+  §Prova mecânica de T032).
+- Não move fase alguma para `done`; não toca `spec-validate.md` da 013 nem
+  `matriz-gate-mutante.md`.
+- `spec.md` é pinada: esta errata exige `gen_pins.py` no mesmo PR da 017
   (R8 §1), com o motivo no commit.

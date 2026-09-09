@@ -3633,3 +3633,85 @@ nada a consome: `qa-engineer` (autor do gate) decide, com o `tech-lead` se
 a resposta for "generalizar" (comportamento novo de instrumento, R4). Não é
 `fix-finding` — não há asserção hoje que dependa do segundo elemento para
 mudar de veredito.
+
+## EA-47 — verbete de vocabulário fechado definido por lista, não por critério: o `spec-validate` certificou a lacuna como conformidade
+
+**Status**: `aberto`
+
+**Aberto em**: 2026-09-09. Escrito pelo `product-owner`, na correção
+(`fix-finding`) do resíduo 1 do aceite de intenção da demanda 017 — o verbete
+*Insumo de prova* do `CONTEXT.md`, já corrigido por remissão (`CONTEXT.md:22-28`).
+Não é achado sobre o verbete em si (que já está emendado): é achado de
+**processo**, maior que a instância que o revelou.
+
+### O núcleo
+
+- `specs/017-semantica-do-gatilho/refinement.md:272-278` — a seção **`§Não
+  registrados, de propósito`** lista as **seis** razões candidatas de classe
+  (oráculo, fixture, declaração, julgador, registro lido, **entrada da
+  varredura**) e diz explicitamente que são identificadores de instrumento,
+  **não termos de domínio**.
+- `.claude/verify/check_mutation.py:487` — `D017_CLASSES` tem **quatro**:
+  `("oraculo", "fixture", "populacao", "declaracao")`. "Entrada da varredura"
+  virou `populacao`.
+- O verbete *Insumo de prova* copiou **cinco dos seis** nomes de classe para
+  dentro do glossário como exemplos — na mesma fase, pela mesma mão, **contra
+  a decisão escrita na própria seção** acima — e deixou de fora justamente a
+  sexta (`populacao`/"entrada da varredura").
+- `specs/017-semantica-do-gatilho/spec.md:342-348` — a linha 346 põe
+  `CONTEXT.md` em `§Não mudam` ("verbetes já gravados na Fase 0... as classes
+  são identificadores, não termos"); `spec-validate.md:304` (item 68) mede
+  `git diff --stat 9d617d0..HEAD -- ... CONTEXT.md ...` **vazio** e registra
+  veredito **✓ conforme**.
+
+**O efeito, que é o achado**: a máquina **certificou** o verbete desatualizado.
+O `spec-validate` converteu uma hipótese da Fase 1 (diff vazio = nada mudou =
+conforme) em prova de conformidade na Fase 6, sem reler o conteúdo contra a
+decisão de origem.
+
+Duas hipóteses óbvias estão **refutadas pelo próprio artefato**, o que é o que
+dá força ao achado: não é "glossário cedo demais" — o refinamento da Fase 0
+já tinha as seis razões (`refinement.md:272-278`, acima); e não é "falta
+reconciliação" — ela acontece (a demanda 016 refez três termos antes de
+gravar, ver instância abaixo; este resíduo foi pego no próprio aceite da 017).
+É defeito de **forma**: verbete que define extensão por **lista** onde deveria
+definir por **critério**.
+
+### As quatro instâncias
+
+- **014** — "prova de discriminância vencida" definida no refinamento da
+  demanda 014 e ausente do `CONTEXT.md`, registrada **dentro do corpo do
+  `EA-30`** (`.claude/BACKLOG.md:1724-1728`) em vez de ter id próprio — que um
+  membro da família já vivesse escondido em achado alheio é o próprio sintoma
+  de não ter id.
+- **015** — *cláusula sentinela* nasceu na **Fase 4**, com desvio autorizado
+  pelo orquestrador sob delegação, registrado no próprio `CONTEXT.md:7-11`
+  ("foi gravado na Fase 4... fora da Fase 0, por autorização do orquestrador
+  sob delegação").
+- **016** — três termos (*Fecho de demanda*, *Demanda mesclada sem fecho*,
+  *Fecho pendente declarado*) resolvidos na Fase 0 e gravados na **Fase 5**,
+  também declarado no próprio `CONTEXT.md:13-20` ("resolvidos na Fase 0...
+  mas gravados aqui na Fase 5, no mesmo PR").
+- **017** — verbete completo na Fase 0 e **incompleto ao fim** — a instância
+  que motivou este registro, emendada hoje (`CONTEXT.md:22-28`).
+
+Nas quatro, o glossário só ficou correto por **desvio declarado** ou por
+**correção de resíduo** — nunca pelo processo ordinário de portão ter pego a
+divergência antes do aceite.
+
+### Os dois remédios candidatos — não decididos, escolha do proprietário
+
+1. **Rito de escrita** (R12 §Glossário, uma linha): verbete define pelo
+   **critério**; extensão que um enum de instrumento vai fechar entra por
+   **remissão à fonte que a pina**, nunca por lista. É o que a emenda de hoje
+   no verbete *Insumo de prova* já aplica — remédio da causa.
+2. **Escopo declarado**: em demanda que constrói vocabulário fechado,
+   `CONTEXT.md` não entra na `§Não mudam` como afirmação, e sim como
+   **pergunta do aceite**; o `spec-validate` mede a resposta, não o diff
+   vazio.
+
+### O que este registro não decide
+
+Qual dos dois remédios (ou os dois) adotar, e se algum vira alteração em
+`documentation.md` (R12) ou em `sdd.md`/`spec-validate` (R4): decisão do
+proprietário. Nenhum agente escreve o rito antes disso.

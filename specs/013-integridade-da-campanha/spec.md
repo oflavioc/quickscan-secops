@@ -670,10 +670,14 @@ foi enfraquecida (R10 §1): a cobertura **cresceu** de um harness (`p51`) para
 onze.
 
 **Medido** (harnesses onde o gate agora corre e correção efetiva da forma dos
-paths): `mutation_map.json → insumos` fechado em `tests_014_mutants.js`
-(commit `9306d40`) e `tests_016_mutants.js` (commit `4f2dc6c`), que corrigiram
-a emissão de `arquivos_mutados` para a forma canônica de path (D1) exigida por
-`D017-REL1`/`D017-FORM1`.
+paths): `mutation_map.json → insumos` entrou no mapa em `e26ee90`
+(`mutation_map.json`, 99+/3−) — não nos dois commits abaixo, que tocam só os
+harnesses; `tests_014_mutants.js` (commit `9306d40`) e `tests_016_mutants.js`
+(commit `4f2dc6c`) corrigiram a emissão de `arquivos_mutados` para a forma
+canônica de path (D1) exigida por `D017-REL1`/`D017-FORM1` *(correção
+2026-09-09, spec-validate.md O-1: a redação anterior atribuía a chave
+`insumos` a `9306d40`/`4f2dc6c` — os dois tocam só `tests_014_mutants.js` e
+`tests_016_mutants.js` respectivamente, `git show --stat`)*.
 
 ### Errata C1 — o consumidor de `arquivos_mutados` deixa de ser só o IC-6
 
@@ -687,14 +691,24 @@ muda — e **é** obrigação nova de quem escreve o preflight, não só de quem
 — é a **forma de cada path** dentro de `arquivos_mutados` (e de `targets`/
 `insumos`): D1 exige relativa à raiz do repositório, separador `/`, sem `./`,
 sem `..`, sem `/` inicial (`specs/017-semantica-do-gatilho/spec.md` §Decisões
-técnicas, D1). Nove dos onze harnesses de preflight já emitiam a forma canônica
-— oito por mutarem só arquivos da raiz (basename ≡ path relativo) e a `ea41`
-por já emitir repo-relativo diretamente; `d014`
-(`tests_014_mutants.js:305`, commit `9306d40`) e `d016`
+técnicas, D1). *(Errata C1 · demanda 017, segunda edição 2026-09-09 — conteúdo
+mínimo completo, `spec.md:377` da 017: a forma canônica **inclui** arquivos
+que a campanha **cria** ou **remove** (existência) — a `d016` emite
+`999-sintetica-d016.json` (criado) e `F5.json`/`sem_fecho.json` (removidos); o
+exemplo de C1 (`:207-220`, acima) **permanece válido** porque todos os paths
+ali estão na raiz; `mutantes[].arquivo` e `edicoes[].arquivo` **não** são
+alcançados por esta forma — consumidor humano, mensagens de `IC-4` — se um
+dia forem comparados por máquina, a errata é dessa demanda,
+`specs/017-semantica-do-gatilho/spec.md:262-266`)*. Nove dos onze harnesses de
+preflight já emitiam a forma canônica — oito por mutarem só arquivos da raiz
+(basename ≡ path relativo) e a `ea41` por já emitir repo-relativo diretamente;
+`d014` (`tests_014_mutants.js:305`, commit `9306d40`) e `d016`
 (`tests_016_mutants.js:555`, commit `4f2dc6c`) **tiveram** de migrar a emissão
-— sem essa migração o gate novo (`D017-REL1`/`D017-FORM1`) mentia (12
-faltantes falsos, medido na Fase 1 da 017, §Correção de fato). `arquivos_mutados`
-de **todo** harness com preflight agora alimenta também o bloco
+— sem essa migração o gate novo (`D017-REL1`/`D017-REL2`) mentia (12
+faltantes falsos, medido na Fase 1 da 017, §Correção de fato) *(correção
+2026-09-09, spec-validate.md O-2: sob emissão por basename, `FORM1` não
+dispara — basename já é forma canônica; quem mentia era `REL1`/`REL2`)*.
+`arquivos_mutados` de **todo** harness com preflight agora alimenta também o bloco
 `D017-REL1`/`D017-REL2`, que substituiu o consumo que era exclusivo do `IC-6`.
 
 **Autorização**: a mesma do portão da Fase 1 da 017 (usuário, 2026-09-06,

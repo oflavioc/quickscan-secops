@@ -1,5 +1,11 @@
 # Spec-validate — 017-semantica-do-gatilho
 
+> **Iteração 3 (2026-09-09, HEAD `f1e9164`): 73 de 73, dois ✓° (itens 6 e 51)
+> — §Iteração 3, ao fim deste arquivo.** As iterações 1 e 2 abaixo estão
+> preservadas como foram commitadas (`cb709d2`, `e547fcd`) — nenhuma linha
+> delas reescrita; este bloco foi inserido acima, no mesmo gesto que a
+> iteração 2 fez com o dela (R2 §5).
+
 > **Iteração 2 (2026-09-09, HEAD `4e7debd`): 71 de 73 — §Iteração 2, ao fim
 > deste arquivo.** A iteração 1 abaixo está preservada como foi commitada em
 > `cb709d2` — nenhuma linha dela reescrita (R2 §5: score que sobe deixa ver de
@@ -737,3 +743,265 @@ do merge (O-4); T046 só depois.
 
 **Este arquivo** é pinado (R9): esta escrita exige repin (**R12**, rótulo novo)
 — o stage `baseline` fica vermelho até lá, por construção (R8 §1).
+
+## Iteração 3 (2026-09-09) — G5 e G6, e só o que os dois commits tocam
+
+> Fase 6 · T040/T044 · `qa-engineer` · **somente leitura**, iteração **3** —
+> aberta pela rota **(a)** do escalonamento da iteração 2, comunicada pelo
+> orquestrador nesta rodada; a palavra do proprietário não é verificável por mim
+> (R2 §4). HEAD **`f1e9164b244780e4aecea387afb4807249237eff`** (= `34ae297`,
+> o repin R12 da iteração 2, + 4 commits: `c8b91cd` G6 · `9b96bbc` R13 ·
+> `75149b9` G5 · `f1e9164` R14), worktree `phase5-014`, base `9d617d0`
+> (= `origin/develop` = merge-base, medido). `git diff --stat 34ae297 HEAD` =
+> **3 arquivos** (`.claude/BACKLOG.md` 22+/0−, `specs/013-…/spec.md` 25+/11−,
+> `pins.json` 3+/3−); `git diff --stat 5818b1c HEAD -- check_mutation.py
+> mutation_map.json tests_014_mutants.js tests_016_mutants.js` **vazio**, e a
+> spec da 017 intocada desde `4e7debd` — toda citação `check_mutation.py:<linha>`
+> e `spec.md:<linha>` (017) das iterações 1 e 2 vale byte a byte. Porcelain
+> vazio antes e durante toda medição; este texto foi escrito **por último**.
+> Reavaliado: G5, G6 e os itens que os dois commits tocam — nada além.
+> **Este registro não emite veredito de aceite.**
+
+### Resultado da iteração 3
+
+**73 de 73 exigências conformes — 100 %** (iteração 2: 71), com **dois ✓°**
+(item 6, desde a iteração 2; item 51, nesta — censo: a tabela da iteração 1
+tinha um só ✓°, o 48, que subiu a ✓ na iteração 2). **Contra o quê**, para ser
+cobrado:
+
+- **G6** contra a Errata `D3(i)` da 017 (`spec.md:938`), **frase a frase**, lida
+  no texto commitado do BACKLOG (`c8b91cd`) e contra o código que a errata
+  descreve (§G4 da iteração 2 — instrumento e bytes não mudaram);
+- **G5** contra a coluna "conteúdo mínimo" de `spec.md:377` da 017, **elemento a
+  elemento** (cinco), lida no texto commitado da 013 (`75149b9`) e contra o
+  fato que cada elemento afirma (preflight da `d016`, `git ls-files`, o sítio de
+  `_m.get("arquivo")` no julgador, o exemplo `:207-220`);
+- as **contagens medidas depois de ler**: `aditiva_013.py` (104), greps (3 · 2 ·
+  1), `wc -l` (726), `git show --stat` dos quatro commits e dos três que a
+  correção O-1 cita, `check_baseline.py` (465/465);
+- a correção **O-2** contra o **julgador real** sob emissão por basename (0
+  `FORM1`; `REL1` + `REL2`; 10 + 2 = 12).
+
+| Gap | Item | Era (it. 2) | Agora | Em uma linha |
+|---|---|---|---|---|
+| **G6** | 54 | ✗ implementação-divergente | **✓** | a segunda edição (`BACKLOG.md:552-572`) diz, verbatim, o que `:938` prescreve; a primeira nota (`:537-550`) está intacta (22+/0−) |
+| **G5** | 51 | ✗ faltando | **✓°** | os cinco elementos de `:377` estão na Errata C1 da 013 e são verdadeiros contra o fato; **três vivem na seção** (`:694-702`), não na nota inline de `:226` que a tabela de `:377` nomeia — observação de posição, §G5 |
+
+Trânsito 71 → 73: **54** ✗ → ✓; **51** ✗ → ✓°. Nenhum outro item muda de
+veredito (49 relido por causa de O-1: mantido ✓).
+
+### Método — executado nesta iteração (2026-09-09, HEAD `f1e9164`)
+
+- `python .claude/verify/check_baseline.py` ⇒ `baseline: 465/465 pins conferem ·
+  0 divergentes · 0 ausentes · 0 sem pin` (o `run.sh --stage=baseline` ecoa só
+  `[PASS] baseline`; a contagem vem do gate direto).
+- `MUTATION_DEFER_MISSING=1 bash .claude/verify/run.sh --light` ⇒ **13 × `[PASS]`**
+  (`env-doctor` · `baseline` · `eol-text` · `boundary` · `marker-lint` ·
+  `icons-check` · `build` · `lint-arch` · `regra-morta` · `state` · `tdd` ·
+  `fecho` · `m41`) · **4 × `[SKIP] … (heavy, --light)`**, nomeados pela flag
+  (`mutation`, `suites`, `suites-heavy`, `evidence-bridge`) · `verify: 13 PASS ·
+  0 FAIL` · exit 0 · porcelain **0** depois. É o "`--light` = 13" de T040 (i).
+  `eol-text` é o stage que lê o `BACKLOG.md` (EA-41, `check_eol_text.py:22`) —
+  a única linha executável que consome um dos dois arquivos tocados. Direto:
+  `tdd: 12 demanda(s) · 0 waiver(s) · 0 problema(s)`; `state: 12 demanda(s) · 0
+  problema(s)`.
+- `aditiva_013.py` **extraído do `tasks.md:299-356`** para fora da árvore,
+  `git hash-object` = `9cc9857f3445ff47b4cf7d771617ec5d4301a08b` (= `tasks.md:294`,
+  = iteração 2): `9d617d0 HEAD` ⇒ `aditiva-013: 4 linha(s) alterada(s) por UMA
+  inserção [116, 194, 226, 232] · 104 linha(s) nova(s) · 0 removida(s) [] · 0
+  inserção(ões) fora da forma *(Errata IC-6|C1 · demanda 017: …)* []`, exit 0;
+  `9d617d0 34ae297` (pré-G5) ⇒ o mesmo com **90**; `HEAD` (árvore) ⇒ `0 · 0 ·
+  0 · 0`, exit 0. **104 − 90 = 14 = 25+ − 11−** de `75149b9` — o número da
+  mensagem do commit ("104 … medido depois da edição") **confere**; a trilha do
+  número é 74 (`5818b1c`) → 90 (`0fe7e75`) → 104 (`75149b9`), e é essa que o
+  `relatorio-final.md` deve citar.
+- `grep -c`: `Errata IC-6 · demanda 017` = **3**; `Errata C1 · demanda 017` =
+  **2** (era 1 — a nota de segunda edição na seção, `:694`, casa a mesma string:
+  é a forma, não um quinto ponto tocado); `^## Erratas da demanda 017` = **1**.
+  `wc -l`: 712 → **726**.
+- `git show --stat`: `c8b91cd` só `.claude/BACKLOG.md` (22+/0−); `9b96bbc` só
+  `pins.json` (hash do BACKLOG + `gerado_de_head`); `75149b9` só
+  `specs/013-…/spec.md` (25+/11−); `f1e9164` só `pins.json` (hash da 013 +
+  `gerado_de_head`). Rótulos: `git log 9d617d0..HEAD | grep pins` ⇒ 18 repins,
+  R0…R14 + R2a/R8a/R8b, **nenhum reuso** — R13 e R14 inéditos.
+- O que O-1 afirma: `e26ee90` só `mutation_map.json` (99+/3−) e `git log
+  -S'"insumos"' -- .claude/verify/mutation_map.json` ⇒ **só `e26ee90`** (a chave
+  nasceu lá); `9306d40` só `tests_014_mutants.js` (4+/2−); `4f2dc6c` só
+  `tests_016_mutants.js` (1+/1−).
+- `node tests_016_mutants.js --preflight` (exit 0): 10 `arquivos_mutados`, 10
+  com diretório; `.claude/project-memory/planning-state/999-sintetica-d016.json`
+  **fora** de `git ls-files` (`tests_016_mutants.js:150`: "NÃO existe no
+  repositório: M32 o cria e o remove"); `.claude/verify/fixtures_016/fecho/F5.json`
+  e `.claude/verify/fixtures_016/protecao/sem_fecho.json` **em** `git ls-files`
+  (mutantes de árvore `:405`, `:472`: "fixture … removida"). `mutantes[]` do
+  preflight tem as chaves `arquivo · edicoes · estado · id · ocorrencias`;
+  `edicoes[]` tem `arquivo · criacao · ocorrencias · remocao` — `edicoes[].arquivo`
+  **existe** como chave emitida.
+- **Julgador real** — `exec` do trecho `check_mutation.py:486-627` (símbolos
+  carregados: `D017_BARRA`, `D017_CLASSES`, `D017_CREDOR_CORE`, `D017_DIAG`,
+  `D017_FAILS`, `d017_base`, `d017_fail`, `d017_forma_ok`, `mut_relacao`),
+  `targets`/`insumos` do mapa, `fontes` = o token do `cmd` (PP-9):
+
+| Harness | `arquivos_mutados` | `estado` | faltante | fantasma | `problemas`, por gate |
+|---|---|---|---|---|---|
+| `d016` | canônico (preflight) | ok | 0 | 0 | — |
+| `d016` | basename dos mesmos 10 | **fail** | 10 | 10 | `D017-REL1` 1 · `D017-REL2` 1 · **`D017-FORM1` 0** |
+| `d014` | canônico (preflight) | ok | 0 | 0 | — |
+| `d014` | basename dos mesmos 5 | **fail** | 2 | 2 | `D017-REL1` 1 · `D017-REL2` 1 · **`D017-FORM1` 0** |
+
+- O campo `forma` do retorno lista, nos casos basename, 10 e 2 nomes em
+  **diagnóstico** (é o que C5 define, `spec.md:319-321` da 017) — não é problema
+  nem gate. 10 + 2 = **12** — o "12 faltantes falsos" de `:707-708` da 013.
+- `check_mutation.py:355-375` (IC-4), lido: `_m.get("arquivo", "?")` (`:370`)
+  entra **só** na mensagem `ocorrencias=… em {_arq}` (`:372-374`); `grep edicoes
+  check_mutation.py` ⇒ **0** — nenhum consumo por máquina de
+  `mutantes[].arquivo` ou `edicoes[].arquivo`.
+- `awk` sobre `:205-221` da 013: `:207-220` é exatamente o bloco ```` ```json ````
+  de C1; os sete paths do exemplo (`USER_GUIDE.md`, `ui_journey_v32.js`,
+  `ui_p50_results_v32.js`, `ui_p50_shell_v32.js`, `ui_p50_v32.css`, `ui_v32.js`,
+  `tests_p51_mutants.js`) estão todos em `git ls-files`, na raiz.
+- `git grep` da frase *"devolvida como dado"* (e variantes) em `CONTEXT.md`,
+  `BACKLOG.md`, `specs/017-…/*.md`, `mutation-matrix.json`: `BACKLOG.md:543`
+  (primeira nota — preservada por desenho) e `:567` (a segunda, negando-a);
+  `spec.md:33`, `:338`, `:827`, `:834` (a errata e a prescrição, citando o que
+  dizia); este arquivo. **`CONTEXT.md` e a matriz: 0** — nenhum outro registro
+  vivo carrega a afirmação falsa.
+- Leituras lado a lado: `spec.md:364-377` e `:261-266` da 017 × `:226` e
+  `:624-726` da 013 (§G5); `spec.md:935-945` da 017 × `BACKLOG.md:537-574`
+  (§G6); `spec.md:483-495` da 013 (a convenção de forma que a 017 adota por
+  referência em `:364`).
+- Remoto: `git ls-remote` ⇒ `origin/feature/017-…` **continua em `5818b1c`**
+  (local `ahead 14`); `gh pr view 48` ⇒ `OPEN · BLOCKED · head 5818b1c`; `gh run
+  list` ⇒ só `34066877538` (2026-09-06). **Nenhum run do CI cobre os catorze
+  commits** — O-4 da iteração 2 continua.
+- **Não executado, com motivo**: bateria de mutantes de árvore e de
+  instrumento — `check_mutation.py`, `mutation_map.json`, `tests_014_mutants.js`
+  e `tests_016_mutants.js` são byte-idênticos a `5818b1c` (diff acima), logo
+  os kills da iteração 1 e da matriz são sobre os mesmos bytes; pipeline
+  **completo** com os stages heavy — a iteração 2 o executou (`17 PASS`) sobre
+  os mesmos bytes de código e mapa, e os quatro commits desta rodada são doc +
+  pins, lidos pelos stages que o `--light` cobre; suítes com Chromium — job
+  `visual` (KI-3), **sem run sobre este HEAD**; a palavra do proprietário no
+  chat (R2 §4).
+
+### Reavaliação — item a item (só o que os dois commits tocam)
+
+Legenda da iteração 1. Última coluna: veredito da iteração 2 → desta.
+
+| # | Exigência | Como medi (HEAD `f1e9164`) | Resultado | → |
+|---|---|---|---|---|
+| 54 | BACKLOG: nota datada em `EA-3` com os três itens de D3 (C9, `spec.md:144`); segunda edição do item (i) prescrita por `D3(i)` (`:938`) | `BACKLOG.md:537-574`; `git show c8b91cd`; `:938` e `:935` frase a frase — §G6 | segunda edição **datada** (`:552`), item (i) na forma exata de `:938` (`:565-566`), negando a formulação anterior (`:567`), derivação nomeada (`:567-570`), (ii)/(iii) declarados intocados (`:572`); primeira nota íntegra; `doc-writer`, um arquivo, repin R13 próprio | **✓** (de ✗) |
+| 51 | Errata `C1` em `:205-226` — conteúdo mínimo de `spec.md:377` (cinco elementos) | `:226`, `:688-712` da 013; o fato de cada elemento (preflight `d016`, `ls-files`, IC-4 `:370-374`, exemplo `:207-220`) — §G5 | **cinco de cinco presentes e verdadeiros**; dois na nota inline `:226` + remissão, três na seção (`:694-702`, dentro de nota da mesma forma) — posição registrada | **✓°** (de ✗ faltando) |
+| 53 | Aditividade mecânica | `aditiva_013.py 9d617d0 HEAD` | `0 removida(s) · 0 fora da forma`, exit 0; `[116, 194, 226, 232]`; **104** novas (90 + 14 de `75149b9`); greps 3 · 2 · 1 | ✓ |
+| 49 | Errata `IC-6` — cobertura (`spec.md:375`) | O-1 reescreveu o parágrafo "Medido" (`:672-680`), vizinho do que o item mede | "onze"/"sete" nome a nome em `:653-657` **intactos**; o parágrafo reescrito atribui `insumos` a `e26ee90` (**verdadeiro**, `git log -S`) e a migração de forma a `9306d40`/`4f2dc6c` (verdadeiro); "exigida por `D017-REL1`/`D017-FORM1`" em `:677` é afirmação sobre **quem exige a forma** (FORM1 a checa; REL1 compara na mesma forma) — não é a de O-2, que era sobre quem **mentia** | ✓ (mantido) |
+| 58 | Pinados → `gen_pins.py` no mesmo PR, commit separado | `git show 9b96bbc f1e9164 -- pins.json` | R13: só BACKLOG + `gerado_de_head`; R14: só a 013 + `gerado_de_head`; `465/465` | ✓ |
+| 67 | Repin após cada commit de conteúdo; rótulo novo | `git log 34ae297..HEAD` | `c8b91cd` → `9b96bbc` (R13); `75149b9` → `f1e9164` (R14), imediatos; **esta escrita exige R15**; `relatorio-final.md` ainda não existe (T042) | ✓ |
+| 69 | Um commit por arquivo; autor do gate ≠ autor da correção (T044) | os quatro commits; `check_tdd.py` direto | `c8b91cd` (doc, 1 arquivo), `75149b9` (doc, 1 arquivo) — nenhum toca gate, mapa ou harness; `0 waiver(s)` | ✓ |
+| 6 | D3 (i) | não tocado nesta rodada (spec da 017 sem diff desde `4e7debd`) | segue como na iteração 2 | ✓° |
+| demais | — | `git diff --stat 34ae297 HEAD` = 3 arquivos de registro; código, mapa e spec da 017 intocados | vereditos das iterações 1 e 2 valem byte a byte | — |
+
+### G6 — a segunda edição contra a Errata `D3(i)`, frase a frase
+
+`spec.md:938` da 017 prescreve; `BACKLOG.md:552-572` (`c8b91cd`) entrega:
+
+| Prescrito (`:938`) | Na nota nova | Onde |
+|---|---|---|
+| "segunda edição alinhada, item (i)" | título *"segunda edição do item (i)"*; o corpo abre citando a formulação de 2026-09-06 e dizendo por que é falsa (retorno sem `mutado`/`harness`, 11/11, §G4) | `:552`, `:554-562` |
+| a frase: *"derivável do retorno C5 (`insumos_ok`) e dos argumentos (`arquivos_mutados`, `fontes`), por harness, sob `estado == ok`"* | **verbatim** | `:565-566` |
+| "no lugar de 'devolvida como dado por `mut_relacao`'" | *"— não devolvida como dado por `mut_relacao`"*: a afirmação é **substituída** pela edição posterior, e a redação original **permanece** (22+/0−; `:537-550` byte-idênticas) — a leitura de R2 §5 e do precedente da 013 ("nenhuma redação original é apagada"); riscar a cláusula dentro da primeira nota seria editar por cima | `:567` |
+| dono `doc-writer`, commit próprio (um arquivo), repin com rótulo novo | `c8b91cd` só `.claude/BACKLOG.md`; `9b96bbc` = R13 | commits |
+| ao lado da primeira, não por cima (R2 §5) | título irmão do de `:537`, mesmo nível `###`, dentro do bloco `EA-3` (antes de `## ~~EA-4` em `:574`) | `:552` |
+
+O que a nota afirma **além** do prescrito, conferido contra `:935` e
+`:897-906` da 017 e contra o código (§G4): `insumo(<classe>)` sai de
+`insumos_ok` com a classe; `mutado` = `arquivos_mutados` (argumento, C1);
+`harness` = `fontes` (argumento, PP-9); `estado == "ok"` é a **pré-condição** da
+derivação, não a identidade (N1, N2) — igual à célula D3(i) e ao §Controle
+negativo; "medido nos onze harnesses" = a tabela de §G4. Citações da nota,
+conferidas: `spec.md:938` (é a linha da prescrição), `spec-validate.md §G4,
+iteração 2` (existe, `:585`), `spec.md:895-906` → medido **`:897-906`**
+(`:895` é a última linha do parágrafo anterior e `:896` é vazia — duas linhas
+de folga no início; o alvo está dentro do intervalo; O-6).
+
+**Resíduo nomeado, não gap**: quem parar de ler em `:550` leva o item (i)
+antigo sem marca in-loco; a correção está duas linhas abaixo, no mesmo bloco,
+com título que a nomeia. É a forma que a errata prescreveu ("segunda edição")
+e que o repositório usa para refutação (R2 §5); a alternativa — riscar a
+cláusula na primeira nota — é a edição por cima que a rodada não pediu.
+
+### G5 — os cinco elementos de `spec.md:377`, um a um, e onde cada um vive
+
+A coluna "Nota inline (conteúdo mínimo)" de `:377` da 017, contra a 013 em
+`75149b9`; a coluna "Fato" é o que eu medi para cada frase, não a frase:
+
+| # | Elemento (`:377`) | Na 013 (HEAD) | Onde | Fato medido |
+|---|---|---|---|---|
+| (a) | forma canônica de `arquivos_mutados` = path relativo à raiz, POSIX | *"relativa à raiz, `/`, sem `./`, `..` nem `/` inicial"* e *"relativa à raiz do repositório, separador `/`, sem `./`, sem `..`, sem `/` inicial"* | **`:226`** (inline) e `:691-693` (seção) | é o predicado `d017_forma_ok` do julgador (§G4 da iteração 2) |
+| (b) | **incluindo criados/removidos** | *"a forma canônica **inclui** arquivos que a campanha **cria** ou **remove** (existência) — a `d016` emite `999-sintetica-d016.json` (criado) e `F5.json`/`sem_fecho.json` (removidos)"* | `:695-697` (seção, nota de segunda edição) | preflight da `d016`: os três paths presentes; `999-…` fora de `git ls-files` (`tests_016_mutants.js:150`), `F5.json`/`sem_fecho.json` em `git ls-files` e removidos por `:405`/`:472` — **verdadeiro**. Os três aparecem por basename numa frase sobre forma repo-relativa; os emitidos são `.claude/project-memory/planning-state/999-sintetica-d016.json`, `.claude/verify/fixtures_016/fecho/F5.json`, `.claude/verify/fixtures_016/protecao/sem_fecho.json` (O-7, cosmético) |
+| (c) | **o exemplo permanece válido porque todos estão na raiz** | *"o exemplo de C1 (`:207-220`, acima) **permanece válido** porque todos os paths ali estão na raiz"* | `:697-699` (seção) | `:207-220` é o bloco JSON de C1; sete paths, todos em `git ls-files` na raiz — **verdadeiro** |
+| (d) | `d014`/`d016` migrados em `<commits>` | *"cumprida por `d014` (`9306d40`) e `d016` (`4f2dc6c`)"*; *"`d014` (`tests_014_mutants.js:305`, commit `9306d40`) e `d016` (`tests_016_mutants.js:555`, commit `4f2dc6c`) **tiveram** de migrar"* | **`:226`** (inline) e `:705-706` (seção) | `git show --stat`: cada commit toca só o seu harness — **verdadeiro** |
+| (e) | **`mutantes[].arquivo` não é alcançado** | *"`mutantes[].arquivo` e `edicoes[].arquivo` **não** são alcançados por esta forma — consumidor humano, mensagens de `IC-4` — se um dia forem comparados por máquina, a errata é dessa demanda, `specs/017-semantica-do-gatilho/spec.md:262-266`"* | `:699-702` (seção) | `check_mutation.py:370-374`: `arquivo` de `mutantes[]` só na mensagem de IC-4; `edicoes` ⇒ 0 hits no julgador; `edicoes[].arquivo` é chave emitida pela `d016` — **verdadeiro**, e em substância igual a `:264-266` da 017 (o bloco é `:261-266`; a citação `:262-266` o contém) |
+
+**Conteúdo: 5/5, nada falso.** As duas observações separadas na iteração 2
+(O-1, O-2) foram incorporadas no mesmo commit, dentro de notas datadas
+(`:677-680`, `:708-710`), e a frase principal de O-2 foi corrigida no corpo
+(`:707`: `REL1`/`REL2`, não `REL1`/`FORM1`) — **medido no julgador real**: sob
+basename, 0 `FORM1`, 1 `REL1` + 1 `REL2` por harness, 10 + 2 faltantes. O
+`aditiva_013.py` continua em `[116, 194, 226, 232] · 0 removida(s)`: a
+segunda edição entrou como linhas novas na seção, sem tocar linha pré-017.
+
+**Posição — por que ✓° e não ✓, e por que não ✗.** A tabela de `:377` tem por
+cabeçalho *"Nota inline (conteúdo mínimo)"* (`:372`) e por ponto *"`:205-226`
+(bloco C1)"*. A nota inline de `:226` carrega (a) e (d) e termina em *"ver
+§Erratas da demanda 017"*; (b), (c) e (e) vivem só na seção `:694-702`, dentro
+de uma nota com a mesma forma e o mesmo id (*"Errata C1 · demanda 017, segunda
+edição 2026-09-09"*). A forma que a 017 adota **por referência** (`:364-365`:
+"a da própria 013, `spec.md:462-495`") diz, em `:483-495` da 013: *"nota
+inline **curta** em cada ponto tocado — para quem lê aquele ponto isolado não
+ser enganado — **e** esta seção única com o texto completo"*. Quem lê `:226`
+isolado hoje não é enganado por nada que está lá, mas também não fica sabendo
+de (b), (c) e (e) sem seguir a remissão — e o exemplo com basenames está onze
+linhas acima da nota. O critério que este registro aplicou desde a iteração 1
+ao item 51 foi *presença na Errata C1 da 013* (`:226` **e** a seção — a
+iteração 2 escreveu "três não existem em lugar nenhum da 013" e a correção
+"dentro da nota `:226` e/ou de `:684-698`"); mover o critério para "só a
+inline" depois da correção seria trocar a asserção depois do fato. Logo **✓°**
+pela legenda ("nada falso; registrado"). Leitura literal alternativa, para
+quem decidir: "`:377` = nota inline" ⇒ 51 é ✗ *faltando por posição*, o
+fecho é **72/73**, e a correção é **uma frase** contígua estendendo a nota de
+`:226` com (b), (c) e (e) — o `aditiva_013.py` continua a aceitar (a linha
+segue "alterada por UMA inserção"), `doc-writer`, commit próprio, repin. Não
+é minha a escolha; o número que vale para cada leitura está dito.
+
+### Observações fora do score (registro, com destino)
+
+- **O-1, O-2** (iteração 2) — **fechadas** em `75149b9`, conferidas acima.
+- **O-3** — a mensagem de `0fe7e75` ("74") é imutável; o número atual é **104**
+  (74 → 90 → 104). Destino: `relatorio-final.md` (T042).
+- **O-4** — remoto em `5818b1c`, `ahead 14`, PR #48 `BLOCKED`, um run. Antes
+  do merge: push e leitura do run; a linha `mutation: N campanha(s)` vive no
+  job `visual` (EA-15). Continua.
+- **O-5** — cabeçalho da Errata `D3(i)` (`spec.md:799-800`) sem a data da
+  ratificação; a spec da 017 não foi tocada nesta rodada. Continua; não é gap.
+- **O-6** — `BACKLOG.md:570` cita `spec.md:895-906`; medido `:897-906`.
+  Cosmético; na próxima edição do arquivo.
+- **O-7** — `specs/013-…/spec.md:696-697` nomeia os três arquivos da `d016` por
+  basename numa frase sobre a forma repo-relativa (os emitidos têm diretório).
+  Cosmético; mesma ocasião.
+- `relatorio-final.md` ausente (T042); a candidata de forma de `FORM1(a)` com
+  string vazia (iteração 1) segue como estava.
+
+### Classificação e próximo passo (skill, passos 3–5; T040 vi)
+
+**Nenhum gap aberto.** 73/73 com dois ✓° (6, 51), os dois registrados com o
+que os separa de ✓. O que fica para decisão do usuário, nomeado e sem
+recomendação implícita: (1) aceitar o item 51 como ✓° (posição) ou pedir o
+espelho de uma frase em `:226` — os dois números estão acima; (2) O-4 antes
+do merge; (3) T042 (`relatorio-final.md`, com 104 / 726 / R0…R15, sendo R15 o
+repin desta escrita) e T046 (`done`) são do orquestrador. Nada desta rodada
+toca gate, mapa ou harness.
+
+**Este arquivo** é pinado: esta escrita exige repin (**R15**, rótulo novo). O
+stage `baseline` lê blobs de HEAD — `check_baseline.py` deu `465/465` com esta
+edição ainda só no working tree, como manda R2 §2 — e fica vermelho a partir do
+commit desta escrita até o repin, por construção (R8 §1).

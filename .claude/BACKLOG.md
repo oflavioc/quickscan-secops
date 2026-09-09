@@ -549,6 +549,28 @@ próprio achado nomeia. Nenhuma das três uniões (`⋃ mutados`, `⋃ targets`,
 população declarada) é calculada pela 017 — ver `specs/017-semantica-do-gatilho/spec.md`
 §"O que fica pronto para o `EA-3` (D3)".
 
+### Nota datada (demanda 017, 2026-09-09) — segunda edição do item (i)
+
+O item (i) da nota acima (2026-09-06) afirma que a classificação de cada path
+do gatilho em `mutado` / `harness` / `insumo(<classe>)` é "devolvida como
+**dado** por `mut_relacao`" — **falso contra o código**: o retorno real de
+`mut_relacao` (contrato C5) não tem as posições `mutado` nem `harness`
+(`"mutado" in retorno = False`, `"harness" in retorno = False`, medido nos
+onze harnesses de preflight — `specs/017-semantica-do-gatilho/spec-validate.md`
+§G4, iteração 2). A Errata `D3(i)` da demanda 017
+(`specs/017-semantica-do-gatilho/spec.md:938`) fixa a forma correta e manda
+esta segunda edição, sem apagar a primeira:
+
+(i) a classificação de cada path do gatilho em `mutado` / `harness` /
+`insumo(<classe>)` é **derivável do retorno C5 (`insumos_ok`) e dos
+argumentos (`arquivos_mutados`, `fontes`), por harness, sob `estado == ok`**
+— não devolvida como dado por `mut_relacao`. `insumo(<classe>)` sai de
+`insumos_ok` (com a classe); `mutado` = `arquivos_mutados` (argumento, C1);
+`harness` = `fontes` (argumento, PP-9). `estado == "ok"` é a pré-condição da
+derivação, não a identidade (N1, N2 — `specs/017-semantica-do-gatilho/spec.md:895-906`).
+
+Itens (ii) e (iii) da nota de 2026-09-06 não são tocados por esta correção.
+
 ## ~~EA-4 — Âncora de mutante apodrece em silêncio; o aviso existe, mas só quando alguém puxa o gatilho~~
 
 **Status**: `refutado`

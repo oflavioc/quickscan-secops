@@ -1441,7 +1441,7 @@ e de gatilho que o re-execute. Ganhou id próprio para não reescrever este corp
 
 ## EA-21 — duas curadorias divergentes para o mesmo gap, no mesmo PDF
 
-**Status**: `aberto`
+**Status**: `resolvido`
 
 **Aberto em**: 2026-09-01. Levantado pela demanda 015 e **reservado em prosa** por
 ela antes do merge do PR #34
@@ -1467,6 +1467,58 @@ quando este registro foi escrito.
 Porta B. `QS_GAP_SUPPORT` vive em `ui_v32.js` (camada 5.x, editável). **Qual
 curadoria é canônica é decisão de produto — `product-owner`**; este registro não a
 toma.
+
+### Fecho (2026-09-11) — a decisão de produto chegou, e o texto já estava no papel
+
+**Decisão do proprietário, tomada no chat em 2026-09-11**: a **ancoragem canônica
+é o `MAP` (`qid × nível`)**. O `QS_GAP_SUPPORT` **não é revogado** — segue vivo como
+superfície declaradamente complementar, de ancoragem diferente. A decisão é de
+ancoragem, **não** de fonte única: eleger fonte única é o que o `refinement.md` §P9
+da 015 deixou fora, e continua fora.
+
+**Medições que sustentam a escolha** (conferidas no disco em 2026-09-11, `develop`
+em `3676986`, nenhum commit tocando os dois arquivos desde 2026-09-01):
+
+- cobertura — `MAP` cobre **15** qids; `QS_GAP_SUPPORT` cobre **4**
+  (`detection-lifecycle`, `logs`, `automation`, `vulnerability-management`);
+- estrutura — os dois carregam razão por produto (`{p,w}` × `{n,w}`) e `cap:`; o
+  `MAP` ainda gradua por nível (`lv:[s2,s1,0,0]`). **Não há vantagem editorial** no
+  `QS_GAP_SUPPORT` a preservar — a hipótese de que só ele carregava o "porquê" foi
+  medida e é falsa;
+- governança — a afirmação canônica passa a morar na camada protegida, não na
+  livremente editável.
+
+**Por que este fecho não edita código.** O nó declarativo que o achado pedia **já
+foi entregue pela 015**: `ui_v32.js:1092` e `:1099` emitem
+`[data-pr-gap-fonte]` — *"Esta lista parte da **capability** associada ao gap, não
+do nível respondido na pergunta — por isso pode não coincidir com outras listas
+deste relatório."* Protegido por `D015-ANC1`, campanha `d015` 15/15 KILL,
+contagem fixada por execução (`expected_suites.json`, 5/0). O "sem texto que diga
+qual responde a quê" da cadeia acima **deixou de ser verdade** quando a 015
+mesclou; o que faltava era o dono normativo, e é ele que este bloco registra.
+
+### O que este fecho NÃO faz
+
+- **Não nomeia a canônica dentro do PDF.** Fazer o papel dizer "esta é a lista
+  canônica" é edição de `ui_v32.js` → autorização nominal §29.4 + repin inline de
+  `PROTECTED` + reexecução de `d015`/`core`/`d009` + job `visual` no CI. Medido
+  contra o ganho — o leitor já é avisado da divergência e da razão dela — **não se
+  paga**. Decisão tomada sob a diretriz permanente do proprietário de 2026-09-11
+  (rota mais simples, rápida e econômica; sem revisão desnecessária).
+- **Não funde as duas curadorias.** Continua diferido no §P9 da 015, que exige
+  decisão sobre reabrir a §UAT-07. Quando (e se) abrir, o delta de conteúdo já está
+  medido e nomeado, e é o que uma fusão mal-feita apagaria: só no `QS_GAP_SUPPORT`
+  vivem **FortiSOC**, **FortiSOAR**, **FortiAnalyzer**, **FortiClient-EMS** e
+  "Automação nativa de FortiAnalyzer/FortiSIEM"; só no `MAP` vivem
+  **FortiAI-Assist**, **FortiXDR** e **FortiEndpoint** (cadeia em
+  `specs/015-superficies-de-apoio/refinement.md` §M5).
+- **Não cria invariante.** A decisão é citável aqui; promovê-la a `INV-*` em
+  `.claude/rules/product-invariants.md` custaria gate e entrada em
+  `invariants.json`, e nada hoje a viola.
+
+**Nenhum rito foi consumido neste fecho**: nada de Camada 1 foi tocado, logo **não
+há D2 Porta B**; nenhum arquivo protegido por §29.4 foi editado. O único custo é o
+repin deste registro.
 
 ## EA-22 — `P51-REC1` promete "sem duplicação" no nome e não compara `pr-gapsup` com superfície alguma
 

@@ -3833,7 +3833,13 @@ function p52PdfColorInk(file, pagina, alvo, tol) {
   finally { try { fs.rmSync(dir, { recursive: true, force: true }); } catch (e) { /* temporário */ } }
 }
 
-const P52_TGT_GREEN = [60, 177, 126];                  /* #3CB17E — encoding exclusivo do alvo */
+/* #3CB17E. NÃO é exclusivo do alvo, e o comentário anterior dizia que era: o MESMO
+   hex é `PR_DOM_HEX[1]` — a cor do domínio 2 — em `ui_v32.js:796`. Achado EA-13,
+   corrigido em 2026-09-11 sob autorização nominal do proprietário no chat.
+   A exclusividade que o gate tem é OUTRA e vive no DOM: polígono com
+   `stroke="#3CB17E"` (`papel.tgtPts`/`papel.tgtDash`, :3975-3977) — tag de domínio
+   não é polígono. A tinta rasterizada sozinha não distingue as duas fontes. */
+const P52_TGT_GREEN = [60, 177, 126];
 const P52_ESTAGIOS = /Inexistente|Inicial|Definido|Gerenciado|Otimiz/i;
 const P52_NUM = /\d[.,]\d/;
 
@@ -4094,7 +4100,32 @@ async function tgt4(browser, errs) {
          ESCOPO. Suíte congelada (§29.4). Autorização NOMINAL do proprietário em
          2026-08-31, restrita a `tgt4()` e a DUAS coisas: a derivação de
          `blocoTexto` e a chamada de `p52PdfColorInk`. As duas juntas, pela razão
-         acima. Nada mais neste arquivo. */
+         acima. Nada mais neste arquivo.
+
+         ─── EA-13 CORRIGIDO (2026-09-11) ────────────────────────────────────
+         A ressalva acima fica como foi escrita (R2 §5: registro se emenda, não se
+         reescreve); o que segue é a emenda.
+
+         AUTORIZAÇÃO NOMINAL do proprietário no chat, 2026-09-11, para o remédio do
+         `EA-13` neste arquivo, no escopo que foi pedido e concedido: a asserção de
+         tinta parar de tratar `#3CB17E` como prova de presença do alvo. Restrita a
+         TRÊS sítios: o comentário de `P52_TGT_GREEN`, a linha `PDF-TINTA` do ramo
+         de gate fechado e a linha `CONTROLE` de tinta zero. Nada mais neste arquivo.
+         A autorização de 2026-08-31 NÃO foi reaproveitada — ela é expressamente
+         restrita e continua valendo só para o que nomeia.
+
+         O QUE MUDOU, e por que não enfraquece (R10 §1): nenhum caso que reprovava
+         deixa de reprovar. A linha `PDF-TINTA` era UMA e virou DUAS, pelo
+         disjunto `papel.tgtPts`, que é a prova exclusiva de verdade (polígono com
+         `stroke="#3CB17E"` — tag de domínio não é polígono). Com o polígono no DOM,
+         o vazamento está corroborado nas duas superfícies; sem ele, a linha declara
+         o hex como AMBÍGUO em vez de afirmar o alvo. A da `CONTROLE` perdeu só o
+         rótulo "do alvo": como condição NECESSÁRIA ela sempre esteve certa, e a
+         prova SUFICIENTE já vive em `papel.tgtPts !== 5` e `papel.tgtDash`.
+
+         O QUE NÃO FOI FEITO, e é o resíduo: desambiguar a fonte da tinta no próprio
+         raster exigiria medir por REGIÃO em vez de por página — mudança em
+         `p52PdfColorInk`, fora desta autorização e de outra ordem de custo. */
       let blocoTexto = "", idxFim = idxBloco;
       if (idxBloco >= 0) {
         for (let k = idxBloco; k < paginas.length; k++)
@@ -4224,7 +4255,19 @@ async function tgt4(browser, errs) {
           if (P52_ESTAGIOS.test(blocoTexto)) detail.push(tag + " PDF-TEXTO: nome de estágio publicado no bloco");
           if (!/n\/d/.test(blocoTexto)) detail.push(tag + " PDF-TEXTO: rótulo canônico 'n/d' ausente do bloco");
           if (!tinta) detail.push(tag + " PDF: rasterização da página do bloco falhou — prova não executada");
-          else if (tinta.px > 0) detail.push(tag + " PDF-TINTA: " + tinta.px + "px de #3CB17E (cor exclusiva do alvo) na página do bloco");
+          /* EA-13: a tinta continua reprovando em TODO caso em que reprovava antes —
+             nenhuma cobertura sai (R10 §1). O que muda é o que a linha AFIRMA: com o
+             polígono do alvo no DOM, o vazamento está corroborado nas duas
+             superfícies; sem ele, a tinta é de hex AMBÍGUO (o mesmo `PR_DOM_HEX[1]`
+             do domínio 2) e a linha diz isso, para um vermelho futuro ser
+             diagnosticável em vez de enganoso. Desambiguar por raster exigiria medir
+             por região, não por página — fora desta autorização. */
+          else if (tinta.px > 0 && papel.tgtPts > 0)
+            detail.push(tag + " PDF-TINTA: " + tinta.px + "px de #3CB17E na página do bloco COM polígono do alvo no DOM (" +
+              papel.tgtPts + " vértices) — vazamento corroborado nas duas superfícies");
+          else if (tinta.px > 0)
+            detail.push(tag + " PDF-TINTA: " + tinta.px + "px de #3CB17E na página do bloco SEM polígono do alvo no DOM — " +
+              "hex ambíguo (alvo × PR_DOM_HEX[1], domínio 2): confirmar a fonte antes de atribuir ao alvo (EA-13)");
         }
       } else {
         /* CONTROLE POSITIVO — a comparação completa e CORRETA continua existindo */
@@ -4236,7 +4279,12 @@ async function tgt4(browser, errs) {
         if (papel.tgtPts !== 5) detail.push(tag + " CONTROLE: polígono do alvo com " + papel.tgtPts + " vértices (esperado 5)");
         if (papel.curPts !== 5) detail.push(tag + " CONTROLE: polígono atual com " + papel.curPts + " vértices (esperado 5)");
         if (!papel.tgtDash) detail.push(tag + " CONTROLE: encoding tracejado exclusivo do alvo ausente");
-        if (tinta && tinta.px === 0) detail.push(tag + " CONTROLE: nenhuma tinta #3CB17E do alvo na página do bloco");
+        /* EA-13: asserção mantida e correta como condição NECESSÁRIA — se o polígono
+           do alvo é impresso, tem de haver tinta. O que ela NÃO é: prova suficiente
+           de presença, porque o hex é compartilhado com o domínio 2. A prova
+           suficiente é exclusiva e já está asserida duas linhas acima
+           (`papel.tgtPts !== 5` e `papel.tgtDash`); só o rótulo "do alvo" saiu. */
+        if (tinta && tinta.px === 0) detail.push(tag + " CONTROLE: nenhuma tinta #3CB17E na página do bloco (condição necessária do alvo impresso)");
         if (tela.nota) detail.push(tag + " CONTROLE: nota de gate fechado presente sob gate ABERTO");
         /* cada número contra o oráculo independente, e tela = papel */
         or.porDominio.forEach((o, i) => {

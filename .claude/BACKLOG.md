@@ -1131,7 +1131,7 @@ da §29.4.
 
 ## EA-13 — `P52_TGT_GREEN` não é cor exclusiva do alvo: o mesmo hex é o domínio 2
 
-**Status**: `aberto`
+**Status**: `resolvido`
 
 **Aberto em**: 2026-08-31. Registrado como "ressalva registrada, não corrigida"
 dentro do gate, na correção do `EA-10` (demanda 010).
@@ -1152,6 +1152,43 @@ dentro do gate, na correção do `EA-10` (demanda 010).
 - **`:4086-4092`** — a ressalva, com o que foi medido no papel: o verde aparece em
   `#pr-maturity` (2×) e `#pr-target` (1×), e em nenhuma outra seção. A exclusividade
   é **de estado, na sessão medida**, não do encoding.
+
+### Fecho (2026-09-11) — a afirmação falsa saiu; a prova exclusiva já existia
+
+**Rito consumido, e é a razão de este achado ter ficado parado**: suíte congelada
+§29.4. **Autorização nominal do proprietário no chat em 2026-09-11**, restrita ao
+remédio do `EA-13` e a **três sítios** — o comentário de `P52_TGT_GREEN`, a linha
+`PDF-TINTA` do ramo de gate fechado e a linha `CONTROLE` de tinta zero. A
+autorização de 2026-08-31 **não** foi reaproveitada: ela é expressamente restrita a
+`tgt4()` e a duas coisas, e continua valendo só para o que nomeia.
+
+**A descoberta que barateou o remédio**: a prova **exclusiva** de presença do alvo
+já existe e já é asserida — polígono com `stroke="#3CB17E"`
+(`papel.tgtPts`/`papel.tgtDash`, `:3975-3977`), asserido em `:4215` no ramo fechado
+e em `:4236`/`:4238` no controle. Tag de domínio **não é polígono**. O defeito
+nunca foi falta de prova: era a **tinta afirmar uma exclusividade que o encoding
+não tem**.
+
+**O que mudou, e por que não enfraquece** (R10 §1 — nenhum caso que reprovava
+deixou de reprovar):
+
+| sítio | antes | depois |
+|---|---|---|
+| comentário de `P52_TGT_GREEN` | *"encoding exclusivo do alvo"* — **falso** | diz que o hex é `PR_DOM_HEX[1]` (domínio 2) e aponta onde mora a exclusividade real |
+| `PDF-TINTA` (gate fechado) | uma linha: tinta > 0 ⇒ *"cor exclusiva do alvo"* | **duas**, pelo disjunto `papel.tgtPts`: com polígono no DOM, vazamento **corroborado nas duas superfícies**; sem ele, declara o hex **ambíguo** em vez de afirmar o alvo |
+| `CONTROLE` de tinta zero | *"nenhuma tinta #3CB17E do alvo"* | mesma asserção, sem o rótulo: é condição **necessária**, e a suficiente já vive em `tgtPts`/`tgtDash` |
+
+**O que este fecho NÃO faz**: desambiguar a fonte da tinta **no próprio raster**
+exigiria medir por **região** em vez de por página — mudança em `p52PdfColorInk`,
+fora da autorização concedida e de outra ordem de custo. Enquanto isso, um vermelho
+de tinta sem polígono no DOM chega **diagnosticável**, com as duas fontes nomeadas,
+em vez de enganoso.
+
+**Verificação**: `node --check` limpo; `run.sh --light` 13 PASS · 0 FAIL;
+`compliance-audit` 17 PASS · 0 FAIL. **Não executado localmente, com o motivo**
+(R2 §1): `p52chromium` e a campanha `p52` (107 mutantes) exigem Chromium — KI-3,
+execução canônica no job `visual` do CI. `tests_p52_chromium.js` é `target` do
+harness `p52`, logo esta edição **re-dispara a campanha por gatilho de path**.
 
 ## EA-14 — no job `visual`, as campanhas de mutação rodam depois das suítes: suíte vermelha deixa o passo `skipped` e a não-medição não aparece como falha
 

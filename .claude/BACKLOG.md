@@ -3487,7 +3487,7 @@ um `fix-finding` do `EA-41` que já cresceu de dois bytes para gate + harness
 
 ## EA-43 — a sonda de `eol-text` deixa diretório órfão em `%TEMP%` no Windows: `rmtree(ignore_errors=True)` engole a falha sobre objeto git somente-leitura
 
-**Status**: `aberto`
+**Status**: `resolvido`
 
 **Aberto em**: 2026-09-05. Medido pelo `qa-engineer` durante a campanha do
 `EA-41`, que removeu os órfãos à mão; conferido e reproduzido pelo
@@ -3530,6 +3530,40 @@ objeto git não existe e o `rmtree` limpa sem erro.
 (`os.chmod` + retry) antes de remover, em vez de `ignore_errors=True`.
 Arquivo **pinado** (`check_eol_text.py`, registry R8) — repin no mesmo PR.
 Dono `qa-engineer`, `fix-finding` próprio.
+
+### Fecho (2026-09-11) — a emenda existia e estava órfã; resgatada e reconferida
+
+**Procedência, dita para não se perder**: o remédio foi escrito **nesta worktree
+`phase5-014`**, na branch `fix/ea43-ea46`, em `8497d3e` (2026-09-11 01:38), por
+uma sessão que **não estava mais ativa** quando este fecho foi escrito. A branch
+nunca foi empurrada (`git ls-remote --heads origin fix/ea43-ea46` vazio) e ficou
+~16h parada. A autoria do git **não identifica a sessão** — todas commitam sob a
+identidade configurada do repositório —, e por isso a procedência vai escrita
+aqui, nunca inferida do `%an`.
+
+**O que a emenda faz** (`.claude/verify/check_eol_text.py`, `remove_efemero()`):
+handler `onexc`/`onerror` que **acrescenta** `S_IWRITE` ao modo corrente e repete
+a operação que falhou; confere o **disco** em vez da ausência de exceção; e
+devolve aviso **nomeado** — `[WARN] eol-text sonda/limpeza`, com caminho e
+exceção — quando sobra resíduo. WARN e não FAIL por decisão registrada no próprio
+cabeçalho: a sonda já rodou inteira, o veredito é sobre a **árvore**, e reprovar
+por higiene de `%TEMP%` inventaria condição de falha que este gate não tem (e
+deixaria o Windows cronicamente vermelho, `EA-5`). O que não se admite é o
+silêncio de antes, e ele morreu.
+
+**Reconferido por execução antes do resgate** (R2 §4 — alegação de outro agente se
+verifica por execução, nunca por leitura do commit). 2026-09-11, py 3.14.7,
+worktree `phase5-014`: `%TEMP%` com **34** `eol-text-sonda-*` antes; uma execução
+de `python .claude/verify/check_eol_text.py` → exit 0, `sonda 13/13`,
+`0 problema(s)`, `0 falha(s) de instrumento`; `%TEMP%` com **34** depois — **zero
+órfão novo**. Controle na `develop`, medido em separado no mesmo dia: 32 → 33, um
+por execução. Nenhuma alínea, cenário (`S0..S12`) ou contagem pinada
+(`TOTAL_SONDA=13`, `PROBLEMAS_SONDA=6`) muda.
+
+**O que este fecho NÃO faz**: não toca o `EA-46`, que viaja na mesma branch e
+**continua `aberto`** — é latente por medição (os dois pontos cegos existem e
+nenhum chamador os alcança), e o commit `3c56eab` apenas declarou a dívida na
+`mutation-matrix.json`. Fechar o `EA-43` não fecha o `EA-46`.
 
 ## EA-44 — o `core` ficou fora do vocabulário fechado da 013: ambiente incompleto sai como "gate sem poder discriminante", um falso eixo D
 
@@ -3711,6 +3745,17 @@ toca este trecho.
   a reserva estática mentiria por omissão para sete dos onze harnesses
   declarados, sem aviso (o retorno seria `[]`, indistinguível de "harness
   não muta nada").
+
+  > **Correção de número (2026-09-11)** — o *"sete dos onze"* acima conta a
+  > **forma de declaração**, e a população inclui `tests_015_apoio.js`, que é
+  > suíte e não fonte de harness. Pelo predicado que importa — 2º elemento
+  > **vazio** —, o censo mede **10 de 12** (completo só em `p51`, 6/6; parcial
+  > em `d014`, 3 de 5), idêntico no commit que abriu o achado (`6a0c7a9`) e no
+  > HEAD. O número corrigido, o método de contagem e o gatilho de reavaliação
+  > vivem na entrada `EA-46` de `.claude/verify/mutation-matrix.json`
+  > (`dividas_declaradas`), declarada em `3c56eab` — **não os copio para cá**:
+  > número copiado apodrece separado do que o mediu. Este parágrafo fica como
+  > foi escrito (R2 §5: registro não se reescreve, se emenda).
 
 ### O que este registro não decide
 

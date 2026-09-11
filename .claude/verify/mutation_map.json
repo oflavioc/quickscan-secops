@@ -368,16 +368,11 @@
         ".claude/verify/check_eol_text.py",
         "tests_ea41_instrumento.js"
       ],
-      "insumos": {
-        "oraculo": [
-          ".claude/verify/check_eol_text.py"
-        ]
-      },
       "requires": [
         "node",
         "python"
       ],
-      "_trilha": "fix-finding EA-42 · 2026-09-11 · qa-engineer · mutantes de INSTRUMENTO do gate eol-text (o gate muda, o mundo e fixo), complementares aos de ARVORE do harness `ea41` (o gate e fixo, o mundo muda). Porta para o repositorio a bateria de 8 que rodou uma vez em copia efemera no RED 2a1fb7f e nunca foi versionada — era a divida EA41-EOL0/EOL1 em dividas_declaradas, sem par e sem gatilho. DESVIO DELIBERADO do padrao d015/d016: a mutacao NAO e in-place com restauracao; cada mutante roda uma COPIA em os.tmpdir() e o SHA-256 do fonte rastreado e conferido antes e depois (R7 §3 endurecido — nao existe janela com a arvore mutada). `targets` inclui o proprio gate para que qualquer mudanca nele re-dispare esta campanha: era exatamente esse gatilho que faltava."
+      "_trilha": "fix-finding EA-42 · 2026-09-11 · qa-engineer · mutantes de INSTRUMENTO do gate eol-text (o gate muda, o mundo e fixo), complementares aos de ARVORE do harness `ea41` (o gate e fixo, o mundo muda). Porta para o repositorio a bateria de 8 que rodou uma vez em copia efemera no RED 2a1fb7f e nunca foi versionada — era a divida EA41-EOL0/EOL1 em dividas_declaradas, sem par e sem gatilho. DESVIO DELIBERADO do padrao d015/d016: a mutacao NAO e in-place com restauracao; cada mutante roda uma COPIA em os.tmpdir() e o SHA-256 do fonte rastreado e conferido antes e depois (R7 §3 endurecido — nao existe janela com a arvore mutada). `targets` inclui o proprio gate para que qualquer mudanca nele re-dispare esta campanha: era exatamente esse gatilho que faltava. SEM `insumos`, de proposito e nao por omissao: neste harness o check_eol_text.py e o SUJEITO MUTADO, nao insumo-oraculo. Declara-lo como oraculo faria o oraculo mover junto com o mutante, que e o que o D017-INS1 recusa — e recusou, na primeira execucao desta entrada (2026-09-11). O oraculo deste harness e o SINAL DECLARADO por mutante (guarda ou divergencia nomeada da sonda), que vive no proprio harness e nao no arquivo mutado."
     }
   }
 }

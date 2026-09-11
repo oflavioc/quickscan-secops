@@ -148,6 +148,7 @@ expôs:
 | Rodada | Pergunta | Resposta do usuário |
 |---|---|---|
 | 1 | Abrir a demanda do `EA-3`? | **Sim** — 2026-09-11, no chat |
+| 2 | `P1`…`P5` abaixo, com as recomendações do PO | **"segue com as recomendações"** — 2026-09-11, no chat. As cinco recomendações viram decisão e estão transcritas em [spec.md](spec.md) §"Decisões do portão da Fase 0" |
 
 ### Perguntas abertas — o portão desta fase depende delas
 

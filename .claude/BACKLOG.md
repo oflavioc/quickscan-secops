@@ -3403,7 +3403,7 @@ backlog **com instrumento**, não com promessa.
 
 ## EA-42 — a prova de que o julgador de `eol-text` não mente vive só em bateria efêmera
 
-**Status**: `aberto`
+**Status**: `resolvido` (a **instância**; a **classe** é o `EA-3`, que segue `aberto`)
 
 **Aberto em**: 2026-09-05. Levantado pelo `qa-engineer`, apontando o
 princípio contra o próprio trabalho dele, no fecho do `EA-41`; registrado
@@ -3487,6 +3487,58 @@ Portar os 8 mutantes do gate como mutantes de instrumento, no padrão
 um `fix-finding` do `EA-41` que já cresceu de dois bytes para gate + harness
 + fixture + três pares; portar os 8 mutantes de instrumento é escopo novo,
 `fix-finding` próprio.
+
+### Fecho da INSTÂNCIA (2026-09-11) — a bateria efêmera virou harness
+
+**`tests_ea41_instrumento.js`** (novo, harness **`ea41i`** em `mutation_map.json`):
+os 8 mutantes de instrumento versionados. Complementa o `ea41` sem substituí-lo —
+`ea41` muta a **árvore** (o gate é fixo, o mundo muda), `ea41i` muta o **gate** (o
+mundo é fixo, o gate muda). Ordens diferentes de prova, nenhuma dispensa a outra.
+
+**Desvio deliberado do padrão `d015`/`d016`, que endurece**: a mutação **não** é
+in-place com restauração. Cada mutante escreve uma **cópia** em `os.tmpdir()` e
+roda o Python sobre ela, com `cwd` na raiz — o gate lê a árvore por `git`, não pela
+própria localização (`ESTE_GATE` é constante, não `__file__`). O SHA-256 do fonte
+rastreado é medido antes e depois, e divergência é **falha**, não aviso. Não existe
+janela em que a árvore esteja mutada (R7 §3).
+
+**Medido** (2026-09-11, py 3.14.7): preflight **8/8 âncoras casando 1×**; campanha
+**8 DETECTADO · 0 SOBREVIVENTE · 0 NÃO EXECUTADO**, gate rastreado intacto
+(`d49f04390524` antes e depois); stage `mutation` **1 campanha · 0 problema(s)**.
+
+**Duas execuções vermelhas, registradas e não escondidas** (R2 §1):
+
+1. **`EA42-I2` sobreviveu na primeira rodada.** Causa diagnosticada antes de
+   atribuir (R2 §3), e era do **mutante**, não do gate: derrubar só a guarda de
+   classe não acusa registro limpo — `S2`, `S6` e `S8` atravessam o corpo sem
+   `-text` e sem CR no índice —, então ele morria por 3 divergências em vez de 6.
+   Reprovação **incidental**, que este harness recusa como kill por desenho.
+   Corrigido para acusação incondicional.
+2. **`D017-INS1` reprovou a primeira versão da entrada `ea41i`**, e a reprovação
+   estava certa: eu havia declarado `check_eol_text.py` como `insumos.oraculo`
+   **e** como alvo de mutação. Oráculo que se move junto com o mutante não é
+   oráculo. O `insumos` saiu, com a ausência dita no `_trilha` para não ser lida
+   como omissão — aqui o gate é o **sujeito mutado**, e o oráculo é o sinal
+   declarado por mutante, que vive no harness.
+
+Dívida `EA41-EOL0/EOL1` declarada **quitada** na matriz, sem reescrever o texto
+anterior (fica no histórico do git). O gatilho que faltava existe:
+`check_eol_text.py` é `target` de `ea41i`, logo qualquer mudança nele re-dispara
+**esta** campanha, e não só a de árvore.
+
+### O que este fecho NÃO faz — a classe continua aberta, e ela já tem id
+
+A §Reclassificação acima antecipou: o **fato** é do eixo C, mas o **detector** que
+fecharia o caso é do eixo A. Não existe hoje oráculo que separe *"gate com par
+possível na matriz"* de *"gate sem `target` algum"* — dos **14** `check_*.py`
+medidos em 2026-09-05, **3** eram `targets` e só **1** era de fato mutado. O
+próximo julgador que ganhar prova só em bateria efêmera continua invisível ao mesmo
+detector.
+
+Essa classe **não ganha id novo**: é literalmente o **`EA-3`** (*"o stage
+`mutation` não sabe dizer o que não está checando"*), que segue `aberto`. Cunhar um
+`EA-49` aqui duplicaria achado vivo — o oposto do que o `EA-48` ensinou. O que o
+`EA-48` cobra é que resíduo não fique **sem** dono; este tem dono, e é o `EA-3`.
 
 ## EA-43 — a sonda de `eol-text` deixa diretório órfão em `%TEMP%` no Windows: `rmtree(ignore_errors=True)` engole a falha sobre objeto git somente-leitura
 

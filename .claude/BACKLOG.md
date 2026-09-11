@@ -3403,7 +3403,12 @@ backlog **com instrumento**, não com promessa.
 
 ## EA-42 — a prova de que o julgador de `eol-text` não mente vive só em bateria efêmera
 
-**Status**: `resolvido` (a **instância**; a **classe** é o `EA-3`, que segue `aberto`)
+**Status**: `resolvido`
+
+> **Alcance do `resolvido`**: fecha a **instância** — a prova do julgador deixou de
+> viver só em bateria efêmera. A **classe** (não há detector que separe *"gate com
+> par possível"* de *"gate sem `target` algum"*) é o **`EA-3`**, que segue `aberto`.
+> Ver §"O que este fecho NÃO faz".
 
 **Aberto em**: 2026-09-05. Levantado pelo `qa-engineer`, apontando o
 princípio contra o próprio trabalho dele, no fecho do `EA-41`; registrado

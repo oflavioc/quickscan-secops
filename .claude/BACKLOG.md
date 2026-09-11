@@ -475,6 +475,37 @@ emitindo **12×** `[OK] … campanha não exigida` (um por harness declarado:
 ----` seguido de `mutation: 0 campanha(s) executada(s) · 0 problema(s)` — o
 achado reproduz e continua `aberto`.
 
+### Censo remedido em 2026-09-11 — o que mudou, e o que não mudou
+
+Remedido porque a própria cadeia registra que **o inventário de órfãos não é
+constante do repositório**: muda conforme harnesses novos chegam. Desde a
+medição anterior entrou o harness `ea41i` (fix-finding do `EA-42`), e a
+pergunta honesta era se ele move o número. **Move pouco, e não onde importa.**
+
+| população | no disco | são `target` | órfãos |
+|---|---|---|---|
+| `check_*.py` | 14 | **3** (`check_branch_protection`, `check_eol_text`, `check_fecho`) | **11** |
+| `tests_*.js` | 36 | 19 | **17** |
+| harnesses declarados | **13** (era 12) | — | — |
+
+**Os seis órfãos nomeados na cadeia continuam os seis**, conferidos um a um
+nesta data: `check_evidence_bridge.py`, `gen_evidence_bridge.py`,
+`evidence_bridge.json`, `tests_session_m48.js`, `compliance-audit.sh` e o
+próprio `.claude/BACKLOG.md`. Nenhum foi adotado por harness algum desde
+2026-09-05.
+
+Vale registrar o que o `EA-42` mediu e este censo confirma: dos 3 `check_*.py`
+que são `target`, só **`check_fecho.py`** é de fato **mutado** por um par
+(`M16`/`M29` de `tests_016_mutants.js`); `check_eol_text.py` passou a ser
+mutado em 2026-09-11 pelo harness `ea41i`, e `check_branch_protection.py`
+é `target` sem mutante. **Ser `target` não é ser coberto** — e é exatamente
+essa a diferença que o instrumento pedido por este achado precisa saber
+declarar.
+
+**Os números seguem sendo teto, não contagem de defeito** (§Correção do
+próprio texto, acima): sem uma declaração de população, `11 de 14` mede o
+universo de candidatos, não o de arquivos que deveriam estar cobertos.
+
 **Deriva de citação, dentro do próprio achado que fala de registro
 apodrecido (família `EA-31`)**: a cadeia acima cita
 `.claude/verify/check_mutation.py:58-59` e `:61` para o laço de trigger e o
@@ -482,6 +513,19 @@ apodrecido (família `EA-31`)**: a cadeia acima cita
 guard de árvore suja (`git status --porcelain`), sem relação com o laço. O
 laço `for name, h in MAP.items(): due = …` e o `[OK] … campanha não exigida`
 vivem hoje em `check_mutation.py:1332-1335`.
+
+> **Segunda deriva, e a emenda que a encerra (2026-09-11)** — a correção acima
+> também apodreceu: `check_mutation.py:1332-1335` hoje é o bloco de
+> `EXCEÇÃO OBSOLETA` do `known_issues`, sem relação com o laço. Medido nesta
+> data, o `[OK] … campanha não exigida` vive em **`:1687`**.
+>
+> **Parar de citar linha para este sítio.** Duas derivas em seis dias, no achado
+> que fala de registro apodrecido, dizem que o número de linha é o material
+> errado: `check_mutation.py` cresce a cada demanda. A âncora durável é o
+> **texto**, que é estável porque é a mensagem que o operador lê:
+> `grep -n "campanha não exigida" .claude/verify/check_mutation.py`. Quem for
+> escrever o remédio usa a busca, não o número — e o número acima fica como
+> trilha do que já foi medido, nunca como endereço a confiar.
 
 ### Achado-irmão (autoria da demanda 009 — citado, não registrado aqui)
 

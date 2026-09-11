@@ -1541,6 +1541,9 @@ mesclou; o que faltava era o dono normativo, e é ele que este bloco registra.
   contra o ganho — o leitor já é avisado da divergência e da razão dela — **não se
   paga**. Decisão tomada sob a diretriz permanente do proprietário de 2026-09-11
   (rota mais simples, rápida e econômica; sem revisão desnecessária).
+  **Este resíduo ganhou id próprio em 2026-09-11: `EA-48`** — o leitor continua
+  recebendo dois conjuntos de produtos para o mesmo gap, e decisão registrada só
+  aqui vira silêncio. Levantado por sessão par na revisão deste fecho.
 - **Não funde as duas curadorias.** Continua diferido no §P9 da 015, que exige
   decisão sobre reabrir a §UAT-07. Quando (e se) abrir, o delta de conteúdo já está
   medido e nomeado, e é o que uma fusão mal-feita apagaria: só no `QS_GAP_SUPPORT`
@@ -3842,6 +3845,63 @@ divergência antes do aceite.
    `CONTEXT.md` não entra na `§Não mudam` como afirmação, e sim como
    **pergunta do aceite**; o `spec-validate` mede a resposta, não o diff
    vazio.
+
+## EA-48 — a canônica do `EA-21` está decidida e o PDF continua emitindo as duas listas
+
+**Status**: `aberto`
+
+**Aberto em**: 2026-09-11, no mesmo dia em que o `EA-21` fechou, e **por causa
+dele**. Levantado por sessão par na revisão do fecho do `EA-21` e conferido por
+leitura de fonte antes de virar registro. Ganha id próprio em vez de reabrir o
+`EA-21` porque o corpo daquele registro descreve outro fato — a **ausência de
+dono normativo**, que morreu — e números citados nunca renumeram (R12).
+
+### Por que não é o `EA-21` de novo
+
+O efeito do `EA-21` tinha duas metades. A segunda — *"sem texto que diga qual
+responde a quê"* — caiu quando a 015 entregou `[data-pr-gap-fonte]`
+(`ui_v32.js:1092`, `:1099`), e a primeira — *"o mesmo gap chega ao leitor com
+dois conjuntos de produtos"* — **não caiu**. O fecho do `EA-21` (2026-09-11)
+nomeou esse resíduo na sua §"O que este fecho NÃO faz", e este registro é o id
+que faltava para ele.
+
+### Cadeia arquivo:linha → efeito
+
+- **`ui_v32.js:1089`, `:1096`** — `qsGapSupportHTML` emite `[data-pr-gap-support]`
+  em `#pr-findings`, a partir de `QS_GAP_SUPPORT` (**por capability**, 4 qids).
+- **`ui_target_v32.js:351`** — `tgtEnablersHTML` emite
+  `[data-ux-enablers="a-validar"]` a partir de `MAP[qid].lv[atual].c`
+  (**por qid × nível**, 15 qids); **`:453`** é o sítio de chamada **no papel**,
+  dentro do card de `#pr-target` (`:455`). Conferido por leitura em 2026-09-11 —
+  o `:453` citado isolado no §M5 da 015 é o sítio de chamada, não a emissão.
+- **`specs/015-superficies-de-apoio/refinement.md` §M5** — em **3 das 7**
+  combinações alcançáveis, **nenhuma lista contém a outra**. Medição não
+  reproduzida aqui de propósito (número copiado apodrece longe de quem o mediu).
+- **Efeito** — decidida a ancoragem canônica (`MAP`), o papel **não diz qual das
+  duas listas é ela**. O aviso de `[data-pr-gap-fonte]` explica a **razão** da
+  divergência ("parte da capability, não do nível respondido"), e não designa
+  autoridade: o leitor continua recebendo dois conjuntos de produtos para o mesmo
+  gap e escolhendo por conta própria.
+
+### Escopo e rito — é por isso que é achado e não demanda
+
+Fechar do lado do papel é editar `ui_v32.js` (e possivelmente
+`ui_target_v32.js`): protegidos por `specs/PHASE_5_0_REV_B.md:1616`, pinados por
+`P50-GOV1`/`P50-IC4` → **autorização nominal §29.4 no chat**, repin inline de
+`PROTECTED`, reexecução das campanhas `d015`/`core`/`d009` e job `visual` no CI.
+O fecho do `EA-21` mediu esse custo contra o ganho e **decidiu não pagar agora**,
+sob a diretriz do proprietário de 2026-09-11 (rota mais simples e econômica) —
+decisão registrada, não esquecimento. Este id existe para que ela continue
+visível em vez de virar silêncio.
+
+### O que este registro não decide
+
+Se o remédio é uma frase de designação no papel, a fusão das curadorias (diferida
+no §P9 da 015, que exige decisão sobre reabrir a §UAT-07), ou nenhum dos dois: é
+decisão de produto do **`product-owner`**, e o custo do rito é do proprietário.
+Instância de fronteira da família `EA-31` — registro que afirma o que a superfície
+não sustenta —, aqui na forma inversa: a **decisão** existe e a **superfície** não
+a reflete.
 
 ### O que este registro não decide
 

@@ -66,6 +66,12 @@ formato, valor fora dos vocabulários fechados, `.gitattributes` não rastreado,
 sonda incompleta — tudo sai como [FAIL] nomeado, exit 1. R10 §7: git por lista de argumentos,
 sem shell; dependência declarada no env-doctor (git ausente = FAIL lá). R7 §3: nada é escrito na
 árvore. Sem rede. NÃO é suíte contada: não há entrada em expected_suites.json (padrão check_*).
+A ÚNICA saída que é [WARN] e não [FAIL] é o resíduo da LIMPEZA do efêmero (EA-43, `remove_efemero`):
+ele vive em %TEMP%, fora da árvore, a sonda já rodou inteira e o veredito é sobre a árvore —
+reprovar ali inventaria uma condição de falha que este gate não tem. O que não se admite é o
+silêncio de antes: `shutil.rmtree(..., ignore_errors=True)` engolia o PermissionError sobre o objeto
+git somente-leitura do efêmero e o diretório ficava em %TEMP%, um por execução do stage (32 órfãos
+medidos em 2026-09-11; 12/12 arquivos do efêmero sem bit de escrita).
 
 USO
   python .claude/verify/check_eol_text.py            stage: sonda + árvore do repositório corrente
@@ -77,6 +83,7 @@ USO
 import os
 import re
 import shutil
+import stat
 import subprocess
 import sys
 import tempfile
@@ -273,17 +280,55 @@ def ambiente_hermetico(tmp):
     return env
 
 
+def destrava_e_repete(func, path, _exc):
+    """`onexc` (py>=3.12) / `onerror` (py 3.10-3.11) do rmtree — MESMA aridade nos dois protocolos.
+
+    No Windows os objetos do git nascem SOMENTE-LEITURA (medido: 12/12 arquivos do efêmero sem
+    S_IWRITE) e o unlink devolve PermissionError [WinError 5]. Aqui o bit de escrita é ACRESCENTADO
+    ao modo corrente (nunca `chmod(path, S_IWRITE)` seco: em POSIX isso derrubaria o bit de execução
+    de diretório e impediria a própria travessia) e a operação que falhou é repetida. O que não ceder
+    nem assim propaga para `remove_efemero`, que NOMEIA — nunca engole (era o EA-43).
+    """
+    os.chmod(path, os.stat(path).st_mode | stat.S_IWRITE)
+    func(path)
+
+
+def remove_efemero(tmp):
+    """Remove o repositório efêmero; devolve a lista de avisos (0 ou 1) do que sobrou em %TEMP%.
+
+    EA-43: a forma anterior era `shutil.rmtree(tmp, ignore_errors=True)` — a falha sobre o objeto
+    somente-leitura era ENGOLIDA e o diretório ficava em %TEMP%, crescendo um por execução do stage.
+    Contrato desta função, nesta ordem: (1) trata a causa conhecida (`destrava_e_repete`);
+    (2) confere o disco — `os.path.exists`, não a ausência de exceção, porque rmtree pode remover
+    parcialmente sem reclamar; (3) devolve AVISO NOMEADO se sobrou, com o caminho e a exceção.
+    NÃO é FAIL (decisão registrada no cabeçalho) e NUNCA levanta: limpeza que derruba o julgamento
+    da árvore seria pior que o resíduo que ela existe para evitar.
+    """
+    kw = ({"onexc": destrava_e_repete} if sys.version_info >= (3, 12)
+          else {"onerror": destrava_e_repete})
+    erro = None
+    try:
+        shutil.rmtree(tmp, **kw)
+    except Exception as e:            # inclusive o que o tratamento não conseguiu destravar
+        erro = f"{type(e).__name__}: {e}"
+    if not os.path.exists(tmp):
+        return []
+    return [f"resíduo em {tmp} — o repositório efêmero NÃO foi removido "
+            f"({erro or 'rmtree não reclamou'}); remova à mão e investigue: "
+            f"lixo que cresce um por execução do stage foi o EA-43"]
+
+
 def sonda():
     """Constrói o repositório efêmero, lê e julga com o MESMO código da árvore; compara caso a caso."""
     tmp = tempfile.mkdtemp(prefix="eol-text-sonda-")
-    divergencias, guarda = [], []
+    divergencias, guarda, limpeza = [], [], []
     try:
         env = ambiente_hermetico(tmp)
         cfg = ["-c", "core.autocrlf=false", "-c", "core.safecrlf=false", "-c", "init.defaultBranch=main"]
         r = git([*cfg, "init", "-q"], tmp, env)
         if r.returncode != 0:
             return {"ok": False, "guarda": [f"git init falhou no efêmero (rc={r.returncode})"],
-                    "divergencias": [], "total": 0, "problemas": None}
+                    "divergencias": [], "total": 0, "problemas": None, "limpeza": limpeza}
         with open(os.path.join(tmp, DECLARACAO), "wb") as fh:
             fh.write(GITATTRIBUTES_DA_SONDA)
         por_add = [DECLARACAO]
@@ -327,9 +372,11 @@ def sonda():
         if len(problemas) != PROBLEMAS_SONDA:
             guarda.append(f"julgador acusou {len(problemas)} problema(s) ≠ {PROBLEMAS_SONDA} pinado(s) — sujeito a mais ou a menos")
         return {"ok": not divergencias and not guarda, "guarda": guarda, "divergencias": divergencias,
-                "total": len(regs), "problemas": len(problemas)}
+                "total": len(regs), "problemas": len(problemas), "limpeza": limpeza}
     finally:
-        shutil.rmtree(tmp, ignore_errors=True)
+        # `limpeza` é a MESMA lista que o dict devolvido carrega (extend, nunca rebind): o `finally`
+        # roda DEPOIS do `return`, e é por essa referência que o aviso da limpeza alcança o relato.
+        limpeza.extend(remove_efemero(tmp))
 
 
 def relata_sonda(s):
@@ -339,6 +386,9 @@ def relata_sonda(s):
         print(f"[FAIL] EA41-EOL0 sonda/guarda: {g}")
     for d in s["divergencias"]:
         print(f"[FAIL] EA41-EOL0 sonda: {d}")
+    # Higiene do efêmero: avisa, não reprova — e não usa id de alínea, porque alínea não é (EA-43).
+    for a in s.get("limpeza", ()):
+        print(f"[WARN] {GATE} sonda/limpeza: {a}")
 
 
 # -------------------------------------------------------------------- main

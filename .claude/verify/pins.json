@@ -1,7 +1,7 @@
 {
   "_meta": {
     "descricao": "Registry único de pins — fonte de identidade dos artefatos (R8). Hashes = SHA-256 dos blobs de HEAD. Alterar arquivo pinado exige regenerar este registry no MESMO PR, com motivo no commit.",
-    "gerado_de_head": "61ac62e7d10032176a32ffa548c16a3de6c387e6",
+    "gerado_de_head": "3c34c2fa15617a064f52120015a6dde2d62ab052",
     "gerado_em": "2026-09-11",
     "exclusoes": [
       "docs_phase5/**",
@@ -15,7 +15,7 @@
     "baseline_core_zip_sha256": "625079c462be7d44ffd69b1cd85f256382322bd0555ae4b548f21bf30ee5b89d"
   },
   "files": {
-    ".claude/BACKLOG.md": "5eb224fab5d4b8f3793156edc9810c187d2e76ecb68a3aa5d04cb6994e2d8e4a",
+    ".claude/BACKLOG.md": "a95c8d0069e98d075efe68aa241c76d7ac8808dda68cd9a132ae3c176ce22d7d",
     ".claude/agent-memory/README.md": "2f868716c8785119c1d6a02a7715f7b5058ab968f55951410fc82fc45b960a93",
     ".claude/agent-memory/build-engineer/MEMORY.md": "5ed47a73226fea6613b44c2ce70b26e95415033bafbd69a3ada20fa7df0bf950",
     ".claude/agent-memory/build-engineer/feedback_escopo_de_scanner_nos_dois_sentidos.md": "a07b03eb0687bc4f08ff02375684b8441f8d434384c415a3e25b1fe233007527",
@@ -418,6 +418,7 @@
     "specs/017-semantica-do-gatilho/spec-validate.md": "5df48c9dfa4c60c3799f927c43d1456b739812119e81dd243ac354ba509c0480",
     "specs/017-semantica-do-gatilho/spec.md": "95c7a11060ef2f20cb2997bee8d80999f7a304c7a385e843d92836ecce758434",
     "specs/017-semantica-do-gatilho/tasks.md": "3cefd74f8449fc129828f2a7a79668eee9e6ea75ffe9949e3d1d22977889c2ad",
+    "specs/018-cobertura-declarada-de-mutacao/refinement.md": "9c619279f41cddce9993ed346ded4f63a41a1686b779a2fc272f2a3e07a4e703",
     "specs/PHASE_5_0_REV_A.md": "22e729174c6a3c5dd620da5330b03eb96d9eb6fc6e64eba097c2bde55eb0a510",
     "specs/PHASE_5_0_REV_B.md": "4f1583c733df62a9452aa7b218d962e40d781bb8d30dfc3179ad6e1ef004619b",
     "synthetic_session_examples/exemplo-completo.json": "8970e68ca0ce6a6885b62a911532a0598c9c5bca1bb783089fb085ba858a314d",

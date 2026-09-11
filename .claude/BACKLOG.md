@@ -3746,6 +3746,17 @@ toca este trecho.
   declarados, sem aviso (o retorno seria `[]`, indistinguível de "harness
   não muta nada").
 
+  > **Correção de número (2026-09-11)** — o *"sete dos onze"* acima conta a
+  > **forma de declaração**, e a população inclui `tests_015_apoio.js`, que é
+  > suíte e não fonte de harness. Pelo predicado que importa — 2º elemento
+  > **vazio** —, o censo mede **10 de 12** (completo só em `p51`, 6/6; parcial
+  > em `d014`, 3 de 5), idêntico no commit que abriu o achado (`6a0c7a9`) e no
+  > HEAD. O número corrigido, o método de contagem e o gatilho de reavaliação
+  > vivem na entrada `EA-46` de `.claude/verify/mutation-matrix.json`
+  > (`dividas_declaradas`), declarada em `3c56eab` — **não os copio para cá**:
+  > número copiado apodrece separado do que o mediu. Este parágrafo fica como
+  > foi escrito (R2 §5: registro não se reescreve, se emenda).
+
 ### O que este registro não decide
 
 Se o remédio é generalizar as duas regexes (aceitar `const`/`let`/`var` e

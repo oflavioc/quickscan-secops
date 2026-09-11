@@ -18,6 +18,14 @@
 > inerte* nasceu na errata E7 da 014 (2026-09-01) e entra dois ciclos depois, com
 > a classe estabilizada pelo fecho do `EA-32`. Trilha:
 > `specs/016-registro-contra-execucao/spec.md` C9.
+>
+> **Emenda declarada — 2026-09-09.** O verbete *Insumo de prova* recebeu cláusula
+> remissiva ao vocabulário fechado da demanda 017, fora de qualquer Fase 0, por
+> `fix-finding` — resíduo 1 do aceite de intenção da 017, diferido de propósito
+> enquanto a spec listava `CONTEXT.md` em §Não mudam e o `spec-validate` media
+> esse diff como vazio (item 68). Nada no verbete era falso: era
+> verdadeiro-e-incompleto, por definir a extensão com exemplos. Trilha:
+> `specs/017-semantica-do-gatilho/spec.md` §Vocabulário fechado.
 
 ## Metodologia (produto)
 
@@ -244,6 +252,13 @@ Arquivo que a campanha não muta mas de que o poder da prova depende — orácul
 gate lê. Entra no gatilho com razão de CLASSE declarada e legível por máquina:
 mudar nele muda o que a campanha prova, não o que ela muta. Arquivo que é mutado
 E insumo classifica-se como conjunto mutado — uma classificação por arquivo.
+A razão de classe é **vocabulário fechado**: normativo em
+`specs/017-semantica-do-gatilho/spec.md` §Vocabulário fechado, pinado em
+`check_mutation.py → D017_CLASSES` e ampliável só por errata com id. Os exemplos
+acima dizem o que um insumo É; **não** são as classes — que são identificadores
+(INV-10), não termos deste glossário, e não coincidem com esta lista: há classe
+que absorve dois destes exemplos e há classe sem exemplo aqui. A lista canônica
+lê-se na fonte, nunca daqui.
 _Evitar_: alvo extra, desvio declarado, endurecimento do trigger, excedente (é o
 rótulo do sintoma no `IC-6`, que pressupõe identidade)
 

@@ -1218,7 +1218,7 @@ mede 9). Se as duas listas um dia divergirem, fechar isso é demanda própria
 
 ## EA-15 — `run.sh` trunca a saída do stage em 30 linhas: o veredito do `mutation` chega sem motivo e parece crash
 
-**Status**: `aberto`
+**Status**: `resolvido`
 
 **Aberto em**: 2026-08-31, na demanda 011. É **achado de método**: muda como se
 atribui causa (R2 §3), antes de mudar qualquer código.
@@ -1246,6 +1246,42 @@ partir da saída truncada do `run.sh`.
 
 **Não medido por execução**: o stage é `mutates: true` e esta escrita não roda
 campanha; a cadeia acima é leitura de fonte.
+
+### Fecho (2026-09-11) — cabeça **e** cauda, com a omissão declarada
+
+**Remédio** (`.claude/verify/run.sh`, ramo FAIL de `reporta()`): o corte deixa de
+ser só pelo começo. Imprime as primeiras `CABECA=30` linhas, **uma linha de
+omissão que diz quantas linhas sumiram e qual o total**, e as últimas `CAUDA=15`
+— onde vive o veredito. Saída com até 45 linhas sai **inteira**, sem marcador.
+As duas constantes ficam nomeadas no topo, junto de `TMPD`, em vez de literais
+enterrados na função.
+
+**Por que cauda, e não `head` maior**: o problema não é tamanho, é **posição**. O
+veredito de um stage é a última linha por construção (`check_mutation.py:185`
+imprime a integridade **antes** de qualquer campanha; `:1289-1305` imprime as
+linhas por campanha e o `mut_relata` **depois**). Qualquer corte pelo começo
+esconde o veredito quando a saída cresce; aumentar o `head` só adia. Vale para
+**qualquer** stage, que é como o achado foi escrito.
+
+**Medido por execução** (2026-09-11, entrada sintética com a forma real — cabeçalho
+de integridade, ruído, `[FAIL]`, `mut_relata`, `----`, linha de veredito):
+
+| cenário | antes (HEAD) | depois |
+|---|---|---|
+| saída de 77 linhas, rc≠0 | última linha visível: `ruido intermediario 17`; veredito e `mut_relata` **invisíveis** | cabeçalho de integridade **e** `[FAIL] d016 · 3 SOBREVIVENTE(s)`, `mut_relata`, `mutation: … · 3 problema(s)`; omissão declarada: `[...] 32 linha(s) omitida(s) no meio (saída completa: 77 linhas) [...]` |
+| saída de 12 linhas, rc≠0 | inteira | inteira, **sem** marcador de omissão (conferido: zero ocorrência de `[...]`) |
+| rc = 0 | `[PASS] stage` | `[PASS] stage` — ramo intacto |
+
+Aritmética conferida: 77 − 30 − 15 = 32. `bash -n` limpo; pipeline completo
+`bash .claude/verify/run.sh --light` → **13 PASS · 0 FAIL**.
+
+**O remédio de método sai de vigor**: não é mais preciso rodar
+`check_mutation.py` direto para atribuir causa — a saída do `run.sh` passou a
+carregar o veredito. Arquivo pinado (registry R8) → repin no mesmo PR.
+
+**O que este fecho NÃO faz**: não toca `check_mutation.py` nem a ordem em que ele
+imprime, e não cria gate sobre a forma da saída do `run.sh` — o `run.sh` é o
+executor do pipeline, não objeto dele.
 
 ## EA-16 — `UX14` é constante por duas razões independentes: o gate não pode reprovar
 

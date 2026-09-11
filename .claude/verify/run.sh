@@ -51,6 +51,9 @@ PY
 
 TMPD=$(mktemp -d); trap 'rm -rf "$TMPD"' EXIT
 PASS=0; FAIL=0; ABORT=0
+# EA-15: quanto da saída de um stage reprovado se imprime. Cabeça E cauda —
+# o veredito de um stage é a ÚLTIMA linha, nunca a primeira.
+CABECA=30; CAUDA=15
 declare -a GRUPO_NOMES=() GRUPO_PIDS=()
 
 executa() { # nome cmd — grava saída e rc em $TMPD
@@ -66,7 +69,20 @@ reporta() { # nome — imprime resultado acumulado
     PASS=$((PASS+1)); echo "[PASS] $nome"
   else
     FAIL=$((FAIL+1)); echo "[FAIL] $nome"
-    sed 's/^/       /' "$TMPD/$nome.out" | head -30
+    # EA-15: cortar só pelo começo entregava o cabeçalho e escondia o veredito.
+    # `check_mutation.py` imprime a integridade da campanha ANTES de qualquer
+    # campanha (:185) e o veredito nas DUAS ÚLTIMAS linhas (:1289-1305); com
+    # `head -30` puro, quem lia o pipeline concluía "o stage morreu". Vale para
+    # qualquer stage. A omissão é declarada, nunca silenciosa.
+    local total
+    total=$(grep -c '' "$TMPD/$nome.out" 2>/dev/null || echo 0)
+    if [ "$total" -le $((CABECA + CAUDA)) ]; then
+      sed 's/^/       /' "$TMPD/$nome.out"
+    else
+      sed 's/^/       /' "$TMPD/$nome.out" | head -"$CABECA"
+      echo "       [...] $((total - CABECA - CAUDA)) linha(s) omitida(s) no meio (saída completa: $total linhas) [...]"
+      sed 's/^/       /' "$TMPD/$nome.out" | tail -"$CAUDA"
+    fi
   fi
   return "$rc"
 }

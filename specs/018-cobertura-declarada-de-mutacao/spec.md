@@ -49,6 +49,12 @@ declarada na Fase 4, fixada por execução na Fase 6.
 
 ## Errata E1 (2026-09-11) — o `C5`/`D018-COB1` é entregue NÃO MEDIDO, com credor
 
+> **RATIFICADA pelo proprietário no chat em 2026-09-12** ("ratifique a errata E1").
+> A partir daqui o `C5` **é** o que esta errata diz — e a conformidade da
+> implementação passa a ser medida contra o critério emendado, não contra o
+> original. Nenhuma linha de código mudou com a ratificação: o que mudou foi a
+> exigência, que era insatisfazível com os dados que a matriz publica.
+
 **Descoberto na Wave 1, ao implementar.** O `C5` manda comparar o arquivo contra
 *"o conjunto mutado de par algum da `mutation-matrix.json`"*. **Essa comparação não
 tem fonte legível por máquina**: medidos os campos dos 171 pares, existem `ancora`,

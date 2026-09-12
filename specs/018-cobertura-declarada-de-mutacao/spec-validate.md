@@ -30,9 +30,8 @@ contra um conjunto que a matriz não publica em forma legível por máquina. Nã
 implementação divergente nem ausência — é a spec pedindo o impossível com os dados
 existentes. Tratada pela **errata E1**, com as duas alternativas recusadas por
 escrito e gatilho de reavaliação nomeado. **Correção da spec aprovada por**: a
-errata foi escrita durante a Fase 5 sob a delegação de 2026-08-29 e o proprietário
-não a ratificou no chat — **fica declarada como pendência de ratificação**, não
-como aprovada.
+errata foi escrita durante a Fase 5 sob a delegação de 2026-08-29 e **RATIFICADA
+pelo proprietário no chat em 2026-09-12**. Ver a iteração 2, abaixo.
 
 **Item 8 — ressalva.** O `M5` previsto para o `C5` não existe, pela mesma razão do
 item 5. Registrado na matriz como dívida `D018-COB1`, com credor, **nunca como par
@@ -56,8 +55,34 @@ Abaixo de 100% ⇒ classificado e **não iterado**: as três lacunas são de **s
 não de implementação, e iterar a implementação não as fecharia. As três estão
 declaradas com credor, gatilho e razão escrita — nenhuma é silêncio.
 
+## Iteração 2 (2026-09-12) — depois da ratificação
+
+O proprietário **ratificou a errata E1** e **manteve o prazo** de `2026-12-31`.
+Duas consequências, e a segunda precisa ser dita com cuidado:
+
+**O item 5 muda de classe.** Com o `C5` emendado — *"entregue `[NÃO MEDIDO]`, com
+causa, credor e gatilho"* —, a implementação faz **exatamente** o que o critério
+agora pede. O item passa de `spec-errada` a **conforme**.
+
+**As duas medidas ficam registradas, e isto não é ginástica de número:**
+
+| contra o quê | score |
+|---|---|
+| a spec **original** | **13/14 ≈ 92,9%** |
+| a spec **emendada e ratificada** | **14/14 = 100%** |
+
+**Nenhuma linha de código mudou entre as duas medidas.** O que mudou foi a
+exigência. Apagar a primeira esconderia que o `C5` original **não era
+satisfazível** com os dados que a matriz publica — e é justamente essa a
+informação que a demanda existe para não perder. Por isso as duas ficam, e o
+`conformance` do planning-state carrega **as duas**.
+
+**O item 11 não muda**: a divergência de escopo entre P4 e P5 é de fato, não de
+formulação — dos seis órfãos do `EA-3`, apenas um cai na população declarada, e
+nenhuma ratificação altera isso.
+
 ## O que este documento não decide
 
-Se a errata E1 é ratificada, se o limite da regra vira achado próprio e se o prazo
-provisório de `2026-12-31` fica: **decisões do proprietário**. O `qa-engineer`
-mede e declara; não ratifica a própria spec.
+Se o limite da regra (`check_branch_protection.py` fora da população, por rodar
+via `compliance-audit.sh`) vira achado próprio: **decisão do proprietário**, ainda
+aberta. O `qa-engineer` mede e declara; não ratifica a própria spec.

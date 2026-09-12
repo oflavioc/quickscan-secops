@@ -83,10 +83,18 @@ verdade e roda por `compliance-audit.sh`, logo fica **fora**. Limite real,
 registrado em `regra.limite_conhecido` — no dado, onde o próximo vai olhar — e
 **candidato a achado do proprietário**.
 
-**Prazo provisório.** As 11 dívidas nascem com `2026-12-31`. A **T002** escalou o
-valor ao proprietário e a resposta não chegou antes da entrega; o valor é redondo
-de propósito, sinal de placeholder. Trocar é uma edição no JSON mais um repin —
-nenhum código depende dele.
+**Prazo — MANTIDO E RATIFICADO (2026-09-12).** As 11 dívidas ficam com
+`2026-12-31`. Nasceu como default do orquestrador porque a **T002** escalou o valor
+e a resposta não chegou antes da entrega; o proprietário o manteve no chat, e ele
+deixou de ser provisório. O `D018-PRAZO1` reprova qualquer dívida que o ultrapasse
+— **a válvula tem data e a data é cobrada**.
+
+**Errata E1 — RATIFICADA (2026-09-12).** A partir daqui o `C5` **é** o que a errata
+diz, e a conformidade passa a ser medida contra o critério emendado. Ver a iteração
+2 do [spec-validate.md](spec-validate.md): o score vai de **13/14** (spec original)
+a **14/14** (spec emendada), e **as duas medidas ficam registradas** — nenhuma linha
+de código mudou entre elas, mudou a exigência. Apagar a primeira esconderia que o
+`C5` original não era satisfazível com os dados que a matriz publica.
 
 ## Verificação final (2026-09-12, árvore limpa)
 

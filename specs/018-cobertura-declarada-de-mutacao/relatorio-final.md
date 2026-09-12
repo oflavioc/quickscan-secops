@@ -88,6 +88,34 @@ valor ao proprietário e a resposta não chegou antes da entrega; o valor é red
 de propósito, sinal de placeholder. Trocar é uma edição no JSON mais um repin —
 nenhum código depende dele.
 
+## Verificação final (2026-09-12, árvore limpa)
+
+| verificador | resultado |
+|---|---|
+| `bash .claude/verify/run.sh` (completo) | **18 PASS · 0 FAIL** — era 17 stages, o `mutation-coverage` é o 18º |
+| `bash .claude/verify/compliance-audit.sh` | **17 PASS · 0 FAIL · 0 WARN** |
+| `check_baseline.py` | **476/476 pins** |
+| stage `mutation` | `1 campanha(s) executada(s) · 0 problema(s)` |
+| campanha `d018` | **7 DETECTADO · 0 SOBREVIVENTE · 0 NÃO EXECUTADO** |
+
+## Quatro defeitos MEUS, todos achados por execução
+
+Registrados porque são a melhor evidência que esta demanda produziu a favor da
+própria tese: **nenhum dos quatro apareceu em leitura.**
+
+| defeito | quem pegou |
+|---|---|
+| premissa falsa *"gatilho sem mutante"*, propagada 4× | medição ao desenhar a Fase 2 → retificada no PR #57 |
+| `UnicodeEncodeError` no `→` sob cp1252 | o primeiro `run.sh` **completo** — minhas execuções manuais levavam `PYTHONIOENCODING` e nunca exerciam o caminho real |
+| `KeyError` no julgador | o mutante `D018-M3`, que matava por *traceback* em vez do sinal declarado |
+| alvo fantasma sem razão de classe | o `D017-REL2`, gate da demanda 017 |
+
+O terceiro e o quarto viraram endurecimento permanente: **crash não conta como
+kill**, e o `d018` declara `insumos.populacao`. Vale registrar que a classe
+`populacao` **já existia no vocabulário fechado da 017** antes desta demanda — o
+termo de que a 018 precisava tinha sido antecipado pela demanda que separou
+gatilho de conjunto mutado.
+
 ## Três achados da própria campanha, nenhum do produto
 
 1. **Encoding.** Quatro mutantes deram resultado errado na primeira execução.

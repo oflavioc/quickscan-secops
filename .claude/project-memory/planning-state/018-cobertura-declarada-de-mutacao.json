@@ -1,6 +1,6 @@
 {
   "demanda": "018-cobertura-declarada-de-mutacao",
-  "phase": "red",
+  "phase": "done",
   "spec_dir": "specs/018-cobertura-declarada-de-mutacao",
   "branch": "feature/018-cobertura-declarada-de-mutacao",
   "brief": "Remedio do achado EA-3: o stage mutation nao sabe dizer o que NAO esta checando. O laco percorre os harnesses declarados, nunca os arquivos que mudaram, entao arquivo fora de todo `targets` nao produz linha alguma — nem OK, nem WARN, nem FAIL — e a ausencia de campanha fica indistinguivel de 'campanha nao exigida'. A demanda entrega, nesta ordem: (i) uma DECLARACAO DE POPULACAO (quais arquivos DEVEM estar sob campanha), no espirito do boundary.json da R6; (ii) o gate que mede a diferenca entre a populacao declarada e os gatilhos reais. Sem (i), os numeros do censo sao TETO e nao defeito: '11 de 14 check_*.py fora de todo targets' mede candidatos, nao arquivos que deveriam estar cobertos. Medido na develop 312a18c em 2026-09-11: 13 harnesses; check_*.py 14 no disco / 3 gatilhos / 11 orfaos; tests_*.js 36 / 19 / 17; os SEIS orfaos nomeados pelo EA-3 em 2026-09-05 continuam orfaos. O EA-42 provou a distincao que o instrumento precisa saber declarar: SER GATILHO NAO E SER COBERTO — dos 3 check_*.py que sao gatilho, so check_fecho.py sempre teve mutante, check_eol_text.py ganhou um em 2026-09-11 (harness ea41i) e check_branch_protection.py e gatilho SEM mutante. Aberta a pedido do proprietario no chat em 2026-09-11; conducao sob a delegacao de 2026-08-29. O EA-3 NAO fecha com a abertura — fecha quando o instrumento existir e o achado for reconferido por execucao.",
@@ -32,5 +32,16 @@
       "D018-ORF1",
       "D018-POP1(b)"
     ]
-  }
+  },
+  "pr_url": "https://github.com/oflavioc/quickscan-secops/pull/58",
+  "implement": {
+    "status": "done",
+    "notes": "Waves 1 a 4 executadas em 2026-09-11/12. Wave 1: julgador + populacao so com a regra + RED commitado (2e5c4e2). Wave 2: 11 dividas + stage no pipeline. Wave 3: harness d018, 7 mutantes, 7/7 KILL. Wave 4: verificacao completa."
+  },
+  "validate": {
+    "status": "done",
+    "notes": "spec-validate iteracao 1: 13/14 ~ 92,9% pela leitura conservadora. NAO iterado, com razao escrita: as tres lacunas sao de SPEC e nao de implementacao. Aceite do qa-engineer (green + 7/7 mutantes + regressao intacta) e do product-owner (a intencao do refinamento esta entregue; o que faltou esta nomeado com credor e gatilho). Auditoria independente humana nao exigida."
+  },
+  "relatorio_final": "specs/018-cobertura-declarada-de-mutacao/relatorio-final.md",
+  "fecho": "Fase 6 completa e PR #58 aberto — a condicao de done pela regra C8 da demanda 016, que separa done (Fase 6 + PR) de merge (CI verde). VERIFICACAO FINAL na arvore limpa: run.sh completo 18 PASS · 0 FAIL; compliance-audit 17 PASS · 0 FAIL · 0 WARN; baseline 476/476; stage mutation 0 problema(s); campanha d018 7/7 KILL. QUATRO DECISOES FICAM COM O PROPRIETARIO, todas declaradas e nenhuma silenciosa: (1) ratificar ou nao a errata E1, que entrega o D018-COB1 como NAO MEDIDO; (2) o prazo das 11 dividas, hoje no default provisorio 2026-12-31 porque a T002 escalou e a resposta nao chegou antes da entrega; (3) se o limite da regra — check_branch_protection.py roda por compliance-audit.sh e fica fora da populacao — vira achado proprio; (4) se o spec-validate em 13/14 e aceito sem nova iteracao. O EA-3 NAO FECHA com esta demanda, e isso esta no relatorio em destaque: a P4 e a P5 nao compoem, e dos seis orfaos que o achado nomeia apenas um cai na populacao declarada. MERGE E DO USUARIO."
 }

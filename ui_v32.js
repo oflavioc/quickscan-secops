@@ -737,7 +737,7 @@ function baseAbsenceHTML(ids, ctxs, isScreen){
 function neutralPrioCausa(c){
   const st = (c && c.maturity && c.maturity.state) || "";
   if (st === "mature")
-    return "Esta capability não apresenta lacuna nesta etapa — não há o que endereçar por produto.";
+    return "Esta capability não apresenta lacuna nesta etapa — não há o que endereçar por produto, e nenhum produto é inferido.";
   if (st === "needs-validation")
     return "Ainda faltam respostas para dizer se há lacuna nesta capability — nenhum produto é inferido.";
   return "Não há oferta direta mapeada para esta capability nesta etapa — nenhum produto é inferido.";

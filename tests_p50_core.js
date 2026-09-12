@@ -227,8 +227,11 @@ const PROTECTED = {
      Identidade anterior: d21f0f2b15f9afa90cae06f0048140a7ca4af73b40d5d6d524c08cbd9f160cc2
        (segundo repin do MESMO fix-finding, 2026-09-12: o ramo `mature` recuperou a
         clausula "nenhum produto e inferido" depois que o D015-NOSUB1 acusou a perda
-        de 2 caracteres no #pr-support. Mesma autorizacao nominal, mesma funcao.) */
-  "ui_v32.js": "132e39eedbe706e37ab346d443071012ad3b3e620225a1e0e6641e238f87a851",
+        de 2 caracteres no #pr-support. Mesma autorizacao nominal, mesma funcao.)
+     Identidade anterior: 132e39eedbe706e37ab346d443071012ad3b3e620225a1e0e6641e238f87a851
+       (repin do fix-finding do EA-48, 2026-09-12: o papel passa a nomear a ancoragem
+        canonica decidida no EA-21. Autorizacao nominal propria, distinta da do EA-24.) */
+  "ui_v32.js": "56cd241aa8bb4dea516faf604abf5b62ddbd20ac1fc04092799c2f8669c1c367",
   "ui_ux_v32.js": "a050401145a5ed7af597eae01a9a23826418119769c096db168b3b177a9d3938",
   /* ERRATA DA AUDITORIA EXTERNA · §4.1.1 ("qualquer texto derivado consome a
      mesma decisão canônica de publicabilidade"). A comparação Atual × Alvo

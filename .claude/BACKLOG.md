@@ -1718,7 +1718,7 @@ canônico, e se o outro vira sinônimo no `CONTEXT.md`) é do `product-owner`.
 
 ## EA-24 — o card neutro culpa o mapeamento quando a causa é ausência de gap
 
-**Status**: `aberto`
+**Status**: `resolvido`
 
 **Aberto em**: 2026-09-01. Reservado em prosa pela 015 (`relatorio-final.md:551`).
 **Pendente de confirmação por execução** (`qa-engineer`).
@@ -1738,6 +1738,41 @@ canônico, e se o outro vira sinônimo no `CONTEXT.md`) é do `product-owner`.
 
 Quais estados alcançáveis produzem cada causa (medida do `qa-engineer`) e qual
 texto substitui (`product-owner` com `ui-engineer`).
+
+### Fecho (2026-09-12) — e o achado era MAIOR do que esta cadeia descrevia
+
+**A medida que faltava**: `maturity.state` tem **quatro** valores
+(`engine_v32.js:349-350`) e o card emitia **um** texto para todos:
+
+| estado | o que o facilitador lia | era verdade? |
+|---|---|---|
+| `gap-high` · `gap-moderate` | *"não há oferta direta mapeada"* | **sim** |
+| `mature` | idem | **não** — não há **lacuna**; é o caso que esta cadeia registrou |
+| `needs-validation` | idem | **não** — faltam **respostas**; **não estava no registro** |
+
+O **`needs-validation` é o pior dos três** e ninguém o tinha nomeado: o facilitador
+lê "lacuna de catálogo" quando o que falta é ele **terminar o assessment**.
+
+**Remédio**: helper `neutralPrioCausa(c)` ramifica por `maturity.state`. **Sem
+estado novo** (R9 §5) — o dado já vem em `c`, calculado pelo engine no mesmo passe.
+O texto dos dois estados de gap fica **byte a byte** como estava.
+
+**A última frase é idêntica nos três ramos, de propósito**: é a invariante
+`[3.2.3-B]` — *prioridade declarada nunca desaparece* — que o comentário do próprio
+código protege e que o **`EA-25`** diz não ter âncora normativa. Não foi tocada.
+
+**Rito consumido**: autorização **nominal §29.4** do proprietário no chat em
+2026-09-12, restrita a `neutralPrioCardHTML` e ao texto do `div.v32-neutral`. A do
+`EA-13` **não** foi reaproveitada. Repin inline de `PROTECTED['ui_v32.js']` pela
+**R8 §2**, sem tocar asserção alguma — os gates `P50-GOV1` e `P50-IC4` leem a mesma
+entrada e fecharam juntos. **Sem Porta B**: `ui_v32.js` é camada 5.x.
+
+**Conferido antes de editar**: nenhuma âncora de mutante casa na função nem no
+texto (`d015`, `core` e `d009` varridos) — mudar o texto não apodrece âncora
+alguma, que é a classe do `EA-4`.
+
+**Medido**: `run.sh --light` 14 PASS · 0 FAIL · `compliance-audit` 17/0/0 ·
+`p50core` **64/64** (de 62/2 na janela vermelha) · `baseline` 476/476.
 
 ## EA-25 — "prioridade declarada nunca desaparece" é invariante de fato sem âncora normativa
 

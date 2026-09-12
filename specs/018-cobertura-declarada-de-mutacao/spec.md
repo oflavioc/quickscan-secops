@@ -47,6 +47,38 @@ Todo critério é gate executável, definido AQUI (R3 §1). Namespace da demanda
 `.claude/verify/expected_suites.json` **no mesmo commit** dos gates (R10 §3) —
 declarada na Fase 4, fixada por execução na Fase 6.
 
+## Errata E1 (2026-09-11) — o `C5`/`D018-COB1` é entregue NÃO MEDIDO, com credor
+
+**Descoberto na Wave 1, ao implementar.** O `C5` manda comparar o arquivo contra
+*"o conjunto mutado de par algum da `mutation-matrix.json`"*. **Essa comparação não
+tem fonte legível por máquina**: medidos os campos dos 171 pares, existem `ancora`,
+`descricao`, `gate`, `harness`, `invariante` — e **nenhum** campo que diga qual
+arquivo o par muta. A informação vive em **prosa**.
+
+As três rotas, e por que duas se recusam:
+
+1. **Substring do nome do arquivo na `descricao`** — é **exatamente o método que
+   produziu a premissa falsa retificada hoje** (PR #57: `M16`/`M29` atribuídos ao
+   mesmo arquivo). Construir um gate sobre o método que acabou de falhar seria
+   institucionalizar o erro.
+2. **Rodar o `--preflight` de cada harness**, que emite `arquivos_mutados` pelo
+   contrato C1 da 013 — **proibido**: gate não spawna outra suíte (R10 §6).
+3. **Declarar não medido, com credor e gatilho** — a forma que a casa já usa
+   (`dividas_declaradas`, `EA-46`, `EA-42`). **Adotada.**
+
+**O gate existe e imprime `[NÃO MEDIDO] D018-COB1` com a causa**, e **não reprova**
+— porque reprovar por algo que não se mede é inventar veredito. O `M5` previsto
+cai junto, e a matriz registra o par como dívida, não como par vazio.
+
+**Gatilho de reavaliação, nomeado**: no dia em que a `mutation-matrix.json` ganhar
+um campo estruturado de arquivo mutado por par — ou em que um harness publicar seu
+conjunto mutado em dado, não em prosa —, o `COB1` passa a medir, e isso é
+**pré-requisito** de quem criar o campo, no mesmo PR.
+
+**O que a errata não muda**: a distinção *gatilho × conjunto mutado* continua real
+e continua sem oráculo — a errata **é** a prova disso, e o `EA-3` ganha uma segunda
+evidência que não tinha.
+
 ## Comportamento especificado
 
 ### Superfície 1 — a declaração de população

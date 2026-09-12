@@ -4090,3 +4090,65 @@ a reflete.
 Qual dos dois remédios (ou os dois) adotar, e se algum vira alteração em
 `documentation.md` (R12) ou em `sdd.md`/`spec-validate` (R4): decisão do
 proprietário. Nenhum agente escreve o rito antes disso.
+
+## EA-49 — a população de mutação lê só o `pipeline.yaml`, e um julgador que roda pelo `compliance-audit.sh` fica fora do alcance do instrumento
+
+**Status**: `aberto`
+
+**Aberto em**: 2026-09-12, a pedido do proprietário no chat, logo após o merge da
+demanda **018**. Levantado pelo orquestrador durante a Fase 5 da própria 018 e
+registrado então em `regra.limite_conhecido` — **no dado**; ganha id próprio agora
+porque registro sem id vira silêncio, que é a lição que o `EA-48` cobrou.
+
+### Cadeia arquivo:linha → efeito
+
+Medida na `develop` em `d89c87a`, em 2026-09-12 — não herdada da 018.
+
+- **`.claude/verify/mutation_population.json → regra`** — a população é derivada
+  de **uma** fonte: `fonte: ".claude/verify/pipeline.yaml"`, campo
+  `stages.*.run`. É a decisão **P4** do portão da Fase 0 da 018, aprovada pelo
+  proprietário, e é deliberada — não é descuido.
+- **Censo desta data**: **15** `check_*.py` no disco · **14** invocados por stage
+  do `pipeline.yaml` (a população) · **2** invocados pelo
+  `.claude/verify/compliance-audit.sh` (`check_branch_protection.py` e
+  `check_fecho.py`).
+- **`check_fecho.py`** é invocado pelos **dois**, logo está na população.
+- **`.claude/verify/check_branch_protection.py`** é o **único** invocado pelo
+  `compliance-audit.sh` e por **nenhum** stage — e por isso **está fora da
+  população**. Conferido também o inverso: **zero** `check_*.py` no disco ficam
+  fora dos dois.
+- **Efeito** — o julgador da proteção de branch é invisível ao
+  `D018-ORF1`. Não é que ele apareça como órfão: **ele não aparece**. O gate que
+  existe para dizer "ninguém está checando isto" não tem como dizê-lo sobre um
+  arquivo que a população não declara.
+
+### Por que isto é achado, e não a 018 mal feita
+
+A 018 entregou o que a P4 aprovou, e o instrumento **funciona** para o que declara
+cobrir. O defeito é de **alcance da regra**, e ele só é visível depois que o
+instrumento existe — antes dele, "julgador sem cobertura" não era uma pergunta que
+a máquina soubesse fazer.
+
+**Hoje o risco é latente, e a distinção importa**: `check_branch_protection.py`
+**está** coberto — é `target` do harness `d016` e é mutado pelo par `D016-M29`
+(*"o laço da sonda itera sobre `[]`"*). A lacuna não é de cobertura; é de
+**vigilância**. Se algum dia a 016 o tirar de `targets`, nada acusa — e o silêncio
+será exatamente o do `EA-3`, um nível acima: agora com um instrumento instalado
+que dá a impressão de estar olhando.
+
+### Remédio candidato (não decidido aqui)
+
+Estender a `fonte` da regra para aceitar **mais de um** arquivo — `pipeline.yaml`
+**e** `compliance-audit.sh` —, ou generalizar para "todo `check_*.py` do disco,
+com exceção nominal". A primeira é a menor e mantém a forma declarativa; a
+segunda inverte o ônus e pode acusar arquivos que ninguém decidiu cobrir, que é a
+**Alternativa B** que o refinamento da 018 recusou por criar dívida em massa.
+
+**Não é `fix-finding`**: mudar a regra muda **o que a máquina cobra de todo
+mundo**, e a P4 foi decisão de portão do proprietário. Reabri-la é demanda, ou no
+mínimo errata com ratificação — a mesma porta pela qual a P4 entrou.
+
+### O que este registro não decide
+
+Qual das duas rotas, e se a população deve ou não crescer junto para `tests_*.js`
+— que é a outra metade do `EA-3` ainda aberta. Decisão do `product-owner`.

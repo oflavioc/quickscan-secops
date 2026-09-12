@@ -30,8 +30,10 @@ possível — antes dela, o remédio seria palpite:
    nomeados continuam órfãos** desde 2026-09-05;
 2. o `EA-42` provou que **ser `target` não é ser coberto** — dos 3 `check_*.py`
    que são `targets`, só `check_fecho.py` sempre teve mutante; `check_eol_text.py`
-   ganhou um em 2026-09-11; `check_branch_protection.py` é `target` **sem
-   mutante**;
+   ganhou um em 2026-09-11; e `check_branch_protection.py` **também é mutado**
+   (`D016-M29`) — ver a *Correção de premissa* em [plan.md](plan.md): a frase
+   herdada do `EA-42` que o dava como "gatilho sem mutante" é **falsa**, e foi
+   repetida aqui antes de ser medida;
 3. o `EA-3` registra, contra si mesmo, que **os números são teto e não defeito**:
    sem declaração de população, `11 de 14` mede candidatos, não arquivos que
    *deveriam* estar cobertos.
@@ -104,8 +106,11 @@ suposto.
 - **`target` × coberto** — `mutation_map.json` declara `targets` (o que
   **dispara** a campanha) e cada harness declara seus `MUTANTS` (o que é
   **mutado**). São conjuntos diferentes e o instrumento atual não compara os dois:
-  `check_branch_protection.py` é `target` de um harness e não é mutado por
-  mutante algum.
+  os três `check_*.py` que são gatilho **são todos mutados** — medido em
+  2026-09-11, corrigindo a afirmação herdada do `EA-42` (ver *Correção de
+  premissa* em [plan.md](plan.md)). A distinção gatilho × conjunto mutado
+  **continua real e necessária**: são campos diferentes, de arquivos diferentes,
+  que nenhum oráculo compara hoje — o que caiu foi só o exemplo.
 - **Precedente vivo do que se quer** — `.claude/verify/boundary.json` declara
   população e rito por classe, e o stage `boundary` mede a árvore contra ela. É a
   forma a copiar.
@@ -123,7 +128,7 @@ cita número de linha de `check_mutation.py` como endereço.
 |---|---|---|
 | **B1** | Arquivo na população declarada e fora de todo `targets` | **FAIL nomeado** — é o defeito que o `EA-3` descreve |
 | **B2** | Arquivo fora da população declarada e fora de todo `targets` | **Silêncio legítimo** — não é lacuna; é o que a declaração existe para dizer |
-| **B3** | Arquivo `target` de um harness, mas **não mutado** por mutante algum | **A decidir — é a pergunta P2.** Hoje `check_branch_protection.py` está nesse estado |
+| **B3** | Arquivo `target` de um harness, mas **não mutado** por mutante algum | **A decidir — é a pergunta P2.** Medido em 2026-09-11: **nenhum** arquivo está nesse estado hoje. O caso é real e o gate nasce verde — o exemplo que eu citava (`check_branch_protection.py`) era falso, ver [plan.md](plan.md) |
 | **B4** | Arquivo cuja única mutação possível é **equivalente por construção** (cláusula defensiva inalcançável, R13) | **Dívida declarada**, nunca FAIL — a forma já existe em `mutation-matrix.json → dividas_declaradas` |
 | **B5** | Arquivo entra na população e ainda não tem harness (janela de trabalho) | **A decidir — pergunta P3.** Sem válvula, a declaração nasce vermelha e o time a silencia |
 | **B6** | Harness novo adota um órfão | A população não muda; a diferença diminui sozinha. **Sem ação** |
@@ -163,7 +168,8 @@ decisão fica visível.
 **P2 · `target` sem mutante é lacuna (caso B3)?** *Recomendação: **sim, mas em
 severidade própria***. São dois defeitos de tamanhos diferentes — "ninguém olha"
 (B1) e "olha e não mede" (B3) —, e colapsá-los num único FAIL faz o segundo
-parecer o primeiro. Hoje só `check_branch_protection.py` está nesse estado.
+parecer o primeiro. **Emenda de 2026-09-11**: medido, **nenhum** arquivo está
+nesse estado hoje — o gate nasce verde e seu poder vem do mutante, não do red.
 
 **P3 · Qual a válvula para a janela de trabalho (caso B5)?** *Recomendação:
 **dívida declarada com prazo**, na forma que `known_issues.json` já usa* — o

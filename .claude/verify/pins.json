@@ -1,7 +1,7 @@
 {
   "_meta": {
     "descricao": "Registry único de pins — fonte de identidade dos artefatos (R8). Hashes = SHA-256 dos blobs de HEAD. Alterar arquivo pinado exige regenerar este registry no MESMO PR, com motivo no commit.",
-    "gerado_de_head": "b36bd4d40a6e44b5fec876660de06c705c9e7d3e",
+    "gerado_de_head": "29e2bf0ce70c2febcfc9532c86b7c3b0a7cc56fe",
     "gerado_em": "2026-09-12",
     "exclusoes": [
       "docs_phase5/**",
@@ -266,7 +266,7 @@
     ".claude/verify/known_issues.json": "9f4ac86a8e20443935cc03efeca3668d9774824d84778f2db930b185b1971818",
     ".claude/verify/mutation-matrix.json": "65e33e41504c22754faf4c4907410787d150dc883002e1b5481ec7c3c9c00e04",
     ".claude/verify/mutation_map.json": "b5a2369231a393c03e7f4e87c9cdc5dea1fc4a984ed54b2411e5241d69030d3d",
-    ".claude/verify/mutation_population.json": "eea090e5679f9a9143eba6747d34cdd4c0ecbff9026d9013a750356f5fce16ae",
+    ".claude/verify/mutation_population.json": "8454a2dea082bd7c58c1da9e42097ade984bc4a2afe1cbeb14e64a15bdbbb3d5",
     ".claude/verify/pipeline.yaml": "e0604991cba1b4d0989b5ad1dd5496d03910c8e36ab4c7f598fe522624d80291",
     ".claude/verify/regra_morta.js": "bfe0944b5088c40c346d63ca39f2dda0795524818b8ead46ceabc7b57f5a5616",
     ".claude/verify/regra_morta.json": "4127bdf2520ab8c15f98c69f0913ef61f77591d506b33e64530c0517359fbd13",
@@ -422,9 +422,9 @@
     "specs/017-semantica-do-gatilho/tasks.md": "3cefd74f8449fc129828f2a7a79668eee9e6ea75ffe9949e3d1d22977889c2ad",
     "specs/018-cobertura-declarada-de-mutacao/plan.md": "711fece20485fe2debc4c81aebe64c33de43d291beb301fccf551cff08a37117",
     "specs/018-cobertura-declarada-de-mutacao/refinement.md": "46c5c0b6cb91ed581ba8884c543a74f44dfeb4cb4acaee19a4ec4c4e511069cb",
-    "specs/018-cobertura-declarada-de-mutacao/relatorio-final.md": "d48accafa8281e4c17e894ae95e7f10d2cd991e34a6cbdd0f1a308306762975d",
-    "specs/018-cobertura-declarada-de-mutacao/spec-validate.md": "7abf4793ab96da7402ff4ad183df6659c19167b36c5d31b6dfcc8dce5461a00b",
-    "specs/018-cobertura-declarada-de-mutacao/spec.md": "e3cd0c8fcfa5928fb8b4782ddf54b4de1fd6602d0bf9bfb035ce8428d7b29d75",
+    "specs/018-cobertura-declarada-de-mutacao/relatorio-final.md": "66fbaf5ff5642222981551d4b890faca7182cfde161ccb81e56e4c81beb4cfa2",
+    "specs/018-cobertura-declarada-de-mutacao/spec-validate.md": "e3e88e5372223f83f32ad17ae9bc36e368a703c098cdbb7eb235c1299e8b75e4",
+    "specs/018-cobertura-declarada-de-mutacao/spec.md": "f64d5197a3872ef6b700d5cca75864b686201eaaf98425d0828abd1945f2a5ca",
     "specs/018-cobertura-declarada-de-mutacao/tasks.md": "f022b101827233456307c49cd9cceaa3831ec82b71244708bf4ab6a48faa955e",
     "specs/PHASE_5_0_REV_A.md": "22e729174c6a3c5dd620da5330b03eb96d9eb6fc6e64eba097c2bde55eb0a510",
     "specs/PHASE_5_0_REV_B.md": "4f1583c733df62a9452aa7b218d962e40d781bb8d30dfc3179ad6e1ef004619b",

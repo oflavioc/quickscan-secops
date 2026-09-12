@@ -502,6 +502,32 @@ mutado em 2026-09-11 pelo harness `ea41i`, e `check_branch_protection.py`
 essa a diferença que o instrumento pedido por este achado precisa saber
 declarar.
 
+> **RETIFICAÇÃO (2026-09-11) — o parágrafo acima está ERRADO na parte factual.**
+> Medido diretamente no mesmo dia, ao desenhar a Fase 2 da demanda **018**:
+>
+> | `check_*.py` que é gatilho | par que o muta |
+> |---|---|
+> | `check_fecho.py` | **`D016-M16`** — *"o laço da sonda itera sobre `[]`"* |
+> | `check_branch_protection.py` | **`D016-M29`** — a mesma mutação, no outro gate |
+> | `check_eol_text.py` | os 8 pares `EA42-I*` do harness `ea41i` |
+>
+> `tests_016_mutants.js` declara **os dois** gates como arquivos mutados:
+> `gateFecho: path.join(V, "check_fecho.py")` e
+> `gateBp: path.join(V, "check_branch_protection.py")`. **Os três gatilhos são
+> mutados; nenhum arquivo está hoje no estado "gatilho sem mutante".**
+>
+> **Como o erro entrou**: o parágrafo herdou a frase do corpo do `EA-42`
+> (2026-09-05), que cita `M16`/`M29` como se **ambos** mutassem `check_fecho.py`.
+> Os **ids estavam certos** e a **atribuição colapsou dois arquivos num só** — e eu
+> repeti a frase sem reexecutar, que é o que a **R2 §4** proíbe. Retificação
+> registrada e não apagada (R2 §5): é a família `EA-31` acontecendo dentro do
+> achado que pede o instrumento contra ela.
+>
+> **O que NÃO muda**: os **seis órfãos** seguem órfãos, reconferidos um a um por
+> medição direta — são eles que sustentam o `EA-3`. E a distinção **gatilho ×
+> conjunto mutado** continua real e sem oráculo: são campos diferentes, de
+> arquivos diferentes, que nada compara hoje. Caiu o exemplo, não a tese.
+
 **Os números seguem sendo teto, não contagem de defeito** (§Correção do
 próprio texto, acima): sem uma declaração de população, `11 de 14` mede o
 universo de candidatos, não o de arquivos que deveriam estar cobertos.
@@ -3550,6 +3576,24 @@ campanha `ea41`) mas **não** é mutado por nenhum `MUTANTS` do harness — a
 campanha `ea41` muta a árvore/índice que o gate lê, nunca o fonte do gate. A
 mesma chave ("é `target`?") que fecharia o `check_fecho.py` deixaria o
 `check_eol_text.py` — o objeto deste próprio achado — do lado de fora.
+
+> **RETIFICAÇÃO (2026-09-11) — a frase "apenas `check_fecho.py`" é FALSA, e este
+> é o sítio de origem.** Medido ao desenhar a Fase 2 da demanda **018**:
+> `D016-M16` muta `check_fecho.py` e **`D016-M29` muta
+> `check_branch_protection.py`** — dois gates, uma mutação cada (*"o laço da sonda
+> itera sobre `[]`"*), com `tests_016_mutants.js` declarando `gateFecho` **e**
+> `gateBp` como arquivos mutados. Os **ids estavam certos**; o que errou foi
+> atribuir os dois ao mesmo arquivo.
+>
+> A frase viajou daqui para o censo do `EA-3` e para dois artefatos da 018 antes
+> de alguém reexecutar — seis dias e quatro cópias. Fica **riscada pela razão, não
+> apagada** (R2 §5), porque o percurso dela é a melhor evidência que este achado
+> tem de si mesmo.
+>
+> **A tese do `EA-42` não cai**: `check_eol_text.py` era mesmo `target` sem ser
+> mutado em 2026-09-05 — e continuou até o harness `ea41i` nascer em 2026-09-11,
+> no fecho deste próprio achado. A chave "é `target`?" de fato não discrimina. O
+> exemplo que a ilustrava é que estava trocado.
 
 **A consequência prática, que é o que importa registrar**: portar os 8
 mutantes de instrumento (o remédio já proposto abaixo) fecha **a instância**

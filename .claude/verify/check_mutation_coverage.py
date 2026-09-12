@@ -37,6 +37,14 @@ import re
 import sys
 from datetime import date
 
+# stdout UTF-8 EXPLÍCITO (R7 §2), na forma que `check_eol_text.py:91-92` já usa. Sem
+# isto o julgador morre de UnicodeEncodeError no Windows ao imprimir `→` — cp1252 não
+# tem U+2192 —, e morre SÓ sob o pipeline: quem roda o comando à mão costuma ter
+# PYTHONIOENCODING no ambiente e nunca vê o defeito. Foi exatamente assim que ele
+# passou despercebido até o primeiro `run.sh` completo.
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+
 GATE = "mutation-coverage"
 ESTE_GATE = ".claude/verify/check_mutation_coverage.py"
 

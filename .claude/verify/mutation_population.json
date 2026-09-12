@@ -1,0 +1,20 @@
+{
+  "_meta": {
+    "descricao": "População de mutação — o conjunto DECLARADO de arquivos que devem estar sob campanha. Demanda 018, remédio do achado EA-3. Sem esta declaração, 'N de M arquivos fora de todo gatilho' mede o universo de candidatos e não o universo do que deveria estar coberto: teto, não defeito.",
+    "vocabulario": "POPULAÇÃO = o que deve estar sob campanha (este arquivo). GATILHO = mutation_map.json → targets, o que REDISPARA a campanha quando muda. CONJUNTO MUTADO = o que os MUTANTS de um harness de fato alteram. Os três são distintos; a demanda 017 separou os dois últimos, esta acrescenta o primeiro.",
+    "parentesco": "O campo `prazo` tem o mesmo papel de `remocao_prevista` em known_issues.json: exceção sem prazo vira permissão permanente. Nome diferente porque a spec aprovada da 018 o fixou como `prazo`; renomear exigiria errata sem ganho.",
+    "consumido_por": ".claude/verify/check_mutation_coverage.py (stage mutation-coverage)",
+    "editado_por": "build-engineer. A REGRA é decisão do product-owner (o que a máquina passa a cobrar); EXCEÇÕES e DÍVIDAS são de quem as pede, sempre com motivo e prazo."
+  },
+  "regra": {
+    "descricao": "Todo check_*.py invocado por algum stage do pipeline.yaml é população. A regra é DADO e não código, para que mudá-la seja decisão visível em diff (plan.md §Riscos).",
+    "fonte": ".claude/verify/pipeline.yaml",
+    "campo": "stages.*.run",
+    "padrao": "check_[A-Za-z0-9_]*\\.py",
+    "raiz": ".claude/verify",
+    "limite_conhecido": "A regra alcanca so quem e invocado por STAGE do pipeline.yaml, como a decisao P4 fixou. MEDIDO em 2026-09-11: 15 check_*.py no disco, 13 na populacao. Os dois de fora sao (a) check_mutation_coverage.py, este proprio julgador, que entra quando o stage mutation-coverage for registrado (T010) — benigno e transitorio; e (b) check_branch_protection.py, que e julgador de verdade mas roda por compliance-audit.sh e nao por stage. O (b) e limite REAL da regra, nao defeito da medicao: estender a fonte a compliance-audit.sh excederia o que a P4 aprovou, e fica para a demanda que estender a populacao. Registrado aqui, no dado, porque e onde o proximo vai olhar."
+  },
+  "excecoes": [],
+  "dividas": [],
+  "_prazo_nota": "JANELA VERMELHA ABERTA (T003): a populacao nasce SEM dividas, de proposito — e o que faz o red do D018-ORF1 existir. As seis dividas entram na T009, por dono diferente e depois do red commitado (R3 §2)."
+}

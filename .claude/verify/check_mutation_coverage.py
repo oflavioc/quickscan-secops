@@ -57,9 +57,6 @@ POPULACAO = os.environ.get("MUTCOV_POPULACAO") or ".claude/verify/mutation_popul
 PIPELINE = ".claude/verify/pipeline.yaml"
 MAPA = ".claude/verify/mutation_map.json"
 
-_RE_STAGE_RUN = re.compile(r"^\s*run:\s*(.+?)\s*$", re.M)
-
-
 def _ler_json(caminho):
     with io.open(caminho, encoding="utf-8") as fh:
         return json.load(fh)
@@ -74,20 +71,31 @@ def populacao_declarada(decl):
     """Aplica a REGRA do arquivo de declaração sobre o pipeline. A regra é dado:
     mudá-la é diff no JSON, nunca edição deste código."""
     regra = decl.get("regra") or {}
-    fonte, padrao = regra.get("fonte"), regra.get("padrao")
+    fontes, padrao = regra.get("fonte"), regra.get("padrao")
     raiz = regra.get("raiz", "")
-    if not (fonte and padrao):
+    if not (fontes and padrao):
         return None, ["regra incompleta: `fonte` e `padrao` são obrigatórios"]
-    if not os.path.exists(fonte):
-        return None, [f"regra aponta para fonte inexistente: {fonte}"]
-    with io.open(fonte, encoding="utf-8") as fh:
-        texto = fh.read()
+    # `fonte` aceita string OU lista (EA-49): um julgador pode ser invocado por um
+    # script que não é stage — é o caso do `check_branch_protection.py`, que roda
+    # pelo `compliance-audit.sh`. Uma fonte só deixava esse julgador fora da
+    # população, e o gate que existe para dizer "ninguém está checando isto" não
+    # tinha como dizê-lo sobre arquivo que a população não declara.
+    if isinstance(fontes, str):
+        fontes = [fontes]
     alvo = re.compile(padrao)
-    achados = set()
-    for m in _RE_STAGE_RUN.finditer(texto):
-        for nome in alvo.findall(m.group(1)):
+    achados, erros = set(), []
+    for fonte in fontes:
+        if not os.path.exists(fonte):
+            erros.append(f"regra aponta para fonte inexistente: {fonte}")
+            continue
+        with io.open(fonte, encoding="utf-8", errors="replace") as fh:
+            texto = fh.read()
+        # Varredura do arquivo INTEIRO, e não só das linhas `run:`: medido em
+        # 2026-09-12, o `pipeline.yaml` devolve os MESMOS 14 dos dois jeitos, e a
+        # restrição a `run:` não se aplica a um `.sh`, que invoca direto.
+        for nome in alvo.findall(texto):
             achados.add(_posix(os.path.join(raiz, nome)) if raiz else _posix(nome))
-    return sorted(achados), []
+    return (None, erros) if erros else (sorted(achados), [])
 
 
 def gatilhos_declarados(mapa):

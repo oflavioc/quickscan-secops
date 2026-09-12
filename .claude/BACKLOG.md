@@ -4093,7 +4093,7 @@ proprietário. Nenhum agente escreve o rito antes disso.
 
 ## EA-49 — a população de mutação lê só o `pipeline.yaml`, e um julgador que roda pelo `compliance-audit.sh` fica fora do alcance do instrumento
 
-**Status**: `aberto`
+**Status**: `resolvido`
 
 **Aberto em**: 2026-09-12, a pedido do proprietário no chat, logo após o merge da
 demanda **018**. Levantado pelo orquestrador durante a Fase 5 da própria 018 e
@@ -4152,3 +4152,32 @@ mínimo errata com ratificação — a mesma porta pela qual a P4 entrou.
 
 Qual das duas rotas, e se a população deve ou não crescer junto para `tests_*.js`
 — que é a outra metade do `EA-3` ainda aberta. Decisão do `product-owner`.
+
+### Fecho (2026-09-12) — a rota menor, e custou zero dívida
+
+`fonte` passou a aceitar **string ou lista**, e `compliance-audit.sh` entrou ao lado
+do `pipeline.yaml`. `check_branch_protection.py` entra na população e sai
+**`[OK]`**: ele já tinha gatilho (`target` do `d016`, mutado pelo par `D016-M29`).
+
+**Medido**: `15 na população · 0 órfão(s) · 11 dívida(s) · 0 problema(s)` —
+**+0 dívida nova**, que era o número previsto no censo. Campanha `d018` reexecutada
+por gatilho de path: **7/7 KILL**. `run.sh --light` 14/0 · `compliance-audit` 17/0/0.
+
+**Simplificação medida antes de adotar**: a varredura passou a ler o arquivo
+inteiro em vez de só as linhas `run:` — o `pipeline.yaml` devolve os **mesmos 14**
+dos dois jeitos, e a restrição a `run:` não faz sentido num `.sh`, que invoca
+direto.
+
+**Feito como `fix-finding`, não como demanda.** A demanda **019** chegou a ser
+aberta e foi **descartada a pedido do proprietário**, com a razão dita no chat: o
+núcleo do remédio é uma linha de dado, e 7 fases em volta disso é cerimônia, não
+rigor. O registro fica porque a decisão de *não* usar a máquina também é decisão.
+
+### O que continua fora, e por escolha
+
+A outra metade do `EA-3`: `gen_*.py`, `*.sh`, `*.json` e `tests_*.js` — custo
+medido em 2026-09-12 se entrassem: **+2, +2, +11 e +17** dívidas. Ficam fora
+porque **hoje ninguém é enganado por eles**, e cada um vira `fix-finding` próprio
+quando incomodar. O `.claude/BACKLOG.md`, que o `EA-3` lista entre os seis, não é
+alcançado por regra nenhuma de arquivo de verificação — é **documento**, e
+cobertura de mutação mede julgador que pode mentir.

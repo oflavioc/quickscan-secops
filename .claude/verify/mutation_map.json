@@ -386,7 +386,12 @@
         "node",
         "python"
       ],
-      "_trilha": "Demanda 018 (remedio do EA-3) · 2026-09-11 · qa-engineer · mutantes de INSTRUMENTO do julgador mutation-coverage. Shape copiado de tests_ea41_instrumento.js (EA-42): mutacao em COPIA sob os.tmpdir(), SHA-256 do fonte rastreado conferido antes e depois, e KILL exigindo o SINAL DECLARADO — crash conta NAO EXECUTADO, nunca kill (endurecimento que nasceu do proprio D018-M3, que na primeira execucao matava por KeyError). SEM `insumos`, e nao por omissao: o julgador e o SUJEITO MUTADO, nao insumo-oraculo — declarar o contrario e o que o D017-INS1 recusa, e ja custou uma reprovacao no EA-42. O oraculo deste harness e o sinal declarado por mutante, que vive no proprio harness. mutation_population.json entra em `targets` porque mudar a declaracao muda o veredito do julgador tanto quanto mudar o codigo dele: gatilho por path tem de cobrir os dois."
+      "_trilha": "Demanda 018 (remedio do EA-3) · 2026-09-11 · qa-engineer · mutantes de INSTRUMENTO do julgador mutation-coverage. Shape copiado de tests_ea41_instrumento.js (EA-42): mutacao em COPIA sob os.tmpdir(), SHA-256 do fonte rastreado conferido antes e depois, e KILL exigindo o SINAL DECLARADO — crash conta NAO EXECUTADO, nunca kill (endurecimento que nasceu do proprio D018-M3, que na primeira execucao matava por KeyError). SEM `insumos`, e nao por omissao: o julgador e o SUJEITO MUTADO, nao insumo-oraculo — declarar o contrario e o que o D017-INS1 recusa, e ja custou uma reprovacao no EA-42. O oraculo deste harness e o sinal declarado por mutante, que vive no proprio harness. mutation_population.json entra em `targets` porque mudar a declaracao muda o veredito do julgador tanto quanto mudar o codigo dele: gatilho por path tem de cobrir os dois. INSUMOS declarado com a classe `populacao` do vocabulario fechado da 017 (D017_CLASSES = oraculo, fixture, populacao, declaracao). O D017-REL2 acusou o arquivo como ALVO FANTASMA na primeira execucao do stage: ele e gatilho e NAO e mutado, e gatilho sem razao de classe e excedente nao explicado. A razao existe e agora esta dita — o julgador LE a populacao para decidir, entao muda-la muda o veredito tanto quanto mudar o codigo. Nao colide com o D017-INS1 (insumo que tambem e conjunto mutado), porque o unico arquivo mutado por este harness e o check_mutation_coverage.py.",
+      "insumos": {
+        "populacao": [
+          ".claude/verify/mutation_population.json"
+        ]
+      }
     }
   }
 }

@@ -1,8 +1,8 @@
 {
   "_meta": {
     "descricao": "Registry único de pins — fonte de identidade dos artefatos (R8). Hashes = SHA-256 dos blobs de HEAD. Alterar arquivo pinado exige regenerar este registry no MESMO PR, com motivo no commit.",
-    "gerado_de_head": "d121da177846327ace5d36c09539388e290f4985",
-    "gerado_em": "2026-09-11",
+    "gerado_de_head": "472419705f9d0083a98fc8a403426040232fb47f",
+    "gerado_em": "2026-09-12",
     "exclusoes": [
       "docs_phase5/**",
       ".claude/project-memory/** (estado de processo — muda por fase; validado pelo stage state, não por pin)",
@@ -202,7 +202,7 @@
     ".claude/verify/check_m41.py": "f5f59097ab1510d6bbd0a3e63272e00da95bb65c818c23a7fff2141e8f5d9b4f",
     ".claude/verify/check_markers.py": "5623d9cb3203cf16a307014a4255bc3d8ecf08e469eaf2f110927802a9b2fe7c",
     ".claude/verify/check_mutation.py": "ee9e36bfd14f5810fe9e9ab9399203b971d398487e24de3a172433166460d34c",
-    ".claude/verify/check_mutation_coverage.py": "0ee0ff0190d6fb6794cbe459798acab7ed298efad952f8fc5a165733f1eccc64",
+    ".claude/verify/check_mutation_coverage.py": "e6bd38a983f6e10cdf65bd85222d952df0a6d85e9479386a0aae83adc27c7e21",
     ".claude/verify/check_state.py": "934999bd6e989bd09e17d322b65ac1c92fece5db85d409558b28de5b6b2fc212",
     ".claude/verify/check_suites.py": "457516eae3a5f98ac894a13fb6283f30a2f5e5dce158d24fced5295fd1978dfe",
     ".claude/verify/check_tdd.py": "1077e9025a9559f34e23658bba12a98ac6fb65c718d057a62687251671de2ce9",
@@ -422,6 +422,8 @@
     "specs/017-semantica-do-gatilho/tasks.md": "3cefd74f8449fc129828f2a7a79668eee9e6ea75ffe9949e3d1d22977889c2ad",
     "specs/018-cobertura-declarada-de-mutacao/plan.md": "711fece20485fe2debc4c81aebe64c33de43d291beb301fccf551cff08a37117",
     "specs/018-cobertura-declarada-de-mutacao/refinement.md": "46c5c0b6cb91ed581ba8884c543a74f44dfeb4cb4acaee19a4ec4c4e511069cb",
+    "specs/018-cobertura-declarada-de-mutacao/relatorio-final.md": "c51fb054f041eed5daf930c9d6e8a58422799538fc9725c8e996bb281fd14600",
+    "specs/018-cobertura-declarada-de-mutacao/spec-validate.md": "7abf4793ab96da7402ff4ad183df6659c19167b36c5d31b6dfcc8dce5461a00b",
     "specs/018-cobertura-declarada-de-mutacao/spec.md": "e3cd0c8fcfa5928fb8b4782ddf54b4de1fd6602d0bf9bfb035ce8428d7b29d75",
     "specs/018-cobertura-declarada-de-mutacao/tasks.md": "f022b101827233456307c49cd9cceaa3831ec82b71244708bf4ab6a48faa955e",
     "specs/PHASE_5_0_REV_A.md": "22e729174c6a3c5dd620da5330b03eb96d9eb6fc6e64eba097c2bde55eb0a510",

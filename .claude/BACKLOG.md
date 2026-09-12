@@ -1510,6 +1510,33 @@ canônica e enquadramento de produto vivem em
 Porta B. O tratamento está declarado como **escopo secundário da 011** — o rito é
 da spec dela, não deste registro.
 
+> **Emenda (2026-09-12) — o dono declarado acima RECUSOU a tarefa, e este registro
+> ficou apontando para ele.** A frase *"escopo secundário da 011"* veio da
+> recomendação **P9 do refinamento** da 011, que de fato propunha incluir. **A spec
+> dela decidiu o contrário, no portão**, e disse por escrito:
+>
+> - `specs/011-numeracao-das-prioridades/spec.md:12` — *"**P9** a lista vazia
+>   **não** entra (achado registrado à parte)"*;
+> - `:272` — *"A lista vazia (`N = 0`) **não é tratada** — decisão P9 do portão"*;
+> - `:73`, na tabela de estados — *"A lista vazia em si **é achado registrado à
+>   parte** (P9) — esta demanda não a trata"*.
+>
+> A 011 **mesclou** (PR #32, `4f7c140`) sem tratar, **e isso estava certo** — foi
+> decisão de portão registrada, não omissão. O que estava errado era **este
+> registro**, que herdou a recomendação e não a decisão.
+>
+> **Consequência prática**: o `EA-19` **não tem dono por herança**. O remédio exige
+> **D2 Porta B** — spec commitada + auditoria independente humana (R1) — porque o
+> arquivo é Camada 1. Não há spec vigente que o autorize.
+>
+> **O conteúdo, porém, não é decisão nova**: a própria 011 observou que aplica o
+> princípio já aceito na **009** — *ausência vira aviso único e acionável* —, em vez
+> da pergunta sobre lista vazia com `"0 de 3 selecionadas"` e a `kbd-tip` prometendo
+> itens inexistentes.
+>
+> Emenda escrita ao levar o achado até a porta e parar (família `EA-31`: o registro
+> afirmava um encaminhamento que a execução tinha desmentido há duas semanas).
+
 ## EA-20 — o padrão que três demandas seguidas instanciaram: gate sem poder discriminante
 
 **Status**: `aberto`
@@ -1821,6 +1848,54 @@ Declarado pela demanda **010** e **não fechado** por ela nem pela 015.
 
 Qual host recebe o tratamento e sob que rito (D2 Porta B, ou spec que autorize
 `ui_target_v32.js`): `tech-lead` propõe, orquestrador delega, usuário autoriza.
+
+### Medição de 2026-09-12 — o remédio foi implementado, medido e REVERTIDO
+
+Com **autorização nominal do proprietário** para `ui_target_v32.js`, o remédio
+óbvio foi escrito e executado: uma cláusula anexada à frase de `tgtEnablersHTML`
+dizendo que *o mesmo catálogo aparece nos blocos de "formas de apoio", lá por gap
+observado; aqui, só nas práticas declaradas como alvo*. O texto original foi
+**preservado verbatim** e a cláusula só acrescenta.
+
+**A duplicação é real, e foi confirmada por leitura**: o `apoio-block`
+(`quickscan_secops_soccmm_v3_1_3.html:863`) e o card-alvo
+(`ui_target_v32.js:351`) leem **o mesmo** `MAP[qid].lv[nível].c`. A seção de apoio
+divide por **priorizado × demais gaps altos** (`:900-911`); o card-alvo, por
+**prática declarada como alvo**. As duas dimensões se cruzam — o `"demais"` do
+rótulo **não** exclui o card-alvo.
+
+**O que bloqueia não é a boundary — é um quarto anel de proteção que a análise
+anterior não tinha visto.** Quatro gates afirmam identidade byte a byte:
+
+| gate | o que afirma | repinável? |
+|---|---|---|
+| `P50-GOV1` | superfície §29.4 byte-idêntica | **sim** — é pin (R8 §2) |
+| `P50-SUF0` | nenhum renderer dono de lógica de suficiência | sim, mesmo mecanismo |
+| `P50-SUF8` | equivalência tripla, 1024 vetores | sim, mesmo mecanismo |
+| **`D015-GOV1`** | *"`#pr-target` byte-idêntico à âncora em E1..E8 — `ui_target_v32.js` intocado, provado pelo produto"* | **NÃO** |
+
+O `D015-GOV1` **não é pin**: é asserção de **saída** contra commit imutável.
+Medido: `E2`/`E5` âncora 45.898 → HEAD 46.470 bytes; `E3` 39.174 → 39.603; `E8`
+45.895 → 46.467. Mover essa âncora é **reescrever o oráculo de um gate para
+acomodar a mudança** — o que a **R10 §1** proíbe.
+
+**O gate não está errado.** A 015 o escreveu para provar que **ela** não tocou o
+arquivo, e ele não distingue *"a 015 quebrou a promessa"* de *"outra demanda,
+depois, mexeu com autorização"*. É a família **`EA-20`** em estado puro: gate
+saudável cuja premissa venceu.
+
+### As três saídas — nenhuma é do orquestrador
+
+1. **Errata na 015** movendo a âncora do `D015-GOV1`, com a razão registrada —
+   a mais correta e a mais cara: mexe em spec validada e o dono do gate é o
+   `qa-engineer`.
+2. **Outro host** — o único outro é o `apoio-block`, que é **Camada 1** → Porta B.
+3. **Deixar parado**, com esta medição no registro. Hoje o leitor vê duplicação
+   **sem explicação** — não é erro factual, é falta de contexto.
+
+**Recomendação do orquestrador**: a **3** por ora, e a **1** quando outra demanda
+já estiver tocando a 015 — abrir errata em spec validada só para acrescentar uma
+frase não se paga sozinho. A decisão é do proprietário.
 
 ## EA-27 — `HIDE_EYEBROWS` existe em três cópias sem dono único
 

@@ -1,7 +1,7 @@
 {
   "_meta": {
     "descricao": "Registry único de pins — fonte de identidade dos artefatos (R8). Hashes = SHA-256 dos blobs de HEAD. Alterar arquivo pinado exige regenerar este registry no MESMO PR, com motivo no commit.",
-    "gerado_de_head": "4275ef30c5e30e09511e133a0a32c81a8d4dc84f",
+    "gerado_de_head": "5b14cd05efd08001b3d4346db1a1d9880c5a30ce",
     "gerado_em": "2026-09-12",
     "exclusoes": [
       "docs_phase5/**",
@@ -422,7 +422,7 @@
     "specs/017-semantica-do-gatilho/tasks.md": "3cefd74f8449fc129828f2a7a79668eee9e6ea75ffe9949e3d1d22977889c2ad",
     "specs/018-cobertura-declarada-de-mutacao/plan.md": "711fece20485fe2debc4c81aebe64c33de43d291beb301fccf551cff08a37117",
     "specs/018-cobertura-declarada-de-mutacao/refinement.md": "46c5c0b6cb91ed581ba8884c543a74f44dfeb4cb4acaee19a4ec4c4e511069cb",
-    "specs/018-cobertura-declarada-de-mutacao/relatorio-final.md": "c51fb054f041eed5daf930c9d6e8a58422799538fc9725c8e996bb281fd14600",
+    "specs/018-cobertura-declarada-de-mutacao/relatorio-final.md": "d48accafa8281e4c17e894ae95e7f10d2cd991e34a6cbdd0f1a308306762975d",
     "specs/018-cobertura-declarada-de-mutacao/spec-validate.md": "7abf4793ab96da7402ff4ad183df6659c19167b36c5d31b6dfcc8dce5461a00b",
     "specs/018-cobertura-declarada-de-mutacao/spec.md": "e3cd0c8fcfa5928fb8b4782ddf54b4de1fd6602d0bf9bfb035ce8428d7b29d75",
     "specs/018-cobertura-declarada-de-mutacao/tasks.md": "f022b101827233456307c49cd9cceaa3831ec82b71244708bf4ab6a48faa955e",

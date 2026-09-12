@@ -215,8 +215,16 @@ const PROTECTED = {
      valor novo (disco normalizado LF, `pins.json → files/ui_v32.js` e
      `git show HEAD:ui_v32.js`), e `declared.m41_payload_sha256` permanece
      `9794b267…4365b` — Porta B fechada.
-     Identidade anterior: d594dafec00d11efa2c25d6fe3183f1d5177343f09c925dfcc7055b17df9bb85 */
-  "ui_v32.js": "9d31fef96e952b37a14d2ad07c616e368d36af7231c4a1896c72d8ac524972b6",
+     Identidade anterior: d594dafec00d11efa2c25d6fe3183f1d5177343f09c925dfcc7055b17df9bb85
+
+     REPIN 2026-09-12 · fix-finding do EA-24 (card neutro nomeia a causa em vez de
+     culpar sempre o mapeamento). Autorizacao NOMINAL do proprietario no chat na
+     mesma data, restrita a `neutralPrioCardHTML` e ao texto do `div.v32-neutral`.
+     Repin inline previsto pela R8 §2 (pin legado em suite congelada): NENHUMA
+     assercao deste arquivo foi tocada, nenhum gate nasce ou morre, `frozenSuites`
+     segue intacto. Hash sobre o blob de HEAD (R2 §2), nao sobre o disco.
+     Identidade anterior: 9d31fef96e952b37a14d2ad07c616e368d36af7231c4a1896c72d8ac524972b6 */
+  "ui_v32.js": "d21f0f2b15f9afa90cae06f0048140a7ca4af73b40d5d6d524c08cbd9f160cc2",
   "ui_ux_v32.js": "a050401145a5ed7af597eae01a9a23826418119769c096db168b3b177a9d3938",
   /* ERRATA DA AUDITORIA EXTERNA · §4.1.1 ("qualquer texto derivado consome a
      mesma decisão canônica de publicabilidade"). A comparação Atual × Alvo

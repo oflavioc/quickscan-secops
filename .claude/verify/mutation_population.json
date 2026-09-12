@@ -15,6 +15,63 @@
     "limite_conhecido": "A regra alcanca so quem e invocado por STAGE do pipeline.yaml, como a decisao P4 fixou. MEDIDO em 2026-09-11: 15 check_*.py no disco, 13 na populacao. Os dois de fora sao (a) check_mutation_coverage.py, este proprio julgador, que entra quando o stage mutation-coverage for registrado (T010) — benigno e transitorio; e (b) check_branch_protection.py, que e julgador de verdade mas roda por compliance-audit.sh e nao por stage. O (b) e limite REAL da regra, nao defeito da medicao: estender a fonte a compliance-audit.sh excederia o que a P4 aprovou, e fica para a demanda que estender a populacao. Registrado aqui, no dado, porque e onde o proximo vai olhar."
   },
   "excecoes": [],
-  "dividas": [],
-  "_prazo_nota": "JANELA VERMELHA ABERTA (T003): a populacao nasce SEM dividas, de proposito — e o que faz o red do D018-ORF1 existir. As seis dividas entram na T009, por dono diferente e depois do red commitado (R3 §2)."
+  "dividas": [
+    {
+      "arquivo": ".claude/verify/check_baseline.py",
+      "motivo": "Julgador do registry de pins. Nasceu na Onda 0, antes de existir harness de mutacao no repositorio, e nenhum o adotou desde entao.",
+      "prazo": "2026-12-31"
+    },
+    {
+      "arquivo": ".claude/verify/check_boundary.py",
+      "motivo": "Julgador das classes de protecao. Mesma origem do check_baseline.py: anterior aos harnesses.",
+      "prazo": "2026-12-31"
+    },
+    {
+      "arquivo": ".claude/verify/check_build.py",
+      "motivo": "Julgador do build deterministico. Cobri-lo exige mutante que sobreviva a reconstrucao, desenho que ainda nao existe.",
+      "prazo": "2026-12-31"
+    },
+    {
+      "arquivo": ".claude/verify/check_evidence_bridge.py",
+      "motivo": "Orfao desde a demanda 008 e o UNICO dos seis nomeados pelo EA-3 que cai nesta populacao. Adocao e fix-finding proprio.",
+      "prazo": "2026-12-31"
+    },
+    {
+      "arquivo": ".claude/verify/check_lint_arch.py",
+      "motivo": "Julgador da R9. Sem harness desde que nasceu.",
+      "prazo": "2026-12-31"
+    },
+    {
+      "arquivo": ".claude/verify/check_m41.py",
+      "motivo": "Julgador da regua D2 (INV-1). Mutar o julgador do engine pede cuidado proprio: o mutante nao pode tocar o payload M41.",
+      "prazo": "2026-12-31"
+    },
+    {
+      "arquivo": ".claude/verify/check_markers.py",
+      "motivo": "Julgador de marcadores. Sem harness desde que nasceu.",
+      "prazo": "2026-12-31"
+    },
+    {
+      "arquivo": ".claude/verify/check_mutation.py",
+      "motivo": "O julgador das campanhas. E o caso mais delicado da lista: muta-lo exige harness que nao dependa dele para rodar, e o EA-42 mediu que 11 de 14 check_*.py estao nessa condicao.",
+      "prazo": "2026-12-31"
+    },
+    {
+      "arquivo": ".claude/verify/check_state.py",
+      "motivo": "Julgador do planning-state. Sem harness desde a Onda 2.",
+      "prazo": "2026-12-31"
+    },
+    {
+      "arquivo": ".claude/verify/check_suites.py",
+      "motivo": "Julgador do registro de contagens. Sem harness desde que nasceu.",
+      "prazo": "2026-12-31"
+    },
+    {
+      "arquivo": ".claude/verify/check_tdd.py",
+      "motivo": "Julgador do red e da matriz gate-mutante. Sem harness desde a Onda 3.",
+      "prazo": "2026-12-31"
+    }
+  ],
+  "_prazo_nota": "PRAZO PROVISORIO, e dito como tal. A T002 escalou o valor ao proprietario e a resposta nao chegou antes da entrega; 2026-12-31 e o default do orquestrador, escolhido por ser fim de exercicio e claramente redondo — sinal de placeholder, nao de estudo de capacidade. Trocar o valor e uma edicao neste arquivo mais um repin: nenhum codigo depende dele.",
+  "_dividas_nota": "ONZE dividas, nao seis. A decisao P5 falava nos 'seis orfaos conhecidos' do EA-3, mas esses seis foram medidos contra TODO o repositorio, e a populacao que a P4 declarou e so os check_*.py do pipeline. MEDIDO em 2026-09-11: dos seis nomeados pelo EA-3, apenas UM (check_evidence_bridge.py) cai nesta populacao; os outros cinco — gen_evidence_bridge.py, evidence_bridge.json, tests_session_m48.js, compliance-audit.sh e .claude/BACKLOG.md — estao FORA dela e este instrumento ainda nao os enxerga. Em troca, a populacao traz dez orfaos que o EA-3 nao tinha nomeado um a um. CONSEQUENCIA, dita sem rodeio: esta demanda NAO fecha o EA-3. Ela entrega o instrumento e cobre os julgadores do pipeline; os cinco de fora esperam a demanda que estender a populacao."
 }

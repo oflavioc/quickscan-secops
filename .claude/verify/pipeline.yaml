@@ -92,6 +92,12 @@ stages:
     parallel: false
     mutates: false
     heavy: true
+  mutation-coverage:
+    desc: "Cobertura declarada de mutação (EA-3): arquivo na população e fora de TODO gatilho é NOMEADO, em vez de silêncio indistinguível de 'campanha não exigida'. Mede AO LADO do stage mutation, nunca no lugar dele; lê mutation_population.json e mutation_map.json, não spawna harness nenhum"
+    run: python .claude/verify/check_mutation_coverage.py
+    parallel: true
+    mutates: false
+    heavy: false
   m41:
     desc: "Harness M41: payload funcional PASS contra o snapshot e SHA-256 == pin declarado (régua D2)"
     run: python .claude/verify/check_m41.py

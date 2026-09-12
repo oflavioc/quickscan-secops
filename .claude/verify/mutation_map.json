@@ -373,6 +373,20 @@
         "python"
       ],
       "_trilha": "fix-finding EA-42 · 2026-09-11 · qa-engineer · mutantes de INSTRUMENTO do gate eol-text (o gate muda, o mundo e fixo), complementares aos de ARVORE do harness `ea41` (o gate e fixo, o mundo muda). Porta para o repositorio a bateria de 8 que rodou uma vez em copia efemera no RED 2a1fb7f e nunca foi versionada — era a divida EA41-EOL0/EOL1 em dividas_declaradas, sem par e sem gatilho. DESVIO DELIBERADO do padrao d015/d016: a mutacao NAO e in-place com restauracao; cada mutante roda uma COPIA em os.tmpdir() e o SHA-256 do fonte rastreado e conferido antes e depois (R7 §3 endurecido — nao existe janela com a arvore mutada). `targets` inclui o proprio gate para que qualquer mudanca nele re-dispare esta campanha: era exatamente esse gatilho que faltava. SEM `insumos`, de proposito e nao por omissao: neste harness o check_eol_text.py e o SUJEITO MUTADO, nao insumo-oraculo. Declara-lo como oraculo faria o oraculo mover junto com o mutante, que e o que o D017-INS1 recusa — e recusou, na primeira execucao desta entrada (2026-09-11). O oraculo deste harness e o SINAL DECLARADO por mutante (guarda ou divergencia nomeada da sonda), que vive no proprio harness e nao no arquivo mutado."
+    },
+    "d018": {
+      "cmd": "node tests_018_mutants.js",
+      "preflight": true,
+      "targets": [
+        ".claude/verify/check_mutation_coverage.py",
+        ".claude/verify/mutation_population.json",
+        "tests_018_mutants.js"
+      ],
+      "requires": [
+        "node",
+        "python"
+      ],
+      "_trilha": "Demanda 018 (remedio do EA-3) · 2026-09-11 · qa-engineer · mutantes de INSTRUMENTO do julgador mutation-coverage. Shape copiado de tests_ea41_instrumento.js (EA-42): mutacao em COPIA sob os.tmpdir(), SHA-256 do fonte rastreado conferido antes e depois, e KILL exigindo o SINAL DECLARADO — crash conta NAO EXECUTADO, nunca kill (endurecimento que nasceu do proprio D018-M3, que na primeira execucao matava por KeyError). SEM `insumos`, e nao por omissao: o julgador e o SUJEITO MUTADO, nao insumo-oraculo — declarar o contrario e o que o D017-INS1 recusa, e ja custou uma reprovacao no EA-42. O oraculo deste harness e o sinal declarado por mutante, que vive no proprio harness. mutation_population.json entra em `targets` porque mudar a declaracao muda o veredito do julgador tanto quanto mudar o codigo dele: gatilho por path tem de cobrir os dois."
     }
   }
 }

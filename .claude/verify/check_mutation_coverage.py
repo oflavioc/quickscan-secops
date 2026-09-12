@@ -40,7 +40,12 @@ from datetime import date
 GATE = "mutation-coverage"
 ESTE_GATE = ".claude/verify/check_mutation_coverage.py"
 
-POPULACAO = ".claude/verify/mutation_population.json"
+# Costura de campanha, no padrão da casa (`MUTATION_PY`, `HTML_OVERRIDE`): o harness
+# `d018` aponta o julgador para uma população SINTÉTICA em tmp, e assim mede o
+# julgador contra cenários que a árvore real não tem (dívida sem prazo, prazo
+# vencido, declaração morta) sem nunca tocar a árvore (R7 §3). Fora da campanha a
+# variável não existe e o caminho é o canônico.
+POPULACAO = os.environ.get("MUTCOV_POPULACAO") or ".claude/verify/mutation_population.json"
 PIPELINE = ".claude/verify/pipeline.yaml"
 MAPA = ".claude/verify/mutation_map.json"
 
@@ -154,8 +159,11 @@ def julgar(decl, pop, gatilhos, hoje):
         d = dividas.get(caminho)
         if d and str(d.get("prazo", "")).strip():
             divida_viva += 1
+            # `.get` e não `[...]`: uma dívida sem prazo já foi acusada por POP1 e
+            # não pode derrubar o julgador aqui — achado do mutante D018-M3, que
+            # matava por KeyError em vez de matar pelo sinal declarado.
             linhas.append(f"[DÍVIDA] D018-ORF1(b) {caminho}: órfão declarado · prazo "
-                          f"{d['prazo']} · {str(d.get('motivo', ''))[:90]}")
+                          f"{d.get('prazo', '')} · {str(d.get('motivo', ''))[:90]}")
         else:
             orfaos += 1
             problemas += 1

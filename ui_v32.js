@@ -718,13 +718,37 @@ function baseAbsenceHTML(ids, ctxs, isScreen){
     ? `<div class="v32-neutral" data-v32-absence="base-context">${texto}</div>`
     : `<div class="pr-card" data-v32-absence="base-context"><div class="pr-mut">${texto}</div></div>`;
 }
+/* [EA-24] O card neutro NOMEIA A CAUSA em vez de culpar sempre o mapeamento.
+   O texto único anterior dizia "não há oferta direta mapeada" nos QUATRO estados de
+   `maturity.state` (`engine_v32.js:349-350`), e era verdade em dois:
+
+     gap-high · gap-moderate   há lacuna e o catálogo não cobre  → verdade (texto mantido)
+     mature                    NÃO há lacuna                     → mentia: culpava o catálogo
+     needs-validation          faltam respostas para decidir     → mentia, e este é o pior:
+                               o facilitador lê "lacuna de catálogo" quando o que falta é
+                               ele terminar o assessment
+
+   O `needs-validation` NÃO estava no registro do EA-24 — foi medido ao implementar, em
+   2026-09-12, e o achado ficou maior do que a cadeia descrevia.
+
+   Sem estado novo (R9 §5): `maturity.state` já vem em `c`, calculado pelo engine no
+   mesmo passe. A última frase é IDÊNTICA nos três ramos de propósito — é a invariante
+   [3.2.3-B], prioridade declarada nunca desaparece, e ela não muda de redação aqui. */
+function neutralPrioCausa(c){
+  const st = (c && c.maturity && c.maturity.state) || "";
+  if (st === "mature")
+    return "Esta capability não apresenta lacuna nesta etapa — não há o que endereçar por produto, e nenhum produto é inferido.";
+  if (st === "needs-validation")
+    return "Ainda faltam respostas para dizer se há lacuna nesta capability — nenhum produto é inferido.";
+  return "Não há oferta direta mapeada para esta capability nesta etapa — nenhum produto é inferido.";
+}
 function neutralPrioCardHTML(id, c){
   /* [3.2.3-B] prioridade NUNCA desaparece: card neutro, zero produto inventado */
   return `<div class="v32-card" data-cap="${escAttr(id)}">
     <div class="v32-card-head"><strong>${esc32(V32.CAPABILITIES[id].name)}</strong>
       <span class="v32-class">${esc32(CLASS_LABELS[c.classification]||c.classification||"")}</span>
       <span class="v32-tag v32-prio-tag">prioridade declarada</span></div>
-    <div class="v32-neutral">Não há oferta direta mapeada para esta capability nesta etapa — nenhum produto é inferido. A prioridade permanece registrada para o aprofundamento.</div>
+    <div class="v32-neutral">${neutralPrioCausa(c)} A prioridade permanece registrada para o aprofundamento.</div>
     ${whyHTMLOf(id, c)}</div>`;
 }
 function renderCap(id, c, pres, afirmaPreservacao){

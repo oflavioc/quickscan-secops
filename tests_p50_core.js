@@ -4027,6 +4027,98 @@ T("P51-DOC13", "manual descreve o score geral e a ordem do relatório como o pro
   return true;
 });
 
+/* ============================================================================
+   P50-VOC1 · EA-23 — a mesma capability sob dois nomes no mesmo relatório
+   ----------------------------------------------------------------------------
+   MEDIDO antes de existir (2026-09-13, artefato publicado, jsdom dirigindo o
+   fluxo real): 12 dos 15 pares pergunta↔capability têm nomes DIFERENTES entre
+   `MAP[qid].cap` (a prática avaliada, que o leitor vê em "Capability a
+   desenvolver:") e `CAPABILITIES[id].name` (o rótulo de catálogo). O catálogo
+   alcança o leitor em UMA superfície só — o chip de "Contexto tecnológico
+   declarado" —, conferido em quatro capabilities: fora do chip, as ocorrências
+   do nome de catálogo no DOM são zero.
+
+   O ORÁCULO NÃO CHAMA O RENDERER. `MAP` e `CAPABILITIES` são lidos do estado
+   congelado por `w.eval` (`MAP` é `const` de topo de script: não está em
+   `window`), e a decisão "declara ou não declara" é recomputada aqui a partir
+   deles. Um oráculo que perguntasse ao módulo o que ele decidiu concordaria com
+   ele por construção.
+
+   POR QUE 1:1 E NÃO TODAS: `soc-governance` agrega TRÊS perguntas (`mandate`,
+   `governance`, `policies`), cada uma com seu próprio `MAP[].cap`. Não existe
+   "o" nome avaliado dessa capability, e inventar um seria fabricar vocabulário.
+   O critério é, portanto, EXATAMENTE UMA pergunta avaliada — e a alínea (c)
+   assere que a agregada NÃO recebe apelido, para que o gate meça a regra e não
+   apenas a presença de texto novo.
+   ========================================================================== */
+T("P50-VOC1", "EA-23: o chip de contexto declara o nome avaliado quando a capability é 1:1 com uma pergunta", () => {
+  const { w, d } = boot();
+  FX.p50ApplyResults(w, d, FX.P50_F7);
+
+  /* --- oráculo: estado congelado, lido direto, sem passar pelo renderer --- */
+  const V = w.__DEV && w.__DEV.V32;
+  if (!V || !V.CAPABILITIES) throw new Error("CAPABILITIES ausente do runtime");
+  const tMap = w.eval("typeof MAP");
+  if (tMap !== "object") throw new Error("estado congelado indisponível: typeof MAP=" + tMap);
+  const CAPS = JSON.parse(w.eval(
+    "JSON.stringify(Object.keys(V32.CAPABILITIES).map(function(id){var c=V32.CAPABILITIES[id];" +
+    "return {id:id,name:c.name,qids:(c.questionIds||[]).slice()};}))"));
+  const capDe = JSON.parse(w.eval(
+    "JSON.stringify(Object.keys(MAP).reduce(function(o,q){o[q]=MAP[q].cap;return o;},{}))"));
+  if (!CAPS.length) throw new Error("catálogo de capabilities vazio");
+
+  /* esperado, recomputado da regra: apelido SE E SOMENTE SE 1 pergunta e nomes divergentes */
+  const esperado = {};
+  CAPS.forEach(c => {
+    const alvo = (c.qids.length === 1 && capDe[c.qids[0]] && capDe[c.qids[0]] !== c.name)
+      ? capDe[c.qids[0]] : null;
+    esperado[c.id] = alvo;
+  });
+  const comApelido = Object.keys(esperado).filter(id => esperado[id]);
+  if (comApelido.length < 5)
+    throw new Error("guarda de tautologia: só " + comApelido.length +
+      " capability(ies) divergente(s) — o gate perderia poder discriminante");
+
+  const chips = qa(d, "#p50-results [data-p50=\"presence-chip\"]");
+  if (!chips.length) throw new Error("nenhum chip de presence na superfície");
+
+  let conferidos = 0, comAlias = 0;
+  chips.forEach(chip => {
+    const id = chip.getAttribute("data-cap");
+    if (!(id in esperado)) throw new Error("chip de capability fora do catálogo: " + id);
+    const alias = chip.querySelector("[data-p50=\"presence-alias\"]");
+    const alvo = esperado[id];
+    conferidos++;
+
+    /* (a) divergente e 1:1 → o nome avaliado está DECLARADO, literal */
+    if (alvo) {
+      if (!alias) throw new Error("capability " + id + " não declara o nome avaliado «" + alvo + "»");
+      if (txt(alias).indexOf(alvo) < 0)
+        throw new Error("apelido de " + id + " não contém o nome avaliado: «" + txt(alias) + "»");
+      comAlias++;
+      /* (b) o nome acessível carrega o apelido — senão o leitor de tela fica com
+         um nome que não aparece em nenhuma outra seção do relatório */
+      if (accName(chip).indexOf(alvo) < 0)
+        throw new Error("nome acessível de " + id + " sem o nome avaliado: «" + accName(chip) + "»");
+    } else {
+      /* (c) agregada (>1 pergunta), sem pergunta, ou nomes iguais → SEM apelido.
+         É esta alínea que impede o mutante "declarar sempre" de passar. */
+      if (alias)
+        throw new Error("apelido fabricado em " + id + " («" + txt(alias) + "»): " +
+          "qids=" + JSON.stringify(CAPS.filter(c => c.id === id)[0].qids));
+    }
+
+    /* (d) o apelido nunca REPETE o nome do chip: declarar o sinônimo é o
+       remédio; repetir o mesmo texto duas vezes é ruído */
+    if (alias && txt(alias).indexOf(txt(chip.querySelector(".p50-presence-cap"))) >= 0)
+      throw new Error("apelido de " + id + " repete o próprio nome do chip");
+  });
+
+  if (!conferidos) throw new Error("nenhum chip conferido");
+  if (!comAlias) throw new Error("nenhum apelido declarado em " + conferidos + " chips conferidos");
+  return true;
+});
+
 /* ============================== RESUMO ============================== */
 const pass = results.filter(r => r.ok).length;
 const fail = results.length - pass;

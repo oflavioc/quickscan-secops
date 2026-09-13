@@ -4108,10 +4108,26 @@ T("P50-VOC1", "EA-23: o chip de contexto declara o nome avaliado quando a capabi
           "qids=" + JSON.stringify(CAPS.filter(c => c.id === id)[0].qids));
     }
 
-    /* (d) o apelido nunca REPETE o nome do chip: declarar o sinônimo é o
-       remédio; repetir o mesmo texto duas vezes é ruído */
-    if (alias && txt(alias).indexOf(txt(chip.querySelector(".p50-presence-cap"))) >= 0)
-      throw new Error("apelido de " + id + " repete o próprio nome do chip");
+    /* (d) o apelido DECLARA, não apenas justapõe. Um segundo nome solto ao lado
+       do primeiro leria como duas capabilities, que é o defeito do EA-23 em vez
+       do remédio: o texto precisa ter moldura além do nome, e nunca pode ser
+       igual ao nome do próprio chip.
+       ERRATA (2026-09-13, medida na primeira execução verde): a redação
+       anterior proibia o nome do chip de ser SUBSTRING do apelido. É falsa —
+       “Gestão de conhecimento” (catálogo) está legitimamente contido em
+       “Gestão de conhecimento operacional” (avaliado), e o gate reprovava o
+       produto correto. A propriedade que ela tentava afirmar (apelido ≠ nome do
+       chip) já é garantida por (a)+(c), que não admitem apelido quando os dois
+       vocabulários coincidem. Trocada pela que se sustenta, e não removida. */
+    if (alias) {
+      const tAlias = txt(alias), tCap = txt(chip.querySelector(".p50-presence-cap"));
+      if (tAlias === tCap)
+        throw new Error("apelido de " + id + " é idêntico ao nome do chip");
+      if (tAlias === alvo)
+        throw new Error("apelido de " + id + " justapõe o nome sem declarar o que ele é");
+      if (tAlias.length <= alvo.length)
+        throw new Error("apelido de " + id + " sem moldura declarativa: «" + tAlias + "»");
+    }
   });
 
   if (!conferidos) throw new Error("nenhum chip conferido");

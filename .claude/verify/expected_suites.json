@@ -69,7 +69,7 @@
     },
     "p50core": {
       "cmd": "node tests_p50_core.js",
-      "pass": 64,
+      "pass": 65,
       "fail": 0
     },
     "p52layout": {

@@ -822,6 +822,51 @@ const MUTANTS = [
   margin:6px 0 0; color:var(--muted);`,
     gate: "P50-PR1", cmd: "node tests_p50_chromium.js",
     reason: /estilo divergente em \.radar-box\[\d+\] propriedade position: baseline "static", candidato "relative"/
+  },
+
+  /* ==========================================================================
+     M54..M56 · EA-23 (fix-finding, 2026-09-13) — carrascos do P50-VOC1.
+     Nenhum exige Chromium: julgam por `tests_p50_core.js`, em jsdom. Entram
+     AQUI, e não em harness novo, porque `ui_p50_results_v32.js` já é `target`
+     declarado deste harness — o gatilho de path que faria a âncora apodrecer
+     (família EA-4) já existe e não precisa ser inventado.
+
+     O QUARTO MUTANTE DA BATERIA NÃO ESTÁ AQUI, e a ausência é medida, não
+     esquecimento: "trocar `qids.length !== 1` por `!qids.length`" é
+     EQUIVALENTE na população alcançável. Medido em 2026-09-13 sobre as 25
+     capabilities do catálogo — 12 com chip e zero pergunta, 10 com chip e uma
+     pergunta, e a ÚNICA que agrega (`soc-governance`, 3 perguntas) tem
+     `landscapeEnabled: false`, logo não rende chip. Com 0 ou 1 pergunta os dois
+     códigos devolvem o mesmo. Declará-lo carrasco seria declarar cobertura que
+     não existe; está em `dividas_declaradas`.
+     ========================================================================== */
+  {
+    id: "M54",
+    desc: "EA-23: declarar o nome avaliado mesmo quando os dois vocabulários coincidem",
+    file: RESULTS,
+    find: `    return (nome && nome !== cap.name) ? nome : null;`,
+    repl: `    return nome || null;                                   /* MUTANTE: sinônimo virou eco */`,
+    gate: "P50-VOC1", cmd: "node tests_p50_core.js",
+    reason: /apelido fabricado em/
+  },
+  {
+    id: "M55",
+    desc: "EA-23: apelido sem moldura — justapõe um segundo nome e lê como outra capability",
+    file: RESULTS,
+    find: `        "avaliada como \u201c" + avaliado + "\u201d"));`,
+    repl: `        avaliado));                                        /* MUTANTE: sem moldura */`,
+    gate: "P50-VOC1", cmd: "node tests_p50_core.js",
+    reason: /justap(õ|o)e o nome sem declarar o que ele (é|e)/
+  },
+  {
+    id: "M56",
+    desc: "EA-23: apelido só na tela — o nome acessível volta a ter um nome que não aparece em outra seção",
+    file: RESULTS,
+    find: `      chip.setAttribute("aria-label", cap.name +
+        (avaliado ? ", avaliada como \u201c" + avaliado + "\u201d" : "") + ": " +`,
+    repl: `      chip.setAttribute("aria-label", cap.name + ": " +   /* MUTANTE: apelido fora do accname */`,
+    gate: "P50-VOC1", cmd: "node tests_p50_core.js",
+    reason: /nome acess(í|i)vel de .* sem o nome avaliado/
   }
 ];
 

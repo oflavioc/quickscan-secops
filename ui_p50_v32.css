@@ -472,6 +472,12 @@
 #p50-results .p50-presence-chip[data-p50-nodomain="true"]{ border-color:var(--line); }
 #p50-results .p50-presence-cap{ color:var(--text); overflow-wrap:anywhere; min-width:0; }
 #p50-results .p50-presence-state{ color:var(--muted); white-space:nowrap; }
+/* EA-23 · o nome da mesma capability na vista do assessment. Secundario por
+   desenho: e ponte de reconhecimento, nao um segundo titulo. A pilula cresce e
+   a lista quebra linha sozinha (`flex-wrap` na .p50-presence-list). */
+#p50-results .p50-presence-alias{
+  color:var(--faint); font-size:11px; overflow-wrap:anywhere; min-width:0;
+}
 #p50-results .p50-presence-chip[data-p50-presence="UNSET"]{
   border-style:dashed; opacity:.72;
 }

@@ -1476,66 +1476,122 @@ Nascimento de checagem nova é do `qa-engineer` com o `tech-lead`, e entra no
 **Não executado**: a leitura é dos dois fontes. A prova canônica — mutar no disco,
 rodar os dois — é do `qa-engineer`.
 
-## EA-19 — a tela de prioridade pergunta por gaps sobre uma lista vazia quando não há finding
+## ~~EA-19 — a tela de prioridade pergunta por gaps sobre uma lista vazia quando não há finding~~
 
-**Status**: `aberto`
+**Status**: `refutado`
 
-**Aberto em**: 2026-08-31. Caso 5 do refinamento da demanda 011, cuja cadeia
-canônica e enquadramento de produto vivem em
-`specs/011-numeracao-das-prioridades/refinement.md:203` (caso 5) e `:287-296`
-(P9 — escopo secundário declarado). A branch `feature/011-numeracao-das-prioridades`
-**não estava mesclada** quando este registro foi escrito (PR #32 aberto).
+~~**Aberto em**: 2026-08-31. Caso 5 do refinamento da demanda 011, cuja cadeia~~
+~~canônica e enquadramento de produto vivem em~~
+~~`specs/011-numeracao-das-prioridades/refinement.md:203` (caso 5) e `:287-296`~~
+~~(P9 — escopo secundário declarado). A branch `feature/011-numeracao-das-prioridades`~~
+~~**não estava mesclada** quando este registro foi escrito (PR #32 aberto).~~
 
-### Cadeia arquivo:linha → efeito
+~~### Cadeia arquivo:linha → efeito~~
 
-- **`quickscan_secops_soccmm_v3_1_3.html:522-533`** — `computeFindings()` só empilha
-  finding quando `m.s > 0`; resposta em nível alto não gera nenhum, e `"NA"` vai
-  para `validate` (`:526`). **N = 0 é alcançável** — todas as confirmadas em nível
-  2/3, ou todas "A validar".
-- **`:716`** — `renderPriority()` lê `computeFindings().findings`.
-- **`:723`** — a pergunta é escrita **incondicionalmente**: "Dos gaps identificados
-  na conversa, quais mais impactam a operação ou o negócio hoje?".
-- **`:725-731`** — `.opts` é `findings.map(...).join("")`: com N = 0 o container
-  renderiza **vazio**.
-- **`:732`** — `"0 de 3 selecionadas"`; **`:738`** — a `kbd-tip` continua prometendo
-  "1–9 seleciona os primeiros itens".
-- **Efeito** — o facilitador fica, ao vivo, com uma pergunta sobre um vazio, um
-  contador e uma legenda que afirmam itens que não existem, e **sem nada que diga
-  que não há gap a priorizar**. É ausência renderizada como lista vazia.
+~~- **`quickscan_secops_soccmm_v3_1_3.html:522-533`** — `computeFindings()` só empilha~~
+~~  finding quando `m.s > 0`; resposta em nível alto não gera nenhum, e `"NA"` vai~~
+~~  para `validate` (`:526`). **N = 0 é alcançável** — todas as confirmadas em nível~~
+~~  2/3, ou todas "A validar".~~
+~~- **`:716`** — `renderPriority()` lê `computeFindings().findings`.~~
+~~- **`:723`** — a pergunta é escrita **incondicionalmente**: "Dos gaps identificados~~
+~~  na conversa, quais mais impactam a operação ou o negócio hoje?".~~
+~~- **`:725-731`** — `.opts` é `findings.map(...).join("")`: com N = 0 o container~~
+~~  renderiza **vazio**.~~
+~~- **`:732`** — `"0 de 3 selecionadas"`; **`:738`** — a `kbd-tip` continua prometendo~~
+~~  "1–9 seleciona os primeiros itens".~~
+~~- **Efeito** — o facilitador fica, ao vivo, com uma pergunta sobre um vazio, um~~
+~~  contador e uma legenda que afirmam itens que não existem, e **sem nada que diga~~
+~~  que não há gap a priorizar**. É ausência renderizada como lista vazia.~~
 
-### Escopo e rito
+~~### Escopo e rito~~
 
-`quickscan_secops_soccmm_v3_1_3.html` é Camada 1, classe `frozen`
-(`.claude/verify/boundary.json`): qualquer rota nesse arquivo é rito D2, hoje
-Porta B. O tratamento está declarado como **escopo secundário da 011** — o rito é
-da spec dela, não deste registro.
+~~`quickscan_secops_soccmm_v3_1_3.html` é Camada 1, classe `frozen`~~
+~~(`.claude/verify/boundary.json`): qualquer rota nesse arquivo é rito D2, hoje~~
+~~Porta B. O tratamento está declarado como **escopo secundário da 011** — o rito é~~
+~~da spec dela, não deste registro.~~
 
-> **Emenda (2026-09-12) — o dono declarado acima RECUSOU a tarefa, e este registro
-> ficou apontando para ele.** A frase *"escopo secundário da 011"* veio da
-> recomendação **P9 do refinamento** da 011, que de fato propunha incluir. **A spec
-> dela decidiu o contrário, no portão**, e disse por escrito:
->
-> - `specs/011-numeracao-das-prioridades/spec.md:12` — *"**P9** a lista vazia
->   **não** entra (achado registrado à parte)"*;
-> - `:272` — *"A lista vazia (`N = 0`) **não é tratada** — decisão P9 do portão"*;
-> - `:73`, na tabela de estados — *"A lista vazia em si **é achado registrado à
->   parte** (P9) — esta demanda não a trata"*.
->
-> A 011 **mesclou** (PR #32, `4f7c140`) sem tratar, **e isso estava certo** — foi
-> decisão de portão registrada, não omissão. O que estava errado era **este
-> registro**, que herdou a recomendação e não a decisão.
->
-> **Consequência prática**: o `EA-19` **não tem dono por herança**. O remédio exige
-> **D2 Porta B** — spec commitada + auditoria independente humana (R1) — porque o
-> arquivo é Camada 1. Não há spec vigente que o autorize.
->
-> **O conteúdo, porém, não é decisão nova**: a própria 011 observou que aplica o
-> princípio já aceito na **009** — *ausência vira aviso único e acionável* —, em vez
-> da pergunta sobre lista vazia com `"0 de 3 selecionadas"` e a `kbd-tip` prometendo
-> itens inexistentes.
->
-> Emenda escrita ao levar o achado até a porta e parar (família `EA-31`: o registro
-> afirmava um encaminhamento que a execução tinha desmentido há duas semanas).
+> ~~**Emenda (2026-09-12) — o dono declarado acima RECUSOU a tarefa, e este registro~~
+> ~~ficou apontando para ele.** A frase *"escopo secundário da 011"* veio da~~
+> ~~recomendação **P9 do refinamento** da 011, que de fato propunha incluir. **A spec~~
+> ~~dela decidiu o contrário, no portão**, e disse por escrito:~~
+~~>~~
+> ~~- `specs/011-numeracao-das-prioridades/spec.md:12` — *"**P9** a lista vazia~~
+> ~~  **não** entra (achado registrado à parte)"*;~~
+> ~~- `:272` — *"A lista vazia (`N = 0`) **não é tratada** — decisão P9 do portão"*;~~
+> ~~- `:73`, na tabela de estados — *"A lista vazia em si **é achado registrado à~~
+> ~~  parte** (P9) — esta demanda não a trata"*.~~
+~~>~~
+> ~~A 011 **mesclou** (PR #32, `4f7c140`) sem tratar, **e isso estava certo** — foi~~
+> ~~decisão de portão registrada, não omissão. O que estava errado era **este~~
+> ~~registro**, que herdou a recomendação e não a decisão.~~
+~~>~~
+> ~~**Consequência prática**: o `EA-19` **não tem dono por herança**. O remédio exige~~
+> ~~**D2 Porta B** — spec commitada + auditoria independente humana (R1) — porque o~~
+> ~~arquivo é Camada 1. Não há spec vigente que o autorize.~~
+~~>~~
+> ~~**O conteúdo, porém, não é decisão nova**: a própria 011 observou que aplica o~~
+> ~~princípio já aceito na **009** — *ausência vira aviso único e acionável* —, em vez~~
+> ~~da pergunta sobre lista vazia com `"0 de 3 selecionadas"` e a `kbd-tip` prometendo~~
+> ~~itens inexistentes.~~
+~~>~~
+> ~~Emenda escrita ao levar o achado até a porta e parar (família `EA-31`: o registro~~
+> ~~afirmava um encaminhamento que a execução tinha desmentido há duas semanas).~~
+
+### Refutado por execução (2026-09-13): a tela existe, o estado não é alcançável
+
+A cadeia `arquivo:linha` acima está **correta linha a linha**. O que a execução
+desmentiu é o **efeito**: nenhum gesto do facilitador leva a `renderPriority()`
+com `N = 0`. As duas únicas entradas em `PRIORITY_STEP` já são guardadas por
+`findings.length`, e nenhuma camada acrescenta uma terceira.
+
+- **`quickscan_secops_soccmm_v3_1_3.html:634`** — `advanceFromQuestion()`:
+  `step = f.length ? PRIORITY_STEP : RESULTS_STEP`. Com `N = 0` o fluxo natural
+  **pula a tela** e vai direto para os resultados.
+- **`:1021`** — o botão *"Editar prioridades"* só é renderizado sob
+  `${findings.length? … :""}`; sem finding, o botão **não existe**, e por isso o
+  handler de `:1029` nunca tem o que ligar.
+- **`ui_ux_v32.js:244`** (`__DEV.showPriority`) e `:247` (`__DEV.gotoStep`) são
+  bridges de desenvolvimento sob `window.__DEV`, não superfície de facilitador.
+- **`ui_session_v32.js:576`** (`step = snap.step`) é o **rollback** de
+  `commitCanonicalOwners`, que restaura o snapshot tomado uma linha antes; a
+  importação bem-sucedida passa por `recomputeAfterImport()` (`:602`), que força
+  `step = RESULTS_STEP`.
+- **`ui_refinement_v32.js:50`** intercepta a transição para `PRIORITY_STEP`, não a
+  cria.
+
+**Medição, no artefato que é publicado** (`quickscan_secops_soccmm_v3_2_dev.html`,
+jsdom, dirigindo o fluxo real — `advanceFromQuestion()`, `togglePriority()`,
+`render()` —, nunca escrevendo `step` à mão exceto no cenário E, que existe para
+mostrar o que a injeção produz):
+
+| Cenário | Estado | `step` resultante |
+|---|---|---|
+| **A** — as 15 respostas em nível 2 (`m.s === 0`) | `findings = 0` | `17` = **resultados** |
+| **B** — as 15 respostas `"NA"` | `findings = 0` | `17` = **resultados** |
+| **C** — entra na prioridade com 1 gap, declara a prioridade, volta (`step = QS.length`), zera a resposta e avança | `findings = 0` | `17` = **resultados**; `#editprio` **ausente** |
+| **D** — resultados com `N > 0` | `findings = 1` | `#editprio` **presente** |
+| **E** — `step = PRIORITY_STEP` **por injeção**, `N = 0` | — | `.opt` = 0, `"0 de 3 selecionadas"`, `kbd-tip` intacta |
+
+O cenário **E** reproduz exatamente o que o registro descreve — e só por injeção.
+O **C** é o caminho que o registro implicitamente supunha (o facilitador volta e
+melhora uma resposta): ele também termina nos resultados.
+
+**Consequência**: o `EA-19` **não é defeito de produto**. Some da lista dos cinco
+que o cliente vê, e some com ele o rito **D2 Porta B** — não há mudança a fazer em
+Camada 1, logo não há spec commitada nem auditoria humana a pedir.
+
+A **demanda 019**, aberta em 2026-09-12 para remediá-lo, foi **encerrada na Fase 0
+sem Fase 1** por falta de objeto; o `refinement.md` dela era o artefato que
+afirmava *"o estado é alcançável — medido, não suposto"* com base numa medição
+**parcial**: mediu `computeFindings()` e não mediu o roteamento. É a família
+`EA-31` aplicada ao próprio trabalho desta sessão — registro comparado contra
+leitura, não contra execução.
+
+**O resíduo tem id próprio**: a invariante *"`PRIORITY_STEP` só é alcançável com
+`N > 0`"* é real e carrega peso, mas está **implícita em duas guardas
+independentes** e **nenhum portão a afirma** — registrada como **`EA-50`**, ao
+final deste arquivo.
+
 
 ## EA-20 — o padrão que três demandas seguidas instanciaram: gate sem poder discriminante
 
@@ -4337,3 +4393,59 @@ porque **hoje ninguém é enganado por eles**, e cada um vira `fix-finding` pró
 quando incomodar. O `.claude/BACKLOG.md`, que o `EA-3` lista entre os seis, não é
 alcançado por regra nenhuma de arquivo de verificação — é **documento**, e
 cobertura de mutação mede julgador que pode mentir.
+
+## EA-50 — a invariante que sustenta o `EA-19` é real, carrega peso e nenhum portão a afirma
+
+**Status**: `aberto`
+
+**Aberto em**: 2026-09-13, ao **refutar o `EA-19` por execução**. Não é o resto do
+`EA-19`: é o que o tornava inofensivo. A tela de prioridade com lista vazia existe
+no fonte e é inalcançável **apenas porque duas guardas independentes, escritas em
+lugares diferentes e sem nenhuma menção uma à outra, concordam**. Nada no
+repositório diz que elas precisam concordar.
+
+### Cadeia arquivo:linha → efeito
+
+- **`quickscan_secops_soccmm_v3_1_3.html:634`** — guarda de fluxo:
+  `step = f.length ? PRIORITY_STEP : RESULTS_STEP`.
+- **`:1021`** — guarda de superfície: `${findings.length? '<button … id="editprio">…' : ""}`.
+- **`:1029`** — `const ep = $("#editprio"); if(ep) ep.onclick = …` — o `if(ep)`
+  **depende** de `:1021`, e não repete a condição. Quem editar `:1021` sem ler
+  `:634` não recebe aviso nenhum.
+- **`:717`** — `[...businessPriority].forEach(id => { if(!findings.some(…)) … delete … })`
+  é a **purga defensiva** que só roda dentro de `renderPriority()`. Medido: como a
+  tela não é alcançada com `N = 0`, a purga **não roda**, e um id obsoleto
+  sobrevive no `Set` até o fim da sessão — inofensivo hoje porque `:825`
+  (`.map(id => findings.find(…)).filter(Boolean)`) o descarta na renderização dos
+  resultados. **Duas defesas para o mesmo risco, nenhuma declarada.**
+- **Efeito** — a invariante *"`PRIORITY_STEP` só é alcançável com `N > 0`"* não
+  está escrita em lugar nenhum: nem como comentário de invariante na Camada 1, nem
+  como asserção em suíte, nem no `CONTEXT.md`. Uma demanda futura que acrescente
+  uma rota para a tela de prioridade — um deep link, um passo de sessão importada,
+  um botão de navegação — **reintroduz o `EA-19` sem que nenhuma máquina reclame**,
+  e o defeito volta a ser exatamente o que o registro refutado descreve.
+
+### Por que isto é `EA-20`, e não `EA-1`
+
+Não é superfície protegida sem gate (`EA-1`): é **propriedade emergente sem
+julgador**. A diferença importa para o remédio — `EA-1` pede pin, este pede
+asserção sobre o **comportamento do fluxo**, que nenhum pin alcança.
+
+### Remédio previsto, e o que ele custa
+
+Suíte nova em namespace próprio (`D050-*`, arquivo próprio — R10 §1 proíbe
+continuar numeração de fase alheia ou morar em arquivo de outra), que dirige o
+fluxo real em jsdom e afirma os cenários **A**, **B**, **C** e **D** medidos na
+refutação do `EA-19`. **Não toca Camada 1**: é arquivo de teste novo mais chave em
+`expected_suites.json` e entrada em `pipeline.yaml` (R10 §9) — classe
+`estrutura/pipeline`, **sem rito de boundary e sem Porta B**. Cabe em
+`fix-finding`; foi deixado aberto porque a refutação do `EA-19` não é o lugar de
+introduzir portão novo (fix-finding §4: "correção revelou outro problema → novo
+achado com id próprio, nunca no mesmo diff").
+
+**Guarda de tautologia, medida antes de escrever este registro** (2026-09-13,
+cópia efêmera do artefato publicado, âncora única conferida — `ocorrencias = 1`):
+o mutante previsto troca `:634` por `step = PRIORITY_STEP` incondicional. Sob ele,
+os cenários **A**, **B** e **C** todos passam a terminar em `step = 16` — os três
+REPROVAM. O portão nasce, portanto, com poder discriminante **medido**, e não é
+mais um dos que o `EA-20` cataloga.

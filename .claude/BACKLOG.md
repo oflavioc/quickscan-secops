@@ -4140,7 +4140,7 @@ divergência antes do aceite.
 
 ## EA-48 — a canônica do `EA-21` está decidida e o PDF continua emitindo as duas listas
 
-**Status**: `aberto`
+**Status**: `resolvido`
 
 **Aberto em**: 2026-09-11, no mesmo dia em que o `EA-21` fechou, e **por causa
 dele**. Levantado por sessão par na revisão do fecho do `EA-21` e conferido por
@@ -4194,6 +4194,52 @@ decisão de produto do **`product-owner`**, e o custo do rito é do proprietári
 Instância de fronteira da família `EA-31` — registro que afirma o que a superfície
 não sustenta —, aqui na forma inversa: a **decisão** existe e a **superfície** não
 a reflete.
+
+### Fecho (2026-09-12) — a superfície passou a refletir a decisão
+
+**Autorização nominal §29.4** do proprietário no chat, própria para este achado; a
+do `EA-24` era restrita ao `neutralPrioCardHTML` e **não** foi reaproveitada.
+
+A frase anterior de `[data-pr-gap-fonte]` ficou **verbatim** e a nova só acrescenta,
+nos **dois** ramos de `qsGapSupportHTML`:
+
+> *"A **ancoragem canônica** desta sessão é a que parte da pergunta e do nível
+> respondido; esta lista é complementar."*
+
+Diz o que o `EA-21` decidiu e **nada além**: ancoragem canônica, **não** fonte
+única. *"Complementar"* é a palavra do próprio fecho do `EA-21` — o
+`QS_GAP_SUPPORT` não é revogado, e o §M5 da 015 mediu que suprimir qualquer das
+duas **subtrai conteúdo**.
+
+### Duas correções depois do primeiro empurrão, ambas pegas por gate
+
+1. **Âncoras podres** (`d015` 3 de 15 não-KILL, *"ocorrencias=0"*). Conferi os
+   **gates** antes de editar e **esqueci os mutantes** — conferir uma metade é o
+   mesmo que não conferir. `FONTE_TXT` acompanhou o fonte no mesmo PR, com a
+   semântica dos três mutantes **intacta** (classe `EA-4`).
+2. **Título vazado**, e este é o mais grave: a primeira redação citava
+   *"Perfil atual × Cenário-alvo de maturidade"*, e o `tests_visual/print.spec.js:62`
+   acusou — *"seções condicionais, títulos únicos"*. **Não era problema de teste,
+   era de leitor**: o bloco de apoio aparece mesmo quando aquela seção **não
+   existe**, então quem não declarou cenário-alvo receberia um ponteiro para o
+   vazio. A mesma classe que o `EA-24` acabara de corrigir, reintroduzida por outro
+   caminho no mesmo dia.
+
+   Remédio: descrever a ancoragem **pela propriedade**, não pelo nome da seção —
+   melhor também fora do gate, porque não depende de rótulo que pode não existir.
+   **Não havia cura local**: o `print.spec.js` exige Chromium (KI-3). É o caso em
+   que o job `visual` é prova, não formalidade.
+
+**Medido** (PR #64, mesclado em `979fac7`): `d015` **5 PASS · 0 FAIL** e campanha
+**15/15** com `IC-4` 15 âncoras · `d010` **24/24** · `p50core` **64/64** após
+**dois** repins inline (R8 §2) · `run.sh` completo **17 PASS · 1 FAIL**, só
+`p51`/`p52` sem Chromium · CI **verify · visual · fecho todos verdes**.
+
+### O que este fecho NÃO faz
+
+Não funde as duas curadorias — continua diferido no §P9 da 015, que exige decisão
+sobre reabrir a §UAT-07. E não toca o `EA-26`, que é a **outra** duplicação (mesmo
+`MAP` em duas seções) e está bloqueada pelo `D015-GOV1`.
 
 ### O que este registro não decide
 

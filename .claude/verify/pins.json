@@ -1,7 +1,7 @@
 {
   "_meta": {
     "descricao": "Registry único de pins — fonte de identidade dos artefatos (R8). Hashes = SHA-256 dos blobs de HEAD. Alterar arquivo pinado exige regenerar este registry no MESMO PR, com motivo no commit.",
-    "gerado_de_head": "ef4bbd0c7754bdee633b32e2bfad406941690812",
+    "gerado_de_head": "4e41c6b05a86906c71ca4ac31fe713e20324999e",
     "gerado_em": "2026-09-13",
     "exclusoes": [
       "docs_phase5/**",
@@ -15,7 +15,7 @@
     "baseline_core_zip_sha256": "625079c462be7d44ffd69b1cd85f256382322bd0555ae4b548f21bf30ee5b89d"
   },
   "files": {
-    ".claude/BACKLOG.md": "cc7e92fab2ca8d2d50157614de22ccbbcf46ab34cc3cdf038d6304ba93d5027b",
+    ".claude/BACKLOG.md": "b76b2927b133ed5f324854462ed4fc9adce37a8d1f4c8edbb3be1a61d64ef41e",
     ".claude/agent-memory/README.md": "2f868716c8785119c1d6a02a7715f7b5058ab968f55951410fc82fc45b960a93",
     ".claude/agent-memory/build-engineer/MEMORY.md": "5ed47a73226fea6613b44c2ce70b26e95415033bafbd69a3ada20fa7df0bf950",
     ".claude/agent-memory/build-engineer/feedback_escopo_de_scanner_nos_dois_sentidos.md": "a07b03eb0687bc4f08ff02375684b8441f8d434384c415a3e25b1fe233007527",
@@ -332,7 +332,7 @@
     "playwright.config.js": "3eacc465035e5fdf3136f09e8346ab05de36c8384710f33a780bd297599bf846",
     "prototypes/.gitkeep": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
     "quickscan_secops_soccmm_v3_1_3.html": "d329049147950a5b2a40b2735c3d4bd9a89177fed439efbcb58df01bdeb7ae82",
-    "quickscan_secops_soccmm_v3_2_dev.html": "a6aeec594938f1d93b6961f03d61eac9273a7204d9f785cb5c4bbf18f4231c42",
+    "quickscan_secops_soccmm_v3_2_dev.html": "29c7c4b66af8187ae6fa6b91f396de362065e85ce7b96b72d6f9dd728a8d61b2",
     "session_roundtrip_report.md": "ffe0d30411cc086681a44fa8d69e1066a0bf26173f15dd8580286787056cf4f8",
     "specs/.gitkeep": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
     "specs/003-marcador-duplicado/fix-finding-registry.md": "dce0be8376f543678b9b214fd2e03e0efbda9f45cd978b909d0cc5208fa456a2",
@@ -482,7 +482,7 @@
     "ui_p50_suff_v32.js": "a9931330021949b581da29012be7669edf75529aaaaa9c2f13d0165494b86f5b",
     "ui_p50_v32.css": "60dc3f324015d011b0210cf0794b8e4951e62a26be4878799b27d75ed1317023",
     "ui_p52_workspace_v32.css": "f71a0054c5cd23473676677c5fe2cd3e17ceb24f358a3e349a4fbf8b15027da1",
-    "ui_p52_workspace_v32.js": "11ce46abc3c28773ef7a37d117eece76888331b7a71348e8eadaf74747749cea",
+    "ui_p52_workspace_v32.js": "909bfaffc35f7029ec642c4e65e9b34727c9ecb30adae9ea71213ad969114923",
     "ui_refinement_v32.js": "ade18a9afd265966feb40cb9f2926e20f5ffd2534dcfe7ec602e46cc6d01132c",
     "ui_session_v32.js": "6fd849cdbdbb6838921a1519613e8a5194777c6eeb9e3e102c681a0ddc27164b",
     "ui_target_v32.js": "81adcb219b606a444dbf046fabeee4d46c411b74a69012896f6e26c90f3c8f5c",

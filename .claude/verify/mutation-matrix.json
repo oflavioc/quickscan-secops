@@ -65,9 +65,9 @@
       "gate": "suítes P50",
       "invariante": "superfícies 5.0",
       "ultima_prova": {
-        "data": "histórica (fases 5.0.x)",
-        "resultado": "KILL",
-        "registro": "docs_phase5/evidence_p50/P50-5.0.5-mutation.json"
+        "data": "2026-09-13",
+        "resultado": "KILL — 56/56 DETECTADO na campanha completa",
+        "registro": "job `visual` do CI, run 34772594772 (PR #67, fix/ea23-vocabulario, 2026-09-13) — campanha COMPLETA, restauracao byte a byte conferida nos quatro alvos e no HTML; `nao-KILL: nenhum`"
       }
     },
     {
@@ -83,9 +83,9 @@
         "recorte": "o comentário `Phase 5.1 · apresentação da pergunta e controle único de evidência.`"
       },
       "ultima_prova": {
-        "data": "2026-08-22",
-        "resultado": "KILL",
-        "registro": "docs_phase5/AUDITORIA_INDEPENDENTE_REAUDITORIA_PHASE_5_1_ERRATA.md",
+        "data": "2026-09-13",
+        "resultado": "KILL — 19/19 DETECTADO na campanha completa",
+        "registro": "job `visual` do CI, run 34772594772 (PR #67, fix/ea23-vocabulario, 2026-09-13) — campanha COMPLETA, restauracao byte a byte conferida nos quatro alvos e no HTML; `nao-KILL: nenhum`",
         "nota": "campanha `tests_p51_mutants.js` executada integralmente na reauditoria independente da fase 5.1: 20/20 mutantes detectados pelo gate e pelo motivo esperados, zero NÃO DETECTADO, zero ERRO, zero restauração divergente. Âncora conferida de novo em 2026-08-29 pelo preflight (C1), ocorrencias == 1 — a prova de KILL, porém, é a de 2026-08-22."
       }
     },
@@ -104,9 +104,9 @@
         "razao": "âncora podre — ocorrencias=0 no preflight da W3: a COPY-B §5.1 reescreveu o texto do `ex:` de `mandate` ('charter' virou 'direcionamento'). A propriedade, o gate (tests_p50_core.js:2723-2724) e o `reason` seguem vivos; só o recorte mudou."
       },
       "ultima_prova": {
-        "data": "2026-08-29",
-        "resultado": "KILL",
-        "registro": "specs/013-integridade-da-campanha/matriz-gate-mutante.md",
+        "data": "2026-09-13",
+        "resultado": "KILL — 19/19 DETECTADO na campanha completa",
+        "registro": "job `visual` do CI, run 34772594772 (PR #67, fix/ea23-vocabulario, 2026-09-13) — campanha COMPLETA, restauracao byte a byte conferida nos quatro alvos e no HTML; `nao-KILL: nenhum`",
         "commit": "6d0a581",
         "nota": "reancorado na T019 (demanda 013) com as três provas cumulativas de T9: (a) unicidade pelo preflight; (b) morte por P51-UX2 com o motivo esperado (`reason`); (c) sobrevivência com as asserções alcançadas pelo `reason` neutralizadas em bloco, em worktree efêmera. Triagem, propriedade e sítio na matriz §3-§4; as linhas de gate medidas estão registradas na mensagem do commit 6d0a581."
       }
@@ -124,9 +124,9 @@
         "recorte": "o `<span class=\"jn-num\">` com a interpolação do índice"
       },
       "ultima_prova": {
-        "data": "2026-08-22",
-        "resultado": "KILL",
-        "registro": "docs_phase5/AUDITORIA_INDEPENDENTE_REAUDITORIA_PHASE_5_1_ERRATA.md",
+        "data": "2026-09-13",
+        "resultado": "KILL — 19/19 DETECTADO na campanha completa",
+        "registro": "job `visual` do CI, run 34772594772 (PR #67, fix/ea23-vocabulario, 2026-09-13) — campanha COMPLETA, restauracao byte a byte conferida nos quatro alvos e no HTML; `nao-KILL: nenhum`",
         "nota": "campanha `tests_p51_mutants.js` executada integralmente na reauditoria independente da fase 5.1: 20/20 mutantes detectados pelo gate e pelo motivo esperados, zero NÃO DETECTADO, zero ERRO, zero restauração divergente. Âncora conferida de novo em 2026-08-29 pelo preflight (C1), ocorrencias == 1 — a prova de KILL, porém, é a de 2026-08-22."
       }
     },
@@ -143,9 +143,9 @@
         "recorte": "o atributo `data-dom` da pergunta"
       },
       "ultima_prova": {
-        "data": "2026-08-22",
-        "resultado": "KILL",
-        "registro": "docs_phase5/AUDITORIA_INDEPENDENTE_REAUDITORIA_PHASE_5_1_ERRATA.md",
+        "data": "2026-09-13",
+        "resultado": "KILL — 19/19 DETECTADO na campanha completa",
+        "registro": "job `visual` do CI, run 34772594772 (PR #67, fix/ea23-vocabulario, 2026-09-13) — campanha COMPLETA, restauracao byte a byte conferida nos quatro alvos e no HTML; `nao-KILL: nenhum`",
         "nota": "campanha `tests_p51_mutants.js` executada integralmente na reauditoria independente da fase 5.1: 20/20 mutantes detectados pelo gate e pelo motivo esperados, zero NÃO DETECTADO, zero ERRO, zero restauração divergente. Âncora conferida de novo em 2026-08-29 pelo preflight (C1), ocorrencias == 1 — a prova de KILL, porém, é a de 2026-08-22."
       }
     },
@@ -162,9 +162,9 @@
         "recorte": "a entrada `FortiClient administrado por EMS` com o texto do escopo"
       },
       "ultima_prova": {
-        "data": "2026-08-22",
-        "resultado": "KILL",
-        "registro": "docs_phase5/AUDITORIA_INDEPENDENTE_REAUDITORIA_PHASE_5_1_ERRATA.md",
+        "data": "2026-09-13",
+        "resultado": "KILL — 19/19 DETECTADO na campanha completa",
+        "registro": "job `visual` do CI, run 34772594772 (PR #67, fix/ea23-vocabulario, 2026-09-13) — campanha COMPLETA, restauracao byte a byte conferida nos quatro alvos e no HTML; `nao-KILL: nenhum`",
         "nota": "campanha `tests_p51_mutants.js` executada integralmente na reauditoria independente da fase 5.1: 20/20 mutantes detectados pelo gate e pelo motivo esperados, zero NÃO DETECTADO, zero ERRO, zero restauração divergente. Âncora conferida de novo em 2026-08-29 pelo preflight (C1), ocorrencias == 1 — a prova de KILL, porém, é a de 2026-08-22."
       }
     },
@@ -181,9 +181,9 @@
         "recorte": "a abertura de `QS_GAP_SUPPORT` com a primeira chave (`detection-lifecycle`)"
       },
       "ultima_prova": {
-        "data": "2026-08-22",
-        "resultado": "KILL",
-        "registro": "docs_phase5/AUDITORIA_INDEPENDENTE_REAUDITORIA_PHASE_5_1_ERRATA.md",
+        "data": "2026-09-13",
+        "resultado": "KILL — 19/19 DETECTADO na campanha completa",
+        "registro": "job `visual` do CI, run 34772594772 (PR #67, fix/ea23-vocabulario, 2026-09-13) — campanha COMPLETA, restauracao byte a byte conferida nos quatro alvos e no HTML; `nao-KILL: nenhum`",
         "nota": "campanha `tests_p51_mutants.js` executada integralmente na reauditoria independente da fase 5.1: 20/20 mutantes detectados pelo gate e pelo motivo esperados, zero NÃO DETECTADO, zero ERRO, zero restauração divergente. Âncora conferida de novo em 2026-08-29 pelo preflight (C1), ocorrencias == 1 — a prova de KILL, porém, é a de 2026-08-22."
       }
     },
@@ -200,9 +200,9 @@
         "recorte": "a regra de `option` de `#ux-target`, com `color` e `background-color` explícitos"
       },
       "ultima_prova": {
-        "data": "2026-08-22",
-        "resultado": "KILL",
-        "registro": "docs_phase5/AUDITORIA_INDEPENDENTE_REAUDITORIA_PHASE_5_1_ERRATA.md",
+        "data": "2026-09-13",
+        "resultado": "KILL — 19/19 DETECTADO na campanha completa",
+        "registro": "job `visual` do CI, run 34772594772 (PR #67, fix/ea23-vocabulario, 2026-09-13) — campanha COMPLETA, restauracao byte a byte conferida nos quatro alvos e no HTML; `nao-KILL: nenhum`",
         "nota": "campanha `tests_p51_mutants.js` executada integralmente na reauditoria independente da fase 5.1: 20/20 mutantes detectados pelo gate e pelo motivo esperados, zero NÃO DETECTADO, zero ERRO, zero restauração divergente. Âncora conferida de novo em 2026-08-29 pelo preflight (C1), ocorrencias == 1 — a prova de KILL, porém, é a de 2026-08-22."
       }
     },
@@ -219,9 +219,9 @@
         "recorte": "a atribuição de `p51Meta.label` a partir de `doc.label`"
       },
       "ultima_prova": {
-        "data": "2026-08-22",
-        "resultado": "KILL",
-        "registro": "docs_phase5/AUDITORIA_INDEPENDENTE_REAUDITORIA_PHASE_5_1_ERRATA.md",
+        "data": "2026-09-13",
+        "resultado": "KILL — 19/19 DETECTADO na campanha completa",
+        "registro": "job `visual` do CI, run 34772594772 (PR #67, fix/ea23-vocabulario, 2026-09-13) — campanha COMPLETA, restauracao byte a byte conferida nos quatro alvos e no HTML; `nao-KILL: nenhum`",
         "nota": "campanha `tests_p51_mutants.js` executada integralmente na reauditoria independente da fase 5.1: 20/20 mutantes detectados pelo gate e pelo motivo esperados, zero NÃO DETECTADO, zero ERRO, zero restauração divergente. Âncora conferida de novo em 2026-08-29 pelo preflight (C1), ocorrencias == 1 — a prova de KILL, porém, é a de 2026-08-22."
       }
     },
@@ -238,9 +238,9 @@
         "recorte": "a atribuição de `sessionDateISO` a partir de `m.startedAt`"
       },
       "ultima_prova": {
-        "data": "2026-08-22",
-        "resultado": "KILL",
-        "registro": "docs_phase5/AUDITORIA_INDEPENDENTE_REAUDITORIA_PHASE_5_1_ERRATA.md",
+        "data": "2026-09-13",
+        "resultado": "KILL — 19/19 DETECTADO na campanha completa",
+        "registro": "job `visual` do CI, run 34772594772 (PR #67, fix/ea23-vocabulario, 2026-09-13) — campanha COMPLETA, restauracao byte a byte conferida nos quatro alvos e no HTML; `nao-KILL: nenhum`",
         "nota": "campanha `tests_p51_mutants.js` executada integralmente na reauditoria independente da fase 5.1: 20/20 mutantes detectados pelo gate e pelo motivo esperados, zero NÃO DETECTADO, zero ERRO, zero restauração divergente. Âncora conferida de novo em 2026-08-29 pelo preflight (C1), ocorrencias == 1 — a prova de KILL, porém, é a de 2026-08-22."
       }
     },
@@ -257,9 +257,9 @@
         "recorte": "a linha `const determinado = suff && overall !== null;`"
       },
       "ultima_prova": {
-        "data": "2026-08-22",
-        "resultado": "KILL",
-        "registro": "docs_phase5/AUDITORIA_INDEPENDENTE_REAUDITORIA_PHASE_5_1_ERRATA.md",
+        "data": "2026-09-13",
+        "resultado": "KILL — 19/19 DETECTADO na campanha completa",
+        "registro": "job `visual` do CI, run 34772594772 (PR #67, fix/ea23-vocabulario, 2026-09-13) — campanha COMPLETA, restauracao byte a byte conferida nos quatro alvos e no HTML; `nao-KILL: nenhum`",
         "nota": "campanha `tests_p51_mutants.js` executada integralmente na reauditoria independente da fase 5.1: 20/20 mutantes detectados pelo gate e pelo motivo esperados, zero NÃO DETECTADO, zero ERRO, zero restauração divergente. Âncora conferida de novo em 2026-08-29 pelo preflight (C1), ocorrencias == 1 — a prova de KILL, porém, é a de 2026-08-22."
       }
     },
@@ -276,9 +276,9 @@
         "recorte": "o par `bands` + `stageAt` do descritor da régua"
       },
       "ultima_prova": {
-        "data": "2026-08-22",
-        "resultado": "KILL",
-        "registro": "docs_phase5/AUDITORIA_INDEPENDENTE_REAUDITORIA_PHASE_5_1_ERRATA.md",
+        "data": "2026-09-13",
+        "resultado": "KILL — 19/19 DETECTADO na campanha completa",
+        "registro": "job `visual` do CI, run 34772594772 (PR #67, fix/ea23-vocabulario, 2026-09-13) — campanha COMPLETA, restauracao byte a byte conferida nos quatro alvos e no HTML; `nao-KILL: nenhum`",
         "nota": "campanha `tests_p51_mutants.js` executada integralmente na reauditoria independente da fase 5.1: 20/20 mutantes detectados pelo gate e pelo motivo esperados, zero NÃO DETECTADO, zero ERRO, zero restauração divergente. Âncora conferida de novo em 2026-08-29 pelo preflight (C1), ocorrencias == 1 — a prova de KILL, porém, é a de 2026-08-22."
       }
     },
@@ -295,9 +295,9 @@
         "recorte": "o `map` da legenda de domínios, com `PR_DOM_HEX[i]`"
       },
       "ultima_prova": {
-        "data": "2026-08-22",
-        "resultado": "KILL",
-        "registro": "docs_phase5/AUDITORIA_INDEPENDENTE_REAUDITORIA_PHASE_5_1_ERRATA.md",
+        "data": "2026-09-13",
+        "resultado": "KILL — 19/19 DETECTADO na campanha completa",
+        "registro": "job `visual` do CI, run 34772594772 (PR #67, fix/ea23-vocabulario, 2026-09-13) — campanha COMPLETA, restauracao byte a byte conferida nos quatro alvos e no HTML; `nao-KILL: nenhum`",
         "nota": "campanha `tests_p51_mutants.js` executada integralmente na reauditoria independente da fase 5.1: 20/20 mutantes detectados pelo gate e pelo motivo esperados, zero NÃO DETECTADO, zero ERRO, zero restauração divergente. Âncora conferida de novo em 2026-08-29 pelo preflight (C1), ocorrencias == 1 — a prova de KILL, porém, é a de 2026-08-22."
       }
     },
@@ -314,9 +314,9 @@
         "recorte": "a linha do polígono do emblema (`QS_PENTA.map`)"
       },
       "ultima_prova": {
-        "data": "2026-08-22",
-        "resultado": "KILL",
-        "registro": "docs_phase5/AUDITORIA_INDEPENDENTE_REAUDITORIA_PHASE_5_1_ERRATA.md",
+        "data": "2026-09-13",
+        "resultado": "KILL — 19/19 DETECTADO na campanha completa",
+        "registro": "job `visual` do CI, run 34772594772 (PR #67, fix/ea23-vocabulario, 2026-09-13) — campanha COMPLETA, restauracao byte a byte conferida nos quatro alvos e no HTML; `nao-KILL: nenhum`",
         "nota": "campanha `tests_p51_mutants.js` executada integralmente na reauditoria independente da fase 5.1: 20/20 mutantes detectados pelo gate e pelo motivo esperados, zero NÃO DETECTADO, zero ERRO, zero restauração divergente. Âncora conferida de novo em 2026-08-29 pelo preflight (C1), ocorrencias == 1 — a prova de KILL, porém, é a de 2026-08-22."
       }
     },
@@ -333,9 +333,9 @@
         "recorte": "o `<text>` do rótulo do domínio no emblema"
       },
       "ultima_prova": {
-        "data": "2026-08-22",
-        "resultado": "KILL",
-        "registro": "docs_phase5/AUDITORIA_INDEPENDENTE_REAUDITORIA_PHASE_5_1_ERRATA.md",
+        "data": "2026-09-13",
+        "resultado": "KILL — 19/19 DETECTADO na campanha completa",
+        "registro": "job `visual` do CI, run 34772594772 (PR #67, fix/ea23-vocabulario, 2026-09-13) — campanha COMPLETA, restauracao byte a byte conferida nos quatro alvos e no HTML; `nao-KILL: nenhum`",
         "nota": "campanha `tests_p51_mutants.js` executada integralmente na reauditoria independente da fase 5.1: 20/20 mutantes detectados pelo gate e pelo motivo esperados, zero NÃO DETECTADO, zero ERRO, zero restauração divergente. Âncora conferida de novo em 2026-08-29 pelo preflight (C1), ocorrencias == 1 — a prova de KILL, porém, é a de 2026-08-22."
       }
     },
@@ -354,9 +354,9 @@
         "razao": "âncora podre — ocorrencias=0 no preflight da W3. Propriedade viva (ui_v32.js:1036, :1041), gate P51-PDF1 vivo (tests_p50_chromium.js:3603-3605) e `reason` casando a mensagem de hoje."
       },
       "ultima_prova": {
-        "data": "2026-08-22",
-        "resultado": "KILL",
-        "registro": "docs_phase5/AUDITORIA_INDEPENDENTE_REAUDITORIA_PHASE_5_1_ERRATA.md",
+        "data": "2026-09-13",
+        "resultado": "KILL — 19/19 DETECTADO na campanha completa",
+        "registro": "job `visual` do CI, run 34772594772 (PR #67, fix/ea23-vocabulario, 2026-09-13) — campanha COMPLETA, restauracao byte a byte conferida nos quatro alvos e no HTML; `nao-KILL: nenhum`",
         "nota": "KILL medido em 2026-08-22 contra a âncora ANTIGA, na campanha integral 20/20 da reauditoria da fase 5.1. Depois da reancoragem de 2026-08-29 (T019, commit 6d0a581) fecharam (a) unicidade e uma (b) PARCIAL por oráculo de artefato; a prova geométrica exige Chromium, ausente na máquina da demanda, e o harness classificou o mutante como NÃO EXECUTADO · gate não pôde ser executado — nunca SOBREVIVENTE. As provas (b) plena e (c) do recorte novo estão PENDENTES no job `visual`: pendência nominal em dividas_declaradas, não em silêncio."
       }
     },
@@ -373,9 +373,9 @@
         "recorte": "o cálculo de `gap` com `p50Round1(tScore - score)`"
       },
       "ultima_prova": {
-        "data": "2026-08-22",
-        "resultado": "KILL",
-        "registro": "docs_phase5/AUDITORIA_INDEPENDENTE_REAUDITORIA_PHASE_5_1_ERRATA.md",
+        "data": "2026-09-13",
+        "resultado": "KILL — 19/19 DETECTADO na campanha completa",
+        "registro": "job `visual` do CI, run 34772594772 (PR #67, fix/ea23-vocabulario, 2026-09-13) — campanha COMPLETA, restauracao byte a byte conferida nos quatro alvos e no HTML; `nao-KILL: nenhum`",
         "nota": "campanha `tests_p51_mutants.js` executada integralmente na reauditoria independente da fase 5.1: 20/20 mutantes detectados pelo gate e pelo motivo esperados, zero NÃO DETECTADO, zero ERRO, zero restauração divergente. Âncora conferida de novo em 2026-08-29 pelo preflight (C1), ocorrencias == 1 — a prova de KILL, porém, é a de 2026-08-22."
       }
     },
@@ -394,9 +394,9 @@
         "razao": "âncora podre — ocorrencias=0 no preflight da W3 (NÃO ambiguidade: o bloco de três linhas registrado não casava nenhum dos dois sítios). A unicidade do recorte novo é CONSTRUÍDA: ancora-se no comentário que ENUNCIA a propriedade, porque o `const` adjacente sozinho cairia em `legacySnapshot` (ui_v32.js:131) em vez de `buildPrintReport` (:1026) — e ali P51-RPT6 reprova com mensagem que não casa o `reason`, o que o harness contabiliza como SOBREVIVENTE."
       },
       "ultima_prova": {
-        "data": "2026-08-29",
-        "resultado": "KILL",
-        "registro": "specs/013-integridade-da-campanha/matriz-gate-mutante.md",
+        "data": "2026-09-13",
+        "resultado": "KILL — 19/19 DETECTADO na campanha completa",
+        "registro": "job `visual` do CI, run 34772594772 (PR #67, fix/ea23-vocabulario, 2026-09-13) — campanha COMPLETA, restauracao byte a byte conferida nos quatro alvos e no HTML; `nao-KILL: nenhum`",
         "commit": "6d0a581",
         "nota": "reancorado na T019 (demanda 013) com as três provas cumulativas de T9: (a) unicidade pelo preflight; (b) morte por P51-RPT6 com o motivo esperado (`reason`); (c) sobrevivência com as asserções alcançadas pelo `reason` neutralizadas em bloco, em worktree efêmera. Triagem, propriedade e sítio na matriz §3-§4; as linhas de gate medidas estão registradas na mensagem do commit 6d0a581."
       }
@@ -414,9 +414,9 @@
         "recorte": "o parágrafo `**Score 0–5.**` da definição de score"
       },
       "ultima_prova": {
-        "data": "2026-08-22",
-        "resultado": "KILL",
-        "registro": "docs_phase5/AUDITORIA_INDEPENDENTE_REAUDITORIA_PHASE_5_1_ERRATA.md",
+        "data": "2026-09-13",
+        "resultado": "KILL — 19/19 DETECTADO na campanha completa",
+        "registro": "job `visual` do CI, run 34772594772 (PR #67, fix/ea23-vocabulario, 2026-09-13) — campanha COMPLETA, restauracao byte a byte conferida nos quatro alvos e no HTML; `nao-KILL: nenhum`",
         "nota": "campanha `tests_p51_mutants.js` executada integralmente na reauditoria independente da fase 5.1: 20/20 mutantes detectados pelo gate e pelo motivo esperados, zero NÃO DETECTADO, zero ERRO, zero restauração divergente. Âncora conferida de novo em 2026-08-29 pelo preflight (C1), ocorrencias == 1 — a prova de KILL, porém, é a de 2026-08-22."
       }
     },
@@ -435,9 +435,9 @@
         "razao": "âncora podre — ocorrencias=0 no preflight da W3. Propriedade viva (USER_GUIDE.md:416-430), gate P51-DOC13 vivo (tests_p50_core.js:3714-3730) e `reason` casando a mensagem de hoje."
       },
       "ultima_prova": {
-        "data": "2026-08-29",
-        "resultado": "KILL",
-        "registro": "specs/013-integridade-da-campanha/matriz-gate-mutante.md",
+        "data": "2026-09-13",
+        "resultado": "KILL — 19/19 DETECTADO na campanha completa",
+        "registro": "job `visual` do CI, run 34772594772 (PR #67, fix/ea23-vocabulario, 2026-09-13) — campanha COMPLETA, restauracao byte a byte conferida nos quatro alvos e no HTML; `nao-KILL: nenhum`",
         "commit": "6d0a581",
         "nota": "reancorado na T019 (demanda 013) com as três provas cumulativas de T9: (a) unicidade pelo preflight; (b) morte por P51-DOC13 com o motivo esperado (`reason`); (c) sobrevivência com as asserções alcançadas pelo `reason` neutralizadas em bloco, em worktree efêmera. Triagem, propriedade e sítio na matriz §3-§4; as linhas de gate medidas estão registradas na mensagem do commit 6d0a581."
       }
@@ -448,9 +448,9 @@
       "gate": "suítes P52/Target/Journey",
       "invariante": "superfícies 5.2",
       "ultima_prova": {
-        "data": "2026-08-31",
-        "resultado": "KILL",
-        "registro": "docs_phase5/evidence_p52/P52-mutation.json | reconfirmado em job `visual` do CI, run 33389017967 (job 99478074174), 2026-08-31 — `mutation: 5 campanha(s) executada(s) · 0 problema(s)`: 107/107 DETECTADO, nenhum não-KILL"
+        "data": "2026-09-13",
+        "resultado": "KILL — 108/108 DETECTADO na campanha completa",
+        "registro": "job `visual` do CI, run 34772594772 (PR #67, fix/ea23-vocabulario, 2026-09-13) — campanha COMPLETA, restauracao byte a byte conferida nos quatro alvos e no HTML; `nao-KILL: nenhum`"
       }
     },
     {
@@ -459,9 +459,9 @@
       "gate": "P52-TGT1 (tests_p52_layout.js, P52_ONLY=P52-TGT1)",
       "invariante": "C3 — adjacência alvo→contexto sobrevive à reancoragem da ordem; a POSIÇÃO ABSOLUTA que P52-TGT1 deixou de afirmar passou para D009-ORD1/ORD2",
       "ultima_prova": {
-        "data": "2026-08-31",
-        "resultado": "KILL — 'P52-F1: contexto (4) antes do alvo (5)' (o `reason` reescrito, /contexto \\(\\d+\\) antes do alvo/, casou; a alternativa antiga 'alvo não é imediatamente posterior' foi removida junto com a asserção que a produzia)",
-        "registro": "T019 (wave 6) — fecha o 'NÃO EXECUTADO, com motivo' declarado no red (commit 3950288): a árvore estava limpa e o harness reconstrói o HTML gerado. Restauração byte a byte OK (9 arquivos + html); acervo de evidência 43 arquivos byte-idênticos; nenhum recibo escrito (execução PARCIAL não grava P52-mutation.json) | reconfirmado em job `visual` do CI, run 33389017967 (job 99478074174), 2026-08-31 — `mutation: 5 campanha(s) executada(s) · 0 problema(s)`: 107/107 DETECTADO, nenhum não-KILL"
+        "data": "2026-09-13",
+        "resultado": "KILL — 108/108 DETECTADO na campanha completa",
+        "registro": "job `visual` do CI, run 34772594772 (PR #67, fix/ea23-vocabulario, 2026-09-13) — campanha COMPLETA, restauracao byte a byte conferida nos quatro alvos e no HTML; `nao-KILL: nenhum`"
       }
     },
     {
@@ -476,9 +476,9 @@
         "verificada_em": "2026-09-04 — preflight p52 (C1) na árvore de fix/ea32-particao-do-p52-ra8 (base 09f4342): exit 0, 108/108 âncoras com ocorrencias == 1 (eram 107 antes da partição; 37 mutantes de CSS, eram 36)"
       },
       "ultima_prova": {
-        "data": "2026-09-04",
-        "resultado": "KILL",
-        "registro": "job `visual` do CI, run 33860535587 (job 100983709794), workflow_dispatch sobre 59c8ad3 (2026-09-04, 09:53Z → 10:16Z; os arquivos do ciclo são byte-idênticos até 69c8eb3 — `git diff --stat 59c8ad3 HEAD` toca só .claude/BACKLOG.md e pins.json), Chrome for Testing 151.0.7922.34 (playwright chromium v1234). LIDO DO LOG, não inferido: '[OK]   IC-4: p52: 108 âncora(s) com ocorrencias == 1 (preflight, C1)' · '[RUN]  p52: node tests_p52_mutants.js' · 'MUTATION TESTING (Phase 5.2) [tests_p52_mutants.js]: 108/108 mutantes detectados pelo gate e motivo esperados' · 'não-KILL: nenhum — os 108 mutante(s) lidos estão DETECTADO'; controle na árvore limpa, no mesmo job: 'PASS  P52-ICON2 — catálogo exibido com altura aparente normalizada e nenhum artwork encostando na borda' e 'P52 CHROMIUM (Phase 5.2): 55 PASS · 0 FAIL de 55'. 108 = 107 + esta partição: as duas metades estavam na população lida (IC-4). O fecho do stage no mesmo run foi 'mutation: 2 campanha(s) executada(s) · 1 problema(s)' — o problema é d014/D014-M8 (errata E15 da 014), não a p52. Condição 3 do reparo cumprida: o kill foi medido antes de ser pinado.",
+        "data": "2026-09-13",
+        "resultado": "KILL — 108/108 DETECTADO na campanha completa",
+        "registro": "job `visual` do CI, run 34772594772 (PR #67, fix/ea23-vocabulario, 2026-09-13) — campanha COMPLETA, restauracao byte a byte conferida nos quatro alvos e no HTML; `nao-KILL: nenhum`",
         "prova_anterior": "NÃO EXECUTADO · ambiente sem chromium (2026-09-04, nascimento do par no fix-finding do EA-32, commit 8d753bc): o kill canônico DESTA forma ficou deferido ao job `visual` — condição 3 do reparo, lição da E13. Antes disso, KILL da forma de DUAS partes (metade MDR efetiva + metade SOCaaS inerte) no job visual, run 33834890154 (job 100905257457, head 51e6c69, 2026-09-04): p52 107/107, 'não-KILL: nenhum' — prova de que P52-ICON2 matava pela metade MDR; não se transferia à forma atual (repl diferente: sem a inserção) nem a P52-RA8B.",
         "nota": "Reprodução NÃO-canônica em 2026-09-04 (Chrome estável 152.0.7977.77 local via CHROME_PATH, Playwright 1.62.1, worktree efêmera destacada em 09f4342 com o harness partido, removida em seguida): controle sem mutação 'PASS P52-ICON2' (igual ao CI); campanha filtrada P52_MUT_ONLY=P52-RA8,P52-RA8B: DETECTADO 2/2 — linha crua 'FAIL P52-ICON2 — … [lg/FortiGuard MDR: altura aparente 34.9% do tile · lg/FortiGuard MDR: desvio de altura 53.9% da mediana]'; restauração byte a byte OK (8 fontes + html), acervo 43 arquivos intactos. A linha nomeia SÓ o próprio asset — é o que a partição comprava. Números ABAIXO do raciocínio da análise (≈52%): o gate multiplica por `scale` um rect que já inclui o transform (tests_p52_chromium.js:1131-1132) — observação repassada como candidata a achado, não corrigida aqui (gate invocado, nunca editado). Nunca substitui a contagem canônica (KI-3)."
       }
@@ -495,9 +495,9 @@
         "verificada_em": "2026-09-04 — preflight p52 (C1) na árvore de fix/ea32-particao-do-p52-ra8 (base 09f4342): exit 0, 108/108 âncoras com ocorrencias == 1"
       },
       "ultima_prova": {
-        "data": "2026-09-04",
-        "resultado": "KILL",
-        "registro": "job `visual` do CI, run 33860535587 (job 100983709794), workflow_dispatch sobre 59c8ad3 (2026-09-04, 09:53Z → 10:16Z; arquivos do ciclo byte-idênticos até 69c8eb3), Chrome for Testing 151.0.7922.34. LIDO DO LOG, não inferido: '[OK]   IC-4: p52: 108 âncora(s) com ocorrencias == 1 (preflight, C1)' · 'MUTATION TESTING (Phase 5.2) [tests_p52_mutants.js]: 108/108 mutantes detectados pelo gate e motivo esperados' · 'não-KILL: nenhum — os 108 mutante(s) lidos estão DETECTADO'; controle na árvore limpa 'PASS  P52-ICON2 — …' e 'P52 CHROMIUM (Phase 5.2): 55 PASS · 0 FAIL de 55'. Primeira prova desta metade em toda a sua história: sob o id antigo ela nunca foi efetiva. O único não-KILL do run é d014/D014-M8 (errata E15 da 014). Condição 3 do reparo cumprida: medido antes de pinado.",
+        "data": "2026-09-13",
+        "resultado": "KILL — 108/108 DETECTADO na campanha completa",
+        "registro": "job `visual` do CI, run 34772594772 (PR #67, fix/ea23-vocabulario, 2026-09-13) — campanha COMPLETA, restauracao byte a byte conferida nos quatro alvos e no HTML; `nao-KILL: nenhum`",
         "prova_anterior": "NÃO EXECUTADO · ambiente sem chromium (2026-09-04, nascimento do par no fix-finding do EA-32, commit 8d753bc): kill canônico deferido ao job `visual` — condição 3 do reparo. Nenhum KILL anterior cobre esta metade (ver descricao).",
         "nota": "Reprodução NÃO-canônica em 2026-09-04 (Chrome estável 152.0.7977.77 local via CHROME_PATH, Playwright 1.62.1, worktree efêmera destacada em 09f4342 com o harness partido, removida em seguida): controle sem mutação 'PASS P52-ICON2'; campanha filtrada P52_MUT_ONLY=P52-RA8,P52-RA8B: DETECTADO 2/2 — linha crua 'FAIL P52-ICON2 — … [lg/FortiGuard SOCaaS: altura aparente 36.5% do tile · lg/FortiGuard SOCaaS: desvio de altura 51.8% da mediana]'; restauração byte a byte OK. A varredura de regra morta da 014 vê esta declaração como VIVA (1 declaração, 1 viva) — a metade que antes era morta por ordem passou a ter carrasco. Nunca substitui a contagem canônica (KI-3)."
       }

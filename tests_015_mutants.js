@@ -106,7 +106,13 @@ const BQ = String.fromCharCode(96);            /* crase, sem crase no fonte */
 const EYEBROW = '<div class="eyebrow">Leitura das prioridades declaradas · contexto V3.2</div>';
 const H3_PRIO = '<h3>Leitura das prioridades declaradas</h3>';
 const H3_BASE = '<h3>Leitura base — contexto tecnológico não informado</h3>';
-const FONTE_TXT = 'Esta lista parte da <b>capability</b> associada ao gap, não do nível respondido na pergunta — por isso pode não coincidir com outras listas deste relatório.';
+/* A frase cresceu no fix-finding do EA-48 (2026-09-12): o papel passa a nomear a
+   ancoragem canônica decidida no EA-21. A âncora acompanha o fonte — é a classe do
+   EA-4 (âncora podre), e ela apodreceu de fato: M5/M6/M7 saíram NÃO EXECUTADO com
+   `ocorrencias=0` na campanha antes desta correção. A SEMÂNTICA dos três mutantes
+   NÃO muda: M5 segue suprimindo o nó no ramo declarado, M6 segue invertendo a
+   propriedade para ancoragem por nível, M7 segue reusando o atributo errado. */
+const FONTE_TXT = 'Esta lista parte da <b>capability</b> associada ao gap, não do nível respondido na pergunta — por isso pode não coincidir com outras listas deste relatório. A <b>ancoragem canônica</b> desta sessão é a que parte da pergunta e do nível respondido; esta lista é complementar.';
 /* A indentação FAZ PARTE da âncora: é ela que separa os dois ramos. */
 const FONTE_NDECL = NL + '      <div class="pr-gapsup-why" data-pr-gap-fonte>' + FONTE_TXT + '</div>';
 const FONTE_DECL  = NL + '    <div class="pr-gapsup-why" data-pr-gap-fonte>' + FONTE_TXT + '</div>';

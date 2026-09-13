@@ -1,7 +1,7 @@
 {
   "_meta": {
     "descricao": "Registry único de pins — fonte de identidade dos artefatos (R8). Hashes = SHA-256 dos blobs de HEAD. Alterar arquivo pinado exige regenerar este registry no MESMO PR, com motivo no commit.",
-    "gerado_de_head": "83bcb46d5cf8026bc92ef6d9a6e7b245c33a8693",
+    "gerado_de_head": "29e56e32dd9c56dc9e492ccadfccd1d56adc792a",
     "gerado_em": "2026-09-12",
     "exclusoes": [
       "docs_phase5/**",
@@ -332,7 +332,7 @@
     "playwright.config.js": "3eacc465035e5fdf3136f09e8346ab05de36c8384710f33a780bd297599bf846",
     "prototypes/.gitkeep": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
     "quickscan_secops_soccmm_v3_1_3.html": "d329049147950a5b2a40b2735c3d4bd9a89177fed439efbcb58df01bdeb7ae82",
-    "quickscan_secops_soccmm_v3_2_dev.html": "7c83017151fc06fc0f04a9ecb913d515c11e9c6ebfb7030466b73c329246254a",
+    "quickscan_secops_soccmm_v3_2_dev.html": "9320a516bf62a055a34d71e564b52ebe0629ae4d421241b718469dd90aa0c7f4",
     "session_roundtrip_report.md": "ffe0d30411cc086681a44fa8d69e1066a0bf26173f15dd8580286787056cf4f8",
     "specs/.gitkeep": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
     "specs/003-marcador-duplicado/fix-finding-registry.md": "dce0be8376f543678b9b214fd2e03e0efbda9f45cd978b909d0cc5208fa456a2",
@@ -441,7 +441,7 @@
     "tests_014_mutants_visual.js": "6fadbb55fd0302ee951d3f8ee9c6d79828784253989e94f7534f98f7ea5438b6",
     "tests_014_regra_morta.js": "9f682946c929200f552041de725aa279d2baa607cf0345cc70f14fbc3f7a8115",
     "tests_015_apoio.js": "e4cfbdb52d3379b21b9a63b60e552ff5662a5f2b92662e8fb2bd0793da4c9719",
-    "tests_015_mutants.js": "47c4b5325fa1990cfa9e753cd28e94af538239190d37623cb7afcff99b5ee20a",
+    "tests_015_mutants.js": "4a1804b8cab5fe2d4b27bb81978faf7e6d95100cbc471cec49f5a8946613774a",
     "tests_016_mutants.js": "91013ea606b4e8b94aa1a3dcbd7408ec6d2f10662a85552ec3d7a74264c4e342",
     "tests_018_mutants.js": "68abe828e6d5d618e43eff715654b8bc64211e530b35f6cb6af09de2f38f39f2",
     "tests_core_mutants.js": "8a0502c2d7f34832722059435f2ccf4d7889614769526b645d4e2a720732af7e",
@@ -451,7 +451,7 @@
     "tests_journey_m45.js": "84d99be32e122f867dc1620cd1f49e4f3ae9795a32185cc75aa246d8682941f5",
     "tests_m42_m86.js": "d263ee641d699e3c99d71e7c23c4923b3444ca3fdce86a6d5eebdd71e14273ee",
     "tests_p50_chromium.js": "32058b4e980ade446d29dd205cdc98485ae3d2e9fbb66d6ee93be5e8224c8a00",
-    "tests_p50_core.js": "d0accc7e125c7426cf39d2f25d97b0846527a692203e2db37f96d0dc0dd562a2",
+    "tests_p50_core.js": "5bf93db6ebfb01c87107a23e954c8d49892812ed424c4cebcdf6234e2a70a18a",
     "tests_p50_mutants.js": "8d22e3ef250b3b6d84d1954e500ff85fe73ee56cfed2069d7d25d33a7b9799f8",
     "tests_p51_mutants.js": "dfa4ec651a41d4befd137c12b1b6046f52d1925f674e1746d6b826981a155559",
     "tests_p52_chromium.js": "713d60b81b07e0a57e2362ed3d64ca250291d6e8871f667a705e3b44d93a4e04",
@@ -489,7 +489,7 @@
     "ui_ux_v32.css": "8afbd55f97a3abd10a0a217925807a92161506be7c3ef3a8ff0303a75ebabbf3",
     "ui_ux_v32.js": "a050401145a5ed7af597eae01a9a23826418119769c096db168b3b177a9d3938",
     "ui_v32.css": "acb0eba165ef25e6b97475430e9b042a9b39038be2b9882ec5b3c67a730faa6f",
-    "ui_v32.js": "132e39eedbe706e37ab346d443071012ad3b3e620225a1e0e6641e238f87a851",
+    "ui_v32.js": "4c9abc435c60cbc71250180a0589542c47565c62b21dc852f6905b1794992106",
     "v3_1_3_functional_snapshot.json": "0abeaa7cc3a7e270fde015791a93bfbdb580803a915871e12811585c99555435"
   }
 }

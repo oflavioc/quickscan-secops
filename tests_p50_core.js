@@ -230,8 +230,12 @@ const PROTECTED = {
         de 2 caracteres no #pr-support. Mesma autorizacao nominal, mesma funcao.)
      Identidade anterior: 132e39eedbe706e37ab346d443071012ad3b3e620225a1e0e6641e238f87a851
        (repin do fix-finding do EA-48, 2026-09-12: o papel passa a nomear a ancoragem
-        canonica decidida no EA-21. Autorizacao nominal propria, distinta da do EA-24.) */
-  "ui_v32.js": "56cd241aa8bb4dea516faf604abf5b62ddbd20ac1fc04092799c2f8669c1c367",
+        canonica decidida no EA-21. Autorizacao nominal propria, distinta da do EA-24.)
+     Identidade anterior: 56cd241aa8bb4dea516faf604abf5b62ddbd20ac1fc04092799c2f8669c1c367
+       (segundo repin do EA-48, 2026-09-12: a frase deixou de citar o TITULO da secao de
+        cenario-alvo e passou a descrever a ancoragem pela propriedade, depois que o
+        print.spec.js:62 mostrou que o titulo vazava para estados sem aquela secao.) */
+  "ui_v32.js": "4c9abc435c60cbc71250180a0589542c47565c62b21dc852f6905b1794992106",
   "ui_ux_v32.js": "a050401145a5ed7af597eae01a9a23826418119769c096db168b3b177a9d3938",
   /* ERRATA DA AUDITORIA EXTERNA · §4.1.1 ("qualquer texto derivado consome a
      mesma decisão canônica de publicabilidade"). A comparação Atual × Alvo

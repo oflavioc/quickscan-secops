@@ -4650,6 +4650,55 @@ criado para isto. **A dívida é real e fica dita**: uma regressão aqui volta a
 silenciosa. O que pegou este defeito não foi gate nenhum — foi **olhar o produto**,
 e é essa a prática que o substitui.
 
+## EA-52 — a lista de prioridades do PDF imprimia perguntas mutiladas
+
+**Status**: `resolvido`
+
+**Aberto e fechado em**: 2026-09-13, na leitura do PDF em quatro cenários, sob a
+diretriz de produto do mesmo dia. Como o `EA-51`, **não veio do backlog**.
+
+### Cadeia arquivo:linha → efeito
+
+- **`ui_v32.js:87-92`** — `qLabel(qid)` devolve o **texto da pergunta**, cortado em
+  72 caracteres com reticências.
+- **`ui_v32.js:1229`** — a seção *"Prioridades declaradas pelo negócio"* do
+  relatório impresso usava `qLabel(f.id)`.
+- **Efeito** — o cliente lia, como prioridade do próprio negócio:
+  *"1. Políticas de segurança e privacidade (incluindo LGPD) estão…"*. Não é uma
+  prioridade: é uma **pergunta cortada**, e cortada exatamente onde diria o que
+  pergunta. **10 das 15** perguntas passam de 72 caracteres.
+
+| pergunta | o que o PDF imprimia | rótulo que já existia |
+|---|---|---|
+| `network-visibility` | "A operação possui visibilidade e capacidade de detectar…" | **Visibilidade de rede** |
+| `monitoring-coverage` | "A operação possui cobertura de monitoramento compatível com a…" | **Cobertura de monitoramento** |
+| `team-capacity` | "A equipe de segurança tem capacidade e redundância compatíveis com a…" | **Capacidade do time** |
+
+**E a tela já mostrava o rótulo curto** — as duas superfícies discordavam, e a que
+vai para o cliente era a pior.
+
+### Correção
+
+`QS[f.k].lbl` no lugar de `qLabel(f.id)`, alinhando o PDF com a tela. **Uma linha.**
+
+`qLabel` **não foi tocada**: o único outro chamador é `tests_ui_m32.js:189`, que a
+usa como oráculo de outra superfície. A função continua existindo para quem
+precisar da pergunta abreviada — só deixou de ser usada onde o rótulo cabia.
+
+### Rito consumido
+
+**Autorização nominal** do proprietário no chat (*"autorizado, pode trocar no
+ui_v32.js"*) — §29.4. **Repin inline** de `PROTECTED["ui_v32.js"]` com trilha
+cumulativa (R8 §2); identidade anterior `4c9abc43…`, nova `79771119…`.
+
+Conferido **antes** de editar: `tests_p52_mutants.js:573` ancora na linha
+**anterior** (`:1228`, o `pr-pagebreak`), intocada; `tests_ui_m332.js:P5` assere a
+**ordem** das prioridades por substring (`"incidente"` antes de `"logs"`), que o
+rótulo curto preserva.
+
+**Medido**: `p50core` 65/65 · `ui_m332` 23/23 · `ui_m32` 25/25 · `d009` 15/15 ·
+`d010` 13/13. Nenhum gate novo — diretriz de 2026-09-13.
+
 ## Varredura de reconferência por execução — 2026-09-13
 
 > **Não corrige nada.** Mede os **26 achados `aberto`** contra a árvore de hoje

@@ -1780,7 +1780,7 @@ família `EA-31`.
 
 ## EA-23 — a mesma capability sob dois nomes no mesmo relatório
 
-**Status**: `aberto`
+**Status**: `resolvido`
 
 **Aberto em**: 2026-09-01. Reservado em prosa pela 015 (`relatorio-final.md:550`).
 
@@ -1798,6 +1798,87 @@ família `EA-31`.
 Fechar do lado do `MAP` é Camada 1 `frozen` → rito D2, hoje Porta B — **é por isso
 que isto é achado e não demanda**. A reconciliação de vocabulário (qual nome é
 canônico, e se o outro vira sinônimo no `CONTEXT.md`) é do `product-owner`.
+
+### Resolvido no fix-finding de 2026-09-13 — o que foi medido, e por que o remédio é este
+
+**O registro nomeava um par; a medição encontrou doze.** Dos 15 pares
+pergunta↔capability, **12 têm nomes diferentes** entre `MAP[qid].cap` e
+`CAPABILITIES[id].name`. Só três coincidem (`network-visibility`,
+`external-surface`, `vulnerability-management`).
+
+**E o alcance é menor do que o registro sugeria, também por medição.** O
+vocabulário de catálogo chega ao leitor em **uma única superfície**: o chip de
+*"Contexto tecnológico declarado"*. Conferido em quatro capabilities — fora do
+chip, as ocorrências do nome de catálogo no DOM são **zero**. Em todo o resto o
+leitor vê `MAP[qid].cap` ("Capability a desenvolver:") ou o rótulo da pergunta.
+
+> **Falso positivo desfeito**: *"Capacidade do time"* aparecia 9 vezes e parecia
+> um quinto caso. Não é: ali o texto é o **rótulo da pergunta** (`QS[k].lbl`),
+> idêntico por coincidência ao nome de catálogo `soc-staffing`.
+
+**O PDF nunca teve o defeito.** `ui_p50_v32.css:669` esconde `#p50-results`
+inteiro em `@media print`, e o chip vive dentro dele. A duplicação existia só na
+tela do workspace — real para quem conduz a sessão ao vivo, ausente do
+documento que o cliente leva.
+
+### Por que não renomear nenhum dos dois
+
+Os dois lados são `frozen` (`boundary.json`): renomear o `MAP` é Camada 1 **mais**
+o `v3_1_3_functional_snapshot.json`, que carrega o nome 6 vezes; renomear o
+catálogo é `engine_v32.js` mais 4 asserções em `tests_ui_m32.js`/`tests_ui_m332.js`.
+Qualquer das duas rotas é **D2 Porta B**.
+
+E não deveriam ser renomeados: **não são sinônimos preguiçosos, são unidades
+diferentes.** `MAP[qid].cap` nomeia a prática avaliada por *uma* pergunta;
+`CAPABILITIES[].name` nomeia a capability do catálogo, que pode **agregar
+várias** — `soc-governance` agrega `mandate`, `governance` e `policies`.
+
+### O remédio
+
+`ui_p50_results_v32.js` (Camada 5, **nem `frozen` nem §29.4**) passa a declarar,
+no chip, o nome pelo qual a capability é avaliada — *avaliada como "…"* — **se e
+somente se** ela for 1:1 com uma pergunta **e** os dois nomes divergirem. O nome
+entra também no `aria-label`: sem isso, quem usa leitor de tela ficaria com o
+único nome que não aparece em nenhuma outra seção. **Nenhum rito consumido**:
+sem D2, sem Porta B, sem autorização nominal.
+
+### Gate e carrascos
+
+**`P50-VOC1`** em `tests_p50_core.js` (mesma fase, mesmo módulo — R10 §1).
+Oráculo **independente**: lê `MAP` e `CAPABILITIES` do estado congelado por
+`w.eval` e **recomputa** a decisão; perguntar ao renderer o que ele decidiu seria
+concordar com ele por construção. Guarda de tautologia no próprio gate: se um dia
+menos de 5 capabilities divergirem, ele **reprova** em vez de passar sem medir.
+
+**Red provado** (`caa28ef`): 64 PASS · 1 FAIL de 65. **Green**: 65 PASS · 0 FAIL.
+
+> **Errata do próprio gate, na primeira execução verde.** A alínea (d) proibia o
+> nome do chip de ser *substring* do apelido. É falsa — "Gestão de conhecimento"
+> (catálogo) está legitimamente contida em "Gestão de conhecimento operacional"
+> (avaliado) — e reprovava o produto **correto**. Foi **trocada**, não removida,
+> pela propriedade que se sustenta (o apelido declara, não justapõe). Registrado
+> aqui porque corrigir oráculo sem dizer é como afrouxar gate sem dizer.
+
+**Mutantes `M54`–`M56`** registrados em `tests_p50_mutants.js` — julgam por
+`tests_p50_core.js`, **sem Chromium**. Entraram nesse harness, e não em um novo,
+porque `ui_p50_results_v32.js` já é `target` declarado dele: o gatilho de path que
+evita a âncora podre (família `EA-4`) já existia.
+
+**O quarto mutante da bateria não foi registrado, e a ausência é medida.** Trocar
+`qids.length !== 1` por `!qids.length` é **equivalente na população alcançável**:
+das 25 capabilities, 12 têm chip e zero pergunta, 10 têm chip e uma pergunta, e a
+**única** que agrega (`soc-governance`) tem `landscapeEnabled: false` — não rende
+chip. Com 0 ou 1 pergunta os dois códigos devolvem o mesmo. A guarda continua no
+código porque é defensiva; declará-la coberta seria afirmar cobertura inexistente.
+
+### O que este fecho não faz
+
+- **Não reconcilia os dois vocabulários** — declara a equivalência onde o leitor
+  a precisa, e cada nome continua certo no seu próprio contexto.
+- **Não alcança `soc-governance`** — a capability agregada não recebe apelido, por
+  desenho: escolher uma das três perguntas seria fabricar vocabulário.
+- **Não toca o PDF** — que nunca teve o defeito.
+
 
 ## EA-24 — o card neutro culpa o mapeamento quando a causa é ausência de gap
 

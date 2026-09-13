@@ -222,8 +222,8 @@
     {
       "camada": 3,
       "folha": "ui_p50_v32.css",
-      "regras": 219,
-      "declaracoes": 1130,
+      "regras": 220,
+      "declaracoes": 1134,
       "media": 11,
       "regras_com_importante": 4,
       "importante_texto": 4,
@@ -256,6 +256,6 @@
       "outras": {}
     }
   ],
-  "censo_fixado_em": "2026-09-01",
-  "censo_fonte": "qa-engineer, wave 1 — CSSOM do jsdom 30.0.1 sobre os blobs da árvore limpa de feature/014-gate-sem-poder-discriminante. Re-medido POR EXECUÇÃO na T070 com o instrumento real; divergência é decisão de direção, nunca rebaixamento (R10 §1)."
+  "censo_fixado_em": "2026-09-13",
+  "censo_fonte": "qa-engineer, wave 1 — CSSOM do jsdom 30.0.1 sobre os blobs da árvore limpa de feature/014-gate-sem-poder-discriminante. Re-medido POR EXECUÇÃO na T070 com o instrumento real; divergência é decisão de direção, nunca rebaixamento (R10 §1). RE-MEDIDO em 2026-09-13 (fix-finding EA-23): `ui_p50_v32.css` foi de 219/1130 para 220/1134 — UMA regra nova, `.p50-presence-alias`, com quatro declarações. SUBIDA por mudança real de produto, medida pelo próprio instrumento (`regra_morta.js → censo(camadasDaArvore())`) e conferida contra o diff: não é rebaixamento para caber no verde, é a direção oposta. As demais folhas saíram inalteradas."
 }

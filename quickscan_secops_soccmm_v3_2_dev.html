@@ -6491,14 +6491,14 @@ function qsGapSupportHTML(f){
     return `<div class="pr-gapsup" data-pr-gap-support data-pr-gap-qid="${escAttr(f.id)}"><div class="pr-gapsup-h">Possíveis caminhos de apoio</div>
       ${cabec}
       <div class="pr-gapsup-why" data-pr-gap-why>Contexto tecnológico não declarado para esta capability: as opções abaixo exigem <b>validar aderência</b> antes de qualquer recomendação.</div>
-      <div class="pr-gapsup-why" data-pr-gap-fonte>Esta lista parte da <b>capability</b> associada ao gap, não do nível respondido na pergunta — por isso pode não coincidir com outras listas deste relatório. A <b>ancoragem canônica</b> desta sessão é a do bloco “Perfil atual × Cenário-alvo de maturidade”, que parte da pergunta e do nível respondido; esta lista é complementar.</div>
+      <div class="pr-gapsup-why" data-pr-gap-fonte>Esta lista parte da <b>capability</b> associada ao gap, não do nível respondido na pergunta — por isso pode não coincidir com outras listas deste relatório. A <b>ancoragem canônica</b> desta sessão é a que parte da pergunta e do nível respondido; esta lista é complementar.</div>
       <ul class="pr-gapsup-list">${m.opts.map(o=>`<li data-pr-gap-opt><b>${esc32(o.n)}</b> — <span class="pr-mut">${esc32(o.w)}; validar aderência ao contexto do cliente.</span></li>`).join("")}</ul></div>`;
   }
   const estado = PRESENCE_LABELS[L.presence] || L.presence;
   return `<div class="pr-gapsup" data-pr-gap-support data-pr-gap-qid="${escAttr(f.id)}"><div class="pr-gapsup-h">Possíveis caminhos de apoio</div>
     ${cabec}
     <div class="pr-gapsup-why" data-pr-gap-why>Apareceu porque o gap acima foi observado e o contexto declarado para esta capability é <b>${esc32(estado)}</b>. As opções são caminhos possíveis, a validar — não são requisito nem compra recomendada.</div>
-    <div class="pr-gapsup-why" data-pr-gap-fonte>Esta lista parte da <b>capability</b> associada ao gap, não do nível respondido na pergunta — por isso pode não coincidir com outras listas deste relatório. A <b>ancoragem canônica</b> desta sessão é a do bloco “Perfil atual × Cenário-alvo de maturidade”, que parte da pergunta e do nível respondido; esta lista é complementar.</div>
+    <div class="pr-gapsup-why" data-pr-gap-fonte>Esta lista parte da <b>capability</b> associada ao gap, não do nível respondido na pergunta — por isso pode não coincidir com outras listas deste relatório. A <b>ancoragem canônica</b> desta sessão é a que parte da pergunta e do nível respondido; esta lista é complementar.</div>
     <ul class="pr-gapsup-list">${m.opts.map(o=>`<li data-pr-gap-opt><b>${esc32(o.n)}</b> — <span class="pr-mut">${esc32(o.w)}.</span></li>`).join("")}</ul></div>`;
 }
 

@@ -2157,7 +2157,7 @@ aqui.
 
 ## EA-30 — três provas de discriminância vencidas no registro da campanha
 
-**Status**: `aberto`
+**Status**: `resolvido`
 
 **Aberto em**: 2026-09-01. Levantado pelo `product-owner` na **Fase 0 da demanda
 014** (`specs/014-gate-sem-poder-discriminante/refinement.md` §6, branch
@@ -2207,6 +2207,53 @@ deriva de citação é sintoma da família `EA-31`.
 O veredito de cada uma das três (e do conjunto `p51`) é do `qa-engineer`; se o
 remédio é campo, cláusula `IC-*` nova ou re-execução, é desenho do `tech-lead` com
 o QA; abrir demanda é do orquestrador (R4).
+
+### Resolvido em 2026-09-13 — as provas foram atualizadas com a execução que já existia
+
+As três datas vencidas apontavam para campanhas que **já haviam rodado**. O PR #67
+disparou as três no job `visual` do CI (run `34772594772`), completas, e é essa
+execução que passa a constar:
+
+| harness | antes | agora | medido |
+|---|---|---|---|
+| `p50` | `"histórica (fases 5.0.x)"` (1 par agregado) | `2026-09-13` | **56/56 DETECTADO** |
+| `p51` | 16 pares em `2026-08-22` + 3 em `2026-08-29` | `2026-09-13` | **19/19 DETECTADO** |
+| `p52` | 2 em `2026-08-31` + 2 em `2026-09-04` | `2026-09-13` | **108/108 DETECTADO** |
+
+**24 pares atualizados** — só o campo `data`, mais uma nota `reexecucao` com o run,
+as contagens e a conferência de restauração byte a byte (`não-KILL: nenhum`).
+
+> **Errata da primeira tentativa (mesmo dia), porque o CI a reprovou e a razão
+> vale mais que o conserto.** Eu tinha reescrito também `resultado` e `registro`,
+> e o **`IC-5`** derrubou os 19 pares da `p51`: ele exige `resultado == "KILL"`
+> **exato** (qualquer outra coisa passa a precisar de `classificacao` do
+> vocabulário fechado) e `registro` que **resolve no disco** —
+> `os.path.exists`, não prosa. Os dois campos voltaram ao original.
+>
+> **E o erro antes desse foi de verificação, não de dados**: fechei a mudança com
+> `run.sh --light`, que **pula o stage `mutation`** — justamente o que julga esta
+> matriz. Proporcional não é o mesmo que leve: o stage que julga o arquivo tocado
+> é obrigatório, mesmo quando o arquivo não é de produto.
+
+**O `P50::M51` fechou.** Era a segunda das três provas vencidas — *"sem KILL
+pós-correção"*, com a execução em navegador deferida. A campanha completa de hoje
+devolveu **zero sobreviventes em 56**, e isso inclui o `M51`.
+
+### A ausência estrutural continua, e fica declarada em vez de gateada
+
+Nenhuma cláusula compara **data de prova no registro** com **execução real da
+campanha**; a atualização acima foi feita à mão. Sob a diretriz do proprietário de
+**2026-09-13** (*"projeto interno… não precisamos de tantas revisões e
+verificações, vamos focar na qualidade e integridade do produto"*), **não foi
+criado gate para isso** — seria instrumento vigiando instrumento, sem alcance no
+produto.
+
+**Custo de deixar assim, dito para quem reabrir**: toda mudança em superfície 5.x
+re-dispara as três campanhas Chromium e envelhece estes 24 pares de novo. O
+remédio barato, se um dia incomodar, é o job `visual` gravar a data no registro ao
+final da campanha — uma linha no workflow, não um gate.
+
+
 
 ## EA-31 — a terceira família: o registro da prova não é comparado com a execução da prova
 

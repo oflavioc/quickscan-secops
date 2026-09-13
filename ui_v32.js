@@ -1226,7 +1226,7 @@ function buildPrintReport(){
      2. A primeira página fica com abertura, metadados, faixa, "Como
      interpretar", resumo e régua — sem um título de prioridades órfão no pé. */
   if (prios.length) h += `<div class="pr-sec pr-pagebreak" id="pr-prios"><h2>Prioridades declaradas pelo negócio</h2>
-    ${prios.map((f,i)=>`<div class="pr-card"><b>${i+1}. ${esc32(qLabel(f.id))}</b></div>`).join("")}</div>`;
+    ${prios.map((f,i)=>`<div class="pr-card"><b>${i+1}. ${esc32(QS[f.k].lbl)}</b></div>`).join("")}</div>`;
   /* D — findings */
   if (findings.length) h += `<div class="pr-sec" id="pr-findings"><h2>Gaps de maturidade observados</h2>
     ${findings.map(f=>{ const q = QS[f.k];

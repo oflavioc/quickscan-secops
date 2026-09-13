@@ -235,7 +235,16 @@ const PROTECTED = {
        (segundo repin do EA-48, 2026-09-12: a frase deixou de citar o TITULO da secao de
         cenario-alvo e passou a descrever a ancoragem pela propriedade, depois que o
         print.spec.js:62 mostrou que o titulo vazava para estados sem aquela secao.) */
-  "ui_v32.js": "4c9abc435c60cbc71250180a0589542c47565c62b21dc852f6905b1794992106",
+  /* EA-52 (fix-finding, 2026-09-13) · AUTORIZACAO NOMINAL do proprietario no
+     chat ("autorizado, pode trocar no ui_v32.js"). UMA linha, em :1229: a lista
+     "Prioridades declaradas pelo negocio" do PDF imprimia `qLabel(f.id)` — a
+     PERGUNTA truncada em 72 caracteres com reticencias — e passa a imprimir
+     `QS[f.k].lbl`, o rotulo curto, que e o mesmo que a TELA ja mostrava.
+     Medido: 10 das 15 perguntas truncavam. `qLabel` NAO foi tocada (o unico
+     outro chamador e tests_ui_m32.js:189). Regra de score, suficiencia, gate e
+     ordem do papel byte-identicas. Identidade anterior:
+     4c9abc435c60cbc71250180a0589542c47565c62b21dc852f6905b1794992106 */
+  "ui_v32.js": "797711193ba493d4e7c1f6afb46ffb88f71ada24199906e45507cc37436b08b5",
   "ui_ux_v32.js": "a050401145a5ed7af597eae01a9a23826418119769c096db168b3b177a9d3938",
   /* ERRATA DA AUDITORIA EXTERNA · §4.1.1 ("qualquer texto derivado consome a
      mesma decisão canônica de publicabilidade"). A comparação Atual × Alvo

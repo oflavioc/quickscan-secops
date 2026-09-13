@@ -1195,6 +1195,12 @@ body[data-uxscreen="refinement"] #ux-progress-mobile{ display:none !important; }
 #p50-results .p50-presence-chip[data-p50-nodomain="true"]{ border-color:var(--line); }
 #p50-results .p50-presence-cap{ color:var(--text); overflow-wrap:anywhere; min-width:0; }
 #p50-results .p50-presence-state{ color:var(--muted); white-space:nowrap; }
+/* EA-23 · o nome da mesma capability na vista do assessment. Secundario por
+   desenho: e ponte de reconhecimento, nao um segundo titulo. A pilula cresce e
+   a lista quebra linha sozinha (`flex-wrap` na .p50-presence-list). */
+#p50-results .p50-presence-alias{
+  color:var(--faint); font-size:11px; overflow-wrap:anywhere; min-width:0;
+}
 #p50-results .p50-presence-chip[data-p50-presence="UNSET"]{
   border-style:dashed; opacity:.72;
 }
@@ -10435,6 +10441,18 @@ if (window.__DEV) Object.assign(window.__DEV, { openExportModal, openImportPicke
     }
     return null;
   }
+  /* EA-23 · nome da capability na vista do assessment, quando ele existe e e
+     UNICO. Le `MAP` direto — o mesmo owner congelado que este modulo ja consome
+     em `p50CapCards()` —, nunca uma copia local. Devolve null quando a
+     capability agrega mais de uma pergunta, quando nao tem pergunta alguma, ou
+     quando os dois vocabularios ja coincidem. */
+  function p50CapAssessedName(cap) {
+    var qids = cap && cap.questionIds;
+    if (!qids || qids.length !== 1) return null;
+    if (typeof MAP === "undefined" || !MAP[qids[0]]) return null;
+    var nome = MAP[qids[0]].cap;
+    return (nome && nome !== cap.name) ? nome : null;
+  }
   function p50PresenceStrip() {
     var V = window.__DEV && window.__DEV.V32 ? window.__DEV.V32 : null;
     if (!V || !V.TECH_LANDSCAPE || !V.CAPABILITIES) return null;
@@ -10456,11 +10474,25 @@ if (window.__DEV) Object.assign(window.__DEV, { openExportModal, openImportPicke
         "data-p50-confirmed": pres === "UNSET" ? "false" : "true" });
       if (dom === null) chip.setAttribute("data-p50-nodomain", "true");
       else chip.setAttribute("data-dom", String(dom));
-      chip.setAttribute("aria-label", cap.name + ": " + (P50_PRESENCE_LABEL[pres] || pres) +
-        " · " + (P50_PRESENCE_ACC[pres] || ""));
+      var avaliado = p50CapAssessedName(cap);          /* EA-23 · ver nota abaixo */
+      chip.setAttribute("aria-label", cap.name +
+        (avaliado ? ", avaliada como “" + avaliado + "”" : "") + ": " +
+        (P50_PRESENCE_LABEL[pres] || pres) + " · " + (P50_PRESENCE_ACC[pres] || ""));
       chip.appendChild(el("span", { "class": "p50-presence-cap" }, cap.name));
       chip.appendChild(el("span", { "class": "p50-presence-state", "data-p50": "presence-state" },
         P50_PRESENCE_LABEL[pres] || pres));
+      /* EA-23 · o catalogo e o assessment nomeiam a mesma capability de formas
+         diferentes, e este chip e a UNICA superficie do relatorio onde o nome de
+         catalogo alcanca o leitor: em toda a outra parte ele le `MAP[qid].cap`
+         ("Capability a desenvolver:"). Sem esta linha, quem sai de um gap e vem
+         procurar o contexto tecnologico dele nao reconhece a mesma capability.
+         SO quando a capability e 1:1 com uma pergunta avaliada: `soc-governance`
+         agrega tres (mandate, governance, policies) e nao tem "o" nome avaliado —
+         escolher um seria fabricar vocabulario. E so quando os nomes DIVERGEM:
+         repetir o mesmo texto duas vezes e ruido, nao sinonimo. */
+      if (avaliado) chip.appendChild(el("span",
+        { "class": "p50-presence-alias", "data-p50": "presence-alias" },
+        "avaliada como “" + avaliado + "”"));
       list.appendChild(chip);
     }
     box.appendChild(list);

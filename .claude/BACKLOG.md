@@ -2220,9 +2220,20 @@ execução que passa a constar:
 | `p51` | 16 pares em `2026-08-22` + 3 em `2026-08-29` | `2026-09-13` | **19/19 DETECTADO** |
 | `p52` | 2 em `2026-08-31` + 2 em `2026-09-04` | `2026-09-13` | **108/108 DETECTADO** |
 
-**24 pares atualizados**, com `registro` apontando para o run e a nota de que a
-restauração byte a byte foi conferida nos quatro alvos e no HTML (`não-KILL:
-nenhum`).
+**24 pares atualizados** — só o campo `data`, mais uma nota `reexecucao` com o run,
+as contagens e a conferência de restauração byte a byte (`não-KILL: nenhum`).
+
+> **Errata da primeira tentativa (mesmo dia), porque o CI a reprovou e a razão
+> vale mais que o conserto.** Eu tinha reescrito também `resultado` e `registro`,
+> e o **`IC-5`** derrubou os 19 pares da `p51`: ele exige `resultado == "KILL"`
+> **exato** (qualquer outra coisa passa a precisar de `classificacao` do
+> vocabulário fechado) e `registro` que **resolve no disco** —
+> `os.path.exists`, não prosa. Os dois campos voltaram ao original.
+>
+> **E o erro antes desse foi de verificação, não de dados**: fechei a mudança com
+> `run.sh --light`, que **pula o stage `mutation`** — justamente o que julga esta
+> matriz. Proporcional não é o mesmo que leve: o stage que julga o arquivo tocado
+> é obrigatório, mesmo quando o arquivo não é de produto.
 
 **O `P50::M51` fechou.** Era a segunda das três provas vencidas — *"sem KILL
 pós-correção"*, com a execução em navegador deferida. A campanha completa de hoje

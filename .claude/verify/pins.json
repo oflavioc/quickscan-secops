@@ -1,7 +1,7 @@
 {
   "_meta": {
     "descricao": "Registry único de pins — fonte de identidade dos artefatos (R8). Hashes = SHA-256 dos blobs de HEAD. Alterar arquivo pinado exige regenerar este registry no MESMO PR, com motivo no commit.",
-    "gerado_de_head": "30291540be74e35718d38c49dbd5a71a4a6c3474",
+    "gerado_de_head": "ef4bbd0c7754bdee633b32e2bfad406941690812",
     "gerado_em": "2026-09-13",
     "exclusoes": [
       "docs_phase5/**",
@@ -15,7 +15,7 @@
     "baseline_core_zip_sha256": "625079c462be7d44ffd69b1cd85f256382322bd0555ae4b548f21bf30ee5b89d"
   },
   "files": {
-    ".claude/BACKLOG.md": "48ed79dd38230a5e65fd75746261d1aed5ae408972abaa619800c563e7d0b6e6",
+    ".claude/BACKLOG.md": "cc7e92fab2ca8d2d50157614de22ccbbcf46ab34cc3cdf038d6304ba93d5027b",
     ".claude/agent-memory/README.md": "2f868716c8785119c1d6a02a7715f7b5058ab968f55951410fc82fc45b960a93",
     ".claude/agent-memory/build-engineer/MEMORY.md": "5ed47a73226fea6613b44c2ce70b26e95415033bafbd69a3ada20fa7df0bf950",
     ".claude/agent-memory/build-engineer/feedback_escopo_de_scanner_nos_dois_sentidos.md": "a07b03eb0687bc4f08ff02375684b8441f8d434384c415a3e25b1fe233007527",
@@ -264,7 +264,7 @@
     ".claude/verify/gen_pins.py": "730043800a41b4cfbb799945dd6499df8ba1375096f5f748df01c8c2d12a407a",
     ".claude/verify/invariants.json": "b8571facafbe6098cc643886cd158f877dd702c0cba6ca5addff34fc3e10bee6",
     ".claude/verify/known_issues.json": "9f4ac86a8e20443935cc03efeca3668d9774824d84778f2db930b185b1971818",
-    ".claude/verify/mutation-matrix.json": "99b4dcea4c53cf7ef55a4384ca0025aee2c7a37daccf7024840f5a2c1ec5f94c",
+    ".claude/verify/mutation-matrix.json": "6fb6695342c0012fe6bd61227e368f4c2292b7e5f525a4a35d819612435fe8e2",
     ".claude/verify/mutation_map.json": "b5a2369231a393c03e7f4e87c9cdc5dea1fc4a984ed54b2411e5241d69030d3d",
     ".claude/verify/mutation_population.json": "7893a00adc8d087bfb0244e2b580d58772de567b35326af2d0c098e6d4025141",
     ".claude/verify/pipeline.yaml": "e0604991cba1b4d0989b5ad1dd5496d03910c8e36ab4c7f598fe522624d80291",

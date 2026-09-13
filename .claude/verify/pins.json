@@ -1,7 +1,7 @@
 {
   "_meta": {
     "descricao": "Registry único de pins — fonte de identidade dos artefatos (R8). Hashes = SHA-256 dos blobs de HEAD. Alterar arquivo pinado exige regenerar este registry no MESMO PR, com motivo no commit.",
-    "gerado_de_head": "be06997925addc0fdc616e88df3ff2bc29cf593c",
+    "gerado_de_head": "8d42d815b7d6f3549a1af1846b22d8183739a831",
     "gerado_em": "2026-09-13",
     "exclusoes": [
       "docs_phase5/**",
@@ -269,7 +269,7 @@
     ".claude/verify/mutation_population.json": "7893a00adc8d087bfb0244e2b580d58772de567b35326af2d0c098e6d4025141",
     ".claude/verify/pipeline.yaml": "e0604991cba1b4d0989b5ad1dd5496d03910c8e36ab4c7f598fe522624d80291",
     ".claude/verify/regra_morta.js": "bfe0944b5088c40c346d63ca39f2dda0795524818b8ead46ceabc7b57f5a5616",
-    ".claude/verify/regra_morta.json": "4127bdf2520ab8c15f98c69f0913ef61f77591d506b33e64530c0517359fbd13",
+    ".claude/verify/regra_morta.json": "7450d90dca4cdfa57ad9a74328ad43ad9342eb4a49ca4a658c6f64dfc8ccc3dd",
     ".claude/verify/regra_morta_seletor.js": "67723c7515264a81ef375910ee357ba944af47ae0d9cc9de6338a8bda3e68a9b",
     ".claude/verify/run.sh": "a404fa877e0fdb94987ae66d3170a2fc9aec8a6138204051aba89395ad22e1aa",
     ".gitattributes": "37bb36fb03aa6edbf1ce9fdc3bb9cb705e0317da970df37783777795bbcdcdb9",

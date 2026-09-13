@@ -13061,20 +13061,30 @@ if (window.__DEV) Object.assign(window.__DEV, { openExportModal, openImportPicke
     var ordem = p52OrderFor(gate);
     ws.setAttribute("data-p52-order", gate === "blocked" ? "gate-blocked" : "canonical");
 
+    /* O numero e um CONTADOR DO QUE RENDERIZOU, nunca o indice da lista
+       canonica. Secao com balde vazio e pulada logo abaixo (`continue`), e
+       numerar pelo indice queimava o numero dela: o leitor via "7. Formas de
+       apoio" seguido de "9. Relatorio e sessao" e concluia que faltava uma
+       secao no relatorio. Medido em 2026-09-13: acontece em toda sessao SEM
+       nenhuma resposta "Nao sei" — o balde `evidence` fica vazio e o 8 some.
+       E o caso BOM, o assessment completo, que produzia o relatorio com
+       aparencia de defeituoso. */
+    var vis = 0;
     for (i = 0; i < ordem.length; i++) {
       var d = ordem[i], nodes = buckets[d.key];
       if (!nodes || !nodes.length) continue;
+      vis++;
       present[d.key] = true;
       var sec = el("section", {
         id: secId(d.key),
         "class": "p52-sec",
         "data-p52-sec": d.key,
-        "data-p52-order": String(i + 1),
+        "data-p52-order": String(vis),
         tabindex: "-1",
         "aria-labelledby": secId(d.key) + "-h"
       });
       var h2 = el("h2", { "class": "p52-sec-title", id: secId(d.key) + "-h" });
-      h2.appendChild(el("span", { "class": "p52-sec-num", "aria-hidden": "true" }, String(i + 1)));
+      h2.appendChild(el("span", { "class": "p52-sec-num", "aria-hidden": "true" }, String(vis)));
       h2.appendChild(el("span", { "class": "p52-sec-name" }, d.title));
       sec.appendChild(h2);
 

@@ -4600,6 +4600,56 @@ os cenários **A**, **B** e **C** todos passam a terminar em `step = 16` — os 
 REPROVAM. O portão nasce, portanto, com poder discriminante **medido**, e não é
 mais um dos que o `EA-20` cataloga.
 
+## EA-51 — o relatório pulava a seção 8: o assessment completo produzia numeração com buraco
+
+**Status**: `resolvido`
+
+**Aberto e fechado em**: 2026-09-13, na primeira inspeção de **produto** feita sob
+a diretriz do proprietário do mesmo dia (*"vamos focar na qualidade e integridade
+do produto em si"*). Não veio do backlog: veio de conduzir uma sessão inteira e
+**ler o que o cliente lê**.
+
+### Cadeia arquivo:linha → efeito
+
+- **`ui_p52_workspace_v32.js:2259-2261`** — o laço pula a seção cujo balde está
+  vazio (`if (!nodes || !nodes.length) continue;`).
+- **`:2267` e `:2272`** — mas o número vinha de **`String(i + 1)`**, o índice na
+  lista canônica de 9 seções. Seção pulada **queimava o número dela**.
+- **Efeito** — o leitor via *"7. Formas de apoio"* seguido de *"9. Relatório e
+  sessão"* e concluía que **faltava uma seção** no relatório. Sai na tela e no PDF.
+
+### Medido em seis cenários, antes de tocar no código
+
+| sessão | numeração |
+|---|---|
+| tudo nível 1 · tudo nível 0 · tudo nível 3 · misto com 2 "NA" | `1,2,3,4,5,6,7,`**`9`** |
+| tudo "NA" · metade "NA" | `1..9` contínuo |
+
+**O gatilho é o caso bom.** A seção 8 é *"Evidência e suficiência"*; o balde dela
+só tem conteúdo quando há resposta **"Não sei"**. Sessão sem nenhuma — o
+assessment completo — é exatamente a que saía com o relatório parecendo defeituoso.
+
+> O cenário "misto com 2 NA" também falhou: as duas "NA" não bastaram para encher
+> o balde. A condição é menos frequente do que "ter alguma NA", então o buraco
+> aparecia em mais sessões do que a tabela sugere.
+
+### Correção
+
+Contador do que **renderizou** (`vis`), em vez do índice da lista, nas duas saídas
+— o número visível e `data-p52-order` da seção. **6 de 6 cenários contínuos** após
+a correção.
+
+Nenhum gate lê o `data-p52-order` **por seção**: os quatro consumidores
+(`tests_009_leitura.js:262`, `tests_p52_layout.js:609`, `tests_p52_chromium.js:320`
+e o CSS) leem o atributo da **raiz**, que continua `canonical`/`gate-blocked`.
+
+### Sem gate novo, por decisão declarada
+
+Sob a diretriz de 2026-09-13, **nenhuma suíte, mutante ou registro novo** foi
+criado para isto. **A dívida é real e fica dita**: uma regressão aqui volta a ser
+silenciosa. O que pegou este defeito não foi gate nenhum — foi **olhar o produto**,
+e é essa a prática que o substitui.
+
 ## Varredura de reconferência por execução — 2026-09-13
 
 > **Não corrige nada.** Mede os **26 achados `aberto`** contra a árvore de hoje

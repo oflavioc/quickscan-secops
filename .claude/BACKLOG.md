@@ -2930,7 +2930,7 @@ orquestrador de restringir o escopo às duas formas baratas já nomeadas pelo
 
 ## EA-37 — a regra "commit por caminho nominal com agente em voo" vive só numa trilha de demanda: nem `orchestration.md` nem a skill a carregam
 
-**Status**: `aberto`
+**Status**: `resolvido`
 
 **Aberto em**: 2026-09-04. Achado do `product-owner` no aceite de intenção da
 demanda 016 (`016-registro-contra-execucao.json →
@@ -2976,6 +2976,28 @@ delegação ativa** (o mesmo sinal que hoje aciona `state-eval`/`guard-*`) —
 dono `build-engineer`. Não decidido aqui se o hook é viável sem falsos
 positivos (ex.: `gen_pins.py` exige árvore limpa e roda só quando nenhum
 agente está em voo, que já é o sinal natural do momento seguro).
+
+### Fechado na varredura de 2026-09-13 — a metade mecânica existe, e foi provada por execução
+
+O achado cobrava o hook. Ele **existe**, e o registro não foi atualizado quando
+ele nasceu — instância da família `EA-31` dentro do achado que mais depende de
+registro fiel.
+
+- **`.claude/hooks/guard-add.sh`** — `PreToolUse` (matcher `Bash`), bloqueante
+  em `git add -A` / `git add .` / `git add --all`. O cabeçalho do próprio hook
+  cita `541771a` e `d130a04`, os dois commits desta cadeia.
+- **`.claude/settings.json:62`** — o hook está **registrado**; não é script
+  órfão.
+- **Provado por execução em 2026-09-13**: alimentado com
+  `{"tool_name":"Bash","tool_input":{"command":"git add -A"}}`, devolve **exit 2**
+  e a mensagem `guard-add: BLOQUEADO — 'git add' de escopo amplo (-A / . / --all).`
+- **`.claude/rules/orchestration.md:71-73`** — a metade normativa, que o próprio
+  registro já dava por feita, continua lá em §Anti-patterns, na forma
+  errado→custo→correto.
+
+O hook resolveu um problema que o registro descrevia como dependente de
+disciplina. Nenhum resíduo foi identificado na varredura.
+
 
 ## EA-38 — no job `visual` sob `pull_request`, o runner do Playwright torna o clone raso no `base.sha` do PR: a campanha `d016` mede um repositório mutado e sai 20/33
 
@@ -4530,3 +4552,79 @@ o mutante previsto troca `:634` por `step = PRIORITY_STEP` incondicional. Sob el
 os cenários **A**, **B** e **C** todos passam a terminar em `step = 16` — os três
 REPROVAM. O portão nasce, portanto, com poder discriminante **medido**, e não é
 mais um dos que o `EA-20` cataloga.
+
+## Varredura de reconferência por execução — 2026-09-13
+
+> **Não corrige nada.** Mede os **26 achados `aberto`** contra a árvore de hoje
+> (`develop` em `b736695`) e registra, por achado, se a cadeia ainda se sustenta.
+> Pedida pelo proprietário depois que três reconferências seguidas mudaram o
+> achado que conferiam — o `EA-19` era falso, o `EA-23` era doze pares e não um,
+> o `EA-48` nasceu do fecho do `EA-21`.
+>
+> **Vocabulário**: `REPRODUZ` (cadeia e efeito de pé) · `MUDOU` (o achado existe
+> mas não no tamanho registrado) · `NÃO REPRODUZ` (o efeito não se sustenta).
+> `[exec]` marca o que foi provado por **execução**, não por leitura.
+
+### Resultado
+
+| achado | veredito | o que a medição de hoje devolveu |
+|---|---|---|
+| `EA-3` | **MUDOU** | O instrumento da 018 já existe e **diz o que não checa**: `15 na população · 0 órfão · 1 não medido · 11 dívida · 0 problema`. Sobra a fronteira declarada (`gen_*.py`, `*.sh`, `*.json`, `tests_*.js`), que é **exclusão nomeada**, não silêncio — o oposto do que o título afirma `[exec]` |
+| `EA-7` | REPRODUZ | `ui_p50_v32.css:715` (era `:697`) ainda declara `grid-template-areas:"main side"`, que subsume a composição da 5.2. Prova final exige Chromium (KI-3) |
+| `EA-8` | **REPRODUZ** | `OFFERINGS ∩ SOLUTION_AREAS = ["fortiai-assist"]` — interseção de exatamente 1 `[exec]` |
+| `EA-9` | **REPRODUZ** | Injetei a oferta `map:sonda-ea9` e `validateConfigV32()` devolveu `[]` — **zero erro**. A segurança do prefixo `map:` continua convenção `[exec]` |
+| `EA-12` | REPRODUZ | `P52_ESTAGIOS` inalterada e ainda `/…/i`; o próprio gate registra o achado de fundo em `:4163` |
+| `EA-14` | REPRODUZ | `.github/workflows/verify.yml`: *"Campanhas de mutação"* vem **depois** de *"Suítes visuais"* e **sem `if: always()`** — suíte vermelha pula a campanha |
+| `EA-16` | **REPRODUZ** | **Removi o `key(w,d,"1")`** — o sujeito inteiro do gate — e `UX14` **passou assim mesmo**. 56/56. O gate não tem como reprovar `[exec]` |
+| `EA-17` | REPRODUZ | Nenhum verificador de prefixo de seletor CSS no pipeline. A única cobertura existente é `D011-PRT1(b)`, de **um** módulo e só dentro de `@media print` — e a própria `mutation-matrix.json:965` já registrava isso |
+| `EA-18` | **REPRODUZ** | Alterei um arquivo **pinado** no disco, sem commit, e o stage devolveu `baseline: 476/476 pins conferem · 0 divergentes`. Ele lê `git show HEAD:` (`:36`) e é cego à árvore `[exec]` |
+| `EA-20` | REPRODUZ (família) | O `EA-16` acabou de ser provado por execução; `EA-7` e `EA-34` de pé estruturalmente. A família tem instâncias vivas |
+| `EA-22` | REPRODUZ | `P51-REC1` está hoje em **`tests_p50_core.js:3421`** (era `:3363`). No corpo: **0** ocorrências de `pr-gapsup` e **0** asserção de duplicação. A promessa segue só no título |
+| `EA-25` | REPRODUZ | `product-invariants.md`: **0** ocorrências de *"nunca desaparece"* ou `3.2.3-B` |
+| `EA-26` | REPRODUZ | Medido em 2026-09-12 com a implementação feita e revertida; `D015-GOV1` continua sendo a âncora de saída |
+| `EA-27` | **MUDOU** | As cópias continuam sem dono único, mas **não são mais silenciosas**: `tests_015_apoio.js:311` (`tresCopiasDaLista`) compara produto × oráculo × fixture, e `D015-M19` mata a divergência. O risco que o achado descreve está **gateado** |
+| `EA-28` | **MUDOU** | Os três buracos nominais **fecharam**: `D015-M17`/`D015-M18` estão no harness, têm **par na matriz** (`2026-09-01 · KILL`) e constam de `dividas_declaradas`. Resta a metade estrutural, e **menor**: o `IC-5` segue nominal à `p51`, mas o `IC-6` foi **generalizado pela 017** a todo harness com preflight |
+| `EA-30` | **REPRODUZ (agravado)** | `p50` continua uma linha agregada com `ultima_prova.data: "histórica (fases 5.0.x)"`, e **16 pares `p51` em `2026-08-22`**. E hoje o job `visual` executou `p50 56/56`, `p51 19/19` e `p52 108/108` — **três campanhas completas que o registro não absorveu** |
+| `EA-31` | REPRODUZ (família) | **Duas instâncias novas hoje**: o `EA-37` estava curado e o registro continuava `aberto`; e as citações de `EA-7`, `EA-22`, `EA-34` e `EA-35` derivaram de linha. A varredura é ela mesma o remédio pontual desta família |
+| `EA-34` | REPRODUZ | `ui_p52_workspace_v32.css:77` e a área nomeada da 5.1 seguem como descrito. Prova exige Chromium |
+| `EA-35` | REPRODUZ | O sítio derivou para **`tests_p52_chromium.js:1138`** (`drawn = Math.min(ir.width, ir.height) * scale`). Prova exige Chromium |
+| `EA-36` | REPRODUZ | `compliance-audit.sh:73` chama `check_branch_protection.py`, e o `compliance-audit` roda **dentro do job `verify`** (`verify.yml:44`) |
+| `EA-37` | **NÃO REPRODUZ** | `.claude/hooks/guard-add.sh` **existe**, está registrado em `settings.json:62` como `PreToolUse`, e executado com `{"command":"git add -A"}` devolve **exit 2** com `guard-add: BLOQUEADO`. A metade mecânica que o achado cobrava **foi construída** `[exec]` |
+| `EA-44` | REPRODUZ | `core` é o **único** dos 14 harnesses com `preflight` ausente `[exec]` |
+| `EA-45` | REPRODUZ | `tests_009_mutants.js`: **0** ocorrências do vocabulário de três estados, contra 7 na `p50` e 5 na `p51` `[exec]` |
+| `EA-46` | REPRODUZ | `check_mutation.py:181` e `:182` **byte a byte como registrados** |
+| `EA-47` | REPRODUZ | O `CONTEXT.md:255-261` ganhou emenda dizendo que *"a lista canônica lê-se na fonte, nunca daqui"* — o que **conserta o ponteiro**, não o critério. A razão de classe continua definida por lista |
+| `EA-50` | REPRODUZ | **0** suítes afirmam a invariante `PRIORITY_STEP ⇒ N > 0` |
+
+### O que a varredura desmentiu, e era meu
+
+**Eu previ que "uma fração cairia". Caiu um.** De 26, **1 não reproduz**, **3
+mudaram de tamanho** e **22 se sustentam**. A intuição de que o registro
+envelhecera mal veio de três acertos seguidos e não resistiu à medição — o
+backlog está, na maior parte, **certo**.
+
+Isso muda o encaminhamento, e é a informação que a varredura comprou: não há um
+lote de achados falsos para limpar. O que existe é **trabalho real represado**, e
+a prioridade passa a ser a ordem de ataque, não a triagem.
+
+### O que a varredura mediu e não estava em registro nenhum
+
+1. **`EA-16` e `EA-18` nunca tinham prova de execução** — eram análise estrutural.
+   Agora têm: um gate que passa sem o próprio sujeito, e um stage que aprova uma
+   árvore mutada.
+2. **`EA-30` piorou hoje, por causa do PR #67**: as três campanhas Chromium
+   rodaram completas no CI e o registro continua com as datas velhas. Toda
+   mudança em superfície 5.x amplia este achado.
+3. **Quatro achados tiveram deriva de citação** (`EA-7`, `EA-22`, `EA-34`,
+   `EA-35`). As linhas corrigidas estão na tabela acima. A deriva é `EA-31`
+   acontecendo em silêncio.
+
+### O que esta varredura NÃO fez
+
+- **Não corrigiu nada.** Nenhum arquivo de produto ou de verificação foi tocado;
+  as duas sondas (`EA-16`, `EA-18`) mutaram a árvore e foram restauradas, com
+  `git status` conferido limpo nas duas.
+- **Não fechou `EA-7`, `EA-34` nem `EA-35` por execução** — os três exigem
+  Chromium, que esta máquina não tem (KI-3). Estão como `REPRODUZ` por
+  sustentação estrutural, e isso está dito em vez de disfarçado.
+- **Não reordenou o backlog.** Priorizar é decisão do proprietário.

@@ -1,7 +1,7 @@
 {
   "_meta": {
     "descricao": "Registry único de pins — fonte de identidade dos artefatos (R8). Hashes = SHA-256 dos blobs de HEAD. Alterar arquivo pinado exige regenerar este registry no MESMO PR, com motivo no commit.",
-    "gerado_de_head": "8d42d815b7d6f3549a1af1846b22d8183739a831",
+    "gerado_de_head": "841a67f2252f40f4ce2e2b037e3ad2650af8018c",
     "gerado_em": "2026-09-13",
     "exclusoes": [
       "docs_phase5/**",
@@ -332,7 +332,7 @@
     "playwright.config.js": "3eacc465035e5fdf3136f09e8346ab05de36c8384710f33a780bd297599bf846",
     "prototypes/.gitkeep": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
     "quickscan_secops_soccmm_v3_1_3.html": "d329049147950a5b2a40b2735c3d4bd9a89177fed439efbcb58df01bdeb7ae82",
-    "quickscan_secops_soccmm_v3_2_dev.html": "03f571c2d780f47dfdc2a634980037cd5f6b3e4dd6553b4c152d08998a627594",
+    "quickscan_secops_soccmm_v3_2_dev.html": "a6aeec594938f1d93b6961f03d61eac9273a7204d9f785cb5c4bbf18f4231c42",
     "session_roundtrip_report.md": "ffe0d30411cc086681a44fa8d69e1066a0bf26173f15dd8580286787056cf4f8",
     "specs/.gitkeep": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
     "specs/003-marcador-duplicado/fix-finding-registry.md": "dce0be8376f543678b9b214fd2e03e0efbda9f45cd978b909d0cc5208fa456a2",
@@ -480,7 +480,7 @@
     "ui_p50_results_v32.js": "07cdc70f0da6a437c92cfc61aa7ee721d576fd9459f3b1180d0381201e23dbb1",
     "ui_p50_shell_v32.js": "e28a21733564e1a222cefa82fb848f569e3a50b6ddda8c447d2ad52b436a58a3",
     "ui_p50_suff_v32.js": "a9931330021949b581da29012be7669edf75529aaaaa9c2f13d0165494b86f5b",
-    "ui_p50_v32.css": "c4ec5360a4fd13769c7c5632a0adc9d3649c87d45bc0ad9d4bcb0cd6bc4067d9",
+    "ui_p50_v32.css": "60dc3f324015d011b0210cf0794b8e4951e62a26be4878799b27d75ed1317023",
     "ui_p52_workspace_v32.css": "f71a0054c5cd23473676677c5fe2cd3e17ceb24f358a3e349a4fbf8b15027da1",
     "ui_p52_workspace_v32.js": "11ce46abc3c28773ef7a37d117eece76888331b7a71348e8eadaf74747749cea",
     "ui_refinement_v32.js": "ade18a9afd265966feb40cb9f2926e20f5ffd2534dcfe7ec602e46cc6d01132c",

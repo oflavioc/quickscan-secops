@@ -4962,6 +4962,110 @@ rótulo curto preserva.
 **Medido**: `p50core` 65/65 · `ui_m332` 23/23 · `ui_m32` 25/25 · `d009` 15/15 ·
 `d010` 13/13. Nenhum gate novo — diretriz de 2026-09-13.
 
+## EA-53 — correção mesclada não alcançava a instância publicada: o serviço rodou 20 dias atrás do repositório
+
+**Status**: `resolvido`
+
+**Aberto em**: 2026-09-14, por **pergunta do proprietário** — *"essas atualizações
+foram feitas na versão disponível no docker?"*. A resposta medida era **não**, e o
+achado é maior que a instância: ele **invalida o relato de todos os outros**.
+Durante três semanas eu reportei "resolvido" e "verde" com razão **no
+repositório**, sem nunca perguntar onde o produto roda.
+
+### Cadeia arquivo:linha → efeito
+
+- **`deploy/v3.2.2/compose.yaml`** — o container `quickscan-v322` monta, em
+  `bind` read-only, `deploy/v3.2.2/quickscan_secops_soccmm_v3_2_2.html`.
+- **`deploy/` está FORA da worktree do git** (é irmão de `phase5/`, sem `.git`):
+  nenhum commit, nenhum pin, nenhum stage o alcança.
+- **`build_v32_html.py`** escreve **só** `quickscan_secops_soccmm_v3_2_dev.html`.
+  Nada no build, no pipeline ou no CI toca `deploy/`.
+- **Efeito, medido**: o serviço em `127.0.0.1:1337` servia 1.014.061 bytes de
+  **25/08**, enquanto o build do repositório tinha 1.072.745 bytes. Conferido por
+  presença no artefato servido: **`EA-23`, `EA-24`, `EA-48`, `EA-51` e `EA-52` —
+  zero ocorrências nas cinco**. Sete correções de produto, nenhuma no ar.
+
+### Por que passou despercebido
+
+Não é descuido de uma pessoa: é **caminho de entrega manual e invisível**. O
+pipeline prova identidade byte a byte entre fonte e `_dev.html` (stage `build`) e
+para exatamente ali. Da fronteira do git em diante, ninguém mede nada — e um
+artefato parado não emite sinal.
+
+### Resolvido em 2026-09-14, em três atos
+
+**1 · Publicado**, com autorização do proprietário, seguindo a convenção da casa:
+`deploy/v3.2.3/` com artefato, `default.conf` byte-idêntico, `compose.yaml`,
+manifesto SHA-256 e registro de deploy. Cutover `quickscan-v322` → `quickscan-v323`
+na mesma porta, com a v3.2.2 **parada e preservada** como rollback.
+
+**Verificado**: o que a porta 1337 devolve é **byte a byte idêntico** ao artefato
+do release (`73bae0ba…`, 1.072.745 bytes, conferido por `cmp`), e as cinco
+correções estão presentes.
+
+**Preflight que importa**: `engine_v32.js` e o **payload funcional M41**
+(`9794b267…d4365b`) saíram **idênticos** aos da v3.2.2 — nenhuma das sete
+correções tocou score ou suficiência. São todas de apresentação.
+
+**2 · Lacuna fechada**: `preparar_release.py`, **no repositório** (versionado e
+pinado, ao contrário de `deploy/`). Uma linha prepara o release inteiro a partir
+do build, herdando a postura de segurança do release anterior.
+
+**Ele deliberadamente NÃO publica.** Não sobe nem para container: prepara e
+**imprime** os comandos. Automatizar o cutover trocaria um esquecimento silencioso
+por uma **publicação silenciosa**, que é pior.
+
+Guardas, provadas na criação: recusa tag fora de `vN.N.N`; recusa sobrescrever
+release existente; recusa árvore suja; e recusa se o build no disco estiver
+desatualizado em relação às fontes.
+
+**3 · O resíduo tem id próprio** — preparar o release ficou barato, mas **nada
+ainda compara o que está no ar com o que o repositório tem**. Não virou gate por
+diretriz do proprietário de 2026-09-13, e porque dependeria do container estar de
+pé. Fica dito: **a próxima defasagem também será silenciosa**, só que agora o
+remédio é uma linha.
+
+## EA-54 — o harness M41, invocado do jeito óbvio, sobrescreve um arquivo `frozen`
+
+**Status**: `aberto`
+
+**Aberto em**: 2026-09-14, no preflight do deploy da v3.2.3 — **aconteceu comigo**,
+e só apareceu porque o `preparar_release.py` recusa árvore suja e nomeou o
+arquivo.
+
+### Cadeia arquivo:linha → efeito
+
+- **`harness_m41_v313.js:18`** —
+  `const outPath = flag("--out") || (argv.includes("--compare") ? null : "v3_1_3_functional_snapshot.json");`
+  Sem `--compare` **e** sem `--out`, o destino padrão é o **próprio snapshot**.
+- **`:260`** — `if (outPath) fs.writeFileSync(outPath, …)`.
+- **`v3_1_3_functional_snapshot.json` é classe `frozen`**
+  (`.claude/verify/boundary.json`), a par de `engine_v32.js` e da Camada 1.
+- **Efeito, medido**: `node harness_m41_v313.js` — o comando que qualquer um
+  digita para obter o payload, e que o registro de deploy da v3.2.2 pede no
+  preflight — reescreveu o snapshot congelado. O diff foi de **uma linha**
+  (`generatedAt`), o payload saiu idêntico, e **nenhum aviso foi emitido**.
+
+**O pipeline não é alcançado**: `check_m41.py:21-22` invoca com `--compare` e
+`--out <temp>`. O defeito está no **padrão**, que é o caminho de quem não lê o
+wrapper primeiro.
+
+### Por que é R7 §3, e não detalhe
+
+*"Verificação nunca escreve na árvore"* — e aqui ela escreve **na classe mais
+protegida do repositório**, em silêncio, no caminho mais provável. Se o payload
+tivesse divergido, o harness teria **gravado a divergência como novo baseline**
+em vez de reprovar.
+
+### O que trava
+
+`harness_m41_v313.js` é **`frozen`**: inverter o padrão (comparar por default,
+escrever só com `--out` explícito) é rito **D2**. Não foi feito aqui.
+
+**Mitigação enquanto isso, e é barata**: invocar sempre com `--compare`
+`v3_1_3_functional_snapshot.json`. O `preparar_release.py` já protege por outro
+caminho — recusa árvore suja —, mas a proteção é lateral, não a cura.
+
 ## Varredura de reconferência por execução — 2026-09-13
 
 > **Não corrige nada.** Mede os **26 achados `aberto`** contra a árvore de hoje

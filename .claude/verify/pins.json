@@ -1,7 +1,7 @@
 {
   "_meta": {
     "descricao": "Registry único de pins — fonte de identidade dos artefatos (R8). Hashes = SHA-256 dos blobs de HEAD. Alterar arquivo pinado exige regenerar este registry no MESMO PR, com motivo no commit.",
-    "gerado_de_head": "3522e1962d5c70718d00d83178f1704436a6284b",
+    "gerado_de_head": "222818f78ab3558282d11f8b205c3981c1b951f9",
     "gerado_em": "2026-09-14",
     "exclusoes": [
       "docs_phase5/**",
@@ -15,7 +15,7 @@
     "baseline_core_zip_sha256": "625079c462be7d44ffd69b1cd85f256382322bd0555ae4b548f21bf30ee5b89d"
   },
   "files": {
-    ".claude/BACKLOG.md": "1594feb0a8cccfbaf7c492558881055b330b93c46b55fa107fe9406c61b154e7",
+    ".claude/BACKLOG.md": "97c7ee5611b9f26f0d680eb5989d5b625ce5bf9f0e34e698cf77350df0240347",
     ".claude/agent-memory/README.md": "2f868716c8785119c1d6a02a7715f7b5058ab968f55951410fc82fc45b960a93",
     ".claude/agent-memory/build-engineer/MEMORY.md": "5ed47a73226fea6613b44c2ce70b26e95415033bafbd69a3ada20fa7df0bf950",
     ".claude/agent-memory/build-engineer/feedback_escopo_de_scanner_nos_dois_sentidos.md": "a07b03eb0687bc4f08ff02375684b8441f8d434384c415a3e25b1fe233007527",
@@ -330,6 +330,7 @@
     "package-lock.json": "920d148fdfa9636df5128f44f38796a5e1d2fd74531c2ed3b1b24e564cdaaf1c",
     "package.json": "0697d82b015471a2dea757d22a0f76fd0319e71cf85e55016db71ab4718a7c26",
     "playwright.config.js": "3eacc465035e5fdf3136f09e8346ab05de36c8384710f33a780bd297599bf846",
+    "preparar_release.py": "0461aa11f3d93e35d85ffbed1fc6ffb05a8e0dfa9992d0a5fd5383076937a8a5",
     "prototypes/.gitkeep": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
     "quickscan_secops_soccmm_v3_1_3.html": "d329049147950a5b2a40b2735c3d4bd9a89177fed439efbcb58df01bdeb7ae82",
     "quickscan_secops_soccmm_v3_2_dev.html": "73bae0bac533031dfe6eebb17805beed3ca8eead9ba0d5e05e58e9beb9d4bc87",

@@ -3427,7 +3427,18 @@ T("P51-RPT6", "estágio coerente entre KPI, régua, jornada, leitura executiva e
 });
 
 /* --------------------------- UAT-07 --------------------------- */
-T("P51-REC1", "recomendações acionáveis junto do gap, sem overclaim nem duplicação", () => {
+/* EA-22 (2026-09-13) · o título dizia "sem overclaim NEM DUPLICAÇÃO" e o corpo
+   não compara `pr-gapsup` com superfície alguma: a propriedade de duplicação
+   nunca foi medida aqui. Promessa RETIRADA do nome em vez de asserção fingida —
+   nenhuma alínea foi removida ou afrouxada (R10 §1: o que existia continua).
+   O que este gate mede, e continua medindo: capability canônica do motor,
+   opções da tabela presentes, nenhum apoio anexado a gap fora do mapeamento
+   normativo (é este o "sem overclaim"), e nenhum gap normativo sem caminhos.
+   DÍVIDA DECLARADA: a relação entre a lista do gap e a do card-alvo não tem
+   julgador. Ela é DECLARADA NO PRODUTO desde o `EA-48` — o bloco de gaps avisa
+   que as listas podem não coincidir e nomeia a canônica —, e a medição está no
+   fecho do `EA-26`. Sem gate novo, por diretriz do proprietário de 2026-09-13. */
+T("P51-REC1", "recomendações acionáveis junto do gap, sem overclaim", () => {
   const R = boot();
   R.w.__DEV.setArq(0);
   /* estado com gaps altos em detecção/logs/automação e contexto declarado */

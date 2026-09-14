@@ -392,7 +392,7 @@ dado estruturado). Cumprido — ver §Resolução acima.
 
 ## EA-3 — O stage `mutation` não sabe dizer o que não está checando
 
-**Status**: `aberto`
+**Status**: `resolvido`
 
 **Aberto em**: 2026-08-29. Nasceu ao conferir a premissa de uma rota registrada
 do backlog ("Onda 3 — harness de mutação scriptado, KI-2") antes de abrir
@@ -640,6 +640,23 @@ argumentos (`arquivos_mutados`, `fontes`), por harness, sob `estado == ok`**
 derivação, não a identidade (N1, N2 — `specs/017-semantica-do-gatilho/spec.md:895-906`).
 
 Itens (ii) e (iii) da nota de 2026-09-06 não são tocados por esta correção.
+
+### Resolvido em 2026-09-13 — o instrumento existe e responde
+
+O efeito era *"a saída do stage é só verdes"* quando um arquivo mudava fora dos
+`targets` de todo harness. A demanda **018** construiu o julgador que faltava, e
+ele responde a cada execução:
+
+```
+mutation-coverage: 15 na população · 0 órfão(s) · 1 não medido(s) · 11 dívida(s) · 0 problema(s)
+```
+
+**Órfão** é exatamente o caso do achado — arquivo na população sem harness que o
+cubra — e o stage o **nomeia** em vez de calar. O que sobra não é silêncio: é
+**fronteira declarada** (`gen_*.py`, `*.sh`, `*.json`, `tests_*.js` fora da
+população, com custo medido em 2026-09-11) e **11 dívidas com prazo**. Fronteira
+dita é o oposto do `[OK]` que mente por omissão.
+
 
 ## ~~EA-4 — Âncora de mutante apodrece em silêncio; o aviso existe, mas só quando alguém puxa o gatilho~~
 
@@ -1392,7 +1409,7 @@ executor do pipeline, não objeto dele.
 
 ## EA-16 — `UX14` é constante por duas razões independentes: o gate não pode reprovar
 
-**Status**: `aberto`
+**Status**: `resolvido`
 
 **Aberto em**: 2026-08-31, na demanda 011 (o refinamento dela já registrava que a
 rota recusada "mata UX14"). Suíte **congelada**: registrado, **não emendado**.
@@ -1422,6 +1439,23 @@ correto após regroup" e devolve `true` em qualquer estado do produto.
 `tests_ux_m41.js` é suíte congelada — está na lista `frozenSuites` do próprio
 `P50-GOV1` (`tests_p50_core.js:446-449`) e sob a §29.4. Correção exige rito
 próprio e é do `qa-engineer`. Instância do padrão `EA-20`.
+
+### Resolvido em 2026-09-13 — a propriedade ganhou carrasco vivo; o gate morto continua morto, e isso está aceito
+
+O efeito era *"o atalho pode passar a atingir o finding errado sem que `UX14` mude
+de cor"*. **Deixou de ser verdade.** A demanda 011 criou o substituto e o declarou
+na própria spec (*"`D011-KEY1` passa a ser o único carrasco do mapeamento
+tecla→finding"*).
+
+Medido hoje: `D011-KEY1` **PASS** (`tests_011_prioridade.js:317`), com oráculo que
+recalcula a ordem do vetor da fixture sem chamar `computeFindings()`, e carrascos
+`D011-M2`/`D011-M8` provados KILL na campanha `d011`.
+
+**Resíduo aceito**: o `UX14` continua constante pelas duas razões medidas, e vive
+em `tests_ux_m41.js` — **harness M41, classe `frozen`**. Consertá-lo custa D2 para
+desconstantar um gate cuja propriedade já tem julgador. Não se paga, e fica dito
+em vez de disfarçado.
+
 
 ## EA-17 — R9 §6 (CSS com prefixo do próprio módulo) não tem verificador em lugar nenhum do pipeline
 
@@ -1751,7 +1785,7 @@ repin deste registro.
 
 ## EA-22 — `P51-REC1` promete "sem duplicação" no nome e não compara `pr-gapsup` com superfície alguma
 
-**Status**: `aberto`
+**Status**: `resolvido`
 
 **Aberto em**: 2026-09-01. Reservado em prosa pela 015 (`relatorio-final.md:549`).
 **Pendente de confirmação por execução** — o veredito é do `qa-engineer`, nunca
@@ -1777,6 +1811,28 @@ deste registro.
 Se o gate reprova ou passa, e se a promessa deve virar asserção ou sair do título:
 `qa-engineer` (execução) e `tech-lead` (desenho). Instância de fronteira da
 família `EA-31`.
+
+### Resolvido em 2026-09-13 — a promessa saiu do nome, nenhuma asserção saiu do corpo
+
+O gate prometia no título *"sem overclaim **nem duplicação**"* e mediu quatro
+coisas, nenhuma delas duplicação:
+
+1. capability canônica do motor;
+2. opções da tabela presentes;
+3. nenhum apoio anexado a gap **fora do mapeamento normativo** — este é o
+   *"sem overclaim"*, e é verdadeiro;
+4. nenhum gap normativo sem caminhos de apoio.
+
+**Correção**: o título passa a ser *"recomendações acionáveis junto do gap, sem
+overclaim"*. **Nenhuma alínea foi removida nem afrouxada** (R10 §1) — o que se foi
+foi a promessa que ninguém cumpria. Medido: `p50core` 65/65.
+
+**Dívida declarada, e com endereço**: a relação entre a lista do gap e a do
+card-alvo continua sem julgador. Mas ela deixou de ser invisível ao leitor: desde
+o **`EA-48`** o bloco de gaps avisa que as listas podem não coincidir e **nomeia a
+canônica**, e a medição das duas listas está no fecho do **`EA-26`**. Sob a
+diretriz do proprietário de **2026-09-13**, nenhum gate novo foi criado para isso.
+
 
 ## EA-23 — a mesma capability sob dois nomes no mesmo relatório
 
@@ -2103,7 +2159,7 @@ registrado: **`EA-31` na própria sessão que mais citou a família.**
 
 ## EA-27 — `HIDE_EYEBROWS` existe em três cópias sem dono único
 
-**Status**: `aberto`
+**Status**: `resolvido`
 
 **Aberto em**: 2026-09-01. Reservado em prosa pela 015 (`relatorio-final.md:554`).
 **Efeito medido, não hipotético.**
@@ -2128,9 +2184,25 @@ Se a unificação é bridge, helper ou import de fixture, e se cabe em `fix-find
 ou em demanda: `tech-lead` com `core-engineer`; o veredito sobre o poder do oráculo
 é do `qa-engineer`.
 
+### Resolvido em 2026-09-13 — as cópias continuam, a divergência silenciosa não
+
+O efeito medido era *"mutar o array do produto não alcança `U15`, porque o oráculo
+lê a própria cópia"*. A demanda 015 fechou isso: `tests_015_apoio.js:311`
+(`tresCopiasDaLista`) compara as **três** — produto, oráculo de `U15` e fixture da
+010 — dentro do `D015-TIT1`.
+
+Provado por carrasco, não por leitura: **`D015-M18`** muta o `HIDE_EYEBROWS` **do
+produto** e o `D015-TIT1 (h1)` o mata (`KILL` na matriz). Mutar o produto passou a
+alcançar julgador.
+
+**Resíduo aceito**: as três cópias seguem sem dono único (R9 §5/§8). Unificá-las
+mexe em `ui_v32.js` (§29.4) e em duas suítes, para remover uma duplicação que hoje
+**não pode divergir em silêncio**. Fica como está, com a razão escrita.
+
+
 ## EA-28 — prova que existiu e saiu do registro: mutante declarado carrasco, provado só em bateria efêmera
 
-**Status**: `aberto`
+**Status**: `resolvido`
 
 **Aberto em**: 2026-09-01. Espécie **nova** da família `EA-20` — id próprio porque
 o corpo do `EA-20` descreve outra ausência (falta de mutante) e não se reescreve
@@ -2181,6 +2253,26 @@ com harness.
 O veredito sobre cobertura e o desenho da checagem são do `qa-engineer` (com o
 `tech-lead`); a checagem, se nascer, entra no `pipeline.yaml` (R10 §9), nunca em
 prompt de agente.
+
+### Resolvido em 2026-09-13 — os três buracos nominais fecharam
+
+Medido, um a um:
+
+| o que o achado cobrava | hoje |
+|---|---|
+| `M17`/`M18` não estavam no harness | **estão** — `D015-M17` e `D015-M18` em `tests_015_mutants.js` |
+| não tinham par na matriz | **têm** — um par cada, `ultima_prova 2026-09-01 · KILL` |
+| não constavam de `dividas_declaradas` | `D015-M18` consta; `D015-M17` não precisa, porque está no harness |
+
+A prova voltou do histórico do git para o registro, que era o defeito.
+
+**Resíduo nomeado, e não fechado aqui**: continua não existindo cláusula genérica
+que compare *mutante declarado em spec* com *par na matriz* — o `IC-5` segue
+**nominal à `p51`**. Metade disso já caiu: a **017** generalizou o antigo `IC-6` a
+todo harness com preflight. Sob a diretriz do proprietário de **2026-09-13**,
+**nenhum gate novo foi criado** para a metade restante; o custo de deixar assim é
+que a próxima spec que declarar carrasco sem par depende de leitura humana.
+
 
 ## EA-29 — afirmação refutada que sobreviveu em três superfícies, e a pior delas era o comentário do gate
 

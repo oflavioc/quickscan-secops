@@ -2838,7 +2838,7 @@ estado, ver `specs/016-registro-contra-execucao/relatorio-final.md` §Números):
 
 ## EA-34 — "declaração viva" não implica "mutação observável pelo gate": o limite do instrumento de regra morta por cascata
 
-**Status**: `aberto`
+**Status**: `resolvido`
 
 **Aberto em**: 2026-09-04. Medido pelo `qa-engineer` na errata **E13** da demanda
 014 (`specs/014-gate-sem-poder-discriminante/spec.md:728-733`), repassado ao
@@ -2913,6 +2913,44 @@ limite no cabeçalho de `regra_morta.js` e em `CONTEXT.md` (vocabulário do
 `product-owner`); ou se a exposição permanece vigiada só pelo par mutante↔gate
 por Chromium, caso a caso, como o próprio `D014-M10`/`P52-LAY2` reancorado.
 Abrir demanda é do orquestrador (R4); o veredito é do `qa-engineer`.
+
+### Resolvido em 2026-09-14 — o limite ficou escrito onde é lido, nas duas pontas
+
+O registro deixava **três opções** e dizia que escolher era do `qa-engineer`.
+Escolhida a segunda — *documentar o limite no cabeçalho de `regra_morta.js` e no
+`CONTEXT.md`* — pela razão que o próprio achado dá: **isto é limitação declarada
+do instrumento, não defeito dele**. As outras duas custam caro e compram pouco:
+a primeira tornaria a varredura `heavy` (geometria renderizada exige navegador),
+que é o oposto do desenho da 014; a terceira já é o que acontece hoje, sem nome.
+
+**No instrumento** (`.claude/verify/regra_morta.js`, novo bloco **§3.1**, dentro
+do comentário do predicado, onde quem lê o `§3` topa com ele): o laço pula toda
+concorrente com `O.prop !== D.prop` e a `§6` agrupa por *contexto + seletor +
+propriedade*. Disso decorre que **`viva` significa "decide a própria propriedade",
+e não "muda o que se vê"**. A consequência prática está escrita para quem for
+escrever mutante de CSS: **`D014-VARR1` verde prova que a declaração DECIDE algo;
+não prova que mutá-la será visível para o gate.**
+
+**No glossário** (`CONTEXT.md`), verbete novo **"Declaração viva e inobservável"**,
+definido **por critério** e não por lista — como a R12 passou a exigir no fecho do
+`EA-47`, no mesmo dia: *viva* decide-se **por propriedade** e sem navegador;
+*observável* decide-se **por efeito**, e efeito só um navegador resolve.
+
+### A evidência que fechou o texto veio de outro achado, hoje
+
+Ao reexaminar o **`EA-7`** encontrei a trilha completa do episódio: a primeira
+forma do `D014-M10` mutava `grid-template-columns` e saiu **SOBREVIVENTE** no job
+`visual` — enquanto esta varredura dizia a declaração **viva**. **As duas leituras
+estavam certas**, e é exatamente isso que o bloco novo diz. O mutante só matou
+depois de **reancorado na colocação** (`grid-column`).
+
+Esse par — instrumento estático diz `viva`, navegador diz `SOBREVIVENTE` — é a
+melhor ilustração possível do limite, e agora está no lugar onde a próxima pessoa
+vai precisar dela.
+
+**Medido**: `D014` regra morta **7 PASS · 0 FAIL**; censo de parse **inalterado**
+(220/1134) — comentário e verbete não mexem em estrutura.
+
 
 ## EA-35 — a "altura aparente" do `P52-ICON2` é proporcional a `scale²`, não a `scale`: o `getBoundingClientRect()` já inclui o `transform`
 

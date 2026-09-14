@@ -291,6 +291,19 @@ de leitura do registro, distinto de SOBREVIVENTE (medido e escapou) e de MUTANTE
 NÃO EXECUTADO (não rodou).
 _Evitar_: prova stale, KILL antigo, par desatualizado
 
+**Declaração viva e inobservável**:
+Declaração que **vence** a cascata para a própria propriedade — e que a varredura
+de regra morta, portanto, dá por **viva** — e que ainda assim não altera nada que
+um gate consiga medir, porque o efeito visual que ela governaria já está
+determinado por **outra propriedade**, possivelmente de outra camada. O critério
+que a separa: *viva* decide-se **por propriedade** e sem navegador; *observável*
+decide-se **por efeito**, e efeito só um navegador resolve. Mutar uma delas produz
+SOBREVIVENTE sem que nada esteja podre — o instrumento e o gate estão ambos
+certos, e medem coisas diferentes.
+_Evitar_: regra morta (é o oposto — aquela não decide nem a própria propriedade),
+mutante fraco, falso sobrevivente, gate sem poder discriminante (esse é o `EA-20`,
+e nasce de outra causa)
+
 **Varredura de regra morta**:
 Checagem estática que, para cada mutante de CSS, prova que a declaração resultante
 decide ao menos uma propriedade — cascata, sem navegador. Distinta da varredura de

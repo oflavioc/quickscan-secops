@@ -1966,7 +1966,7 @@ o auditor ratifica). Este registro apenas mede a ausência.
 
 ## EA-26 — resíduo `C × I`: card-alvo e `apoio-block` lendo o mesmo `MAP` em duas seções, sem texto que explique
 
-**Status**: `aberto`
+**Status**: `resolvido`
 
 **Aberto em**: 2026-09-01. Reservado em prosa pela 015 (`relatorio-final.md:553`).
 Declarado pela demanda **010** e **não fechado** por ela nem pela 015.
@@ -2033,6 +2033,73 @@ saudável cuja premissa venceu.
 **Recomendação do orquestrador**: a **3** por ora, e a **1** quando outra demanda
 já estiver tocando a 015 — abrir errata em spec validada só para acrescentar uma
 frase não se paga sozinho. A decisão é do proprietário.
+
+### Resolvido em 2026-09-13 — o remédio já tinha chegado por outra porta, e a medição de 2026-09-12 descrevia o defeito errado
+
+Remedido **sem uma linha de código** e **sem consumir rito nenhum**: a cura veio do
+`EA-48`, escrito em 2026-09-12 para outro fim (o resíduo do `EA-21`), e alcança
+este achado inteiro. Medido no **papel real**, pelo `beforeprint` — não pelo
+`buildPrintReport()`, que é artefato intermediário e não passa pelo mapa de
+apresentação.
+
+#### O defeito era outro, e mais concreto do que "falta de contexto"
+
+A cadeia dizia *"a mesma informação em duas seções"*. **Não é a mesma
+informação.** Medido em sessão com duas práticas declaradas como alvo:
+
+| capability | seção **Gaps observados** | seção **Cenário-alvo** |
+|---|---|---|
+| Análise centralizada, correlação e retenção de eventos | FortiAnalyzer, FortiSIEM, **FortiSOC** | FortiAnalyzer, FortiSIEM |
+| Ciclo de vida de detecção | FortiAnalyzer, FortiSIEM, **FortiSOAR**, **FortiSOC** | FortiSIEM |
+
+São **duas respostas diferentes para a mesma pergunta** no mesmo documento — a do
+alvo é subconjunto estrito. A causa é a ancoragem: a seção de gaps parte da
+**capability**; a do alvo, do **nível respondido**.
+
+#### Por que isso deixou de ser defeito
+
+O `EA-48` pôs no bloco de gaps, **nos dois ramos** (contexto declarado e não
+declarado — conferido por execução), a frase que nomeia exatamente essa
+divergência:
+
+> *"Esta lista parte da capability associada ao gap, não do nível respondido na
+> pergunta — por isso **pode não coincidir com outras listas deste relatório**. A
+> **ancoragem canônica** desta sessão é a que parte da pergunta e do nível
+> respondido; esta lista é complementar."*
+
+Três coisas, e as três importam:
+
+1. **avisa que outras listas existem**;
+2. **explica por que divergem**;
+3. **nomeia qual é a canônica** — e a canônica é a do **card-alvo**, que é
+   justamente o bloco que a `D015-GOV1` impede de tocar.
+
+E o bloco do alvo declara a própria ancoragem: *"Do catálogo desta sessão, **pelo
+gap observado nesta prática**"*.
+
+**A ordem de leitura fecha o argumento**: `pr-findings` vem **antes** de
+`pr-target` no papel e "4 Gaps" antes de "5 Cenário-alvo" na tela (medido nos dois
+ramos). O leitor recebe a explicação **antes** de encontrar a lista menor.
+
+#### O resíduo, aceito e nomeado
+
+A explicação é **assimétrica**: o bloco de gaps referencia o outro, o card-alvo
+não. Fechar a assimetria exige tocar `#pr-target` — e a `D015-GOV1` compara esse
+nó **byte a byte** contra commit imutável, em 7 estados. Mover a âncora é
+reescrever o oráculo de um gate para acomodar a mudança (**R10 §1**).
+
+Não se paga: o custo é errata em spec validada, e o ganho seria repetir, no
+segundo bloco, um aviso que o leitor já recebeu no primeiro. **Não há erro factual
+em nenhuma das duas listas** — há duas ancoragens declaradas, ambas ditas.
+
+#### Sobre a medição de 2026-09-12
+
+Aquela sessão implementou uma cláusula em `tgtEnablersHTML`, mediu os quatro anéis
+de proteção e reverteu. **A implementação estava certa e o diagnóstico, incompleto**:
+tratava o caso como "duplicação sem explicação" quando já não era — a explicação
+tinha entrado no mesmo dia, do outro lado do relatório, por outro achado. Fica
+registrado: **`EA-31` na própria sessão que mais citou a família.**
+
 
 ## EA-27 — `HIDE_EYEBROWS` existe em três cópias sem dono único
 

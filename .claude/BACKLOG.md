@@ -5066,6 +5066,63 @@ escrever só com `--out` explícito) é rito **D2**. Não foi feito aqui.
 `v3_1_3_functional_snapshot.json`. O `preparar_release.py` já protege por outro
 caminho — recusa árvore suja —, mas a proteção é lateral, não a cura.
 
+### Emenda de 2026-09-14 — mitigado onde dá, e a correção de raiz continua bloqueada
+
+> **Errata do orquestrador, antes de tudo.** Ao listar o backlog eu recomendei este
+> achado como *"uma linha, e o D2 nele é barato porque dá para provar identidade
+> byte a byte — que é a Porta A"*. **Estava errado.** `CLAUDE.md:107` diz, textual:
+> *"Porta A pendente de ratificação — hoje tudo é Porta B"*. Portanto a correção de
+> raiz exige **spec commitada + auditoria independente humana**, e não é barata.
+> O erro foi meu e não do registro: a Porta A está pendente desde antes desta
+> sessão, e eu já a tinha citado corretamente ao abrir a demanda 019.
+
+#### O risco é real, e é LIMITADO — medido, não suposto
+
+Simulei a invocação nua (só o carimbo `generatedAt` alterado) e perguntei a cada
+guarda existente se ela prosseguiria:
+
+| guarda | com o snapshot `frozen` sujo |
+|---|---|
+| `baseline` | **PASSA** — lê `git show HEAD:`, é cego à árvore. É o **`EA-18`** |
+| `mutation` | **RECUSA** — árvore suja |
+| `gen_pins` | **RECUSA** — árvore suja |
+| `preparar_release.py` | **RECUSA** — árvore suja |
+
+Três das quatro recusam prosseguir. A janela silenciosa é **entre a invocação nua
+e o próximo desses comandos** — e commitar o estrago por acidente esbarra ainda no
+hook `guard-add.sh`, que bloqueia `git add -A`.
+
+**O que continua verdadeiro, e é o que mantém o achado aberto**: se o payload
+divergisse, o harness gravaria a divergência **como novo baseline** em vez de
+reprovar. Nenhuma das três guardas impede isso — elas só impedem que o estrago
+**avance**.
+
+#### Mitigação aplicada
+
+O `preparar_release.py` passou a **imprimir o comando seguro** no bloco de
+preflight, com a razão:
+
+```
+node harness_m41_v313.js quickscan_secops_soccmm_v3_2_dev.html \
+     --compare v3_1_3_functional_snapshot.json
+```
+
+Isso tira a armadilha do **caminho óbvio**, que é onde ela vivia: ninguém a
+documentava: era o comando que a pessoa digitava sozinha. O defeito latente
+continua no harness.
+
+#### A correção de raiz, para quando o proprietário decidir
+
+Inverter o padrão de `harness_m41_v313.js:18` — comparar por default, escrever só
+com `--out` explícito. **Uma linha de código, rito de sete fases**: `frozen` ⇒ D2
+⇒ Porta B ⇒ spec commitada + auditoria humana independente, que **nenhum agente
+pode assinar** (R4 §D3).
+
+Vale notar a assimetria, porque ela é o argumento para ratificar a Porta A um dia:
+a mudança é **provadamente inerte à medição** — não toca o cálculo do payload, só
+o destino do arquivo —, e é exatamente esse tipo de prova que a Porta A aceitaria.
+
+
 ## Varredura de reconferência por execução — 2026-09-13
 
 > **Não corrige nada.** Mede os **26 achados `aberto`** contra a árvore de hoje

@@ -29,6 +29,20 @@ resolvido ANTES do portão do refinamento. Doc, spec e prompt novos usam o termo
 glossário. Termo que falta lá é sinal: linguagem inventada (reconsiderar) ou
 lacuna real (registrar).
 
+**Verbete define por CRITÉRIO, nunca por lista** (`EA-47`, 2026-09-14). Definição
+que enumera casos envelhece em silêncio: quando a fonte ganha um item, a lista do
+glossário fica errada sem que nada mude nela. O verbete diz **o que faz um caso
+pertencer**; a lista canônica vive na fonte executável e é **referenciada**, não
+copiada. Instância que pagou: o verbete *Insumo de prova* copiou cinco das seis
+razões de classe da 017, contra a decisão escrita no refinamento dela, e ficou sem
+a sexta.
+
+**Item em `§Não mudam` não se certifica por diff vazio** (`EA-47`). `git diff`
+vazio prova que o arquivo **não mudou** — nunca que ele **continua certo**. Na
+Fase 6, item declarado imutável exige releitura do conteúdo contra a decisão de
+origem; foi assim que o `spec-validate` da 017 certificou como conforme um verbete
+que a própria demanda tinha tornado obsoleto.
+
 ## Achados e backlog
 
 Achados vão ao backlog com **id permanente** (números citados nunca renumeram;

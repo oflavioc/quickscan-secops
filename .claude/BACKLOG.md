@@ -4227,7 +4227,7 @@ nenhum chamador os alcança), e o commit `3c56eab` apenas declarou a dívida na
 
 ## EA-44 — o `core` ficou fora do vocabulário fechado da 013: ambiente incompleto sai como "gate sem poder discriminante", um falso eixo D
 
-**Status**: `aberto`
+**Status**: `resolvido`
 
 **Aberto em**: 2026-09-05. Nasceu como o residual nomeado no fecho de
 `EA-4`/`EA-5`/`EA-6` — riscar os três sem nomear o que sobra trocaria um
@@ -4299,9 +4299,31 @@ este achado (não dá preflight ao `core` nem toca `tests_core_mutants.js`) —
 apenas nomeia, na saída do stage, quem tem de resolvê-lo. `check_mutation.py:476`
 e `:531` citam o mesmo credor no comentário e no contrato de `mut_relacao`.
 
+### Resolvido em 2026-09-14 — âncora podre deixou de ser contada como sobrevivente
+
+O efeito era a **indistinção**: `tests_core_mutants.js` empurrava a âncora podre
+para o mesmo balde de um mutante que rodou e sobreviveu, e a linha de fecho — a
+única que alguém lê primeiro — dizia "escaparam" para os dois.
+
+O `core` migrou para os mesmos três estados do `d009`: âncora que não aplica sai
+`NÃO EXECUTADO · âncora não encontrada`, falha de rebuild sai `NÃO EXECUTADO ·
+rebuild falhou`, e `SOBREVIVENTE` fica reservado a mutante que **rodou** e não foi
+morto. O mutante continua no harness (R10) — o que mudou foi o **rótulo**.
+
+**Medido**: `3 DETECTADO · 0 SOBREVIVENTE · 0 NÃO EXECUTADO de 3`, restauração
+byte a byte OK.
+
+**O que continua fora, por escopo declarado e não por esquecimento**: o `core`
+segue em `IC_SEM_PREFLIGHT` (`check_mutation.py:119`). A 013 o excluiu com razão
+registrada — ele é a **referência do interpretador**, e tocá-lo era o risco que
+aquela demanda existia para conter (T8). Com esta correção, a âncora podre do
+`core` ainda aparece só na execução da campanha, mas **aparece nomeada**, que era
+o defeito deste achado.
+
+
 ## EA-45 — o resíduo do `d009`: nascido em branch paralela, nunca recebeu o vocabulário de três estados da 013
 
-**Status**: `aberto`
+**Status**: `resolvido`
 
 **Aberto em**: 2026-09-05. Segundo residual nomeado no fecho de
 `EA-4`/`EA-5`/`EA-6` — mecanismo distinto do `EA-44`: `d009` TEM preflight
@@ -4357,9 +4379,36 @@ Portar `d009` para o padrão T4/T5 (`tests_p50_mutants.js`/
 comportamento novo de instrumento, não `fix-finding`: `tech-lead` com
 `qa-engineer` desenham, o orquestrador abre a demanda (R4).
 
+### Resolvido em 2026-09-14 — o `d009` migrou para o vocabulário fechado da 013
+
+Duas correções, no `tests_009_mutants.js`:
+
+**1. A campanha deixou de sair muda.** O achado media que
+`MUTATION_PY=inexistente` produzia exceção não capturada, exit 1 e **zero linhas**
+— indistinguível, para quem lê, de campanha que não precisou rodar. O
+interpretador passa a ser conferido **antes de qualquer efeito**, e cada mutante
+sai `NÃO EXECUTADO · interpretador ausente`. Medido: **19 linhas**, uma por
+mutante, com a causa do conjunto fechado.
+
+**2. Três estados no lugar de dois.** `KILL`/`ESCAPOU` viraram
+`DETECTADO`/`SOBREVIVENTE`/`NÃO EXECUTADO`, com as causas fechadas de
+`check_mutation.py:113` — âncora podre (`não encontrada`/`ambígua`), `rebuild
+falhou`, `gate não pôde ser executado`. **`SOBREVIVENTE` passou a exigir que o
+gate tenha rodado**: sem linha do gate ninguém julgou nada.
+
+**A prova de que isso importa** é a linha canônica: `check_mutation.py:846`
+(`RE_MUT_LINHA`) casa as três formas novas e **não casava** `KILL      <id> · …`.
+O relato de não-KILL por nome, que existe desde a 013, nunca tinha alcançado esta
+campanha.
+
+**Medido**: campanha completa **19 DETECTADO · 0 SOBREVIVENTE · 0 NÃO EXECUTADO
+de 19**, restauração de source e HTML byte a byte OK — mesma contagem de antes,
+agora legível pelo instrumento.
+
+
 ## EA-46 — `ic_estatico` tem dois pontos cegos de regex, e hoje nenhum chamador os alcança
 
-**Status**: `aberto`
+**Status**: `resolvido`
 
 **Aberto em**: 2026-09-06. Observado durante a demanda 017 (T034,
 `doc-writer`), ao ler `ic_estatico` para escrever a nota de `EA-3` sobre a
@@ -4427,9 +4476,42 @@ a resposta for "generalizar" (comportamento novo de instrumento, R4). Não é
 `fix-finding` — não há asserção hoje que dependa do segundo elemento para
 mudar de veredito.
 
+### Resolvido em 2026-09-14 — dois pontos cegos fechados, e o resíduo deixou de ser mudo
+
+O achado media que o 2º elemento de `ic_estatico` sairia `[]` — **indistinguível
+de "este harness não muta nada"** — para a maioria dos harnesses, no dia em que
+alguém precisasse dele.
+
+**Censo antes, reproduzido hoje**: 2º elemento **vazio em 12 de 14** fontes de
+harness (completo só em `p51`, parcial em `d014`).
+
+**Duas correções:**
+
+1. **`fmap` passou a ler as duas formas** de declarar o arquivo — o objeto literal
+   `chave: path.join(HERE, "arq")` (p51, d014) **e** a constante solta
+   `const NOME = path.join(HERE, "arq")`, que é a forma das outras doze. `usados`
+   passou a casar `file: F.x` **e** `file: X`.
+2. **`[]` deixou de significar duas coisas.** Fonte que **declara mutante** e não
+   entrega arquivo devolve **`None`** — *não medido* — em vez de lista vazia.
+   É a R10 §2 (não medir em silêncio é FAIL) aplicada ao valor de retorno.
+
+**Censo depois**: **10 medidos · 4 nomeados como NÃO MEDIDO**, contra 2 medidos e
+12 mudos.
+
+**Validação de que o alargamento não inventa**: para os 10, os arquivos lidos são
+**subconjunto dos `targets` declarados em `mutation_map.json` — zero fora, nos
+dez**. É a condição necessária que o `D017-REL1` já exige (`targets ⊇ arquivos
+mutados`), conferida aqui pelo caminho estático.
+
+Os dois chamadores (`:394` e `:1243`) continuam consumindo só `[0]`, como antes —
+nenhuma mudança de comportamento no stage. O que mudou foi a **qualidade da
+reserva** para o dia em que ela for consumida, que era exatamente o risco do
+achado.
+
+
 ## EA-47 — verbete de vocabulário fechado definido por lista, não por critério: o `spec-validate` certificou a lacuna como conformidade
 
-**Status**: `aberto`
+**Status**: `resolvido`
 
 **Aberto em**: 2026-09-09. Escrito pelo `product-owner`, na correção
 (`fix-finding`) do resíduo 1 do aceite de intenção da demanda 017 — o verbete
@@ -4502,6 +4584,28 @@ divergência antes do aceite.
    `CONTEXT.md` não entra na `§Não mudam` como afirmação, e sim como
    **pergunta do aceite**; o `spec-validate` mede a resposta, não o diff
    vazio.
+
+### Resolvido em 2026-09-14 — a regra de forma entrou na R12
+
+O verbete já estava emendado quando o achado foi escrito; o que faltava era o
+**processo**, e o registro dizia isso com todas as letras (*"é defeito de forma"*).
+Duas regras entraram em `.claude/rules/documentation.md`, no bloco do glossário:
+
+1. **Verbete define por CRITÉRIO, nunca por lista.** Definição que enumera casos
+   envelhece em silêncio — quando a fonte ganha um item, a lista do glossário fica
+   errada **sem que nada mude nela**. O verbete diz o que faz um caso pertencer; a
+   lista canônica vive na fonte executável e é **referenciada**, não copiada.
+2. **Item em `§Não mudam` não se certifica por diff vazio.** `git diff` vazio prova
+   que o arquivo **não mudou** — nunca que ele **continua certo**. Item declarado
+   imutável exige, na Fase 6, releitura do conteúdo contra a decisão de origem.
+
+As duas citam a instância que pagou o preço, como manda o formato da casa
+(errado → custo → correto).
+
+**Sem verificador novo**, por diretriz do proprietário de 2026-09-13. A regra vive
+onde `CLAUDE.md` aponta e todo agente lê — é a mesma metade normativa que resolveu
+o `EA-37`; a metade mecânica, lá, só veio depois e por decisão própria.
+
 
 ## EA-48 — a canônica do `EA-21` está decidida e o PDF continua emitindo as duas listas
 

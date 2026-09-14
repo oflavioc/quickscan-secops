@@ -1,8 +1,8 @@
 {
   "_meta": {
     "descricao": "Registry único de pins — fonte de identidade dos artefatos (R8). Hashes = SHA-256 dos blobs de HEAD. Alterar arquivo pinado exige regenerar este registry no MESMO PR, com motivo no commit.",
-    "gerado_de_head": "67af55412f7ad18d3eee6b1d12403ed7d77c2f5d",
-    "gerado_em": "2026-09-13",
+    "gerado_de_head": "3522e1962d5c70718d00d83178f1704436a6284b",
+    "gerado_em": "2026-09-14",
     "exclusoes": [
       "docs_phase5/**",
       ".claude/project-memory/** (estado de processo — muda por fase; validado pelo stage state, não por pin)",
@@ -15,7 +15,7 @@
     "baseline_core_zip_sha256": "625079c462be7d44ffd69b1cd85f256382322bd0555ae4b548f21bf30ee5b89d"
   },
   "files": {
-    ".claude/BACKLOG.md": "5b34b95a0d6762ad0e6c24733556ef9a61aa618cfbc83e02e5a9fca4ab89288b",
+    ".claude/BACKLOG.md": "1594feb0a8cccfbaf7c492558881055b330b93c46b55fa107fe9406c61b154e7",
     ".claude/agent-memory/README.md": "2f868716c8785119c1d6a02a7715f7b5058ab968f55951410fc82fc45b960a93",
     ".claude/agent-memory/build-engineer/MEMORY.md": "5ed47a73226fea6613b44c2ce70b26e95415033bafbd69a3ada20fa7df0bf950",
     ".claude/agent-memory/build-engineer/feedback_escopo_de_scanner_nos_dois_sentidos.md": "a07b03eb0687bc4f08ff02375684b8441f8d434384c415a3e25b1fe233007527",
@@ -164,7 +164,7 @@
     ".claude/rules/boundary.md": "327888a7af5719d2bb264058457d1c6782f62a6dcaa506fdf844336a55da47f4",
     ".claude/rules/design-decisions.md": "02bc7645e93d8c5aacf556fed5ed8f2f9600a2e8dcf6f7cead8241fcf9c3ba30",
     ".claude/rules/determinism.md": "90bab1c89c7b9a54c400b7124d60693a431face37f422e847e6d2e566cb5f76d",
-    ".claude/rules/documentation.md": "d34405cb28f4413cef8e5c7512a952ca05f162aac14310bec9b0b12d9d9ce574",
+    ".claude/rules/documentation.md": "1bc3ee711769319d3bd7dbfe5d7ac376f764149865457fe9bb283fcf0daf10d4",
     ".claude/rules/evidence-intake.md": "a93f8d063602e2b075c2096d38e74f9cd1f8452c8943691aca82c3847c84cd8c",
     ".claude/rules/evidence.md": "da270e16cd13f788667618e073a147a32ef04e7ff6294af79b713314155b6274",
     ".claude/rules/gates.md": "a8a7223b9eba4928bb274751430396fe8c75bd3f7d9cacbfd3c462080aac96c9",
@@ -201,7 +201,7 @@
     ".claude/verify/check_lint_arch.py": "ef3b65187a895b7b9d4d970a5763974d3e72345eca98bf9625457397c0f0fe8a",
     ".claude/verify/check_m41.py": "f5f59097ab1510d6bbd0a3e63272e00da95bb65c818c23a7fff2141e8f5d9b4f",
     ".claude/verify/check_markers.py": "5623d9cb3203cf16a307014a4255bc3d8ecf08e469eaf2f110927802a9b2fe7c",
-    ".claude/verify/check_mutation.py": "ee9e36bfd14f5810fe9e9ab9399203b971d398487e24de3a172433166460d34c",
+    ".claude/verify/check_mutation.py": "0b69f47035b650f189cdc67fcab60e889d03ec75ebf690d9159518b6fb0848b9",
     ".claude/verify/check_mutation_coverage.py": "43988278ef21e304680fe8c8707516953e6867c0afe0f095455771721e2a5830",
     ".claude/verify/check_state.py": "934999bd6e989bd09e17d322b65ac1c92fece5db85d409558b28de5b6b2fc212",
     ".claude/verify/check_suites.py": "457516eae3a5f98ac894a13fb6283f30a2f5e5dce158d24fced5295fd1978dfe",
@@ -431,7 +431,7 @@
     "synthetic_session_examples/exemplo-completo.json": "8970e68ca0ce6a6885b62a911532a0598c9c5bca1bb783089fb085ba858a314d",
     "synthetic_session_examples/exemplo-minimo.json": "314e4a7ba4e90aca5a0660370a97b31f82a5cc87b044e937f1a8066020c57ede",
     "tests_009_leitura.js": "4322961372c4505dd7abb2202c5a0e895f1ba6ac0c43575a8956c68ab5e28cdd",
-    "tests_009_mutants.js": "19411b703a6d873c0d4df30f3e45cdbc5aab596741700381324d57cf19865f27",
+    "tests_009_mutants.js": "6a5223149058eaca31056e528805c3847df7f7ae16c87c545412890d628135d4",
     "tests_010_mutants.js": "ba6427c0eef9a3166bac4e88403843b96ab4e5f5d0102b48a30800d7bdfeb6c7",
     "tests_010_vao.js": "52aa030b9689eed65dae03e3a8aa4d8dd0840e1637a3a90abc7e52296035d81e",
     "tests_011_chromium.js": "8a35766bd889143e4d05749700d8fc82026ed703f86191a13947197ce9b6e16e",
@@ -444,7 +444,7 @@
     "tests_015_mutants.js": "4a1804b8cab5fe2d4b27bb81978faf7e6d95100cbc471cec49f5a8946613774a",
     "tests_016_mutants.js": "91013ea606b4e8b94aa1a3dcbd7408ec6d2f10662a85552ec3d7a74264c4e342",
     "tests_018_mutants.js": "68abe828e6d5d618e43eff715654b8bc64211e530b35f6cb6af09de2f38f39f2",
-    "tests_core_mutants.js": "8a0502c2d7f34832722059435f2ccf4d7889614769526b645d4e2a720732af7e",
+    "tests_core_mutants.js": "4c7c4bcec9ff0a3fd5f5bc9edce17c4c016dfeb08159529002da2b8db322c732",
     "tests_ea41_instrumento.js": "dc93b175b1be807fe7989645c6a61df73a1909d3a5b56510753059d6f93dfcbc",
     "tests_ea41_mutants.js": "1ce0c3c7444cf4eae710e9ad714fd7fb0b58cb3c0136afce7842e1af6be07301",
     "tests_icons_m46.js": "f73f96e32951507135c0b36d968fe12e9ffbc268e8ad438ea2e6c861a8b88123",

@@ -178,10 +178,22 @@ def ic_estatico(caminho):
     (R10 §2). A reserva mede e o relatório NOMEIA qual oráculo respondeu.
     """
     src = open(caminho, encoding="utf-8", errors="replace").read()
+    # EA-46 · as DUAS formas de declarar o arquivo, medidas nos 14 harnesses:
+    #   objeto literal  `chave: path.join(HERE, "arq")`       — p51, d014
+    #   constante solta `const NOME = path.join(HERE, "arq")` — as outras 12
     fmap = dict(re.findall(r'(\w+)\s*:\s*path\.join\(HERE,\s*"([^"]+)"\s*\)', src))
+    fmap.update(dict(re.findall(
+        r'(?:const|let|var)\s+(\w+)\s*=\s*path\.join\(HERE,\s*"([^"]+)"\s*\)', src)))
+    # e as DUAS formas de usar: `file: F.x` (namespaced) e `file: X` (identificador)
     usados = set(re.findall(r"\bfile\s*:\s*F\.(\w+)", src))
-    return ([m.group(2) for m in RE_IC_ID.finditer(src)],
-            sorted({fmap[k] for k in usados if k in fmap}))
+    usados |= set(re.findall(r"\bfile\s*:\s*([A-Za-z_]\w*)\s*[,}]", src))
+    ids = [m.group(2) for m in RE_IC_ID.finditer(src)]
+    arquivos = sorted({fmap[k] for k in usados if k in fmap})
+    # EA-46 · `[]` dizia DUAS coisas — "não muta arquivo nenhum" e "não consegui
+    # ler" — e nenhum consumidor teria como distingui-las. Fonte que DECLARA
+    # mutante e não entrega arquivo é NÃO MEDIDO e sai como `None`: R10 §2
+    # (não medir em silêncio é FAIL) aplicado ao valor de retorno.
+    return (ids, arquivos if (arquivos or not ids) else None)
 
 
 print("---- integridade da campanha (013) ----")

@@ -957,7 +957,7 @@ abrir achado sem instância seria especular. Fica só citada, não reaberta.
 
 ## EA-7 — Gate verde que já não pode reprovar: a Fase 5.2 assumiu a composição que o mutante da 5.1 ataca
 
-**Status**: `aberto`
+**Status**: `resolvido`
 
 **Aberto em**: 2026-08-29. Encontrado pelo `qa-engineer` na E3 da demanda 013, ao
 classificar os dois não-KILL da campanha no vocabulário fechado. Janela de
@@ -1034,6 +1034,39 @@ caso que a campanha conseguiu enxergar porque alguém foi olhar um número de
 que mutam `ui_p50_v32.css` (`M51-08`) e todos os da `p50` que mutam o mesmo
 arquivo estão sujeitos ao mesmo mecanismo, e passariam pelo preflight do mesmo
 jeito.
+
+### Resolvido — a demanda 014 aposentou o par e nomeou o substituto; o registro é que ficou para trás
+
+Reexaminado em 2026-09-14, depois de o orquestrador ter classificado este achado
+**duas vezes** como bloqueado por rito D2 (PRs #73 e #74). **Estava errado**:
+`tests_p51_mutants.js`, `ui_p50_v32.css` e `ui_p52_workspace_v32.css` não são
+`frozen` no `boundary.json` **nem** têm pin em `PROTECTED`. Nenhum rito jamais
+barrou este achado.
+
+E, ao medir, o trabalho já estava feito — em **2026-09-01**, pela demanda 014.
+
+| o que o achado cobrava | estado medido hoje |
+|---|---|
+| `M51-01` afirma propriedade que a mutação não viola | **aposentado**; zero ocorrências em `tests_p51_mutants.js` |
+| substituto | **`D014-M10`**, harness `d014vis`, muta a linha **vencedora** (`ui_p52_workspace_v32.css`, `.wrap > #p50-shell { grid-column: 2 → 1 }`) |
+| a propriedade tem carrasco vivo? | **sim** — par `D014-M10`/`P52-LAY2`, `ultima_prova 2026-09-04 · KILL`, run `33834890154` |
+| o carrasco pode apodrecer em silêncio? | **não** — `d014vis.targets` inclui `ui_p52_workspace_v32.css`: mexer na camada que decide **re-dispara** a campanha |
+
+**A 014 não escondeu o resíduo**: `dividas_declaradas` registra, com todas as
+letras, que `P51-VIS1` **fica sem mutante próprio**, e por quê — *"a propriedade
+NÃO fica desguardada: quem a mede é o par `D014-M10`/`P52-LAY2`, na camada que
+HOJE a decide"*. Dívida declarada com causa, não falsa garantia.
+
+**Vale guardar o caminho**, porque é a parte cara do episódio: a primeira forma do
+`D014-M10` (mutar `grid-template-columns` em `:77`) saiu **SOBREVIVENTE** no job
+`visual` — tirar o segundo track não tira a segunda coluna, porque
+`grid-template-areas:"main side"` da camada 5.1 mantém a grade explícita. Só a
+**reancoragem na colocação** (`grid-column`) matou. É a interação entre camadas
+que o **`EA-34`** registra como limite de instrumento.
+
+**Nada foi alterado neste fecho.** É registro alcançando a execução — a mesma
+família `EA-31` que já fechou `EA-16`, `EA-27`, `EA-28` e `EA-37` nesta semana.
+
 
 ## EA-8 — `data-eid` não é chave global no engine: `fortiai-assist` é id em `OFFERINGS` e em `SOLUTION_AREAS`
 

@@ -1,7 +1,7 @@
 {
   "_meta": {
     "descricao": "Registry único de pins — fonte de identidade dos artefatos (R8). Hashes = SHA-256 dos blobs de HEAD. Alterar arquivo pinado exige regenerar este registry no MESMO PR, com motivo no commit.",
-    "gerado_de_head": "b5c8561e30bc30b5166f51dc91ae2b6e08aa77bb",
+    "gerado_de_head": "2f822f2c1d108fd3717d90bd206eac788b31f965",
     "gerado_em": "2026-09-14",
     "exclusoes": [
       "docs_phase5/**",
@@ -15,7 +15,7 @@
     "baseline_core_zip_sha256": "625079c462be7d44ffd69b1cd85f256382322bd0555ae4b548f21bf30ee5b89d"
   },
   "files": {
-    ".claude/BACKLOG.md": "4a29c3d110c59ada462ffed6de0db8d2e210a1f6268c36a4ea987969fa511a87",
+    ".claude/BACKLOG.md": "132e4b85d056e16a765f5221eb56cb4f76f9a78935bae239f338c38179faed4e",
     ".claude/agent-memory/README.md": "2f868716c8785119c1d6a02a7715f7b5058ab968f55951410fc82fc45b960a93",
     ".claude/agent-memory/build-engineer/MEMORY.md": "5ed47a73226fea6613b44c2ce70b26e95415033bafbd69a3ada20fa7df0bf950",
     ".claude/agent-memory/build-engineer/feedback_escopo_de_scanner_nos_dois_sentidos.md": "a07b03eb0687bc4f08ff02375684b8441f8d434384c415a3e25b1fe233007527",
@@ -268,7 +268,7 @@
     ".claude/verify/mutation_map.json": "b5a2369231a393c03e7f4e87c9cdc5dea1fc4a984ed54b2411e5241d69030d3d",
     ".claude/verify/mutation_population.json": "7893a00adc8d087bfb0244e2b580d58772de567b35326af2d0c098e6d4025141",
     ".claude/verify/pipeline.yaml": "e0604991cba1b4d0989b5ad1dd5496d03910c8e36ab4c7f598fe522624d80291",
-    ".claude/verify/regra_morta.js": "bfe0944b5088c40c346d63ca39f2dda0795524818b8ead46ceabc7b57f5a5616",
+    ".claude/verify/regra_morta.js": "d04a0638a82dbf8a9f7f83d8b416653db5178619a61a87655213f699e3a31dab",
     ".claude/verify/regra_morta.json": "7450d90dca4cdfa57ad9a74328ad43ad9342eb4a49ca4a658c6f64dfc8ccc3dd",
     ".claude/verify/regra_morta_seletor.js": "67723c7515264a81ef375910ee357ba944af47ae0d9cc9de6338a8bda3e68a9b",
     ".claude/verify/run.sh": "a404fa877e0fdb94987ae66d3170a2fc9aec8a6138204051aba89395ad22e1aa",
@@ -277,7 +277,7 @@
     ".gitignore": "f12379e20604234d2c80ed8486cefa9c6fc22034e89c1fa79c239e6ae0665079",
     "AGENTS.md": "267c0b98ae9f6fa4289be88e95b72393be936951625be2917ae08fe0cb3e9671",
     "CLAUDE.md": "46bc87e937d6ac560e0445f30626257d2347b6001408300230d0955bdfee9b1d",
-    "CONTEXT.md": "66cabe140dac9832e03b42d6d16ecf45684bbf4a78218b44f175058c3ae11060",
+    "CONTEXT.md": "863db89e296e371dfa6d99ca8c0d16057462aaaecfaef02c410ad6f35ffc3809",
     "ICON_ASSET_DECISIONS_V32.md": "f14494c78ae40af88f8a2adf49e30f314a6800736b11607d3382e0a31d5cce80",
     "LICENSE": "1ddd9deeecd23a1cece8a3aee60c77f4168295535ea4d7cc0102c55d8e777c49",
     "MANIFEST.sha256": "defd52d1cfc57e6ca5a9ebcce8b620a080772b6ea62753f987c5a58f8ccf38c6",

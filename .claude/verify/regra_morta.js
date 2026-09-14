@@ -211,7 +211,46 @@ function vence(D, O) {
    perdedora PREFIXADA, ela casa um SUBCONJUNTO, e a perdedora segue decidindo
    fora dele — salvo se os compostos extras forem `html`/`body`/`:root`, caso em
    que o subconjunto é o conjunto. É a única diferença entre `M51-01` (morta) e
-   `M51-08` (viva), e os dois raciocínios intuitivos erram cada um a sua metade. */
+   `M51-08` (viva), e os dois raciocínios intuitivos erram cada um a sua metade.
+
+   ─────────────────────────────────────────────────────────────────────────
+   3.1 · O LIMITE DESTE PREDICADO — leia antes de ler `viva` como garantia
+   ─────────────────────────────────────────────────────────────────────────
+
+   O laço abaixo pula toda concorrente com `O.prop !== D.prop`, e a §6
+   (`diferenca()`) agrupa por `contexto + seletor + PROPRIEDADE`. As duas coisas
+   dizem a mesma regra: **concorrente é sempre da MESMA propriedade**.
+
+   Disso decorre um limite que NÃO é defeito, e que este bloco existe para
+   nomear: `viva` significa *"decide a própria propriedade"*, e **não** *"muda o
+   que se vê"*. Uma declaração pode vencer a cascata para a propriedade dela e
+   mesmo assim não alterar nada que um gate meça, porque o efeito visual que ela
+   governaria já está determinado por **outra propriedade** — possivelmente de
+   outra camada, que este instrumento nem compara. O `CONTEXT.md` chama isso de
+   **declaração viva e inobservável**.
+
+   Consequência prática, para quem for escrever mutante de CSS: `D014-VARR1`
+   verde prova que a declaração mutada DECIDE algo; **não** prova que mutá-la
+   será visível para o gate. Quem decide isso é o navegador, caso a caso, pelo
+   par mutante↔gate.
+
+   Medido duas vezes, e as duas estão no achado `EA-34`:
+
+     · `grid-template-areas:"main side"` (camada 5.1) mantém a grade explícita de
+       duas colunas, e por isso tirar o segundo track de `grid-template-columns`
+       (camada 5.2) muda só a LARGURA — medido em 1280: `842px 320px` →
+       `861px 301px` —, nunca a composição "lado a lado" que `P52-LAY2` mede.
+       `D014-M10`, nessa forma, saiu SOBREVIVENTE no job `visual` enquanto esta
+       varredura dizia a declaração `viva`. As duas leituras estavam certas.
+       O mutante só matou depois de REANCORADO na COLOCAÇÃO (`grid-column`).
+
+     · `--p52-icon-scale` do `P52-RA8`: caso irmão, mesma forma.
+
+   O que este bloco NÃO promete: cobrir a interação entre propriedades exigiria
+   medir geometria renderizada, com navegador, o que tornaria esta varredura
+   `heavy` — o oposto do desenho da 014, que a quis estática e barata. A escolha
+   de não fazer isso é deliberada e está registrada no `EA-34`.
+   */
 function classificarDeclaracao(D, todas) {
   if (S.gramaticaRecusada(D.seletor))
     return { veredito: "indecidivel", razao: "gramatica-de-seletor-recusada",

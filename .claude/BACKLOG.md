@@ -2996,7 +2996,7 @@ vai precisar dela.
 
 ## EA-35 — a "altura aparente" do `P52-ICON2` é proporcional a `scale²`, não a `scale`: o `getBoundingClientRect()` já inclui o `transform`
 
-**Status**: `aberto`
+**Status**: `resolvido`
 
 **Aberto em**: 2026-09-04. Achado do `qa-engineer` durante o reparo do
 `EA-32` (partição do mutante `P52-RA8`) — id permanente alocado pelo
@@ -3121,6 +3121,72 @@ Se a duplicação é bug de fato (opção 1) ou nome errado sobre grandeza
 intencional (opção 2); a confirmação por execução do gate após qualquer
 mudança é do `qa-engineer`; a autorização da linha exata é do proprietário,
 no chat.
+
+### Resolvido em 2026-09-14 — era defeito, e o gate irmão já provava
+
+O registro reservava a escolha: **defeito de cálculo** (opção 1) ou **grandeza
+intencional com nome errado** (opção 2). O levantamento fechou a favor da 1, por
+três evidências independentes.
+
+#### 1 · A intenção declarada é linear
+
+`tests_p52_chromium.js:1106` — *"ICON-REV-A §8.2 · altura aparente medida em
+**PIXEL do bounding box da tinta**"*. Pixel de altura da tinta como fração do
+tile é grandeza **linear**. O nome estava certo; a conta é que não entregava o
+que ele promete.
+
+#### 2 · O gate IRMÃO, no mesmo arquivo, já fazia certo
+
+Encontrado ao aplicar a correção — **evidência que este registro não tinha**:
+`P52-ICON1` (`:504`) calcula
+
+```js
+/* dimensão APARENTE do artwork = maior lado da tinta, na escala em que
+   `object-fit:contain` desenha a imagem dentro do tile */
+const drawn = Math.min(ir.width, ir.height);
+```
+
+**sem `* scale`**, e com um comentário que define *"dimensão aparente"*
+exatamente como a grandeza linear. Os dois gates irmãos mediam a mesma coisa e
+**discordavam**; a correção os torna consistentes. Não restava intenção a
+preservar.
+
+#### 3 · Os números, medidos antes de tocar
+
+Como `ir` já é pós-transform, `corrigida = atual ÷ scale`. Com os 13 fatores de
+`ui_p52_workspace_v32.css:1345-1357`:
+
+| asset | `scale` | deslocamento |
+|---|---|---|
+| **FortiNDR** | 1.089 | **−6,1 pp** |
+| FortiGuard-MDR · FortiSIEM | 1.053 | −3,8 pp |
+| FortiAI-Assist · FortiXDR | 1.044 | −3,2 pp |
+| FortiAnalyzer | 1.025 | −1,8 pp |
+| sete assets | 1.006 | −0,5 pp |
+| FortiGuard-Service-Bundle | 0.989 | +0,8 pp |
+
+Maior deslocamento **6,1 pontos**, contra faixa de **15 pontos** (0,675–0,825):
+**nenhum asset sai da faixa**, e o **veredito não muda**. O que muda é a
+fidelidade do número impresso — que foi o custo real, medido no reparo do
+`EA-32`: previsão pinada de **52%** contra medição de **34,9%** e **36,5%**,
+diferença que é exatamente o quadrado do fator.
+
+#### Rito consumido
+
+**Autorização do proprietário no chat**, 2026-09-14: respondeu *"Sigo com a
+recomendação"* à proposta que nomeava **esta linha** (`:1138`, hoje `:1161`) e a
+remoção do `* scale`. **Não se estende** a outra linha nem a outra demanda — mesmo
+padrão que esta suíte já registra em `:4023`.
+
+**Limiar `0.68`–`0.82` inalterado**, por decisão do proprietário na mesma resposta
+(a régua óptica é conteúdo de produto, R1).
+
+`scale` continua lido e **reportado na evidência** (`scale: scale`): o que saiu foi
+a segunda multiplicação, não a medição do fator.
+
+**Prova final é do CI** — `tests_p52_chromium.js` exige Chromium (KI-3), e a
+mudança re-dispara a campanha `p52`, porque a suíte é `target` declarado dela.
+
 
 ## EA-36 — o vermelho de `D016-PROT1` vive dentro do job `verify`: o sinal que a errata E1 quis separar volta a se confundir, uma vez
 

@@ -1135,7 +1135,30 @@ async function icon2(browser, errs) {
           }
         if (maxx < 0) continue;
         const fw = (maxx - minx + 1) / S, fh = (maxy - miny + 1) / S;
-        const drawn = Math.min(ir.width, ir.height) * scale;
+        /* EA-35 (2026-09-14) · o `* scale` saiu daqui, e a razao esta na linha
+           :1123: `ir` e medido DEPOIS do `transform: scale(...)` de
+           ui_p52_workspace_v32.css:1342 — o navegador ja devolve a caixa
+           POS-escala. Multiplicar de novo fazia `drawn`, e portanto
+           `hApparent`/`wApparent`, proporcionais a scale^2.
+           A INTENCAO DECLARADA e linear e esta em :1106: "altura aparente
+           medida em PIXEL do bounding box da tinta". O nome estava certo; a
+           conta e que nao entregava o que ele promete.
+           MEDIDO antes de tocar, com os 13 fatores declarados em
+           ui_p52_workspace_v32.css:1345-1357: como `corrigida = atual / scale`,
+           o maior deslocamento e do FortiNDR (scale 1.089) com -6,1 pontos
+           percentuais, contra uma faixa de 15 pontos (0,675-0,825). NENHUM asset
+           sai da faixa, e o VEREDITO do gate nao muda — o que muda e a
+           fidelidade do numero impresso.
+           O que o defeito custou, medido no reparo do EA-32: o raciocinio pinado
+           previa 52% para o cenario mutado (scale 1.006 -> 0.70) e a medicao deu
+           34,9% e 36,5% — a diferenca e exatamente o quadrado do fator.
+           LIMIAR INALTERADO por decisao do proprietario (a regua optica e
+           conteudo de produto, R1).
+           RITO: autorizacao do proprietario no chat, 2026-09-14, respondendo
+           "Sigo com a recomendacao" a proposta que nomeava ESTA linha e a
+           remocao do `* scale`. A autorizacao nao se estende a outra linha nem
+           a outra demanda — mesmo padrao que esta suite ja registra em :4023. */
+        const drawn = Math.min(ir.width, ir.height);
         const tileSide = Math.min(tr.width, tr.height);
         out.push({
           alt: img.getAttribute("alt") || "(sem alt)",

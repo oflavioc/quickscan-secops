@@ -3840,7 +3840,32 @@ function p52PdfColorInk(file, pagina, alvo, tol) {
    `stroke="#3CB17E"` (`papel.tgtPts`/`papel.tgtDash`, :3975-3977) — tag de domínio
    não é polígono. A tinta rasterizada sozinha não distingue as duas fontes. */
 const P52_TGT_GREEN = [60, 177, 126];
-const P52_ESTAGIOS = /Inexistente|Inicial|Definido|Gerenciado|Otimiz/i;
+/* EA-12 (2026-09-14) · SENSOR SEMANTICO. A forma anterior era
+   `/Inexistente|Inicial|Definido|Gerenciado|Otimiz/i` — radicais soltos, case
+   INSENSITIVE — e casava SEIS rotulos de opcao de `QS` que usam essas palavras
+   como adjetivo comum: "Plano de capacitacao definido", "Sem processo definido",
+   "Casos de uso gerenciados", "Playbooks definidos", "Cobertura gerenciada e
+   otimizada", "Scans inexistentes ou ocasionais". A defesa contra isso era
+   GEOMETRICA (o recorte do nucleo, abaixo) e nao semantica.
+   AGORA: as SEIS formas CANONICAS de `stageOf()`
+   (quickscan_secops_soccmm_v3_1_3.html:484-492), case SENSITIVE. Nome de estagio
+   e ROTULO e nasce capitalizado; o adjetivo em frase nasce minusculo.
+   NAO ENFRAQUECE — medido antes de trocar, nos dois lados:
+     verdadeiros positivos  8/8 (as seis canonicas MAIS as duas formas sem espaco
+                            "Gerenciadoquantitativamente" e "Emotimizacao", que e
+                            como o DOM as concatena)
+     falsos positivos       6/6 ELIMINADOS
+     sitios reais do gate   3/3 seguem casando (os KPIs de atual e alvo), e o que
+                            legitimamente nao publica estagio segue nao casando
+   SEM `\b` NO INICIO, e isso e medido, nao descuido: o DOM concatena sem espaco
+   ("...5Gerenciado"), e entre `5` e `G` nao ha fronteira de palavra — com `\b` o
+   sensor perderia os tres sitios reais e o CONTROLE de :4277 reprovaria por
+   motivo falso. A capitalizacao canonica ja e a ancora semantica.
+   O RECORTE DO NUCLEO CONTINUA, e por merito proprio: ele deriva do CRITERIO
+   (o que o gate fechado autoriza publicar), nao deste falso positivo. O achado
+   dizia "resolver exige mexer na ASSERCAO, nao na derivacao" — e e so a
+   assercao que muda aqui. */
+const P52_ESTAGIOS = /(?:Inexistente|Inicial|Gerenciado\s*quantitativamente|Gerenciado|Definido|Em\s*otimiza[çc][ãa]o)/;
 const P52_NUM = /\d[.,]\d/;
 
 async function tgt4(browser, errs) {
@@ -4160,10 +4185,15 @@ async function tgt4(browser, errs) {
            núcleo (medido). A TINTA não encolhe junto e isso é deliberado: as
            PÁGINAS do bloco são as mesmas, o que encolheu foi o TEXTO medido,
            e o único verde do bloco é o polígono do radar, que está no núcleo.
-           ACHADO DE FUNDO, fora desta autorização: `P52_ESTAGIOS` casar
-           rótulo de opção é falso positivo do sensor, e este limite o contorna
-           em vez de resolvê-lo. Resolver exige mexer na ASSERÇÃO, não na
-           derivação — achado próprio. */
+           ACHADO DE FUNDO, registrado como `EA-12` e RESOLVIDO em 2026-09-14:
+           `P52_ESTAGIOS` casava rótulo de opção — falso positivo do sensor —, e
+           este limite o contornava em vez de resolvê-lo. O sensor passou a ser
+           SEMÂNTICO (ver o comentário sobre `P52_ESTAGIOS`, acima): as seis
+           formas canônicas de `stageOf()`, case sensitive. Os seis rótulos de
+           `QS` deixaram de casar.
+           ESTE RECORTE CONTINUA, e agora por mérito exclusivo: ele deriva do
+           CRITÉRIO — o que o gate fechado autoriza publicar —, e não do falso
+           positivo que o revelou. Nada aqui muda. */
         const ultDom = DOM_PT[DOM_PT.length - 1];
         const iUlt = blocoTexto.lastIndexOf(ultDom);
         if (iUlt >= 0) {

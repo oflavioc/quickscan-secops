@@ -97,7 +97,7 @@ def main(tag):
     print("  1. escrever o registro de deploy (" + slug.upper() + "_PRODUCTION_DEPLOYMENT_RECORD.md),")
     print("     com o payload M41 medido e o smoke das correcoes que entram")
     print("  2. o cutover, quando voce decidir:")
-    print("       docker stop " + ("quickscan-" + os.path.basename(base)[1:].replace(".", "")))
+    print("       docker stop quickscan-" + os.path.basename(base).replace(".", ""))
     print("       docker compose -f deploy/" + tag + "/compose.yaml up -d")
     print("  3. conferir byte a byte o que a porta devolve contra o artefato")
     return 0

@@ -67,32 +67,56 @@ function rebuild() {
   execSync(`${PY} "${path.join(HERE, "build_v32_html.py")}"`, { stdio: "pipe" });
 }
 
-let killed = 0, escaped = [];
+/* EA-44 · vocabulário fechado de TRÊS estados da 013 (T4/T5). O `core` ficou
+   fora daquela demanda por escopo declarado (T8: ele é a REFERÊNCIA do
+   interpretador, e tocá-lo era o risco que a 013 existia para conter), e a
+   linha de fecho contava âncora podre como "escapou" — o MESMO rótulo de um
+   mutante que rodou e sobreviveu de verdade. Os dois ficavam indistinguíveis
+   na única linha que alguém lê primeiro. */
+const DETECTADO = "DETECTADO", SOBREVIVENTE = "SOBREVIVENTE", NAO_EXECUTADO = "NÃO EXECUTADO";
+/* conjunto FECHADO de causas (check_mutation.py:113 · IC_CAUSAS_FECHADAS) */
+const C_ANC0 = "âncora não encontrada", C_BUILD = "rebuild falhou";
+let D = 0, S = 0, U = 0;
+const naoDetectados = [];
+const emitir = (m, estado, causa, nota) => {
+  if (estado === DETECTADO) D++; else if (estado === SOBREVIVENTE) S++; else U++;
+  if (estado !== DETECTADO) naoDetectados.push(m.id + (estado === NAO_EXECUTADO ? " (não executado)" : ""));
+  console.log(estado + "  " + m.id + " · " + m.desc);
+  console.log("              gate esperado: " + m.gate +
+    (causa ? " · causa: " + causa : "") + (nota ? " · " + nota : ""));
+};
 console.log("CORE MUTATION · " + MUTANTS.length + " mutantes · baselines: " +
   MUTABLE.map(f => path.basename(f) + " " + BASE_SHA[f].slice(0, 12)).join(" · "));
 
 for (const m of MUTANTS) {
   const src = fs.readFileSync(m.file, "utf8");
   if (!src.includes(m.find)) {
-    console.log(`FAIL  ${m.id} — find-string não aplica (módulo mudou: mantenha o mutante, R10)`);
-    escaped.push(m.id);
+    /* EA-44 · âncora podre é NÃO EXECUTADO, jamais sobrevivente: o mutante
+       sequer chegou a existir, e dizer "escapou" afirma que o gate rodou e
+       não matou. Mantenha o mutante (R10) — o que muda é o RÓTULO. */
+    emitir(m, NAO_EXECUTADO, C_ANC0, "find-string não aplica: o módulo mudou de forma");
     continue;
   }
   fs.writeFileSync(m.file, src.replace(m.find, m.repl), "utf8");
-  rebuild();
+  let falhouBuild = false, notaBuild = "";
+  try { rebuild(); }
+  catch (e) { falhouBuild = true; notaBuild = String((e && e.message) || e).slice(0, 120); }
   let out = "", code = 0;
-  try { out = execSync(m.cmd, { stdio: "pipe", encoding: "utf8" }); }
-  catch (e) { code = e.status || 1; out = (e.stdout || "") + (e.stderr || ""); }
-  const dead = code !== 0 && m.reason.test(out);
-  console.log((dead ? "KILL " : "FAIL ") + ` ${m.id} — ${m.desc} → oracle ${m.gate} ` +
-    (dead ? "matou (exit " + code + ")" : "NÃO matou — gate sem poder discriminante"));
-  if (dead) killed++; else escaped.push(m.id);
+  if (!falhouBuild) {
+    try { out = execSync(m.cmd, { stdio: "pipe", encoding: "utf8" }); }
+    catch (e) { code = e.status || 1; out = (e.stdout || "") + (e.stderr || ""); }
+  }
+  const dead = !falhouBuild && code !== 0 && m.reason.test(out);
+  if (falhouBuild) emitir(m, NAO_EXECUTADO, C_BUILD, notaBuild);
+  else if (dead)   emitir(m, DETECTADO, "", "matou (exit " + code + ")");
+  else             emitir(m, SOBREVIVENTE, "", "NÃO matou — gate sem poder discriminante");
   fs.writeFileSync(m.file, src, "utf8");            // restauração exata
 }
 
 rebuild();                                          // HTML de volta ao canônico
 const restored = MUTABLE.every(f => sha(f) === BASE_SHA[f]);
 console.log("restauração: " + (restored ? "byte a byte OK" : "DIVERGENTE — repare a árvore!"));
-console.log(`CORE MUTATION: ${killed} KILL · ${escaped.length} escaparam de ${MUTANTS.length}` +
-  (escaped.length ? " (" + escaped.join(", ") + ")" : ""));
-process.exit(escaped.length || !restored ? 1 : 0);
+console.log("CORE MUTATION: " + D + " DETECTADO · " + S + " SOBREVIVENTE · " + U +
+  " NÃO EXECUTADO de " + MUTANTS.length +
+  (naoDetectados.length ? " (" + naoDetectados.join(", ") + ")" : ""));
+process.exit((S + U) || !restored ? 1 : 0);

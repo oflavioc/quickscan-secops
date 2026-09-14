@@ -484,33 +484,74 @@ if (process.argv.slice(2).indexOf("--preflight") >= 0) {
   process.exit(preflight(SELECTED));
 }
 
+/* EA-45 · vocabulário fechado de TRÊS estados da 013 (T4/T5). O `d009` nasceu em
+   branch paralela e ficou no formato de dois estados (`KILL`/`ESCAPOU`), no qual
+   âncora podre, gate que não rodou e mutante que sobreviveu de verdade caíam no
+   MESMO balde. A linha canônica é `<ESTADO>  <id> · <desc>` — dois espaços — que
+   é o que `check_mutation.py:846` (RE_MUT_LINHA) sabe ler; sem ela o relato de
+   não-KILL por nome nunca alcançou esta campanha. */
+const DETECTADO = "DETECTADO", SOBREVIVENTE = "SOBREVIVENTE", NAO_EXECUTADO = "NÃO EXECUTADO";
+/* conjunto FECHADO de causas (check_mutation.py:113 · IC_CAUSAS_FECHADAS) */
+const C_INTERP = "interpretador ausente", C_ANC0 = "âncora não encontrada",
+      C_ANCN = "âncora ambígua", C_BUILD = "rebuild falhou",
+      C_GATE = "gate não pôde ser executado";
+
 (function main() {
+  /* EA-45 · o interpretador é conferido ANTES de qualquer efeito. Medido no
+     achado: `MUTATION_PY=inexistente` fazia `build()` lançar exceção não
+     capturada e a campanha saía com ZERO linhas — indistinguível, para quem lê,
+     de uma campanha que não precisou rodar. As irmãs p50/p51/p52 já tratavam
+     isto pelo IC-3(a); esta era a única fora. */
+  if (!resolvePy(PY)) {
+    console.log("D009 MUTATION · " + SELECTED.length + " mutante(s) · interpretador '" + PY +
+      "' (" + PY_ORIGEM + ") não resolvido");
+    console.log("");
+    SELECTED.forEach(m => {
+      console.log(NAO_EXECUTADO + "  " + m.id + " · " + m.desc);
+      console.log("              gate esperado: " + m.gate + " · causa: " + C_INTERP);
+    });
+    console.log("");
+    console.log("D009 MUTATION: 0 DETECTADO · 0 SOBREVIVENTE · " + SELECTED.length +
+      " NÃO EXECUTADO de " + SELECTED.length);
+    process.exit(1);
+  }
   build();
   BASE_HTML_SHA = sha(HTML);
   console.log("D009 MUTATION · " + SELECTED.length + " mutante(s)" + (ONLY.length ? " [PARCIAL]" : "") +
     " · baseline html " + BASE_HTML_SHA.slice(0, 12) + " · " +
     MUTABLE.map(f => path.basename(f) + " " + BASE_SHA[f].slice(0, 8)).join(" · ") + "\n");
 
-  let killed = 0;
-  const escaped = [];
+  let D = 0, S = 0, U = 0;
+  const naoDetectados = [];
+  const emitir = (m, estado, causa, nota, linha) => {
+    if (estado === DETECTADO) D++; else if (estado === SOBREVIVENTE) S++; else U++;
+    if (estado !== DETECTADO) naoDetectados.push(m.id + (estado === NAO_EXECUTADO ? " (não executado)" : ""));
+    console.log(estado + "  " + m.id + " · " + m.desc);
+    console.log("              gate esperado: " + m.gate +
+      (causa ? " · causa: " + causa : "") + (nota ? " · " + nota : ""));
+    if (linha) console.log("              " + String(linha).slice(0, 240));
+    console.log("");
+  };
 
   for (const m of SELECTED) {
     const src = fs.readFileSync(m.file, "utf8");
     const hits = src.split(m.find).length - 1;
     if (hits !== 1) {
-      /* R10 §2: âncora perdida NUNCA vira silêncio. Um `find` que não aplica é
-         um mutante que não existe — e um gate sem discriminante provado. */
-      console.log(`FALHA DO HARNESS  ${m.id} — âncora casa ${hits}x em ${path.basename(m.file)} ` +
-        "(esperado 1): o módulo mudou de forma e o mutante deixou de aplicar");
-      escaped.push(m.id + " (âncora)");
+      /* R10 §2: âncora perdida NUNCA vira silêncio — e, desde o EA-45, também
+         nunca vira "escapou". Âncora podre é NÃO EXECUTADO com causa do conjunto
+         fechado; contá-la como sobrevivente era dizer que o gate rodou e não
+         matou, quando o mutante sequer chegou a existir. */
+      emitir(m, NAO_EXECUTADO, hits === 0 ? C_ANC0 : C_ANCN,
+        "âncora casa " + hits + "x em " + path.basename(m.file) + " (esperado 1)", "");
       continue;
     }
 
-    let dead = false, nota = "", linha = "", extra = "";
+    let dead = false, nota = "", linha = "", extra = "", falhouBuild = false;
     try {
       fs.writeFileSync(m.file, src.replace(m.find, m.repl), "utf8");
-      build();
-      const r = run(SUITE, { D009_ONLY: m.gate });
+      try { build(); }
+      catch (e) { falhouBuild = true; nota = String((e && e.message) || e).slice(0, 120); }
+      const r = falhouBuild ? { code: 1, out: "" } : run(SUITE, { D009_ONLY: m.gate });
       linha = gateLine(r.out, m.gate) || "";
       const reprovou = /^FAIL/.test(linha);
       const motivo = m.reason.test(linha);
@@ -540,10 +581,12 @@ if (process.argv.slice(2).indexOf("--preflight") >= 0) {
       if (sha(m.file) !== BASE_SHA[m.file]) throw new Error(m.id + ": restauração NÃO byte-idêntica de " + path.basename(m.file));
     }
 
-    if (dead) killed++; else escaped.push(m.id);
-    console.log((dead ? "KILL      " : "ESCAPOU   ") + m.id + " · " + m.desc +
-      "\n                  oráculo: " + m.gate + (nota ? " · " + nota : "") +
-      "\n                  " + (linha ? linha.slice(0, 240) : "(sem linha do gate)") + extra + "\n");
+    /* EA-45 · três estados. SOBREVIVENTE exige que o gate TENHA RODADO: sem
+       linha do gate ninguém julgou nada, e isso é NÃO EXECUTADO. */
+    if (falhouBuild)  emitir(m, NAO_EXECUTADO, C_BUILD, nota, "");
+    else if (!linha)  emitir(m, NAO_EXECUTADO, C_GATE, "o gate esperado não emitiu linha", "");
+    else if (dead)    emitir(m, DETECTADO, "", nota, linha + extra);
+    else              emitir(m, SOBREVIVENTE, "", nota, linha + extra);
   }
 
   build();
@@ -551,7 +594,8 @@ if (process.argv.slice(2).indexOf("--preflight") >= 0) {
   const srcOk = MUTABLE.every(f => sha(f) === BASE_SHA[f]);
   console.log("restauração: source " + (srcOk ? "byte a byte OK" : "DIVERGENTE") +
     " · html " + (htmlOk ? "byte a byte OK" : "DIVERGENTE (" + sha(HTML).slice(0, 12) + ")"));
-  console.log(`D009 MUTATION: ${killed} KILL · ${escaped.length} escaparam de ${SELECTED.length}` +
-    (escaped.length ? " (" + escaped.join(", ") + ")" : ""));
-  process.exit(escaped.length || !srcOk || !htmlOk ? 1 : 0);
+  console.log("D009 MUTATION: " + D + " DETECTADO · " + S + " SOBREVIVENTE · " + U +
+    " NÃO EXECUTADO de " + SELECTED.length +
+    (naoDetectados.length ? " (" + naoDetectados.join(", ") + ")" : ""));
+  process.exit((S + U) || !srcOk || !htmlOk ? 1 : 0);
 })();

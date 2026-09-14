@@ -1223,7 +1223,7 @@ em nenhuma hipótese (R12). Padrão de fundo: `EA-20`.
 
 ## EA-12 — `P52_ESTAGIOS` casa rótulo de opção: falso positivo do sensor, contornado pelo recorte e não resolvido
 
-**Status**: `aberto`
+**Status**: `resolvido`
 
 **Aberto em**: 2026-08-31. Declarado como "achado de fundo, fora desta
 autorização" pelo próprio gate, durante a correção do `EA-10` (demanda 010).
@@ -1248,6 +1248,48 @@ autorização" pelo próprio gate, durante a correção do `EA-10` (demanda 010)
 
 O remédio é asserção nova em suíte congelada: dono é o `qa-engineer`, e o rito é o
 da §29.4.
+
+### Resolvido em 2026-09-14 — o sensor virou semântico; o recorte fica, e agora por mérito próprio
+
+O registro dizia que resolver *"exige mexer na **asserção**, não na derivação"*. É
+exatamente o que foi feito: **só o sensor mudou**.
+
+| | antes | agora |
+|---|---|---|
+| forma | `/Inexistente\|Inicial\|Definido\|Gerenciado\|Otimiz/i` — radicais soltos, case **insensitive** | as **seis formas canônicas** de `stageOf()` (`…v3_1_3.html:484-492`), case **sensitive** |
+| razão | nenhuma: casava qualquer ocorrência da palavra | nome de estágio é **rótulo** e nasce capitalizado; o adjetivo em frase nasce minúsculo |
+
+**Medido antes de trocar, nos dois lados:**
+
+| | |
+|---|---|
+| verdadeiros positivos | **8/8** — as seis canônicas **mais** `Gerenciadoquantitativamente` e `Emotimização`, que é como o DOM as concatena |
+| falsos positivos | **6/6 eliminados** (`"Plano de capacitação definido"`, `"Sem processo definido"`, `"Casos de uso gerenciados"`, `"Playbooks definidos"`, `"Cobertura gerenciada e otimizada"`, `"Scans inexistentes ou ocasionais"`) |
+| sítios reais do gate | **3/3** seguem casando, e o que legitimamente não publica estágio segue não casando |
+
+**Não enfraquece**: mesmos verdadeiros positivos, seis falsos a menos. É aumento
+de poder discriminante, que é o oposto do que a R10 §1 proíbe.
+
+#### O `\b` que quase entrou, e a medição que o barrou
+
+A primeira forma que escrevi tinha `\b` no início. **Falhou nos três sítios
+reais**: o DOM concatena sem espaço (`"…5Gerenciado"`) e entre `5` e `G` **não há
+fronteira de palavra**. Com ela, o **controle** de `:4277` — que assere que o KPI
+do alvo **tem** estágio — reprovaria por motivo falso. A capitalização canônica já
+é a âncora semântica; o `\b` era supérfluo e quebrava. É a mesma armadilha de
+concatenação que o próprio gate já documentava na derivação do recorte.
+
+#### O que NÃO mudou, e é deliberado
+
+O **recorte do núcleo** continua inteiro. Ele deriva do **critério** — o que o gate
+fechado autoriza publicar —, não do falso positivo que o revelou. A nota do gate
+foi atualizada para dizer isso: antes ela declarava o achado de fundo; agora
+declara que ele foi resolvido e que o recorte permanece **por mérito exclusivo**.
+
+**Prova final é do CI**: `tests_p52_chromium.js` exige Chromium (KI-3). A mudança
+também re-dispara a campanha `p52` (109 mutantes), porque a suíte é `target`
+declarado dela.
+
 
 ## EA-13 — `P52_TGT_GREEN` não é cor exclusiva do alvo: o mesmo hex é o domínio 2
 

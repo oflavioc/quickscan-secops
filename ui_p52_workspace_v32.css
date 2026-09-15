@@ -487,6 +487,82 @@
     #p52-sec-support > .t-details,
     #p52-sec-support > .banner-ok { grid-column: 1 / -1; }
     #p52-sec-support > .section-title { margin: 10px 0 0; }
+    /* EA-55 · a faixa executiva pode agora aterrissar na seção de contexto
+       (ver `p52ExecRowBucket()`); ocupa a faixa inteira nas duas. */
+    #p52-sec-context > #ux-execrow { grid-column: 1 / -1; }
+  }
+
+  /* ==========================================================================
+     EA-55 · CARD DE PRIORIDADE DECLARADA, APOIO E QUEBRA DE LINHA
+
+     Três defeitos de leitura relatados pelo proprietário após sessão real, e
+     medidos em `127.0.0.1:1337` antes de qualquer mudança:
+
+       1 · a seção de prioridades trazia o MESMO conteúdo duas vezes, em duas
+           formas — os cards e a faixa `#ux-prios`. A faixa some da TELA por
+           classe e permanece no DOM: `tests_ux_m41.js:346` conta
+           `#ux-prios .ux-priochip` e `tests_p50_core.js:908` exige que
+           `#ux-execrow` continue existindo e sendo recriado. Ocultar satisfaz
+           os dois; remover derrubaria ambos.
+       2 · a `.rk` empilhava ordem, procedência e severidade na mesma tarja e a
+           `.d` corria dois fatos rotulados numa linha só. Agora: ordem no
+           título, fatos em lista, procedência no rodapé à direita.
+       3 · a descrição do produto e o "Neste contexto:" corriam juntos, e a
+           frase contextual começava no meio de uma linha da descrição.
+
+     Cor: nenhum literal hexadecimal aqui — só tokens. `--faint` sobre
+     `--surface` mede 4,92:1, acima de 4,5:1, e `.prio-decl` não tem `opacity`
+     em nenhum ancestral. Esta última meia-frase é a lição do `EA-23`, onde a
+     aritmética dava 4,92:1 e o CI media 3,15:1 porque a superfície compunha
+     `opacity:.72` — conferido na tela, não deduzido.
+     ========================================================================== */
+  .p52-dup-prios { display: none; }
+
+  /* parágrafo LEGADO promovido a lead da seção: mesma forma de `.p52-sec-lead`,
+     classe própria porque `p52Harvest()` descarta o que leva aquela (ver
+     `p52BuildGaps()`). O `style=` inline do renderer congelado traz cor e
+     tamanho próprios e vence esta regra em cor/tamanho — o que esta classe
+     corrige é a métrica de bloco, que é o que tirava o parágrafo do prumo. */
+  .p52-sec > .p52-legacy-lead {
+    margin: 0 0 14px; line-height: 1.65; max-width: 78ch;
+  }
+
+  .p52-sec .prio-decl .rk {
+    display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 10px;
+  }
+  .p52-prio-flag {
+    border: 1px solid var(--line); border-radius: 999px;
+    padding: 1px 8px; color: var(--muted); font-weight: 700;
+  }
+  .p52-prio-facts {
+    list-style: disc; margin: 8px 0 0; padding-left: 18px;
+    color: var(--muted); font-size: 14px; line-height: 1.6;
+  }
+  .p52-prio-facts li { margin: 0 0 3px; overflow-wrap: anywhere; }
+  .p52-prio-facts li::marker { color: var(--faint); }
+  .p52-prio-rot { color: var(--text); font-weight: 650; }
+  /* a procedência é metadado do card, não conteúdo: menor que o destaque
+     (`.prio-decl h4`, 18px), em itálico, ancorada no canto inferior direito */
+  .p52-prio-src {
+    margin-top: 10px; text-align: right;
+    font-size: 12.5px; font-style: italic; color: var(--faint);
+  }
+
+  /* ponteiro para o apoio que o renderer já listou em outra seção; os nomes
+     vêm do DOM, nunca deste arquivo (`P52-REC1` proíbe produto aqui) */
+  .p52-hint {
+    margin-top: 10px; padding-top: 8px; border-top: 1px dashed var(--line);
+    font-size: 13px; line-height: 1.55;
+  }
+  .p52-hint-rot { color: var(--faint); margin-right: 6px; }
+  .p52-hint-val { color: var(--text); overflow-wrap: anywhere; }
+
+  .p52-sec .apoio-block .pt-desc { overflow-wrap: anywhere; }
+  .p52-prod-ctx {
+    display: block; margin-top: 6px; padding-left: 14px; position: relative;
+  }
+  .p52-prod-ctx::before {
+    content: "•"; position: absolute; left: 0; color: var(--faint);
   }
   #p52-sec-support > .section-title:first-of-type { margin-top: 0; }
 

@@ -3076,6 +3076,39 @@ body[data-uxscreen="refinement"] #ux-progress-mobile{ display:none !important; }
     grid-row: 1 / span 8; grid-column: 1; margin: 0;
   }
   #v32-print-report .v32-cand > *, #v32-print-report .v32-svc > * { grid-column: 2; }
+
+  /* ========================================================================
+     EA-58 · colisão de cascata entre DUAS camadas, no mesmo elemento.
+
+     A regra acima nasceu para o ícone dos cards de apoio do relatório (§11.7,
+     "materialmente visíveis no papel") e usa `#id + !important`. Ela alcança
+     TAMBÉM os chips de habilitador do cenário-alvo, que são de outra camada e
+     pedem outra escala:
+
+       .ux-tgt-enabler .v32-icon   → width:14px; height:14px; flex-basis:14px
+                                     (`ui_ux_v32.css:216`, @media print)
+
+     A dos 11mm vence por especificidade e `!important`, mas **não** sobrepõe
+     `flex-basis` — então o chip recebe uma moldura governada por uma regra que
+     nunca soube que ele existia, e o artwork fica perdido dentro dela. É o que
+     o proprietário viu no PDF: caixa com borda e nada dentro. Medido: os SVG
+     estão íntegros, `data:` URI válido, cores sólidas (#f00000/#464646/#2cccd3),
+     `opacity 1`, sem filtro — não é imagem quebrada, é caixa errada.
+
+     A correção é por ACRÉSCIMO, nunca por edição das duas regras existentes:
+     `tests_journey_m45.js:325` afirma o literal da regra de `ui_ux_v32.css`, e
+     `tests_p52_mutants.js:582` ancora um mutante no texto exato do bloco dos
+     11mm (preflight IC-4 exige ocorrência == 1). Mexer em qualquer um dos dois
+     quebraria gate ou âncora. Esta regra é mais específica e vem depois.
+
+     O juiz final é uma impressão real do Chromium, que esta máquina não tem
+     (KI-3): conferir no PDF do proprietário.
+     ======================================================================== */
+  #v32-print-report .ux-tgt-enabler .v32-icon,
+  #v32-print-report .ux-tgt-enabler .v32-icon-fb {
+    width: 4.5mm !important; height: 4.5mm !important;
+    flex: 0 0 4.5mm; padding: 0.3mm; border-radius: 0.8mm;
+  }
   /* §8.1 · no papel, o endereço canônico fica legível ao lado do nome */
   #v32-print-report .p52-sup-link { font-size: 8pt; color: #444 !important; text-decoration: none; }
   #v32-print-report .p52-sup-link::after { content: " (" attr(href) ")"; word-break: break-all; }
@@ -11753,8 +11786,8 @@ if (window.__DEV) Object.assign(window.__DEV, { openExportModal, openImportPicke
       if (rot && /capability/i.test(txt(rot)))
         return txt(li[i]).slice(txt(rot).length).trim();
     }
-    var cl = card.querySelector(".capline");                   /* card de gap */
-    if (cl) { var b = cl.querySelector("b"); if (b) return txt(cl).slice(txt(b).length).trim(); }
+    /* EA-58 · o ramo que lia `.capline` do card de GAP saiu junto com o
+       ponteiro nos `.finding`: sem chamador, seria código morto. */
     return "";
   }
 
@@ -11780,9 +11813,31 @@ if (window.__DEV) Object.assign(window.__DEV, { openExportModal, openImportPicke
      outra coisa: ENCURTAR a distância até o apoio que o renderer congelado JÁ
      escreveu, sem nomear nada por conta própria.
      -------------------------------------------------------------------------- */
+  /* --------------------------------------------------------------------------
+     EA-58 · o ponteiro sai da seção de GAPS.
+
+     No `EA-55` eu o coloquei também nos `.finding`, e criei uma assimetria que
+     o proprietário viu na hora: o gap ALTO recebe card completo — ícone,
+     descrição, "Neste contexto:", link oficial — porque vem do renderer
+     congelado; o MODERADO recebia só um nome em texto puro, meu. Duas formas
+     para a mesma coisa, e a mais pobre justamente onde há menos informação.
+
+     A decisão do proprietário é melhor do que equilibrar as duas: a seção de
+     gaps é DIAGNÓSTICO — gaps, severidade e capability a desenvolver — e
+     solução vive em "Formas de apoio", que vem depois. O acordeão legado
+     permanece onde está porque nasce FECHADO (medido: `details.open === false`),
+     logo é opt-in e não intromete; e movê-lo mudaria a semântica de ocultação
+     da recomendação legada (`hideLegacyRecommendation()`, `ui_v32.js:178`),
+     que é o motivo declarado no próprio `P52-REC1`.
+
+     O ponteiro FICA nos `.prio-decl`, e isso não é exceção arbitrária: ele só
+     dispara quando a capability do card aparece na lista "após validação" — ou
+     seja, exatamente quando a política de severidade NÃO emite apoio direto e
+     o card ficaria sem nada. Onde há apoio direto, ele não aparece.
+     -------------------------------------------------------------------------- */
   function p52SupportHints(flow) {
     var idx = p52ValidationIndex(flow);
-    var cards = flow.querySelectorAll(".prio-decl, .finding"), i, j;
+    var cards = flow.querySelectorAll(".prio-decl"), i, j;
     for (i = 0; i < cards.length; i++) {
       var card = cards[i];
       if (card.getAttribute("data-p52-hint")) continue;
@@ -11837,6 +11892,35 @@ if (window.__DEV) Object.assign(window.__DEV, { openExportModal, openImportPicke
       for (j = corte; j < kids.length; j++) ctx.appendChild(kids[j]);
       d.appendChild(ctx);
     }
+  }
+
+  /* ==========================================================================
+     EA-58 · "demais" em relação a quê?
+
+     O acordeão legado chama-se "Possíveis formas de apoio aos demais gaps
+     altos". O "demais" é relativo às **prioridades declaradas**, que vivem na
+     seção 2; quando o leitor chega na seção 4 o referente já se perdeu. Relato
+     do proprietário: *"não seria demais gaps, seria justamente os que foram
+     identificados logo acima"* — e ele está certo, porque nesta seção TODOS os
+     gaps são não-prioritários, de modo que "os demais" e "os de cima" são o
+     mesmo conjunto.
+
+     A expressão "demais gaps altos" é PRESERVADA ao pé da letra, e não por
+     apego: `tests_010_vao.js:442` usa `/demais gaps altos/i` sobre o
+     `<summary>` como **âncora de DOM** para identificar este nó, e a alínea (b)
+     do `D010-ARB3` afirma que ele nunca recebe `.v32-hidden`. Reescrever o
+     rótulo faria a âncora deixar de casar e o gate perderia o sujeito **sem
+     ficar vermelho** — enfraquecimento silencioso, que é o que a R10 §1 proíbe.
+     Por isso aqui se ESCLARECE em vez de substituir.
+     ========================================================================== */
+  var P52_DEMAIS_SUFIXO = " — os listados acima";
+
+  function p52ClarificaDemais(det) {
+    if (!det || det.getAttribute("data-p52-demais")) return;
+    var b = det.querySelector("summary b");
+    if (!b || !/demais gaps altos/i.test(txt(b))) return;
+    b.textContent = txt(b) + P52_DEMAIS_SUFIXO;
+    det.setAttribute("data-p52-demais", "esclarecido");
   }
 
   var P52_SEV = [
@@ -11937,6 +12021,7 @@ if (window.__DEV) Object.assign(window.__DEV, { openExportModal, openImportPicke
       else if (/moderad/i.test(rot)) alvo = grupos.moderate;
       if (alvo && alvo.nextSibling) sec.insertBefore(tail[i], alvo.nextSibling);
       else sec.appendChild(tail[i]);
+      p52ClarificaDemais(tail[i]);
     }
   }
 

@@ -5565,3 +5565,79 @@ específica que vai ao relatório.
 `fullStateJSON()` (`ui_v32.js:815`) **não** precisaria mudar — um campo fora
 dele não viola a invariante de impressão conferida por `finishPrint()`. Essa
 parte é barata; as três acima não são.
+
+## EA-58 — a régua D2 inclui strings de exibição: corrigir um rótulo custa o mesmo que mudar uma decisão
+
+**Status**: `aberto`
+
+**Aberto em**: 2026-09-15, a pedido explícito do proprietário, depois de três
+rodadas seguidas de apontamentos de produto em que **todo** ajuste de conteúdo
+— por mais cosmético — caiu em Porta B.
+
+### Cadeia arquivo:linha → efeito
+
+- **`harness_m41_v313.js:217`** —
+  `functionalPayload(r) { return { configErrors, candidatesMatrix, scenarios }; }`
+- **`:240`** — o SHA-256 é calculado sobre `stableStringify()` **dessas três
+  chaves**, e é ele que `pins.json → declared.m41_payload_sha256` pina.
+- **`.claude/rules/product-invariants.md`**, régua da INV-1, textual:
+  *"Payload idêntico = Porta A. Payload diferente = Porta B, sem exceção."*
+
+**Medido por execução** — extraí as três chaves do
+`v3_1_3_functional_snapshot.json` e procurei rótulos de exibição:
+
+```
+DENTRO do payload: Network Detection & Response
+DENTRO do payload: Detecção e resposta em endpoint (EDR)
+DENTRO do payload: Análise centralizada, correlação e retenção de eventos
+```
+
+Os **nomes de capability** de `MAP[qid].cap` estão dentro da superfície
+hasheada. Logo: acrescentar `(NDR)` a um rótulo, para ficar coerente com o
+`(EDR)` que o vizinho já tem, **muda o SHA do payload** e aciona spec commitada
++ auditoria independente humana.
+
+### Por que isso é achado, e não desenho
+
+A régua D2 existe para separar **mudança de equivalência** de **mudança de
+comportamento**. Como está, ela não separa: uma sigla entre parênteses e uma
+troca de produto recomendado produzem **o mesmo sinal** — payload diferente.
+
+O efeito prático é o oposto do pretendido. Uma régua que encarece o trivial na
+mesma medida do grave **empurra para não corrigir o trivial** — e o trivial,
+aqui, é o vocabulário que o cliente lê no relatório. O acervo de apontamentos
+desta semana mostra o custo: `(NDR)`, `SIEM` no rótulo de logs, FortiNAC,
+FortiClient EMS, FortiSOAR em capacidade do time, FortiSOC — **seis pedidos do
+proprietário sobre o produto, todos represados atrás do mesmo rito**.
+
+Não estou afirmando que os rótulos devam sair do payload. Eles são o que o
+usuário recebe, e há bom motivo para o harness os congelar. O achado é que
+**hoje não existe um segundo sinal** que distinga as duas naturezas, e por isso
+a única resposta possível a qualquer pedido de conteúdo é "Porta B".
+
+### O que NÃO foi feito aqui
+
+Nada. Não toquei no harness, que é classe **`frozen`**, nem na régua, que é
+**ato de governança** (R8 §3: *"Mudá-los é ato de governança, nunca efeito
+colateral"*). Este registro é o insumo da decisão, não a decisão.
+
+### Encaminhamento — três saídas, em ordem de custo
+
+1. **Nenhuma mudança de régua: agrupar.** Se toda mudança de conteúdo é Porta B,
+   que seja **uma** Porta B levando todo o lote (`EA-56` + os seis pedidos +
+   `SCORES`). A auditoria independente humana é o custo dominante e **não dobra
+   por levar mais conteúdo**. É a saída disponível hoje, sem decidir nada novo.
+2. **Segundo sinal, derivado do mesmo payload.** Um SHA adicional sobre o
+   payload com os campos de exibição **normalizados** — se só ele muda, a
+   alteração é de vocabulário; se o principal muda, é de decisão. Não afrouxa a
+   régua atual: acrescenta discriminante ao lado dela. Exige demanda própria e
+   mexe em `harness_m41_v313.js`, que é `frozen` — portanto Porta B uma vez,
+   para deixar de pagar Porta B sempre.
+3. **Ratificar a Porta A.** `CLAUDE.md:107` — *"Porta A pendente de ratificação
+   — hoje tudo é Porta B"*. Ela sozinha **não resolve este achado**: rótulo em
+   `MAP` muda o payload, então nem a Porta A o alcançaria. Registrado aqui para
+   fechar a pergunta antes que ela seja feita.
+
+A decisão é do proprietário. Ver [[EA-56]], que é a instância mais cara deste
+achado, e a linha de `design-decisions.md` sobre `SCORES = [0, 1.7, 3.3, 5]`,
+que é a mais estrutural.

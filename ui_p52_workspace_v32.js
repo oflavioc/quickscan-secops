@@ -872,8 +872,8 @@
       if (rot && /capability/i.test(txt(rot)))
         return txt(li[i]).slice(txt(rot).length).trim();
     }
-    var cl = card.querySelector(".capline");                   /* card de gap */
-    if (cl) { var b = cl.querySelector("b"); if (b) return txt(cl).slice(txt(b).length).trim(); }
+    /* EA-58 · o ramo que lia `.capline` do card de GAP saiu junto com o
+       ponteiro nos `.finding`: sem chamador, seria código morto. */
     return "";
   }
 
@@ -899,9 +899,31 @@
      outra coisa: ENCURTAR a distância até o apoio que o renderer congelado JÁ
      escreveu, sem nomear nada por conta própria.
      -------------------------------------------------------------------------- */
+  /* --------------------------------------------------------------------------
+     EA-58 · o ponteiro sai da seção de GAPS.
+
+     No `EA-55` eu o coloquei também nos `.finding`, e criei uma assimetria que
+     o proprietário viu na hora: o gap ALTO recebe card completo — ícone,
+     descrição, "Neste contexto:", link oficial — porque vem do renderer
+     congelado; o MODERADO recebia só um nome em texto puro, meu. Duas formas
+     para a mesma coisa, e a mais pobre justamente onde há menos informação.
+
+     A decisão do proprietário é melhor do que equilibrar as duas: a seção de
+     gaps é DIAGNÓSTICO — gaps, severidade e capability a desenvolver — e
+     solução vive em "Formas de apoio", que vem depois. O acordeão legado
+     permanece onde está porque nasce FECHADO (medido: `details.open === false`),
+     logo é opt-in e não intromete; e movê-lo mudaria a semântica de ocultação
+     da recomendação legada (`hideLegacyRecommendation()`, `ui_v32.js:178`),
+     que é o motivo declarado no próprio `P52-REC1`.
+
+     O ponteiro FICA nos `.prio-decl`, e isso não é exceção arbitrária: ele só
+     dispara quando a capability do card aparece na lista "após validação" — ou
+     seja, exatamente quando a política de severidade NÃO emite apoio direto e
+     o card ficaria sem nada. Onde há apoio direto, ele não aparece.
+     -------------------------------------------------------------------------- */
   function p52SupportHints(flow) {
     var idx = p52ValidationIndex(flow);
-    var cards = flow.querySelectorAll(".prio-decl, .finding"), i, j;
+    var cards = flow.querySelectorAll(".prio-decl"), i, j;
     for (i = 0; i < cards.length; i++) {
       var card = cards[i];
       if (card.getAttribute("data-p52-hint")) continue;
@@ -956,6 +978,35 @@
       for (j = corte; j < kids.length; j++) ctx.appendChild(kids[j]);
       d.appendChild(ctx);
     }
+  }
+
+  /* ==========================================================================
+     EA-58 · "demais" em relação a quê?
+
+     O acordeão legado chama-se "Possíveis formas de apoio aos demais gaps
+     altos". O "demais" é relativo às **prioridades declaradas**, que vivem na
+     seção 2; quando o leitor chega na seção 4 o referente já se perdeu. Relato
+     do proprietário: *"não seria demais gaps, seria justamente os que foram
+     identificados logo acima"* — e ele está certo, porque nesta seção TODOS os
+     gaps são não-prioritários, de modo que "os demais" e "os de cima" são o
+     mesmo conjunto.
+
+     A expressão "demais gaps altos" é PRESERVADA ao pé da letra, e não por
+     apego: `tests_010_vao.js:442` usa `/demais gaps altos/i` sobre o
+     `<summary>` como **âncora de DOM** para identificar este nó, e a alínea (b)
+     do `D010-ARB3` afirma que ele nunca recebe `.v32-hidden`. Reescrever o
+     rótulo faria a âncora deixar de casar e o gate perderia o sujeito **sem
+     ficar vermelho** — enfraquecimento silencioso, que é o que a R10 §1 proíbe.
+     Por isso aqui se ESCLARECE em vez de substituir.
+     ========================================================================== */
+  var P52_DEMAIS_SUFIXO = " — os listados acima";
+
+  function p52ClarificaDemais(det) {
+    if (!det || det.getAttribute("data-p52-demais")) return;
+    var b = det.querySelector("summary b");
+    if (!b || !/demais gaps altos/i.test(txt(b))) return;
+    b.textContent = txt(b) + P52_DEMAIS_SUFIXO;
+    det.setAttribute("data-p52-demais", "esclarecido");
   }
 
   var P52_SEV = [
@@ -1056,6 +1107,7 @@
       else if (/moderad/i.test(rot)) alvo = grupos.moderate;
       if (alvo && alvo.nextSibling) sec.insertBefore(tail[i], alvo.nextSibling);
       else sec.appendChild(tail[i]);
+      p52ClarificaDemais(tail[i]);
     }
   }
 

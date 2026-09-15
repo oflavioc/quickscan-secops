@@ -5493,6 +5493,38 @@ redigida como *"validar aderência"*, que é a moldura honesta para uma trilha
 de capacitação. Enquanto isso não acontece, o `EA-55` entrega o ponteiro para
 o apoio que já existe, e nada é inventado.
 
+### Emenda de 2026-09-15 — medido no PAPEL, e lá é pior
+
+Depois do merge do PR #81 medi a mesma sessão **no relatório do cliente**,
+disparando `beforeprint` (nunca `buildPrintReport()` — ver a lição registrada em
+`EA-26`). O que a tela agora resolve por ponteiro, o PDF **não** resolve:
+
+| configuração | `Capacidade do time` recebe caminho de apoio? | gaps com apoio |
+|---|---|---|
+| contexto tecnológico **não informado** (`legacyMode`) | **não** | **2 de 10** |
+| contexto tecnológico **declarado** | **não** | **2 de 10** |
+
+No modo legado é pior ainda por composição: a errata externa **B-02** suprime as
+seções E–H, e com elas some também a lista *"Pode fazer sentido — após
+validação"* — que na TELA é onde o apoio a `team-capacity` aparece. Ou seja, no
+PDF de uma sessão sem contexto declarado, **uma prioridade declarada pelo
+negócio é nomeada e não recebe absolutamente nada**, sem ponteiro algum.
+
+E a proporção não é detalhe de um gap: **8 dos 10 gaps** desta sessão chegam ao
+cliente sem caminho de apoio, nas duas configurações. A causa é a mesma deste
+achado — `QS_GAP_SUPPORT` cobre **4 qids**, e `QIDS_AUTORIZADOS`
+(`tests_p50_core.js:3495`) é a âncora normativa que fixa esses quatro.
+
+**O que isto muda no encaminhamento**: o `EA-56` deixa de ser "falta a trilha de
+capacitação" e passa a ser **"a tabela de apoio do relatório cobre 40% dos gaps
+que o produto sabe produzir"**. A decisão continua sendo a mesma e continua sendo
+do proprietário — **emendar a §UAT-07** —, mas o que está em jogo é o artefato
+que vai ao cliente, não uma linha de tela.
+
+O ponteiro entregue pelo `EA-55` **não alcança o papel** por desenho: ele vive na
+camada 5.2, que compõe a tela; o relatório é montado por `buildPrintReport()`
+(`ui_v32.js`, §29.4). Corrigir o papel exige a mesma decisão de governança.
+
 ## EA-57 — a seção de apoio nas prioridades declaradas é redundante e não é editável
 
 **Status**: `aberto`

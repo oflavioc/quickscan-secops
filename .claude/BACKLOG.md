@@ -5377,3 +5377,159 @@ a prioridade passa a ser a ordem de ataque, não a triagem.
   Chromium, que esta máquina não tem (KI-3). Estão como `REPRODUZ` por
   sustentação estrutural, e isso está dito em vez de disfarçado.
 - **Não reordenou o backlog.** Priorizar é decisão do proprietário.
+
+## EA-55 — a tela de resultados lia mal: duplicidade nas prioridades, ordem invertida nos gaps e o apoio longe do gap
+
+**Status**: `resolvido`
+
+**Aberto em**: 2026-09-14, por **relato do proprietário após sessão real** — não
+por varredura. Quatro apontamentos, todos reproduzidos por mim em
+`127.0.0.1:1337` antes de qualquer mudança, dirigindo o fluxo de verdade
+(15 respostas, 10 achados, 3 prioridades declaradas).
+
+### Cadeia arquivo:linha → efeito
+
+1. **Duplicidade nas prioridades.** `ui_ux_v32.js:208` insere `#ux-execrow`
+   antes da âncora "Gaps observados"; `ui_p52_workspace_v32.js:670` a
+   reclassifica para o balde `priorities`. A faixa aterrissa **logo abaixo dos
+   `.prio-decl` que repete** — mesmo conteúdo, duas formas seguidas. Sem
+   contexto tecnológico declarado a faixa é **só** a repetição.
+2. **Ordem dos gaps.** `p52BuildGaps()` empurrava todo o *head* para cima: o
+   primeiro heading da seção "Gaps observados" era o título legado **"Outros
+   gaps observados"**, que rotula de "outros" o conjunto inteiro e empurra
+   `Gaps altos de maturidade` para baixo de um título que o contradiz. E o
+   `details` "Possíveis formas de apoio aos demais gaps **altos**" era anexado
+   no fim da seção — **depois dos moderados**, longe do grupo que nomeia.
+3. **"Capacidade do time" sem solução.** Medido: **não falta mapeamento.**
+   `MAP["team-capacity"]` (`quickscan_secops_soccmm_v3_1_3.html:430`) aponta
+   duas ofertas no nível 1. O que existe é **política de severidade** — o
+   renderer congelado só emite `.apoio-block` para `sev 2`, e prioridade com
+   gap moderado recebe banner e vai para "Pode fazer sentido — após validação",
+   **duas seções abaixo**, redigida como não-recomendação. A recomendação
+   existia; estava longe e negada.
+4. **Redundância da seção de apoio.** Na sessão medida ela continha
+   **exatamente** os dois `.apoio-block` que os gaps acima já justificam.
+
+### O que foi corrigido, e onde
+
+Tudo em **`ui_p52_workspace_v32.js` + `.css`** — camada 5.2, fora da §29.4,
+sem rito. A camada já é a dona da recomposição da tela; nenhum arquivo
+`frozen` ou protegido foi tocado, e o payload M41 não muda.
+
+- `p52ExecRowBucket()` — a faixa some da TELA por classe e **permanece no
+  DOM**; com `#ux-ctxsummary` presente ela é roteada para a seção de contexto,
+  onde o resumo pertence. Ocultar, e não remover, porque
+  `tests_ux_m41.js:346` conta `#ux-prios .ux-priochip` e
+  `tests_p50_core.js:908` exige `#ux-execrow` vivo e recriado.
+- `p52BuildPrioCard()` — ordem no título (`PRIORIDADE N`), fatos em lista,
+  procedência (`declarada na sessão`) em rodapé itálico à direita. Reescrita
+  por **leitura** do que o renderer imprimiu, nunca por recomputação.
+- `p52BuildGaps()` — título legado oculto, parágrafo promovido a lead,
+  `Gaps altos de maturidade` como primeiro heading, e cada `details` de apoio
+  inserido **logo após o grupo cuja severidade ele nomeia**.
+- `p52SupportHints()` — o ponteiro "Apoio possível, a validar: …" no próprio
+  card, com os nomes **lidos do DOM** (`P52-REC1` proíbe produto neste
+  arquivo). Sem casamento, não imprime nada — nunca afirma apoio não listado.
+- `p52ProdBullets()` — "Neste contexto:" ganha bloco próprio na caixa da
+  solução, por **movimento de nós**, sem reescrever texto.
+
+### Dois defeitos que eu mesmo introduzi, e o que os pegou
+
+- **`P52-REC1` reprovou** porque escrevi um nome de produto **num comentário
+  meu** (`/Forti[A-Z]/` em `tests_p52_layout.js:538`). É a segunda vez que um
+  comentário meu derruba um portão; o portão estava certo.
+- **O parágrafo de lead sumia do DOM na segunda passagem**: marquei um nó
+  LEGADO com `p52-sec-lead`, e `p52Harvest()` trata essa classe como invólucro
+  desta camada e **não o devolve à lista**. Corrigido com classe própria
+  (`p52-legacy-lead`). Pego por medição na tela, não por leitura.
+
+### O que NÃO foi feito, e por quê
+
+- **A trilha de capacitação (`training.fortinet.com`)** — decidida com o
+  proprietário nesta data e **bloqueada nos três caminhos possíveis**. Ver
+  `EA-56`.
+- **A seção de apoio editável** — pedida pelo proprietário e registrada como
+  demanda própria. Ver `EA-57`.
+- **Mover os `.apoio-block` para junto das prioridades**, que era a minha
+  proposta para matar a redundância do apontamento 4. `P52-REC1`
+  (`tests_p52_layout.js:512`) lança *"bloco de apoio fora da seção e fora do
+  acordeão de gaps"* — a invariante é explícita e deliberada, e
+  `data-p52-support-cards` é conferido contra o DOM em dois portões. O
+  ponteiro no card resolve a distância sem enfraquecer portão nenhum; a
+  redundância em si fica com o `EA-57`, que é onde o proprietário a colocou.
+
+## EA-56 — a trilha de capacitação não tem onde morar: os três caminhos estão bloqueados
+
+**Status**: `aberto`
+
+**Aberto em**: 2026-09-14, ao implementar o `EA-55`. O proprietário decidiu o
+conteúdo (`training.fortinet.com`) e eu **não consegui entregá-lo** sem
+enfraquecer um portão ou abrir rito caro. Registro o bloqueio em vez de
+escolher por conta própria.
+
+### O buraco é real
+
+`training.fortinet.com` **não aparece em lugar nenhum do produto** (`grep` em
+`quickscan_secops_soccmm_v3_1_3.html` e `engine_v32.js`: zero). A única menção
+a capacitação é prosa dentro da descrição do bundle de serviços
+(`:272`). As duas capabilities de pessoas — `soc-staffing` e `soc-skills` — não
+têm oferta de treinamento nomeável.
+
+### Os três caminhos e o que cada um custa
+
+| caminho | arquivo | o que trava |
+|---|---|---|
+| `MAP` | `quickscan_secops_soccmm_v3_1_3.html:430` | classe **`frozen`** → rito D2, e `CLAUDE.md:107` diz *"Porta A pendente de ratificação — hoje tudo é Porta B"*: spec + auditoria independente humana |
+| `QS_GAP_SUPPORT` | `ui_v32.js:1058` | `P51-REC1` (`tests_p50_core.js:3495`) declara `QIDS_AUTORIZADOS = ["detection-lifecycle","logs","automation","vulnerability-management"]` como **âncora normativa externa** da diretriz §UAT-07 e lança *"apoio anexado a um gap fora do mapeamento normativo"*. `team-capacity` não está nela. Mexer na lista é **emendar a diretriz** — decisão de governança do proprietário, não minha (R10 §1) |
+| camada 5.2 | `ui_p52_workspace_v32.js` | `P52-REC1` (`tests_p52_layout.js:538`) proíbe nome de produto neste arquivo. A regex não pegaria o domínio do portal de treinamento, mas o propósito do portão é exatamente esse — passar pela letra e furar o espírito seria o pior dos três |
+
+### Encaminhamento
+
+O caminho mais barato é o **segundo**, e ele depende de uma decisão que só o
+proprietário toma: **emendar a §UAT-07 para incluir as capabilities de
+pessoas**. Com a lista ampliada, a entrada em `QS_GAP_SUPPORT` custa a
+autorização nominal §29.4 de sempre e um repin inline — e a tabela já é
+redigida como *"validar aderência"*, que é a moldura honesta para uma trilha
+de capacitação. Enquanto isso não acontece, o `EA-55` entrega o ponteiro para
+o apoio que já existe, e nada é inventado.
+
+## EA-57 — a seção de apoio nas prioridades declaradas é redundante e não é editável
+
+**Status**: `aberto`
+
+**Aberto em**: 2026-09-14, por relato do proprietário (apontamento 4 do
+`EA-55`), que pediu explicitamente que virasse demanda própria.
+
+### O que foi medido
+
+Na sessão real, a seção 7 continha **exatamente** os dois `.apoio-block` que os
+gaps já justificam, mais um banner. Não é coincidência: é a mesma função
+`apoioBlock` (`quickscan_secops_soccmm_v3_1_3.html:860`) rodando sobre o mesmo
+conjunto, em outra superfície.
+
+### O que o proprietário pediu
+
+Que a seção seja **editável por ele no momento do preenchimento**, quando tem
+informação do cliente que o screening não tem, podendo selecionar a solução
+específica que vai ao relatório.
+
+### Por que é demanda, e não ajuste de apresentação
+
+É **comportamento novo**, e o custo está em três lugares fora da camada 5.2:
+
+- **Estado persistido** — a exportação de sessão vive em `ui_session_v32.js`
+  (§29.4 protegido) e a importação **valida esquema** (`:298+`); campo novo
+  toca os dois.
+- **Papel** — `buildPrintReport()` está em `ui_v32.js` (§29.4 protegido).
+  Correção só de tela deixaria o PDF, que é o que vai ao cliente, divergente.
+- **Proveniência** — e este é o ponto que não pode ser negociado. Uma solução
+  **escolhida pelo operador** impressa num relatório que declara *"os
+  resultados refletem a percepção declarada na sessão"*
+  (`quickscan_secops_soccmm_v3_1_3.html:242`) precisa de **marcador visível**
+  dizendo que é anotação do operador e não saída do motor. O produto inteiro é
+  construído sobre não inventar recomendação; uma seção editável sem marcador
+  desmonta essa garantia em silêncio.
+
+`fullStateJSON()` (`ui_v32.js:815`) **não** precisaria mudar — um campo fora
+dele não viola a invariante de impressão conferida por `finishPrint()`. Essa
+parte é barata; as três acima não são.

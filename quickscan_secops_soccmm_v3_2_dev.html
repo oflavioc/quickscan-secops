@@ -2046,6 +2046,82 @@ body[data-uxscreen="refinement"] #ux-progress-mobile{ display:none !important; }
     #p52-sec-support > .t-details,
     #p52-sec-support > .banner-ok { grid-column: 1 / -1; }
     #p52-sec-support > .section-title { margin: 10px 0 0; }
+    /* EA-55 · a faixa executiva pode agora aterrissar na seção de contexto
+       (ver `p52ExecRowBucket()`); ocupa a faixa inteira nas duas. */
+    #p52-sec-context > #ux-execrow { grid-column: 1 / -1; }
+  }
+
+  /* ==========================================================================
+     EA-55 · CARD DE PRIORIDADE DECLARADA, APOIO E QUEBRA DE LINHA
+
+     Três defeitos de leitura relatados pelo proprietário após sessão real, e
+     medidos em `127.0.0.1:1337` antes de qualquer mudança:
+
+       1 · a seção de prioridades trazia o MESMO conteúdo duas vezes, em duas
+           formas — os cards e a faixa `#ux-prios`. A faixa some da TELA por
+           classe e permanece no DOM: `tests_ux_m41.js:346` conta
+           `#ux-prios .ux-priochip` e `tests_p50_core.js:908` exige que
+           `#ux-execrow` continue existindo e sendo recriado. Ocultar satisfaz
+           os dois; remover derrubaria ambos.
+       2 · a `.rk` empilhava ordem, procedência e severidade na mesma tarja e a
+           `.d` corria dois fatos rotulados numa linha só. Agora: ordem no
+           título, fatos em lista, procedência no rodapé à direita.
+       3 · a descrição do produto e o "Neste contexto:" corriam juntos, e a
+           frase contextual começava no meio de uma linha da descrição.
+
+     Cor: nenhum literal hexadecimal aqui — só tokens. `--faint` sobre
+     `--surface` mede 4,92:1, acima de 4,5:1, e `.prio-decl` não tem `opacity`
+     em nenhum ancestral. Esta última meia-frase é a lição do `EA-23`, onde a
+     aritmética dava 4,92:1 e o CI media 3,15:1 porque a superfície compunha
+     `opacity:.72` — conferido na tela, não deduzido.
+     ========================================================================== */
+  .p52-dup-prios { display: none; }
+
+  /* parágrafo LEGADO promovido a lead da seção: mesma forma de `.p52-sec-lead`,
+     classe própria porque `p52Harvest()` descarta o que leva aquela (ver
+     `p52BuildGaps()`). O `style=` inline do renderer congelado traz cor e
+     tamanho próprios e vence esta regra em cor/tamanho — o que esta classe
+     corrige é a métrica de bloco, que é o que tirava o parágrafo do prumo. */
+  .p52-sec > .p52-legacy-lead {
+    margin: 0 0 14px; line-height: 1.65; max-width: 78ch;
+  }
+
+  .p52-sec .prio-decl .rk {
+    display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 10px;
+  }
+  .p52-prio-flag {
+    border: 1px solid var(--line); border-radius: 999px;
+    padding: 1px 8px; color: var(--muted); font-weight: 700;
+  }
+  .p52-prio-facts {
+    list-style: disc; margin: 8px 0 0; padding-left: 18px;
+    color: var(--muted); font-size: 14px; line-height: 1.6;
+  }
+  .p52-prio-facts li { margin: 0 0 3px; overflow-wrap: anywhere; }
+  .p52-prio-facts li::marker { color: var(--faint); }
+  .p52-prio-rot { color: var(--text); font-weight: 650; }
+  /* a procedência é metadado do card, não conteúdo: menor que o destaque
+     (`.prio-decl h4`, 18px), em itálico, ancorada no canto inferior direito */
+  .p52-prio-src {
+    margin-top: 10px; text-align: right;
+    font-size: 12.5px; font-style: italic; color: var(--faint);
+  }
+
+  /* ponteiro para o apoio que o renderer já listou em outra seção; os nomes
+     vêm do DOM, nunca deste arquivo (`P52-REC1` proíbe produto aqui) */
+  .p52-hint {
+    margin-top: 10px; padding-top: 8px; border-top: 1px dashed var(--line);
+    font-size: 13px; line-height: 1.55;
+  }
+  .p52-hint-rot { color: var(--faint); margin-right: 6px; }
+  .p52-hint-val { color: var(--text); overflow-wrap: anywhere; }
+
+  .p52-sec .apoio-block .pt-desc { overflow-wrap: anywhere; }
+  .p52-prod-ctx {
+    display: block; margin-top: 6px; padding-left: 14px; position: relative;
+  }
+  .p52-prod-ctx::before {
+    content: "•"; position: absolute; left: 0; color: var(--faint);
   }
   #p52-sec-support > .section-title:first-of-type { margin-top: 0; }
 
@@ -11457,8 +11533,43 @@ if (window.__DEV) Object.assign(window.__DEV, { openExportModal, openImportPicke
      demais gaps altos", que no baseline pertence ao bloco de gaps e NÃO ao
      bloco de recomendação ocultável.
      ========================================================================== */
+  /* ==========================================================================
+     EA-55 · a faixa executiva repete as prioridades que os cards já imprimem.
+
+     `uxResultsDecor()` (`ui_ux_v32.js:208`) insere `#ux-execrow` ANTES da
+     âncora "Gaps observados". No layout que essa camada assumia, a faixa caía
+     longe dos `.prio-decl` e funcionava como resumo. Esta camada reclassifica
+     a faixa para o balde `priorities`, e ela passou a aterrissar logo ABAIXO
+     dos cards que repete — o mesmo conteúdo, em duas formas seguidas.
+
+     A faixa carrega DUAS coisas: `#ux-prios` (a repetição) e, quando há
+     contexto tecnológico declarado, `#ux-ctxsummary` (que não repete nada e é
+     útil). Por isso a decisão é por conteúdo, e não por remoção:
+
+       · `#ux-prios` some da TELA por classe — permanece no DOM. Nenhum nó é
+         detachado da faixa: `uxResultsDecor()` começa por
+         `document.getElementById("ux-execrow").remove()`, e mover um filho
+         para fora faria o `remove()` deixar um órfão para trás, duplicando o
+         id na passagem seguinte. Medido, e é por isso que esta função move a
+         faixa INTEIRA de balde em vez de repartir os filhos.
+       · com `#ux-ctxsummary` presente, a faixa inteira vai para a seção de
+         contexto tecnológico, que é onde o resumo pertence;
+       · sem ele, a faixa é só a repetição e fica oculta onde está.
+     ========================================================================== */
+  function p52ExecRowBucket(row) {
+    var prios = row.querySelector("#ux-prios");
+    if (prios) prios.classList.add("p52-dup-prios");
+    if (row.querySelector("#ux-ctxsummary")) return "context";
+    row.classList.add("p52-dup-prios");
+    return "priorities";
+  }
+
   var RE_PRIORIDADES = /Prioridades declaradas pelo neg[óo]cio/i;
   var RE_GAPS = /gaps observados/i;
+  /* EA-55 · o título legado que abria a seção de gaps; ver `p52BuildGaps()`.
+     Mais estrito que `RE_GAPS` de propósito: casa só a variante "outros", para
+     que o título canônico da seção continue classificando normalmente. */
+  var RE_GAPS_OUTROS = /outros gaps observados/i;
 
   function p52Classify(list) {
     var buckets = {}, i;
@@ -11472,7 +11583,7 @@ if (window.__DEV) Object.assign(window.__DEV, { openExportModal, openImportPicke
       if (n.id === "v32panel") { buckets.context.push(n); continue; }
       if (n.id === "p50-suff" || n.id === "ux-refsum") { buckets.evidence.push(n); continue; }
       if (n.id === "p50-results") { buckets.detail.push(n); continue; }
-      if (n.id === "ux-execrow") { buckets.priorities.push(n); continue; }
+      if (n.id === "ux-execrow") { buckets[p52ExecRowBucket(n)].push(n); continue; }
       if (has(n, "actions")) { buckets.actions.push(n); continue; }
       if (has(n, "finding")) { buckets.gaps.push(n); continue; }
       if (has(n, "prio-decl")) { buckets.priorities.push(n); continue; }
@@ -11540,6 +11651,194 @@ if (window.__DEV) Object.assign(window.__DEV, { openExportModal, openImportPicke
      a distinção sobrevive em escala de cinza (borda, ícone textual e texto) e
      para leitor de tela (heading + contagem no nome acessível).
      ========================================================================== */
+  /* ==========================================================================
+     EA-55 · forma do card de prioridade declarada.
+
+     O renderer congelado imprime três linhas soltas:
+
+       <div class="rk">Prioridade 1 · declarada na sessão[ · ponto de atenção]</div>
+       <h4>RÓTULO<span class="dom-chip">DOMÍNIO</span></h4>
+       <div class="d">Evidência: X · Capability: Y</div>
+
+     A `.rk` mistura TRÊS coisas de peso diferente — a ordem declarada, a
+     procedência do dado e um marcador de severidade — na mesma tarja, e a
+     `.d` encadeia dois fatos rotulados numa linha corrida. Esta camada
+     separa por peso: ordem no título, fatos em lista, procedência no rodapé.
+
+     A reescrita é por LEITURA do que o renderer imprimiu, nunca por
+     recomputação — mesma disciplina de `p52SeverityOf()`, que lê a classe da
+     tag em vez de reclassificar o achado. O separador é ` · `, e a escolha foi
+     MEDIDA antes: varri as 15 perguntas em todos os níveis e as 25
+     capabilities canônicas de `MAP`, e nenhum texto de opção ou nome de
+     capability contém ` · ` no valor. Segmento sem `:` vira bullet sem rótulo
+     em vez de ser descartado, e todo segmento que não seja a procedência
+     sobrevive como selo — se o renderer congelado ganhar um quarto marcador,
+     ele aparece em vez de sumir em silêncio.
+     ========================================================================== */
+  var RE_PRIO_FONTE = /declarada na sess[ãa]o/i;
+
+  function p52SplitFacts(s) {
+    var parts = String(s || "").split(" · "), out = [], i;
+    for (i = 0; i < parts.length; i++) {
+      var seg = parts[i].trim();
+      if (!seg) continue;
+      var c = seg.indexOf(":");
+      out.push(c > 0
+        ? { rot: seg.slice(0, c).trim(), val: seg.slice(c + 1).trim() }
+        : { rot: null, val: seg });
+    }
+    return out;
+  }
+
+  function p52BuildPrioCard(card) {
+    if (card.getAttribute("data-p52-prio") === "rebuilt") return;
+    var rk = card.querySelector(":scope > .rk");
+    var d = card.querySelector(":scope > .d");
+    if (!rk || !d) return;                       /* forma inesperada: não mexe */
+
+    var segs = txt(rk).split(" · "), ordem = (segs.shift() || "").trim(), fonte = "", flags = [], i;
+    for (i = 0; i < segs.length; i++) {
+      var s = segs[i].trim();
+      if (!s) continue;
+      if (!fonte && RE_PRIO_FONTE.test(s)) fonte = s; else flags.push(s);
+    }
+
+    rk.textContent = "";
+    rk.appendChild(el("span", { "class": "p52-prio-rank" }, ordem));
+    for (i = 0; i < flags.length; i++)
+      rk.appendChild(el("span", { "class": "p52-prio-flag" }, flags[i]));
+
+    var facts = p52SplitFacts(txt(d)), ul = el("ul", { "class": "p52-prio-facts" });
+    for (i = 0; i < facts.length; i++) {
+      var li = el("li");
+      /* o rótulo carrega o próprio `:` e o valor o próprio espaço: nada de
+         separador vindo do CSS. `p52CapOf()` fatia por comprimento de rótulo,
+         e conteúdo de `::after` não entra em `textContent` — a pontuação
+         gerada por folha de estilo quebraria a fatia em silêncio, além de
+         sumir na cópia para a área de transferência. */
+      if (facts[i].rot) li.appendChild(el("b", { "class": "p52-prio-rot" }, facts[i].rot + ":"));
+      li.appendChild(document.createTextNode(facts[i].rot ? " " + facts[i].val : facts[i].val));
+      ul.appendChild(li);
+    }
+    d.parentNode.replaceChild(ul, d);
+
+    /* a procedência vira rodapé do card; só existe se o renderer a declarou */
+    if (fonte) card.appendChild(el("div", { "class": "p52-prio-src" }, fonte));
+    card.setAttribute("data-p52-prio", "rebuilt");
+    if (flags.length) card.setAttribute("data-p52-prio-flag", "1");
+  }
+
+  /* ==========================================================================
+     EA-55 · o apoio que JÁ EXISTE, no ponto onde o gap aparece.
+
+     Medido em sessão real: "Capacidade do time" entrou como prioridade
+     declarada, saiu com `sev 1` (gap moderado), e o card não mostrou
+     recomendação nenhuma. Não falta mapeamento — `MAP["team-capacity"]` aponta
+     duas ofertas no nível 1. O que existe é POLÍTICA DE SEVERIDADE:
+     o renderer congelado só emite `.apoio-block` para `sev 2`; prioridade com
+     gap moderado recebe um banner e é empurrada para "Pode fazer sentido —
+     após validação", DUAS seções abaixo, redigida como não-recomendação.
+
+     A política está certa e não é tocada aqui: gap moderado não deve disparar
+     recomendação direta. O defeito é de DISTÂNCIA — o leitor conclui que não
+     há apoio quando há. Esta passagem não cria recomendação: ela lê os
+     `.t-item` que o próprio renderer já escreveu, casa pelo nome CANÔNICO da
+     capability (o mesmo texto nas duas superfícies) e imprime um ponteiro.
+     Sem casamento, não imprime nada — nunca afirma apoio que não foi listado.
+     ========================================================================== */
+  function p52CapOf(card) {
+    var li = card.querySelectorAll(".p52-prio-facts li"), i;
+    for (i = 0; i < li.length; i++) {
+      var rot = li[i].querySelector(".p52-prio-rot");
+      if (rot && /capability/i.test(txt(rot)))
+        return txt(li[i]).slice(txt(rot).length).trim();
+    }
+    var cl = card.querySelector(".capline");                   /* card de gap */
+    if (cl) { var b = cl.querySelector("b"); if (b) return txt(cl).slice(txt(b).length).trim(); }
+    return "";
+  }
+
+  function p52ValidationIndex(flow) {
+    var idx = [], items = flow.querySelectorAll(".t-list .t-item"), i;
+    for (i = 0; i < items.length; i++) {
+      var t = txt(items[i]);
+      var corte = t.indexOf(" — ");
+      if (corte <= 0) continue;
+      idx.push({ prod: t.slice(0, corte).trim(), texto: t });
+    }
+    return idx;
+  }
+
+  /* --------------------------------------------------------------------------
+     NÃO confundir com a "trilha de capacitação" pedida pelo proprietário em
+     2026-09-14 (`training.fortinet.com`). Ela NÃO cabe aqui e não foi feita:
+     `P51-REC1` (`tests_p50_core.js:3495`) declara um conjunto normativo
+     externo de qids autorizados a receber apoio — âncora da diretriz §UAT-07
+     — e `team-capacity` não está nele; e `P52-REC1`
+     (`tests_p52_layout.js:538`) proíbe nome de produto neste arquivo. Os três
+     caminhos possíveis e seus custos estão em `EA-56`. O que esta função faz é
+     outra coisa: ENCURTAR a distância até o apoio que o renderer congelado JÁ
+     escreveu, sem nomear nada por conta própria.
+     -------------------------------------------------------------------------- */
+  function p52SupportHints(flow) {
+    var idx = p52ValidationIndex(flow);
+    var cards = flow.querySelectorAll(".prio-decl, .finding"), i, j;
+    for (i = 0; i < cards.length; i++) {
+      var card = cards[i];
+      if (card.getAttribute("data-p52-hint")) continue;
+      var cap = p52CapOf(card);
+      if (!cap) continue;
+      var prods = [];
+      for (j = 0; j < idx.length; j++)
+        if (idx[j].texto.indexOf(cap) >= 0 && prods.indexOf(idx[j].prod) < 0) prods.push(idx[j].prod);
+      if (!prods.length) continue;
+      var box = el("div", { "class": "p52-hint", "data-p52-hint-kind": "validar" });
+      box.appendChild(el("span", { "class": "p52-hint-rot" }, "Apoio possível, a validar:"));
+      box.appendChild(document.createTextNode(" "));   /* espaço REAL: a margem
+         do CSS separa na tela mas não no `textContent` — sem isto o rótulo e o
+         primeiro produto saem grudados na cópia e no leitor de tela */
+      box.appendChild(el("span", { "class": "p52-hint-val" }, prods.join(" · ")));
+      /* o rodapé de procedência é o último elemento do card por desenho (canto
+         inferior direito): o ponteiro entra ANTES dele, nunca depois */
+      var src = card.querySelector(":scope > .p52-prio-src");
+      if (src) card.insertBefore(box, src); else card.appendChild(box);
+      card.setAttribute("data-p52-hint", "1");
+    }
+  }
+
+  /* ==========================================================================
+     EA-55 · a caixa da solução Fortinet quebrava linha no lugar errado.
+
+     `.pt-desc` encadeia numa só corrida DOIS enunciados de natureza diferente:
+     a descrição geral do produto (constante, do catálogo) e o "Neste contexto:
+     …" (variável, derivado da resposta da sessão). Medido em 1440x900: 400px
+     de largura, `overflow-wrap: normal`, e a frase contextual começando no meio
+     de uma linha da descrição — o leitor não distingue onde termina o catálogo
+     e onde começa a leitura da sessão dele.
+
+     A separação é por MOVIMENTO de nós, nunca por reescrita de texto: o `<b>`
+     "Neste contexto:" e tudo que o segue passam para um bloco próprio. Nenhum
+     caractere é criado, removido ou reordenado — a mesma disciplina que
+     `p52CopyGuard()` aplica ao texto digitado pelo usuário.
+     ========================================================================== */
+  var RE_PROD_CTX = /neste contexto/i;
+
+  function p52ProdBullets(flow) {
+    var descs = flow.querySelectorAll(".apoio-block .pt-desc"), i;
+    for (i = 0; i < descs.length; i++) {
+      var d = descs[i];
+      if (d.getAttribute("data-p52-desc")) continue;
+      d.setAttribute("data-p52-desc", "split");
+      var kids = Array.prototype.slice.call(d.childNodes), corte = -1, j;
+      for (j = 0; j < kids.length; j++)
+        if (kids[j].nodeType === 1 && kids[j].tagName === "B" && RE_PROD_CTX.test(txt(kids[j]))) { corte = j; break; }
+      if (corte < 0) continue;
+      var ctx = el("div", { "class": "p52-prod-ctx" });
+      for (j = corte; j < kids.length; j++) ctx.appendChild(kids[j]);
+      d.appendChild(ctx);
+    }
+  }
+
   var P52_SEV = [
     { key: "high", cls: "sev-a", title: "Gaps altos de maturidade" },
     { key: "moderate", cls: "sev-m", title: "Gaps moderados de maturidade" }
@@ -11566,7 +11865,35 @@ if (window.__DEV) Object.assign(window.__DEV, { openExportModal, openImportPicke
     for (i = 0; i < lead.length; i++) if (has(lead[i], "t-details")) { tailStart = i; break; }
     var head = tailStart < 0 ? lead : lead.slice(0, tailStart);
     var tail = tailStart < 0 ? [] : lead.slice(tailStart);
-    for (i = 0; i < head.length; i++) sec.appendChild(head[i]);
+    /* ========================================================================
+       EA-55 · o que abria a seção era um título legado que a contradiz.
+
+       O renderer congelado emite `Outros gaps observados` + parágrafo quando
+       houve prioridade declarada, porque no layout antigo esse bloco vinha
+       depois das prioridades e precisava se apresentar. Aqui ele é o PRIMEIRO
+       heading da seção "Gaps observados" — e rotula de "outros" o conjunto
+       inteiro, empurrando `Gaps altos de maturidade` para baixo de um título
+       que diz o contrário. Medido em sessão real.
+
+       O título some da TELA (permanece no DOM, como todo `p52-dup-title`); o
+       parágrafo permanece e vira o lead da seção — é ele que carrega a
+       informação real, a de que estes são os gaps NÃO escolhidos como
+       prioridade. Some o rótulo redundante, fica o que informa.
+       ======================================================================== */
+    for (i = 0; i < head.length; i++) {
+      if (has(head[i], "section-title") && RE_GAPS_OUTROS.test(txt(head[i])))
+        head[i].classList.add("p52-dup-title");
+      /* classe PRÓPRIA, e não `p52-sec-lead`: `p52Harvest()` trata
+         `p52-sec-lead` como invólucro criado por esta camada e NÃO o devolve à
+         lista, porque os leads de seção são reconstruídos a cada passagem.
+         Marcar o parágrafo LEGADO com ela o apagava na segunda passagem —
+         medido na tela, o parágrafo simplesmente sumia do DOM. Aqui só a forma
+         é emprestada; a propriedade do nó continua sendo do renderer
+         congelado. */
+      else if (head[i].tagName === "P") head[i].classList.add("p52-legacy-lead");
+      sec.appendChild(head[i]);
+    }
+    var grupos = {};
     for (var s = 0; s < P52_SEV.length; s++) {
       var d = P52_SEV[s], list = cards[d.key];
       if (!list.length) continue;
@@ -11588,8 +11915,29 @@ if (window.__DEV) Object.assign(window.__DEV, { openExportModal, openImportPicke
       for (i = 0; i < list.length; i++) box.appendChild(list[i]);
       grp.appendChild(box);
       sec.appendChild(grp);
+      grupos[d.key] = grp;
     }
-    for (i = 0; i < tail.length; i++) sec.appendChild(tail[i]);
+    /* ========================================================================
+       EA-55 · o apoio encosta no grupo que ele nomeia.
+
+       O disclosure legado chama-se "Possíveis formas de apoio aos demais gaps
+       ALTOS" e era anexado no fim da seção — depois dos moderados, longe do
+       grupo que descreve. Cada `.t-details` passa a ser inserido logo APÓS o
+       grupo cuja severidade ele nomeia; o que não nomeia nenhuma continua no
+       fim, como hoje.
+
+       A inserção é IRMÃ do grupo, nunca dentro dele: `p52Harvest()` só desce
+       em `.p52-gapgrp-cards`, então um nó solto dentro do grupo se perderia na
+       passagem seguinte. Medido ao escrever — é a mesma armadilha de
+       idempotência que `p52ExecRowBucket()` evita do outro lado.
+       ======================================================================== */
+    for (i = 0; i < tail.length; i++) {
+      var alvo = null, rot = txt(tail[i].querySelector("summary") || tail[i]);
+      if (/gaps?\s+altos?/i.test(rot)) alvo = grupos.high;
+      else if (/moderad/i.test(rot)) alvo = grupos.moderate;
+      if (alvo && alvo.nextSibling) sec.insertBefore(tail[i], alvo.nextSibling);
+      else sec.appendChild(tail[i]);
+    }
   }
 
   /* ==========================================================================
@@ -13105,6 +13453,22 @@ if (window.__DEV) Object.assign(window.__DEV, { openExportModal, openImportPicke
 
       if (d.key === "gaps") p52BuildGaps(sec, nodes);
       else for (k = 0; k < nodes.length; k++) sec.appendChild(nodes[k]);
+      /* EA-55 · reconstrói cada card de prioridade declarada na forma que
+         separa ordem, fatos e procedência. Depois do append: a reescrita lê o
+         que o renderer congelado imprimiu. */
+      if (d.key === "priorities") {
+        var pc = sec.querySelectorAll(":scope > .prio-decl");
+        for (k = 0; k < pc.length; k++) p52BuildPrioCard(pc[k]);
+        /* EA-55 · mesmo tratamento dado ao título legado da seção de gaps:
+           "Prioridades declaradas pelo negócio" repete o nome da seção e some
+           da TELA. A regra genérica logo abaixo exige igualdade exata de
+           texto e não alcança esta variante. Permanece no DOM —
+           `tests_journey_m45.js:213` acha esta `.section-title` por
+           `textContent`, e `p52Classify()` a usa para trocar de balde. */
+        var lt = sec.querySelectorAll(":scope > .section-title");
+        for (k = 0; k < lt.length; k++)
+          if (RE_PRIORIDADES.test(txt(lt[k]))) lt[k].classList.add("p52-dup-title");
+      }
       if (d.key === "actions" && evbase) sec.appendChild(evbase);
 
       /* o título legado que apenas repete o nome da seção vira ruído: some da
@@ -13132,6 +13496,11 @@ if (window.__DEV) Object.assign(window.__DEV, { openExportModal, openImportPicke
     if (secExec) p52ExecPair(secExec);
     p52DomainBars(flow);
     p52MarkIcons(flow);
+    /* EA-55 · passagens que cruzam SEÇÕES, e por isso só podem rodar com o
+       fluxo inteiro montado: o ponteiro de apoio lê a lista "após validação"
+       (seção 7) para decorar cards das seções 2 e 4. */
+    p52SupportHints(flow);
+    p52ProdBullets(flow);
 
     var ctx = document.getElementById("v32panel");
     if (ctx) {

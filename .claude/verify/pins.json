@@ -1,7 +1,7 @@
 {
   "_meta": {
     "descricao": "Registry único de pins — fonte de identidade dos artefatos (R8). Hashes = SHA-256 dos blobs de HEAD. Alterar arquivo pinado exige regenerar este registry no MESMO PR, com motivo no commit.",
-    "gerado_de_head": "c30997843337605de5f0d5eaa25a9c62b3549249",
+    "gerado_de_head": "f6c92d0814c7968e2d5127ea8ba8548ae0010ddf",
     "gerado_em": "2026-09-14",
     "exclusoes": [
       "docs_phase5/**",
@@ -15,7 +15,7 @@
     "baseline_core_zip_sha256": "625079c462be7d44ffd69b1cd85f256382322bd0555ae4b548f21bf30ee5b89d"
   },
   "files": {
-    ".claude/BACKLOG.md": "354f07987358f9ae2d9b22a01322d69ea5efcaa7ee66b1d84e0fc5d8ab7d7d12",
+    ".claude/BACKLOG.md": "9ca300e2ec652e78043e8bf2719b1f331ad7c3ffaf3a65c899420d4bf9afce0d",
     ".claude/agent-memory/README.md": "2f868716c8785119c1d6a02a7715f7b5058ab968f55951410fc82fc45b960a93",
     ".claude/agent-memory/build-engineer/MEMORY.md": "5ed47a73226fea6613b44c2ce70b26e95415033bafbd69a3ada20fa7df0bf950",
     ".claude/agent-memory/build-engineer/feedback_escopo_de_scanner_nos_dois_sentidos.md": "a07b03eb0687bc4f08ff02375684b8441f8d434384c415a3e25b1fe233007527",
@@ -269,7 +269,7 @@
     ".claude/verify/mutation_population.json": "7893a00adc8d087bfb0244e2b580d58772de567b35326af2d0c098e6d4025141",
     ".claude/verify/pipeline.yaml": "e0604991cba1b4d0989b5ad1dd5496d03910c8e36ab4c7f598fe522624d80291",
     ".claude/verify/regra_morta.js": "d04a0638a82dbf8a9f7f83d8b416653db5178619a61a87655213f699e3a31dab",
-    ".claude/verify/regra_morta.json": "7450d90dca4cdfa57ad9a74328ad43ad9342eb4a49ca4a658c6f64dfc8ccc3dd",
+    ".claude/verify/regra_morta.json": "5d6584d9f8578c435d02563d88fcb73d99a9d00b6cda62f435ec57e0384bc471",
     ".claude/verify/regra_morta_seletor.js": "67723c7515264a81ef375910ee357ba944af47ae0d9cc9de6338a8bda3e68a9b",
     ".claude/verify/run.sh": "a404fa877e0fdb94987ae66d3170a2fc9aec8a6138204051aba89395ad22e1aa",
     ".gitattributes": "37bb36fb03aa6edbf1ce9fdc3bb9cb705e0317da970df37783777795bbcdcdb9",
@@ -333,7 +333,7 @@
     "preparar_release.py": "44b0a74dac345cfb5b27742d5fee51d9941646ec33f1cbb18aa81f98bf31a0cd",
     "prototypes/.gitkeep": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
     "quickscan_secops_soccmm_v3_1_3.html": "d329049147950a5b2a40b2735c3d4bd9a89177fed439efbcb58df01bdeb7ae82",
-    "quickscan_secops_soccmm_v3_2_dev.html": "73bae0bac533031dfe6eebb17805beed3ca8eead9ba0d5e05e58e9beb9d4bc87",
+    "quickscan_secops_soccmm_v3_2_dev.html": "b9a9e14841a6f339212fbbfc1039d676d949a8183376c4322edcc4d876963e54",
     "session_roundtrip_report.md": "ffe0d30411cc086681a44fa8d69e1066a0bf26173f15dd8580286787056cf4f8",
     "specs/.gitkeep": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
     "specs/003-marcador-duplicado/fix-finding-registry.md": "dce0be8376f543678b9b214fd2e03e0efbda9f45cd978b909d0cc5208fa456a2",
@@ -482,8 +482,8 @@
     "ui_p50_shell_v32.js": "e28a21733564e1a222cefa82fb848f569e3a50b6ddda8c447d2ad52b436a58a3",
     "ui_p50_suff_v32.js": "a9931330021949b581da29012be7669edf75529aaaaa9c2f13d0165494b86f5b",
     "ui_p50_v32.css": "60dc3f324015d011b0210cf0794b8e4951e62a26be4878799b27d75ed1317023",
-    "ui_p52_workspace_v32.css": "f71a0054c5cd23473676677c5fe2cd3e17ceb24f358a3e349a4fbf8b15027da1",
-    "ui_p52_workspace_v32.js": "909bfaffc35f7029ec642c4e65e9b34727c9ecb30adae9ea71213ad969114923",
+    "ui_p52_workspace_v32.css": "978c1d54e8eddb0f98ad0d2f7fd860596208ff93e9cffff58ba4b5fab40a3e9d",
+    "ui_p52_workspace_v32.js": "5921f149401f35c65f6bad107e02a16232461e16231346f61bd3bb406a88416b",
     "ui_refinement_v32.js": "ade18a9afd265966feb40cb9f2926e20f5ffd2534dcfe7ec602e46cc6d01132c",
     "ui_session_v32.js": "6fd849cdbdbb6838921a1519613e8a5194777c6eeb9e3e102c681a0ddc27164b",
     "ui_target_v32.js": "81adcb219b606a444dbf046fabeee4d46c411b74a69012896f6e26c90f3c8f5c",

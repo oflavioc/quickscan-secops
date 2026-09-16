@@ -5609,3 +5609,52 @@ colateral"*). Este registro é o insumo da decisão, não a decisão.
 A decisão é do proprietário. Ver [[EA-56]], que é a instância mais cara deste
 achado, e a linha de `design-decisions.md` sobre `SCORES = [0, 1.7, 3.3, 5]`,
 que é a mais estrutural.
+
+## EA-61 — a redação do selo do bundle está pinada por gate em suíte protegida
+
+**Status**: `aberto`
+
+**Aberto em**: 2026-09-16, ao implementar o `EA-60`. O proprietário pediu uma
+troca de duas palavras e ela **não foi feita** — registro o bloqueio em vez de
+contorná-lo.
+
+### O pedido
+
+No editor de contexto, o selo ao lado de cada subscription incluída pelo bundle
+declarado deve ler **"incluso no bundle"** em vez de **"incluído pelo bundle"**.
+
+### Cadeia arquivo:linha → efeito
+
+- **`ui_v32.js:402`** emite
+  `<span class="v32-tag v32-bundletag">incluído pelo bundle</span>`.
+- **`tests_ui_m333.js:280`** (gate `C22`) afirma
+  `/incluído pelo bundle/.test(txt(q(d,"#v32-sub-fg-ips").parentElement))`
+  como **prova de que a inferência do bundle ENT está sendo exibida**.
+- **`tests_ui_m333.js` está na lista §29.4** (`tests_p50_core.js:502`).
+
+Medido por execução: com a troca aplicada pela camada 5.2,
+`UI 3.3.3` cai para **25 PASS · 1 FAIL**; revertida, volta a **26 PASS · 0 FAIL**.
+
+### Por que não contornei
+
+A propriedade que o `C22` mede é a **inferência**, não a redação — reancorar a
+expressão para `/inclu[ií](do pelo|so no) bundle/` preservaria o teste inteiro.
+Mas duas regras dizem que não é minha a caneta:
+
+- **R3 §2** — quem escreve gate é o `qa-engineer`; o implementador **nunca**
+  escreve o próprio critério de aceite. Editar o `C22` para aceitar a minha
+  própria mudança é exatamente o anti-padrão que a regra nomeia.
+- **§29.4** — a suíte é protegida e exige autorização nominal do proprietário.
+
+Havia uma saída pela letra: a camada 5.2 podia trocar o texto e eu podia não
+olhar para o `ui333`. O gate ficaria vermelho e eu saberia. Não é saída.
+
+### O que destrava, e é barato
+
+Uma frase do proprietário autorizando o repin nominal da `tests_ui_m333.js`.
+Com ela, a reancoragem é de **uma linha**, a propriedade fica idêntica e o selo
+passa a ler o que ele pediu. Enquanto isso, o resto do item 12 **foi
+entregue**: o selo deixou de quebrar linha e os bundles ficaram em 2×2.
+
+Ver [[EA-58]] — é a mesma família, num nível acima: ali a régua D2 não
+distingue rótulo de decisão; aqui um gate de comportamento pina uma redação.

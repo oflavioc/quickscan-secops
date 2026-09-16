@@ -12921,34 +12921,24 @@ if (window.__DEV) Object.assign(window.__DEV, { openExportModal, openImportPicke
   }
 
   /* ==========================================================================
-     EA-60 · (12) "incluído pelo bundle" → "incluso no bundle".
+     EA-60 · (12) "incluído pelo bundle" → "incluso no bundle": NÃO FEITO.
 
-     Troca de APRESENTAÇÃO, pedida pelo proprietário. Ela não passa pelo
-     `P52_COPY` porque aquele mapa só visita nós que contenham
-     `mandato|charter|—` — guarda de caminho quente que não vou alargar por
-     causa de um selo. Aqui a troca é dirigida ao nó exato.
+     O proprietário pediu a troca e ela é trivial de escrever. O que a barra é
+     `C22` (`tests_ui_m333.js:280`), que afirma `/incluído pelo bundle/` sobre
+     o rótulo renderizado como prova de que a inferência do bundle ENT está
+     sendo exibida — e essa suíte é **§29.4 protegida**.
 
-     O que este bloco NÃO faz, e é deliberado: marcar as caixas automaticamente
-     conforme o bundle. O próprio editor declara, em `ui_v32.js:398`, que
-     *"Incluído pelo bundle é informativo e **não grava declaração**"* — marcar
-     sozinho transformaria inferência em declaração do cliente, que é dado de
-     ENTRADA do motor. Isso é mudança de comportamento e está registrado como
-     demanda, não como acabamento.
+     Reancorar a expressão preservaria a propriedade inteira (o que o gate
+     mede é a inferência, não a redação). Mas quem escreve gate é o QA, nunca o
+     implementador para aceitar a própria mudança (R3 §2) — e a suíte protegida
+     exige autorização nominal do proprietário. Registrado em `EA-61`.
+
+     O que FOI feito aqui, e não depende de gate nenhum: o selo deixa de
+     quebrar para a linha de baixo, e os bundles passam a 2x2.
      ========================================================================== */
-  function p52BundleTagCopy(ed) {
-    var tags = ed.querySelectorAll(".v32-bundletag"), i;
-    for (i = 0; i < tags.length; i++) {
-      var tg = tags[i];
-      if (tg.getAttribute("data-p52-tag")) continue;
-      if (/inclu[ií]do pelo bundle/i.test(txt(tg))) tg.textContent = "incluso no bundle";
-      tg.setAttribute("data-p52-tag", "1");
-    }
-  }
-
   function p52ContextEditorDecor() {
     var ed = document.getElementById("v32editor");
     if (!ed) return;
-    p52BundleTagCopy(ed);      /* EA-60 · item 12 */
     var keep = p52CaptureEditorFocus(ed);
     p52DedupeEditorErrors(ed);
     p52ContextRegions(ed);

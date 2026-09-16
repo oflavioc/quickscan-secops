@@ -770,7 +770,17 @@ function buildSupportHTML(res, afirmaPreservacao){
   const rest = Object.keys(ctxs).filter(id => !prioCaps.includes(id));
   let html = "";
   if (prioCaps.length)
-    html += `<div class="section-title"><div class="eyebrow">Leitura das prioridades declaradas · contexto V3.2</div></div>
+    /* EA-61 · o sufixo `· contexto V3.2` SAI do eyebrow.
+       Ele foi ratificado pelo proprietário na demanda 015 e DES-ratificado por
+       ele em 2026-09-16, com o motivo declarado: número de versão da árvore
+       interna não diz nada ao cliente e lê como vazamento. A assimetria que a
+       015 desenhou entre tela e papel deixa de existir — os dois passam a
+       dizer a mesma frase, que é o que a alínea (c) do `D015-TIT1` já cobrava.
+       A troca é feita AQUI, na origem, e não na camada de apresentação: o
+       mutante `D015-M2` ancora neste literal, e reescrever só o render o
+       tornaria equivalente por construção — mutante sem poder discriminante é
+       pior do que mutante nenhum. */
+    html += `<div class="section-title"><div class="eyebrow">Leitura das prioridades declaradas</div></div>
       <div class="v32-block" id="v32prio">${prioCaps.map(id=>renderCap(id, ctxs[id], presentationOf(id, ctxs[id]), afirmaPreservacao)).join("")}</div>`;
   const byMode = m => rest.filter(id => presentationOf(id, ctxs[id])==="card" && ctxs[id].supportMode===m);
   [["DIRECT","v32direct"],["CONTEXTUAL","v32contextual"],["VALIDATE","v32validate"]].forEach(([m,bid])=>{

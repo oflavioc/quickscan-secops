@@ -363,10 +363,26 @@ T("D015-TIT1", "C1 · o título de #v32prio nomeia a leitura (tela e papel), com
       throw new Error("o eyebrow ainda promete apoio: " + JSON.stringify(base.eyebrow) +
         " casa " + RE_PROMESSA);
   });
-  g.passo("(b) o eyebrow mantém o sufixo `" + SUFIXO + "` (ratificado)", () => {
+  /* [EA-61 · 2026-09-16] O proprietário DES-RATIFICOU o sufixo `· contexto
+     V3.2`, com o motivo declarado: número de versão da árvore interna não diz
+     nada ao cliente e lê como vazamento no relatório.
+
+     A alínea é INVERTIDA, não apagada — o que ela guarda continua sendo o
+     mesmo: a tela não carrega o sufixo por acidente nem o recupera numa
+     regressão. Apagá-la deixaria a propriedade sem juiz.
+
+     Texto anterior, preservado (R2 §5):
+       g.passo("(b) o eyebrow mantém o sufixo `" + SUFIXO + "` (ratificado)", …)
+         if (base.eyebrow.indexOf(SUFIXO) < 0)
+           throw new Error("o sufixo ratificado sumiu do eyebrow: " + …);
+
+     Com a inversão, a alínea (c) — tela e papel com a MESMA oração principal —
+     passa a comparar duas frases idênticas, e a assimetria que a 015 desenhou
+     deixa de existir. A alínea (d) segue válida por construção. */
+  g.passo("(b) o eyebrow NÃO carrega o sufixo `" + SUFIXO + "` (des-ratificado)", () => {
     if (!okF) return vac("(b)", "sem sujeito medido em (f)");
-    if (base.eyebrow.indexOf(SUFIXO) < 0)
-      throw new Error("o sufixo ratificado sumiu do eyebrow: " + JSON.stringify(base.eyebrow));
+    if (base.eyebrow.indexOf(SUFIXO) >= 0 || RE_SUFIXO.test(base.eyebrow))
+      throw new Error("o sufixo des-ratificado voltou ao eyebrow: " + JSON.stringify(base.eyebrow));
   });
   g.passo("(c) o <h3> do papel tem a MESMA oração principal do eyebrow", () => {
     if (!okF) return vac("(c)", "sem sujeito medido em (f)");

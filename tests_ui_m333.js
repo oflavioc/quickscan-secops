@@ -277,7 +277,14 @@ T("C22 (A)","FortiSOC primeiro + FortiGate segundo → editor representa o Forti
   return q(d,"#v32-plat-fgt").checked &&
     d.querySelector('input[name="v32-bundle"][value="ent"]').checked &&
     q(d,"#v32-sub-fg-ot-security").checked &&
-    /incluído pelo bundle/.test(txt(q(d,"#v32-sub-fg-ips").parentElement));
+    /* [EA-61 · 2026-09-16] Reancorado sob autorização nominal do proprietário.
+       O que esta alínea mede é a INFERÊNCIA — que `fg-ips`, não declarado, é
+       exibido como coberto pelo bundle ENT — e não a redação do selo. O
+       proprietário pediu "incluso no bundle" no lugar de "incluído pelo
+       bundle"; a expressão aceita passa a cobrir as DUAS, para que a alínea
+       continue medindo a inferência qualquer que seja a camada que escreva o
+       rótulo. Expressão anterior, preservada (R2 §5): /incluído pelo bundle/ */
+    /inclu(ído pelo|so no) bundle/.test(txt(q(d,"#v32-sub-fg-ips").parentElement));
 });
 T("C23 (A)","salvar atualiza só a entrada FortiGate; FortiSOC preservado byte-idêntico e primeiro",()=>{
   const {w,d}=boot();answerAll(w,2);w.__DEV.showResults();

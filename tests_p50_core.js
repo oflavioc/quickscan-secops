@@ -244,7 +244,18 @@ const PROTECTED = {
      outro chamador e tests_ui_m32.js:189). Regra de score, suficiencia, gate e
      ordem do papel byte-identicas. Identidade anterior:
      4c9abc435c60cbc71250180a0589542c47565c62b21dc852f6905b1794992106 */
-  "ui_v32.js": "797711193ba493d4e7c1f6afb46ffb88f71ada24199906e45507cc37436b08b5",
+  /* EA-61 · 2026-09-16 · AUTORIZAÇÃO NOMINAL do proprietário, no chat: o sufixo
+     `· contexto V3.2` sai do eyebrow de "Leitura das prioridades declaradas".
+     Ele havia sido RATIFICADO por ele na demanda 015 e foi DES-RATIFICADO
+     agora, com o motivo declarado: número de versão da árvore interna não diz
+     nada ao cliente e lê como vazamento no relatório.
+     A edição é de UMA linha (`ui_v32.js:773`). Regra de score, suficiência,
+     gate e schema permanecem byte-idênticas; o payload M41 não é alcançado.
+     Acompanham, no mesmo PR: a alínea (b) do `D015-TIT1` invertida e o mutante
+     `D015-M2` invertido junto — a propriedade guardada continua a mesma, em
+     direção oposta. Identidade anterior:
+     797711193ba493d4e7c1f6afb46ffb88f71ada24199906e45507cc37436b08b5 */
+  "ui_v32.js": "07e1dec0aea89d31616c3b2bee9b8bc10ffad276b7324dc4d97dcd1cc2468eb7",
   "ui_ux_v32.js": "a050401145a5ed7af597eae01a9a23826418119769c096db168b3b177a9d3938",
   /* ERRATA DA AUDITORIA EXTERNA · §4.1.1 ("qualquer texto derivado consome a
      mesma decisão canônica de publicabilidade"). A comparação Atual × Alvo

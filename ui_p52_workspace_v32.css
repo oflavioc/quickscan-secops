@@ -1189,7 +1189,20 @@
     padding: 12px 22px; border-radius: 8px;
     font-size: 14.5px; font-weight: 600; line-height: 1.2; text-align: center;
   }
+  /* EA-59 · maiúscula inicial de cada métrica da home, por TIPOGRAFIA: o
+     texto no DOM continua exatamente o que a Camada 4.x escreveu, porque
+     `R31` (`tests_ref_m44.js:189`) o afirma em minúscula e a propriedade que
+     ele guarda — a desambiguação 15 vs 16 — nada tem a ver com caixa.
+
+     `::first-letter` só age em contêiner de BLOCO: num `<span>` inline o
+     `getComputedStyle` chega a reportar `uppercase` e **nada é desenhado**.
+     Medido na tela com e sem a regra: mesma largura, 119,93px nas duas. Daí
+     o `inline-block`. */
+  .p52-meta-lbl { display: inline-block; }
+  .p52-meta-lbl::first-letter { text-transform: uppercase; }
+
   /* o selo que herdou a palavra "opcional" do rótulo do botão */
+
   .p52-cta-tag {
     align-self: center; color: var(--muted); font-size: 12px;
     letter-spacing: .04em; text-transform: uppercase;

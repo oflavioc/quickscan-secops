@@ -2251,12 +2251,6 @@
     return p.join(" ");
   }
 
-  function p52CapitalizaPrimeira(s) {
-    var t = String(s || "");
-    var m = t.match(/^(\s*)(\S)([\s\S]*)$/);
-    return m ? m[1] + m[2].toUpperCase() + m[3] : t;
-  }
-
   function p52HomeCopy(scr) {
     var i;
     /* (1) "Ao final:" abre parágrafo próprio — são duas afirmações de peso
@@ -2283,10 +2277,19 @@
       if (dv.getAttribute("data-p52-meta")) continue;
       var b = dv.querySelector(":scope > b");
       if (b && /^\s*0\s*[–-]\s*5\s*$/.test(b.textContent)) b.textContent = "0 - 5";
+      /* A maiúscula inicial é TIPOGRAFIA, e por isso não se escreve no texto.
+         `R31` (`tests_ref_m44.js:189`, suíte §29.4 protegida) afirma a string
+         "perguntas + ponto de partida" em minúscula sobre o `textContent` do
+         `#app` — reescrever o nó derrubava o gate, e a propriedade que ele
+         guarda (a desambiguação 15 vs 16) nada tem a ver com caixa. O rótulo
+         é envolvido num `<span>` e quem capitaliza é o `::first-letter`: o
+         `textContent` permanece byte a byte o que a Camada 4.x escreveu. */
       var kids = Array.prototype.slice.call(dv.childNodes), feito = false;
       for (var k = 0; k < kids.length && !feito; k++) {
         if (kids[k].nodeType !== 3 || !kids[k].nodeValue.trim()) continue;
-        kids[k].nodeValue = p52CapitalizaPrimeira(kids[k].nodeValue);
+        var lbl = el("span", { "class": "p52-meta-lbl" });
+        dv.insertBefore(lbl, kids[k]);
+        lbl.appendChild(kids[k]);
         feito = true;
       }
       dv.setAttribute("data-p52-meta", "1");

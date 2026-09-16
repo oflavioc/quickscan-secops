@@ -1,7 +1,7 @@
 {
   "_meta": {
     "descricao": "Registry único de pins — fonte de identidade dos artefatos (R8). Hashes = SHA-256 dos blobs de HEAD. Alterar arquivo pinado exige regenerar este registry no MESMO PR, com motivo no commit.",
-    "gerado_de_head": "6908ef71597cad896084a1da8826c0100ca3b193",
+    "gerado_de_head": "5c40e7d6052916ce9adc79355431948e691707be",
     "gerado_em": "2026-09-16",
     "exclusoes": [
       "docs_phase5/**",
@@ -333,7 +333,7 @@
     "preparar_release.py": "44b0a74dac345cfb5b27742d5fee51d9941646ec33f1cbb18aa81f98bf31a0cd",
     "prototypes/.gitkeep": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
     "quickscan_secops_soccmm_v3_1_3.html": "d329049147950a5b2a40b2735c3d4bd9a89177fed439efbcb58df01bdeb7ae82",
-    "quickscan_secops_soccmm_v3_2_dev.html": "68b7285b44c7d821201a8d83aa9c56e931b94b1914f281fe9cac8d18b0313ed5",
+    "quickscan_secops_soccmm_v3_2_dev.html": "46b88ef76761132d2f9ed4fb064f746213967b2364123706ccafae063debca7b",
     "session_roundtrip_report.md": "ffe0d30411cc086681a44fa8d69e1066a0bf26173f15dd8580286787056cf4f8",
     "specs/.gitkeep": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
     "specs/003-marcador-duplicado/fix-finding-registry.md": "dce0be8376f543678b9b214fd2e03e0efbda9f45cd978b909d0cc5208fa456a2",
@@ -441,8 +441,8 @@
     "tests_014_mutants.js": "54366a464b031fb352c1a4362bbc08251aa42df5ecd96351cb3d30b7b596c9ff",
     "tests_014_mutants_visual.js": "6fadbb55fd0302ee951d3f8ee9c6d79828784253989e94f7534f98f7ea5438b6",
     "tests_014_regra_morta.js": "9f682946c929200f552041de725aa279d2baa607cf0345cc70f14fbc3f7a8115",
-    "tests_015_apoio.js": "e4cfbdb52d3379b21b9a63b60e552ff5662a5f2b92662e8fb2bd0793da4c9719",
-    "tests_015_mutants.js": "4a1804b8cab5fe2d4b27bb81978faf7e6d95100cbc471cec49f5a8946613774a",
+    "tests_015_apoio.js": "8a8efde0bf12b5441fbc4e5216927f041e8c12d387f2ae6184ba9b95426f5b60",
+    "tests_015_mutants.js": "3a949d1ecd2738c23f56b5277eea136484f2b6c255f78a547c723ba80f5e50fc",
     "tests_016_mutants.js": "91013ea606b4e8b94aa1a3dcbd7408ec6d2f10662a85552ec3d7a74264c4e342",
     "tests_018_mutants.js": "68abe828e6d5d618e43eff715654b8bc64211e530b35f6cb6af09de2f38f39f2",
     "tests_core_mutants.js": "4c7c4bcec9ff0a3fd5f5bc9edce17c4c016dfeb08159529002da2b8db322c732",
@@ -452,7 +452,7 @@
     "tests_journey_m45.js": "84d99be32e122f867dc1620cd1f49e4f3ae9795a32185cc75aa246d8682941f5",
     "tests_m42_m86.js": "d263ee641d699e3c99d71e7c23c4923b3444ca3fdce86a6d5eebdd71e14273ee",
     "tests_p50_chromium.js": "32058b4e980ade446d29dd205cdc98485ae3d2e9fbb66d6ee93be5e8224c8a00",
-    "tests_p50_core.js": "289941787357be1719d7bed75c6fcb56de99717681274a17944522daea21e8ce",
+    "tests_p50_core.js": "5b9508bd73a08be98eb55a9547e383c5398ad171c1215631652d7555dd55ae31",
     "tests_p50_mutants.js": "a78306918c7f27ab08c34cd557ece041e55cc7271169c7f4749b0ebcea058b8b",
     "tests_p51_mutants.js": "dfa4ec651a41d4befd137c12b1b6046f52d1925f674e1746d6b826981a155559",
     "tests_p52_chromium.js": "2556cf2447e02d3f61c6d132360325ac7fe1ded8e0aab37c929f3fd17188063b",
@@ -465,7 +465,7 @@
     "tests_ui_m32.js": "32d9246232045d99a9811403ca72d31cb9d52951f62c2728cfedf214630e0f34",
     "tests_ui_m33.js": "2e2b181ca6c40f506c5466aac1276815fe2be4122f26241be41000f073f6e658",
     "tests_ui_m332.js": "2e9ce33d131090b5e85a77d1beaf94a65cbf21b6bc7b175f17e93fd6ae568c0a",
-    "tests_ui_m333.js": "522e24e6ecea7594089cba8a0fff10d5fd9dca12aa448809c9676b794733e973",
+    "tests_ui_m333.js": "143746fc8f0a323a0221b5ef9ad2d53816aab11c4907c2eb52710118400ded39",
     "tests_unset_ug.js": "0b22450956b75e760a9c9c79d7d48b6df51e7f55c5e1325876a9a4be26844d58",
     "tests_ux_m41.js": "bbbd944273bee2c37d756bc5fefdc08f92ccbceb4083fc4cf67b30bc39452fe2",
     "tests_visual/fixtures.js": "1b3cead911563bcb53192a6b6312851d297ab10a1109ff876d8bf1bfc2c07a86",
@@ -483,14 +483,14 @@
     "ui_p50_suff_v32.js": "a9931330021949b581da29012be7669edf75529aaaaa9c2f13d0165494b86f5b",
     "ui_p50_v32.css": "60dc3f324015d011b0210cf0794b8e4951e62a26be4878799b27d75ed1317023",
     "ui_p52_workspace_v32.css": "b47c9156a99be0f846a9b1505afd61861d87efdd73c3f4670d433c4c867b3ece",
-    "ui_p52_workspace_v32.js": "0c59be1af78d2ca7423099cc6026af40cc1c28f8db836d26d6469c7b3e763e64",
+    "ui_p52_workspace_v32.js": "c04b948d636027c420eef76ba8fa52e46bb1a405a19f81f6b30d549d8a283765",
     "ui_refinement_v32.js": "ade18a9afd265966feb40cb9f2926e20f5ffd2534dcfe7ec602e46cc6d01132c",
     "ui_session_v32.js": "6fd849cdbdbb6838921a1519613e8a5194777c6eeb9e3e102c681a0ddc27164b",
     "ui_target_v32.js": "81adcb219b606a444dbf046fabeee4d46c411b74a69012896f6e26c90f3c8f5c",
     "ui_ux_v32.css": "8afbd55f97a3abd10a0a217925807a92161506be7c3ef3a8ff0303a75ebabbf3",
     "ui_ux_v32.js": "a050401145a5ed7af597eae01a9a23826418119769c096db168b3b177a9d3938",
     "ui_v32.css": "acb0eba165ef25e6b97475430e9b042a9b39038be2b9882ec5b3c67a730faa6f",
-    "ui_v32.js": "797711193ba493d4e7c1f6afb46ffb88f71ada24199906e45507cc37436b08b5",
+    "ui_v32.js": "07e1dec0aea89d31616c3b2bee9b8bc10ffad276b7324dc4d97dcd1cc2468eb7",
     "v3_1_3_functional_snapshot.json": "0abeaa7cc3a7e270fde015791a93bfbdb580803a915871e12811585c99555435"
   }
 }

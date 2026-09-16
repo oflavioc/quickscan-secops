@@ -1,8 +1,8 @@
 {
   "_meta": {
     "descricao": "Registry único de pins — fonte de identidade dos artefatos (R8). Hashes = SHA-256 dos blobs de HEAD. Alterar arquivo pinado exige regenerar este registry no MESMO PR, com motivo no commit.",
-    "gerado_de_head": "172e1d12cbab873780ba42cf63f359f7d0a221c5",
-    "gerado_em": "2026-09-15",
+    "gerado_de_head": "6908ef71597cad896084a1da8826c0100ca3b193",
+    "gerado_em": "2026-09-16",
     "exclusoes": [
       "docs_phase5/**",
       ".claude/project-memory/** (estado de processo — muda por fase; validado pelo stage state, não por pin)",
@@ -15,7 +15,7 @@
     "baseline_core_zip_sha256": "625079c462be7d44ffd69b1cd85f256382322bd0555ae4b548f21bf30ee5b89d"
   },
   "files": {
-    ".claude/BACKLOG.md": "15209fa02775c18002e20288fe61672bfbc4b1ed63dd3404f4b8f57e26add087",
+    ".claude/BACKLOG.md": "f3e961d2e099a0df06d68e00a9a2dd74479c8edc5f3ebc93c2a32315958913ca",
     ".claude/agent-memory/README.md": "2f868716c8785119c1d6a02a7715f7b5058ab968f55951410fc82fc45b960a93",
     ".claude/agent-memory/build-engineer/MEMORY.md": "5ed47a73226fea6613b44c2ce70b26e95415033bafbd69a3ada20fa7df0bf950",
     ".claude/agent-memory/build-engineer/feedback_escopo_de_scanner_nos_dois_sentidos.md": "a07b03eb0687bc4f08ff02375684b8441f8d434384c415a3e25b1fe233007527",
@@ -333,7 +333,7 @@
     "preparar_release.py": "44b0a74dac345cfb5b27742d5fee51d9941646ec33f1cbb18aa81f98bf31a0cd",
     "prototypes/.gitkeep": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
     "quickscan_secops_soccmm_v3_1_3.html": "d329049147950a5b2a40b2735c3d4bd9a89177fed439efbcb58df01bdeb7ae82",
-    "quickscan_secops_soccmm_v3_2_dev.html": "a64163743aa9af5399ab893da28bb8ad08549ea4e35758a44ec3b78462c9c3ad",
+    "quickscan_secops_soccmm_v3_2_dev.html": "68b7285b44c7d821201a8d83aa9c56e931b94b1914f281fe9cac8d18b0313ed5",
     "session_roundtrip_report.md": "ffe0d30411cc086681a44fa8d69e1066a0bf26173f15dd8580286787056cf4f8",
     "specs/.gitkeep": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
     "specs/003-marcador-duplicado/fix-finding-registry.md": "dce0be8376f543678b9b214fd2e03e0efbda9f45cd978b909d0cc5208fa456a2",
@@ -483,7 +483,7 @@
     "ui_p50_suff_v32.js": "a9931330021949b581da29012be7669edf75529aaaaa9c2f13d0165494b86f5b",
     "ui_p50_v32.css": "60dc3f324015d011b0210cf0794b8e4951e62a26be4878799b27d75ed1317023",
     "ui_p52_workspace_v32.css": "b47c9156a99be0f846a9b1505afd61861d87efdd73c3f4670d433c4c867b3ece",
-    "ui_p52_workspace_v32.js": "fb0509425597286f2ebd445c291ed2e92816ac84e6a45661feb642611a6670a8",
+    "ui_p52_workspace_v32.js": "0c59be1af78d2ca7423099cc6026af40cc1c28f8db836d26d6469c7b3e763e64",
     "ui_refinement_v32.js": "ade18a9afd265966feb40cb9f2926e20f5ffd2534dcfe7ec602e46cc6d01132c",
     "ui_session_v32.js": "6fd849cdbdbb6838921a1519613e8a5194777c6eeb9e3e102c681a0ddc27164b",
     "ui_target_v32.js": "81adcb219b606a444dbf046fabeee4d46c411b74a69012896f6e26c90f3c8f5c",

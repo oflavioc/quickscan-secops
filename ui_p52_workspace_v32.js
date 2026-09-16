@@ -2220,6 +2220,124 @@
      contexto) descem para uma faixa organizada abaixo do hero. Nenhum nó
      legado é criado ou removido — só reposicionado.
      ========================================================================== */
+  /* ==========================================================================
+     EA-59 · acabamento da home, pedido do proprietário depois de usar a v3.2.5.
+
+     Tudo por LEITURA e ajuste do que o renderer congelado e a Camada 4.x já
+     imprimiram — nenhum texto é reescrito do zero, para que a fonte continue
+     tendo um dono só.
+
+     Um detalhe que NÃO é livre: `P52-HOME1` (`tests_p52_layout.js:661`) exige
+     `/opcional/i` no texto da faixa de CTAs. O pedido era remover "opcional"
+     do rótulo do botão para encurtá-lo — e isso, feito ao pé da letra,
+     derrubaria o gate. A palavra sai do BOTÃO e vira selo próprio ao lado
+     dele, dentro da mesma faixa: o botão encurta, o leitor continua sabendo
+     que o caminho é opcional, e o gate continua com o sujeito que ele afirma.
+     ========================================================================== */
+  var P52_MINUSCULAS = ["o", "a", "os", "as", "de", "do", "da", "e", "em", "no", "na", "para", "com"];
+
+  function p52Titulo(s) {
+    var p = String(s || "").trim().split(/\s+/), i;
+    for (i = 0; i < p.length; i++) {
+      var bruto = p[i], nu = bruto.toLowerCase();
+      /* palavra que já tem maiúscula interna é nome próprio de produto ou
+         marca (Quickscan, e os nomes do catálogo): não se toca nela.
+         P52-REC1 proíbe nome de produto neste arquivo — inclusive em
+         comentário, e é a terceira vez que ele me pega assim. */
+      if (/[A-ZÁÉÍÓÚÂÊÔÃÕÇ]/.test(bruto.slice(1))) continue;
+      if (i > 0 && P52_MINUSCULAS.indexOf(nu) >= 0) { p[i] = nu; continue; }
+      p[i] = bruto.charAt(0).toUpperCase() + bruto.slice(1);
+    }
+    return p.join(" ");
+  }
+
+  function p52HomeCopy(scr) {
+    var i;
+    /* (1) "Ao final:" abre parágrafo próprio — são duas afirmações de peso
+       diferente: o que a sessão NÃO exige, e o que ela entrega. */
+    var lead = scr.querySelector("p.lead");
+    if (lead && !lead.getAttribute("data-p52-lead")) {
+      var nós = Array.prototype.slice.call(lead.childNodes);
+      for (i = 0; i < nós.length; i++) {
+        var nn = nós[i];
+        if (nn.nodeType !== 3 || nn.nodeValue.indexOf("Ao final") < 0) continue;
+        var corte = nn.nodeValue.indexOf("Ao final");
+        var depois = nn.splitText(corte);
+        depois.nodeValue = depois.nodeValue.replace(/^\s+/, "");
+        lead.insertBefore(el("br"), depois);
+        break;
+      }
+      lead.setAttribute("data-p52-lead", "quebrado");
+    }
+
+    /* (2) a régua respira e cada métrica abre com maiúscula */
+    var metas = scr.querySelectorAll(".meta-row > div");
+    for (i = 0; i < metas.length; i++) {
+      var dv = metas[i];
+      if (dv.getAttribute("data-p52-meta")) continue;
+      var b = dv.querySelector(":scope > b");
+      if (b && /^\s*0\s*[–-]\s*5\s*$/.test(b.textContent)) b.textContent = "0 - 5";
+      /* A maiúscula inicial é TIPOGRAFIA, e por isso não se escreve no texto.
+         `R31` (`tests_ref_m44.js:189`, suíte §29.4 protegida) afirma a string
+         "perguntas + ponto de partida" em minúscula sobre o `textContent` do
+         `#app` — reescrever o nó derrubava o gate, e a propriedade que ele
+         guarda (a desambiguação 15 vs 16) nada tem a ver com caixa. O rótulo
+         é envolvido num `<span>` e quem capitaliza é o `::first-letter`: o
+         `textContent` permanece byte a byte o que a Camada 4.x escreveu. */
+      var kids = Array.prototype.slice.call(dv.childNodes), feito = false;
+      for (var k = 0; k < kids.length && !feito; k++) {
+        if (kids[k].nodeType !== 3 || !kids[k].nodeValue.trim()) continue;
+        var lbl = el("span", { "class": "p52-meta-lbl" });
+        dv.insertBefore(lbl, kids[k]);
+        lbl.appendChild(kids[k]);
+        feito = true;
+      }
+      dv.setAttribute("data-p52-meta", "1");
+    }
+
+    /* (3) o bloco de tempo do núcleo repetia o que a faixa de tempo logo
+       abaixo já diz. Sai da TELA e permanece no DOM. */
+    var tcore = scr.querySelector(".ux-time-core");
+    if (tcore) tcore.classList.add("p52-dup-title");
+  }
+
+  function p52HomeCtaCopy(row) {
+    var btns = row.querySelectorAll(":scope > .cta, :scope > .btn2"), i;
+    for (i = 0; i < btns.length; i++) {
+      var btn = btns[i];
+      if (btn.getAttribute("data-p52-cta")) continue;
+      var t = txt(btn), seta = /→\s*$/.test(t) ? " →" : "";
+      t = t.replace(/\s*→\s*$/, "");
+      /* (4) "· opcional" sai do rótulo e vira selo irmão, na mesma faixa */
+      var opc = /·\s*opcional\s*$/i.test(t);
+      if (opc) t = t.replace(/\s*·\s*opcional\s*$/i, "");
+      btn.textContent = p52Titulo(t) + seta;
+      btn.setAttribute("data-p52-cta", "1");
+      if (opc && !row.querySelector('[data-p52="cta-opcional"]'))
+        btn.insertAdjacentElement("afterend",
+          el("span", { "class": "p52-cta-tag", "data-p52": "cta-opcional" }, "opcional"));
+    }
+  }
+
+  /* --------------------------------------------------------------------------
+     EA-59 · (5) a marca ganha porte e uma luz que passa POR TRÁS dela.
+
+     O `<img>` é elemento substituído e não aceita pseudo-elemento próprio;
+     por isso a camada o envolve num `<span>`, que passa a ser o palco. Nenhum
+     byte do asset é tocado e o `alt` continua no `<img>` original.
+
+     O movimento é decorativo e some por inteiro sob `prefers-reduced-motion`
+     (`V322-MOT2` cobra que a preferência zere movimento) — e o envoltório é
+     `aria-hidden` nenhum: ele não muda a árvore acessível, só desenha atrás.
+     -------------------------------------------------------------------------- */
+  function p52BrandShine() {
+    var img = document.querySelector(".brand .logo.logo-dark");
+    if (!img || (img.parentNode && has(img.parentNode, "p52-brandshine"))) return;
+    var palco = el("span", { "class": "p52-brandshine", "data-p52": "brand-shine" });
+    img.parentNode.insertBefore(palco, img);
+    palco.appendChild(img);
+  }
+
   function p52Home(app) {
     var scr = app.querySelector("section.screen");
     if (!scr) return;
@@ -2232,6 +2350,8 @@
     var disc = scr.querySelector(".disclaimer");
     if (disc && disc.parentNode) disc.parentNode.removeChild(disc);
     p52FooterNeutrality();
+    p52HomeCopy(scr);          /* EA-59 · itens 1, 2 e 3 do acabamento */
+    p52BrandShine();           /* EA-59 · item 5 */
 
     /* As referências são capturadas ANTES da distribuição: assim que um nó
        entra num contêiner ainda não anexado, `getElementById` deixa de
@@ -2260,9 +2380,16 @@
       if (ctxBtn) { ctxBtn.classList.add("p52-cta-ctx"); row.appendChild(ctxBtn); }
       if (imp) {
         var sub = el("div", { "class": "p52-cta-sub", "data-p52": "cta-sub" });
+        /* EA-59 · o import recebe a MESMA geometria dos CTAs. Ele permanece
+           ABAIXO e não vira terceira coluna: `P52-HOME1`
+           (`tests_p52_layout.js:662`) exige `#ses-import` dentro de
+           `[data-p52="cta-sub"]`, e o proprietário deixou essa saída explícita
+           ("se não, pode deixar o Importar Sessão embaixo"). */
         sub.appendChild(imp);
         row.parentNode.insertBefore(sub, row.nextSibling);
       }
+      p52HomeCtaCopy(row);
+      if (imp) p52HomeCtaCopy(imp.parentNode);
     }
 
     var art = el("div", { "class": "p52-hero-art" });

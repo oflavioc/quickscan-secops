@@ -518,6 +518,42 @@
      ========================================================================== */
   .p52-dup-prios { display: none; }
 
+  /* ==========================================================================
+     EA-59 · (5) a marca ganha porte e uma luz que passa POR TRÁS dela.
+
+     `.logo` nasce com 24px na Camada 1; aqui vai a 34px. O brilho é um
+     gradiente que atravessa o palco UMA vez a cada ciclo, atrás do artwork
+     (`z-index` menor), com `filter: blur()` para não virar régua luminosa.
+     Nenhum byte do SVG é tocado.
+
+     `prefers-reduced-motion: reduce` **remove a animação inteira**, e não a
+     encurta: para quem declarou essa preferência não sobra movimento nenhum
+     nesta superfície.
+     ========================================================================== */
+  .p52-brandshine {
+    position: relative; display: inline-flex; align-items: center;
+    isolation: isolate; overflow: hidden; border-radius: 6px; padding: 2px 6px;
+  }
+  .brand .p52-brandshine .logo { height: 34px; position: relative; z-index: 1; }
+  .p52-brandshine::before {
+    content: ""; position: absolute; z-index: 0; top: -40%; bottom: -40%;
+    left: -60%; width: 45%; pointer-events: none;
+    background: linear-gradient(100deg,
+      transparent 0%,
+      color-mix(in srgb, var(--red) 22%, transparent) 42%,
+      color-mix(in srgb, var(--text) 30%, transparent) 50%,
+      color-mix(in srgb, var(--red) 22%, transparent) 58%,
+      transparent 100%);
+    filter: blur(6px);
+    animation: p52-brandsweep 5.5s cubic-bezier(.45, 0, .2, 1) infinite;
+  }
+  @keyframes p52-brandsweep {
+    0%   { transform: translateX(0); opacity: 0; }
+    12%  { opacity: 1; }
+    55%  { opacity: 1; }
+    70%, 100% { transform: translateX(420%); opacity: 0; }
+  }
+
   /* parágrafo LEGADO promovido a lead da seção: mesma forma de `.p52-sec-lead`,
      classe própria porque `p52Harvest()` descarta o que leva aquela (ver
      `p52BuildGaps()`). O `style=` inline do renderer congelado traz cor e
@@ -711,6 +747,32 @@
     padding: 18px 20px;
     border: 1px solid var(--line); border-radius: 12px; background: var(--surface);
   }
+  /* ==========================================================================
+     EA-59 · (10) a barra de ações estava desalinhada.
+
+     `#ses-actions` é um flex container ANINHADO dentro da barra, e os botões
+     que vivem nele — "Exportar sessão", "Importar sessão" — assentavam por
+     baseline, enquanto os irmãos de primeiro nível assentavam pela caixa.
+
+     Medido em 1440x900 ANTES da correção: **quatro topos distintos** numa
+     barra que deveria ter um só. O `.cta` media 53px de altura contra 49px
+     dos irmãos, e os botões de sessão assentavam 6px abaixo deles.
+
+     Altura única resolve os dois de uma vez; o `align-items: center` da barra
+     já existia e passa a ter o que centralizar. 44px é também o alvo de toque
+     que o `P50-ACC4` cobra no mobile.
+     ========================================================================== */
+  #p52-sec-actions .actions > button,
+  #p52-sec-actions .actions > #ses-actions,
+  #p52-sec-actions .actions #ses-actions > button {
+    min-height: 44px; padding-top: 0; padding-bottom: 0;
+    margin-top: 0; margin-bottom: 0;
+    display: inline-flex; align-items: center; justify-content: center;
+  }
+  #p52-sec-actions .actions > button,
+  #p52-sec-actions .actions #ses-actions > button { height: 44px; }
+  #p52-sec-actions .actions #ses-actions { align-items: center; }
+
   #p52-sec-actions .actions .cta { order: 1; }
   #p52-sec-actions .actions #editprio { order: 2; }
   #p52-sec-actions .actions #review { order: 3; }
@@ -773,6 +835,8 @@
     html { scroll-behavior: auto; }
     section.screen, .screen[data-p52-nav] { animation: none !important; }
     .p52-rail-link, .p52-sec { transition: none; }
+    /* EA-59 · a luz da marca é decoração pura: some inteira, não encurta */
+    .p52-brandshine::before { animation: none !important; display: none; }
   }
 
   /* nenhuma superfície do workspace pode gerar rolagem horizontal */
@@ -1116,11 +1180,33 @@
   .p52-cta-row {
     display: flex; flex-wrap: wrap; gap: 14px; align-items: stretch; margin: 30px 0 0;
   }
+  /* EA-59 · botões um pouco menores, a pedido do proprietário. `min-width`
+     caiu de 300px para 232px e a altura de 52px para 46px — ainda acima do
+     alvo de toque de 44px que o `P50-ACC4` cobra no mobile. */
   .p52-cta-row > .cta, .p52-cta-row > .btn2 {
     display: inline-flex; align-items: center; justify-content: center;
-    margin: 0; min-height: 52px; min-width: 300px; flex: 0 1 auto;
-    padding: 15px 26px; border-radius: 8px;
-    font-size: 15px; font-weight: 600; line-height: 1.2; text-align: center;
+    margin: 0; min-height: 46px; min-width: 232px; flex: 0 1 auto;
+    padding: 12px 22px; border-radius: 8px;
+    font-size: 14.5px; font-weight: 600; line-height: 1.2; text-align: center;
+  }
+  /* EA-59 · maiúscula inicial de cada métrica da home, por TIPOGRAFIA: o
+     texto no DOM continua exatamente o que a Camada 4.x escreveu, porque
+     `R31` (`tests_ref_m44.js:189`) o afirma em minúscula e a propriedade que
+     ele guarda — a desambiguação 15 vs 16 — nada tem a ver com caixa.
+
+     `::first-letter` só age em contêiner de BLOCO: num `<span>` inline o
+     `getComputedStyle` chega a reportar `uppercase` e **nada é desenhado**.
+     Medido na tela com e sem a regra: mesma largura, 119,93px nas duas. Daí
+     o `inline-block`. */
+  .p52-meta-lbl { display: inline-block; }
+  .p52-meta-lbl::first-letter { text-transform: uppercase; }
+
+  /* o selo que herdou a palavra "opcional" do rótulo do botão */
+
+  .p52-cta-tag {
+    align-self: center; color: var(--muted); font-size: 12px;
+    letter-spacing: .04em; text-transform: uppercase;
+    border: 1px solid var(--line); border-radius: 999px; padding: 2px 10px;
   }
   .p52-cta-row > #start { background: var(--red); color: #fff; border: 1px solid var(--red); }
   /* ERRATA FINAL V3.2.2 · M-05 · o azul de MARCA (`--ftnt-blue`, #307FE2) rende
@@ -1138,9 +1224,13 @@
     outline: 2px solid var(--text); outline-offset: -4px;
   }
   .p52-cta-sub { margin-top: 14px; }
+  /* EA-59 · "Importar Sessão" com a MESMA geometria dos CTAs de cima. Ele
+     permanece abaixo (exigência do `P52-HOME1`), mas deixa de parecer um
+     controle de segunda classe por ser menor que os irmãos. */
   .p52-cta-sub > .btn2 {
     display: inline-flex; align-items: center; justify-content: center;
-    min-height: 44px; min-width: 200px; padding: 12px 22px; border-radius: 8px;
+    min-height: 46px; min-width: 232px; padding: 12px 22px; border-radius: 8px;
+    font-size: 14.5px; font-weight: 600; line-height: 1.2;
   }
   @media (max-width: 767px) {
     .p52-cta-row { flex-direction: column; }
@@ -1710,17 +1800,17 @@
   body[data-uxscreen="home"] .p52-hero-main .sub-eyebrow { font-size: calc(11.5px * var(--p52-uw-home)); }
   body[data-uxscreen="home"] .p52-hero-main .meta-row > div { font-size: calc(13px * var(--p52-uw-home)); }
   body[data-uxscreen="home"] .p52-hero-main .meta-row b { font-size: calc(20px * var(--p52-uw-home)); }
+  /* EA-59 · os números-base aqui precisam acompanhar os da faixa normal,
+     senão o botão encolhe até 2399px e volta a crescer a partir de 2400px.
+     A ESCALA (×1,22) é da errata ultrawide e não muda; o que muda é o
+     tamanho de partida sobre o qual ela incide. */
   body[data-uxscreen="home"] .p52-cta-row > .cta,
-  body[data-uxscreen="home"] .p52-cta-row > .btn2 {
-    font-size: calc(15px * var(--p52-uw-home));
-    min-height: calc(52px * var(--p52-uw-home));
-    min-width: calc(300px * var(--p52-uw-home));
-    padding: calc(15px * var(--p52-uw-home)) calc(26px * var(--p52-uw-home));
-  }
+  body[data-uxscreen="home"] .p52-cta-row > .btn2,
   body[data-uxscreen="home"] .p52-cta-sub > .btn2 {
-    font-size: calc(14px * var(--p52-uw-home));
-    min-height: calc(44px * var(--p52-uw-home));
-    padding: calc(12px * var(--p52-uw-home)) calc(20px * var(--p52-uw-home));
+    font-size: calc(14.5px * var(--p52-uw-home));
+    min-height: calc(46px * var(--p52-uw-home));
+    min-width: calc(232px * var(--p52-uw-home));
+    padding: calc(12px * var(--p52-uw-home)) calc(22px * var(--p52-uw-home));
   }
   body[data-uxscreen="home"] .ux-time { font-size: calc(13px * var(--p52-uw-home)); }
   body[data-uxscreen="home"] .ux-micro {

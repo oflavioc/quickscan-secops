@@ -233,15 +233,15 @@
     {
       "camada": 4,
       "folha": "ui_p52_workspace_v32.css",
-      "regras": 543,
-      "declaracoes": 2173,
+      "regras": 552,
+      "declaracoes": 2224,
       "media": 47,
-      "regras_com_importante": 13,
-      "importante_texto": 23,
+      "regras_com_importante": 14,
+      "importante_texto": 24,
       "importante_com_var": 0,
       "outras": {
-        "CSSKeyframesRule": 2,
-        "CSSKeyframeRule": 4
+        "CSSKeyframesRule": 3,
+        "CSSKeyframeRule": 8
       }
     },
     {

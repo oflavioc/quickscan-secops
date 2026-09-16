@@ -139,6 +139,34 @@
     ["charter", "documento de direcionamento da operação"],
     ["Mandato", "Direcionamento"],
     ["mandato", "direcionamento"],
+    /* ==========================================================================
+       EA-60 · (13) número de versão interna vazando para o relatório.
+
+       Relato do proprietário, sobre o card de prioridade sem contexto
+       declarado: *"temos infos internas ali vazando no relatório"*. Ele está
+       certo — `V3.1.3` e `V3.2` são versões da NOSSA árvore, e o cliente não
+       tem como saber o que significam. "Leitura V3.1.3 preservada" é
+       vocabulário de quem manteve a compatibilidade, não de quem lê o
+       diagnóstico.
+
+       A troca é de APRESENTAÇÃO e por isso vive aqui, no mesmo mapa que já
+       reescreve "mandato" → "direcionamento" nas duas superfícies. A origem
+       (`ui_v32.js:635`) não é tocada: ela é §29.4, e a frase que ela emite
+       tem duas cláusulas com donos diferentes —
+
+         · "Leitura V3.1.3 preservada (maturidade: X)" nasce do veredito de
+           arbitragem da INV-7 (`tests_010_vao.js:550` proíbe afirmá-la com a
+           Camada 1 oculta) — o que muda aqui é só como ela se apresenta;
+         · "nenhum produto é inferido sem contexto" é **promessa pinada pelo
+           V10** (`tests_010_vao.js:589`) e sobrevive intacta às duas trocas.
+
+       O sufixo do eyebrow ("· contexto V3.2") NÃO entra: `D015-TIT1` o afirma
+       como **ratificado pelo proprietário** na demanda 015
+       (`tests_015_apoio.js:366`). Tirá-lo é desfazer uma decisão dele, e isso
+       é decisão dele — não minha.
+       ========================================================================== */
+    ["Leitura V3.1.3 preservada (maturidade:", "Maturidade observada nesta sessão (nível:"],
+    ["desta capability para interpretação V3.2 —", "desta capability —"],
     /* §5.2 · travessões de sistema que viraram separador padrão */
     ["Evidência / contexto da resposta — opcional", "Evidência / contexto da resposta · opcional"],
     ["Screening indicativo de alto nível — não substitui assessment formal.",
@@ -921,6 +949,43 @@
      seja, exatamente quando a política de severidade NÃO emite apoio direto e
      o card ficaria sem nada. Onde há apoio direto, ele não aparece.
      -------------------------------------------------------------------------- */
+  /* ==========================================================================
+     EA-60 · (9) o banner de prioridade moderada era um bloco de texto corrido.
+
+     O renderer congelado emite, numa linha só: a explicação, o nome da seção
+     para onde aponta, e a lista de capabilities separada por ` · ` dentro de
+     um `<b>`. Com três capabilities o resultado é uma parede — foi o que o
+     proprietário leu e não conseguiu separar.
+
+     Aqui a lista é destacada do parágrafo e vira itens. **Nenhum caractere é
+     criado, removido ou reordenado**: o `<b>` já existia e já continha
+     exatamente essas capabilities; o que muda é que cada uma ganha linha
+     própria, pelo mesmo movimento de nós usado em `p52ProdBullets()`.
+     ========================================================================== */
+  function p52SplitBanner(flow) {
+    var banners = flow.querySelectorAll(".banner-ok"), i, j;
+    for (i = 0; i < banners.length; i++) {
+      var bn = banners[i];
+      if (bn.getAttribute("data-p52-banner")) continue;
+      bn.setAttribute("data-p52-banner", "1");
+      var b = bn.querySelector(":scope > b");
+      if (!b || txt(b).indexOf(" · ") < 0) continue;
+      var itens = txt(b).split(" · ").map(function (s) { return s.trim(); }).filter(Boolean);
+      if (itens.length < 2) continue;
+      var ul = el("ul", { "class": "p52-banner-list" });
+      for (j = 0; j < itens.length; j++) ul.appendChild(el("li", null, itens[j]));
+      /* o `:` que abria a lista fica no parágrafo; o ponto final que a fechava
+         deixa de existir porque a lista não é mais uma oração */
+      var depois = b.nextSibling;
+      while (depois && depois.nodeType === 3 && /^\s*\.\s*$/.test(depois.nodeValue)) {
+        var morto = depois; depois = depois.nextSibling;
+        morto.parentNode.removeChild(morto);
+      }
+      b.parentNode.replaceChild(ul, b);
+      bn.classList.add("p52-banner-split");
+    }
+  }
+
   function p52SupportHints(flow) {
     var idx = p52ValidationIndex(flow);
     var cards = flow.querySelectorAll(".prio-decl"), i, j;
@@ -1436,7 +1501,15 @@
       var sel = ed.querySelector("#v32-arch-" + k);
       host = sel ? sel.closest("label") : null;
       if (!host || host.querySelector('[data-p52="cap-help"]')) continue;
-      host.classList.add("p52-fieldhelp");
+      /* EA-60 · (11) o (i) de arquitetura caía ABAIXO do nome do campo.
+         O botão é inserido entre o texto do rótulo e o `<select>`, e como o
+         select é bloco o (i) ficava sozinho numa linha — diferente de todo o
+         resto do editor, onde a ajuda fica ao LADO do nome. A ordem no DOM
+         está certa (nome → ajuda → controle) e continua igual; o que faltava
+         era dizer ao layout que o controle é que abre linha nova. Classe
+         própria porque `p52-fieldhelp` também veste os sinais, que têm
+         checkbox e não podem virar grade. */
+      host.classList.add("p52-fieldhelp", "p52-fieldhelp-arch");
       made = p52HelpControl("p52-archhelp-" + k, txt(host).split("\n")[0].slice(0, 60), P52_ARCH_HELP[k]);
       host.insertBefore(made.btn, sel);
       host.appendChild(made.pop);
@@ -1783,9 +1856,35 @@
     }
   }
 
+  /* ==========================================================================
+     EA-60 · (12) "incluído pelo bundle" → "incluso no bundle".
+
+     Troca de APRESENTAÇÃO, pedida pelo proprietário. Ela não passa pelo
+     `P52_COPY` porque aquele mapa só visita nós que contenham
+     `mandato|charter|—` — guarda de caminho quente que não vou alargar por
+     causa de um selo. Aqui a troca é dirigida ao nó exato.
+
+     O que este bloco NÃO faz, e é deliberado: marcar as caixas automaticamente
+     conforme o bundle. O próprio editor declara, em `ui_v32.js:398`, que
+     *"Incluído pelo bundle é informativo e **não grava declaração**"* — marcar
+     sozinho transformaria inferência em declaração do cliente, que é dado de
+     ENTRADA do motor. Isso é mudança de comportamento e está registrado como
+     demanda, não como acabamento.
+     ========================================================================== */
+  function p52BundleTagCopy(ed) {
+    var tags = ed.querySelectorAll(".v32-bundletag"), i;
+    for (i = 0; i < tags.length; i++) {
+      var tg = tags[i];
+      if (tg.getAttribute("data-p52-tag")) continue;
+      if (/inclu[ií]do pelo bundle/i.test(txt(tg))) tg.textContent = "incluso no bundle";
+      tg.setAttribute("data-p52-tag", "1");
+    }
+  }
+
   function p52ContextEditorDecor() {
     var ed = document.getElementById("v32editor");
     if (!ed) return;
+    p52BundleTagCopy(ed);      /* EA-60 · item 12 */
     var keep = p52CaptureEditorFocus(ed);
     p52DedupeEditorErrors(ed);
     p52ContextRegions(ed);
@@ -2799,6 +2898,7 @@
        (seção 7) para decorar cards das seções 2 e 4. */
     p52SupportHints(flow);
     p52ProdBullets(flow);
+    p52SplitBanner(flow);      /* EA-60 · item 9 */
 
     var ctx = document.getElementById("v32panel");
     if (ctx) {

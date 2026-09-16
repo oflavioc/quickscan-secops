@@ -672,7 +672,67 @@
     border: 1px solid var(--line); border-radius: 999px; padding: 2px 9px;
   }
   #v32editor details[data-p52-grp="open"] .p52-grp-state { color: var(--text); border-color: var(--muted); }
+  /* ==========================================================================
+     EA-60 · (11) e (12) · acabamento do editor de contexto.
+
+     (11a) O (i) dos campos de arquitetura caía numa linha só dele, entre o
+     nome e o `<select>`, porque o select é bloco. A ordem no DOM já era a
+     certa — nome, ajuda, controle; faltava dizer que quem abre linha nova é o
+     CONTROLE. Classe própria: `p52-fieldhelp` também veste os sinais, que
+     têm checkbox e quebrariam numa grade.
+
+     (11b) "Requisitos ou preocupações específicas" destoava por ser um card
+     CHEIO DE CARDS: cada subgrupo aberto ganhava a mesma borda e o mesmo
+     acento azul de um grupo de primeiro nível, e o conjunto lia como quatro
+     seções soltas em vez de uma. O acento passa a marcar só a hierarquia de
+     cima; o subgrupo fica subordinado, sem competir com o pai.
+
+     (12) O selo do bundle não pode quebrar linha: ele qualifica o item ao
+     lado, e sozinho numa linha parece rótulo de outra coisa.
+     ========================================================================== */
+  /* `flex-direction: row` é explícito de propósito: `.v32-arch label` declara
+     `column`, e sem reverter aqui o (i) continuava empilhado. Medido. */
+  #v32editor label.p52-fieldhelp-arch {
+    display: flex; flex-direction: row; flex-wrap: wrap;
+    align-items: center; gap: 6px 8px;
+  }
+  #v32editor label.p52-fieldhelp-arch > select { flex: 1 0 100%; }
+
+  #v32editor details.v32-group details.v32-siggroup[data-p52-grp="open"] {
+    border-left-width: 1px; border-left-color: var(--line);
+    background: transparent;
+  }
+  #v32editor details.v32-group details.v32-siggroup { background: transparent; }
+
+  /* o seletor precisa alcançar `#v32editor .v32-signals > label`, que declara
+     `display:grid` com coluna de 18px para o checkbox — nela o selo era
+     empurrado para a linha de baixo. Medido na cascata, não suposto. */
+  #v32editor .v32-subs .v32-signals > label {
+    display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 8px;
+  }
+  #v32editor .v32-subs .v32-signals > label > input[type="checkbox"] { align-self: center; }
+  #v32editor .v32-bundletag { white-space: nowrap; }
+
+  /* (12) os bundles em blocos homogêneos: 2x2 em vez de 3+1, para que
+     "Enterprise Protection" — o rótulo mais longo — deixe de ficar sozinho
+     numa fileira própria. */
+  #v32editor fieldset.v32-bundles > label {
+    display: inline-flex; align-items: center; gap: 8px;
+  }
+  @media (min-width: 900px) {
+    #v32editor fieldset.v32-bundles {
+      display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px 20px;
+    }
+    #v32editor fieldset.v32-bundles > legend { grid-column: 1 / -1; }
+  }
+
   .p52-grp-body { padding: 4px 16px 16px; display: grid; gap: 12px; }
+  /* (9) a lista que saiu do bloco corrido do banner */
+  .p52-banner-list {
+    list-style: disc; margin: 8px 0 0; padding-left: 20px; line-height: 1.6;
+  }
+  .p52-banner-list li { margin: 0 0 2px; overflow-wrap: anywhere; }
+  .p52-banner-list li::marker { color: var(--faint); }
   @media (min-width: 1600px) {
     #v32editor details[data-p52-grp="open"] > .p52-grp-body {
       grid-template-columns: repeat(2, minmax(0, 1fr));

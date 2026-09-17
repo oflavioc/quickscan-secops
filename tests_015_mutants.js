@@ -103,7 +103,11 @@ const naoClassificada = msg => "falha não classificada: " + msg;
 const NL = String.fromCharCode(10);
 const BQ = String.fromCharCode(96);            /* crase, sem crase no fonte */
 
-const EYEBROW = '<div class="eyebrow">Leitura das prioridades declaradas · contexto V3.2</div>';
+/* [EA-61 · 2026-09-16] A âncora acompanha o fonte: o proprietário des-ratificou
+   o sufixo `· contexto V3.2` e ele saiu de `ui_v32.js:773`. Âncora anterior,
+   preservada (R2 §5):
+     '<div class="eyebrow">Leitura das prioridades declaradas · contexto V3.2</div>' */
+const EYEBROW = '<div class="eyebrow">Leitura das prioridades declaradas</div>';
 const H3_PRIO = '<h3>Leitura das prioridades declaradas</h3>';
 const H3_BASE = '<h3>Leitura base — contexto tecnológico não informado</h3>';
 /* A frase cresceu no fix-finding do EA-48 (2026-09-12): o papel passa a nomear a
@@ -135,11 +139,18 @@ const MUTANTS = [
     repl: '<div class="eyebrow">Apoio nas prioridades declaradas · contexto V3.2</div>',
     gate: "D015-TIT1", only: "D015-TIT1", reason: /o eyebrow ainda promete apoio/ },
 
+  /* [EA-61 · 2026-09-16] O mutante é INVERTIDO junto com a alínea (b) que ele
+     guarda: antes provava que apagar o sufixo era pego; agora prova que
+     RESSUSCITÁ-LO é pego. A semântica — "a alínea (b) tem poder
+     discriminante" — não muda. Forma anterior, preservada (R2 §5):
+       desc: "apagar o sufixo ratificado `· contexto V3.2` do eyebrow"
+       repl: '<div class="eyebrow">Leitura das prioridades declaradas</div>'
+       reason: /o sufixo ratificado sumiu do eyebrow/ */
   { id: "D015-M2", file: V32JS,
-    desc: "apagar o sufixo ratificado `· contexto V3.2` do eyebrow",
+    desc: "ressuscitar o sufixo des-ratificado `· contexto V3.2` no eyebrow",
     find: EYEBROW,
-    repl: '<div class="eyebrow">Leitura das prioridades declaradas</div>',
-    gate: "D015-TIT1", only: "D015-TIT1", reason: /o sufixo ratificado sumiu do eyebrow/ },
+    repl: '<div class="eyebrow">Leitura das prioridades declaradas · contexto V3.2</div>',
+    gate: "D015-TIT1", only: "D015-TIT1", reason: /o sufixo des-ratificado voltou ao eyebrow/ },
 
   { id: "D015-M3", file: V32JS,
     desc: "editar só a tela, deixando o papel para trás (o <h3> volta a prometer apoio)",
@@ -238,7 +249,14 @@ const MUTANTS = [
   { id: "D015-M18", file: V32JS,
     desc: "por o eyebrow em HIDE_EYEBROWS (bomba armada para a proxima mudanca de escopo da varredura)",
     find: HIDE_ABRE,
-    repl: 'const HIDE_EYEBROWS = ["Leitura das prioridades declaradas · contexto V3.2",'
+    /* [EA-61 · 2026-09-16] O `repl` acompanha o eyebrow: ele precisa inserir o
+       texto ATUAL, senão a lista passa a conter uma string que não é o eyebrow
+       de ninguém e a alínea (h1) não tem o que acusar — foi exatamente o que
+       aconteceu na primeira execução após a des-ratificação: **M18 sobreviveu**,
+       com a campanha em 14/15. É a classe "âncora podre" (`EA-4`) que este
+       mesmo arquivo documenta em M5/M6/M7. Forma anterior, preservada (R2 §5):
+         '…["Leitura das prioridades declaradas · contexto V3.2",…' */
+    repl: 'const HIDE_EYEBROWS = ["Leitura das prioridades declaradas",'
           + '"Como a Fortinet pode apoiar nas prioridades declaradas",',
     gate: "D015-TIT1", only: "D015-TIT1", reason: /ENTROU na lista de ocultação/ }
 ];

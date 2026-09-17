@@ -557,7 +557,26 @@
       points: pts.map(function (p) { return p.x.toFixed(1) + "," + p.y.toFixed(1); }).join(" ")
     });
     root.appendChild(ring);
-    root.appendChild(svg("circle", { "class": "p52-emblem-core", cx: cx, cy: cy, r: 46 }));
+    /* EA-63 · o brilho que percorre o anel, sobre a MESMA geometria. Segundo
+       elemento porque dar `stroke-dasharray` ao anel base faria o pentágono
+       sumir — foi o meu primeiro rascunho, e a tela mostrou. */
+    var trace = svg("polygon", {
+      "class": "p52-emblem-trace", "aria-hidden": "true",
+      points: pts.map(function (p) { return p.x.toFixed(1) + "," + p.y.toFixed(1); }).join(" ")
+    });
+    root.appendChild(trace);
+    var coreR = 46;
+    root.appendChild(svg("circle", { "class": "p52-emblem-core", cx: cx, cy: cy, r: coreR }));
+    /* EA-63 · o pulso que sai do núcleo. Elemento DECORATIVO e apenas isso:
+       `pointer-events: none` no CSS e `aria-hidden` aqui, para não entrar na
+       árvore acessível nem na área sensível de nó nenhum. Ele é irmão do core,
+       nunca filho de um `.p52-emblem-node` — o gate `P52-POP2` mede a caixa
+       dos nós e move o mouse para o centro dela; qualquer coisa que eu
+       pendurasse num nó mudaria esse ponto, e Chromium não roda nesta máquina
+       (KI-3) para eu conferir. */
+    root.appendChild(svg("circle", {
+      "class": "p52-emblem-ping", cx: cx, cy: cy, r: coreR, "aria-hidden": "true"
+    }));
     var ct = svg("text", { "class": "p52-emblem-coretext", x: cx, y: cy + 5, "text-anchor": "middle" });
     ct.appendChild(document.createTextNode("SOC-CMM"));
     root.appendChild(ct);
@@ -569,8 +588,21 @@
         "aria-describedby": "p52-domhelp-" + i,
         "aria-label": "O que é " + DOMS[i].pt + "? Explicação do domínio"
       });
+      /* EA-63 · a haste começa na BORDA do núcleo, não no centro dele.
+         Pedido do proprietário: "as setas ... que ficassem atrás do círculo
+         central". O núcleo é opaco (`fill: var(--surface)`), então sair da
+         borda é visualmente idêntico a passar por trás — e custa só dois
+         números, contra reordenar a pintura, que exigiria tirar a linha do
+         `<g>` do nó. Não tirei: `P52-POP2` (`tests_p52_chromium.js:2985`)
+         calcula o CENTRO DA CAIXA do grupo e move o mouse até lá esperando que
+         o popover abra. Sem a haste, essa caixa encolhe para disco+rótulo e o
+         centro pode cair no vão entre os dois — e eu não tenho Chromium aqui
+         para medir (KI-3). Mexer no que não posso medir foi exatamente o que
+         produziu o `EA-62`. */
       g.appendChild(svg("line", {
-        "class": "p52-emblem-spoke", x1: cx, y1: cy,
+        "class": "p52-emblem-spoke",
+        x1: (cx + coreR * Math.cos(pts[i].ang)).toFixed(1),
+        y1: (cy + coreR * Math.sin(pts[i].ang)).toFixed(1),
         x2: pts[i].x.toFixed(1), y2: pts[i].y.toFixed(1)
       }));
       g.appendChild(svg("circle", {

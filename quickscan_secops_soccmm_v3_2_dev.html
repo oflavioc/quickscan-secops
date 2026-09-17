@@ -2456,6 +2456,9 @@ body[data-uxscreen="refinement"] #ux-progress-mobile{ display:none !important; }
     .p52-rail-link, .p52-sec { transition: none; }
     /* EA-59 · a luz da marca é decoração pura: some inteira, não encurta */
     .p52-brandshine::before { animation: none !important; display: none; }
+    /* EA-63 · idem para o emblema: sem movimento, e o brilho do anel nem é
+       desenhado (parado ele viraria um traço arbitrário sobre o pentágono) */
+    .p52-emblem-ping, .p52-emblem-trace { animation: none !important; display: none; }
   }
 
   /* nenhuma superfície do workspace pode gerar rolagem horizontal */
@@ -2623,6 +2626,55 @@ body[data-uxscreen="refinement"] #ux-progress-mobile{ display:none !important; }
     font-family: inherit;
   }
   .p52-emblem-spoke { stroke: var(--line); stroke-width: 1.2; }
+
+  /* ==========================================================================
+     EA-63 · o emblema ganha movimento — e NADA que o gate mede se move.
+
+     Duas animações, ambas em elementos que nenhuma suíte mede e que não
+     participam de hit-testing:
+
+       · `.p52-emblem-ping` — pulso que sai do núcleo e se dissolve antes de
+         alcançar o anel. Elemento próprio, `pointer-events: none`,
+         `aria-hidden`. Irmão do core, nunca filho de um `.p52-emblem-node`.
+       · `.p52-emblem-ring` — um brilho que percorre o pentágono. O anel é
+         geometria decorativa: `grep p52-emblem-ring tests_*.js` devolve zero.
+
+     O que eu NÃO animei, de propósito: `.p52-emblem-spoke`,
+     `.p52-emblem-disc` e `.p52-emblem-label`. Os três são medidos pelo
+     `P52-POP2`, que calcula o centro da caixa de cada um e move o mouse até
+     lá. `stroke-dasharray` numa haste muda o que é pintado; `transform` num
+     disco muda a caixa. Qualquer dos dois poderia deslocar o ponto que o gate
+     aponta — e Chromium não roda nesta máquina (KI-3), então seria mudança que
+     eu não consigo medir. É a lição do `EA-62`, aplicada antes de doer.
+
+     `prefers-reduced-motion: reduce` remove as duas por inteiro.
+     ========================================================================== */
+  .p52-emblem-ping {
+    fill: none; pointer-events: none;
+    stroke: color-mix(in srgb, var(--red) 70%, transparent); stroke-width: 1.5;
+    transform-box: fill-box; transform-origin: center;
+    animation: p52-emblem-ping 4.8s cubic-bezier(.25, .6, .35, 1) infinite;
+  }
+  @keyframes p52-emblem-ping {
+    0%        { transform: scale(1);    opacity: 0; }
+    10%       { opacity: .55; }
+    70%, 100% { transform: scale(2.55); opacity: 0; }
+  }
+  /* O anel BASE continua sólido e intocado — dar dasharray a ele faria o
+     pentágono sumir, que foi o meu primeiro rascunho e estava errado. O brilho
+     é um segundo polígono, por cima, com a mesma geometria.
+     Perímetro medido: lado = 2·130·sen(π/5) ≈ 152,8 · 5 ≈ 764. */
+  .p52-emblem-trace {
+    fill: none; pointer-events: none;
+    stroke: color-mix(in srgb, var(--red) 65%, transparent); stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-dasharray: 86 678;
+    animation: p52-emblem-trace 9s linear infinite;
+  }
+  @keyframes p52-emblem-trace {
+    from { stroke-dashoffset: 764; }
+    to   { stroke-dashoffset: 0; }
+  }
   /* ERRATA §3 · área sensível idêntica nos cinco nós — transparente, nunca
      pintada; `pointer-events` explícito porque `fill:transparent` sozinho já
      bastaria, mas a declaração torna a intenção auditável. */
@@ -11631,7 +11683,26 @@ if (window.__DEV) Object.assign(window.__DEV, { openExportModal, openImportPicke
       points: pts.map(function (p) { return p.x.toFixed(1) + "," + p.y.toFixed(1); }).join(" ")
     });
     root.appendChild(ring);
-    root.appendChild(svg("circle", { "class": "p52-emblem-core", cx: cx, cy: cy, r: 46 }));
+    /* EA-63 · o brilho que percorre o anel, sobre a MESMA geometria. Segundo
+       elemento porque dar `stroke-dasharray` ao anel base faria o pentágono
+       sumir — foi o meu primeiro rascunho, e a tela mostrou. */
+    var trace = svg("polygon", {
+      "class": "p52-emblem-trace", "aria-hidden": "true",
+      points: pts.map(function (p) { return p.x.toFixed(1) + "," + p.y.toFixed(1); }).join(" ")
+    });
+    root.appendChild(trace);
+    var coreR = 46;
+    root.appendChild(svg("circle", { "class": "p52-emblem-core", cx: cx, cy: cy, r: coreR }));
+    /* EA-63 · o pulso que sai do núcleo. Elemento DECORATIVO e apenas isso:
+       `pointer-events: none` no CSS e `aria-hidden` aqui, para não entrar na
+       árvore acessível nem na área sensível de nó nenhum. Ele é irmão do core,
+       nunca filho de um `.p52-emblem-node` — o gate `P52-POP2` mede a caixa
+       dos nós e move o mouse para o centro dela; qualquer coisa que eu
+       pendurasse num nó mudaria esse ponto, e Chromium não roda nesta máquina
+       (KI-3) para eu conferir. */
+    root.appendChild(svg("circle", {
+      "class": "p52-emblem-ping", cx: cx, cy: cy, r: coreR, "aria-hidden": "true"
+    }));
     var ct = svg("text", { "class": "p52-emblem-coretext", x: cx, y: cy + 5, "text-anchor": "middle" });
     ct.appendChild(document.createTextNode("SOC-CMM"));
     root.appendChild(ct);
@@ -11643,8 +11714,21 @@ if (window.__DEV) Object.assign(window.__DEV, { openExportModal, openImportPicke
         "aria-describedby": "p52-domhelp-" + i,
         "aria-label": "O que é " + DOMS[i].pt + "? Explicação do domínio"
       });
+      /* EA-63 · a haste começa na BORDA do núcleo, não no centro dele.
+         Pedido do proprietário: "as setas ... que ficassem atrás do círculo
+         central". O núcleo é opaco (`fill: var(--surface)`), então sair da
+         borda é visualmente idêntico a passar por trás — e custa só dois
+         números, contra reordenar a pintura, que exigiria tirar a linha do
+         `<g>` do nó. Não tirei: `P52-POP2` (`tests_p52_chromium.js:2985`)
+         calcula o CENTRO DA CAIXA do grupo e move o mouse até lá esperando que
+         o popover abra. Sem a haste, essa caixa encolhe para disco+rótulo e o
+         centro pode cair no vão entre os dois — e eu não tenho Chromium aqui
+         para medir (KI-3). Mexer no que não posso medir foi exatamente o que
+         produziu o `EA-62`. */
       g.appendChild(svg("line", {
-        "class": "p52-emblem-spoke", x1: cx, y1: cy,
+        "class": "p52-emblem-spoke",
+        x1: (cx + coreR * Math.cos(pts[i].ang)).toFixed(1),
+        y1: (cy + coreR * Math.sin(pts[i].ang)).toFixed(1),
         x2: pts[i].x.toFixed(1), y2: pts[i].y.toFixed(1)
       }));
       g.appendChild(svg("circle", {

@@ -5658,3 +5658,98 @@ entregue**: o selo deixou de quebrar linha e os bundles ficaram em 2×2.
 
 Ver [[EA-58]] — é a mesma família, num nível acima: ali a régua D2 não
 distingue rótulo de decisão; aqui um gate de comportamento pina uma redação.
+
+## EA-62 — reescrita de apresentação pode cegar gate de invariante, e nada avisa
+
+**Status**: `aberto`
+
+**Aberto em**: 2026-09-17, **aconteceu comigo** no PR #85 — e quem pegou foi o
+CI, não eu.
+
+### O que aconteceu, medido
+
+Acrescentei ao `P52_COPY` (`ui_p52_workspace_v32.js`) uma entrada que reescreve,
+**no render**:
+
+```
+"Leitura V3.1.3 preservada (maturidade: X)"  →  "Maturidade observada nesta sessão (nível: X)"
+```
+
+Troca de apresentação, pedida pelo proprietário: número de versão da árvore
+interna vazando para o relatório do cliente.
+
+Acontece que **essa string é o OBSERVÁVEL** de três cláusulas do `D010-INV7`:
+
+- **`tests_010_vao.js:305`** — `const RE_PRESERVADA = /Leitura V3\.1\.3 preservada/;`
+- **`:549`** — a alínea (a) reprova se a tela afirma preservação com a Camada 1
+  **oculta**. É a **INV-7**, uma das dez invariantes de produto.
+- **`:560`** e **`:575`** usam a mesma regex.
+
+Removida do DOM, o gate deixou de enxergar o estado que policia. O mutante
+`D010-M6` (`tests_010_mutants.js:133`), que arma justamente essa bomba —
+*"emitir a afirmação de preservação incondicionalmente"* — passou a
+**SOBREVIVER**: `gate D010-INV7 · reprovou por motivo diferente do esperado`.
+
+Revertida a entrada, `d010` volta a **24/24**.
+
+### Por que eu não peguei antes de empurrar
+
+A campanha `d010` tem `cmd: "node tests_010_vao.js"` e **não** exige Chromium —
+mas o *stage* `mutation` a executa só no job que tem o ambiente completo, e nesta
+máquina o `p52`/`d014vis` faltando derruba o stage inteiro antes (KI-3). Na
+prática: **mudança de apresentação não é medida contra a matriz de mutação
+local**, e o sinal só aparece no CI, ~50 minutos depois.
+
+### Por que é achado, e não só um erro meu
+
+O `p52Copy` existe desde a 5.2 e reescreve texto renderizado em **qualquer**
+superfície, tela e papel. Nada no repositório liga as duas pontas:
+
+- não há registro de **quais strings são observáveis de gate**;
+- não há checagem que compare o mapa de cópia com as âncoras de texto das
+  suítes;
+- a ordem de execução é justamente a que esconde: o gate lê o DOM **depois** da
+  reescrita.
+
+Enquanto isso valer, toda entrada nova no `P52_COPY` é uma aposta — e a
+`EA-59`/`EA-60` mostraram que essas entradas vão continuar aparecendo, porque é
+por ali que o vocabulário do produto é corrigido sem tocar superfície congelada.
+
+### Encaminhamento
+
+O remédio barato é uma **checagem estática no pipeline** (R10 §9): extrair os
+literais de `P52_COPY[i][0]` e reprovar se algum deles aparecer como literal de
+regex/string em arquivo `tests_*.js`. Não prova ausência de cegueira — prova que
+ninguém reescreve, sem saber, um texto que alguma suíte usa como sujeito.
+
+Isso é **gate novo**, e a diretriz de 2026-09-13 diz para não criar gate sem
+pedido do proprietário. Fica registrado para decisão dele.
+
+**Mitigação enquanto isso, e é de graça**: entrada nova no `P52_COPY` exige
+`grep` do literal antigo em `tests_*.js` antes de commitar. Foi o que teria
+evitado este caso — e é exatamente o passo que eu pulei.
+
+Ver [[EA-58]] e [[EA-61]] — a mesma família: o produto e as provas
+compartilham vocabulário, e mudar a palavra mexe nas duas pontas.
+
+#### Emenda de 2026-09-17 — a mitigação rodada, e o que ela achou
+
+Apliquei a checagem proposta acima sobre o estado atual: extrair os literais de
+`P52_COPY[i][0]` e procurá-los nas suítes. **Três candidatos**, todos
+pré-existentes e nenhum deles cego:
+
+| literal | suíte | veredito |
+|---|---|---|
+| `Mandato e objetivos` | `tests_p52_layout.js` | é o gate **`P52-COPY1`**, que afirma a AUSÊNCIA — ele existe para provar que a reescrita aconteceu |
+| `Mandato e objetivos` | `tests_009_leitura.js:154-160` | aparece só em **comentário**, e o comentário descreve exatamente este perigo: *"procurar 'Mandato e objetivos' na tela nunca casaria. Por isso o gate aplica…"* |
+| `Mandato e objetivos` | `tests_ui_m332.js:267` | asserção real, sobre superfície que a reescrita não alcança — a suíte passa 23/23 |
+
+**Isso reforça o achado em vez de esvaziá-lo.** O perigo já era conhecido: o
+`tests_009_leitura.js` o documenta em prosa e contorna caso a caso. O que não
+existe é **mecanismo** — cada suíte se defende por conta própria, e quem
+escrever a próxima entrada no `P52_COPY` não tem como saber disso a não ser
+lendo os comentários certos. Foi o que aconteceu comigo.
+
+A checagem, como está, é **heurística**: ela sinaliza candidatos, não defeitos.
+Mesmo assim teria bastado — o literal `Leitura V3.1.3 preservada` apareceria
+apontando para `tests_010_vao.js`, e eu teria parado antes de empurrar.

@@ -5753,3 +5753,92 @@ lendo os comentários certos. Foi o que aconteceu comigo.
 A checagem, como está, é **heurística**: ela sinaliza candidatos, não defeitos.
 Mesmo assim teria bastado — o literal `Leitura V3.1.3 preservada` apareceria
 apontando para `tests_010_vao.js`, e eu teria parado antes de empurrar.
+
+## EA-64 — o repositório não registra qual versão está em produção, e o README apodreceu quatro versões
+
+**Status**: `aberto`
+
+**Aberto em**: 2026-09-17, ao atualizar o README a pedido do proprietário.
+
+### O que estava errado, medido
+
+O README declarava, em 2026-09-17:
+
+> **v3.2.2** — produção publicada. É a versão liberada e atualmente em uso.
+
+No mesmo momento, o que a porta `127.0.0.1:1337` devolvia era a **v3.2.6**
+(`2f9c0a84…`, conferido byte a byte). O README estava **quatro versões atrás** e
+afirmando algo falso — e o gate que o guarda, `V322-DOC3`
+(`tests_p52_layout.js:1731`), estava **verde**, porque ele pinava o número
+`v3.2.2` literalmente.
+
+### Cadeia arquivo:linha → efeito
+
+- **`.claude/verify/current_phase.json`** registra a **fase de produto** (5.2,
+  `SELADA`, tag `v3.2.1`) — não o que está publicado.
+- **`deploy/`** mora **fora da worktree do git** (`EA-53`): nenhum commit, pin
+  ou stage o alcança.
+- **`preparar_release.py`** escreve em `deploy/<tag>/` e **não** deixa registro
+  no repositório.
+- **Logo**: não existe, em lugar algum rastreado, a resposta para *"qual versão
+  está em produção?"*. O único lugar onde a informação aparecia era a prosa do
+  README — que é justamente o que apodreceu.
+
+**Medido em 2026-09-17**: as releases publicadas no GitHub iam até a **v3.2.2**,
+de 25/08. As v3.2.3, v3.2.4 e v3.2.5 foram para o ar **sem release**, existindo
+só em `deploy/`.
+
+### Por que o gate não pegou
+
+`V322-DOC3` afirmava `/v3\.2\.2[^\n]{0,120}produção publicada/`. Ele media se o
+README **diz** algo, nunca se o que ele diz é **verdade** — e não tinha contra o
+que comparar, porque a verdade não está em lugar nenhum do repositório.
+
+Não é defeito do gate: é o limite dele. Um julgador não pode conferir um fato
+que a árvore não guarda.
+
+### O que foi feito agora
+
+- README corrigido para a v3.2.6, com a v3.2.5 nomeada como rollback e o par
+  v3.2.2/v3.2.1 preservado como histórico.
+- Release **v3.2.6** cortada e conferida (o download do GitHub é byte a byte o
+  artefato em uso), sob autorização do proprietário no chat.
+- `V322-DOC3` **reancorado para a propriedade** em vez do número: ele passa a
+  extrair a versão que o README chama de produção e a que chama de rollback,
+  exigir que sejam distintas, e cobrar coerência com a frase "a versão corrente
+  do produto é a vX". Ficou mais forte num ponto — a forma anterior não pegava
+  "produção e rollback apontando a mesma versão".
+- Título do gate corrigido: dizia *"produção v3.2.1 e candidata v3.2.2"*, o
+  contrário do que o corpo media desde 2026-08-25 (família do `EA-22`).
+
+### O que NÃO foi feito, e é o remédio de raiz
+
+Criar a **fonte de verdade**: um registro rastreado — no espírito do
+`boundary.json` da R6 — dizendo qual tag está publicada, com que sha256 e a
+partir de que commit, escrito pelo `preparar_release.py` no mesmo passo que
+prepara o `deploy/`. Com ele, o `V322-DOC3` deixa de conferir só coerência
+interna e passa a conferir **o fato**.
+
+Isso é **gate/instrumento novo**, e a diretriz de 2026-09-13 diz para não criar
+sem pedido do proprietário. Fica registrado para decisão dele.
+
+**Mitigação enquanto isso**: a reancoragem acima faz o gate parar de apodrecer a
+cada versão — ele não sabe se o número está certo, mas passou a sobreviver à
+mudança em vez de exigir edição. O que continua sem juiz é a **correspondência
+com a realidade**, e ela depende de alguém olhar.
+
+### Observação anexa, medida e não corrigida
+
+A **imagem de abertura** do README vem de `docs_phase5/evidence_v322/` e mostra
+a home **anterior** ao `EA-59`/`EA-63` — botões antigos, marca menor, emblema
+sem o tratamento novo. O próprio `V322-DOC3` declara, em comentário, que *"um
+PNG de um acervo anterior representaria estado visual superado"* — e é o que
+ele está aceitando agora, porque a asserção fixa o diretório do acervo e não a
+atualidade da captura.
+
+Não substituí: promover imagem ao repositório é passo explícito de evidência
+(R11 §2) e o `guard-data` barra binário novo acima de 200 KB. Fica nomeado.
+
+Ver [[EA-53]] — é a mesma raiz: `deploy/` fora do git faz o repositório não
+saber o que está no ar. Ali a consequência foi correção mesclada que não chegava
+ao cliente; aqui é documentação que mente para quem chega de fora.

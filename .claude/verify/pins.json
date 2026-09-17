@@ -1,7 +1,7 @@
 {
   "_meta": {
     "descricao": "Registry único de pins — fonte de identidade dos artefatos (R8). Hashes = SHA-256 dos blobs de HEAD. Alterar arquivo pinado exige regenerar este registry no MESMO PR, com motivo no commit.",
-    "gerado_de_head": "7a8185a27a8eda5b88123afe946fc83b3a1504ce",
+    "gerado_de_head": "87fc01fd55bd4f0994627159b5a7f10ebe67d2cc",
     "gerado_em": "2026-09-17",
     "exclusoes": [
       "docs_phase5/**",
@@ -269,7 +269,7 @@
     ".claude/verify/mutation_population.json": "7893a00adc8d087bfb0244e2b580d58772de567b35326af2d0c098e6d4025141",
     ".claude/verify/pipeline.yaml": "e0604991cba1b4d0989b5ad1dd5496d03910c8e36ab4c7f598fe522624d80291",
     ".claude/verify/regra_morta.js": "d04a0638a82dbf8a9f7f83d8b416653db5178619a61a87655213f699e3a31dab",
-    ".claude/verify/regra_morta.json": "8ff039cd20bc9d72c8395e86739a1bd69232742fb6cf8fe980f9811a35f3f924",
+    ".claude/verify/regra_morta.json": "7ce3dabccd8b34c08c907266881a1da9a8030284e2b088e0fffe9ade73b26521",
     ".claude/verify/regra_morta_seletor.js": "67723c7515264a81ef375910ee357ba944af47ae0d9cc9de6338a8bda3e68a9b",
     ".claude/verify/run.sh": "a404fa877e0fdb94987ae66d3170a2fc9aec8a6138204051aba89395ad22e1aa",
     ".gitattributes": "37bb36fb03aa6edbf1ce9fdc3bb9cb705e0317da970df37783777795bbcdcdb9",
@@ -333,7 +333,7 @@
     "preparar_release.py": "44b0a74dac345cfb5b27742d5fee51d9941646ec33f1cbb18aa81f98bf31a0cd",
     "prototypes/.gitkeep": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
     "quickscan_secops_soccmm_v3_1_3.html": "d329049147950a5b2a40b2735c3d4bd9a89177fed439efbcb58df01bdeb7ae82",
-    "quickscan_secops_soccmm_v3_2_dev.html": "3d5cf36f0b7cf5fed7ecc511b9e5c86eb3ed9c766288b50a1ca5a6b43eddf658",
+    "quickscan_secops_soccmm_v3_2_dev.html": "2f9c0a84e6c37d5b01f59b5196b6b4749de598669383a7d86bfb0b45d9100e3c",
     "session_roundtrip_report.md": "ffe0d30411cc086681a44fa8d69e1066a0bf26173f15dd8580286787056cf4f8",
     "specs/.gitkeep": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
     "specs/003-marcador-duplicado/fix-finding-registry.md": "dce0be8376f543678b9b214fd2e03e0efbda9f45cd978b909d0cc5208fa456a2",
@@ -482,8 +482,8 @@
     "ui_p50_shell_v32.js": "e28a21733564e1a222cefa82fb848f569e3a50b6ddda8c447d2ad52b436a58a3",
     "ui_p50_suff_v32.js": "a9931330021949b581da29012be7669edf75529aaaaa9c2f13d0165494b86f5b",
     "ui_p50_v32.css": "60dc3f324015d011b0210cf0794b8e4951e62a26be4878799b27d75ed1317023",
-    "ui_p52_workspace_v32.css": "b47c9156a99be0f846a9b1505afd61861d87efdd73c3f4670d433c4c867b3ece",
-    "ui_p52_workspace_v32.js": "15f70f084db1c7bc7fbe410ae0779045e87d5cca62551037f9d771b232476d0d",
+    "ui_p52_workspace_v32.css": "38a5bb69d213893cd85c179463311a993d0a874c05963cdd9aa43ddc091596eb",
+    "ui_p52_workspace_v32.js": "e550a93cddf190089edaf646b92b9f596c6133f257c9a697de108d7a4af38fb0",
     "ui_refinement_v32.js": "ade18a9afd265966feb40cb9f2926e20f5ffd2534dcfe7ec602e46cc6d01132c",
     "ui_session_v32.js": "6fd849cdbdbb6838921a1519613e8a5194777c6eeb9e3e102c681a0ddc27164b",
     "ui_target_v32.js": "81adcb219b606a444dbf046fabeee4d46c411b74a69012896f6e26c90f3c8f5c",

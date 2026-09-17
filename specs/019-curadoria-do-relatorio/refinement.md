@@ -230,6 +230,126 @@ vezes.
 > cobre a **condução** dos portões; estas cinco são decisões de **produto** sobre
 > o que a ferramenta passa a permitir, não ritmo de fase.
 
+## Decisões do portão da Fase 0 — **FECHADO em 2026-09-17**
+
+Transcritas aqui para não viverem só no transcript.
+
+**P1 · A fronteira.** Curadoria é **seleção**. O verbo "adicionar" foi
+desdobrado em três e decidido caso a caso:
+
+| | o que é | decisão |
+|---|---|---|
+| **(a)** | acrescentar produto **do catálogo** que o motor não ofereceu para aquele gap | **SIM** — é seleção de um conjunto maior |
+| **(b)** | acrescentar produto **fora do que o motor ofereceu**, inclusive fora do mapeamento atual | **SIM** |
+| **(c)** | escrever **texto livre** de recomendação | **NÃO** — *"esse é desnecessário"* |
+
+Com (c) fora, a INV-8 permanece intacta: nada que o operador produz vira prosa
+do motor. **(b) tem consequência de desenho e está nomeada abaixo.**
+
+**P2 · Persistência.** Sim, como **sexta chave canônica** da sessão.
+
+**P3 · Proveniência.** Rótulo **por item**, no padrão já existente de
+`Observações da sessão`.
+
+**P4 · Escopo.** Confirmada a leitura proposta:
+
+> A curadoria age sobre o que o motor **inferiu** — nunca sobre o que foi
+> **declarado** ou **medido**.
+
+| curável | não curável |
+|---|---|
+| formas de apoio e recomendações | respostas · score · estágio · suficiência |
+| leitura arquitetural | **gaps observados** |
+| "pode fazer sentido — após validação" | prioridades declaradas · cenário-alvo |
+
+O "Tudo" do proprietário vale no sentido que importa: **toda recomendação, em
+todas as seções onde ela apareça**. Suprimir um gap seria o relatório deixar de
+dizer o que o cliente respondeu — para desenfatizar, o caminho é a observação.
+
+**P5 · Apoio por solução.** Entra nesta demanda, agrupado pela divisão oficial
+do portfólio (`fortinet.com/products`, lido em 2026-09-17).
+
+### Conhecimento do proprietário, registrado
+
+> *"Pode manter FortiEDR e FortiClient; é decisão ainda interna da Fortinet não
+> divulgar explicitamente, mas ainda assim comercializar a opção separada."*
+
+A navegação pública consolidou o endpoint sob **FortiEndpoint** e não mostra
+mais FortiEDR nem FortiClient. **Isso é decisão de divulgação, não
+descontinuação.** O registro importa porque eu havia lido a ausência como sinal
+de que o item 8 do feedback pedia nomes superados — e estava errado. Consequência
+para o `EA-56`: os dois continuam candidatos legítimos de catálogo.
+
+### Consequência aberta, para a Fase 1 decidir
+
+A decisão **(b)** exige uma origem para os produtos que o motor não ofereceu.
+Duas rotas, a serem pesadas no `plan.md`:
+
+- **(i) Catálogo completo como fonte.** A curadoria oferece **todo** o
+  `PRODUCTS`, e não só os mapeados para aquele gap. Mantém tudo como seleção e
+  não cria vocabulário novo. Limite: não alcança produto que **não exista** no
+  catálogo — e `FortiNAC`, `FortiEDR` e `FortiClient` **não existem** hoje
+  (medido: zero ocorrências em `quickscan_secops_soccmm_v3_1_3.html` e
+  `engine_v32.js`).
+- **(ii) Catálogo ampliado antes.** Acrescentar os faltantes ao `PRODUCTS`
+  **sem** mapeá-los a pergunta alguma — o que, em tese, os tornaria
+  selecionáveis sem mudar o que o motor decide sozinho.
+
+### A rota (ii) foi MEDIDA, e é Porta B
+
+Executado em 2026-09-17, em **cópia** do HTML construído — a árvore nunca foi
+tocada (R7 §3):
+
+```
+1ª sonda · produto novo, sem ícone
+   payload DIVERGE — configErrors ganha
+   "ICONS: produto sem ícone embutido (fallback será usado) — FortiTesteEA57"
+
+2ª sonda · FortiEDR, que TEM ícone em ui_icons_v32.js
+   payload DIVERGE — a mesma linha, agora com FortiEDR
+```
+
+**A causa não é o mapeamento.** `candidatesMatrix()`
+(`harness_m41_v313.js:117`) percorre as **perguntas** e lê o `MAP`; produto sem
+mapeamento não entra nela. Quem muda é o **`configErrors`**: a validação da
+Camada 1 (`quickscan_secops_soccmm_v3_1_3.html:1088`) exige que **todo** item de
+`PRODUCTS` tenha entrada no `ICONS` **da Camada 1** — e o acervo onde
+`FortiEDR`/`FortiClient` existem é o `ICONS_V32`, que é **outro mapa**.
+
+> **Conclusão medida**: acrescentar **qualquer** produto ao `PRODUCTS` altera o
+> payload M41. A rota (ii) é **Porta B, sem exceção** (R1) — e converge com o
+> `EA-56`/`EA-58`, que já estão na fila.
+
+**Consequência para o desenho desta demanda**: a rota (i) é a única livre, e ela
+alcança **todo o catálogo existente**. Não alcança `FortiNAC`, `FortiEDR` nem
+`FortiClient`, que **não existem** em `PRODUCTS` (medido: zero ocorrências).
+Esses três chegam quando a Porta B do catálogo acontecer — e a curadoria os
+oferece **no dia seguinte, sem mudança de código**, porque ela lê o catálogo.
+
+Ou seja: a demanda entrega valor agora **e** fica pronta para o catálogo depois.
+Isso é resultado da medição, não desenho que eu tenha escolhido.
+
+### Taxonomia de agrupamento (P5), levantada em 2026-09-17
+
+Oito categorias de topo. Quase todo o catálogo cai em **Security Operations**,
+cujos subgrupos viram os baldes:
+
+| subgrupo | do nosso catálogo |
+|---|---|
+| Security and Risk Management | FortiSOC · FortiAnalyzer · FortiSIEM · FortiSOAR · SOCaaS · FortiAI-Assist |
+| Endpoint | FortiEndpoint *(e FortiEDR/FortiClient, por decisão do proprietário)* |
+| Network Detection | FortiNDR · FortiDeceptor · FortiSandbox |
+| Continuous Threat Exposure Management | FortiRecon |
+
+**Duas ressalvas que a leitura revelou e que o agrupamento precisa tratar:**
+
+1. **FortiGate não está em Security Operations** — está em *Network Security*.
+   O agrupamento usa o subgrupo quando existe e a categoria de topo quando não.
+2. **MDR e treinamento não estão em Products.** Vivem em *Support → Services and
+   Training*. São **serviços**, não produtos, e precisam de balde próprio — sem
+   ele, somem do agrupamento. Isso vale também para a trilha de capacitação do
+   `EA-56`.
+
 ## Fora de escopo (explícito)
 
 - **Editar texto do relatório.** Recusado por INV-8 (ver P1).
@@ -241,7 +361,8 @@ vezes.
   **publicado**.
 - **Score, estágio, suficiência, gaps.** Nada nesta demanda os alcança. O
   payload M41 deve sair **byte-idêntico**, e isso é critério de aceite.
-- **Curadoria de gaps, prioridades ou cenário-alvo** — salvo decisão contrária
-  em P4.
+- **Curadoria de gaps, prioridades ou cenário-alvo** — decidido em P4: são
+  medição e declaração, não inferência. Ficam fora **por princípio**, não por
+  economia.
 - **A imagem de abertura do README** e a fonte de verdade de produção
   (`EA-64`): outra conversa.

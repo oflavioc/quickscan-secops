@@ -410,7 +410,19 @@ const PROTECTED = {
      byte-idênticos. Identidade anterior (errata final · ALTO-1):
      df0b00eb75f2ee2f8ae5542104bafd7f54580163e60432e7a48bb4bf8118aaf7 */
   "ui_journey_v32.js": "579592eb09039648441c7e3f68d1428d4a22cc18499882a68a30aee5aa0ab9a2",
-  "ui_session_v32.js": "6fd849cdbdbb6838921a1519613e8a5194777c6eeb9e3e102c681a0ddc27164b",
+  /* [019 · T010/T011 · 2026-09-18] REPIN autorizado pelo proprietário em 2026-09-17.
+     `captureCanonicalInputs()` ganha a SEXTA chave canônica, `reportCuration`, e
+     a importação passa a validá-la delegando ao owner do estado (`__CURATION`).
+     A chave é ENTRADA — seleção do operador entre o que o motor ofereceu — e por
+     isso fica ao lado das respostas e das prioridades, nunca entre os derivados
+     (INV-7). Ela é OMITIDA quando nada foi declarado, o que preserva
+     `missing != {}` (INV-8) e mantém o `S4-S5` verde na sessão comum.
+     `snapshotCanonicalOwners`/`restoreCanonicalOwners` carregam a curadoria para
+     que uma importação que falhe no meio não deixe a seleção meio aplicada.
+     Nada além disso mudou: as cinco chaves anteriores, a ordem delas e as
+     validações existentes permanecem byte-idênticas.
+     Identidade anterior: 6fd849cdbdbb6838921a1519613e8a5194777c6eeb9e3e102c681a0ddc27164b */
+  "ui_session_v32.js": "e1463eb769cdd00262b911307a114671d61a5c3bc1a61f039886473b8ef96787",
   "ui_icons_v32.js": "32aabc3445571d447189edf4b486239c9256aa9bd0bc6bdab00635a65aa42151",
   "ui_v32.css": "acb0eba165ef25e6b97475430e9b042a9b39038be2b9882ec5b3c67a730faa6f",
   /* DEMANDA 009 (`009-leitura-do-relatorio`) · AUTORIZAÇÃO NOMINAL §29.4.

@@ -120,10 +120,10 @@ T("D019-CUR1", "curadoria é SELEÇÃO: o estado só carrega ids e enum fechado,
   const st = b.state();
   if (!st || typeof st !== "object") vac("(a)", "o bridge não expõe estado legível");
   const ENUM = ["include", "exclude"];
-  const off = st.offerings || {};
+  const off = st.decisions || {};
   Object.keys(off).forEach(k => {
     if (ENUM.indexOf(off[k]) < 0)
-      throw new Error("valor fora do enum fechado em offerings[" + k + "]: " + JSON.stringify(off[k]));
+      throw new Error("valor fora do enum fechado em decisions[" + k + "]: " + JSON.stringify(off[k]));
   });
   /* nenhuma chave do estado pode conter prosa: o que existe são ids e enums */
   const plano = JSON.stringify(st);
@@ -149,11 +149,26 @@ T("D019-CUR2", "ausência de curadoria produz o MESMO relatório de hoje — mis
 /* ===================== C3 · entrada canônica (INV-8) ==================== */
 T("D019-INV8", "a sexta chave é ENTRADA canônica: exportada, recomputada na importação, e id desconhecido é recusado", () => {
   const { w } = boot();
-  cur(w);
+  const b = cur(w);
+  /* AUSÊNCIA primeiro: sem nada declarado, a chave NÃO existe. É o que mantém
+     `missing ≠ {}` (INV-8) e o que faz o `S4-S5` continuar verde na sessão
+     comum. Medido na W3: sem esta alínea o gate cobrava a chave sempre, e eu
+     teria "consertado" o produto para satisfazer um gate errado. */
+  const semNada = w.__DEV.captureCanonicalInputs();
+  if ("reportCuration" in semNada)
+    throw new Error("chave presente sem nada declarado — ausência e vazio precisam ser distintos");
+  /* DECLARADA: aí sim ela viaja */
+  const alvo = b.offered()[0];
+  if (!alvo) vac("(a)", "nenhuma oferta nesta sessão — sem sujeito para declarar curadoria");
+  b.set(alvo, "exclude");
   const doc = w.__DEV.captureCanonicalInputs();
   const chaves = Object.keys(doc);
   if (chaves.indexOf("reportCuration") < 0)
-    throw new Error("reportCuration não entrou nos inputs canônicos: " + JSON.stringify(chaves));
+    throw new Error("curadoria declarada não entrou nos inputs canônicos: " + JSON.stringify(chaves));
+  /* id desconhecido é RECUSADO, nunca aceito em silêncio */
+  let recusou = false;
+  try { b.set("ProdutoQueNaoExiste", "include"); } catch (e) { recusou = /fora do catálogo/.test(e.message); }
+  if (!recusou) throw new Error("id fora do catálogo foi aceito — a fronteira seleção×redação depende dessa recusa");
   /* nenhum derivado viaja junto */
   const s = JSON.stringify(doc);
   ["\"findings\"", "\"score\"", "\"stage\"", "supportMode", "recommendationContext"].forEach(b => {

@@ -1,6 +1,6 @@
 {
   "demanda": "019-curadoria-do-relatorio",
-  "phase": "red",
+  "phase": "implement",
   "spec_dir": "specs/019-curadoria-do-relatorio",
   "branch": "feature/019-curadoria-do-relatorio",
   "brief": "Achado EA-57 mais o feedback de 2026-09-15: o SE termina a sessao sabendo coisas que o screening nao sabe (o que o cliente ja contratou, o que esta em piloto, qual conversa esta madura) e nao tem onde colocar isso — o relatorio sai como o motor produziu, e a escolha e entregar assim ou reescrever fora da ferramenta. A demanda entrega uma tela de CURADORIA, depois dos resultados, onde o operador seleciona o subconjunto do que o motor produziu que vai ao relatorio, na tela E no PDF; e absorve a reorganizacao de 'Formas de apoio' por SOLUCAO, porque a curadoria precisa de uma lista de produtos para oferecer e essa lista e exatamente a visao por solucao. FRONTEIRA DURA: o operador escolhe entre o que o motor ofereceu, nunca escreve o que o motor deveria ter dito — e disso dependem as duas invariantes que a demanda tangencia (INV-7 determinismo, INV-8 derivado nunca serializado). Medido em 2026-09-17 sobre develop: sessao real de 15 respostas produz 15 blocos de apoio para 9 produtos distintos e 20 mencoes, com 'Servicos FortiGuard' aparecendo 5 vezes; a visao por solucao daria 9 cards. Aberta a pedido do proprietario; conducao sob a delegacao de 2026-08-29.",
@@ -41,5 +41,20 @@
       "D019-VAZ1",
       "D019-SUF1"
     ]
+  },
+  "implement": {
+    "status": "in_progress",
+    "waves_done": [
+      "W2",
+      "W3"
+    ],
+    "commits": {
+      "W2": "aef6ff3",
+      "W3": "3b616db"
+    },
+    "gates": "D019 CURADORIA 5 PASS - 5 FAIL de 10; os 5 vermelhos sao W4 (SOL1, SOL2), W5 (VAZ1) e W6 (PROV1, PAR1).",
+    "mutation": "4 DETECTADO - 0 SOBREVIVENTE - 7 NAO EXECUTADO de 11; os 7 com causa declarada (alvo de wave que nao rodou). A campanha ganhou o D019-M11, exigido pela T012.",
+    "verify": "run.sh 17 PASS - 1 FAIL; o unico FAIL e o stage suites, porque as duas suites da 019 so entram no registro na T022 (W7). known_issues.json segue vazio: nenhuma demanda deste repo usou a excecao nominal, e inventa-la agora seria silenciar.",
+    "notes": "W3 fechada com T010, T011 e T012. A sexta chave canonica `reportCuration` e ENTRADA e e OMITIDA quando nada foi declarado, o que preserva missing != {} (INV-8). RENAME `offerings` -> `decisions`: medido por sonda que, com o nome antigo, o S4-S5 REPROVAVA, porque `offerings` e um dos treze nomes de campo derivado banidos. A saida nao foi afrouxar o banimento e sim corrigir o nome. T012 cumprida por execucao nas tres condicoes: (i) a linha `banned` e contexto no diff, byte-identica, e passou a ser conferida TAMBEM com curadoria declarada; (ii) D019-M11 ressuscita a lista de cinco e sai DETECTADO; (iii) commit separado e posterior ao T010. TRES DEFEITOS MEUS, todos pegos por execucao e corrigidos nesta wave: (1) commitei T010/T011 depois de rodar so a suite de sessao, deixando o pin da §29.4 de ui_session_v32.js para tras e o P50-GOV1 vermelho; (2) o rename deixou as ancoras de M1, M2 e M3 ambiguas e os tres sairam NAO EXECUTADO com o alvo existindo (EA-4, ancora podre); (3) com ancoras boas, M1 e M2 sairam SOBREVIVENTES e a culpa era dos gates: o CUR1 olhava um estado intocado e o CUR2 so conferia que o relatorio nao estava vazio. Familia do EA-20, a segunda vez nesta demanda depois do PAR1. Os dois gates ganharam alinea e ficaram MAIORES; nada foi afrouxado."
   }
 }

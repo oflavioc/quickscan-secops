@@ -125,8 +125,24 @@ T("D019-CUR1", "curadoria é SELEÇÃO: o estado só carrega ids e enum fechado,
     if (ENUM.indexOf(off[k]) < 0)
       throw new Error("valor fora do enum fechado em decisions[" + k + "]: " + JSON.stringify(off[k]));
   });
-  /* nenhuma chave do estado pode conter prosa: o que existe são ids e enums */
-  const plano = JSON.stringify(st);
+  /* (b) A FRONTEIRA, TENTADA DE VERDADE. [W3] Até aqui este gate só olhava um
+     estado intocado: prometia "nenhum texto nasce dele" e media um objeto vazio.
+     Era a família do EA-20 — promessa grande, medição pequena — e quem denunciou
+     foi o mutante D019-M1, que abriu o estado para texto livre e ficou VERDE.
+     Agora o gate TENTA redigir, e exige recusa. */
+  const alvo = b.catalog()[0];
+  if (!alvo) vac("(b)", "catálogo vazio — sem sujeito para tentar redigir");
+  let recusouProsa = false;
+  try { b.set(alvo, "Recomendo priorizar a consolidação de logs no próximo trimestre."); }
+  catch (e) { recusouProsa = /enum fechado/.test(e.message); }
+  if (!recusouProsa) throw new Error("o estado ACEITOU texto livre em decisions — seleção virou redação");
+  let recusouNota = false;
+  try { b.setArchitectureNote("preferimos arquitetura unificada, com ressalvas de prazo"); }
+  catch (e) { recusouNota = /enum fechado/.test(e.message); }
+  if (!recusouNota) throw new Error("architectureNote ACEITOU texto livre — seleção virou redação");
+  /* (c) depois das tentativas, nem o estado nem o que viaja na sessão carregam
+     prosa. O `toSession()` entra aqui porque é ele que atravessa a fronteira. */
+  const plano = JSON.stringify(b.state()) + JSON.stringify(b.toSession() || {});
   const suspeito = plano.match(/"[^"]{60,}"/);
   if (suspeito) throw new Error("estado carrega texto longo — sinal de redação, não de seleção: " + suspeito[0].slice(0, 70));
   return true;
@@ -143,7 +159,20 @@ T("D019-CUR2", "ausência de curadoria produz o MESMO relatório de hoje — mis
   if (!doc) vac("(b)", "captureCanonicalInputs indisponível");
   if ("reportCuration" in doc && doc.reportCuration === null)
     throw new Error("chave presente como null — missing e null precisam ser distintos (INV-8)");
-  return semCuradoria.length > 0;
+  if (!semCuradoria.length) vac("(c)", "relatório sem texto — sem sujeito");
+  /* (d) AUSÊNCIA NÃO É SUPRESSÃO, medido na ponte. [W3] O gate antes checava só
+     que o relatório não estava vazio, e por isso o mutante D019-M2 — que faz a
+     leitura converter `missing` em "exclude" — sobreviveu. A superfície que
+     consome a curadoria só nasce na W4, mas a REGRA já é observável aqui: sem
+     nada declarado, o publicado é exatamente o ofertado. */
+  const b = cur(w);
+  const ofertado = b.offered();
+  if (!ofertado.length) vac("(d)", "nenhuma oferta nesta sessão — ausência≠supressão ficaria sem sujeito");
+  const publicado = b.published();
+  if (JSON.stringify(publicado) !== JSON.stringify(ofertado))
+    throw new Error("sem curadoria declarada o publicado divergiu do ofertado — ausência virou supressão: " +
+      ofertado.length + " ofertados, " + publicado.length + " publicados");
+  return true;
 });
 
 /* ===================== C3 · entrada canônica (INV-8) ==================== */

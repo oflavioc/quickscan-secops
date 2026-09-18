@@ -23,7 +23,23 @@
 
    As âncoras (`find`) são o TEXTO que a spec manda existir, não números de
    linha — lição do `EA-4` (âncora podre), que fez M5/M6/M7 da 015 saírem
-   `ocorrencias=0` sem ninguém ver. Quando cada wave entregar seu módulo, o
+   `ocorrencias=0` sem ninguém ver.
+
+   **E o EA-4 me pegou aqui, na W3.** O rename `offerings` → `decisions` deixou
+   as âncoras de M1, M2 e M3 AMBÍGUAS (5, 8 e 4 ocorrências): os três saíram
+   `NÃO EXECUTADO` com o alvo já existindo. A regra `ocorrencias == 1` não é
+   burocracia — foi ela que denunciou, e é por isso que ela nunca vira aviso.
+   Reancorados em trechos únicos, e o critério de unicidade passou a ser
+   conferido também sobre ESTE arquivo quando eu o edito.
+
+   **E aí a campanha cobrou o preço certo.** Com âncoras boas, M1 e M2 saíram
+   SOBREVIVENTES — e a culpa não era deles: o `D019-CUR1` olhava um estado
+   intocado e o `D019-CUR2` só conferia que o relatório não estava vazio. Dois
+   gates prometendo mais do que mediam, a família do `EA-20`, de novo nesta
+   demanda. Os gates ganharam alínea (o CUR1 TENTA redigir e exige recusa; o
+   CUR2 compara publicado×ofertado na ponte) e os mutantes passaram a atacar o
+   ponto que quebra de verdade: a validação do enum, e a conversão de `missing`
+   em exclusão. Nada foi afrouxado — os dois gates ficaram maiores. Quando cada wave entregar seu módulo, o
    preflight passa a exigir `ocorrencias == 1` e a campanha ganha sentido.
 
    ==========================================================================
@@ -60,17 +76,18 @@ const CMD = "node tests_019_curadoria.js";
 const MUTANTS = [
   { id: "D019-M1", file: F.estado, gate: "D019-CUR1",
     desc: "abrir o estado para TEXTO LIVRE — a fronteira que a demanda existe para proteger",
-    find: 'decisions:', repl: 'textoLivre: "", decisions:',
-    reason: /texto longo|enum fechado|SELEÇÃO/ },
+    find: 'if (ENUM.indexOf(valor) < 0) return "valor fora do enum fechado: " + String(valor);',
+    repl: 'if (false) return "valor fora do enum fechado: " + String(valor);',
+    reason: /ACEITOU texto livre|texto longo/ },
 
   { id: "D019-M2", file: F.estado, gate: "D019-CUR2",
     desc: "fazer ausência de curadoria significar 'excluir tudo'",
-    find: '"include"', repl: '"exclude"',
-    reason: /MESMO relatório|missing/ },
+    find: 'return ofertados().indexOf(id) >= 0 ? "include" : "exclude";', repl: 'return "exclude";',
+    reason: /ausência virou supressão|missing/ },
 
   { id: "D019-M3", file: F.sessao, gate: "D019-INV8",
     desc: "serializar junto a lista de recomendações resultante — derivado como fonte de verdade",
-    find: "reportCuration", repl: "reportCuration_derivado",
+    find: "out.reportCuration = cur;", repl: "out.reportCuration_derivado = cur;",
     reason: /inputs canônicos|campo derivado/ },
 
   { id: "D019-M4", file: F.papel, gate: "D019-PROV1",
@@ -106,7 +123,19 @@ const MUTANTS = [
   { id: "D019-M10", file: F.editor, gate: "D019-SUF1",
     desc: "oferecer curadoria com o resultado bloqueado",
     find: 'blocked', repl: 'released',
-    reason: /resultado bloqueado/ }
+    reason: /resultado bloqueado/ },
+
+  /* [T012] O mutante da REANCORAGEM. Ele não ataca o produto: ataca o critério
+     que eu mesmo acabei de mexer. Ressuscita a lista de CINCO chaves e exige que
+     o `S4-S5` reprove — se ele ficasse verde com a lista antiga, a alínea (b)
+     não estaria discriminando coisa alguma e a reancoragem teria sido só uma
+     permissão a mais. Roda a suíte de SESSÃO, não a da 019, e por isso não
+     reconstrói o HTML: a mutação é no arquivo de teste, não numa fonte. */
+  { id: "D019-M11", file: F.gateSes, gate: "S4-S5",
+    desc: "ressuscitar a lista de cinco chaves — provar que a reancoragem do S4-S5 ainda discrimina",
+    find: 'CANONICAS.concat(["reportCuration"])', repl: 'CANONICAS',
+    suite: "tests_session_m48.js", nodeArgs: ["--max-old-space-size=4608"], skipBuild: true,
+    reason: /FAIL {2}S4-S5/ }
 ];
 
 /* ==========================================================================
@@ -133,11 +162,16 @@ function construir(destino) {
   }
 }
 
-function rodarGate(only, htmlPath) {
+/* A suíte julgadora é parametrizável porque o M11 é julgado pela suíte de
+   SESSÃO. Sem isso, ele teria de virar um gate da 019 que reimplementa o S4-S5 —
+   duas verdades sobre a mesma regra, e uma delas envelheceria. */
+function rodarGate(m, htmlPath) {
+  const suite = m.suite || "tests_019_curadoria.js";
+  const args = (m.nodeArgs || []).concat([path.join(HERE, suite)]);
+  const env = Object.assign({}, process.env);
+  if (!m.suite) { env.D019_ONLY = m.gate; env.D019_HTML_OVERRIDE = htmlPath; }
   try {
-    const out = execFileSync(process.argv[0], [path.join(HERE, "tests_019_curadoria.js")],
-      { cwd: HERE, encoding: "utf8",
-        env: Object.assign({}, process.env, { D019_ONLY: only, D019_HTML_OVERRIDE: htmlPath }) });
+    const out = execFileSync(process.argv[0], args, { cwd: HERE, encoding: "utf8", env });
     return { saiu: 0, out };
   } catch (e) {
     return { saiu: e.status == null ? -1 : e.status, out: (e.stdout || "") + (e.stderr || "") };
@@ -168,13 +202,15 @@ for (const m of MUTANTS) {
        apontado para ele: a verificação não toca o artefato rastreado (R7 §3).
        Caminho entre aspas por `execFileSync` com argv separado (R10 §7). */
     const efemero = path.join(require("os").tmpdir(), "d019-" + m.id + ".html");
-    const build = construir(efemero);
-    if (!build.ok) {
-      estado = NAO_EXECUTADO;
-      causa = "build sob mutação falhou: " + build.why;
-      throw new SaltoControlado();
+    if (!m.skipBuild) {
+      const build = construir(efemero);
+      if (!build.ok) {
+        estado = NAO_EXECUTADO;
+        causa = "build sob mutação falhou: " + build.why;
+        throw new SaltoControlado();
+      }
     }
-    const r = rodarGate(m.gate, efemero);
+    const r = rodarGate(m, efemero);
     try { fs.unlinkSync(efemero); } catch (e) { /* efêmero; ausência não é erro */ }
     if (r.saiu === 0) { estado = SOBREVIVENTE; causa = "o gate " + m.gate + " ficou verde sob mutação"; }
     else if (m.reason.test(r.out)) { estado = DETECTADO; }

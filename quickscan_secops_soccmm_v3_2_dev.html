@@ -8387,7 +8387,7 @@ function captureCanonicalInputs(){
       declaredDriver: L.declaredDriver ? JSON.parse(JSON.stringify(L.declaredDriver)) : null };
   });
   const signals = {}; V32.SIGNAL_IDS.forEach(s=>{ signals[s] = V32.SESSION_SIGNALS[s]; });
-  return {
+  const out = {
     assessment: { archetype: (arq===undefined?null:arq), answers, notes: notesOut },
     priorities: [...businessPriority],
     technologyLandscape: { capabilities: land,
@@ -8397,6 +8397,16 @@ function captureCanonicalInputs(){
     targetProfile: { overrides: JSON.parse(JSON.stringify(TARGET_PROFILE.overrides)) },
     operationalRefinement: { answers: JSON.parse(JSON.stringify(OPERATIONAL_REFINEMENT.answers)) }
   };
+  /* [019 · T010] SEXTA CHAVE CANONICA — curadoria do relatorio.
+     A chave e OMITIDA quando nada foi declarado: e o que mantem
+     `missing != {}` (INV-8), e o gate D019-CUR2 mede exatamente isso.
+     O conteudo vem do OWNER do estado por bridge (R9 §5) — este modulo
+     serializa, nunca decide. Selecao e ENTRADA; por isso ela cabe aqui,
+     ao lado das respostas e das prioridades, e nao entre os derivados. */
+  const cur = (typeof window !== "undefined" && window.__CURATION)
+    ? window.__CURATION.toSession() : undefined;
+  if (cur !== undefined) out.reportCuration = cur;
+  return out;
 }
 /* [4.8.0.7-B] truncamento do label por ESCALARES: String.slice(0,200) corta code units e podia partir um
    par surrogate ao meio, emitindo um label malformado que o próprio import recusaria (defeito real desta
@@ -8547,9 +8557,20 @@ function validateSessionDocument(doc){
   if (hasForbiddenKeys(doc,0)) return err("Documento contém chaves proibidas.");
   const I = doc.inputs;
   if (!I || typeof I !== "object" || Array.isArray(I)) return err("Bloco de entradas ausente.");
-  const extraIn = Object.keys(I).filter(k=>!["assessment","priorities","technologyLandscape","targetProfile","operationalRefinement"].includes(k));
+  const extraIn = Object.keys(I).filter(k=>!["assessment","priorities","technologyLandscape","targetProfile","operationalRefinement","reportCuration"].includes(k));
   if (extraIn.length) return err("Entradas não reconhecidas: " + extraIn.join(", "));
   if (hasReservedDerived(I,0)) return err("O arquivo contém resultados derivados; sessões transportam apenas entradas.");
+  /* [019 · T011] curadoria: id desconhecido e valor fora do enum sao
+     RECUSADOS com mensagem, nunca ignorados em silencio. Quem valida e o
+     OWNER do estado — duplicar a regra aqui criaria duas verdades sobre o
+     que e um id valido, e uma delas envelheceria. Ausencia da chave e
+     legitima e nao produz erro: `missing != {}` (INV-8). */
+  if (I.reportCuration !== undefined){
+    if (typeof window === "undefined" || !window.__CURATION)
+      return err("Curadoria declarada no arquivo, mas o modulo de curadoria nao esta disponivel.");
+    const errosCur = window.__CURATION.fromSession(I.reportCuration);
+    if (errosCur && errosCur.length) return err("Curadoria inválida: " + errosCur.join("; "));
+  }
   /* assessment */
   const A = I.assessment;
   if (!A || typeof A !== "object" || Array.isArray(A)) return err("Assessment ausente.");
@@ -8889,6 +8910,11 @@ function snapshotCanonicalOwners(){
     signals: JSON.parse(JSON.stringify(V32.SESSION_SIGNALS)),
     target: JSON.parse(JSON.stringify(TARGET_PROFILE.overrides)),
     refinement: JSON.parse(JSON.stringify(OPERATIONAL_REFINEMENT.answers)),
+    /* [019 · T010] a curadoria entra no SNAPSHOT para que uma importacao
+       que falhe no meio nao deixe a selecao do operador meio aplicada —
+       o commit e atomico ou nao e commit. */
+    curadoria: (typeof window !== "undefined" && window.__CURATION)
+      ? window.__CURATION.state() : null,
     step: step
   };
 }
@@ -8904,6 +8930,8 @@ function restoreCanonicalOwners(snap){
   Object.keys(TARGET_PROFILE.overrides).forEach(k => { delete TARGET_PROFILE.overrides[k]; });
   Object.keys(snap.target).forEach(k => { TARGET_PROFILE.overrides[k] = snap.target[k]; });
   Object.keys(snap.refinement).forEach(k => { OPERATIONAL_REFINEMENT.answers[k] = snap.refinement[k]; });
+  if (typeof window !== "undefined" && window.__CURATION && snap.curadoria)
+    window.__CURATION.fromSession(snap.curadoria);
   step = snap.step;
 }
 function commitCanonicalOwners(cand){
@@ -11158,11 +11186,24 @@ if (window.__DEV) Object.assign(window.__DEV, { openExportModal, openImportPicke
    viraria regra de negócio.
 
    ==========================================================================
-   AUSÊNCIA ≠ VAZIO ≠ EXCLUSÃO  (INV-8, gate `D019-CUR2`)
+   POR QUE `decisions` E NÃO `offerings`
    ==========================================================================
-   `offerings` sem a chave  → o motor decide (comportamento de hoje)
-   `offerings[id] = "include"` → publica, mesmo que o motor não tenha ofertado
-   `offerings[id] = "exclude"` → não publica, mesmo que o motor tenha ofertado
+   A primeira versão deste módulo chamava o mapa de `offerings`. O gate `S4-S5`
+   (`tests_session_m48.js`, §29.4) proíbe **treze nomes de campo derivado** no
+   documento de sessão, e `"offerings"` é um deles — o engine usa essa palavra
+   para o CATÁLOGO derivado (`V32.OFFERINGS`).
+
+   Medido por sonda antes de qualquer commit: com o nome antigo, o documento
+   serializado continha `"offerings"` e o `S4-S5` reprovava — corretamente.
+
+   A saída NÃO foi afrouxar o banimento: ele existe para pegar catálogo
+   derivado vazando para a sessão, e continuaria valendo. A saída foi corrigir
+   o nome. O mapa guarda DECISÕES do operador, não ofertas do motor, e
+   `decisions` é o que ele sempre deveria ter dito.
+
+   `decisions` sem a chave  → o motor decide (comportamento de hoje)
+   `decisions[id] = "include"` → publica, mesmo que o motor não tenha ofertado
+   `decisions[id] = "exclude"` → não publica, mesmo que o motor tenha ofertado
 
    `missing` nunca é convertido em `"exclude"` na leitura. O mutante
    `D019-M2` ataca justamente essa conversão.
@@ -11175,7 +11216,7 @@ if (window.__DEV) Object.assign(window.__DEV, { openExportModal, openImportPicke
   var ENUM = ["include", "exclude"];
 
   /* estado canônico — só ids e enum fechado, nunca prosa */
-  var estado = { offerings: {}, architectureNote: undefined };
+  var estado = { decisions: {}, architectureNote: undefined };
 
   function catalogo() {
     if (typeof PRODUCTS === "undefined" || !PRODUCTS) return [];
@@ -11211,7 +11252,7 @@ if (window.__DEV) Object.assign(window.__DEV, { openExportModal, openImportPicke
 
   /* decisão EFETIVA para um id, sem converter ausência em exclusão */
   function decidir(id) {
-    if (Object.prototype.hasOwnProperty.call(estado.offerings, id)) return estado.offerings[id];
+    if (Object.prototype.hasOwnProperty.call(estado.decisions, id)) return estado.decisions[id];
     return ofertados().indexOf(id) >= 0 ? "include" : "exclude";
   }
 
@@ -11221,10 +11262,10 @@ if (window.__DEV) Object.assign(window.__DEV, { openExportModal, openImportPicke
   function publicados() {
     var base = ofertados(), out = [], i, id;
     for (i = 0; i < base.length; i++) if (decidir(base[i]) === "include") out.push(base[i]);
-    var chaves = Object.keys(estado.offerings);
+    var chaves = Object.keys(estado.decisions);
     for (i = 0; i < chaves.length; i++) {
       id = chaves[i];
-      if (estado.offerings[id] === "include" && out.indexOf(id) < 0 && catalogo().indexOf(id) >= 0) out.push(id);
+      if (estado.decisions[id] === "include" && out.indexOf(id) < 0 && catalogo().indexOf(id) >= 0) out.push(id);
     }
     return out;
   }
@@ -11232,14 +11273,14 @@ if (window.__DEV) Object.assign(window.__DEV, { openExportModal, openImportPicke
   /* verdadeiro só quando a presença do item É decisão do operador — o motor
      não o ofereceu. É o que o rótulo de proveniência anuncia (C4). */
   function escolhaDoOperador(id) {
-    return estado.offerings[id] === "include" && ofertados().indexOf(id) < 0;
+    return estado.decisions[id] === "include" && ofertados().indexOf(id) < 0;
   }
 
   /* inclusão que a avaliação já não sustenta — mantida e SINALIZADA, nunca
      descartada nem ressuscitada em silêncio (caso de borda 4/5 do refinamento) */
   function inclusoesSemLastro() {
-    return Object.keys(estado.offerings).filter(function (id) {
-      return estado.offerings[id] === "include" && ofertados().indexOf(id) < 0;
+    return Object.keys(estado.decisions).filter(function (id) {
+      return estado.decisions[id] === "include" && ofertados().indexOf(id) < 0;
     });
   }
 
@@ -11249,7 +11290,7 @@ if (window.__DEV) Object.assign(window.__DEV, { openExportModal, openImportPicke
      foi declarado — é o que mantém `missing ≠ {}` (INV-8). */
   function paraSessao() {
     var out = {};
-    if (Object.keys(estado.offerings).length) out.offerings = copia(estado.offerings);
+    if (Object.keys(estado.decisions).length) out.decisions = copia(estado.decisions);
     if (estado.architectureNote !== undefined) out.architectureNote = estado.architectureNote;
     return Object.keys(out).length ? out : undefined;
   }
@@ -11257,15 +11298,15 @@ if (window.__DEV) Object.assign(window.__DEV, { openExportModal, openImportPicke
   /* restauro na importação: valida item a item e RECUSA com mensagem, nunca
      ignora em silêncio (gate `D019-INV8`, alínea de recusa) */
   function daSessao(obj) {
-    estado = { offerings: {}, architectureNote: undefined };
+    estado = { decisions: {}, architectureNote: undefined };
     if (obj === undefined || obj === null) return [];
     if (typeof obj !== "object" || Array.isArray(obj)) return ["reportCuration não é objeto"];
-    var erros = [], off = obj.offerings;
+    var erros = [], off = obj.decisions;
     if (off !== undefined) {
-      if (typeof off !== "object" || off === null || Array.isArray(off)) erros.push("offerings não é objeto");
+      if (typeof off !== "object" || off === null || Array.isArray(off)) erros.push("decisions não é objeto");
       else Object.keys(off).forEach(function (id) {
         var e = valido(id, off[id]);
-        if (e) erros.push("offerings: " + e); else estado.offerings[id] = off[id];
+        if (e) erros.push("decisions: " + e); else estado.decisions[id] = off[id];
       });
     }
     if (obj.architectureNote !== undefined) {
@@ -11278,7 +11319,7 @@ if (window.__DEV) Object.assign(window.__DEV, { openExportModal, openImportPicke
   window.__CURATION = {
     __installed: true,
     /* leitura */
-    state: function () { return copia({ offerings: estado.offerings, architectureNote: estado.architectureNote }); },
+    state: function () { return copia({ decisions: estado.decisions, architectureNote: estado.architectureNote }); },
     offered: ofertados,
     catalog: catalogo,
     decide: decidir,
@@ -11289,7 +11330,7 @@ if (window.__DEV) Object.assign(window.__DEV, { openExportModal, openImportPicke
     set: function (id, valor) {
       var e = valido(id, valor);
       if (e) throw new Error("curadoria: " + e);
-      estado.offerings[id] = valor;
+      estado.decisions[id] = valor;
       return true;
     },
     setArchitectureNote: function (valor) {
@@ -11297,7 +11338,7 @@ if (window.__DEV) Object.assign(window.__DEV, { openExportModal, openImportPicke
       estado.architectureNote = valor;
       return true;
     },
-    clear: function () { estado = { offerings: {}, architectureNote: undefined }; },
+    clear: function () { estado = { decisions: {}, architectureNote: undefined }; },
     /* sessão (consumido por ui_session_v32.js) */
     toSession: paraSessao,
     fromSession: daSessao,
@@ -11307,7 +11348,7 @@ if (window.__DEV) Object.assign(window.__DEV, { openExportModal, openImportPicke
         published: publicados(),
         offered: ofertados(),
         architectureNote: estado.architectureNote === undefined ? "include" : estado.architectureNote,
-        operatorChoices: Object.keys(estado.offerings).filter(escolhaDoOperador),
+        operatorChoices: Object.keys(estado.decisions).filter(escolhaDoOperador),
         suppressed: ofertados().filter(function (id) { return decidir(id) === "exclude"; })
       };
     }

@@ -56,7 +56,7 @@ function captureCanonicalInputs(){
       declaredDriver: L.declaredDriver ? JSON.parse(JSON.stringify(L.declaredDriver)) : null };
   });
   const signals = {}; V32.SIGNAL_IDS.forEach(s=>{ signals[s] = V32.SESSION_SIGNALS[s]; });
-  return {
+  const out = {
     assessment: { archetype: (arq===undefined?null:arq), answers, notes: notesOut },
     priorities: [...businessPriority],
     technologyLandscape: { capabilities: land,
@@ -66,6 +66,16 @@ function captureCanonicalInputs(){
     targetProfile: { overrides: JSON.parse(JSON.stringify(TARGET_PROFILE.overrides)) },
     operationalRefinement: { answers: JSON.parse(JSON.stringify(OPERATIONAL_REFINEMENT.answers)) }
   };
+  /* [019 · T010] SEXTA CHAVE CANONICA — curadoria do relatorio.
+     A chave e OMITIDA quando nada foi declarado: e o que mantem
+     `missing != {}` (INV-8), e o gate D019-CUR2 mede exatamente isso.
+     O conteudo vem do OWNER do estado por bridge (R9 §5) — este modulo
+     serializa, nunca decide. Selecao e ENTRADA; por isso ela cabe aqui,
+     ao lado das respostas e das prioridades, e nao entre os derivados. */
+  const cur = (typeof window !== "undefined" && window.__CURATION)
+    ? window.__CURATION.toSession() : undefined;
+  if (cur !== undefined) out.reportCuration = cur;
+  return out;
 }
 /* [4.8.0.7-B] truncamento do label por ESCALARES: String.slice(0,200) corta code units e podia partir um
    par surrogate ao meio, emitindo um label malformado que o próprio import recusaria (defeito real desta
@@ -216,9 +226,20 @@ function validateSessionDocument(doc){
   if (hasForbiddenKeys(doc,0)) return err("Documento contém chaves proibidas.");
   const I = doc.inputs;
   if (!I || typeof I !== "object" || Array.isArray(I)) return err("Bloco de entradas ausente.");
-  const extraIn = Object.keys(I).filter(k=>!["assessment","priorities","technologyLandscape","targetProfile","operationalRefinement"].includes(k));
+  const extraIn = Object.keys(I).filter(k=>!["assessment","priorities","technologyLandscape","targetProfile","operationalRefinement","reportCuration"].includes(k));
   if (extraIn.length) return err("Entradas não reconhecidas: " + extraIn.join(", "));
   if (hasReservedDerived(I,0)) return err("O arquivo contém resultados derivados; sessões transportam apenas entradas.");
+  /* [019 · T011] curadoria: id desconhecido e valor fora do enum sao
+     RECUSADOS com mensagem, nunca ignorados em silencio. Quem valida e o
+     OWNER do estado — duplicar a regra aqui criaria duas verdades sobre o
+     que e um id valido, e uma delas envelheceria. Ausencia da chave e
+     legitima e nao produz erro: `missing != {}` (INV-8). */
+  if (I.reportCuration !== undefined){
+    if (typeof window === "undefined" || !window.__CURATION)
+      return err("Curadoria declarada no arquivo, mas o modulo de curadoria nao esta disponivel.");
+    const errosCur = window.__CURATION.fromSession(I.reportCuration);
+    if (errosCur && errosCur.length) return err("Curadoria inválida: " + errosCur.join("; "));
+  }
   /* assessment */
   const A = I.assessment;
   if (!A || typeof A !== "object" || Array.isArray(A)) return err("Assessment ausente.");
@@ -558,6 +579,11 @@ function snapshotCanonicalOwners(){
     signals: JSON.parse(JSON.stringify(V32.SESSION_SIGNALS)),
     target: JSON.parse(JSON.stringify(TARGET_PROFILE.overrides)),
     refinement: JSON.parse(JSON.stringify(OPERATIONAL_REFINEMENT.answers)),
+    /* [019 · T010] a curadoria entra no SNAPSHOT para que uma importacao
+       que falhe no meio nao deixe a selecao do operador meio aplicada —
+       o commit e atomico ou nao e commit. */
+    curadoria: (typeof window !== "undefined" && window.__CURATION)
+      ? window.__CURATION.state() : null,
     step: step
   };
 }
@@ -573,6 +599,8 @@ function restoreCanonicalOwners(snap){
   Object.keys(TARGET_PROFILE.overrides).forEach(k => { delete TARGET_PROFILE.overrides[k]; });
   Object.keys(snap.target).forEach(k => { TARGET_PROFILE.overrides[k] = snap.target[k]; });
   Object.keys(snap.refinement).forEach(k => { OPERATIONAL_REFINEMENT.answers[k] = snap.refinement[k]; });
+  if (typeof window !== "undefined" && window.__CURATION && snap.curadoria)
+    window.__CURATION.fromSession(snap.curadoria);
   step = snap.step;
 }
 function commitCanonicalOwners(cand){

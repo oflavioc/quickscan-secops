@@ -32,11 +32,24 @@
    viraria regra de negócio.
 
    ==========================================================================
-   AUSÊNCIA ≠ VAZIO ≠ EXCLUSÃO  (INV-8, gate `D019-CUR2`)
+   POR QUE `decisions` E NÃO `offerings`
    ==========================================================================
-   `offerings` sem a chave  → o motor decide (comportamento de hoje)
-   `offerings[id] = "include"` → publica, mesmo que o motor não tenha ofertado
-   `offerings[id] = "exclude"` → não publica, mesmo que o motor tenha ofertado
+   A primeira versão deste módulo chamava o mapa de `offerings`. O gate `S4-S5`
+   (`tests_session_m48.js`, §29.4) proíbe **treze nomes de campo derivado** no
+   documento de sessão, e `"offerings"` é um deles — o engine usa essa palavra
+   para o CATÁLOGO derivado (`V32.OFFERINGS`).
+
+   Medido por sonda antes de qualquer commit: com o nome antigo, o documento
+   serializado continha `"offerings"` e o `S4-S5` reprovava — corretamente.
+
+   A saída NÃO foi afrouxar o banimento: ele existe para pegar catálogo
+   derivado vazando para a sessão, e continuaria valendo. A saída foi corrigir
+   o nome. O mapa guarda DECISÕES do operador, não ofertas do motor, e
+   `decisions` é o que ele sempre deveria ter dito.
+
+   `decisions` sem a chave  → o motor decide (comportamento de hoje)
+   `decisions[id] = "include"` → publica, mesmo que o motor não tenha ofertado
+   `decisions[id] = "exclude"` → não publica, mesmo que o motor tenha ofertado
 
    `missing` nunca é convertido em `"exclude"` na leitura. O mutante
    `D019-M2` ataca justamente essa conversão.
@@ -49,7 +62,7 @@
   var ENUM = ["include", "exclude"];
 
   /* estado canônico — só ids e enum fechado, nunca prosa */
-  var estado = { offerings: {}, architectureNote: undefined };
+  var estado = { decisions: {}, architectureNote: undefined };
 
   function catalogo() {
     if (typeof PRODUCTS === "undefined" || !PRODUCTS) return [];
@@ -85,7 +98,7 @@
 
   /* decisão EFETIVA para um id, sem converter ausência em exclusão */
   function decidir(id) {
-    if (Object.prototype.hasOwnProperty.call(estado.offerings, id)) return estado.offerings[id];
+    if (Object.prototype.hasOwnProperty.call(estado.decisions, id)) return estado.decisions[id];
     return ofertados().indexOf(id) >= 0 ? "include" : "exclude";
   }
 
@@ -95,10 +108,10 @@
   function publicados() {
     var base = ofertados(), out = [], i, id;
     for (i = 0; i < base.length; i++) if (decidir(base[i]) === "include") out.push(base[i]);
-    var chaves = Object.keys(estado.offerings);
+    var chaves = Object.keys(estado.decisions);
     for (i = 0; i < chaves.length; i++) {
       id = chaves[i];
-      if (estado.offerings[id] === "include" && out.indexOf(id) < 0 && catalogo().indexOf(id) >= 0) out.push(id);
+      if (estado.decisions[id] === "include" && out.indexOf(id) < 0 && catalogo().indexOf(id) >= 0) out.push(id);
     }
     return out;
   }
@@ -106,14 +119,14 @@
   /* verdadeiro só quando a presença do item É decisão do operador — o motor
      não o ofereceu. É o que o rótulo de proveniência anuncia (C4). */
   function escolhaDoOperador(id) {
-    return estado.offerings[id] === "include" && ofertados().indexOf(id) < 0;
+    return estado.decisions[id] === "include" && ofertados().indexOf(id) < 0;
   }
 
   /* inclusão que a avaliação já não sustenta — mantida e SINALIZADA, nunca
      descartada nem ressuscitada em silêncio (caso de borda 4/5 do refinamento) */
   function inclusoesSemLastro() {
-    return Object.keys(estado.offerings).filter(function (id) {
-      return estado.offerings[id] === "include" && ofertados().indexOf(id) < 0;
+    return Object.keys(estado.decisions).filter(function (id) {
+      return estado.decisions[id] === "include" && ofertados().indexOf(id) < 0;
     });
   }
 
@@ -123,7 +136,7 @@
      foi declarado — é o que mantém `missing ≠ {}` (INV-8). */
   function paraSessao() {
     var out = {};
-    if (Object.keys(estado.offerings).length) out.offerings = copia(estado.offerings);
+    if (Object.keys(estado.decisions).length) out.decisions = copia(estado.decisions);
     if (estado.architectureNote !== undefined) out.architectureNote = estado.architectureNote;
     return Object.keys(out).length ? out : undefined;
   }
@@ -131,15 +144,15 @@
   /* restauro na importação: valida item a item e RECUSA com mensagem, nunca
      ignora em silêncio (gate `D019-INV8`, alínea de recusa) */
   function daSessao(obj) {
-    estado = { offerings: {}, architectureNote: undefined };
+    estado = { decisions: {}, architectureNote: undefined };
     if (obj === undefined || obj === null) return [];
     if (typeof obj !== "object" || Array.isArray(obj)) return ["reportCuration não é objeto"];
-    var erros = [], off = obj.offerings;
+    var erros = [], off = obj.decisions;
     if (off !== undefined) {
-      if (typeof off !== "object" || off === null || Array.isArray(off)) erros.push("offerings não é objeto");
+      if (typeof off !== "object" || off === null || Array.isArray(off)) erros.push("decisions não é objeto");
       else Object.keys(off).forEach(function (id) {
         var e = valido(id, off[id]);
-        if (e) erros.push("offerings: " + e); else estado.offerings[id] = off[id];
+        if (e) erros.push("decisions: " + e); else estado.decisions[id] = off[id];
       });
     }
     if (obj.architectureNote !== undefined) {
@@ -152,7 +165,7 @@
   window.__CURATION = {
     __installed: true,
     /* leitura */
-    state: function () { return copia({ offerings: estado.offerings, architectureNote: estado.architectureNote }); },
+    state: function () { return copia({ decisions: estado.decisions, architectureNote: estado.architectureNote }); },
     offered: ofertados,
     catalog: catalogo,
     decide: decidir,
@@ -163,7 +176,7 @@
     set: function (id, valor) {
       var e = valido(id, valor);
       if (e) throw new Error("curadoria: " + e);
-      estado.offerings[id] = valor;
+      estado.decisions[id] = valor;
       return true;
     },
     setArchitectureNote: function (valor) {
@@ -171,7 +184,7 @@
       estado.architectureNote = valor;
       return true;
     },
-    clear: function () { estado = { offerings: {}, architectureNote: undefined }; },
+    clear: function () { estado = { decisions: {}, architectureNote: undefined }; },
     /* sessão (consumido por ui_session_v32.js) */
     toSession: paraSessao,
     fromSession: daSessao,
@@ -181,7 +194,7 @@
         published: publicados(),
         offered: ofertados(),
         architectureNote: estado.architectureNote === undefined ? "include" : estado.architectureNote,
-        operatorChoices: Object.keys(estado.offerings).filter(escolhaDoOperador),
+        operatorChoices: Object.keys(estado.decisions).filter(escolhaDoOperador),
         suppressed: ofertados().filter(function (id) { return decidir(id) === "exclude"; })
       };
     }

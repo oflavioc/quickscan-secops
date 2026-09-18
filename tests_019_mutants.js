@@ -60,7 +60,7 @@ const CMD = "node tests_019_curadoria.js";
 const MUTANTS = [
   { id: "D019-M1", file: F.estado, gate: "D019-CUR1",
     desc: "abrir o estado para TEXTO LIVRE — a fronteira que a demanda existe para proteger",
-    find: 'offerings:', repl: 'textoLivre: "", offerings:',
+    find: 'decisions:', repl: 'textoLivre: "", decisions:',
     reason: /texto longo|enum fechado|SELEÇÃO/ },
 
   { id: "D019-M2", file: F.estado, gate: "D019-CUR2",
@@ -80,7 +80,7 @@ const MUTANTS = [
 
   { id: "D019-M5", file: F.solucao, gate: "D019-MED1",
     desc: "deixar a curadoria filtrar a lista de findings — alcançar MEDIÇÃO",
-    find: "offerings", repl: "findings",
+    find: "decisions", repl: "findings",
     reason: /alterou derivado|não podem mudar/ },
 
   { id: "D019-M6", file: F.solucao, gate: "D019-SOL1",

@@ -1,6 +1,6 @@
 {
   "demanda": "019-curadoria-do-relatorio",
-  "phase": "tasks",
+  "phase": "red",
   "spec_dir": "specs/019-curadoria-do-relatorio",
   "branch": "feature/019-curadoria-do-relatorio",
   "brief": "Achado EA-57 mais o feedback de 2026-09-15: o SE termina a sessao sabendo coisas que o screening nao sabe (o que o cliente ja contratou, o que esta em piloto, qual conversa esta madura) e nao tem onde colocar isso — o relatorio sai como o motor produziu, e a escolha e entregar assim ou reescrever fora da ferramenta. A demanda entrega uma tela de CURADORIA, depois dos resultados, onde o operador seleciona o subconjunto do que o motor produziu que vai ao relatorio, na tela E no PDF; e absorve a reorganizacao de 'Formas de apoio' por SOLUCAO, porque a curadoria precisa de uma lista de produtos para oferecer e essa lista e exatamente a visao por solucao. FRONTEIRA DURA: o operador escolhe entre o que o motor ofereceu, nunca escreve o que o motor deveria ter dito — e disso dependem as duas invariantes que a demanda tangencia (INV-7 determinismo, INV-8 derivado nunca serializado). Medido em 2026-09-17 sobre develop: sessao real de 15 respostas produz 15 blocos de apoio para 9 produtos distintos e 20 mencoes, com 'Servicos FortiGuard' aparecendo 5 vezes; a visao por solucao daria 9 cards. Aberta a pedido do proprietario; conducao sob a delegacao de 2026-08-29.",
@@ -20,7 +20,26 @@
     "approved_at": "2026-09-17"
   },
   "tasks": {
-    "status": "awaiting_approval",
-    "notes": "Fase 3 escrita pelo orquestrador no contrato do tech-lead. 26 tarefas em 8 waves (0 a 7). NOTA DE CONDUCAO herdada da 018 e declarada em vez de simulada: agentes de papel indisponiveis como subagentes, entao a separacao de poderes da R3 §2 e mantida por COMMIT E ARTEFATO distintos, nao por processo distinto — e essa e a maior fragilidade da demanda, porque quem escreve o criterio e quem o satisfaz sao o mesmo agente. MITIGACAO ESTRUTURAL: os dez gates e os dez mutantes sao entregues e o red e provado ANTES de existir uma linha de implementacao (T002-T005); a ordem dos commits e a prova de que o criterio nao foi ajustado ao resultado. A TAREFA DE MAIOR RISCO E A T012 — reancorar a lista do S4-S5, que e ajustar o criterio que me julga — e ela tem tres condicoes nao negociaveis: os 13 nomes de campo derivado continuam proibidos e isso e conferido POR EXECUCAO; a reancoragem entra COM MUTANTE PROPRIO que ressuscite a lista antiga, provando que a alinea ainda discrimina; e o commit e SEPARADO do T010 e DEPOIS dele, para que o diff mostre a chave existindo antes do criterio aceita-la. QUATRO ORDENS QUE NAO PODEM INVERTER estao declaradas: red antes da implementacao; chave antes da reancoragem; visao por solucao antes do editor; e a T023 espera o CI, porque a geometria do apoio (P52-REC1g) e o unico risco que esta maquina nao julga (KI-3) e a wave 4 nao fecha local. T004 declara sem omitir quais gates NASCEM VERDES — CUR2, MED1 e SUF1 — com o poder vindo dos mutantes e nao do red, no precedente D015-NOSUB1. T021 carrega a mitigacao do EA-62: grep do literal em tests_*.js antes de qualquer entrada de copia de apresentacao. PORTAO PENDENTE DO USUARIO (R4)."
+    "status": "approved",
+    "notes": "Fase 3 escrita pelo orquestrador no contrato do tech-lead. 26 tarefas em 8 waves (0 a 7). NOTA DE CONDUCAO herdada da 018 e declarada em vez de simulada: agentes de papel indisponiveis como subagentes, entao a separacao de poderes da R3 §2 e mantida por COMMIT E ARTEFATO distintos, nao por processo distinto — e essa e a maior fragilidade da demanda, porque quem escreve o criterio e quem o satisfaz sao o mesmo agente. MITIGACAO ESTRUTURAL: os dez gates e os dez mutantes sao entregues e o red e provado ANTES de existir uma linha de implementacao (T002-T005); a ordem dos commits e a prova de que o criterio nao foi ajustado ao resultado. A TAREFA DE MAIOR RISCO E A T012 — reancorar a lista do S4-S5, que e ajustar o criterio que me julga — e ela tem tres condicoes nao negociaveis: os 13 nomes de campo derivado continuam proibidos e isso e conferido POR EXECUCAO; a reancoragem entra COM MUTANTE PROPRIO que ressuscite a lista antiga, provando que a alinea ainda discrimina; e o commit e SEPARADO do T010 e DEPOIS dele, para que o diff mostre a chave existindo antes do criterio aceita-la. QUATRO ORDENS QUE NAO PODEM INVERTER estao declaradas: red antes da implementacao; chave antes da reancoragem; visao por solucao antes do editor; e a T023 espera o CI, porque a geometria do apoio (P52-REC1g) e o unico risco que esta maquina nao julga (KI-3) e a wave 4 nao fecha local. T004 declara sem omitir quais gates NASCEM VERDES — CUR2, MED1 e SUF1 — com o poder vindo dos mutantes e nao do red, no precedente D015-NOSUB1. T021 carrega a mitigacao do EA-62: grep do literal em tests_*.js antes de qualquer entrada de copia de apresentacao. PORTAO PENDENTE DO USUARIO (R4). PORTAO FECHADO em 2026-09-17 ('Aprovado, prossiga').",
+    "approved_at": "2026-09-17"
+  },
+  "red": {
+    "status": "proven",
+    "commit": "52d38c4",
+    "approved_at": "2026-09-18",
+    "notes": "T002/T003/T004 do tasks.md. Os dez gates (tests_019_curadoria.js) e os dez mutantes (tests_019_mutants.js) escritos ANTES de qualquer linha de implementacao (R3 §1/§4); o commit 52d38c4 e a prova de que o criterio nao foi ajustado ao resultado. EXECUTADO: D019 CURADORIA 3 PASS · 7 FAIL de 10, batendo EXATAMENTE com o previsto no T004 — vermelhos CUR1, INV8, PROV1, SOL1, SOL2, PAR1 e VAZ1; verdes CUR2, MED1 e SUF1. Os tres verdes vao DECLARADOS e nao escondidos: nada os viola hoje porque hoje nao ha curadoria alguma, e o poder deles vem dos mutantes e nao do red (precedente D015-NOSUB1/GOV1) — esconde-los inflaria o vermelho. CAMPANHA: 0 DETECTADO · 0 SOBREVIVENTE · 10 NAO EXECUTADO, cada um com CAUSA — sete porque o modulo nao existe, tres porque a ancora ainda nao foi escrita (ocorrencias=0). NAO EXECUTADO, jamais SOBREVIVENTE. UM DEFEITO MEU PEGO ANTES DO COMMIT: o runner invocava o build com `node` e engolia a falha; como o gate le o HTML CONSTRUIDO e nao o modulo-fonte, a mutacao nunca alcancaria o sujeito e TODO mutante sairia SOBREVIVENTE pelo motivo errado — falso negativo de campanha, pior que campanha nenhuma. Corrigido para build com python em ARQUIVO EFEMERO, com o gate apontado por D019_HTML_OVERRIDE; a verificacao nao toca o artefato rastreado (R7 §3) e a restauracao e conferida byte a byte. Ancoras por TEXTO que a spec manda existir, nunca numero de linha (licao do EA-4).",
+    "gates": [
+      "D019-CUR1",
+      "D019-CUR2",
+      "D019-INV8",
+      "D019-PROV1",
+      "D019-MED1",
+      "D019-SOL1",
+      "D019-SOL2",
+      "D019-PAR1",
+      "D019-VAZ1",
+      "D019-SUF1"
+    ]
   }
 }

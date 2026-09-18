@@ -233,6 +233,12 @@ T("D019-PAR1", "tela e papel publicam o mesmo conjunto, medido DEPOIS de beforep
   b.set(oferta[0], "exclude");
   w.__DEV.showResults();
   const tela = new Set(qa(d, "#p52-workspace [data-p53-sol-produto]").map(n => n.getAttribute("data-p53-sol-produto")));
+  /* NÃO-VACUIDADE, e ela custou caro para aparecer: sem esta alínea o gate
+     fechava VERDE com os dois conjuntos VAZIOS — igualdade trivial entre nada
+     e nada. É a família do `EA-20` (gate que promete asserção e entrega
+     tautologia), e ela nasceu aqui na W2, quando a visão por solução ainda não
+     existia e o `PAR1` passou sem sujeito. Medido, não suposto. */
+  if (!tela.size) vac("(b)", "a tela não publicou produto algum — sem sujeito, a igualdade tela×papel seria trivial");
   w.__DEV.preparePrint();
   const papel = new Set(qa(d, "#v32-print-report [data-p53-sol-produto]").map(n => n.getAttribute("data-p53-sol-produto")));
   w.__DEV.finishPrint();

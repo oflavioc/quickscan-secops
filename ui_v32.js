@@ -1331,6 +1331,15 @@ function buildPrintReport(){
      jornada, o refinamento operacional, o cenário-alvo e o anexo de respostas
      são derivados exclusivamente das respostas do assessment e passam a
      existir também quando o contexto não é informado. */
+  /* [019 · T020] APOIO POR SOLUÇÃO, A MESMA SELEÇÃO DA TELA.
+     Entra AQUI, e não dentro de `#pr-support`, porque aquele bloco é
+     condicional ao contexto declarado (errata B-02) e esta seção é derivada
+     dos GAPS — ela existe mesmo sem contexto algum, como a jornada e o
+     refinamento logo abaixo. O consumo é pelo bridge único do módulo, sob a
+     mesma guarda `typeof` dos três hooks de PDF que já existem. O papel é
+     DERIVADO dos cards da tela: recalcular criaria dois caminhos para a mesma
+     decisão, que é como as duas superfícies divergem (EA-58). */
+  h += (typeof window!=="undefined" && window.__P53SOL && window.__P53SOL.printHTML) ? window.__P53SOL.printHTML() : "";
   h += (typeof window!=="undefined" && window.__uxJourneyPrintHTML) ? window.__uxJourneyPrintHTML() : "";   /* [4.5-W] */
   h += (typeof window!=="undefined" && window.__uxRefinementPrintHTML) ? window.__uxRefinementPrintHTML() : "";   /* [4.4-O] */
   h += (typeof window!=="undefined" && window.__uxTargetPrintHTML) ? window.__uxTargetPrintHTML() : "";   /* [4.3.1-Q] */

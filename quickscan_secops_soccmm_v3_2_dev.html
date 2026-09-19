@@ -4041,6 +4041,21 @@ body[data-uxscreen="refinement"] #ux-progress-mobile{ display:none !important; }
 
 .p53-sol-why { margin-bottom: 12px; }
 
+/* C4 · o selo de proveniência. Ele só aparece em item cuja PRESENÇA é decisão
+   do engenheiro — nunca em item que o motor já oferecia. Rótulo que aparece em
+   tudo não distingue nada, e o `D019-PROV1` mede isso nas duas direções. */
+.p53-sol-prov {
+  margin: 0 0 10px;
+  padding: 6px 10px;
+  border-left: 3px solid var(--p52-attn);
+  background: var(--surface2);
+  border-radius: 0 6px 6px 0;
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--muted);
+}
+.p53-sol-card-add { border-style: dashed; }
+
 /* O ponteiro que fica no disclosure legado depois que os blocos migram. Ele
    existe porque o `<details>` é âncora do `D010-ARB3` e não pode ser ocultado;
    vazio e mudo, ele mentiria. */
@@ -7211,6 +7226,15 @@ function buildPrintReport(){
      jornada, o refinamento operacional, o cenário-alvo e o anexo de respostas
      são derivados exclusivamente das respostas do assessment e passam a
      existir também quando o contexto não é informado. */
+  /* [019 · T020] APOIO POR SOLUÇÃO, A MESMA SELEÇÃO DA TELA.
+     Entra AQUI, e não dentro de `#pr-support`, porque aquele bloco é
+     condicional ao contexto declarado (errata B-02) e esta seção é derivada
+     dos GAPS — ela existe mesmo sem contexto algum, como a jornada e o
+     refinamento logo abaixo. O consumo é pelo bridge único do módulo, sob a
+     mesma guarda `typeof` dos três hooks de PDF que já existem. O papel é
+     DERIVADO dos cards da tela: recalcular criaria dois caminhos para a mesma
+     decisão, que é como as duas superfícies divergem (EA-58). */
+  h += (typeof window!=="undefined" && window.__P53SOL && window.__P53SOL.printHTML) ? window.__P53SOL.printHTML() : "";
   h += (typeof window!=="undefined" && window.__uxJourneyPrintHTML) ? window.__uxJourneyPrintHTML() : "";   /* [4.5-W] */
   h += (typeof window!=="undefined" && window.__uxRefinementPrintHTML) ? window.__uxRefinementPrintHTML() : "";   /* [4.4-O] */
   h += (typeof window!=="undefined" && window.__uxTargetPrintHTML) ? window.__uxTargetPrintHTML() : "";   /* [4.3.1-Q] */
@@ -15340,6 +15364,17 @@ if (window.__DEV) Object.assign(window.__DEV, { openExportModal, openImportPicke
     if (!id) return "include";
     try { return b.decide(id); } catch (e) { return "include"; }
   }
+  /* Verdadeiro só quando a PRESENÇA do item é decisão do operador — o motor não
+     o ofereceu. É literalmente o que a C4 manda rotular, e a distinção importa:
+     confirmar um item que o motor já ofereceu NÃO é decisão de presença, e
+     rotular isso encheria o relatório de selos que não informam nada. */
+  function ehEscolhaDoOperador(nome) {
+    var b = curadoria(); if (!b) return false;
+    var id = idDoNome(nome);
+    if (!id) return false;
+    try { return !!b.isOperatorChoice(id); } catch (e) { return false; }
+  }
+  var PROV_TXT = "Incluído por decisão do engenheiro — não derivado da avaliação.";
 
   /* ===================== coleta: de onde vêm os nós =====================
      Escopo é o WORKSPACE inteiro, não a seção de apoio: medido que 12 dos 15
@@ -15440,7 +15475,14 @@ if (window.__DEV) Object.assign(window.__DEV, { openExportModal, openImportPicke
     return ordem.map(function (n) { return porNome[n]; });
   }
 
-  /* ===================== construção do card por produto ===================== */
+  /* ===================== construção do card por produto =====================
+     O selo de grupo nasce em UM lugar só. Ele estava duplicado — card colhido
+     e card acrescentado emitiam o mesmo atributo cada um por si — e a campanha
+     cobrou na hora: o `D019-M7` saiu `ocorrencias=2`, NÃO EXECUTADO. Âncora
+     ambígua é sintoma; a causa era código duplicado, e a correção é a óbvia. */
+  function chipDoGrupo(grupo) {
+    return el("div", { "class": "p53-sol-chip", "data-p53-sol-grupo-nome": grupo }, nomeDoGrupo(grupo));
+  }
   function cardDoProduto(p) {
     var grupo = grupoDoNome(p.nome);
     var card = el("div", {
@@ -15466,9 +15508,14 @@ if (window.__DEV) Object.assign(window.__DEV, { openExportModal, openImportPicke
        visível porque os cards são ordenados por grupo. Nada foi afrouxado no
        `D010` para isso caber.
        ==================================================================== */
-    card.appendChild(el("div", { "class": "p53-sol-chip", "data-p53-sol-grupo-nome": grupo },
-      nomeDoGrupo(grupo)));
+    card.appendChild(chipDoGrupo(grupo));
     card.appendChild(el("h4", null, p.nome));
+    /* C4 · PROVENIÊNCIA NA TELA. O mesmo marcador nasce no papel, em
+       `printHTML()`. Foi o EA-58 que ensinou o modo real de as duas superfícies
+       divergirem: o rótulo existe em uma e some na outra — e o mutante
+       `D019-M4` ataca exatamente isso, removendo SÓ no papel. */
+    if (ehEscolhaDoOperador(p.nome))
+      card.appendChild(el("div", { "class": "p53-sol-prov", "data-p53-prov": "operador" }, PROV_TXT));
     card.appendChild(el("div", { "class": "why p53-sol-why" },
       p.caps.length === 1 ? "Atende 1 capability desta leitura."
                           : "Atende " + p.caps.length + " capabilities desta leitura."));
@@ -15501,6 +15548,58 @@ if (window.__DEV) Object.assign(window.__DEV, { openExportModal, openImportPicke
     var corpo = det.querySelector("div") || det;
     corpo.appendChild(el("p", { "class": "p53-sol-ptr" },
       "As formas de apoio desta leitura estão consolidadas por produto na seção “Formas de apoio”."));
+  }
+
+  /* ============== o produto que o engenheiro ACRESCENTOU ==============
+     Ele não tem `.prod` para migrar: o motor nunca o renderizou, porque nunca
+     o ofereceu. O card é montado a partir do CATÁLOGO (`PRODUCTS`) — nome,
+     descrição e link oficial —, que é dado do produto, não texto inventado
+     aqui. Nenhuma capability é listada, e isso é deliberado: associá-lo a uma
+     capability seria afirmar uma relação que a avaliação não estabeleceu. O
+     que o card diz é o que se sabe: o produto, e que a presença dele é escolha
+     de quem conduziu a sessão. */
+  function cardAcrescentado(id) {
+    var p = (typeof PRODUCTS !== "undefined" && PRODUCTS) ? PRODUCTS[id] : null;
+    if (!p) return null;
+    var grupo = (PORTFOLIO[id] || NAO_CLASSIFICADO);
+    var card = el("div", {
+      "class": "apoio-block p53-sol-card p53-sol-card-add",
+      "data-p53-sol-produto": p.n,
+      "data-p53-sol-grupo": grupo
+    });
+    card.appendChild(chipDoGrupo(grupo));
+    card.appendChild(el("h4", null, p.n));
+    card.appendChild(el("div", { "class": "p53-sol-prov", "data-p53-prov": "operador" }, PROV_TXT));
+    var corpo = el("div", { "class": "prods" });
+    var linha = el("div", { "class": "prod" });
+    var texto = el("span", null);
+    texto.appendChild(el("div", { "class": "pt-name" }, p.n));
+    if (p.d) texto.appendChild(el("div", { "class": "pt-desc" }, p.d));
+    if (p.u) {
+      var a = el("a", { "class": "pt-link", href: p.u, target: "_blank", rel: "noopener" }, "Página oficial ↗");
+      texto.appendChild(a);
+    }
+    linha.appendChild(texto);
+    corpo.appendChild(linha);
+    card.appendChild(corpo);
+    return card;
+  }
+  function acrescimos(jaPresentes) {
+    var b = curadoria(); if (!b) return [];
+    var ids;
+    try { ids = b.state().decisions || {}; } catch (e) { return []; }
+    var out = [];
+    Object.keys(ids).forEach(function (id) {
+      if (ids[id] !== "include" || !ehEscolhaDoOperadorId(b, id)) return;
+      var p = (typeof PRODUCTS !== "undefined" && PRODUCTS) ? PRODUCTS[id] : null;
+      if (!p || jaPresentes.indexOf(p.n) >= 0) return;
+      var c = cardAcrescentado(id);
+      if (c) out.push(c);
+    });
+    return out;
+  }
+  function ehEscolhaDoOperadorId(b, id) {
+    try { return !!b.isOperatorChoice(id); } catch (e) { return false; }
   }
 
   /* ===================== a supressão que se declara =====================
@@ -15582,6 +15681,7 @@ if (window.__DEV) Object.assign(window.__DEV, { openExportModal, openImportPicke
       for (i = 0; i < produtos.length; i++)
         if (decisaoDe(produtos[i].nome) !== "exclude") cards.push(cardDoProduto(produtos[i]));
       var suprimidos = produtos.length - cards.length;
+      cards = cards.concat(acrescimos(cards.map(function (c) { return c.getAttribute("data-p53-sol-produto"); })));
       /* as cascas saem do DOM DEPOIS de os `.prod` terem migrado: remover
          antes levaria o nó movido junto. */
       for (i = 0; i < legados.length; i++)
@@ -15605,6 +15705,7 @@ if (window.__DEV) Object.assign(window.__DEV, { openExportModal, openImportPicke
           removidos++;
         } else atuais.push(no);
       }
+      atuais = atuais.concat(acrescimos(atuais.map(function (c) { return c.getAttribute("data-p53-sol-produto"); })));
       colocar(sec, atuais);
       declararSupressao(sec, atuais.length, removidos);
     }
@@ -15618,6 +15719,64 @@ if (window.__DEV) Object.assign(window.__DEV, { openExportModal, openImportPicke
 
     ponteiro(document.querySelector("#p52-workspace details.t-details"));
     passes++;
+  }
+
+  /* ======================================================================
+     O PAPEL — T020 e T021.
+
+     A seção do papel é derivada dos CARDS DA TELA, e não recalculada do zero.
+     Recalcular criaria dois caminhos para a mesma decisão, e o `D019-PAR1`
+     existe porque é exatamente assim que as duas superfícies divergem: cada
+     uma com a sua conta, uma delas envelhecendo. Derivando, a igualdade
+     tela×papel é propriedade de construção, não coincidência a verificar.
+
+     Sai como STRING porque `buildPrintReport()` monta o relatório por
+     concatenação — é o contrato dos três hooks de impressão que já existem
+     (`__uxJourneyPrintHTML` e irmãos), e este entra no mesmo padrão em vez de
+     inventar um quarto mecanismo (R9 §4).
+     ====================================================================== */
+  function escHtml(s) {
+    return String(s == null ? "" : s)
+      .split("&").join("&amp;").split("<").join("&lt;").split(">").join("&gt;")
+      .split('"').join("&quot;").split("'").join("&#39;");
+  }
+  function papelHTML() {
+    var sec = document.getElementById("p52-sec-support");
+    if (!sec) return "";
+    var cards = sec.querySelectorAll(":scope > .apoio-block[data-p53-sol-produto]");
+    var aviso = sec.querySelector(":scope > [data-p53-suprimido]");
+    if (!cards.length && !aviso) return "";
+    var h = '<div class="pr-sec" id="pr-sup-solucao"><h2>Formas de apoio, por produto</h2>';
+    if (aviso) h += '<div class="pr-mut" data-p53-suprimido="' +
+      escHtml(aviso.getAttribute("data-p53-suprimido")) + '">' + escHtml(txt(aviso)) + "</div>";
+    var grupoAtual = null, i, j;
+    for (i = 0; i < cards.length; i++) {
+      var c = cards[i];
+      var nome = c.getAttribute("data-p53-sol-produto");
+      var gid = c.getAttribute("data-p53-sol-grupo");
+      if (gid !== grupoAtual) {
+        grupoAtual = gid;
+        h += '<h3 data-p53-sol-grupo-nome="' + escHtml(gid) + '">' + escHtml(nomeDoGrupo(gid)) + "</h3>";
+      }
+      h += '<div class="pr-card" data-p53-sol-produto="' + escHtml(nome) + '" data-p53-sol-grupo="' + escHtml(gid) + '">';
+      h += "<b>" + escHtml(nome) + "</b>";
+      /* MESMO marcador da tela. O `D019-M4` remove só aqui, porque é aqui que
+         a divergência costuma nascer sem ninguém ver (EA-58). */
+      if (c.querySelector("[data-p53-prov]"))
+        h += '<div class="pr-mut" data-p53-prov="operador">' + escHtml(PROV_TXT) + "</div>";
+      var desc = c.querySelector(".pt-desc");
+      if (desc) h += '<div class="pr-mut">' + escHtml(txt(desc)) + "</div>";
+      var caps = c.querySelectorAll("[data-p53-sol-cap]");
+      if (caps.length) {
+        h += "<ul>";
+        for (j = 0; j < caps.length; j++)
+          h += '<li data-p53-sol-cap="' + escHtml(caps[j].getAttribute("data-p53-sol-cap")) + '">' +
+               escHtml(caps[j].getAttribute("data-p53-sol-cap")) + "</li>";
+        h += "</ul>";
+      }
+      h += "</div>";
+    }
+    return h + "</div>";
   }
 
   function seguro() {
@@ -15642,6 +15801,15 @@ if (window.__DEV) Object.assign(window.__DEV, { openExportModal, openImportPicke
        classificação, e uma delas envelheceria. */
     grupos: function () { return GRUPOS.map(function (g) { return { id: g.id, nome: g.nome }; }); },
     grupoDe: function (nome) { return grupoDoNome(nome); },
+    /* Hook de impressão. Os três hooks de PDF que já existem neste produto são
+       globais soltos (`__uxJourneyPrintHTML` e irmãos), herança das camadas
+       4.x; um QUARTO global seria um segundo bridge deste módulo, e a R9 §2
+       proíbe. Entra aqui, no bridge único, e `buildPrintReport()` o consome sob
+       a mesma guarda `typeof` dos outros. */
+    printHTML: function () {
+      try { return papelHTML(); }
+      catch (e) { erros.push(String((e && e.message) || e)); return ""; }
+    },
     diag: function () {
       return { errors: erros.slice(0), passes: passes, censo: ultimoCenso,
         grupos: GRUPOS.map(function (g) { return g.id; }) };

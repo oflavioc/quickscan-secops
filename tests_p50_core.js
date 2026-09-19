@@ -255,7 +255,19 @@ const PROTECTED = {
      `D015-M2` invertido junto — a propriedade guardada continua a mesma, em
      direção oposta. Identidade anterior:
      797711193ba493d4e7c1f6afb46ffb88f71ada24199906e45507cc37436b08b5 */
-  "ui_v32.js": "07e1dec0aea89d31616c3b2bee9b8bc10ffad276b7324dc4d97dcd1cc2468eb7",
+  /* [019 · T020 · 2026-09-18] REPIN autorizado pelo proprietário em 2026-09-17.
+     `buildPrintReport()` passa a consumir a visão por solução, no padrão dos
+     três hooks de PDF que já existem (`__uxJourneyPrintHTML` e irmãos) e sob a
+     mesma guarda `typeof`. A edição é de UMA linha de consumo mais o comentário
+     que explica a posição: ela entra FORA do bloco `#pr-support`, que é
+     condicional ao contexto declarado (errata B-02), porque a visão por solução
+     é derivada dos GAPS e existe mesmo sem contexto algum.
+     Nada mais foi tocado: score, suficiência, gate, schema, a arbitragem da 010
+     e o payload M41 permanecem byte-idênticos — o hook devolve string e o
+     arquivo só a concatena.
+     Identidade anterior:
+     07e1dec0aea89d31616c3b2bee9b8bc10ffad276b7324dc4d97dcd1cc2468eb7 */
+  "ui_v32.js": "6db500439aea5a4264f4220b872fab776b5e37a0b78c9c9606ef67a5c44ee79c",
   "ui_ux_v32.js": "a050401145a5ed7af597eae01a9a23826418119769c096db168b3b177a9d3938",
   /* ERRATA DA AUDITORIA EXTERNA · §4.1.1 ("qualquer texto derivado consome a
      mesma decisão canônica de publicabilidade"). A comparação Atual × Alvo
@@ -4036,11 +4048,25 @@ T("P51-DOC13", "manual descreve o score geral e a ordem do relatório como o pro
     { ids: ["pr-findings"], re: /gaps de maturidade observados/i },
     { ids: ["pr-landscape"], re: /contexto tecnol[óo]gico declarado/i },
     { ids: ["pr-interp", "pr-support"], re: /interpreta[çc][ãa]o do contexto/i },
+    { ids: ["pr-sup-solucao"], re: /formas de apoio, por produto/i },
     { ids: ["pr-journey"], re: /jornada de maturidade/i },
     { ids: ["pr-target"], re: /cen[áa]rio-alvo/i },
     { ids: ["pr-annex"], re: /anexo/i }
   ];
-  const idsEsperados = ESPERADO.reduce((a, e) => a.concat(e.ids), []);
+  /* [019 · T020 · 2026-09-18] SEÇÕES CONDICIONAIS, DECLARADAS PELO NOME.
+     `pr-sup-solucao` existe quando há apoio por solução a publicar — e não
+     existe quando a arbitragem da 010 oculta a região, ou quando a curadoria
+     suprimiu tudo sem nada a declarar. O manual já dizia que as seções do meio
+     são condicionais; o gate não sabia expressar isso.
+
+     A tolerância é NOMINAL, nunca curinga: só este id pode faltar, e quando ele
+     aparece precisa aparecer NA POSIÇÃO declarada — fora dela, `idsEsperados` o
+     traz aqui e `ordemReal` o traz noutro lugar, e a comparação reprova. O §12
+     do manual continua listando a seção sempre, porque o manual descreve o
+     documento que o produto PODE emitir, não uma execução. */
+  const OPCIONAIS = ["pr-sup-solucao"];
+  const idsEsperados = ESPERADO.reduce((a, e) => a.concat(e.ids), [])
+    .filter(id => OPCIONAIS.indexOf(id) < 0 || ordemReal.indexOf(id) >= 0);
   if (JSON.stringify(ordemReal) !== JSON.stringify(idsEsperados))
     throw new Error("ordem real do relatório mudou: " + JSON.stringify(ordemReal));
   /* legenda na CAPA e régua DENTRO do resumo — o ponto exato de R3 */

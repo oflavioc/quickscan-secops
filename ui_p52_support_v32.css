@@ -53,6 +53,21 @@
 
 .p53-sol-why { margin-bottom: 12px; }
 
+/* C4 · o selo de proveniência. Ele só aparece em item cuja PRESENÇA é decisão
+   do engenheiro — nunca em item que o motor já oferecia. Rótulo que aparece em
+   tudo não distingue nada, e o `D019-PROV1` mede isso nas duas direções. */
+.p53-sol-prov {
+  margin: 0 0 10px;
+  padding: 6px 10px;
+  border-left: 3px solid var(--p52-attn);
+  background: var(--surface2);
+  border-radius: 0 6px 6px 0;
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--muted);
+}
+.p53-sol-card-add { border-style: dashed; }
+
 /* O ponteiro que fica no disclosure legado depois que os blocos migram. Ele
    existe porque o `<details>` é âncora do `D010-ARB3` e não pode ser ocultado;
    vazio e mudo, ele mentiria. */

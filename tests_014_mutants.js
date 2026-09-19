@@ -215,12 +215,22 @@ const MUTANTS = [
   { id: "D014-M7", file: F.builder, gate: "D014-COB1",
     desc: "folha nova injetada pelo builder sem tocar a varredura — a cobertura derivada tem de recusar ALTO, nomeando a folha",
     reason: /ui_d014_m7_fantasma\.css/,
+    /* [019 · W4 · 2026-09-18] REANCORADO. A folha `ui_p52_support_v32.css`
+       entrou na injeção do builder: a linha de `html.replace` mudou e a leitura
+       de `p53solcss` nasceu entre as duas linhas da âncora contígua. Resultado
+       medido: `ocorrencias=0`, mutante NÃO EXECUTADO com o alvo existindo —
+       EA-4 atingindo campanha alheia, denunciado pelo stage `mutation`.
+       O ATAQUE NÃO MUDOU: o `repl` continua injetando UMA folha fantasma que
+       não existe no disco, e o kill continua sendo a varredura recusar ALTO
+       nomeando `ui_d014_m7_fantasma.css` em vez de varrer por baixo. */
     find: String.raw`d011css = open(D011CSS, encoding="utf-8").read()
-html = html.replace("</style>", "\n/* V32_CSS_BEGIN */\n" + uicss + "\n/* V32_CSS_END */\n/* V32_UXCSS_BEGIN */\n" + uxcss + "\n/* V32_UXCSS_END */\n/* V32_P50CSS_BEGIN */\n" + p50css + "\n/* V32_P50CSS_END */\n/* V32_P52CSS_BEGIN */\n" + p52css + "\n/* V32_P52CSS_END */\n/* V32_D011CSS_BEGIN */\n" + d011css + "\n/* V32_D011CSS_END */\n</style>")`,
+p53solcss = open(P53SOLCSS, encoding="utf-8").read()
+html = html.replace("</style>", "\n/* V32_CSS_BEGIN */\n" + uicss + "\n/* V32_CSS_END */\n/* V32_UXCSS_BEGIN */\n" + uxcss + "\n/* V32_UXCSS_END */\n/* V32_P50CSS_BEGIN */\n" + p50css + "\n/* V32_P50CSS_END */\n/* V32_P52CSS_BEGIN */\n" + p52css + "\n/* V32_P52CSS_END */\n/* V32_D011CSS_BEGIN */\n" + d011css + "\n/* V32_D011CSS_END */\n/* V32_P53SOLCSS_BEGIN */\n" + p53solcss + "\n/* V32_P53SOLCSS_END */\n</style>")`,
     repl: String.raw`D014CSS = HERE / "ui_d014_m7_fantasma.css"   # MUTANTE D014-M7: folha nova, varredura nao avisada
 d014css = open(D014CSS, encoding="utf-8").read()
 d011css = open(D011CSS, encoding="utf-8").read()
-html = html.replace("</style>", "\n/* V32_CSS_BEGIN */\n" + uicss + "\n/* V32_CSS_END */\n/* V32_UXCSS_BEGIN */\n" + uxcss + "\n/* V32_UXCSS_END */\n/* V32_P50CSS_BEGIN */\n" + p50css + "\n/* V32_P50CSS_END */\n/* V32_P52CSS_BEGIN */\n" + p52css + "\n/* V32_P52CSS_END */\n/* V32_D011CSS_BEGIN */\n" + d011css + "\n/* V32_D011CSS_END */\n/* V32_D014CSS_BEGIN */\n" + d014css + "\n/* V32_D014CSS_END */\n</style>")` },
+p53solcss = open(P53SOLCSS, encoding="utf-8").read()
+html = html.replace("</style>", "\n/* V32_CSS_BEGIN */\n" + uicss + "\n/* V32_CSS_END */\n/* V32_UXCSS_BEGIN */\n" + uxcss + "\n/* V32_UXCSS_END */\n/* V32_P50CSS_BEGIN */\n" + p50css + "\n/* V32_P50CSS_END */\n/* V32_P52CSS_BEGIN */\n" + p52css + "\n/* V32_P52CSS_END */\n/* V32_D011CSS_BEGIN */\n" + d011css + "\n/* V32_D011CSS_END */\n/* V32_P53SOLCSS_BEGIN */\n" + p53solcss + "\n/* V32_P53SOLCSS_END */\n/* V32_D014CSS_BEGIN */\n" + d014css + "\n/* V32_D014CSS_END */\n</style>")` },
 
   /* ── C6 · o indecidível ───────────────────────────────────────────────── */
   { id: "D014-M8", file: F.instr, gate: "D014-IND1",

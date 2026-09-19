@@ -90,15 +90,37 @@ const MUTANTS = [
     find: "out.reportCuration = cur;", repl: "out.reportCuration_derivado = cur;",
     reason: /inputs canônicos|campo derivado/ },
 
-  { id: "D019-M4", file: F.papel, gate: "D019-PROV1",
+  /* [W6] O M4 mudou de ARQUIVO pelo mesmo motivo do M9: quem emite a
+     proveniência no papel é o dono da apresentação por solução, via o hook que
+     `buildPrintReport()` consome. O ataque é o mesmo e continua sendo o certo —
+     remover o rótulo SÓ NO PAPEL, deixando a tela intacta, que é como as duas
+     superfícies divergem sem ninguém ver (EA-58). */
+  { id: "D019-M4", file: F.solucao, gate: "D019-PROV1",
     desc: "remover a proveniência SÓ NO PAPEL — o modo real de as duas superfícies divergirem",
-    find: 'data-p53-prov', repl: 'data-p53-prov-removido',
+    find: '<div class="pr-mut" data-p53-prov="operador">', repl: '<div class="pr-mut" data-p53-prov-removido="operador">',
     reason: /proveniência ausente no PAPEL/ },
 
+  /* [W6] O M5 ganhou um ataque PLAUSÍVEL, e essa é a palavra que importa.
+     A âncora antiga (`decisions` no módulo de apresentação) nunca existiu: a
+     apresentação não lê nem escreve o modelo derivado, e mutar o que não há
+     seria inventar alvo para fechar a contagem.
+
+     O ataque agora é um erro que alguém REALMENTE cometeria: implementar
+     "excluir" podando o produto do catálogo derivado (`MAP`) em vez de
+     simplesmente não renderizar o card. Funciona na tela, parece limpo — e faz
+     a curadoria alcançar a MEDIÇÃO, que é exatamente o que a C5 proíbe e o que
+     o `D019-MED1` existe para pegar. */
   { id: "D019-M5", file: F.solucao, gate: "D019-MED1",
-    desc: "deixar a curadoria filtrar a lista de findings — alcançar MEDIÇÃO",
-    find: "decisions", repl: "findings",
-    reason: /alterou derivado|não podem mudar/ },
+    desc: "implementar a exclusão podando o catálogo derivado — a curadoria alcança a MEDIÇÃO",
+    find: 'if (decisaoDe(produtos[i].nome) !== "exclude") cards.push(cardDoProduto(produtos[i]));',
+    repl: 'if (decisaoDe(produtos[i].nome) !== "exclude") cards.push(cardDoProduto(produtos[i])); else { var _i = idDoNome(produtos[i].nome); if (_i && typeof MAP !== "undefined") Object.keys(MAP).forEach(function (k) { var lv = MAP[k] && MAP[k].lv; if (!lv) return; Object.keys(lv).forEach(function (n) { lv[n].c = (lv[n].c || []).filter(function (x) { return x.p !== _i; }); }); }); }',
+    /* O motivo esperado inclui a mensagem da alínea NOVA do `D019-MED1`. Na
+       primeira corrida o mutante saiu SOBREVIVENTE "por motivo diferente do
+       esperado": o gate o havia pego, mas pela cláusula da oferta do motor, que
+       não existia quando esta regex foi escrita. O runner está certo em exigir
+       que o motivo bata — detectar pelo motivo errado é coincidência, não
+       cobertura. */
+    reason: /alterou derivado|alterou o que o MOTOR oferece|não podem mudar/ },
 
   { id: "D019-M6", file: F.solucao, gate: "D019-SOL1",
     desc: "descartar produto que só aparece como menção curta — perda que o olho não procura",
@@ -127,9 +149,13 @@ const MUTANTS = [
     find: '"data-p53-sol-grupo-nome": grupo', repl: '"data-p53-sol-grupo-nome-removido": grupo',
     reason: /não se nomeiam|não se nomeia/ },
 
+  /* [W6] O M8 ataca o ponto de consumo: `buildPrintReport()` deixa de chamar o
+     hook e o papel perde a seção inteira. A âncora antiga (`__CURATION` em
+     `ui_v32.js`) nunca teria alvo — o arquivo congelado não fala com o owner do
+     estado, e nem deveria: ele fala com o dono da apresentação. */
   { id: "D019-M8", file: F.papel, gate: "D019-PAR1",
-    desc: "aplicar a curadoria só na tela — o papel volta a publicar tudo",
-    find: "__CURATION", repl: "__CURATION_ignorado",
+    desc: "o papel deixa de consumir a visão por solução — a seleção fica só na tela",
+    find: 'window.__P53SOL.printHTML() : ""', repl: '"" : ""',
     reason: /divergência tela×papel/ },
 
   /* [W5] O M9 mudou de ARQUIVO, não de ataque. Quem declara a supressão é o

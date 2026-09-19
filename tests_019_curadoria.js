@@ -225,32 +225,98 @@ T("D019-INV8", "a sexta chave é ENTRADA canônica: exportada, recomputada na im
 });
 
 /* ================= C4 · proveniência nas DUAS superfícies ================ */
-T("D019-PROV1", "todo item incluído por decisão do operador leva marcador de proveniência na TELA e no PAPEL", () => {
+/* ==========================================================================
+   [W6] A FIXTURE DESTE GATE NÃO CRIAVA A CONDIÇÃO QUE ELE DESCREVE.
+
+   A C4 diz: "todo item cuja **PRESENÇA é decisão do operador** leva rótulo". A
+   fixture original marcava como `include` um produto que o motor JÁ HAVIA
+   OFERECIDO — cuja presença, portanto, não é decisão de ninguém: ele estaria
+   no relatório de qualquer jeito. O gate exigia o selo para uma confirmação.
+
+   Satisfazê-lo como estava significaria carimbar "incluído por decisão do
+   engenheiro" em item derivado da avaliação — ou seja, o produto passaria a
+   MENTIR para caber no gate. Foi pego por leitura do critério contra a spec,
+   antes de escrever a implementação.
+
+   A correção não afrouxa: a alínea (a) passa a usar um produto FORA da oferta,
+   que é o caso que a C4 nomeia, e nasce a alínea (c) — o selo NÃO pode aparecer
+   em item ofertado. Sem ela, um produto que carimbasse tudo passaria, e o
+   rótulo não distinguiria coisa alguma. O `D019-M4` continua atacando a
+   ausência SÓ NO PAPEL, que é o modo real de as duas superfícies divergirem.
+   ========================================================================== */
+T("D019-PROV1", "item cuja PRESENÇA é decisão do operador leva marcador na TELA e no PAPEL — e só ele", () => {
   const { w, d } = boot();
   const b = cur(w);
-  const alvo = b.offered()[0];
-  if (!alvo) vac("(a)", "nenhuma oferta para curar nesta sessão");
-  b.set(alvo, "include");
+  const ofertados = b.offered();
+  const foraDaOferta = b.catalog().filter(id => ofertados.indexOf(id) < 0)[0];
+  if (!foraDaOferta) vac("(a)", "todo o catálogo foi ofertado — não há presença que seja decisão do operador");
+  if (!ofertados.length) vac("(a)", "nenhuma oferta nesta sessão — a alínea (c) ficaria sem sujeito");
+  b.set(foraDaOferta, "include");
+  b.set(ofertados[0], "include");          /* confirmação: NÃO é decisão de presença */
   w.__DEV.showResults();
-  const naTela = qa(d, "#app [data-p53-prov]").length;
-  if (!naTela) throw new Error("marcador de proveniência ausente na TELA");
+
+  const cardDe = id => {
+    const p = w.eval("PRODUCTS")[id];
+    return p ? d.querySelector('#app [data-p53-sol-produto="' + p.n + '"]') : null;
+  };
+  /* (a) o acrescentado está na TELA e leva o selo */
+  const add = cardDe(foraDaOferta);
+  if (!add) throw new Error("o produto incluído pelo operador não chegou à TELA");
+  if (!add.querySelector("[data-p53-prov]")) throw new Error("marcador de proveniência ausente na TELA");
+  /* (b) e no PAPEL — o modo real de divergir (EA-58) */
   w.__DEV.preparePrint();
-  const noPapel = qa(d, "#v32-print-report [data-p53-prov]").length;
+  const noPapel = qa(d, '#v32-print-report [data-p53-sol-produto] [data-p53-prov]').length;
+  const papelAdd = d.querySelector('#v32-print-report [data-p53-sol-produto]');
   w.__DEV.finishPrint();
+  if (!papelAdd) throw new Error("a visão por solução não chegou ao PAPEL — sem sujeito");
   if (!noPapel) throw new Error("marcador de proveniência ausente no PAPEL — é assim que as duas superfícies divergem (EA-58)");
+  /* (c) o CONFIRMADO não leva selo: rótulo que aparece em tudo não distingue nada */
+  const conf = cardDe(ofertados[0]);
+  if (conf && conf.querySelector("[data-p53-prov]"))
+    throw new Error("item OFERTADO pelo motor levou marcador de proveniência — o rótulo afirma decisão de presença " +
+      "que não houve, e um selo que aparece em tudo não distingue nada");
   return true;
 });
 
 /* ========== C5 · não alcança medição nem declaração (VERDE hoje) ========= */
-T("D019-MED1", "a curadoria não alcança medição nem declaração: derivados idênticos com e sem ela", () => {
+/* ==========================================================================
+   [W6] ESTE GATE NÃO OLHAVA PARA O CATÁLOGO DERIVADO, E O MUTANTE PROVOU.
+
+   `derivado()` compara `legacySnapshot()` e `buildRecommendationContext()` —
+   nenhum dos dois passa por `MAP`. Então uma exclusão implementada PODANDO o
+   catálogo derivado (que é o erro que alguém realmente comete: "removi do MAP,
+   agora não renderiza") deixava o gate VERDE. O `D019-M5` fez exatamente isso
+   e sobreviveu.
+
+   E a poda É a curadoria alcançando a medição: `offered()` deriva de
+   `computeFindings()` + `MAP`; mexer ali muda o que o MOTOR oferece, não o que
+   a tela mostra. A alínea nova compara a OFERTA do motor antes e depois —
+   mesma expressão que o `D019-SOL1` usa como oráculo, pela mesma razão.
+   ========================================================================== */
+const OFERTA_DO_MOTOR =
+  "(function(){var o=[],fs=(computeFindings()||{}).findings||[];" +
+  "for(var i=0;i<fs.length;i++){var f=fs[i],m=MAP[f.id];" +
+  "if(!m||!m.lv||!m.lv[f.lvl])continue;var c=m.lv[f.lvl].c||[];" +
+  "for(var j=0;j<c.length;j++)o.push(f.id+'/'+f.lvl+'/'+c[j].p);}" +
+  "return o.join('|');})()";
+
+T("D019-MED1", "a curadoria não alcança medição nem declaração: derivados E oferta do motor idênticos com e sem ela", () => {
   const { w } = boot();
   const antes = derivado(w);
+  const ofertaAntes = w.eval(OFERTA_DO_MOTOR);
+  if (!ofertaAntes) vac("(a)", "o motor não ofereceu nada nesta sessão — sem sujeito para a alínea da oferta");
   let b = null;
   try { b = w.__CURATION; } catch (e) { b = null; }
-  if (b && b.offered && b.offered().length) { b.set(b.offered()[0], "exclude"); w.__DEV.showResults(); }
+  if (!b || !b.offered || !b.offered().length) vac("(b)", "sem curadoria disponível — nada a exercer");
+  b.set(b.offered()[0], "exclude");
+  w.__DEV.showResults();
   const depois = derivado(w);
   if (antes !== depois)
     throw new Error("a curadoria alterou derivado — score/estágio/suficiência/gaps não podem mudar (C5)");
+  const ofertaDepois = w.eval(OFERTA_DO_MOTOR);
+  if (ofertaAntes !== ofertaDepois)
+    throw new Error("a curadoria alterou o que o MOTOR oferece — excluir é não publicar, nunca podar o catálogo " +
+      "derivado; isso é a curadoria alcançando a MEDIÇÃO (C5)");
   return true;
 });
 

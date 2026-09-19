@@ -1,6 +1,6 @@
 {
   "demanda": "019-curadoria-do-relatorio",
-  "phase": "implement",
+  "phase": "done",
   "spec_dir": "specs/019-curadoria-do-relatorio",
   "branch": "feature/019-curadoria-do-relatorio",
   "brief": "Achado EA-57 mais o feedback de 2026-09-15: o SE termina a sessao sabendo coisas que o screening nao sabe (o que o cliente ja contratou, o que esta em piloto, qual conversa esta madura) e nao tem onde colocar isso — o relatorio sai como o motor produziu, e a escolha e entregar assim ou reescrever fora da ferramenta. A demanda entrega uma tela de CURADORIA, depois dos resultados, onde o operador seleciona o subconjunto do que o motor produziu que vai ao relatorio, na tela E no PDF; e absorve a reorganizacao de 'Formas de apoio' por SOLUCAO, porque a curadoria precisa de uma lista de produtos para oferecer e essa lista e exatamente a visao por solucao. FRONTEIRA DURA: o operador escolhe entre o que o motor ofereceu, nunca escreve o que o motor deveria ter dito — e disso dependem as duas invariantes que a demanda tangencia (INV-7 determinismo, INV-8 derivado nunca serializado). Medido em 2026-09-17 sobre develop: sessao real de 15 respostas produz 15 blocos de apoio para 9 produtos distintos e 20 mencoes, com 'Servicos FortiGuard' aparecendo 5 vezes; a visao por solucao daria 9 cards. Aberta a pedido do proprietario; conducao sob a delegacao de 2026-08-29.",
@@ -43,22 +43,36 @@
     ]
   },
   "implement": {
-    "status": "in_progress",
+    "status": "done",
     "waves_done": [
       "W2",
       "W3",
       "W4",
-      "W5"
+      "W5",
+      "W6",
+      "W7"
     ],
     "commits": {
       "W2": "aef6ff3",
       "W3": "3b616db",
       "W4": "0448673",
-      "W5": "7a1b461"
+      "W5": "7a1b461",
+      "W6": "4400b2e",
+      "W7": "69cc5a2"
     },
-    "gates": "D019 CURADORIA 8 PASS - 2 FAIL de 10; os 2 vermelhos sao W6 (PROV1, PAR1).",
-    "mutation": "8 DETECTADO - 0 SOBREVIVENTE - 3 NAO EXECUTADO de 11; M4, M5 e M8 esperam a W6. Campanhas alheias seguem verdes (stage mutation 0 problemas).",
-    "verify": "stage mutation limpo (0 problemas). O unico FAIL do run.sh segue sendo o stage suites, porque as duas suites da 019 so entram no registro na T022 (W7).",
+    "gates": "D019 CURADORIA 10 PASS - 0 FAIL de 10.",
+    "mutation": "11 DETECTADO - 0 SOBREVIVENTE - 0 NAO EXECUTADO de 11. Preflight: 11 ancoras, todas com ocorrencias == 1.",
+    "verify": "run.sh 17 PASS - 1 FAIL; o unico FAIL e o stage `mutation`, por p51 e p52 exigirem Chromium (KI-3) — execucao canonica no job `visual` do CI. compliance-audit 17 PASS - 0 FAIL - 0 WARN.",
     "notes": "W3 fechada com T010, T011 e T012. A sexta chave canonica `reportCuration` e ENTRADA e e OMITIDA quando nada foi declarado, o que preserva missing != {} (INV-8). RENAME `offerings` -> `decisions`: medido por sonda que, com o nome antigo, o S4-S5 REPROVAVA, porque `offerings` e um dos treze nomes de campo derivado banidos. A saida nao foi afrouxar o banimento e sim corrigir o nome. T012 cumprida por execucao nas tres condicoes: (i) a linha `banned` e contexto no diff, byte-identica, e passou a ser conferida TAMBEM com curadoria declarada; (ii) D019-M11 ressuscita a lista de cinco e sai DETECTADO; (iii) commit separado e posterior ao T010. TRES DEFEITOS MEUS, todos pegos por execucao e corrigidos nesta wave: (1) commitei T010/T011 depois de rodar so a suite de sessao, deixando o pin da §29.4 de ui_session_v32.js para tras e o P50-GOV1 vermelho; (2) o rename deixou as ancoras de M1, M2 e M3 ambiguas e os tres sairam NAO EXECUTADO com o alvo existindo (EA-4, ancora podre); (3) com ancoras boas, M1 e M2 sairam SOBREVIVENTES e a culpa era dos gates: o CUR1 olhava um estado intocado e o CUR2 so conferia que o relatorio nao estava vazio. Familia do EA-20, a segunda vez nesta demanda depois do PAR1. Os dois gates ganharam alinea e ficaram MAIORES; nada foi afrouxado. W4 FECHADA com T013, T014 e T015. Decisao do proprietario em 2026-09-18: consolidar TUDO na secao de apoio — medido que com prioridades declaradas os 15 blocos nao estavam todos la (3 em #p52-sec-support e 12 no <details> da secao de gaps), e restringir a secao deixaria 6 produtos fora. 15 blocos viram 9 cards de produto; `Servicos FortiGuard` deixa de aparecer 5 vezes. Medido no navegador a 1440 CSS px: grade de 2 colunas, cards a 49% da secao (limite do REC1g e 62%), contador data-p52-support-cards = 9. TRES GATES ME BARRARAM E OS TRES ESTAVAM CERTOS: (1) P52-REC1g — container por grupo zeraria :scope > .apoio-block e TODA a clausula de geometria ficaria pulada por guarda; sem container, cards sao filhos diretos ordenados por grupo. (2) D010-ARB1 (c) — minha faixa de grupo se pos entre o titulo congelado e os blocos e quebrou a contiguidade do censo da Camada 1; a faixa virou selo dentro do card. (3) D010-ARB3 — a arbitragem da 010 e tudo-ou-nada, e consumir blocos visiveis de regiao parcialmente oculta produz o estado misto que ela proibe; o modulo passa a se ABSTER quando ha substituto V3.2. Mais o d014, que exigiu declarar a folha de CSS nova no censo PINADO — repinada com numeros MEDIDOS pelo instrumento, e o veredito voltou a zero regras mortas. E A CAMPANHA COBROU DOS GATES, nao do produto: D019-M6 saiu SOBREVIVENTE porque o D019-SOL1 tinha virado TAUTOLOGIA — lia o conjunto por gap do DOM, mas a consolidacao move os .prod para dentro dos cards e consome as mencoes curtas, entao o gate comparava o resultado com ele mesmo. Oraculo trocado para o MOTOR (computeFindings + MAP + PRODUCTS), medindo o PAR produto x capability: 20 pares dos dois lados. O D019-SOL2 tinha o problema irmao — sua unica clausula com dentes olhava o balde nao-classificado, que esta VAZIO — e passou a exigir que TODO grupo presente se nomeie. O D019-M7 mudou de ataque pelo mesmo motivo: o original seria inerte, e mutante inerte vira confianca falsa. QUARTO DEFEITO MEU DA SERIE: a edicao do builder apodreceu as ancoras de D011-M18 e D014-M7, campanhas de OUTRAS demandas, que sairam NAO EXECUTADO com alvo existindo. Quem denunciou foi o stage mutation; as suites estavam todas verdes. Reancorados com o ataque de cada um preservado. W5 FECHADA com T016-T019. Editor `ui_curation_edit_v32.js`: nao e dono de estado (le e escreve pelo __CURATION) e NAO TEM CAMPO DE TEXTO, porque a fronteira e selecao e nao redacao. T017: o return por gate fechado vem ANTES de qualquer chamada ao bridge — 'o estado nao e lido' e a metade que escapa. T018: supressao TOTAL e PARCIAL se declaram; secao ausente e secao vazia sao os dois erros simetricos. `v32-hidden` proibido neste modulo: o D010-ARB3 reprova no meu como transbordo da varredura. CORRIGI O TEXTO DO PROPRIO AVISO: eu havia escrito 'nao e MAIS sustentada', que afirma que a sessao mudou DEPOIS da escolha — e o estado nao sabe disso (guarda id->enum, sem proveniencia temporal, por desenho da C1/INV-8). unsupported() e por construcao o mesmo conjunto de escolhaDoOperador(). O aviso passou a afirmar so o observavel. QUARTA APARICAO DA FAMILIA EA-20: a T019 tinha o CUR2 como gate e nada nele media sinalizacao. Acrescentada alinea (e), que abre o editor pelo CONTROLE real (nao chamando a montagem a mao) e exige o marcador. Pega por leitura, antes do mutante. M9 mudou de arquivo (quem declara a supressao e a apresentacao, nao o editor) e M10 foi reancorado no predicado em vez da palavra `blocked`."
-  }
+  },
+  "validate": {
+    "status": "done",
+    "spec_validate": "specs/019-curadoria-do-relatorio/spec-validate.md",
+    "score_iteracao_1": "13/16 = 81,3%",
+    "score_iteracao_2": "14/16 = 87,5%",
+    "gaps": "4 gaps. Gap 1 (C2, spec-errada): a byte-identidade ficou impossivel quando o proprietario decidiu, em 2026-09-18, consolidar os 15 blocos em 9 cards — consolidar E mudar o relatorio; a intencao da C2 (ausencia nao suprime) continua medida, com mais dentes. Gap 2 (R10 §3, spec-errada): a spec exige registro 'no mesmo commit' e a regra que ela cita diz 'no mesmo PR'; o mais estrito e inexequivel com janela vermelha visivel. Gap 3 (nao e gap): a fixture do D019-PROV1 foi corrigida — ela exigia selo para item que o motor JA OFERECIA, e satisfaze-la faria o PRODUTO MENTIR. Gap 4 (LACUNA DE IMPLEMENTACAO, fechada): a leitura arquitetural esta na coluna 'curavel' do portao da Fase 0 e a spec nao a levou para nenhum criterio; o estado a suportava, nenhuma superficie a honrava e o editor nao a oferecia. Entregue com a alinea (c) do D019-PAR1, que confere as DUAS direcoes — excluir retira das duas superficies e reincluir devolve.",
+    "erratas_propostas": "E1 (C2), E2 (R10 §3), E3 (novo criterio C11) — todas PENDENTES DE RATIFICACAO do proprietario.",
+    "aceite_de_intencao": "`nao encontrei objecao` — R4 §D3: nenhum agente escreve em registro de aceitacao. O aceite e do proprietario, no chat. relatorio-final.md registrado."
+  },
+  "pr_url": "https://github.com/oflavioc/quickscan-secops/pull/88"
 }

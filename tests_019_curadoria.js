@@ -172,6 +172,24 @@ T("D019-CUR2", "ausência de curadoria produz o MESMO relatório de hoje — mis
   if (JSON.stringify(publicado) !== JSON.stringify(ofertado))
     throw new Error("sem curadoria declarada o publicado divergiu do ofertado — ausência virou supressão: " +
       ofertado.length + " ofertados, " + publicado.length + " publicados");
+  /* (e) [W5] A T019 — inclusão que a avaliação não oferece é SINALIZADA no
+     editor — tinha o `D019-CUR2` como gate e nada nele media sinalização
+     alguma. Comportamento implementado que nenhuma máquina observa é
+     comportamento que some no refactor seguinte. É a quarta vez nesta demanda
+     que a distância entre o que o gate promete e o que ele mede aparece; esta
+     foi pega por leitura, antes de qualquer mutante. */
+  const extra = b.catalog().filter(id => ofertado.indexOf(id) < 0)[0];
+  if (!extra) vac("(e)", "todo o catálogo foi ofertado nesta sessão — sem sujeito para inclusão sem lastro");
+  b.set(extra, "include");
+  w.__DEV.showResults();
+  const abrir = d.querySelector("[data-p53-abrir-curadoria]");
+  if (!abrir) throw new Error("controle de curadoria ausente com o resultado liberado — a alínea (e) não teria sujeito");
+  abrir.click();
+  if (!d.querySelector("[data-p53-cur-panel]"))
+    throw new Error("o controle não abriu o painel — sem painel não há onde sinalizar");
+  if (!d.querySelector("[data-p53-cur-sem-lastro]"))
+    throw new Error("inclusão que a avaliação não oferece NÃO foi sinalizada no editor — " +
+      "mantida em silêncio é o que o caso de borda 4/5 proíbe");
   return true;
 });
 

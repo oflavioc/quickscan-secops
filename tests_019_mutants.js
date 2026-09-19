@@ -132,14 +132,22 @@ const MUTANTS = [
     find: "__CURATION", repl: "__CURATION_ignorado",
     reason: /divergência tela×papel/ },
 
-  { id: "D019-M9", file: F.editor, gate: "D019-VAZ1",
+  /* [W5] O M9 mudou de ARQUIVO, não de ataque. Quem declara a supressão é o
+     dono da apresentação (`ui_p52_support_v32.js`), não o editor: o editor
+     decide, a apresentação publica. Apontá-lo para o editor o deixaria
+     `ocorrencias=0` para sempre — NÃO EXECUTADO eterno com cara de campanha
+     incompleta, que é o modo de falha do EA-4. */
+  { id: "D019-M9", file: F.solucao, gate: "D019-VAZ1",
     desc: "renderizar seção vazia quando a curadoria suprime tudo",
-    find: "data-p53-suprimido", repl: "data-p53-suprimido-removido",
+    find: '"data-p53-suprimido": String(suprimidos)', repl: '"data-p53-suprimido-removido": String(suprimidos)',
     reason: /vazia e muda|DESAPARECEU/ },
 
+  /* [W5] O M10 foi reancorado no predicado, e não na palavra `blocked`: o
+     editor pergunta se o gate está `released`, não se está `blocked`. Ancorar
+     na palavra do enum oposto era ancorar no vocabulário de outro módulo. */
   { id: "D019-M10", file: F.editor, gate: "D019-SUF1",
     desc: "oferecer curadoria com o resultado bloqueado",
-    find: 'blocked', repl: 'released',
+    find: 'return !res || res.getAttribute("data-p50-gate") !== "released";', repl: 'return false;',
     reason: /resultado bloqueado/ },
 
   /* [T012] O mutante da REANCORAGEM. Ele não ataca o produto: ataca o critério

@@ -267,7 +267,19 @@ const PROTECTED = {
      arquivo só a concatena.
      Identidade anterior:
      07e1dec0aea89d31616c3b2bee9b8bc10ffad276b7324dc4d97dcd1cc2468eb7 */
-  "ui_v32.js": "6db500439aea5a4264f4220b872fab776b5e37a0b78c9c9606ef67a5c44ee79c",
+  /* [019 · T025 · 2026-09-18] SEGUNDO REPIN da mesma autorizacao. O aceite de
+     intencao contra o refinement encontrou uma lacuna: a LEITURA ARQUITETURAL
+     esta na coluna "curavel" do portao da Fase 0 (§P4) e a spec nao a levou
+     para nenhum dos dez criterios — o estado a suportava, nenhuma superficie a
+     honrava e o editor nao a oferecia.
+     A edicao sao DUAS guardas (tela e papel) e UM helper de consulta,
+     , que existe justamente para que as duas superficies
+     nao possam divergir por esquecimento de um dos lados. Ausencia do modulo,
+     ausencia da chave ou erro devolvem : a curadoria SUPRIME, nunca e
+     pre-condicao para publicar.
+     Identidade anterior:
+     6db500439aea5a4264f4220b872fab776b5e37a0b78c9c9606ef67a5c44ee79c */
+  "ui_v32.js": "30a6d48e4aca170c5b3c7bf41100ea1fc1ca20739765ffda945a6ffe16a84670",
   "ui_ux_v32.js": "a050401145a5ed7af597eae01a9a23826418119769c096db168b3b177a9d3938",
   /* ERRATA DA AUDITORIA EXTERNA · §4.1.1 ("qualquer texto derivado consome a
      mesma decisão canônica de publicabilidade"). A comparação Atual × Alvo

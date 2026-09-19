@@ -6043,6 +6043,18 @@ function newDraft(){
   };
 }
 
+/* [019 · T025] Leitura da curadoria para itens que NÃO são produto — hoje só a
+   nota arquitetural. Um único ponto de consulta, para que tela e papel não
+   possam divergir por esquecimento de um dos dois lados (é o EA-58 de novo).
+   Ausência do módulo, ausência da chave ou qualquer erro devolvem `true`: a
+   curadoria SUPRIME, nunca é pré-condição para publicar. */
+function v32CuradoriaPublica(chave){
+  try {
+    if (typeof window === "undefined" || !window.__CURATION || !window.__CURATION.__installed) return true;
+    return window.__CURATION.state()[chave] !== "exclude";
+  } catch (e) { return true; }
+}
+
 /* ---------------- render: blocos pós-resultado ---------------- */
 function ensurePanel(app){
   let p = document.getElementById("v32panel");
@@ -6699,7 +6711,12 @@ function buildSupportHTML(res, afirmaPreservacao){
       <div class="v32-block" id="v32maturity">${matIds.map(id=>baseCardHTML(id, ctxs[id], "maturity")).join("")}</div>`;
   /* [3.2.1-2] mantido; [3.2.2-A] prioridades excluídas das seções subsequentes */
   const an = res.architectureNote;
-  if (an && an.show){
+  /* [019 · T025] A leitura arquitetural é CURÁVEL — decisão do portão da Fase 0
+     (refinement §P4, coluna "curável"). O estado dela vive no owner
+     (`__CURATION`), e aqui só se consome, sob guarda `typeof`: sem o módulo, o
+     comportamento é o de hoje. Excluí-la a retira das DUAS superfícies — esta e
+     a de `buildPrintReport()` —, nunca de uma só. */
+  if (an && an.show && v32CuradoriaPublica("architectureNote")){
     html += `<div class="section-title"><div class="eyebrow">Leitura arquitetural</div></div>
       <div class="v32-block" id="v32arch-note">
         <div class="v32-neutral">${an.basis.coreGaps.length} gaps confirmados em capabilities core de plataforma; ${an.basis.socPlatformNone?"ausência confirmada de plataforma SOC":"fragmentação declarada na stack"}.</div>
@@ -7217,7 +7234,7 @@ function buildPrintReport(){
   h += `</div>`;
   /* H — leitura arquitetural */
   const an = ctxRes.architectureNote;
-  if (an && an.show) h += `<div class="pr-sec" id="pr-arch"><h2>Leitura arquitetural</h2>
+  if (an && an.show && v32CuradoriaPublica("architectureNote")) h += `<div class="pr-sec" id="pr-arch"><h2>Leitura arquitetural</h2>
     <div class="pr-card"><div class="pr-mut">${an.basis.coreGaps.length} gaps confirmados em capabilities core; ${an.basis.socPlatformNone?"ausência confirmada de plataforma SOC":"fragmentação declarada"}.</div>
     <div><b>Rota A</b> — ${esc32(an.optionA)}</div>
     ${an.optionB?`<div><b>Rota B</b> — ${esc32(an.optionB)}</div>`:""}</div></div>`;
@@ -15886,6 +15903,11 @@ if (window.__DEV) Object.assign(window.__DEV, { openExportModal, openImportPicke
     return !res || res.getAttribute("data-p50-gate") !== "released";
   }
 
+  /* `undefined` significa "o motor decide", e o motor publica — a mesma
+     disciplina de `missing ≠ vazio` que vale para os produtos. */
+  function estadoNota(b) {
+    try { return b.state().architectureNote; } catch (e) { return undefined; }
+  }
   function nomeDe(id) {
     var p = (typeof PRODUCTS !== "undefined" && PRODUCTS) ? PRODUCTS[id] : null;
     return (p && p.n) || id;
@@ -15975,6 +15997,38 @@ if (window.__DEV) Object.assign(window.__DEV, { openExportModal, openImportPicke
     listaOf.appendChild(el("h4", { "class": "p53-cur-lista-t" }, "Oferecidos pela avaliação"));
     ofertados.forEach(function (id) { listaOf.appendChild(linhaProduto(b, id, true)); });
     painel.appendChild(listaOf);
+
+    /* ====================================================================
+       A LEITURA ARQUITETURAL, que é curável por decisão do portão da Fase 0
+       (refinement §P4). Ela não é produto e não entra nas listas acima: é um
+       item só, com um enum só, e por isso tem controle próprio.
+
+       Só aparece quando a leitura EXISTE nesta sessão. Oferecer o controle de
+       algo que não está no relatório seria pedir uma decisão sem objeto — a
+       mesma razão pela qual o editor inteiro não existe com o gate de
+       suficiência fechado.
+       ==================================================================== */
+    if (document.getElementById("v32arch-note") || estadoNota(b) === "exclude") {
+      var arq = el("div", { "class": "p53-cur-lista", "data-p53-cur-lista": "arquitetura" });
+      arq.appendChild(el("h4", { "class": "p53-cur-lista-t" }, "Leitura arquitetural"));
+      var linhaA = el("label", { "class": "p53-cur-item", "data-p53-cur-arquitetura": "1" });
+      var cxA = el("input", { type: "checkbox", "class": "p53-cur-check" });
+      var incluida = estadoNota(b) !== "exclude";
+      if (incluida) cxA.setAttribute("checked", "checked");
+      cxA.checked = incluida;
+      cxA.addEventListener("change", function () {
+        try { b.setArchitectureNote(cxA.checked ? "include" : "exclude"); }
+        catch (e) { erros.push(String((e && e.message) || e)); cxA.checked = !cxA.checked; return; }
+        redesenhar();
+      });
+      linhaA.appendChild(cxA);
+      var txtA = el("span", { "class": "p53-cur-item-txt" });
+      txtA.appendChild(el("span", { "class": "p53-cur-item-nome" }, "Publicar a leitura arquitetural"));
+      txtA.appendChild(el("span", { "class": "p53-cur-item-grp" }, "rotas A e B, na tela e no papel"));
+      linhaA.appendChild(txtA);
+      arq.appendChild(linhaA);
+      painel.appendChild(arq);
+    }
 
     var extras = catalogo.filter(function (id) { return ofertados.indexOf(id) < 0; });
     if (extras.length) {

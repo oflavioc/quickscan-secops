@@ -448,6 +448,40 @@ T("D019-PAR1", "tela e papel publicam o mesmo conjunto, medido DEPOIS de beforep
   const soPapel = [...papel].filter(x => !tela.has(x));
   if (soTela.length || soPapel.length)
     throw new Error("divergência tela×papel — só na tela: [" + soTela.join(", ") + "] · só no papel: [" + soPapel.join(", ") + "]");
+
+  /* (c) [T025] A LEITURA ARQUITETURAL TAMBÉM É CURÁVEL, e nas duas superfícies.
+     Ela está na coluna "curável" do portão da Fase 0 (refinement §P4) e a spec
+     não a levou para nenhum dos dez critérios — o aceite de intenção encontrou
+     a lacuna, e o comportamento foi entregue. Sem esta alínea ele nasceria sem
+     máquina que o observe, que é como comportamento some no refactor seguinte.
+
+     Fixture própria, e ela é necessária: a sessão de referência não declara
+     contexto tecnológico, e sem contexto a leitura arquitetural não existe —
+     medir ali seria medir o vazio. */
+  const A = boot();
+  const V = A.w.__DEV.V32;
+  ["security-analytics", "soc-platform"].forEach(c => {
+    if (V.TECH_LANDSCAPE[c]) V.TECH_LANDSCAPE[c].presence = "NONE";
+  });
+  V.ARCHITECTURE_CONTEXT.saasAllowed = "yes";
+  V.ARCHITECTURE_CONTEXT.unifiedPlatformPreference = "unified";
+  A.w.__DEV.showResults();
+  if (!A.d.getElementById("v32arch-note"))
+    vac("(c)", "a fixture não produziu leitura arquitetural — a alínea ficaria sem sujeito");
+  cur(A.w).setArchitectureNote("exclude");
+  A.w.__DEV.showResults();
+  if (A.d.getElementById("v32arch-note"))
+    throw new Error("leitura arquitetural EXCLUÍDA continua na TELA");
+  A.w.__DEV.preparePrint();
+  const noPapel = !!A.d.getElementById("pr-arch");
+  A.w.__DEV.finishPrint();
+  if (noPapel)
+    throw new Error("leitura arquitetural EXCLUÍDA continua no PAPEL — é assim que as duas superfícies divergem (EA-58)");
+  cur(A.w).setArchitectureNote("include");
+  A.w.__DEV.showResults();
+  if (!A.d.getElementById("v32arch-note"))
+    throw new Error("reincluir não devolveu a leitura arquitetural — exclusão tem de ser reversível, " +
+      "senão a curadoria vira destruição");
   return true;
 });
 

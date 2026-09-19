@@ -148,6 +148,18 @@ function newDraft(){
   };
 }
 
+/* [019 · T025] Leitura da curadoria para itens que NÃO são produto — hoje só a
+   nota arquitetural. Um único ponto de consulta, para que tela e papel não
+   possam divergir por esquecimento de um dos dois lados (é o EA-58 de novo).
+   Ausência do módulo, ausência da chave ou qualquer erro devolvem `true`: a
+   curadoria SUPRIME, nunca é pré-condição para publicar. */
+function v32CuradoriaPublica(chave){
+  try {
+    if (typeof window === "undefined" || !window.__CURATION || !window.__CURATION.__installed) return true;
+    return window.__CURATION.state()[chave] !== "exclude";
+  } catch (e) { return true; }
+}
+
 /* ---------------- render: blocos pós-resultado ---------------- */
 function ensurePanel(app){
   let p = document.getElementById("v32panel");
@@ -804,7 +816,12 @@ function buildSupportHTML(res, afirmaPreservacao){
       <div class="v32-block" id="v32maturity">${matIds.map(id=>baseCardHTML(id, ctxs[id], "maturity")).join("")}</div>`;
   /* [3.2.1-2] mantido; [3.2.2-A] prioridades excluídas das seções subsequentes */
   const an = res.architectureNote;
-  if (an && an.show){
+  /* [019 · T025] A leitura arquitetural é CURÁVEL — decisão do portão da Fase 0
+     (refinement §P4, coluna "curável"). O estado dela vive no owner
+     (`__CURATION`), e aqui só se consome, sob guarda `typeof`: sem o módulo, o
+     comportamento é o de hoje. Excluí-la a retira das DUAS superfícies — esta e
+     a de `buildPrintReport()` —, nunca de uma só. */
+  if (an && an.show && v32CuradoriaPublica("architectureNote")){
     html += `<div class="section-title"><div class="eyebrow">Leitura arquitetural</div></div>
       <div class="v32-block" id="v32arch-note">
         <div class="v32-neutral">${an.basis.coreGaps.length} gaps confirmados em capabilities core de plataforma; ${an.basis.socPlatformNone?"ausência confirmada de plataforma SOC":"fragmentação declarada na stack"}.</div>
@@ -1322,7 +1339,7 @@ function buildPrintReport(){
   h += `</div>`;
   /* H — leitura arquitetural */
   const an = ctxRes.architectureNote;
-  if (an && an.show) h += `<div class="pr-sec" id="pr-arch"><h2>Leitura arquitetural</h2>
+  if (an && an.show && v32CuradoriaPublica("architectureNote")) h += `<div class="pr-sec" id="pr-arch"><h2>Leitura arquitetural</h2>
     <div class="pr-card"><div class="pr-mut">${an.basis.coreGaps.length} gaps confirmados em capabilities core; ${an.basis.socPlatformNone?"ausência confirmada de plataforma SOC":"fragmentação declarada"}.</div>
     <div><b>Rota A</b> — ${esc32(an.optionA)}</div>
     ${an.optionB?`<div><b>Rota B</b> — ${esc32(an.optionB)}</div>`:""}</div></div>`;

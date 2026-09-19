@@ -64,6 +64,11 @@
     return !res || res.getAttribute("data-p50-gate") !== "released";
   }
 
+  /* `undefined` significa "o motor decide", e o motor publica — a mesma
+     disciplina de `missing ≠ vazio` que vale para os produtos. */
+  function estadoNota(b) {
+    try { return b.state().architectureNote; } catch (e) { return undefined; }
+  }
   function nomeDe(id) {
     var p = (typeof PRODUCTS !== "undefined" && PRODUCTS) ? PRODUCTS[id] : null;
     return (p && p.n) || id;
@@ -153,6 +158,38 @@
     listaOf.appendChild(el("h4", { "class": "p53-cur-lista-t" }, "Oferecidos pela avaliação"));
     ofertados.forEach(function (id) { listaOf.appendChild(linhaProduto(b, id, true)); });
     painel.appendChild(listaOf);
+
+    /* ====================================================================
+       A LEITURA ARQUITETURAL, que é curável por decisão do portão da Fase 0
+       (refinement §P4). Ela não é produto e não entra nas listas acima: é um
+       item só, com um enum só, e por isso tem controle próprio.
+
+       Só aparece quando a leitura EXISTE nesta sessão. Oferecer o controle de
+       algo que não está no relatório seria pedir uma decisão sem objeto — a
+       mesma razão pela qual o editor inteiro não existe com o gate de
+       suficiência fechado.
+       ==================================================================== */
+    if (document.getElementById("v32arch-note") || estadoNota(b) === "exclude") {
+      var arq = el("div", { "class": "p53-cur-lista", "data-p53-cur-lista": "arquitetura" });
+      arq.appendChild(el("h4", { "class": "p53-cur-lista-t" }, "Leitura arquitetural"));
+      var linhaA = el("label", { "class": "p53-cur-item", "data-p53-cur-arquitetura": "1" });
+      var cxA = el("input", { type: "checkbox", "class": "p53-cur-check" });
+      var incluida = estadoNota(b) !== "exclude";
+      if (incluida) cxA.setAttribute("checked", "checked");
+      cxA.checked = incluida;
+      cxA.addEventListener("change", function () {
+        try { b.setArchitectureNote(cxA.checked ? "include" : "exclude"); }
+        catch (e) { erros.push(String((e && e.message) || e)); cxA.checked = !cxA.checked; return; }
+        redesenhar();
+      });
+      linhaA.appendChild(cxA);
+      var txtA = el("span", { "class": "p53-cur-item-txt" });
+      txtA.appendChild(el("span", { "class": "p53-cur-item-nome" }, "Publicar a leitura arquitetural"));
+      txtA.appendChild(el("span", { "class": "p53-cur-item-grp" }, "rotas A e B, na tela e no papel"));
+      linhaA.appendChild(txtA);
+      arq.appendChild(linhaA);
+      painel.appendChild(arq);
+    }
 
     var extras = catalogo.filter(function (id) { return ofertados.indexOf(id) < 0; });
     if (extras.length) {

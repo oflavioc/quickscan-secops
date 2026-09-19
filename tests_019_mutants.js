@@ -229,6 +229,77 @@ function rodarGate(m, htmlPath) {
   }
 }
 
+/* ==========================================================================
+   `--preflight` — contrato C1 da demanda 013, no MESMO commit da chave do mapa.
+
+   `check_mutation.py` roda o preflight de todo harness que declara
+   `"preflight": true` e RECUSA a chave sem a leitura do argv: sem isso o IC-4
+   derruba o stage inteiro mesmo com a campanha verde. O preflight NÃO muta,
+   NÃO reconstrói, NÃO executa gate e NÃO escreve arquivo — emite UM objeto
+   JSON em stdout (todo texto humano vai para stderr) e prova `ocorrencias == 1`
+   em cada âncora ANTES de qualquer mutação.
+
+   É a mesma disciplina que esta demanda pagou três vezes na mão: âncora podre
+   não aparece como vermelho, aparece como silêncio. Aqui ela aparece ANTES.
+   ========================================================================== */
+function resolvePy(nome) {
+  if (nome.indexOf("/") >= 0 || nome.indexOf("\\") >= 0) {
+    try { return fs.statSync(nome).isFile() ? path.resolve(nome) : null; } catch (e) { return null; }
+  }
+  const exts = process.platform === "win32"
+    ? [""].concat((process.env.PATHEXT || ".COM;.EXE;.BAT;.CMD").split(";").filter(Boolean))
+    : [""];
+  for (const dir of String(process.env.PATH || "").split(path.delimiter)) {
+    if (!dir) continue;
+    for (const ext of exts) {
+      const cand = path.join(dir.replace(/^"|"$/g, ""), nome + ext);
+      try { if (fs.statSync(cand).isFile()) return cand; } catch (e) { /* próximo candidato */ }
+    }
+  }
+  return null;
+}
+const CAUSA = {
+  interpretador: "interpretador ausente",
+  ausente: "âncora não encontrada",
+  ambigua: "âncora ambígua",
+  rebuild: "rebuild falhou",
+  gate: "gate não pôde ser executado"
+};
+function preflight() {
+  const binario = resolvePy(PY);
+  const origem = process.env.D019_PYTHON ? "D019_PYTHON" : "padrão";
+  const dados = {
+    harness: "d019",
+    arquivo: path.basename(__filename),
+    interpretador: { nome: PY, origem: origem, resolvido: !!binario },
+    arquivos_mutados: Array.from(new Set(MUTANTS.map(m => path.basename(m.file)))).sort(),
+    mutantes: []
+  };
+  for (const m of MUTANTS) {
+    const n = existe(m.file) ? ocorrencias(m) : 0;
+    const e = { id: m.id, arquivo: path.basename(m.file), ocorrencias: n,
+                estado: n === 1 ? "ok" : "nao_executavel" };
+    if (n === 0) e.causa = CAUSA.ausente;
+    else if (n > 1) e.causa = CAUSA.ambigua;
+    dados.mutantes.push(e);
+  }
+  process.stdout.write(JSON.stringify(dados) + "\n");
+  const podres = dados.mutantes.filter(m => m.estado !== "ok");
+  process.stderr.write("PREFLIGHT d019 · " + dados.mutantes.length + " mutante(s) · interpretador " +
+    PY + " (" + origem + "): " + (binario ? "resolvido em " + binario : "NÃO RESOLVIDO") + "\n");
+  for (const m of dados.mutantes) {
+    process.stderr.write("  " + (m.estado === "ok" ? "ok           " : "nao_executavel") + " " +
+      m.id + " · ocorrencias=" + m.ocorrencias + " em " + m.arquivo +
+      (m.causa ? " · " + m.causa : "") + "\n");
+  }
+  process.stderr.write(podres.length
+    ? podres.length + " âncora(s) fora de ocorrencias == 1: " + podres.map(m => m.id).join(", ") + "\n"
+    : "todas as âncoras com ocorrencias == 1\n");
+  if (!binario) process.stderr.write(CAUSA.interpretador + ": " + PY + "\n");
+  return (binario && podres.length === 0) ? 0 : 1;
+}
+if (process.argv.slice(2).indexOf("--preflight") >= 0) process.exit(preflight());
+
 const linhas = [];
 for (const m of MUTANTS) {
   if (!existe(m.file)) {

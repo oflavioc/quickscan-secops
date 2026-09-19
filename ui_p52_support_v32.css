@@ -1,0 +1,185 @@
+/* ============================================================================
+   APOIO POR SOLUÇÃO — CSS · demanda 019 (W4 · T015)
+   Prefixo PRÓPRIO `p53-sol-`. Nenhum seletor alheio (R9 §6): a faixa de grupo
+   e os cards são estilizados pela classe que este módulo cria, nunca por
+   `#p52-sec-support > *` — o dono daquela grade é o workspace 5.2.
+
+   Sem hex literal (lição do `P50-COR1`): só tokens já declarados.
+   ========================================================================== */
+
+/* O SELO DE GRUPO, dentro do card.
+
+   A primeira versão era uma faixa irmã atravessando a grade. Medido: ela se
+   punha entre o título congelado e os blocos e quebrava a contiguidade que o
+   censo da Camada 1 exige (`D010-ARB1 (c)` reprovou por VACUIDADE). O selo
+   dentro do card resolve sem tocar em nada congelado — e o agrupamento
+   continua legível porque os cards são ordenados por grupo. */
+.p53-sol-chip {
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: .09em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 6px;
+}
+
+/* As capabilities que o produto atende. É a informação que a visão por gap
+   carregava no título de cada bloco e que, sem esta lista, se perderia na
+   consolidação — 15 títulos virando 9 cards. */
+.p53-sol-caps {
+  list-style: none;
+  margin: 12px 0 0;
+  padding: 12px 0 0;
+  border-top: 1px solid var(--line);
+}
+.p53-sol-cap {
+  position: relative;
+  padding-left: 16px;
+  margin: 4px 0;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--muted);
+}
+.p53-sol-cap::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: .55em;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--ftnt-silver);
+}
+
+.p53-sol-why { margin-bottom: 12px; }
+
+/* C4 · o selo de proveniência. Ele só aparece em item cuja PRESENÇA é decisão
+   do engenheiro — nunca em item que o motor já oferecia. Rótulo que aparece em
+   tudo não distingue nada, e o `D019-PROV1` mede isso nas duas direções. */
+.p53-sol-prov {
+  margin: 0 0 10px;
+  padding: 6px 10px;
+  border-left: 3px solid var(--p52-attn);
+  background: var(--surface2);
+  border-radius: 0 6px 6px 0;
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--muted);
+}
+.p53-sol-card-add { border-style: dashed; }
+
+/* O ponteiro que fica no disclosure legado depois que os blocos migram. Ele
+   existe porque o `<details>` é âncora do `D010-ARB3` e não pode ser ocultado;
+   vazio e mudo, ele mentiria. */
+.p53-sol-ptr {
+  margin: 4px 0 0;
+  font-size: 13.5px;
+  line-height: 1.55;
+  color: var(--muted);
+}
+
+/* A supressão declarada (T018): nunca seção vazia, nunca seção ausente. */
+.p53-sol-suprimido {
+  margin: 14px 0 0;
+  padding: 12px 14px;
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--p52-attn);
+  border-radius: 8px;
+  font-size: 13.5px;
+  line-height: 1.55;
+  color: var(--muted);
+}
+.p53-sol-suprimido strong { color: var(--text); }
+
+/* ============================================================================
+   EDITOR DE CURADORIA (`ui_curation_edit_v32.js`) — mesma folha, de propósito.
+
+   A apresentação por solução e o editor que age sobre ela são DOIS módulos de
+   UMA funcionalidade, e compartilham a família de prefixo `p53-`. Quinze regras
+   não pagam uma folha própria: cada folha nova entra no censo PINADO da `d014`
+   e no contrato de injeção do builder. O que a R9 §6 cobra é prefixo próprio e
+   nenhum seletor alheio — as duas coisas valem aqui: `p53-cur-*` é do editor,
+   `p53-sol-*` é da apresentação, e nenhuma regra desta folha alcança seletor de
+   outro dono.
+   ========================================================================== */
+.p53-cur-abrir {
+  justify-self: start;
+  margin: 16px 0 0;
+  padding: 9px 16px;
+  font-size: 13.5px;
+  font-weight: 650;
+  color: var(--text);
+  background: var(--surface2);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  cursor: pointer;
+}
+.p53-cur-abrir:hover { border-color: var(--ftnt-silver); }
+
+.p53-cur-panel {
+  margin: 12px 0 0;
+  padding: 16px 18px;
+  background: var(--surface2);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+}
+.p53-cur-lead {
+  margin: 0 0 14px;
+  font-size: 13.5px;
+  line-height: 1.55;
+  color: var(--muted);
+}
+.p53-cur-lista { margin-top: 14px; }
+.p53-cur-lista-t {
+  margin: 0 0 6px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--faint);
+}
+.p53-cur-lista-nota {
+  margin: 0 0 8px;
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--faint);
+}
+.p53-cur-item {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  padding: 5px 0;
+  cursor: pointer;
+}
+.p53-cur-item-txt { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+.p53-cur-item-nome { font-size: 14px; color: var(--text); }
+.p53-cur-item-grp { font-size: 12px; color: var(--faint); }
+.p53-cur-item-add {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--p52-attn);
+}
+.p53-cur-alerta {
+  margin: 0 0 14px;
+  padding: 12px 14px;
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--p52-attn);
+  border-radius: 8px;
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--muted);
+}
+.p53-cur-alerta strong { color: var(--text); }
+
+@media (min-width: 1180px) {
+  .p53-cur-abrir, .p53-cur-panel, .p53-sol-suprimido { grid-column: 1 / -1; }
+}
+
+/* O editor é superfície de TRABALHO, não de entrega: não vai ao papel. */
+@media print {
+  .p53-sol-caps { break-inside: avoid; }
+  .p53-sol-suprimido { break-inside: avoid; }
+  .p53-cur-abrir, .p53-cur-panel { display: none; }
+}

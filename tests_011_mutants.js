@@ -310,8 +310,18 @@ const MUTANTS = [
     id: "D011-M18",
     desc: "o builder deixa de injetar o bloco CSS do módulo — a regra de print existe no fonte e não chega ao artefato publicado",
     file: BUILD_PY,
-    find: '/* V32_P52CSS_END */\\n/* V32_D011CSS_BEGIN */\\n" + d011css + "\\n/* V32_D011CSS_END */\\n</style>")',
-    repl: '/* V32_P52CSS_END */\\n</style>")   # MUTANTE D011-M18',
+    /* [019 · W4 · 2026-09-18] REANCORADO. A demanda 019 acrescentou a folha
+       `ui_p52_support_v32.css` à injeção do builder, e a âncora antiga — que
+       terminava logo depois do marcador de fim do bloco D011CSS — passou a
+       `ocorrencias=0` (o fechamento de comentário fica FORA deste texto de
+       propósito: comentário meu já derrubou gate três vezes neste repositório).
+       O mutante saiu NÃO EXECUTADO, com o alvo existindo. É o EA-4 atingindo
+       campanha alheia, e foi o stage `mutation` que denunciou.
+       O ATAQUE NÃO MUDOU: o `repl` continua removendo EXATAMENTE o bloco CSS
+       do d011 e mais nada — o bloco da 019 é preservado no lugar, para que a
+       mutação isole o que promete isolar. */
+    find: '/* V32_P52CSS_END */\\n/* V32_D011CSS_BEGIN */\\n" + d011css + "\\n/* V32_D011CSS_END */\\n/* V32_P53SOLCSS_BEGIN */\\n" + p53solcss + "\\n/* V32_P53SOLCSS_END */\\n</style>")',
+    repl: '/* V32_P52CSS_END */\\n/* V32_P53SOLCSS_BEGIN */\\n" + p53solcss + "\\n/* V32_P53SOLCSS_END */\\n</style>")   # MUTANTE D011-M18',
     gate: "D011-PRT1",
     reason: /bloco CSS do módulo ausente ou duplicado no HTML construído: 0×/
   },

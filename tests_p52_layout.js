@@ -1698,7 +1698,13 @@ T("V322-MOT2", "a animação legada de tela é neutralizada, a transição nova 
    passaria em qualquer revisão por leitura.
    ========================================================================== */
 
-T("V322-DOC3", "README: imagem de abertura real e válida, distinção inequívoca entre produção v3.2.1 e candidata v3.2.2, e disciplina de verificação do pacote externo", () => {
+/* [EA-64 · 2026-09-17] O TÍTULO ficou para trás no sync de 2026-08-25: dizia
+   "produção v3.2.1 e candidata v3.2.2" enquanto as asserções, já naquele dia,
+   cobravam a v3.2.2 como produção. Título que promete o contrário do que o
+   corpo mede é a família do `EA-22`, e aqui ele apontava para o passado do
+   passado. Passa a nomear a PROPRIEDADE, que é o que o corpo realmente afirma
+   e o que sobrevive à próxima versão. */
+T("V322-DOC3", "README: imagem de abertura real e válida, distinção inequívoca entre a versão em produção e a de rollback, e disciplina de verificação do pacote externo", () => {
   const rdPath = path.join(__dirname, "README.md");
   const rd = readIf(rdPath);
   if (!rd) throw new Error("README.md ausente");
@@ -1728,14 +1734,36 @@ T("V322-DOC3", "README: imagem de abertura real e válida, distinção inequívo
      anterior deste bloco protegia o estado candidata e proibia anunciar a
      promoção; asserir o fato expirado seria o gate errando por teimosia.
      Direção decidida pela tabela do verify: o FATO mudou por ato do auditor. */
-  if (!/v3\.2\.1/.test(rd)) throw new Error("README não nomeia a v3.2.1");
-  if (!/v3\.2\.2/.test(rd)) throw new Error("README não nomeia a v3.2.2");
-  const prod = /v3\.2\.2[^\n]{0,120}produ[çc][ãa]o publicada|produ[çc][ãa]o publicada[^\n]{0,120}v3\.2\.2/i;
-  if (!prod.test(rd)) throw new Error("README não declara a v3.2.2 como produção publicada");
-  const roll = /v3\.2\.1[^\n]{0,160}rollback|rollback[^\n]{0,160}v3\.2\.1/i;
-  if (!roll.test(rd)) throw new Error("README não preserva a v3.2.1 como caminho de rollback");
-  if (!/vers[ãa]o corrente do produto [ée] a v3\.2\.2/i.test(rd))
-    throw new Error("README não afirma a v3.2.2 como versão corrente");
+  /* [SYNC v3.2.6 · 2026-09-17] O proprietário publicou as v3.2.3..v3.2.6 no
+     ambiente dele e autorizou, no chat, a release da v3.2.6 — que foi cortada
+     e conferida (o download do GitHub é byte a byte o artefato em uso). O par
+     v3.2.2/v3.2.1 virou histórico, e asserir o fato expirado seria o gate
+     errando por teimosia, na mesma direção que este bloco já tomou em
+     2026-08-25.
+
+     A asserção deixa de PINAR NÚMEROS e passa a medir a PROPRIEDADE: o README
+     declara uma versão como produção, outra como rollback, as duas são
+     distintas, e a que ele chama de corrente é a mesma que ele chamou de
+     produção. Isso é mais forte que a forma anterior em um ponto — ela não
+     conseguia pegar "produção e rollback apontando a MESMA versão" — e mais
+     fraco em nenhum: continua reprovando README sem a distinção.
+
+     O que esta alínea NÃO consegue medir, e por isso virou achado (`EA-64`): se
+     a versão que o README chama de produção é a que está REALMENTE publicada.
+     Não há registro disso no repositório — `current_phase.json` guarda a FASE,
+     e o `deploy/` mora fora do git. Foi essa lacuna que deixou o README quatro
+     versões atrás sem nada ficar vermelho. */
+  const V = "v(\\d+\\.\\d+\\.\\d+)";
+  const mProd = rd.match(new RegExp(V + "[^\\n]{0,120}produ[çc][ãa]o publicada|produ[çc][ãa]o publicada[^\\n]{0,120}" + V, "i"));
+  if (!mProd) throw new Error("README não declara nenhuma versão como produção publicada");
+  const vProd = mProd[1] || mProd[2];
+  const mRoll = rd.match(new RegExp(V + "[^\\n]{0,160}rollback|rollback[^\\n]{0,160}" + V, "i"));
+  if (!mRoll) throw new Error("README não preserva nenhuma versão como caminho de rollback");
+  const vRoll = mRoll[1] || mRoll[2];
+  if (vProd === vRoll)
+    throw new Error("README aponta a MESMA versão como produção e rollback: v" + vProd);
+  if (!new RegExp("vers[ãa]o corrente do produto [ée] a v" + vProd.replace(/\./g, "\\."), "i").test(rd))
+    throw new Error("README declara a v" + vProd + " como produção mas não a afirma como versão corrente");
 
   /* --- o que o contexto tecnológico influencia e o que NÃO influencia ----- */
   if (!/contexto tecnol[óo]gico/i.test(rd)) throw new Error("README não fala do contexto tecnológico");

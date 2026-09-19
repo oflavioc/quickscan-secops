@@ -16,14 +16,17 @@ contextuais e um relatório em PDF pronto para leitura executiva.
 
 | versão | o que é | onde está |
 |---|---|---|
-| **v3.2.2** | **produção publicada.** É a versão liberada e atualmente em uso. | [release `v3.2.2`](https://github.com/oflavioc/quickscan-secops/releases/tag/v3.2.2) |
-| **v3.2.1** | **versão anterior**, preservada e verificada como caminho de rollback. | [release `v3.2.1`](https://github.com/oflavioc/quickscan-secops/releases/tag/v3.2.1) |
+| **v3.2.6** | **produção publicada.** É a versão liberada e atualmente em uso. | [release `v3.2.6`](https://github.com/oflavioc/quickscan-secops/releases/tag/v3.2.6) |
+| **v3.2.5** | **versão anterior**, preservada e verificada como caminho de rollback. | preservada no ambiente de publicação |
+| v3.2.2 · v3.2.1 | marcos anteriores, com release própria e auditoria externa registrada | [`v3.2.2`](https://github.com/oflavioc/quickscan-secops/releases/tag/v3.2.2) · [`v3.2.1`](https://github.com/oflavioc/quickscan-secops/releases/tag/v3.2.1) |
 
-A v3.2.2 foi avaliada pelo proprietário e por revisão externa independente, promovida a produção e
-substituiu a v3.2.1. **A versão corrente do produto é a v3.2.2.** A v3.2.1 permanece preservada e
-verificada, disponível para rollback imediato. Um arquivo `*_dev.html` na árvore de trabalho é
-candidata, nunca release: antes de avaliar ou distribuir qualquer HTML, confira a identidade
-declarada no manifesto da rodada.
+**A versão corrente do produto é a v3.2.6.** A v3.2.5 permanece preservada e verificada, disponível
+para rollback imediato. As versões v3.2.3 a v3.2.5 foram publicadas no ambiente do proprietário sem
+release própria; a v3.2.6 consolida todas, e as notas dela descrevem o conjunto.
+
+**Para avaliar ou distribuir, use o artefato da release** — ele é o mesmo byte a byte que está em uso.
+Um arquivo `*_dev.html` na árvore de trabalho é candidata, nunca release: antes de avaliar ou
+distribuir qualquer HTML, confira a identidade declarada no manifesto da rodada.
 
 Produção, dados de cliente e infraestrutura de publicação **não fazem parte deste repositório**.
 Tags, releases e deployment são atos separados da implementação e da auditoria.
@@ -57,12 +60,21 @@ distinção do começo ao fim.
 A aplicação é um **único arquivo HTML autocontido**: sem servidor obrigatório, sem instalação, sem
 dependência de runtime.
 
+Baixe o artefato da [release mais recente](https://github.com/oflavioc/quickscan-secops/releases/latest)
+— `quickscan_secops_soccmm_v3_2_6.html` — e abra no navegador (duplo clique, ou `Arquivo → Abrir`).
+Não há instalação nem servidor.
+
+> O GitHub **não renderiza HTML como página**: clicar no arquivo mostra o código-fonte e o botão
+> "Raw" o entrega como texto. Baixe o arquivo e abra localmente.
+
+Quem trabalha no repositório usa a candidata da árvore, que é reconstruída pelo build:
+
 ```text
 quickscan_secops_soccmm_v3_2_dev.html
 ```
 
-Abra o arquivo diretamente no navegador (duplo clique, ou `Arquivo → Abrir`), ou sirva o diretório
-por qualquer servidor estático local. Navegadores baseados em Chromium são o alvo de referência.
+Servir o diretório por qualquer servidor estático local também funciona. Navegadores baseados em
+Chromium são o alvo de referência.
 
 **Nenhum dado sai da máquina.** A ferramenta não faz requisição externa, não usa CDN, fonte remota,
 analytics nem telemetria, e não grava nada no armazenamento do navegador. Tudo o que é digitado vive
@@ -99,9 +111,10 @@ O build é determinístico: duas execuções sobre as mesmas fontes produzem o m
 
 ## Tela de abertura
 
-Os dois caminhos de entrada ficam lado a lado: **Começar o quickscan** e **Adicionar contexto
-tecnológico · opcional**, com **Importar sessão** logo abaixo. O emblema dos cinco domínios é
-identidade gráfica e traz uma explicação curta por domínio; ele não representa score nem estágio.
+Os dois caminhos de entrada ficam lado a lado: **Começar o Quickscan** e **Adicionar Contexto
+Tecnológico**, este marcado com o selo `opcional` ao lado. **Importar Sessão** fica logo abaixo, com a
+mesma geometria dos demais. O emblema dos cinco domínios é identidade gráfica e traz uma explicação
+curta por domínio; ele não representa score nem estágio.
 
 ## Contexto tecnológico
 

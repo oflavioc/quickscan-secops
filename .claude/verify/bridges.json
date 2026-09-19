@@ -75,6 +75,10 @@
     "__P53SOL": {
       "owner": "ui_p52_support_v32.js",
       "nota": "apoio por solucao (demanda 019 W4). Shape fechado { __installed, diag() }, no precedente do __D011: NAO expoe decorate(), porque gate que chamasse a decoracao a mao mediria o efeito com o mecanismo morto. A decoracao entra so por __P50.registerDecor, registrada DEPOIS do workspace 5.2."
+    },
+    "__P53CUR": {
+      "owner": "ui_curation_edit_v32.js",
+      "nota": "editor de curadoria (demanda 019 W5). Shape fechado { __installed, diag() }, no precedente do __D011. NAO e dono de estado (R9 §5): le e escreve pelo __CURATION, que e do core-engineer. Toda escrita passa por __CURATION.set(), que recusa id fora do catalogo e valor fora do enum — e por isso este editor nao tem campo de texto."
     }
   }
 }

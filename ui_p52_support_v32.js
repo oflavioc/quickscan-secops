@@ -111,14 +111,33 @@
     for (var i = 0; i < GRUPOS.length; i++) if (GRUPOS[i].id === id) return GRUPOS[i].nome;
     return id;
   }
-  function grupoDoNome(nome) {
-    if (typeof PRODUCTS === "undefined" || !PRODUCTS) return NAO_CLASSIFICADO;
+  function idDoNome(nome) {
+    if (typeof PRODUCTS === "undefined" || !PRODUCTS) return null;
     for (var id in PRODUCTS) {
       if (!Object.prototype.hasOwnProperty.call(PRODUCTS, id)) continue;
-      if (PRODUCTS[id] && PRODUCTS[id].n === nome)
-        return PORTFOLIO[id] || NAO_CLASSIFICADO;
+      if (PRODUCTS[id] && PRODUCTS[id].n === nome) return id;
     }
-    return NAO_CLASSIFICADO;
+    return null;
+  }
+  function grupoDoNome(nome) {
+    var id = idDoNome(nome);
+    return (id && PORTFOLIO[id]) || NAO_CLASSIFICADO;
+  }
+
+  /* =================== a curadoria, quando existe ===================
+     R9 §3: o contrato vem da API do bridge, nunca de atributo que outro módulo
+     escreveu no DOM. Sob guarda de `typeof`: este módulo continua funcionando
+     inteiro se o owner do estado não estiver instalado — a visão por solução
+     não depende da curadoria para existir, é a curadoria que age sobre ela. */
+  function curadoria() {
+    return (typeof window !== "undefined" && window.__CURATION && window.__CURATION.__installed)
+      ? window.__CURATION : null;
+  }
+  function decisaoDe(nome) {
+    var b = curadoria(); if (!b) return "include";
+    var id = idDoNome(nome);
+    if (!id) return "include";
+    try { return b.decide(id); } catch (e) { return "include"; }
   }
 
   /* ===================== coleta: de onde vêm os nós =====================
@@ -283,6 +302,35 @@
       "As formas de apoio desta leitura estão consolidadas por produto na seção “Formas de apoio”."));
   }
 
+  /* ===================== a supressão que se declara =====================
+     T018. Curadoria que exclui tudo NÃO some com a seção nem a deixa vazia e
+     muda: ela DIZ que houve supressão, e quantos itens. As duas alternativas
+     que este nó existe para impedir são simétricas e igualmente ruins — seção
+     ausente faz o leitor achar que o motor nada encontrou; seção vazia faz
+     parecer defeito. O `D019-VAZ1` mede a presença deste nó.
+
+     Publicação PARCIAL também se declara. Não estava no gate, e é a mesma
+     regra: quem lê um relatório curado precisa saber que houve curadoria, não
+     só quando ela apagou tudo. */
+  function declararSupressao(sec, publicados, suprimidos) {
+    var velho = sec.querySelector(":scope > [data-p53-suprimido]");
+    if (velho && velho.parentNode) velho.parentNode.removeChild(velho);
+    if (!suprimidos) return;
+    var aviso = el("div", {
+      "class": "p53-sol-suprimido",
+      "data-p53-suprimido": String(suprimidos),
+      role: "status"
+    });
+    aviso.appendChild(el("strong", null,
+      publicados ? "Seleção do engenheiro aplicada." : "Nenhuma forma de apoio foi publicada nesta leitura."));
+    aviso.appendChild(el("span", null, publicados
+      ? " " + suprimidos + (suprimidos === 1 ? " item foi retirado" : " itens foram retirados") +
+        " da apresentação; " + publicados + (publicados === 1 ? " permanece." : " permanecem.")
+      : " Os " + suprimidos + (suprimidos === 1 ? " item oferecido foi retirado" : " itens oferecidos foram retirados") +
+        " da apresentação por decisão do engenheiro. A avaliação e os gaps observados não mudaram."));
+    sec.appendChild(aviso);
+  }
+
   /* ===================== colocação e agrupamento ===================== */
   function colocar(sec, cards) {
     var porGrupo = {}, i, g;
@@ -324,13 +372,23 @@
       var produtos = colher(legados);
       if (!produtos.length) return;
       var cards = [], i;
-      for (i = 0; i < produtos.length; i++) cards.push(cardDoProduto(produtos[i]));
+      /* ==================================================================
+         A CURADORIA AGE AQUI, E SÓ AQUI — sobre o que vai à APRESENTAÇÃO.
+         Os blocos legados já foram lidos: o conjunto ofertado pelo motor não
+         muda por decisão do operador, e é isso que o `D019-MED1` mede. O que
+         a decisão dele alcança é o que se PUBLICA.
+         ================================================================== */
+      for (i = 0; i < produtos.length; i++)
+        if (decisaoDe(produtos[i].nome) !== "exclude") cards.push(cardDoProduto(produtos[i]));
+      var suprimidos = produtos.length - cards.length;
       /* as cascas saem do DOM DEPOIS de os `.prod` terem migrado: remover
          antes levaria o nó movido junto. */
       for (i = 0; i < legados.length; i++)
         if (legados[i].parentNode) legados[i].parentNode.removeChild(legados[i]);
       colocar(sec, cards);
-      ultimoCenso = { produtos: produtos.length, blocos: legados.length };
+      declararSupressao(sec, cards.length, suprimidos);
+      ultimoCenso = { produtos: produtos.length, publicados: cards.length,
+        suprimidos: suprimidos, blocos: legados.length };
     } else {
       /* IDEMPOTÊNCIA. A camada 5.2 roda também sob MutationObserver, e esta
          função é chamada a cada passagem. Sem os legados não há o que
@@ -338,9 +396,16 @@
          workspace, então o agrupamento é refeito sobre o que já existe. */
       var existentes = sec.querySelectorAll(":scope > .apoio-block[data-p53-sol-produto]");
       if (!existentes.length) return;
-      var atuais = [];
-      for (var k = 0; k < existentes.length; k++) atuais.push(existentes[k]);
+      var atuais = [], removidos = 0;
+      for (var k = 0; k < existentes.length; k++) {
+        var no = existentes[k];
+        if (decisaoDe(no.getAttribute("data-p53-sol-produto")) === "exclude") {
+          if (no.parentNode) no.parentNode.removeChild(no);
+          removidos++;
+        } else atuais.push(no);
+      }
       colocar(sec, atuais);
+      declararSupressao(sec, atuais.length, removidos);
     }
 
     /* O contador é lido pelo `P52-REC1g` e comparado com os cards MEDIDOS na
@@ -368,6 +433,14 @@
 
   window.__P53SOL = {
     __installed: true,
+    /* Leitura do PORTFÓLIO, consumida pelo editor de curadoria (R9 §3: contrato
+       por API de bridge). Continua sem `decorate()`, no precedente do `__D011`:
+       gate que chamasse a decoração à mão mediria o efeito com o mecanismo
+       morto. O mapa vive aqui porque aqui está o dono da apresentação por
+       solução; duplicá-lo no editor criaria duas verdades sobre a mesma
+       classificação, e uma delas envelheceria. */
+    grupos: function () { return GRUPOS.map(function (g) { return { id: g.id, nome: g.nome }; }); },
+    grupoDe: function (nome) { return grupoDoNome(nome); },
     diag: function () {
       return { errors: erros.slice(0), passes: passes, censo: ultimoCenso,
         grupos: GRUPOS.map(function (g) { return g.id; }) };

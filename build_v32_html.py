@@ -23,6 +23,7 @@ CURJS = HERE / "ui_curation_v32.js"   # [019] owner do estado de curadoria
 P52WSJS = HERE / "ui_p52_workspace_v32.js"
 D011JS = HERE / "ui_d011_prioridade_v32.js"
 P53SOLJS = HERE / "ui_p52_support_v32.js"   # [019 · W4] apoio por solução
+P53CURJS = HERE / "ui_curation_edit_v32.js"   # [019 · W5] editor de curadoria
 UXCSS = HERE / "ui_ux_v32.css"
 P50CSS = HERE / "ui_p50_v32.css"
 P52CSS = HERE / "ui_p52_workspace_v32.css"
@@ -65,6 +66,7 @@ curjs = open(CURJS, encoding="utf-8").read()
 p52wsjs = open(P52WSJS, encoding="utf-8").read()
 d011js = open(D011JS, encoding="utf-8").read()
 p53soljs = open(P53SOLJS, encoding="utf-8").read()
+p53curjs = open(P53CURJS, encoding="utf-8").read()
 # [4.8-E] metadata determinística: versão do package + SHA real do engine (nunca digitados à mão)
 import hashlib, json as _json
 _pkg = _json.load(open(HERE / "package.json", encoding="utf-8"))
@@ -75,7 +77,7 @@ build_meta = ("\n/* V32_BUILD_META_BEGIN */\nwindow.__QS_BUILD_META = " +
 uxcss = open(UXCSS, encoding="utf-8").read()
 inject = ("/* V32_ENGINE_BEGIN */\n" + engine + "\n/* V32_ENGINE_END */\n" + adapter +
           "\n/* V32_ICONS_BEGIN */\n" + iconsjs + "\n/* V32_ICONS_END */\n" +
-          "\n/* V32_UI_BEGIN */\n" + uijs + "\n/* V32_UI_END */\n" + "\n/* V32_UX_BEGIN */\n" + uxjs + "\n/* V32_UX_END */\n" + "\n/* V32_TARGET_BEGIN */\n" + tgtjs + "\n/* V32_TARGET_END */\n" + "\n/* V32_REF_BEGIN */\n" + refjs + "\n/* V32_REF_END */\n" + build_meta + "\n/* V32_JOURNEY_BEGIN */\n" + jnjs + "\n/* V32_JOURNEY_END */\n" + "\n/* V32_SESSION_BEGIN */\n" + sesjs + "\n/* V32_SESSION_END */\n" + "\n/* V32_P50_SHELL_BEGIN */\n" + p50shelljs + "\n/* V32_P50_SHELL_END */\n" + "\n/* V32_P50_SUFF_BEGIN */\n" + p50suffjs + "\n/* V32_P50_SUFF_END */\n" + "\n/* V32_P50_RESULTS_BEGIN */\n" + p50resultsjs + "\n/* V32_P50_RESULTS_END */\n" + "\n/* V32_CURATION_BEGIN */\n" + curjs + "\n/* V32_CURATION_END */\n" + "\n/* V32_P52_WORKSPACE_BEGIN */\n" + p52wsjs + "\n/* V32_P52_WORKSPACE_END */\n" + "\n/* V32_D011_BEGIN */\n" + d011js + "\n/* V32_D011_END */\n" + "\n/* V32_P53_SUPPORT_BEGIN */\n" + p53soljs + "\n/* V32_P53_SUPPORT_END */\n" + anchor)
+          "\n/* V32_UI_BEGIN */\n" + uijs + "\n/* V32_UI_END */\n" + "\n/* V32_UX_BEGIN */\n" + uxjs + "\n/* V32_UX_END */\n" + "\n/* V32_TARGET_BEGIN */\n" + tgtjs + "\n/* V32_TARGET_END */\n" + "\n/* V32_REF_BEGIN */\n" + refjs + "\n/* V32_REF_END */\n" + build_meta + "\n/* V32_JOURNEY_BEGIN */\n" + jnjs + "\n/* V32_JOURNEY_END */\n" + "\n/* V32_SESSION_BEGIN */\n" + sesjs + "\n/* V32_SESSION_END */\n" + "\n/* V32_P50_SHELL_BEGIN */\n" + p50shelljs + "\n/* V32_P50_SHELL_END */\n" + "\n/* V32_P50_SUFF_BEGIN */\n" + p50suffjs + "\n/* V32_P50_SUFF_END */\n" + "\n/* V32_P50_RESULTS_BEGIN */\n" + p50resultsjs + "\n/* V32_P50_RESULTS_END */\n" + "\n/* V32_CURATION_BEGIN */\n" + curjs + "\n/* V32_CURATION_END */\n" + "\n/* V32_P52_WORKSPACE_BEGIN */\n" + p52wsjs + "\n/* V32_P52_WORKSPACE_END */\n" + "\n/* V32_D011_BEGIN */\n" + d011js + "\n/* V32_D011_END */\n" + "\n/* V32_P53_SUPPORT_BEGIN */\n" + p53soljs + "\n/* V32_P53_SUPPORT_END */\n" + "\n/* V32_P53_CURATION_EDIT_BEGIN */\n" + p53curjs + "\n/* V32_P53_CURATION_EDIT_END */\n" + anchor)
 html = html.replace(anchor, inject)
 uicss = open(UICSS, encoding="utf-8").read()
 assert html.count("</style>") == 1, "style tag não único"

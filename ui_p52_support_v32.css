@@ -63,7 +63,108 @@
   color: var(--muted);
 }
 
+/* A supressão declarada (T018): nunca seção vazia, nunca seção ausente. */
+.p53-sol-suprimido {
+  margin: 14px 0 0;
+  padding: 12px 14px;
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--p52-attn);
+  border-radius: 8px;
+  font-size: 13.5px;
+  line-height: 1.55;
+  color: var(--muted);
+}
+.p53-sol-suprimido strong { color: var(--text); }
+
+/* ============================================================================
+   EDITOR DE CURADORIA (`ui_curation_edit_v32.js`) — mesma folha, de propósito.
+
+   A apresentação por solução e o editor que age sobre ela são DOIS módulos de
+   UMA funcionalidade, e compartilham a família de prefixo `p53-`. Quinze regras
+   não pagam uma folha própria: cada folha nova entra no censo PINADO da `d014`
+   e no contrato de injeção do builder. O que a R9 §6 cobra é prefixo próprio e
+   nenhum seletor alheio — as duas coisas valem aqui: `p53-cur-*` é do editor,
+   `p53-sol-*` é da apresentação, e nenhuma regra desta folha alcança seletor de
+   outro dono.
+   ========================================================================== */
+.p53-cur-abrir {
+  justify-self: start;
+  margin: 16px 0 0;
+  padding: 9px 16px;
+  font-size: 13.5px;
+  font-weight: 650;
+  color: var(--text);
+  background: var(--surface2);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  cursor: pointer;
+}
+.p53-cur-abrir:hover { border-color: var(--ftnt-silver); }
+
+.p53-cur-panel {
+  margin: 12px 0 0;
+  padding: 16px 18px;
+  background: var(--surface2);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+}
+.p53-cur-lead {
+  margin: 0 0 14px;
+  font-size: 13.5px;
+  line-height: 1.55;
+  color: var(--muted);
+}
+.p53-cur-lista { margin-top: 14px; }
+.p53-cur-lista-t {
+  margin: 0 0 6px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--faint);
+}
+.p53-cur-lista-nota {
+  margin: 0 0 8px;
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--faint);
+}
+.p53-cur-item {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  padding: 5px 0;
+  cursor: pointer;
+}
+.p53-cur-item-txt { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+.p53-cur-item-nome { font-size: 14px; color: var(--text); }
+.p53-cur-item-grp { font-size: 12px; color: var(--faint); }
+.p53-cur-item-add {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--p52-attn);
+}
+.p53-cur-alerta {
+  margin: 0 0 14px;
+  padding: 12px 14px;
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--p52-attn);
+  border-radius: 8px;
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--muted);
+}
+.p53-cur-alerta strong { color: var(--text); }
+
+@media (min-width: 1180px) {
+  .p53-cur-abrir, .p53-cur-panel, .p53-sol-suprimido { grid-column: 1 / -1; }
+}
+
+/* O editor é superfície de TRABALHO, não de entrega: não vai ao papel. */
 @media print {
-  .p53-sol-band { break-after: avoid; }
   .p53-sol-caps { break-inside: avoid; }
+  .p53-sol-suprimido { break-inside: avoid; }
+  .p53-cur-abrir, .p53-cur-panel { display: none; }
 }

@@ -237,18 +237,65 @@ T("D019-MED1", "a curadoria não alcança medição nem declaração: derivados 
 });
 
 /* ===================== C6 · apoio por solução, íntegro ================== */
-T("D019-SOL1", "visão por solução: o CONJUNTO de produtos é igual ao da visão por gap, menções curtas incluídas", () => {
+/* ==========================================================================
+   [W4] ESTE GATE MEDIA CONTRA SI MESMO, E O MUTANTE PROVOU.
+
+   A versão original lia o conjunto "por gap" de `.apoio-block .prod .pt-name`
+   e `.prod-mini b` no DOM. Só que a consolidação **move** os `.prod` para
+   dentro dos cards e **consome** as menções curtas: depois dela, aquele seletor
+   devolve exatamente os 9 produtos dos cards. O gate comparava o resultado com
+   ele mesmo — tautologia perfeita, verde por construção.
+
+   Quem denunciou foi o `D019-M6`: desliguei a colheita das menções curtas e o
+   gate continuou VERDE. A causa não era o mutante fraco; era o oráculo olhando
+   para o espelho.
+
+   O oráculo agora é o MOTOR — `computeFindings()` + `MAP` + `PRODUCTS` —, que é
+   a mesma fonte que o renderer congelado usa e que a consolidação não pode
+   alterar. E mede o PAR (produto × capability), não só o conjunto de produtos:
+   medido que na sessão de referência todo produto tem ao menos um `.prod`
+   completo, então perder as menções curtas NÃO perde produto — perde a
+   associação com a capability. Era exatamente essa a perda "que o olho não
+   procura", e ela só é observável no par.
+
+   O texto da capability passa pelo `__P52.applyCopy`, que é transformação
+   DECLARADA e pública deste repositório justamente para que um gate possa
+   comparar texto canônico com texto exibido sem aceitar divergência.
+   ========================================================================== */
+T("D019-SOL1", "visão por solução: o par (produto × capability) é igual ao que o MOTOR produziu, menções curtas incluídas", () => {
   const { w, d } = boot();
-  const porGap = new Set();
-  qa(d, "#p52-workspace .apoio-block .prod .pt-name").forEach(n => porGap.add(txt(n)));
-  qa(d, "#p52-workspace .apoio-block .prod-mini b").forEach(n => porGap.add(txt(n)));
-  if (!porGap.size) vac("(a)", "nenhum produto na sessão de referência — sem sujeito");
-  const porSolucao = new Set(qa(d, "#p52-workspace [data-p53-sol-produto]").map(n => n.getAttribute("data-p53-sol-produto")));
-  if (!porSolucao.size) throw new Error("visão por solução ausente — nenhum [data-p53-sol-produto]");
-  const sumiu = [...porGap].filter(p => !porSolucao.has(p));
-  const nasceu = [...porSolucao].filter(p => !porGap.has(p));
-  if (sumiu.length) throw new Error("produto SUMIU na visão por solução: " + sumiu.join(", "));
-  if (nasceu.length) throw new Error("produto NASCEU na visão por solução: " + nasceu.join(", "));
+  const copy = (w.__P52 && typeof w.__P52.applyCopy === "function")
+    ? function (s) { return w.__P52.applyCopy(s); } : function (s) { return s; };
+  const esperado = new Set(), prodEsperado = new Set();
+  w.eval("(function(){var o=[],fs=(computeFindings()||{}).findings||[];" +
+         "for(var i=0;i<fs.length;i++){var f=fs[i],m=MAP[f.id];" +
+         "if(!m||!m.lv||!m.lv[f.lvl])continue;var c=m.lv[f.lvl].c||[];" +
+         "for(var j=0;j<c.length;j++){var p=PRODUCTS[c[j].p];if(p)o.push([p.n,m.cap]);}}" +
+         "return o;})()").forEach(par => {
+    prodEsperado.add(par[0]);
+    esperado.add(par[0] + " × " + copy(par[1]).replace(/\s+/g, " ").trim());
+  });
+  if (!esperado.size) vac("(a)", "o motor não ofereceu produto algum nesta sessão — sem sujeito");
+
+  const cards = qa(d, "#p52-workspace [data-p53-sol-produto]");
+  if (!cards.length) throw new Error("visão por solução ausente — nenhum [data-p53-sol-produto]");
+  const observado = new Set(), prodObservado = new Set();
+  cards.forEach(c => {
+    const nome = c.getAttribute("data-p53-sol-produto");
+    prodObservado.add(nome);
+    qa(c, "[data-p53-sol-cap]").forEach(li =>
+      observado.add(nome + " × " + String(li.getAttribute("data-p53-sol-cap")).replace(/\s+/g, " ").trim()));
+  });
+
+  const pSumiu = [...prodEsperado].filter(p => !prodObservado.has(p));
+  const pNasceu = [...prodObservado].filter(p => !prodEsperado.has(p));
+  if (pSumiu.length) throw new Error("produto SUMIU na visão por solução: " + pSumiu.join(", "));
+  if (pNasceu.length) throw new Error("produto NASCEU na visão por solução: " + pNasceu.join(", "));
+
+  const sumiu = [...esperado].filter(x => !observado.has(x));
+  const nasceu = [...observado].filter(x => !esperado.has(x));
+  if (sumiu.length) throw new Error("par (produto × capability) SUMIU na visão por solução: " + sumiu.slice(0, 5).join(" · "));
+  if (nasceu.length) throw new Error("par (produto × capability) NASCEU na visão por solução: " + nasceu.slice(0, 5).join(" · "));
   return true;
 });
 
@@ -261,8 +308,35 @@ T("D019-SOL2", "todo produto cai num grupo do portfólio; o sem categoria vai pa
   if (semGrupo.length)
     throw new Error(semGrupo.length + " produto(s) fora de qualquer grupo: " +
       semGrupo.map(c => c.getAttribute("data-p53-sol-produto")).join(", "));
-  const naoClass = qa(d, '[data-p53-sol-grupo="nao-classificado"] [data-p53-sol-produto]');
-  const rotulo = d.querySelector('[data-p53-sol-grupo="nao-classificado"] [data-p53-sol-grupo-nome]');
+  /* (b) TODO grupo presente SE NOMEIA. [W4] A alínea original media só o balde
+     `nao-classificado` — e, na sessão de referência, ele está VAZIO, porque os
+     13 produtos do catálogo têm categoria. Ou seja: a única cláusula com dentes
+     do C7 nunca chegava a rodar, e o gate fechava verde tendo medido apenas que
+     cada card declara um grupo. É a família do EA-20 pela terceira vez nesta
+     demanda; desta vez peguei antes do mutante.
+
+     A regra que o C7 realmente enuncia — "o desconhecido é NOMEADO" — vale para
+     qualquer grupo: agrupar sem dizer o nome do grupo é descarte silencioso da
+     própria classificação. Medido sobre os 9 cards reais, não sobre um balde
+     que pode estar vazio. */
+  const grupos = {};
+  cards.forEach(c => {
+    const dono = c.closest("[data-p53-sol-grupo]");
+    grupos[dono.getAttribute("data-p53-sol-grupo")] = true;
+  });
+  const ids = Object.keys(grupos);
+  if (!ids.length) vac("(b)", "nenhum grupo declarado — sem sujeito");
+  const semNome = ids.filter(g => {
+    const rot = d.querySelector('[data-p53-sol-grupo-nome="' + g + '"]');
+    return !rot || !txt(rot);
+  });
+  if (semNome.length)
+    throw new Error("grupo(s) que não se nomeiam: " + semNome.join(", ") +
+      " — agrupar sem dizer o nome é descarte silencioso da classificação (C7)");
+  /* (c) o balde do desconhecido, quando existir, é explícito E listado */
+  const naoClass = cards.filter(c =>
+    c.closest('[data-p53-sol-grupo="nao-classificado"]'));
+  const rotulo = d.querySelector('[data-p53-sol-grupo-nome="nao-classificado"]');
   if (naoClass.length && !rotulo)
     throw new Error("há produto não classificado e o grupo não se nomeia — descarte silencioso é o que o C7 proíbe");
   return true;

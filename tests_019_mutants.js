@@ -102,13 +102,30 @@ const MUTANTS = [
 
   { id: "D019-M6", file: F.solucao, gate: "D019-SOL1",
     desc: "descartar produto que só aparece como menção curta — perda que o olho não procura",
-    find: ".prod-mini", repl: ".prod-mini-ignorado",
+    find: 'minis[j].querySelector("b")', repl: 'minis[j].querySelector("b-inexistente")',
     reason: /SUMIU na visão por solução/ },
+  /* O M6 foi o mutante mais caro desta demanda, e valeu cada rodada: ele saiu
+     SOBREVIVENTE com âncora boa, e o culpado era o oráculo do `D019-SOL1`, que
+     media o DOM consolidado contra ele mesmo. Na sessão de referência todo
+     produto tem um `.prod` completo, então perder as menções curtas não perde
+     PRODUTO — perde o par (produto × capability). Sem medir o par, esta perda é
+     literalmente invisível, que é a definição do que o M6 existe para atacar. */
 
+  /* [W4] O ATAQUE MUDOU, e a razão fica escrita. A spec descrevia o M7 como
+     "descartar em silêncio o produto sem categoria conhecida" — mas na sessão
+     de referência NENHUM produto é sem categoria: os 13 do catálogo têm grupo
+     no portfólio. O mutante original seria INERTE, e mutante inerte é pior que
+     mutante nenhum, porque vira confiança falsa.
+
+     O que o C7 enuncia — "o desconhecido é NOMEADO" — vale para qualquer
+     grupo: agrupar sem dizer o nome do grupo é descartar em silêncio a própria
+     classificação. É esse o descarte que este mutante passa a atacar, e ele
+     ACONTECE na sessão de referência. A cláusula do balde `nao-classificado`
+     continua no gate, declaradamente condicional. */
   { id: "D019-M7", file: F.solucao, gate: "D019-SOL2",
-    desc: "descartar em silêncio o produto sem categoria conhecida",
-    find: "nao-classificado", repl: "descartado-em-silencio",
-    reason: /fora de qualquer grupo|não se nomeia/ },
+    desc: "agrupar sem nomear o grupo — descarte silencioso da classificação",
+    find: '"data-p53-sol-grupo-nome": grupo', repl: '"data-p53-sol-grupo-nome-removido": grupo',
+    reason: /não se nomeiam|não se nomeia/ },
 
   { id: "D019-M8", file: F.papel, gate: "D019-PAR1",
     desc: "aplicar a curadoria só na tela — o papel volta a publicar tudo",

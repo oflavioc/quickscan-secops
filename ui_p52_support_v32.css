@@ -1,0 +1,69 @@
+/* ============================================================================
+   APOIO POR SOLUÇÃO — CSS · demanda 019 (W4 · T015)
+   Prefixo PRÓPRIO `p53-sol-`. Nenhum seletor alheio (R9 §6): a faixa de grupo
+   e os cards são estilizados pela classe que este módulo cria, nunca por
+   `#p52-sec-support > *` — o dono daquela grade é o workspace 5.2.
+
+   Sem hex literal (lição do `P50-COR1`): só tokens já declarados.
+   ========================================================================== */
+
+/* O SELO DE GRUPO, dentro do card.
+
+   A primeira versão era uma faixa irmã atravessando a grade. Medido: ela se
+   punha entre o título congelado e os blocos e quebrava a contiguidade que o
+   censo da Camada 1 exige (`D010-ARB1 (c)` reprovou por VACUIDADE). O selo
+   dentro do card resolve sem tocar em nada congelado — e o agrupamento
+   continua legível porque os cards são ordenados por grupo. */
+.p53-sol-chip {
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: .09em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 6px;
+}
+
+/* As capabilities que o produto atende. É a informação que a visão por gap
+   carregava no título de cada bloco e que, sem esta lista, se perderia na
+   consolidação — 15 títulos virando 9 cards. */
+.p53-sol-caps {
+  list-style: none;
+  margin: 12px 0 0;
+  padding: 12px 0 0;
+  border-top: 1px solid var(--line);
+}
+.p53-sol-cap {
+  position: relative;
+  padding-left: 16px;
+  margin: 4px 0;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--muted);
+}
+.p53-sol-cap::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: .55em;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--ftnt-silver);
+}
+
+.p53-sol-why { margin-bottom: 12px; }
+
+/* O ponteiro que fica no disclosure legado depois que os blocos migram. Ele
+   existe porque o `<details>` é âncora do `D010-ARB3` e não pode ser ocultado;
+   vazio e mudo, ele mentiria. */
+.p53-sol-ptr {
+  margin: 4px 0 0;
+  font-size: 13.5px;
+  line-height: 1.55;
+  color: var(--muted);
+}
+
+@media print {
+  .p53-sol-band { break-after: avoid; }
+  .p53-sol-caps { break-inside: avoid; }
+}

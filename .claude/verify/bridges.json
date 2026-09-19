@@ -71,6 +71,10 @@
     "__CURATION": {
       "owner": "ui_curation_v32.js",
       "nota": "estado de curadoria do relatorio (demanda 019): selecao por offering, enum fechado include/exclude; getters/setters e contract() de leitura. Renderizacao consome, nunca escreve (R9 §5)."
+    },
+    "__P53SOL": {
+      "owner": "ui_p52_support_v32.js",
+      "nota": "apoio por solucao (demanda 019 W4). Shape fechado { __installed, diag() }, no precedente do __D011: NAO expoe decorate(), porque gate que chamasse a decoracao a mao mediria o efeito com o mecanismo morto. A decoracao entra so por __P50.registerDecor, registrada DEPOIS do workspace 5.2."
     }
   }
 }

@@ -1,7 +1,7 @@
 {
   "_meta": {
     "descricao": "Registry único de pins — fonte de identidade dos artefatos (R8). Hashes = SHA-256 dos blobs de HEAD. Alterar arquivo pinado exige regenerar este registry no MESMO PR, com motivo no commit.",
-    "gerado_de_head": "981a026aac78fa3fd482687366693577f610c5d9",
+    "gerado_de_head": "282d4f61514b79dab493ab78ce61c30506fa7ec5",
     "gerado_em": "2026-09-18",
     "exclusoes": [
       "docs_phase5/**",
@@ -333,7 +333,7 @@
     "preparar_release.py": "44b0a74dac345cfb5b27742d5fee51d9941646ec33f1cbb18aa81f98bf31a0cd",
     "prototypes/.gitkeep": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
     "quickscan_secops_soccmm_v3_1_3.html": "d329049147950a5b2a40b2735c3d4bd9a89177fed439efbcb58df01bdeb7ae82",
-    "quickscan_secops_soccmm_v3_2_dev.html": "c523080fce9b49364fc4d947c50002100724b92045f7c9ab7c5bc90721bfbbcf",
+    "quickscan_secops_soccmm_v3_2_dev.html": "99739b4b287da257da87c902e755d19be8daeafde449d2e096cd95458a0d46b7",
     "session_roundtrip_report.md": "ffe0d30411cc086681a44fa8d69e1066a0bf26173f15dd8580286787056cf4f8",
     "specs/.gitkeep": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
     "specs/003-marcador-duplicado/fix-finding-registry.md": "dce0be8376f543678b9b214fd2e03e0efbda9f45cd978b909d0cc5208fa456a2",
@@ -429,6 +429,8 @@
     "specs/018-cobertura-declarada-de-mutacao/tasks.md": "f022b101827233456307c49cd9cceaa3831ec82b71244708bf4ab6a48faa955e",
     "specs/019-curadoria-do-relatorio/plan.md": "7b8c9bbec9eee5728f1c9195e3479d025edca708b684f58d4ca83ef79f0ef58c",
     "specs/019-curadoria-do-relatorio/refinement.md": "38a7a6c303431e16ec7a218d62dc342711c57196a83e0004ba2fd6759a18986b",
+    "specs/019-curadoria-do-relatorio/relatorio-final.md": "6995e5346e8d91d83991b8a5839b535dd2fbb485e97b59137ecfc589c9c0c03f",
+    "specs/019-curadoria-do-relatorio/spec-validate.md": "ce2b7e6d75f055df05931eb10ab8a3243ed0dab51178bd4b8ff4394cb4d16bb0",
     "specs/019-curadoria-do-relatorio/spec.md": "7634b364c20d3d55ec739ead00b2436e1a71874c93d8a818529e20790b11a90f",
     "specs/019-curadoria-do-relatorio/tasks.md": "aeccccd9a6d133b168a6e2168143c6350b8c9e4357e46d5d1e02b87c3f680880",
     "specs/PHASE_5_0_REV_A.md": "22e729174c6a3c5dd620da5330b03eb96d9eb6fc6e64eba097c2bde55eb0a510",
@@ -449,7 +451,7 @@
     "tests_015_mutants.js": "3a949d1ecd2738c23f56b5277eea136484f2b6c255f78a547c723ba80f5e50fc",
     "tests_016_mutants.js": "91013ea606b4e8b94aa1a3dcbd7408ec6d2f10662a85552ec3d7a74264c4e342",
     "tests_018_mutants.js": "68abe828e6d5d618e43eff715654b8bc64211e530b35f6cb6af09de2f38f39f2",
-    "tests_019_curadoria.js": "70e7d72b9d1db8225d62c9644a9349b7e549ed82dd24b090c9328db6ace7ba89",
+    "tests_019_curadoria.js": "3e1428dd18bbd29a32e54a58ebb318abf0f52234fa3a54e31e7a078a4ab5df52",
     "tests_019_mutants.js": "ceb037b2b1213c9911ebdecab2aa14ed01aa4362ad9ccbd0af2ae3927d3295b2",
     "tests_core_mutants.js": "4c7c4bcec9ff0a3fd5f5bc9edce17c4c016dfeb08159529002da2b8db322c732",
     "tests_ea41_instrumento.js": "dc93b175b1be807fe7989645c6a61df73a1909d3a5b56510753059d6f93dfcbc",
@@ -458,7 +460,7 @@
     "tests_journey_m45.js": "84d99be32e122f867dc1620cd1f49e4f3ae9795a32185cc75aa246d8682941f5",
     "tests_m42_m86.js": "d263ee641d699e3c99d71e7c23c4923b3444ca3fdce86a6d5eebdd71e14273ee",
     "tests_p50_chromium.js": "32058b4e980ade446d29dd205cdc98485ae3d2e9fbb66d6ee93be5e8224c8a00",
-    "tests_p50_core.js": "66a0c23e629e182fffe4887d1fd1529aa670c5ca9dc2b825138b62e1ea7cf985",
+    "tests_p50_core.js": "88fd3031cd140e9a70700da9b5193a0c8b290da1ae07a4f71b6df5d5b5bb1506",
     "tests_p50_mutants.js": "a78306918c7f27ab08c34cd557ece041e55cc7271169c7f4749b0ebcea058b8b",
     "tests_p51_mutants.js": "dfa4ec651a41d4befd137c12b1b6046f52d1925f674e1746d6b826981a155559",
     "tests_p52_chromium.js": "2556cf2447e02d3f61c6d132360325ac7fe1ded8e0aab37c929f3fd17188063b",
@@ -480,7 +482,7 @@
     "tests_visual/session.spec.js": "99956abdd43b0c946d2d9035c75fdeaae7a8bcba9e9d4051f31bb9647b0df499",
     "tools_p52_pdf_census.js": "556293f4951f4fa6300a74f3464550940511b3de15c2ba24296f39c1de409e40",
     "tools_p52_shots.js": "e287a7abd4f50085a47f8aeac485e9706a6de3f1e909bacefdf320d8d71741a9",
-    "ui_curation_edit_v32.js": "31af68e68fde3d3f81e71ccd75cd28a5417821722f97818033fe7c8c49530f76",
+    "ui_curation_edit_v32.js": "e94af2f53755ef94b37d513bfde70333a5369ff69878b6f28d65da1855087443",
     "ui_curation_v32.js": "05dbf8b6e7219515c2a1fe11ec71e5486a0c6d7b0dd46588d5ca58fe43b4af52",
     "ui_d011_prioridade_v32.css": "7505bb7ed3d59e2a49f51eae56db1d342474be9a48de4818adc6089fcee7b864",
     "ui_d011_prioridade_v32.js": "418a7bc5337d6bd13eb121654cee53972861a268f19d6dc1b851f0878dd24399",
@@ -500,7 +502,7 @@
     "ui_ux_v32.css": "8afbd55f97a3abd10a0a217925807a92161506be7c3ef3a8ff0303a75ebabbf3",
     "ui_ux_v32.js": "a050401145a5ed7af597eae01a9a23826418119769c096db168b3b177a9d3938",
     "ui_v32.css": "acb0eba165ef25e6b97475430e9b042a9b39038be2b9882ec5b3c67a730faa6f",
-    "ui_v32.js": "6db500439aea5a4264f4220b872fab776b5e37a0b78c9c9606ef67a5c44ee79c",
+    "ui_v32.js": "30a6d48e4aca170c5b3c7bf41100ea1fc1ca20739765ffda945a6ffe16a84670",
     "v3_1_3_functional_snapshot.json": "0abeaa7cc3a7e270fde015791a93bfbdb580803a915871e12811585c99555435"
   }
 }

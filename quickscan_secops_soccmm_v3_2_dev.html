@@ -3985,6 +3985,194 @@ body[data-uxscreen="refinement"] #ux-progress-mobile{ display:none !important; }
 }
 
 /* V32_D011CSS_END */
+/* V32_P53SOLCSS_BEGIN */
+/* ============================================================================
+   APOIO POR SOLUÇÃO — CSS · demanda 019 (W4 · T015)
+   Prefixo PRÓPRIO `p53-sol-`. Nenhum seletor alheio (R9 §6): a faixa de grupo
+   e os cards são estilizados pela classe que este módulo cria, nunca por
+   `#p52-sec-support > *` — o dono daquela grade é o workspace 5.2.
+
+   Sem hex literal (lição do `P50-COR1`): só tokens já declarados.
+   ========================================================================== */
+
+/* O SELO DE GRUPO, dentro do card.
+
+   A primeira versão era uma faixa irmã atravessando a grade. Medido: ela se
+   punha entre o título congelado e os blocos e quebrava a contiguidade que o
+   censo da Camada 1 exige (`D010-ARB1 (c)` reprovou por VACUIDADE). O selo
+   dentro do card resolve sem tocar em nada congelado — e o agrupamento
+   continua legível porque os cards são ordenados por grupo. */
+.p53-sol-chip {
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: .09em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 6px;
+}
+
+/* As capabilities que o produto atende. É a informação que a visão por gap
+   carregava no título de cada bloco e que, sem esta lista, se perderia na
+   consolidação — 15 títulos virando 9 cards. */
+.p53-sol-caps {
+  list-style: none;
+  margin: 12px 0 0;
+  padding: 12px 0 0;
+  border-top: 1px solid var(--line);
+}
+.p53-sol-cap {
+  position: relative;
+  padding-left: 16px;
+  margin: 4px 0;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--muted);
+}
+.p53-sol-cap::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: .55em;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--ftnt-silver);
+}
+
+.p53-sol-why { margin-bottom: 12px; }
+
+/* C4 · o selo de proveniência. Ele só aparece em item cuja PRESENÇA é decisão
+   do engenheiro — nunca em item que o motor já oferecia. Rótulo que aparece em
+   tudo não distingue nada, e o `D019-PROV1` mede isso nas duas direções. */
+.p53-sol-prov {
+  margin: 0 0 10px;
+  padding: 6px 10px;
+  border-left: 3px solid var(--p52-attn);
+  background: var(--surface2);
+  border-radius: 0 6px 6px 0;
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--muted);
+}
+.p53-sol-card-add { border-style: dashed; }
+
+/* O ponteiro que fica no disclosure legado depois que os blocos migram. Ele
+   existe porque o `<details>` é âncora do `D010-ARB3` e não pode ser ocultado;
+   vazio e mudo, ele mentiria. */
+.p53-sol-ptr {
+  margin: 4px 0 0;
+  font-size: 13.5px;
+  line-height: 1.55;
+  color: var(--muted);
+}
+
+/* A supressão declarada (T018): nunca seção vazia, nunca seção ausente. */
+.p53-sol-suprimido {
+  margin: 14px 0 0;
+  padding: 12px 14px;
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--p52-attn);
+  border-radius: 8px;
+  font-size: 13.5px;
+  line-height: 1.55;
+  color: var(--muted);
+}
+.p53-sol-suprimido strong { color: var(--text); }
+
+/* ============================================================================
+   EDITOR DE CURADORIA (`ui_curation_edit_v32.js`) — mesma folha, de propósito.
+
+   A apresentação por solução e o editor que age sobre ela são DOIS módulos de
+   UMA funcionalidade, e compartilham a família de prefixo `p53-`. Quinze regras
+   não pagam uma folha própria: cada folha nova entra no censo PINADO da `d014`
+   e no contrato de injeção do builder. O que a R9 §6 cobra é prefixo próprio e
+   nenhum seletor alheio — as duas coisas valem aqui: `p53-cur-*` é do editor,
+   `p53-sol-*` é da apresentação, e nenhuma regra desta folha alcança seletor de
+   outro dono.
+   ========================================================================== */
+.p53-cur-abrir {
+  justify-self: start;
+  margin: 16px 0 0;
+  padding: 9px 16px;
+  font-size: 13.5px;
+  font-weight: 650;
+  color: var(--text);
+  background: var(--surface2);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  cursor: pointer;
+}
+.p53-cur-abrir:hover { border-color: var(--ftnt-silver); }
+
+.p53-cur-panel {
+  margin: 12px 0 0;
+  padding: 16px 18px;
+  background: var(--surface2);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+}
+.p53-cur-lead {
+  margin: 0 0 14px;
+  font-size: 13.5px;
+  line-height: 1.55;
+  color: var(--muted);
+}
+.p53-cur-lista { margin-top: 14px; }
+.p53-cur-lista-t {
+  margin: 0 0 6px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--faint);
+}
+.p53-cur-lista-nota {
+  margin: 0 0 8px;
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--faint);
+}
+.p53-cur-item {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  padding: 5px 0;
+  cursor: pointer;
+}
+.p53-cur-item-txt { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+.p53-cur-item-nome { font-size: 14px; color: var(--text); }
+.p53-cur-item-grp { font-size: 12px; color: var(--faint); }
+.p53-cur-item-add {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--p52-attn);
+}
+.p53-cur-alerta {
+  margin: 0 0 14px;
+  padding: 12px 14px;
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--p52-attn);
+  border-radius: 8px;
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--muted);
+}
+.p53-cur-alerta strong { color: var(--text); }
+
+@media (min-width: 1180px) {
+  .p53-cur-abrir, .p53-cur-panel, .p53-sol-suprimido { grid-column: 1 / -1; }
+}
+
+/* O editor é superfície de TRABALHO, não de entrega: não vai ao papel. */
+@media print {
+  .p53-sol-caps { break-inside: avoid; }
+  .p53-sol-suprimido { break-inside: avoid; }
+  .p53-cur-abrir, .p53-cur-panel { display: none; }
+}
+
+/* V32_P53SOLCSS_END */
 </style>
 </head>
 <body>
@@ -5855,6 +6043,18 @@ function newDraft(){
   };
 }
 
+/* [019 · T025] Leitura da curadoria para itens que NÃO são produto — hoje só a
+   nota arquitetural. Um único ponto de consulta, para que tela e papel não
+   possam divergir por esquecimento de um dos dois lados (é o EA-58 de novo).
+   Ausência do módulo, ausência da chave ou qualquer erro devolvem `true`: a
+   curadoria SUPRIME, nunca é pré-condição para publicar. */
+function v32CuradoriaPublica(chave){
+  try {
+    if (typeof window === "undefined" || !window.__CURATION || !window.__CURATION.__installed) return true;
+    return window.__CURATION.state()[chave] !== "exclude";
+  } catch (e) { return true; }
+}
+
 /* ---------------- render: blocos pós-resultado ---------------- */
 function ensurePanel(app){
   let p = document.getElementById("v32panel");
@@ -6511,7 +6711,12 @@ function buildSupportHTML(res, afirmaPreservacao){
       <div class="v32-block" id="v32maturity">${matIds.map(id=>baseCardHTML(id, ctxs[id], "maturity")).join("")}</div>`;
   /* [3.2.1-2] mantido; [3.2.2-A] prioridades excluídas das seções subsequentes */
   const an = res.architectureNote;
-  if (an && an.show){
+  /* [019 · T025] A leitura arquitetural é CURÁVEL — decisão do portão da Fase 0
+     (refinement §P4, coluna "curável"). O estado dela vive no owner
+     (`__CURATION`), e aqui só se consome, sob guarda `typeof`: sem o módulo, o
+     comportamento é o de hoje. Excluí-la a retira das DUAS superfícies — esta e
+     a de `buildPrintReport()` —, nunca de uma só. */
+  if (an && an.show && v32CuradoriaPublica("architectureNote")){
     html += `<div class="section-title"><div class="eyebrow">Leitura arquitetural</div></div>
       <div class="v32-block" id="v32arch-note">
         <div class="v32-neutral">${an.basis.coreGaps.length} gaps confirmados em capabilities core de plataforma; ${an.basis.socPlatformNone?"ausência confirmada de plataforma SOC":"fragmentação declarada na stack"}.</div>
@@ -7029,7 +7234,7 @@ function buildPrintReport(){
   h += `</div>`;
   /* H — leitura arquitetural */
   const an = ctxRes.architectureNote;
-  if (an && an.show) h += `<div class="pr-sec" id="pr-arch"><h2>Leitura arquitetural</h2>
+  if (an && an.show && v32CuradoriaPublica("architectureNote")) h += `<div class="pr-sec" id="pr-arch"><h2>Leitura arquitetural</h2>
     <div class="pr-card"><div class="pr-mut">${an.basis.coreGaps.length} gaps confirmados em capabilities core; ${an.basis.socPlatformNone?"ausência confirmada de plataforma SOC":"fragmentação declarada"}.</div>
     <div><b>Rota A</b> — ${esc32(an.optionA)}</div>
     ${an.optionB?`<div><b>Rota B</b> — ${esc32(an.optionB)}</div>`:""}</div></div>`;
@@ -7038,6 +7243,15 @@ function buildPrintReport(){
      jornada, o refinamento operacional, o cenário-alvo e o anexo de respostas
      são derivados exclusivamente das respostas do assessment e passam a
      existir também quando o contexto não é informado. */
+  /* [019 · T020] APOIO POR SOLUÇÃO, A MESMA SELEÇÃO DA TELA.
+     Entra AQUI, e não dentro de `#pr-support`, porque aquele bloco é
+     condicional ao contexto declarado (errata B-02) e esta seção é derivada
+     dos GAPS — ela existe mesmo sem contexto algum, como a jornada e o
+     refinamento logo abaixo. O consumo é pelo bridge único do módulo, sob a
+     mesma guarda `typeof` dos três hooks de PDF que já existem. O papel é
+     DERIVADO dos cards da tela: recalcular criaria dois caminhos para a mesma
+     decisão, que é como as duas superfícies divergem (EA-58). */
+  h += (typeof window!=="undefined" && window.__P53SOL && window.__P53SOL.printHTML) ? window.__P53SOL.printHTML() : "";
   h += (typeof window!=="undefined" && window.__uxJourneyPrintHTML) ? window.__uxJourneyPrintHTML() : "";   /* [4.5-W] */
   h += (typeof window!=="undefined" && window.__uxRefinementPrintHTML) ? window.__uxRefinementPrintHTML() : "";   /* [4.4-O] */
   h += (typeof window!=="undefined" && window.__uxTargetPrintHTML) ? window.__uxTargetPrintHTML() : "";   /* [4.3.1-Q] */
@@ -8387,7 +8601,7 @@ function captureCanonicalInputs(){
       declaredDriver: L.declaredDriver ? JSON.parse(JSON.stringify(L.declaredDriver)) : null };
   });
   const signals = {}; V32.SIGNAL_IDS.forEach(s=>{ signals[s] = V32.SESSION_SIGNALS[s]; });
-  return {
+  const out = {
     assessment: { archetype: (arq===undefined?null:arq), answers, notes: notesOut },
     priorities: [...businessPriority],
     technologyLandscape: { capabilities: land,
@@ -8397,6 +8611,16 @@ function captureCanonicalInputs(){
     targetProfile: { overrides: JSON.parse(JSON.stringify(TARGET_PROFILE.overrides)) },
     operationalRefinement: { answers: JSON.parse(JSON.stringify(OPERATIONAL_REFINEMENT.answers)) }
   };
+  /* [019 · T010] SEXTA CHAVE CANONICA — curadoria do relatorio.
+     A chave e OMITIDA quando nada foi declarado: e o que mantem
+     `missing != {}` (INV-8), e o gate D019-CUR2 mede exatamente isso.
+     O conteudo vem do OWNER do estado por bridge (R9 §5) — este modulo
+     serializa, nunca decide. Selecao e ENTRADA; por isso ela cabe aqui,
+     ao lado das respostas e das prioridades, e nao entre os derivados. */
+  const cur = (typeof window !== "undefined" && window.__CURATION)
+    ? window.__CURATION.toSession() : undefined;
+  if (cur !== undefined) out.reportCuration = cur;
+  return out;
 }
 /* [4.8.0.7-B] truncamento do label por ESCALARES: String.slice(0,200) corta code units e podia partir um
    par surrogate ao meio, emitindo um label malformado que o próprio import recusaria (defeito real desta
@@ -8547,9 +8771,20 @@ function validateSessionDocument(doc){
   if (hasForbiddenKeys(doc,0)) return err("Documento contém chaves proibidas.");
   const I = doc.inputs;
   if (!I || typeof I !== "object" || Array.isArray(I)) return err("Bloco de entradas ausente.");
-  const extraIn = Object.keys(I).filter(k=>!["assessment","priorities","technologyLandscape","targetProfile","operationalRefinement"].includes(k));
+  const extraIn = Object.keys(I).filter(k=>!["assessment","priorities","technologyLandscape","targetProfile","operationalRefinement","reportCuration"].includes(k));
   if (extraIn.length) return err("Entradas não reconhecidas: " + extraIn.join(", "));
   if (hasReservedDerived(I,0)) return err("O arquivo contém resultados derivados; sessões transportam apenas entradas.");
+  /* [019 · T011] curadoria: id desconhecido e valor fora do enum sao
+     RECUSADOS com mensagem, nunca ignorados em silencio. Quem valida e o
+     OWNER do estado — duplicar a regra aqui criaria duas verdades sobre o
+     que e um id valido, e uma delas envelheceria. Ausencia da chave e
+     legitima e nao produz erro: `missing != {}` (INV-8). */
+  if (I.reportCuration !== undefined){
+    if (typeof window === "undefined" || !window.__CURATION)
+      return err("Curadoria declarada no arquivo, mas o modulo de curadoria nao esta disponivel.");
+    const errosCur = window.__CURATION.fromSession(I.reportCuration);
+    if (errosCur && errosCur.length) return err("Curadoria inválida: " + errosCur.join("; "));
+  }
   /* assessment */
   const A = I.assessment;
   if (!A || typeof A !== "object" || Array.isArray(A)) return err("Assessment ausente.");
@@ -8889,6 +9124,11 @@ function snapshotCanonicalOwners(){
     signals: JSON.parse(JSON.stringify(V32.SESSION_SIGNALS)),
     target: JSON.parse(JSON.stringify(TARGET_PROFILE.overrides)),
     refinement: JSON.parse(JSON.stringify(OPERATIONAL_REFINEMENT.answers)),
+    /* [019 · T010] a curadoria entra no SNAPSHOT para que uma importacao
+       que falhe no meio nao deixe a selecao do operador meio aplicada —
+       o commit e atomico ou nao e commit. */
+    curadoria: (typeof window !== "undefined" && window.__CURATION)
+      ? window.__CURATION.state() : null,
     step: step
   };
 }
@@ -8904,6 +9144,8 @@ function restoreCanonicalOwners(snap){
   Object.keys(TARGET_PROFILE.overrides).forEach(k => { delete TARGET_PROFILE.overrides[k]; });
   Object.keys(snap.target).forEach(k => { TARGET_PROFILE.overrides[k] = snap.target[k]; });
   Object.keys(snap.refinement).forEach(k => { OPERATIONAL_REFINEMENT.answers[k] = snap.refinement[k]; });
+  if (typeof window !== "undefined" && window.__CURATION && snap.curadoria)
+    window.__CURATION.fromSession(snap.curadoria);
   step = snap.step;
 }
 function commitCanonicalOwners(cand){
@@ -11122,6 +11364,212 @@ if (window.__DEV) Object.assign(window.__DEV, { openExportModal, openImportPicke
 })();
 
 /* V32_P50_RESULTS_END */
+
+/* V32_CURATION_BEGIN */
+/* ============================================================================
+   CURADORIA DO RELATÓRIO — OWNER DO ESTADO · demanda 019
+   Dono: core-engineer. Bridge único: `__CURATION` (R9 §2, registrado em
+   .claude/verify/bridges.json).
+
+   ==========================================================================
+   A FRONTEIRA QUE ESTE MÓDULO EXISTE PARA SUSTENTAR
+   ==========================================================================
+   O operador ESCOLHE entre o que o motor ofereceu. Ele NUNCA escreve o que o
+   motor deveria ter dito.
+
+   Disso dependem as duas invariantes que a demanda tangencia:
+
+     · INV-7 — determinismo é propriedade de (entradas) → saída, não proibição
+       de entrada humana. A curadoria é ENTRADA, como já são as respostas, as
+       prioridades e o contexto tecnológico.
+     · INV-8 — derivado nunca é serializado como fonte de verdade. SELEÇÃO é
+       entrada; TEXTO escrito pelo operador seria derivado, e por isso este
+       módulo **não aceita texto**: `set()` recusa id fora do catálogo e valor
+       fora do enum fechado.
+
+   O gate `D019-CUR1` mede exatamente isso, e o mutante `D019-M1` ataca-o
+   abrindo o estado para texto livre.
+
+   ==========================================================================
+   POR QUE ESTE MÓDULO NÃO LÊ O DOM
+   ==========================================================================
+   R9 §3: contrato inter-módulo só por API de bridge; é proibido ler atributo
+   escrito por outro módulo como canal de decisão. O conjunto ofertado é
+   derivado do MOTOR (`computeFindings()` + `MAP`), nunca da tela — senão o
+   estado dependeria de quem renderizou primeiro, e a ordem de instalação
+   viraria regra de negócio.
+
+   ==========================================================================
+   POR QUE `decisions` E NÃO `offerings`
+   ==========================================================================
+   A primeira versão deste módulo chamava o mapa de `offerings`. O gate `S4-S5`
+   (`tests_session_m48.js`, §29.4) proíbe **treze nomes de campo derivado** no
+   documento de sessão, e `"offerings"` é um deles — o engine usa essa palavra
+   para o CATÁLOGO derivado (`V32.OFFERINGS`).
+
+   Medido por sonda antes de qualquer commit: com o nome antigo, o documento
+   serializado continha `"offerings"` e o `S4-S5` reprovava — corretamente.
+
+   A saída NÃO foi afrouxar o banimento: ele existe para pegar catálogo
+   derivado vazando para a sessão, e continuaria valendo. A saída foi corrigir
+   o nome. O mapa guarda DECISÕES do operador, não ofertas do motor, e
+   `decisions` é o que ele sempre deveria ter dito.
+
+   `decisions` sem a chave  → o motor decide (comportamento de hoje)
+   `decisions[id] = "include"` → publica, mesmo que o motor não tenha ofertado
+   `decisions[id] = "exclude"` → não publica, mesmo que o motor tenha ofertado
+
+   `missing` nunca é convertido em `"exclude"` na leitura. O mutante
+   `D019-M2` ataca justamente essa conversão.
+   ========================================================================== */
+(function () {
+  "use strict";
+  if (typeof window === "undefined") return;
+  if (window.__CURATION && window.__CURATION.__installed) return;   /* R9 §1 */
+
+  var ENUM = ["include", "exclude"];
+
+  /* estado canônico — só ids e enum fechado, nunca prosa */
+  var estado = { decisions: {}, architectureNote: undefined };
+
+  function catalogo() {
+    if (typeof PRODUCTS === "undefined" || !PRODUCTS) return [];
+    return Object.keys(PRODUCTS);
+  }
+
+  /* O que o MOTOR ofereceu nesta sessão: união dos candidatos de cada gap
+     observado, na ordem em que o motor os produz. Derivado do engine, nunca
+     do DOM. */
+  function ofertados() {
+    var out = [], vistos = {};
+    if (typeof computeFindings !== "function" || typeof MAP === "undefined") return out;
+    var fs;
+    try { fs = (computeFindings() || {}).findings || []; } catch (e) { return out; }
+    for (var i = 0; i < fs.length; i++) {
+      var f = fs[i], m = MAP[f.id];
+      if (!m || !m.lv || !m.lv[f.lvl]) continue;
+      var cands = m.lv[f.lvl].c || [];
+      for (var j = 0; j < cands.length; j++) {
+        var p = cands[j].p;
+        if (p && !vistos[p]) { vistos[p] = true; out.push(p); }
+      }
+    }
+    return out;
+  }
+
+  function valido(id, valor) {
+    if (typeof id !== "string" || !id) return "id ausente";
+    if (catalogo().indexOf(id) < 0) return "id fora do catálogo: " + id;
+    if (ENUM.indexOf(valor) < 0) return "valor fora do enum fechado: " + String(valor);
+    return null;
+  }
+
+  /* decisão EFETIVA para um id, sem converter ausência em exclusão */
+  function decidir(id) {
+    if (Object.prototype.hasOwnProperty.call(estado.decisions, id)) return estado.decisions[id];
+    return ofertados().indexOf(id) >= 0 ? "include" : "exclude";
+  }
+
+  /* o que vai ao relatório: ofertados que não foram excluídos, mais os que o
+     operador incluiu por conta própria — estes últimos, e só estes, carregam
+     proveniência. */
+  function publicados() {
+    var base = ofertados(), out = [], i, id;
+    for (i = 0; i < base.length; i++) if (decidir(base[i]) === "include") out.push(base[i]);
+    var chaves = Object.keys(estado.decisions);
+    for (i = 0; i < chaves.length; i++) {
+      id = chaves[i];
+      if (estado.decisions[id] === "include" && out.indexOf(id) < 0 && catalogo().indexOf(id) >= 0) out.push(id);
+    }
+    return out;
+  }
+
+  /* verdadeiro só quando a presença do item É decisão do operador — o motor
+     não o ofereceu. É o que o rótulo de proveniência anuncia (C4). */
+  function escolhaDoOperador(id) {
+    return estado.decisions[id] === "include" && ofertados().indexOf(id) < 0;
+  }
+
+  /* inclusão que a avaliação já não sustenta — mantida e SINALIZADA, nunca
+     descartada nem ressuscitada em silêncio (caso de borda 4/5 do refinamento) */
+  function inclusoesSemLastro() {
+    return Object.keys(estado.decisions).filter(function (id) {
+      return estado.decisions[id] === "include" && ofertados().indexOf(id) < 0;
+    });
+  }
+
+  function copia(o) { return JSON.parse(JSON.stringify(o)); }
+
+  /* snapshot para SERIALIZAÇÃO: só o que é entrada. Chave ausente quando nada
+     foi declarado — é o que mantém `missing ≠ {}` (INV-8). */
+  function paraSessao() {
+    var out = {};
+    if (Object.keys(estado.decisions).length) out.decisions = copia(estado.decisions);
+    if (estado.architectureNote !== undefined) out.architectureNote = estado.architectureNote;
+    return Object.keys(out).length ? out : undefined;
+  }
+
+  /* restauro na importação: valida item a item e RECUSA com mensagem, nunca
+     ignora em silêncio (gate `D019-INV8`, alínea de recusa) */
+  function daSessao(obj) {
+    estado = { decisions: {}, architectureNote: undefined };
+    if (obj === undefined || obj === null) return [];
+    if (typeof obj !== "object" || Array.isArray(obj)) return ["reportCuration não é objeto"];
+    var erros = [], off = obj.decisions;
+    if (off !== undefined) {
+      if (typeof off !== "object" || off === null || Array.isArray(off)) erros.push("decisions não é objeto");
+      else Object.keys(off).forEach(function (id) {
+        var e = valido(id, off[id]);
+        if (e) erros.push("decisions: " + e); else estado.decisions[id] = off[id];
+      });
+    }
+    if (obj.architectureNote !== undefined) {
+      if (ENUM.indexOf(obj.architectureNote) < 0) erros.push("architectureNote fora do enum: " + String(obj.architectureNote));
+      else estado.architectureNote = obj.architectureNote;
+    }
+    return erros;
+  }
+
+  window.__CURATION = {
+    __installed: true,
+    /* leitura */
+    state: function () { return copia({ decisions: estado.decisions, architectureNote: estado.architectureNote }); },
+    offered: ofertados,
+    catalog: catalogo,
+    decide: decidir,
+    published: publicados,
+    isOperatorChoice: escolhaDoOperador,
+    unsupported: inclusoesSemLastro,
+    /* escrita — a ÚNICA porta; renderização nunca escreve (R9 §5) */
+    set: function (id, valor) {
+      var e = valido(id, valor);
+      if (e) throw new Error("curadoria: " + e);
+      estado.decisions[id] = valor;
+      return true;
+    },
+    setArchitectureNote: function (valor) {
+      if (ENUM.indexOf(valor) < 0) throw new Error("curadoria: valor fora do enum fechado: " + String(valor));
+      estado.architectureNote = valor;
+      return true;
+    },
+    clear: function () { estado = { decisions: {}, architectureNote: undefined }; },
+    /* sessão (consumido por ui_session_v32.js) */
+    toSession: paraSessao,
+    fromSession: daSessao,
+    /* contrato de leitura para os módulos de apresentação */
+    contract: function () {
+      return {
+        published: publicados(),
+        offered: ofertados(),
+        architectureNote: estado.architectureNote === undefined ? "include" : estado.architectureNote,
+        operatorChoices: Object.keys(estado.decisions).filter(escolhaDoOperador),
+        suppressed: ofertados().filter(function (id) { return decidir(id) === "exclude"; })
+      };
+    }
+  };
+})();
+
+/* V32_CURATION_END */
 
 /* V32_P52_WORKSPACE_BEGIN */
 /* ============================================================================
@@ -14790,6 +15238,879 @@ if (window.__DEV) Object.assign(window.__DEV, { openExportModal, openImportPicke
 })();
 
 /* V32_D011_END */
+
+/* V32_P53_SUPPORT_BEGIN */
+/* ============================================================================
+   APOIO POR SOLUÇÃO — CAMADA 5.2 · demanda 019 (W4)
+   Dono: ui-engineer. Bridge único: `__P53SOL` (R9 §2), shape fechado
+   `{ __installed, diag() }` — no precedente do `__D011`: nenhuma porta que
+   permita a um gate chamar a decoração à mão e medir o efeito com o mecanismo
+   morto.
+
+   ==========================================================================
+   O QUE ESTE MÓDULO FAZ, E POR QUE NÃO PODE SER "OCULTAR E RECONSTRUIR"
+   ==========================================================================
+   A seção de apoio deixa de agrupar por CAPABILITY e passa a agrupar por
+   PRODUTO. Medido na sessão de referência: 15 blocos → 9 cards, com
+   `Serviços FortiGuard` deixando de aparecer 5 vezes.
+
+   O caminho óbvio — construir cards novos e ocultar os legados — derruba o
+   `P52-REC1g`: `getBoundingClientRect()` de elemento oculto zera e o gate lê
+   "cards de apoio em coluna única no desktop". Pior: o `D010-INV7` compara o
+   censo VISÍVEL da Camada 1 contra o mesmo estado em modo legado, e ocultar
+   bloco contíguo a título congelado é exatamente o que ele proíbe.
+
+   Por isso o desenho é **movimento de nós**: o `.prod` completo de cada
+   produto — o que tem ícone, descrição e link — MIGRA do bloco de capability
+   para o card do produto. Nada é reescrito, nada é ocultado, e o que sobra
+   das cascas é removido do DOM, não escondido.
+
+   ==========================================================================
+   ONDE OS BLOCOS ESTAVAM, E POR QUE ISSO IMPORTA
+   ==========================================================================
+   Medido antes de escrever uma linha: com prioridades declaradas, os 15
+   blocos NÃO estão todos na seção de apoio.
+
+     · 3  em `#p52-sec-support`  — apoio às prioridades declaradas
+     · 12 dentro do `<details class="t-details">` da seção de gaps
+
+   A consolidação recolhe os dois lugares (decisão do proprietário em
+   2026-09-18). O `<details>` **permanece no DOM e visível**: ele é âncora
+   nomeada do `D010-ARB3 (b)`, que o lista entre as que NUNCA podem ser
+   ocultadas. Ele perde os blocos e ganha um ponteiro para onde o apoio foi
+   consolidado — sumir com ele seria trocar um gate por uma conveniência.
+
+   ==========================================================================
+   AGRUPAMENTO: A DIVISÃO OFICIAL DO PORTFÓLIO
+   ==========================================================================
+   Decisão do proprietário (refinement P5): a separação segue
+   https://www.fortinet.com/products. As três regras de borda da spec:
+
+     1. produto fora de *Security Operations* usa a categoria de topo;
+     2. **serviços** (MDR, SOCaaS, bundles) têm grupo próprio — eles não estão
+        em *Products*, e sem isso sumiriam;
+     3. produto sem categoria conhecida vai para grupo EXPLÍCITO e é LISTADO.
+
+   A regra 3 não é decorativa: o catálogo é do motor e pode crescer sem que
+   este mapa saiba. Descarte silencioso é o que o `D019-SOL2` proíbe.
+   ========================================================================== */
+(function () {
+  "use strict";
+  if (typeof window === "undefined" || typeof document === "undefined") return;
+  if (window.__P53SOL && window.__P53SOL.__installed) return;              /* R9 §1 */
+
+  var erros = [], passes = 0, ultimoCenso = null;
+
+  /* ====================== o mapa do portfólio ======================
+     Chaveado pelo ID DE CATÁLOGO, nunca pelo nome exibido: o nome é texto de
+     apresentação e pode mudar sem aviso (`SOCaaS` já se chama
+     `FortiGuard SOCaaS` na tela). O nome exibido é resolvido em tempo de
+     execução a partir de `PRODUCTS`, que é a mesma fonte que o renderer
+     congelado usa — assim o card e o bloco de origem não podem divergir. */
+  var GRUPOS = [
+    { id: "siem-analytics",    nome: "SIEM, analytics e retenção" },
+    { id: "soar-automacao",    nome: "SOAR, automação e IA" },
+    { id: "endpoint",          nome: "Segurança de endpoint" },
+    { id: "rede-deception",    nome: "Detecção e resposta em rede" },
+    { id: "exposicao",         nome: "Exposição e risco digital" },
+    { id: "dados",             nome: "Proteção de dados" },
+    { id: "servicos",          nome: "Serviços gerenciados e de resposta" },
+    { id: "nao-classificado",  nome: "Sem categoria declarada no portfólio" }
+  ];
+  var PORTFOLIO = {
+    "FortiSIEM": "siem-analytics",
+    "FortiAnalyzer": "siem-analytics",
+    "FortiSOAR": "soar-automacao",
+    "FortiAI-Assist": "soar-automacao",
+    "FortiEndpoint": "endpoint",
+    "FortiXDR": "endpoint",
+    "FortiNDR": "rede-deception",
+    "FortiDeceptor": "rede-deception",
+    "FortiRecon": "exposicao",
+    "FortiDLP": "dados",
+    "SOCaaS": "servicos",
+    "FortiGuard-MDR-Service": "servicos",
+    "FortiGuard-Service-Bundle": "servicos"
+  };
+  var NAO_CLASSIFICADO = "nao-classificado";
+
+  /* ============================ utilidades ============================ */
+  function el(tag, attrs, texto) {
+    var n = document.createElement(tag), k;
+    if (attrs) for (k in attrs) if (Object.prototype.hasOwnProperty.call(attrs, k)) n.setAttribute(k, attrs[k]);
+    if (texto != null) n.appendChild(document.createTextNode(String(texto)));
+    return n;
+  }
+  function txt(n) { return n ? String(n.textContent || "").replace(/\s+/g, " ").trim() : ""; }
+  function has(n, c) { return !!(n && n.classList && n.classList.contains(c)); }
+
+  /* nome exibido → id de catálogo, derivado de PRODUCTS em tempo de execução.
+     O DOM carrega o NOME (é o que `.pt-name` e `.prod-mini b` mostram, e é o
+     que o `D019-SOL1` compara); o mapa do portfólio carrega o ID. Este é o
+     único ponto de tradução, e ele falha para o lado seguro: nome que não
+     existe no catálogo cai em `nao-classificado`. */
+  function nomeDoGrupo(id) {
+    for (var i = 0; i < GRUPOS.length; i++) if (GRUPOS[i].id === id) return GRUPOS[i].nome;
+    return id;
+  }
+  function idDoNome(nome) {
+    if (typeof PRODUCTS === "undefined" || !PRODUCTS) return null;
+    for (var id in PRODUCTS) {
+      if (!Object.prototype.hasOwnProperty.call(PRODUCTS, id)) continue;
+      if (PRODUCTS[id] && PRODUCTS[id].n === nome) return id;
+    }
+    return null;
+  }
+  function grupoDoNome(nome) {
+    var id = idDoNome(nome);
+    return (id && PORTFOLIO[id]) || NAO_CLASSIFICADO;
+  }
+
+  /* =================== a curadoria, quando existe ===================
+     R9 §3: o contrato vem da API do bridge, nunca de atributo que outro módulo
+     escreveu no DOM. Sob guarda de `typeof`: este módulo continua funcionando
+     inteiro se o owner do estado não estiver instalado — a visão por solução
+     não depende da curadoria para existir, é a curadoria que age sobre ela. */
+  function curadoria() {
+    return (typeof window !== "undefined" && window.__CURATION && window.__CURATION.__installed)
+      ? window.__CURATION : null;
+  }
+  function decisaoDe(nome) {
+    var b = curadoria(); if (!b) return "include";
+    var id = idDoNome(nome);
+    if (!id) return "include";
+    try { return b.decide(id); } catch (e) { return "include"; }
+  }
+  /* Verdadeiro só quando a PRESENÇA do item é decisão do operador — o motor não
+     o ofereceu. É literalmente o que a C4 manda rotular, e a distinção importa:
+     confirmar um item que o motor já ofereceu NÃO é decisão de presença, e
+     rotular isso encheria o relatório de selos que não informam nada. */
+  function ehEscolhaDoOperador(nome) {
+    var b = curadoria(); if (!b) return false;
+    var id = idDoNome(nome);
+    if (!id) return false;
+    try { return !!b.isOperatorChoice(id); } catch (e) { return false; }
+  }
+  var PROV_TXT = "Incluído por decisão do engenheiro — não derivado da avaliação.";
+
+  /* ===================== coleta: de onde vêm os nós =====================
+     Escopo é o WORKSPACE inteiro, não a seção de apoio: medido que 12 dos 15
+     blocos vivem no `<details>` da seção de gaps. Restringir à seção deixaria
+     6 produtos fora da visão por solução — e o `D019-SOL1` nomearia cada um
+     deles como "produto SUMIU". */
+  /* ====================================================================
+     BLOCO OCULTO NÃO É MATÉRIA-PRIMA. Medido: sem esta guarda o `D010-ARB3`
+     reprovou sob a fixture F2 — "arbitragem parcial: 1 ocultos de 7 nós da
+     Camada 1 (esperado 0 ou 7)".
+
+     A arbitragem da 010 é TUDO-OU-NADA: quando existe substituto V3.2, a
+     leitura congelada inteira fica oculta. Consumir um bloco oculto para
+     produzir um card visível RESSUSCITA o conteúdo que a arbitragem tinha
+     decidido esconder — e a decisão de esconder não é minha, é de outro
+     módulo, tomada por uma regra que este aqui não conhece.
+
+     Regra: o que está oculto fica onde está, intocado. A visão por solução
+     consolida o que está VISÍVEL, e só.
+     ==================================================================== */
+  function oculto(n) {
+    for (var p = n; p && p.classList; p = p.parentElement)
+      if (p.classList.contains("v32-hidden")) return true;
+    return false;
+  }
+
+  /* ====================================================================
+     ABSTENÇÃO QUANDO A ARBITRAGEM DA 010 ESTÁ EM CURSO.
+
+     Medido em duas rodadas, e a segunda corrigiu a primeira. Pular só os
+     blocos ocultos não bastou: o `D010-ARB3` continuou acusando "arbitragem
+     parcial — 3 ocultos de 7". A arbitragem da demanda 010 é TUDO-OU-NADA
+     sobre o escopo de apoio inteiro; mexer em parte dele, mesmo só na parte
+     visível, produz exatamente o estado misto que ela proíbe.
+
+     Então a regra é simétrica: se HÁ substituto V3.2 em cena — sinalizado
+     por qualquer nó oculto no escopo — esta camada não consolida nada. Não é
+     o caso dela decidir; quem decide é a arbitragem, e a decisão dela vale
+     para a região toda.
+     ==================================================================== */
+  function escopoApoio() {
+    var tela = document.querySelector("section.screen");
+    if (!tela) return null;
+    return tela.querySelector('[data-p52-legacy-scope="support"]') || tela;
+  }
+  function arbitragemEmCurso() {
+    var esc = escopoApoio();
+    if (!esc) return false;
+    var filhos = esc.children, i;
+    for (i = 0; i < filhos.length; i++)
+      if (filhos[i].classList && filhos[i].classList.contains("v32-hidden")) return true;
+    return false;
+  }
+  function blocosLegados(ws) {
+    var todos = ws.querySelectorAll(".apoio-block"), out = [], i;
+    for (i = 0; i < todos.length; i++)
+      if (!todos[i].hasAttribute("data-p53-sol-produto") && !oculto(todos[i])) out.push(todos[i]);
+    return out;
+  }
+
+  /* Um produto por chave, na ordem de PRIMEIRA aparição — que é a ordem em que
+     o motor os produziu. Ordenar por outra coisa (alfabética, por exemplo)
+     inventaria precedência que o motor não declarou. */
+  function colher(blocos) {
+    var ordem = [], porNome = {}, i, j;
+    function reg(nome) {
+      if (!nome) return null;
+      if (!porNome[nome]) { porNome[nome] = { nome: nome, prod: null, caps: [], contextos: [] }; ordem.push(nome); }
+      return porNome[nome];
+    }
+    for (i = 0; i < blocos.length; i++) {
+      var bloco = blocos[i];
+      var cap = txt(bloco.querySelector("h4"));
+      var why = bloco.querySelector(".why");
+      var prods = bloco.querySelectorAll(".prod");
+      var minis = bloco.querySelectorAll(".prod-mini");
+      for (j = 0; j < prods.length; j++) {
+        var nomeP = txt(prods[j].querySelector(".pt-name"));
+        var regP = reg(nomeP);
+        if (!regP) continue;
+        /* o `.prod` COMPLETO existe uma vez por produto em toda a leitura — é
+           o dedup com precedência do renderer congelado. Guardamos o primeiro
+           e movemos o nó; nunca copiamos, para não duplicar ícone e link. */
+        if (!regP.prod) regP.prod = prods[j];
+        if (cap && regP.caps.indexOf(cap) < 0) regP.caps.push(cap);
+        if (why && regP.contextos.indexOf(txt(why)) < 0) regP.contextos.push(txt(why));
+      }
+      for (j = 0; j < minis.length; j++) {
+        /* MENÇÃO CURTA. É por aqui que um produto desapareceria sem ninguém
+           ver, porque é o que o olho não procura — o mutante `D019-M6` ataca
+           exatamente este laço. */
+        var nomeM = txt(minis[j].querySelector("b"));
+        var regM = reg(nomeM);
+        if (!regM) continue;
+        if (cap && regM.caps.indexOf(cap) < 0) regM.caps.push(cap);
+      }
+    }
+    return ordem.map(function (n) { return porNome[n]; });
+  }
+
+  /* ===================== construção do card por produto =====================
+     O selo de grupo nasce em UM lugar só. Ele estava duplicado — card colhido
+     e card acrescentado emitiam o mesmo atributo cada um por si — e a campanha
+     cobrou na hora: o `D019-M7` saiu `ocorrencias=2`, NÃO EXECUTADO. Âncora
+     ambígua é sintoma; a causa era código duplicado, e a correção é a óbvia. */
+  function chipDoGrupo(grupo) {
+    return el("div", { "class": "p53-sol-chip", "data-p53-sol-grupo-nome": grupo }, nomeDoGrupo(grupo));
+  }
+  function cardDoProduto(p) {
+    var grupo = grupoDoNome(p.nome);
+    var card = el("div", {
+      "class": "apoio-block p53-sol-card",
+      "data-p53-sol-produto": p.nome,
+      "data-p53-sol-grupo": grupo
+    });
+    /* ====================================================================
+       O GRUPO SE NOMEIA DENTRO DO CARD, e não numa faixa entre os cards.
+
+       A primeira versão usava faixa irmã, atravessando a grade. Medido: o
+       `D010-ARB1 (c)` reprovou com VACUIDADE — "nenhum `.apoio-block`
+       contíguo aos títulos presentes". O censo da Camada 1 varre os filhos
+       DIRETOS do escopo de apoio, marca o título congelado e conta os blocos
+       CONTÍGUOS a ele; qualquer nó estranho no meio encerra a contagem. A
+       faixa, sendo o primeiro filho depois do título, zerava o censo — e o
+       gate falhou por não ter medido nada, que é exatamente o que ele promete
+       fazer.
+
+       O gate estava certo e o desenho estava errado: eu tinha partido uma
+       região congelada para acomodar um rótulo meu. O selo entra DENTRO do
+       card, os 9 blocos ficam contíguos ao título, e o agrupamento continua
+       visível porque os cards são ordenados por grupo. Nada foi afrouxado no
+       `D010` para isso caber.
+       ==================================================================== */
+    card.appendChild(chipDoGrupo(grupo));
+    card.appendChild(el("h4", null, p.nome));
+    /* C4 · PROVENIÊNCIA NA TELA. O mesmo marcador nasce no papel, em
+       `printHTML()`. Foi o EA-58 que ensinou o modo real de as duas superfícies
+       divergirem: o rótulo existe em uma e some na outra — e o mutante
+       `D019-M4` ataca exatamente isso, removendo SÓ no papel. */
+    if (ehEscolhaDoOperador(p.nome))
+      card.appendChild(el("div", { "class": "p53-sol-prov", "data-p53-prov": "operador" }, PROV_TXT));
+    card.appendChild(el("div", { "class": "why p53-sol-why" },
+      p.caps.length === 1 ? "Atende 1 capability desta leitura."
+                          : "Atende " + p.caps.length + " capabilities desta leitura."));
+    var corpo = el("div", { "class": "prods" });
+    /* O `.prod` é MOVIDO, não clonado: descrição, ícone e link oficial são os
+       mesmos nós que o renderer congelado emitiu. Produto que só apareceu como
+       menção curta não tem `.prod` — e mesmo assim entra, com o nome que a
+       menção carregava. Descartá-lo aqui é o que o `D019-SOL1` reprova. */
+    if (p.prod) corpo.appendChild(p.prod);
+    card.appendChild(corpo);
+    if (p.caps.length) {
+      var lista = el("ul", { "class": "p53-sol-caps" });
+      /* O atributo é CONTRATO com o gate; a classe é estilo. O `D019-SOL1`
+         compara o par (produto × capability) contra o que o MOTOR produziu, e
+         precisa de um seletor que não seja um detalhe de CSS meu. */
+      for (var i = 0; i < p.caps.length; i++)
+        lista.appendChild(el("li", { "class": "p53-sol-cap", "data-p53-sol-cap": p.caps[i] }, p.caps[i]));
+      card.appendChild(lista);
+    }
+    return card;
+  }
+
+  /* ===================== o ponteiro que fica no lugar =====================
+     O `<details class="t-details">` é âncora nomeada do `D010-ARB3 (b)`, entre
+     as que NUNCA podem ser ocultadas. Ele perde os blocos e recebe uma linha
+     dizendo para onde eles foram. Sem isso ele ficaria visível, vazio e
+     mentindo — pior que a redundância que a demanda veio resolver. */
+  function ponteiro(det) {
+    if (!det || det.querySelector(".p53-sol-ptr")) return;
+    var corpo = det.querySelector("div") || det;
+    corpo.appendChild(el("p", { "class": "p53-sol-ptr" },
+      "As formas de apoio desta leitura estão consolidadas por produto na seção “Formas de apoio”."));
+  }
+
+  /* ============== o produto que o engenheiro ACRESCENTOU ==============
+     Ele não tem `.prod` para migrar: o motor nunca o renderizou, porque nunca
+     o ofereceu. O card é montado a partir do CATÁLOGO (`PRODUCTS`) — nome,
+     descrição e link oficial —, que é dado do produto, não texto inventado
+     aqui. Nenhuma capability é listada, e isso é deliberado: associá-lo a uma
+     capability seria afirmar uma relação que a avaliação não estabeleceu. O
+     que o card diz é o que se sabe: o produto, e que a presença dele é escolha
+     de quem conduziu a sessão. */
+  function cardAcrescentado(id) {
+    var p = (typeof PRODUCTS !== "undefined" && PRODUCTS) ? PRODUCTS[id] : null;
+    if (!p) return null;
+    var grupo = (PORTFOLIO[id] || NAO_CLASSIFICADO);
+    var card = el("div", {
+      "class": "apoio-block p53-sol-card p53-sol-card-add",
+      "data-p53-sol-produto": p.n,
+      "data-p53-sol-grupo": grupo
+    });
+    card.appendChild(chipDoGrupo(grupo));
+    card.appendChild(el("h4", null, p.n));
+    card.appendChild(el("div", { "class": "p53-sol-prov", "data-p53-prov": "operador" }, PROV_TXT));
+    var corpo = el("div", { "class": "prods" });
+    var linha = el("div", { "class": "prod" });
+    var texto = el("span", null);
+    texto.appendChild(el("div", { "class": "pt-name" }, p.n));
+    if (p.d) texto.appendChild(el("div", { "class": "pt-desc" }, p.d));
+    if (p.u) {
+      var a = el("a", { "class": "pt-link", href: p.u, target: "_blank", rel: "noopener" }, "Página oficial ↗");
+      texto.appendChild(a);
+    }
+    linha.appendChild(texto);
+    corpo.appendChild(linha);
+    card.appendChild(corpo);
+    return card;
+  }
+  function acrescimos(jaPresentes) {
+    var b = curadoria(); if (!b) return [];
+    var ids;
+    try { ids = b.state().decisions || {}; } catch (e) { return []; }
+    var out = [];
+    Object.keys(ids).forEach(function (id) {
+      if (ids[id] !== "include" || !ehEscolhaDoOperadorId(b, id)) return;
+      var p = (typeof PRODUCTS !== "undefined" && PRODUCTS) ? PRODUCTS[id] : null;
+      if (!p || jaPresentes.indexOf(p.n) >= 0) return;
+      var c = cardAcrescentado(id);
+      if (c) out.push(c);
+    });
+    return out;
+  }
+  function ehEscolhaDoOperadorId(b, id) {
+    try { return !!b.isOperatorChoice(id); } catch (e) { return false; }
+  }
+
+  /* ===================== a supressão que se declara =====================
+     T018. Curadoria que exclui tudo NÃO some com a seção nem a deixa vazia e
+     muda: ela DIZ que houve supressão, e quantos itens. As duas alternativas
+     que este nó existe para impedir são simétricas e igualmente ruins — seção
+     ausente faz o leitor achar que o motor nada encontrou; seção vazia faz
+     parecer defeito. O `D019-VAZ1` mede a presença deste nó.
+
+     Publicação PARCIAL também se declara. Não estava no gate, e é a mesma
+     regra: quem lê um relatório curado precisa saber que houve curadoria, não
+     só quando ela apagou tudo. */
+  function declararSupressao(sec, publicados, suprimidos) {
+    var velho = sec.querySelector(":scope > [data-p53-suprimido]");
+    if (velho && velho.parentNode) velho.parentNode.removeChild(velho);
+    if (!suprimidos) return;
+    var aviso = el("div", {
+      "class": "p53-sol-suprimido",
+      "data-p53-suprimido": String(suprimidos),
+      role: "status"
+    });
+    aviso.appendChild(el("strong", null,
+      publicados ? "Seleção do engenheiro aplicada." : "Nenhuma forma de apoio foi publicada nesta leitura."));
+    aviso.appendChild(el("span", null, publicados
+      ? " " + suprimidos + (suprimidos === 1 ? " item foi retirado" : " itens foram retirados") +
+        " da apresentação; " + publicados + (publicados === 1 ? " permanece." : " permanecem.")
+      : " Os " + suprimidos + (suprimidos === 1 ? " item oferecido foi retirado" : " itens oferecidos foram retirados") +
+        " da apresentação por decisão do engenheiro. A avaliação e os gaps observados não mudaram."));
+    sec.appendChild(aviso);
+  }
+
+  /* ===================== colocação e agrupamento ===================== */
+  function colocar(sec, cards) {
+    var porGrupo = {}, i, g;
+    for (i = 0; i < cards.length; i++) {
+      g = cards[i].getAttribute("data-p53-sol-grupo");
+      (porGrupo[g] = porGrupo[g] || []).push(cards[i]);
+    }
+    /* Os cards entram DIRETOS na seção, na ordem dos grupos — nunca dentro de
+       um invólucro por grupo, e nunca separados por faixa.
+
+       Invólucro derrubaria o `P52-REC1g`, que mede `:scope > .apoio-block`:
+       com container, `cards.length` vira 0, TODA a cláusula de geometria fica
+       guardada por `cards.length > 1`, e o gate passa sem medir nada. Cegar um
+       gate de geometria para satisfazer um de agrupamento é a troca que o
+       EA-62 já custou uma vez neste projeto.
+
+       Faixa irmã derrubaria o `D010-ARB1 (c)` — medido, não suposto — porque
+       ela quebra a contiguidade entre o título congelado e os blocos.
+
+       Sobra a ordenação, que é o que o agrupamento precisa para existir na
+       tela, com o selo de cada card dizendo a que grupo ele pertence. */
+    for (i = 0; i < GRUPOS.length; i++) {
+      var lista = porGrupo[GRUPOS[i].id];
+      if (!lista || !lista.length) continue;
+      for (var j = 0; j < lista.length; j++) sec.appendChild(lista[j]);
+    }
+  }
+
+  /* ===================== a passagem ===================== */
+  function decorar() {
+    var ws = document.getElementById("p52-workspace");
+    if (!ws) return;
+    var sec = document.getElementById("p52-sec-support");
+    if (!sec) return;
+    if (arbitragemEmCurso()) return;
+
+    var legados = blocosLegados(ws);
+    if (legados.length) {
+      var produtos = colher(legados);
+      if (!produtos.length) return;
+      var cards = [], i;
+      /* ==================================================================
+         A CURADORIA AGE AQUI, E SÓ AQUI — sobre o que vai à APRESENTAÇÃO.
+         Os blocos legados já foram lidos: o conjunto ofertado pelo motor não
+         muda por decisão do operador, e é isso que o `D019-MED1` mede. O que
+         a decisão dele alcança é o que se PUBLICA.
+         ================================================================== */
+      for (i = 0; i < produtos.length; i++)
+        if (decisaoDe(produtos[i].nome) !== "exclude") cards.push(cardDoProduto(produtos[i]));
+      var suprimidos = produtos.length - cards.length;
+      cards = cards.concat(acrescimos(cards.map(function (c) { return c.getAttribute("data-p53-sol-produto"); })));
+      /* as cascas saem do DOM DEPOIS de os `.prod` terem migrado: remover
+         antes levaria o nó movido junto. */
+      for (i = 0; i < legados.length; i++)
+        if (legados[i].parentNode) legados[i].parentNode.removeChild(legados[i]);
+      colocar(sec, cards);
+      declararSupressao(sec, cards.length, suprimidos);
+      ultimoCenso = { produtos: produtos.length, publicados: cards.length,
+        suprimidos: suprimidos, blocos: legados.length };
+    } else {
+      /* IDEMPOTÊNCIA. A camada 5.2 roda também sob MutationObserver, e esta
+         função é chamada a cada passagem. Sem os legados não há o que
+         consolidar — mas os cards podem ter sido reordenados pela passagem do
+         workspace, então o agrupamento é refeito sobre o que já existe. */
+      var existentes = sec.querySelectorAll(":scope > .apoio-block[data-p53-sol-produto]");
+      if (!existentes.length) return;
+      var atuais = [], removidos = 0;
+      for (var k = 0; k < existentes.length; k++) {
+        var no = existentes[k];
+        if (decisaoDe(no.getAttribute("data-p53-sol-produto")) === "exclude") {
+          if (no.parentNode) no.parentNode.removeChild(no);
+          removidos++;
+        } else atuais.push(no);
+      }
+      atuais = atuais.concat(acrescimos(atuais.map(function (c) { return c.getAttribute("data-p53-sol-produto"); })));
+      colocar(sec, atuais);
+      declararSupressao(sec, atuais.length, removidos);
+    }
+
+    /* O contador é lido pelo `P52-REC1g` e comparado com os cards MEDIDOS na
+       tela. Ele é escrito pelo workspace na passagem anterior, quando os
+       blocos ainda eram 15 capabilities; sem reescrevê-lo aqui o gate reprova
+       por divergência de contagem — e reprovaria com razão. */
+    sec.setAttribute("data-p52-support-cards",
+      String(sec.querySelectorAll(":scope > .apoio-block").length));
+
+    ponteiro(document.querySelector("#p52-workspace details.t-details"));
+    passes++;
+  }
+
+  /* ======================================================================
+     O PAPEL — T020 e T021.
+
+     A seção do papel é derivada dos CARDS DA TELA, e não recalculada do zero.
+     Recalcular criaria dois caminhos para a mesma decisão, e o `D019-PAR1`
+     existe porque é exatamente assim que as duas superfícies divergem: cada
+     uma com a sua conta, uma delas envelhecendo. Derivando, a igualdade
+     tela×papel é propriedade de construção, não coincidência a verificar.
+
+     Sai como STRING porque `buildPrintReport()` monta o relatório por
+     concatenação — é o contrato dos três hooks de impressão que já existem
+     (`__uxJourneyPrintHTML` e irmãos), e este entra no mesmo padrão em vez de
+     inventar um quarto mecanismo (R9 §4).
+     ====================================================================== */
+  function escHtml(s) {
+    return String(s == null ? "" : s)
+      .split("&").join("&amp;").split("<").join("&lt;").split(">").join("&gt;")
+      .split('"').join("&quot;").split("'").join("&#39;");
+  }
+  function papelHTML() {
+    var sec = document.getElementById("p52-sec-support");
+    if (!sec) return "";
+    var cards = sec.querySelectorAll(":scope > .apoio-block[data-p53-sol-produto]");
+    var aviso = sec.querySelector(":scope > [data-p53-suprimido]");
+    if (!cards.length && !aviso) return "";
+    var h = '<div class="pr-sec" id="pr-sup-solucao"><h2>Formas de apoio, por produto</h2>';
+    if (aviso) h += '<div class="pr-mut" data-p53-suprimido="' +
+      escHtml(aviso.getAttribute("data-p53-suprimido")) + '">' + escHtml(txt(aviso)) + "</div>";
+    var grupoAtual = null, i, j;
+    for (i = 0; i < cards.length; i++) {
+      var c = cards[i];
+      var nome = c.getAttribute("data-p53-sol-produto");
+      var gid = c.getAttribute("data-p53-sol-grupo");
+      if (gid !== grupoAtual) {
+        grupoAtual = gid;
+        h += '<h3 data-p53-sol-grupo-nome="' + escHtml(gid) + '">' + escHtml(nomeDoGrupo(gid)) + "</h3>";
+      }
+      h += '<div class="pr-card" data-p53-sol-produto="' + escHtml(nome) + '" data-p53-sol-grupo="' + escHtml(gid) + '">';
+      h += "<b>" + escHtml(nome) + "</b>";
+      /* MESMO marcador da tela. O `D019-M4` remove só aqui, porque é aqui que
+         a divergência costuma nascer sem ninguém ver (EA-58). */
+      if (c.querySelector("[data-p53-prov]"))
+        h += '<div class="pr-mut" data-p53-prov="operador">' + escHtml(PROV_TXT) + "</div>";
+      var desc = c.querySelector(".pt-desc");
+      if (desc) h += '<div class="pr-mut">' + escHtml(txt(desc)) + "</div>";
+      var caps = c.querySelectorAll("[data-p53-sol-cap]");
+      if (caps.length) {
+        h += "<ul>";
+        for (j = 0; j < caps.length; j++)
+          h += '<li data-p53-sol-cap="' + escHtml(caps[j].getAttribute("data-p53-sol-cap")) + '">' +
+               escHtml(caps[j].getAttribute("data-p53-sol-cap")) + "</li>";
+        h += "</ul>";
+      }
+      h += "</div>";
+    }
+    return h + "</div>";
+  }
+
+  function seguro() {
+    try { decorar(); }
+    catch (e) { erros.push(String((e && e.message) || e)); if (window.console) console.error("P53 apoio por solução:", e); }
+  }
+
+  /* Registra DEPOIS do workspace 5.2: o builder injeta este arquivo em seguida,
+     e `registerDecor` preserva a ordem de registro. Rodar antes significaria
+     consolidar blocos que a passagem seguinte ainda vai mover. */
+  if (window.__P50 && typeof window.__P50.registerDecor === "function") {
+    window.__P50.registerDecor(seguro);
+  }
+
+  window.__P53SOL = {
+    __installed: true,
+    /* Leitura do PORTFÓLIO, consumida pelo editor de curadoria (R9 §3: contrato
+       por API de bridge). Continua sem `decorate()`, no precedente do `__D011`:
+       gate que chamasse a decoração à mão mediria o efeito com o mecanismo
+       morto. O mapa vive aqui porque aqui está o dono da apresentação por
+       solução; duplicá-lo no editor criaria duas verdades sobre a mesma
+       classificação, e uma delas envelheceria. */
+    grupos: function () { return GRUPOS.map(function (g) { return { id: g.id, nome: g.nome }; }); },
+    grupoDe: function (nome) { return grupoDoNome(nome); },
+    /* Hook de impressão. Os três hooks de PDF que já existem neste produto são
+       globais soltos (`__uxJourneyPrintHTML` e irmãos), herança das camadas
+       4.x; um QUARTO global seria um segundo bridge deste módulo, e a R9 §2
+       proíbe. Entra aqui, no bridge único, e `buildPrintReport()` o consome sob
+       a mesma guarda `typeof` dos outros. */
+    printHTML: function () {
+      try { return papelHTML(); }
+      catch (e) { erros.push(String((e && e.message) || e)); return ""; }
+    },
+    diag: function () {
+      return { errors: erros.slice(0), passes: passes, censo: ultimoCenso,
+        grupos: GRUPOS.map(function (g) { return g.id; }) };
+    }
+  };
+})();
+
+/* V32_P53_SUPPORT_END */
+
+/* V32_P53_CURATION_EDIT_BEGIN */
+/* ============================================================================
+   EDITOR DE CURADORIA — CAMADA 5.2 · demanda 019 (W5)
+   Dono: ui-engineer. Bridge único: `__P53CUR` (R9 §2), shape fechado
+   `{ __installed, diag() }` — sem `decorate()`, no precedente do `__D011`.
+
+   ==========================================================================
+   O QUE ESTE MÓDULO É, E O QUE ELE NÃO PODE SER
+   ==========================================================================
+   É a superfície onde o engenheiro decide o que de fato será apresentado como
+   recomendação. O motor escolhe automaticamente; o engenheiro mantém, remove
+   ou acrescenta, pelo critério e pela experiência dele.
+
+   O que ele NÃO é: um campo de texto. A fronteira da demanda é SELEÇÃO, nunca
+   REDAÇÃO — o operador escolhe entre o que existe no catálogo, e não escreve o
+   que o motor deveria ter dito. Por isso toda escrita passa por
+   `__CURATION.set()`, que recusa id fora do catálogo e valor fora do enum
+   fechado, e por isso aqui não há `<input type="text">` nem `<textarea>`.
+
+   ==========================================================================
+   ESTE MÓDULO NÃO É DONO DE ESTADO (R9 §5)
+   ==========================================================================
+   Ele lê e escreve pelo bridge `__CURATION`, que é do `core-engineer`. Um
+   editor que guardasse a seleção em variável própria teria duas verdades: a
+   dele e a da sessão, e a divergência apareceria só na exportação.
+
+   ==========================================================================
+   POR QUE `v32-hidden` ESTÁ PROIBIDO AQUI
+   ==========================================================================
+   Medido na W4, e custou duas rodadas: o `D010-ARB3` varre os filhos diretos
+   do escopo de apoio e reprova com "nó OCULTO fora da Camada 1 (transbordo da
+   varredura)" qualquer elemento meu que carregue aquela classe. O painel
+   fechado usa o atributo `hidden` e classe própria — nunca a classe da
+   arbitragem, que pertence a outro módulo e significa outra coisa.
+   ========================================================================== */
+(function () {
+  "use strict";
+  if (typeof window === "undefined" || typeof document === "undefined") return;
+  if (window.__P53CUR && window.__P53CUR.__installed) return;              /* R9 §1 */
+
+  var erros = [], passes = 0, aberto = false;
+
+  function el(tag, attrs, texto) {
+    var n = document.createElement(tag), k;
+    if (attrs) for (k in attrs) if (Object.prototype.hasOwnProperty.call(attrs, k)) n.setAttribute(k, attrs[k]);
+    if (texto != null) n.appendChild(document.createTextNode(String(texto)));
+    return n;
+  }
+  function bridge() {
+    return (window.__CURATION && window.__CURATION.__installed) ? window.__CURATION : null;
+  }
+  function portfolio() {
+    return (window.__P53SOL && window.__P53SOL.__installed) ? window.__P53SOL : null;
+  }
+
+  /* ==================== o gate de suficiência ====================
+     T017. Resultado BLOQUEADO ⇒ não há resultado publicado para curar: o
+     controle não existe e o estado não é lido. "Não é lido" é a metade que
+     costuma escapar — oferecer o controle desabilitado ainda seria oferecer, e
+     ler o estado para desenhar um painel que ninguém pode usar já seria deixar
+     a curadoria alcançar uma tela onde ela não tem o que curar.
+     O `D019-SUF1` mede a AUSÊNCIA do controle. */
+  function gateFechado() {
+    var res = document.getElementById("p50-results");
+    return !res || res.getAttribute("data-p50-gate") !== "released";
+  }
+
+  /* `undefined` significa "o motor decide", e o motor publica — a mesma
+     disciplina de `missing ≠ vazio` que vale para os produtos. */
+  function estadoNota(b) {
+    try { return b.state().architectureNote; } catch (e) { return undefined; }
+  }
+  function nomeDe(id) {
+    var p = (typeof PRODUCTS !== "undefined" && PRODUCTS) ? PRODUCTS[id] : null;
+    return (p && p.n) || id;
+  }
+
+  /* ==================== o corpo do painel ==================== */
+  function linhaProduto(b, id, ofertado) {
+    var nome = nomeDe(id);
+    var linha = el("label", { "class": "p53-cur-item", "data-p53-cur-item": nome });
+    var cx = el("input", { type: "checkbox", "class": "p53-cur-check" });
+    var incluido;
+    try { incluido = b.decide(id) === "include"; } catch (e) { incluido = ofertado; }
+    if (incluido) cx.setAttribute("checked", "checked");
+    cx.checked = incluido;
+    cx.addEventListener("change", function () {
+      try { b.set(id, cx.checked ? "include" : "exclude"); }
+      catch (e) { erros.push(String((e && e.message) || e)); cx.checked = !cx.checked; return; }
+      redesenhar();
+    });
+    linha.appendChild(cx);
+    var texto = el("span", { "class": "p53-cur-item-txt" });
+    texto.appendChild(el("span", { "class": "p53-cur-item-nome" }, nome));
+    var ps = portfolio();
+    texto.appendChild(el("span", { "class": "p53-cur-item-grp" },
+      ps ? rotuloGrupo(ps, nome) : ""));
+    if (!ofertado)
+      texto.appendChild(el("span", { "class": "p53-cur-item-add" }, "acréscimo do engenheiro"));
+    linha.appendChild(texto);
+    return linha;
+  }
+  function rotuloGrupo(ps, nome) {
+    var gid = ps.grupoDe(nome), gs = ps.grupos(), i;
+    for (i = 0; i < gs.length; i++) if (gs[i].id === gid) return gs[i].nome;
+    return gid;
+  }
+
+  /* ==================== inclusão que a avaliação não oferece ====================
+     T019 e o caso de borda 4/5 do refinamento. As duas saídas fáceis estão
+     erradas: descartar apaga uma decisão humana sem avisar; ressuscitar em
+     silêncio publica algo que ninguém reconfirmou. A inclusão é MANTIDA e
+     SINALIZADA — quem decide é o engenheiro, com a informação na frente.
+
+     A REDAÇÃO DIZ MENOS DO QUE A PRIMEIRA VERSÃO DIZIA, e de propósito. Eu
+     havia escrito "não é MAIS sustentada pela avaliação", que afirma que a
+     sessão mudou DEPOIS da escolha. O estado não sabe disso: ele guarda
+     `id → include|exclude`, sem registro de quando a escolha foi feita nem do
+     que estava ofertado então. `unsupported()` é, por construção, o mesmo
+     conjunto de `escolhaDoOperador()` — acréscimo deliberado e inclusão que
+     envelheceu são indistinguíveis aqui.
+
+     Distingui-los exigiria proveniência temporal no estado, e isso o desenho
+     recusa: só ids e enum fechado é o que sustenta a C1 e a INV-8. Então o
+     aviso afirma o que É observável — a avaliação atual não oferece estes
+     itens — e isso serve aos dois casos, que é o que o engenheiro precisa
+     saber nos dois. */
+  function avisoSemLastro(b, painel) {
+    var sem;
+    try { sem = b.unsupported() || []; } catch (e) { sem = []; }
+    if (!sem.length) return;
+    var box = el("div", { "class": "p53-cur-alerta", "data-p53-cur-sem-lastro": String(sem.length), role: "status" });
+    box.appendChild(el("strong", null, sem.length === 1
+      ? "1 item publicado não é oferecido pela avaliação atual."
+      : sem.length + " itens publicados não são oferecidos pela avaliação atual."));
+    box.appendChild(el("span", null, " A presença deles é decisão sua, e o relatório dirá isso: "
+      + sem.map(nomeDe).join(", ") + ". Nada foi retirado nem acrescentado sem você."));
+    painel.appendChild(box);
+  }
+
+  function montarPainel(b) {
+    var painel = el("div", {
+      "class": "p53-cur-panel",
+      id: "p53-cur-panel",
+      "data-p53-cur-panel": "1",
+      role: "group",
+      "aria-label": "Curadoria do relatório"
+    });
+    painel.appendChild(el("p", { "class": "p53-cur-lead" },
+      "O motor ofereceu o que está marcado. Mantenha, remova ou acrescente — a escolha " +
+      "muda o que é APRESENTADO, nunca a avaliação, o estágio ou os gaps observados."));
+    avisoSemLastro(b, painel);
+
+    var ofertados = [], catalogo = [];
+    try { ofertados = b.offered() || []; } catch (e) { ofertados = []; }
+    try { catalogo = b.catalog() || []; } catch (e) { catalogo = []; }
+
+    var listaOf = el("div", { "class": "p53-cur-lista", "data-p53-cur-lista": "ofertados" });
+    listaOf.appendChild(el("h4", { "class": "p53-cur-lista-t" }, "Oferecidos pela avaliação"));
+    ofertados.forEach(function (id) { listaOf.appendChild(linhaProduto(b, id, true)); });
+    painel.appendChild(listaOf);
+
+    /* ====================================================================
+       A LEITURA ARQUITETURAL, que é curável por decisão do portão da Fase 0
+       (refinement §P4). Ela não é produto e não entra nas listas acima: é um
+       item só, com um enum só, e por isso tem controle próprio.
+
+       Só aparece quando a leitura EXISTE nesta sessão. Oferecer o controle de
+       algo que não está no relatório seria pedir uma decisão sem objeto — a
+       mesma razão pela qual o editor inteiro não existe com o gate de
+       suficiência fechado.
+       ==================================================================== */
+    if (document.getElementById("v32arch-note") || estadoNota(b) === "exclude") {
+      var arq = el("div", { "class": "p53-cur-lista", "data-p53-cur-lista": "arquitetura" });
+      arq.appendChild(el("h4", { "class": "p53-cur-lista-t" }, "Leitura arquitetural"));
+      var linhaA = el("label", { "class": "p53-cur-item", "data-p53-cur-arquitetura": "1" });
+      var cxA = el("input", { type: "checkbox", "class": "p53-cur-check" });
+      var incluida = estadoNota(b) !== "exclude";
+      if (incluida) cxA.setAttribute("checked", "checked");
+      cxA.checked = incluida;
+      cxA.addEventListener("change", function () {
+        try { b.setArchitectureNote(cxA.checked ? "include" : "exclude"); }
+        catch (e) { erros.push(String((e && e.message) || e)); cxA.checked = !cxA.checked; return; }
+        redesenhar();
+      });
+      linhaA.appendChild(cxA);
+      var txtA = el("span", { "class": "p53-cur-item-txt" });
+      txtA.appendChild(el("span", { "class": "p53-cur-item-nome" }, "Publicar a leitura arquitetural"));
+      txtA.appendChild(el("span", { "class": "p53-cur-item-grp" }, "rotas A e B, na tela e no papel"));
+      linhaA.appendChild(txtA);
+      arq.appendChild(linhaA);
+      painel.appendChild(arq);
+    }
+
+    var extras = catalogo.filter(function (id) { return ofertados.indexOf(id) < 0; });
+    if (extras.length) {
+      var listaEx = el("div", { "class": "p53-cur-lista", "data-p53-cur-lista": "acrescimos" });
+      listaEx.appendChild(el("h4", { "class": "p53-cur-lista-t" }, "Acrescentar por decisão sua"));
+      listaEx.appendChild(el("p", { "class": "p53-cur-lista-nota" },
+        "Não foram oferecidos por esta avaliação. Se incluir, o relatório dirá que a presença é escolha sua."));
+      extras.forEach(function (id) { listaEx.appendChild(linhaProduto(b, id, false)); });
+      painel.appendChild(listaEx);
+    }
+    return painel;
+  }
+
+  /* ==================== montagem e desmontagem ==================== */
+  function limpar(sec) {
+    var velhos = sec.querySelectorAll(":scope > [data-p53-abrir-curadoria], :scope > [data-p53-cur-panel]"), i;
+    for (i = 0; i < velhos.length; i++) if (velhos[i].parentNode) velhos[i].parentNode.removeChild(velhos[i]);
+  }
+
+  function decorar() {
+    var sec = document.getElementById("p52-sec-support");
+    if (!sec) return;
+    limpar(sec);
+    /* T017: gate fechado ⇒ nem controle, nem leitura do estado. O `return` vem
+       ANTES de qualquer chamada ao bridge, de propósito. */
+    if (gateFechado()) { aberto = false; return; }
+    var b = bridge();
+    if (!b) return;
+
+    /* O controle e o painel entram DEPOIS dos cards. O censo da Camada 1 conta
+       os blocos contíguos ao título congelado e para no primeiro nó estranho —
+       entrando aqui, ele já contou todos. Entrar antes repetiria o erro que o
+       `D010-ARB1` cobrou na W4. */
+    var btn = el("button", {
+      type: "button",
+      "class": "p53-cur-abrir",
+      "data-p53-abrir-curadoria": "1",
+      "aria-expanded": aberto ? "true" : "false",
+      "aria-controls": "p53-cur-panel"
+    }, aberto ? "Fechar curadoria" : "Curar o que será apresentado");
+    btn.addEventListener("click", function (ev) {
+      ev.preventDefault();
+      aberto = !aberto;
+      redesenhar();
+    });
+    sec.appendChild(btn);
+    if (aberto) sec.appendChild(montarPainel(b));
+    passes++;
+  }
+
+  /* Redesenha pelo MESMO caminho que o editor de contexto tecnológico usa
+     (`renderBlocks` + `__uxDecor`), para que a seleção atravesse todas as
+     camadas de decoração na ordem normal. Chamar só a própria montagem deixaria
+     a visão por solução desatualizada — ela é quem aplica a curadoria. */
+  function redesenhar() {
+    var app = document.getElementById("app");
+    try {
+      if (typeof renderBlocks === "function" && app) renderBlocks(app);
+      if (window.__uxDecor && app) window.__uxDecor(app);
+      else decorar();
+    } catch (e) {
+      erros.push(String((e && e.message) || e));
+      if (window.console) console.error("P53 curadoria (redesenho):", e);
+    }
+  }
+
+  function seguro() {
+    try { decorar(); }
+    catch (e) { erros.push(String((e && e.message) || e)); if (window.console) console.error("P53 curadoria:", e); }
+  }
+
+  if (window.__P50 && typeof window.__P50.registerDecor === "function") {
+    window.__P50.registerDecor(seguro);
+  }
+
+  window.__P53CUR = {
+    __installed: true,
+    diag: function () { return { errors: erros.slice(0), passes: passes, aberto: aberto }; }
+  };
+})();
+
+/* V32_P53_CURATION_EDIT_END */
 const CONFIG_ERRORS = validateConfig();
 if(CONFIG_ERRORS.length) console.error("Quickscan · erros de configuração:", CONFIG_ERRORS);
 

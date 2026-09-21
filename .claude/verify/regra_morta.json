@@ -254,8 +254,19 @@
       "importante_texto": 0,
       "importante_com_var": 0,
       "outras": {}
+    },
+    {
+      "camada": 6,
+      "folha": "ui_p52_support_v32.css",
+      "regras": 28,
+      "declaracoes": 183,
+      "media": 2,
+      "regras_com_importante": 0,
+      "importante_texto": 0,
+      "importante_com_var": 0,
+      "outras": {}
     }
   ],
-  "censo_fixado_em": "2026-09-13",
-  "censo_fonte": "qa-engineer, wave 1 — CSSOM do jsdom 30.0.1 sobre os blobs da árvore limpa de feature/014-gate-sem-poder-discriminante. Re-medido POR EXECUÇÃO na T070 com o instrumento real; divergência é decisão de direção, nunca rebaixamento (R10 §1). RE-MEDIDO em 2026-09-13 (fix-finding EA-23): `ui_p50_v32.css` foi de 219/1130 para 220/1134 — UMA regra nova, `.p50-presence-alias`, com quatro declarações. SUBIDA por mudança real de produto, medida pelo próprio instrumento (`regra_morta.js → censo(camadasDaArvore())`) e conferida contra o diff: não é rebaixamento para caber no verde, é a direção oposta. As demais folhas saíram inalteradas."
+  "censo_fixado_em": "2026-09-18",
+  "censo_fonte": "qa-engineer, wave 1 — CSSOM do jsdom 30.0.1 sobre os blobs da árvore limpa de feature/014-gate-sem-poder-discriminante. Re-medido POR EXECUÇÃO na T070 com o instrumento real; divergência é decisão de direção, nunca rebaixamento (R10 §1). RE-MEDIDO em 2026-09-13 (fix-finding EA-23): `ui_p50_v32.css` foi de 219/1130 para 220/1134 — UMA regra nova, `.p50-presence-alias`, com quatro declarações. SUBIDA por mudança real de produto, medida pelo próprio instrumento (`regra_morta.js → censo(camadasDaArvore())`) e conferida contra o diff: não é rebaixamento para caber no verde, é a direção oposta. As demais folhas saíram inalteradas. FOLHA NOVA em 2026-09-18 (demanda 019, W4): `ui_p52_support_v32.css` entrou na injecao do builder e portanto no censo. Os numeros NAO foram digitados: medidos por execucao com o proprio instrumento (`regra_morta.js` censo() sobre as camadas que `folhasInjetadas()` devolve), e conferidos contra o que a suite observou. O gate reprovou primeiro — censo_ok=false, mortas=null, e as tres alineas dependentes caindo em cascata — que e exatamente o comportamento que a errata E6 pede: veredito depois do censo, nunca antes. Declarar a folha e o rito; rebaixar o numero medido para caber no verde seria o oposto (R10 §1). RE-MEDIDO no mesmo dia (019, W5): as regras do editor de curadoria entraram na MESMA folha `ui_p52_support_v32.css` — apresentacao por solucao e editor sao dois modulos de UMA funcionalidade e dividem a familia de prefixo `p53-`; o que a R9 §6 cobra e prefixo proprio e nenhum seletor alheio, e as duas coisas valem. Numeros medidos por execucao com o instrumento: 8->26 regras, 47->162 declaracoes, 1->2 media. RE-MEDIDO de novo na W6 (selo de proveniencia e card acrescentado): 26->28 regras, 162->183 declaracoes. Medido por execucao, como sempre."
 }

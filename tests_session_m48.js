@@ -112,14 +112,45 @@ T("S1-S3","schema root + toolVersion do build + engine SHA real",()=>{
     doc.toolVersion===PKG.version && doc.engineSha256===ENG_SHA &&
     typeof doc.createdAt==="string" && doc.label==="X" && !!doc.inputs;
 });
-T("S4-S5","export só canônico; zero campo derivado",()=>{
+/* [019 · T012 · 2026-09-18] REANCORAGEM AUTORIZADA (§29.4; proprietário em 2026-09-17).
+   A lista de chaves era FIXA em cinco. A demanda 019 acrescenta `reportCuration`,
+   que é ENTRADA — seleção do operador, como já são as respostas e as prioridades —
+   e que só aparece quando algo foi declarado. Por isso a alínea antiga continuava
+   VERDE sem nunca ver o caso de seis chaves: `richSession` não declara curadoria.
+   Reancorar aqui é ajustar o critério que me julga, e a regra foi: onde havia UMA
+   asserção agora há DUAS, e a segunda é a que não existia. Nada foi afrouxado —
+   os treze nomes de campo derivado seguem banidos e passam a ser conferidos
+   TAMBÉM com curadoria declarada, que é por onde catálogo derivado poderia voltar
+   a vazar (foi exatamente o que aconteceu quando o mapa se chamava `offerings`).
+   O mutante `D019-M11` ressuscita a lista de cinco e prova que a alínea (b) ainda
+   discrimina; sem ele, esta reancoragem seria só uma permissão a mais. */
+T("S4-S5","export só canônico; zero campo derivado — com e SEM curadoria declarada",()=>{
   const {w,d}=boot(); richSession(w,d);
-  const s=JSON.stringify(w.__DEV.buildSessionDocument());
   const banned=["\"score\"","domainScores","\"stage\"","sufficiency","\"findings\"","recommendationContext",
     "supportMode","\"offerings\"","\"services\"","targetScore","refinementScore","narrative","journey"];
-  const keys=Object.keys(w.__DEV.captureCanonicalInputs());
-  return banned.every(b=>!s.includes(b)) &&
-    JSON.stringify(keys)===JSON.stringify(["assessment","priorities","technologyLandscape","targetProfile","operationalRefinement"]);
+  const CANONICAS=["assessment","priorities","technologyLandscape","targetProfile","operationalRefinement"];
+  /* (a) sessão comum: a sexta chave NÃO existe. Ausência ≠ vazio (INV-8) — é o
+     que impede a chave de viajar vazia em toda sessão que nunca curou nada. */
+  const s5=JSON.stringify(w.__DEV.buildSessionDocument());
+  const k5=Object.keys(w.__DEV.captureCanonicalInputs());
+  if(!banned.every(b=>!s5.includes(b)))
+    throw new Error("campo derivado no export SEM curadoria: "+JSON.stringify(banned.filter(b=>s5.includes(b))));
+  if(JSON.stringify(k5)!==JSON.stringify(CANONICAS))
+    throw new Error("chaves canônicas sem curadoria: "+JSON.stringify(k5));
+  /* (b) MESMA sessão, agora com curadoria declarada: exatamente uma chave a mais,
+     na última posição, e nenhum banido de volta. Mesma janela de propósito — a
+     única diferença entre (a) e (b) é a declaração. */
+  const cur=w.__CURATION;
+  if(!cur) throw new Error("bridge de curadoria ausente — a alínea (b) não teria sujeito");
+  const alvo=cur.catalog()[0];
+  if(!alvo) throw new Error("catálogo vazio — a alínea (b) seria vácua");
+  cur.set(alvo,"exclude");
+  const s6=JSON.stringify(w.__DEV.buildSessionDocument());
+  const k6=Object.keys(w.__DEV.captureCanonicalInputs());
+  if(!s6.includes("reportCuration"))
+    throw new Error("curadoria declarada não viajou — sem sujeito, (b) seria vácua");
+  return banned.every(b=>!s6.includes(b)) &&
+    JSON.stringify(k6)===JSON.stringify(CANONICAS.concat(["reportCuration"]));
 });
 T("S6","roundtrip padrão: inputs e derivados idênticos",()=>{
   const {w,d}=boot(); answerAll(w,1,{logs:0}); w.__DEV.setPriorities(["logs"]); w.__DEV.showResults();

@@ -5871,6 +5871,90 @@ Ver [[EA-53]] — é a mesma raiz: `deploy/` fora do git faz o repositório não
 saber o que está no ar. Ali a consequência foi correção mesclada que não chegava
 ao cliente; aqui é documentação que mente para quem chega de fora.
 
+## EA-65 — a visão por solução não existe quando há contexto tecnológico declarado
+
+**Status**: `aberto`
+
+**Aberto em**: 2026-09-22, por mim, ao medir o papel para avaliar se a emenda do
+`EA-56` (PR #82) ainda descrevia o produto. **Defeito meu, publicado na v3.2.7** —
+achado por acidente de outra verificação, não por gate.
+
+### O que foi medido
+
+Build da v3.2.7, sessão com 15 respostas em nível 0 e três prioridades
+declaradas, variando **só** o contexto tecnológico:
+
+| sessão | cards por solução | blocos legados | `isLegacyModeV32()` |
+|---|---|---|---|
+| **sem** contexto declarado | **9** | 0 (consolidados) | `true` |
+| **com** contexto declarado | **0** | 15 (intactos) | `false` |
+
+Basta **uma** capability declarada para a funcionalidade inteira sumir — tela e
+papel. No papel, `[data-p53-sol-produto]` vai de 9 para 0.
+
+### Cadeia arquivo:linha → efeito
+
+1. Declarar qualquer contexto tira o runtime do modo legado; a arbitragem da
+   demanda 010 oculta o título congelado e **3** `.apoio-block` em
+   `#p52-sec-support` (medido: 4 filhos diretos com `v32-hidden`).
+2. `ui_p52_support_v32.js:198` — `arbitragemEmCurso()` devolve `true` quando
+   **qualquer** filho direto do escopo de apoio está oculto.
+3. `ui_p52_support_v32.js:443` — `decorar()` faz `return` imediato. O módulo se
+   abstém da **seção inteira**.
+4. Os **12** `.apoio-block` que permanecem VISÍVEIS, no acordeão da seção de
+   gaps, nunca são consolidados. `__P53SOL.diag()` devolve `passes: 0`.
+5. `buildPrintReport()` chama `__P53SOL.printHTML()`, que deriva dos cards da
+   tela; sem cards, devolve `""` e a seção não existe no papel.
+
+**Verruga visível**: o controle `[data-p53-abrir-curadoria]` **aparece** nessa
+configuração, porque o gate de suficiência está liberado. Oferece curadoria de um
+conjunto vazio.
+
+### Por que nenhum gate pegou, e esta é a parte que importa
+
+O `boot()` de `tests_019_curadoria.js:85` **nunca declara contexto tecnológico**.
+Os dez gates da demanda rodam, todos, em modo legado. Não é gate medindo menos do
+que promete — é **fixture cobrindo um caminho só**, e o caminho não coberto é o
+principal: o contexto tecnológico existe justamente para "evitar recomendações
+incompatíveis com o ambiente existente".
+
+É parente do `EA-20` por outra porta. Lá o gate era tautológico; aqui ele é
+honesto e **cego por amostragem**.
+
+### A decisão grossa que produziu isso
+
+A guarda nasceu na W4 para satisfazer o `D010-ARB3`, que reprovou — com razão —
+uma versão que ressuscitava blocos ocultos pela arbitragem. A arbitragem da 010 é
+**tudo-ou-nada**, e consumir parte de uma região parcialmente oculta produz o
+estado misto que ela proíbe (`tests_010_vao.js:437`).
+
+O que eu não vi na hora: a abstenção correta é **por nó**, não por seção. Os 3
+ocultos ficam onde estão; os 12 visíveis podem ser consolidados. A tentativa por
+nó falhou na W4 por uma razão que só ficou clara agora — os cards novos nasciam
+**contíguos** ao trecho congelado oculto, e `censoCamada1()`
+(`tests_010_vao.js:179` e o censo logo acima) os contava no mesmo grupo,
+quebrando o tudo-ou-nada por composição, não por princípio.
+
+### Encaminhamento proposto
+
+Consolidar os blocos **visíveis** e inserir um **nó separador** entre o trecho
+congelado e os cards: o censo para no primeiro nó de classe não permitida, os
+ocultos fecham em `ocultos == conhecidos`, e o `P52-REC1g` continua com os cards
+como filhos diretos da grade.
+
+E a fixture que faltava: **gate que rode com contexto declarado**. Sem ela a
+correção nasce com o mesmo ponto cego.
+
+### Estado da produção
+
+**Não há regressão.** Nessa configuração a v3.2.7 se comporta como a v3.2.6 — os
+15 blocos por capability, como sempre foram. A funcionalidade nova não aparece, e
+o botão de curadoria aparece sem objeto. Rollback disponível e verificado
+(`deploy/v3.2.6/`), mas não recomendado por mim: voltar não devolve nada que a
+v3.2.7 tenha tirado.
+
+Ver [[EA-57]], que esta demanda fechou, e [[EA-20]], de quem este achado é
+parente por amostragem.
 ## EA-66 — falha ao montar o relatório imprime a TELA como se fosse o relatório
 
 **Status**: `resolvido`

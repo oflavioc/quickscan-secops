@@ -6095,3 +6095,75 @@ defeitos conviveram por sete waves.
 > dizendo "este aqui é de segunda", e não é isso que a demanda combinou.
 
 Ver [[EA-20]] e [[EA-57]].
+
+## EA-68 — a visão por solução ignora a fonte onde quase todos os produtos vivem
+
+**Status**: `aberto`
+
+**Aberto em**: 2026-09-22, ao investigar o apontamento 2 do proprietário:
+*"'Centralização de logs' foi uma prioridade declarada, logo, FortiSIEM,
+FortiAnalyzer e até mesmo FortiSOC, poderiam vir aqui"*. O apontamento é
+sintoma; a causa é maior do que ele.
+
+### O que foi medido
+
+Sessão reproduzida do relato do proprietário — quase tudo em nível 1 (gap
+moderado), dois achados em nível 0 (gap alto), três prioridades declaradas:
+
+| | |
+|---|---|
+| achados na sessão | **15** |
+| deles com `sev 2` | **2** |
+| produtos na **visão por solução** | **2** — FortiSOAR, Serviços FortiGuard |
+| produtos em *"pode fazer sentido — após validação"* (`.t-item`) | **9** |
+| desses 9, quantos aparecem na visão por solução | **zero** |
+
+**A consolidação por produto cobre 2 de 11 produtos.** Os outros nove estão na
+tela, logo abaixo, noutra estrutura.
+
+### Cadeia
+
+1. O renderer congelado emite `.apoio-block` **apenas para `sev 2`**
+   (`quickscan_secops_soccmm_v3_1_3.html:890+`, `prioSev2.length ? ... :`).
+   Achado de gap moderado não gera bloco de apoio; gera entrada `.t-item` na
+   lista *"pode fazer sentido — após validação"*.
+2. `ui_p52_support_v32.js` — `blocosLegados()` colhe **só** `.apoio-block`.
+3. Logo, numa sessão dominada por gaps moderados — que é a sessão comum — a
+   visão por solução nasce quase vazia, e a informação fica na lista antiga.
+
+### Por que nenhum gate pegou, e é a quinta forma da mesma família
+
+O `boot()` de `tests_019_curadoria.js` responde **tudo em nível 0**. Nessa
+fixture *todo* achado é `sev 2`, *todo* achado vira `.apoio-block`, e a
+consolidação enxerga 100% dos produtos — 15 blocos → 9 cards, que é o número
+que a spec cita e que eu medi em sete waves.
+
+A fixture cobre o **extremo improvável**: uma operação em que tudo está no pior
+nível. A sessão real do proprietário tem quase tudo no nível intermediário, e
+ali a demanda entrega 18% do que promete.
+
+É parente direto do [[EA-65]] — lá a cegueira era no eixo *contexto declarado*,
+aqui é no eixo *severidade das respostas*. Duas fixturas, um caminho cada.
+
+### O que isto significa para a demanda 019
+
+A 019 existe para substituir a leitura por gap por uma leitura por produto. Numa
+sessão comum ela **não substitui**: convivem a visão por solução com dois cards
+e a lista antiga com nove produtos, dizendo coisas diferentes sobre o mesmo
+assessment. É pior do que antes da demanda, porque agora são duas superfícies
+desalinhadas em vez de uma.
+
+### Decisão que pertence ao proprietário
+
+A saída natural é a visão por solução consolidar **as duas fontes** — o
+`.apoio-block` de `sev 2` e o `.t-item` de `sev 1` —, com o produto aparecendo
+uma vez e o **qualificador** dizendo de onde veio: indicação prioritária ou
+"após validação".
+
+Isso **muda o desenho aprovado na Fase 1 da 019** e por isso não é minha
+decisão. O refinamento da demanda não previu a distinção de severidade porque a
+medição da Fase 0 foi feita na mesma fixture de nível 0.
+
+Relacionado: [[EA-56]], cuja emenda mede o mesmo vão pelo lado do papel —
+*"a tabela de apoio do relatório cobre 40% dos gaps"*. É a mesma lacuna vista de
+outro ângulo, e a correção deste achado muda aquele número.

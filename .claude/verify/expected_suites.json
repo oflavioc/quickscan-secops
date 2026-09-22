@@ -117,9 +117,10 @@
   },
   "heavy": {
     "session": {
-      "cmd": "node --max-old-space-size=4608 tests_session_m48.js",
+      "cmd": "node --max-old-space-size=6144 tests_session_m48.js",
       "pass": 97,
-      "fail": 0
+      "fail": 0,
+      "_trilha": " HEAP 4608 -> 6144 MB em 2026-09-22 (EA-65), e o numero e MEDIDO, nao estimado: com a visao por solucao passando a existir tambem com contexto declarado, cada janela jsdom da suite ganha 11 cards e 11 icones que antes nao existiam nesse modo. A 4608 a suite estourou com `Ineffective mark-compacts near heap limit`; a 6144 fecha 97 PASS - 0 FAIL. CONFERIDO QUE A CAUSA E ESSA: a mesma suite, na develop sem a correcao, fecha 97/97 a 4608. Nao ha laco de re-decoracao — medido `passes = 1` por janela nos dois modos; o que cresce e retencao de DOM por janela, que esta suite acumula por desenho (poucos gates fecham a janela). A fragilidade e dela e e anterior a esta correcao; o que esta mudanca faz e cruzar um limite que ja estava proximo."
     }
   },
   "visual": {

@@ -270,7 +270,15 @@ function papel(w, d) {
    suíte alheia (R10 §6). Se a ordem mudar, ESTE literal muda por edição
    explícita e a divergência vira decisão (R10 §1). */
 const D010_ORDEM_PAPEL = ["pr-cover", "pr-howto", "pr-maturity", "pr-prios", "pr-findings",
-  "pr-landscape", "pr-interp", "pr-support", "pr-journey", "pr-target", "pr-annex"];
+  "pr-landscape", "pr-interp", "pr-support", "pr-sup-solucao", "pr-journey", "pr-target", "pr-annex"];
+/* [019 · T020 · 2026-09-18] `pr-sup-solucao` entrou na ordem, e ele é
+   CONDICIONAL: existe quando há apoio por solução a publicar, e não existe
+   quando a arbitragem da 010 oculta a região. A tolerância é NOMINAL — só este
+   id pode faltar, e se aparecer tem de aparecer nesta posição. Transcrito da
+   mesma decisão em `P51-DOC13`, que ganhou a mesma lista de opcionais; se as
+   duas divergirem, a divergência é decisão a tomar, nunca asserção a afrouxar
+   (R10 §1). */
+const D010_OPCIONAIS_PAPEL = ["pr-sup-solucao"];
 
 /* Prefixo do `data-eid` do item SEM equivalente V3.2 — NORMATIVO desde a errata
    E15 da spec (§C10 (b): "`data-eid` da forma `map:<chave do MAP>` — prefixo
@@ -1662,9 +1670,11 @@ T("D010-PAPEL1", "C13 · #pr-target e #pr-sup-base fecham o vão no papel, com a
   g.passo("(c) a ordem do relatório impresso (pin de P51-DOC13) permanece", () => {
     const ordem = Array.from(pr.children).map(n => n.id).filter(Boolean);
     if (!ordem.length) vac("(c)", "o relatório impresso saiu sem seção alguma");
-    if (JSON.stringify(ordem) !== JSON.stringify(D010_ORDEM_PAPEL))
+    const esperada = D010_ORDEM_PAPEL.filter(id =>
+      D010_OPCIONAIS_PAPEL.indexOf(id) < 0 || ordem.indexOf(id) >= 0);
+    if (JSON.stringify(ordem) !== JSON.stringify(esperada))
       throw new Error("a ordem do relatório impresso mudou · obtida=" + JSON.stringify(ordem) +
-        " · pinada por P51-DOC13=" + JSON.stringify(D010_ORDEM_PAPEL));
+        " · pinada por P51-DOC13=" + JSON.stringify(esperada));
   });
   /* (d) #pr-support continua ausente em modo legado (regressão de P1) */
   g.passo("(d) #pr-support ausente em modo legado (regressão de P1)", () => {

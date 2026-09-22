@@ -148,6 +148,18 @@ function newDraft(){
   };
 }
 
+/* [019 · T025] Leitura da curadoria para itens que NÃO são produto — hoje só a
+   nota arquitetural. Um único ponto de consulta, para que tela e papel não
+   possam divergir por esquecimento de um dos dois lados (é o EA-58 de novo).
+   Ausência do módulo, ausência da chave ou qualquer erro devolvem `true`: a
+   curadoria SUPRIME, nunca é pré-condição para publicar. */
+function v32CuradoriaPublica(chave){
+  try {
+    if (typeof window === "undefined" || !window.__CURATION || !window.__CURATION.__installed) return true;
+    return window.__CURATION.state()[chave] !== "exclude";
+  } catch (e) { return true; }
+}
+
 /* ---------------- render: blocos pós-resultado ---------------- */
 function ensurePanel(app){
   let p = document.getElementById("v32panel");
@@ -770,7 +782,17 @@ function buildSupportHTML(res, afirmaPreservacao){
   const rest = Object.keys(ctxs).filter(id => !prioCaps.includes(id));
   let html = "";
   if (prioCaps.length)
-    html += `<div class="section-title"><div class="eyebrow">Leitura das prioridades declaradas · contexto V3.2</div></div>
+    /* EA-61 · o sufixo `· contexto V3.2` SAI do eyebrow.
+       Ele foi ratificado pelo proprietário na demanda 015 e DES-ratificado por
+       ele em 2026-09-16, com o motivo declarado: número de versão da árvore
+       interna não diz nada ao cliente e lê como vazamento. A assimetria que a
+       015 desenhou entre tela e papel deixa de existir — os dois passam a
+       dizer a mesma frase, que é o que a alínea (c) do `D015-TIT1` já cobrava.
+       A troca é feita AQUI, na origem, e não na camada de apresentação: o
+       mutante `D015-M2` ancora neste literal, e reescrever só o render o
+       tornaria equivalente por construção — mutante sem poder discriminante é
+       pior do que mutante nenhum. */
+    html += `<div class="section-title"><div class="eyebrow">Leitura das prioridades declaradas</div></div>
       <div class="v32-block" id="v32prio">${prioCaps.map(id=>renderCap(id, ctxs[id], presentationOf(id, ctxs[id]), afirmaPreservacao)).join("")}</div>`;
   const byMode = m => rest.filter(id => presentationOf(id, ctxs[id])==="card" && ctxs[id].supportMode===m);
   [["DIRECT","v32direct"],["CONTEXTUAL","v32contextual"],["VALIDATE","v32validate"]].forEach(([m,bid])=>{
@@ -794,7 +816,12 @@ function buildSupportHTML(res, afirmaPreservacao){
       <div class="v32-block" id="v32maturity">${matIds.map(id=>baseCardHTML(id, ctxs[id], "maturity")).join("")}</div>`;
   /* [3.2.1-2] mantido; [3.2.2-A] prioridades excluídas das seções subsequentes */
   const an = res.architectureNote;
-  if (an && an.show){
+  /* [019 · T025] A leitura arquitetural é CURÁVEL — decisão do portão da Fase 0
+     (refinement §P4, coluna "curável"). O estado dela vive no owner
+     (`__CURATION`), e aqui só se consome, sob guarda `typeof`: sem o módulo, o
+     comportamento é o de hoje. Excluí-la a retira das DUAS superfícies — esta e
+     a de `buildPrintReport()` —, nunca de uma só. */
+  if (an && an.show && v32CuradoriaPublica("architectureNote")){
     html += `<div class="section-title"><div class="eyebrow">Leitura arquitetural</div></div>
       <div class="v32-block" id="v32arch-note">
         <div class="v32-neutral">${an.basis.coreGaps.length} gaps confirmados em capabilities core de plataforma; ${an.basis.socPlatformNone?"ausência confirmada de plataforma SOC":"fragmentação declarada na stack"}.</div>
@@ -1312,7 +1339,7 @@ function buildPrintReport(){
   h += `</div>`;
   /* H — leitura arquitetural */
   const an = ctxRes.architectureNote;
-  if (an && an.show) h += `<div class="pr-sec" id="pr-arch"><h2>Leitura arquitetural</h2>
+  if (an && an.show && v32CuradoriaPublica("architectureNote")) h += `<div class="pr-sec" id="pr-arch"><h2>Leitura arquitetural</h2>
     <div class="pr-card"><div class="pr-mut">${an.basis.coreGaps.length} gaps confirmados em capabilities core; ${an.basis.socPlatformNone?"ausência confirmada de plataforma SOC":"fragmentação declarada"}.</div>
     <div><b>Rota A</b> — ${esc32(an.optionA)}</div>
     ${an.optionB?`<div><b>Rota B</b> — ${esc32(an.optionB)}</div>`:""}</div></div>`;
@@ -1321,6 +1348,15 @@ function buildPrintReport(){
      jornada, o refinamento operacional, o cenário-alvo e o anexo de respostas
      são derivados exclusivamente das respostas do assessment e passam a
      existir também quando o contexto não é informado. */
+  /* [019 · T020] APOIO POR SOLUÇÃO, A MESMA SELEÇÃO DA TELA.
+     Entra AQUI, e não dentro de `#pr-support`, porque aquele bloco é
+     condicional ao contexto declarado (errata B-02) e esta seção é derivada
+     dos GAPS — ela existe mesmo sem contexto algum, como a jornada e o
+     refinamento logo abaixo. O consumo é pelo bridge único do módulo, sob a
+     mesma guarda `typeof` dos três hooks de PDF que já existem. O papel é
+     DERIVADO dos cards da tela: recalcular criaria dois caminhos para a mesma
+     decisão, que é como as duas superfícies divergem (EA-58). */
+  h += (typeof window!=="undefined" && window.__P53SOL && window.__P53SOL.printHTML) ? window.__P53SOL.printHTML() : "";
   h += (typeof window!=="undefined" && window.__uxJourneyPrintHTML) ? window.__uxJourneyPrintHTML() : "";   /* [4.5-W] */
   h += (typeof window!=="undefined" && window.__uxRefinementPrintHTML) ? window.__uxRefinementPrintHTML() : "";   /* [4.4-O] */
   h += (typeof window!=="undefined" && window.__uxTargetPrintHTML) ? window.__uxTargetPrintHTML() : "";   /* [4.3.1-Q] */

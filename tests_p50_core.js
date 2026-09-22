@@ -244,7 +244,42 @@ const PROTECTED = {
      outro chamador e tests_ui_m32.js:189). Regra de score, suficiencia, gate e
      ordem do papel byte-identicas. Identidade anterior:
      4c9abc435c60cbc71250180a0589542c47565c62b21dc852f6905b1794992106 */
-  "ui_v32.js": "797711193ba493d4e7c1f6afb46ffb88f71ada24199906e45507cc37436b08b5",
+  /* EA-61 · 2026-09-16 · AUTORIZAÇÃO NOMINAL do proprietário, no chat: o sufixo
+     `· contexto V3.2` sai do eyebrow de "Leitura das prioridades declaradas".
+     Ele havia sido RATIFICADO por ele na demanda 015 e foi DES-RATIFICADO
+     agora, com o motivo declarado: número de versão da árvore interna não diz
+     nada ao cliente e lê como vazamento no relatório.
+     A edição é de UMA linha (`ui_v32.js:773`). Regra de score, suficiência,
+     gate e schema permanecem byte-idênticas; o payload M41 não é alcançado.
+     Acompanham, no mesmo PR: a alínea (b) do `D015-TIT1` invertida e o mutante
+     `D015-M2` invertido junto — a propriedade guardada continua a mesma, em
+     direção oposta. Identidade anterior:
+     797711193ba493d4e7c1f6afb46ffb88f71ada24199906e45507cc37436b08b5 */
+  /* [019 · T020 · 2026-09-18] REPIN autorizado pelo proprietário em 2026-09-17.
+     `buildPrintReport()` passa a consumir a visão por solução, no padrão dos
+     três hooks de PDF que já existem (`__uxJourneyPrintHTML` e irmãos) e sob a
+     mesma guarda `typeof`. A edição é de UMA linha de consumo mais o comentário
+     que explica a posição: ela entra FORA do bloco `#pr-support`, que é
+     condicional ao contexto declarado (errata B-02), porque a visão por solução
+     é derivada dos GAPS e existe mesmo sem contexto algum.
+     Nada mais foi tocado: score, suficiência, gate, schema, a arbitragem da 010
+     e o payload M41 permanecem byte-idênticos — o hook devolve string e o
+     arquivo só a concatena.
+     Identidade anterior:
+     07e1dec0aea89d31616c3b2bee9b8bc10ffad276b7324dc4d97dcd1cc2468eb7 */
+  /* [019 · T025 · 2026-09-18] SEGUNDO REPIN da mesma autorizacao. O aceite de
+     intencao contra o refinement encontrou uma lacuna: a LEITURA ARQUITETURAL
+     esta na coluna "curavel" do portao da Fase 0 (§P4) e a spec nao a levou
+     para nenhum dos dez criterios — o estado a suportava, nenhuma superficie a
+     honrava e o editor nao a oferecia.
+     A edicao sao DUAS guardas (tela e papel) e UM helper de consulta,
+     , que existe justamente para que as duas superficies
+     nao possam divergir por esquecimento de um dos lados. Ausencia do modulo,
+     ausencia da chave ou erro devolvem : a curadoria SUPRIME, nunca e
+     pre-condicao para publicar.
+     Identidade anterior:
+     6db500439aea5a4264f4220b872fab776b5e37a0b78c9c9606ef67a5c44ee79c */
+  "ui_v32.js": "30a6d48e4aca170c5b3c7bf41100ea1fc1ca20739765ffda945a6ffe16a84670",
   "ui_ux_v32.js": "a050401145a5ed7af597eae01a9a23826418119769c096db168b3b177a9d3938",
   /* ERRATA DA AUDITORIA EXTERNA · §4.1.1 ("qualquer texto derivado consome a
      mesma decisão canônica de publicabilidade"). A comparação Atual × Alvo
@@ -399,7 +434,19 @@ const PROTECTED = {
      byte-idênticos. Identidade anterior (errata final · ALTO-1):
      df0b00eb75f2ee2f8ae5542104bafd7f54580163e60432e7a48bb4bf8118aaf7 */
   "ui_journey_v32.js": "579592eb09039648441c7e3f68d1428d4a22cc18499882a68a30aee5aa0ab9a2",
-  "ui_session_v32.js": "6fd849cdbdbb6838921a1519613e8a5194777c6eeb9e3e102c681a0ddc27164b",
+  /* [019 · T010/T011 · 2026-09-18] REPIN autorizado pelo proprietário em 2026-09-17.
+     `captureCanonicalInputs()` ganha a SEXTA chave canônica, `reportCuration`, e
+     a importação passa a validá-la delegando ao owner do estado (`__CURATION`).
+     A chave é ENTRADA — seleção do operador entre o que o motor ofereceu — e por
+     isso fica ao lado das respostas e das prioridades, nunca entre os derivados
+     (INV-7). Ela é OMITIDA quando nada foi declarado, o que preserva
+     `missing != {}` (INV-8) e mantém o `S4-S5` verde na sessão comum.
+     `snapshotCanonicalOwners`/`restoreCanonicalOwners` carregam a curadoria para
+     que uma importação que falhe no meio não deixe a seleção meio aplicada.
+     Nada além disso mudou: as cinco chaves anteriores, a ordem delas e as
+     validações existentes permanecem byte-idênticas.
+     Identidade anterior: 6fd849cdbdbb6838921a1519613e8a5194777c6eeb9e3e102c681a0ddc27164b */
+  "ui_session_v32.js": "e1463eb769cdd00262b911307a114671d61a5c3bc1a61f039886473b8ef96787",
   "ui_icons_v32.js": "32aabc3445571d447189edf4b486239c9256aa9bd0bc6bdab00635a65aa42151",
   "ui_v32.css": "acb0eba165ef25e6b97475430e9b042a9b39038be2b9882ec5b3c67a730faa6f",
   /* DEMANDA 009 (`009-leitura-do-relatorio`) · AUTORIZAÇÃO NOMINAL §29.4.
@@ -4013,11 +4060,25 @@ T("P51-DOC13", "manual descreve o score geral e a ordem do relatório como o pro
     { ids: ["pr-findings"], re: /gaps de maturidade observados/i },
     { ids: ["pr-landscape"], re: /contexto tecnol[óo]gico declarado/i },
     { ids: ["pr-interp", "pr-support"], re: /interpreta[çc][ãa]o do contexto/i },
+    { ids: ["pr-sup-solucao"], re: /formas de apoio, por produto/i },
     { ids: ["pr-journey"], re: /jornada de maturidade/i },
     { ids: ["pr-target"], re: /cen[áa]rio-alvo/i },
     { ids: ["pr-annex"], re: /anexo/i }
   ];
-  const idsEsperados = ESPERADO.reduce((a, e) => a.concat(e.ids), []);
+  /* [019 · T020 · 2026-09-18] SEÇÕES CONDICIONAIS, DECLARADAS PELO NOME.
+     `pr-sup-solucao` existe quando há apoio por solução a publicar — e não
+     existe quando a arbitragem da 010 oculta a região, ou quando a curadoria
+     suprimiu tudo sem nada a declarar. O manual já dizia que as seções do meio
+     são condicionais; o gate não sabia expressar isso.
+
+     A tolerância é NOMINAL, nunca curinga: só este id pode faltar, e quando ele
+     aparece precisa aparecer NA POSIÇÃO declarada — fora dela, `idsEsperados` o
+     traz aqui e `ordemReal` o traz noutro lugar, e a comparação reprova. O §12
+     do manual continua listando a seção sempre, porque o manual descreve o
+     documento que o produto PODE emitir, não uma execução. */
+  const OPCIONAIS = ["pr-sup-solucao"];
+  const idsEsperados = ESPERADO.reduce((a, e) => a.concat(e.ids), [])
+    .filter(id => OPCIONAIS.indexOf(id) < 0 || ordemReal.indexOf(id) >= 0);
   if (JSON.stringify(ordemReal) !== JSON.stringify(idsEsperados))
     throw new Error("ordem real do relatório mudou: " + JSON.stringify(ordemReal));
   /* legenda na CAPA e régua DENTRO do resumo — o ponto exato de R3 */

@@ -5527,7 +5527,35 @@ camada 5.2, que compõe a tela; o relatório é montado por `buildPrintReport()`
 
 ## EA-57 — a seção de apoio nas prioridades declaradas é redundante e não é editável
 
-**Status**: `aberto`
+**Status**: `resolvido`
+
+> **Fecho — demanda `019-curadoria-do-relatorio`, PR #88, mesclado em
+> 2026-09-21.** Este achado virou a demanda que o proprietário pediu, e ela entregou
+> as duas metades: a **redundância** (a seção passa a agrupar por produto em vez
+> de por gap — medido, 15 blocos → 9 cards, com `Serviços FortiGuard` deixando de
+> aparecer cinco vezes) e a **edição** (`ui_curation_edit_v32.js`, onde o
+> engenheiro mantém, remove ou acrescenta).
+>
+> **Os três custos que este achado nomeou foram pagos, um a um:**
+>
+> - **estado persistido** — `reportCuration`, sexta chave canônica em
+>   `ui_session_v32.js` (§29.4, autorizado em 2026-09-17), omitida quando nada
+>   foi declarado, o que preserva `missing ≠ {}` (INV-8);
+> - **papel** — `buildPrintReport()` consome a mesma seleção da tela, e o papel é
+>   **derivado** dos cards, não recalculado: a igualdade tela×papel virou
+>   propriedade de construção em vez de coincidência a conferir (`D019-PAR1`);
+> - **proveniência** — `[data-p53-prov]` nas duas superfícies, e **só** em item
+>   cuja PRESENÇA é decisão do operador. O gate `D019-PROV1` mede as duas
+>   direções: o selo existe onde deve **e não existe onde não deve**, porque
+>   rótulo que aparece em tudo não distingue nada.
+>
+> O ponto que este achado dizia não ser negociável — não inventar recomendação —
+> ficou executável: a curadoria é **seleção**, e o editor não tem campo de texto
+> por desenho. O `D019-CUR1` tenta redigir a cada execução para provar que
+> continua não tendo.
+
+**Aberto em**: 2026-09-14, por relato do proprietário (apontamento 4 do
+`EA-55`), que pediu explicitamente que virasse demanda própria.
 
 **Aberto em**: 2026-09-14, por relato do proprietário (apontamento 4 do
 `EA-55`), que pediu explicitamente que virasse demanda própria.
@@ -5641,3 +5669,236 @@ colateral"*). Este registro é o insumo da decisão, não a decisão.
 A decisão é do proprietário. Ver [[EA-56]], que é a instância mais cara deste
 achado, e a linha de `design-decisions.md` sobre `SCORES = [0, 1.7, 3.3, 5]`,
 que é a mais estrutural.
+
+## EA-61 — a redação do selo do bundle está pinada por gate em suíte protegida
+
+**Status**: `aberto`
+
+**Aberto em**: 2026-09-16, ao implementar o `EA-60`. O proprietário pediu uma
+troca de duas palavras e ela **não foi feita** — registro o bloqueio em vez de
+contorná-lo.
+
+### O pedido
+
+No editor de contexto, o selo ao lado de cada subscription incluída pelo bundle
+declarado deve ler **"incluso no bundle"** em vez de **"incluído pelo bundle"**.
+
+### Cadeia arquivo:linha → efeito
+
+- **`ui_v32.js:402`** emite
+  `<span class="v32-tag v32-bundletag">incluído pelo bundle</span>`.
+- **`tests_ui_m333.js:280`** (gate `C22`) afirma
+  `/incluído pelo bundle/.test(txt(q(d,"#v32-sub-fg-ips").parentElement))`
+  como **prova de que a inferência do bundle ENT está sendo exibida**.
+- **`tests_ui_m333.js` está na lista §29.4** (`tests_p50_core.js:502`).
+
+Medido por execução: com a troca aplicada pela camada 5.2,
+`UI 3.3.3` cai para **25 PASS · 1 FAIL**; revertida, volta a **26 PASS · 0 FAIL**.
+
+### Por que não contornei
+
+A propriedade que o `C22` mede é a **inferência**, não a redação — reancorar a
+expressão para `/inclu[ií](do pelo|so no) bundle/` preservaria o teste inteiro.
+Mas duas regras dizem que não é minha a caneta:
+
+- **R3 §2** — quem escreve gate é o `qa-engineer`; o implementador **nunca**
+  escreve o próprio critério de aceite. Editar o `C22` para aceitar a minha
+  própria mudança é exatamente o anti-padrão que a regra nomeia.
+- **§29.4** — a suíte é protegida e exige autorização nominal do proprietário.
+
+Havia uma saída pela letra: a camada 5.2 podia trocar o texto e eu podia não
+olhar para o `ui333`. O gate ficaria vermelho e eu saberia. Não é saída.
+
+### O que destrava, e é barato
+
+Uma frase do proprietário autorizando o repin nominal da `tests_ui_m333.js`.
+Com ela, a reancoragem é de **uma linha**, a propriedade fica idêntica e o selo
+passa a ler o que ele pediu. Enquanto isso, o resto do item 12 **foi
+entregue**: o selo deixou de quebrar linha e os bundles ficaram em 2×2.
+
+Ver [[EA-58]] — é a mesma família, num nível acima: ali a régua D2 não
+distingue rótulo de decisão; aqui um gate de comportamento pina uma redação.
+
+## EA-62 — reescrita de apresentação pode cegar gate de invariante, e nada avisa
+
+**Status**: `aberto`
+
+**Aberto em**: 2026-09-17, **aconteceu comigo** no PR #85 — e quem pegou foi o
+CI, não eu.
+
+### O que aconteceu, medido
+
+Acrescentei ao `P52_COPY` (`ui_p52_workspace_v32.js`) uma entrada que reescreve,
+**no render**:
+
+```
+"Leitura V3.1.3 preservada (maturidade: X)"  →  "Maturidade observada nesta sessão (nível: X)"
+```
+
+Troca de apresentação, pedida pelo proprietário: número de versão da árvore
+interna vazando para o relatório do cliente.
+
+Acontece que **essa string é o OBSERVÁVEL** de três cláusulas do `D010-INV7`:
+
+- **`tests_010_vao.js:305`** — `const RE_PRESERVADA = /Leitura V3\.1\.3 preservada/;`
+- **`:549`** — a alínea (a) reprova se a tela afirma preservação com a Camada 1
+  **oculta**. É a **INV-7**, uma das dez invariantes de produto.
+- **`:560`** e **`:575`** usam a mesma regex.
+
+Removida do DOM, o gate deixou de enxergar o estado que policia. O mutante
+`D010-M6` (`tests_010_mutants.js:133`), que arma justamente essa bomba —
+*"emitir a afirmação de preservação incondicionalmente"* — passou a
+**SOBREVIVER**: `gate D010-INV7 · reprovou por motivo diferente do esperado`.
+
+Revertida a entrada, `d010` volta a **24/24**.
+
+### Por que eu não peguei antes de empurrar
+
+A campanha `d010` tem `cmd: "node tests_010_vao.js"` e **não** exige Chromium —
+mas o *stage* `mutation` a executa só no job que tem o ambiente completo, e nesta
+máquina o `p52`/`d014vis` faltando derruba o stage inteiro antes (KI-3). Na
+prática: **mudança de apresentação não é medida contra a matriz de mutação
+local**, e o sinal só aparece no CI, ~50 minutos depois.
+
+### Por que é achado, e não só um erro meu
+
+O `p52Copy` existe desde a 5.2 e reescreve texto renderizado em **qualquer**
+superfície, tela e papel. Nada no repositório liga as duas pontas:
+
+- não há registro de **quais strings são observáveis de gate**;
+- não há checagem que compare o mapa de cópia com as âncoras de texto das
+  suítes;
+- a ordem de execução é justamente a que esconde: o gate lê o DOM **depois** da
+  reescrita.
+
+Enquanto isso valer, toda entrada nova no `P52_COPY` é uma aposta — e a
+`EA-59`/`EA-60` mostraram que essas entradas vão continuar aparecendo, porque é
+por ali que o vocabulário do produto é corrigido sem tocar superfície congelada.
+
+### Encaminhamento
+
+O remédio barato é uma **checagem estática no pipeline** (R10 §9): extrair os
+literais de `P52_COPY[i][0]` e reprovar se algum deles aparecer como literal de
+regex/string em arquivo `tests_*.js`. Não prova ausência de cegueira — prova que
+ninguém reescreve, sem saber, um texto que alguma suíte usa como sujeito.
+
+Isso é **gate novo**, e a diretriz de 2026-09-13 diz para não criar gate sem
+pedido do proprietário. Fica registrado para decisão dele.
+
+**Mitigação enquanto isso, e é de graça**: entrada nova no `P52_COPY` exige
+`grep` do literal antigo em `tests_*.js` antes de commitar. Foi o que teria
+evitado este caso — e é exatamente o passo que eu pulei.
+
+Ver [[EA-58]] e [[EA-61]] — a mesma família: o produto e as provas
+compartilham vocabulário, e mudar a palavra mexe nas duas pontas.
+
+#### Emenda de 2026-09-17 — a mitigação rodada, e o que ela achou
+
+Apliquei a checagem proposta acima sobre o estado atual: extrair os literais de
+`P52_COPY[i][0]` e procurá-los nas suítes. **Três candidatos**, todos
+pré-existentes e nenhum deles cego:
+
+| literal | suíte | veredito |
+|---|---|---|
+| `Mandato e objetivos` | `tests_p52_layout.js` | é o gate **`P52-COPY1`**, que afirma a AUSÊNCIA — ele existe para provar que a reescrita aconteceu |
+| `Mandato e objetivos` | `tests_009_leitura.js:154-160` | aparece só em **comentário**, e o comentário descreve exatamente este perigo: *"procurar 'Mandato e objetivos' na tela nunca casaria. Por isso o gate aplica…"* |
+| `Mandato e objetivos` | `tests_ui_m332.js:267` | asserção real, sobre superfície que a reescrita não alcança — a suíte passa 23/23 |
+
+**Isso reforça o achado em vez de esvaziá-lo.** O perigo já era conhecido: o
+`tests_009_leitura.js` o documenta em prosa e contorna caso a caso. O que não
+existe é **mecanismo** — cada suíte se defende por conta própria, e quem
+escrever a próxima entrada no `P52_COPY` não tem como saber disso a não ser
+lendo os comentários certos. Foi o que aconteceu comigo.
+
+A checagem, como está, é **heurística**: ela sinaliza candidatos, não defeitos.
+Mesmo assim teria bastado — o literal `Leitura V3.1.3 preservada` apareceria
+apontando para `tests_010_vao.js`, e eu teria parado antes de empurrar.
+
+## EA-64 — o repositório não registra qual versão está em produção, e o README apodreceu quatro versões
+
+**Status**: `aberto`
+
+**Aberto em**: 2026-09-17, ao atualizar o README a pedido do proprietário.
+
+### O que estava errado, medido
+
+O README declarava, em 2026-09-17:
+
+> **v3.2.2** — produção publicada. É a versão liberada e atualmente em uso.
+
+No mesmo momento, o que a porta `127.0.0.1:1337` devolvia era a **v3.2.6**
+(`2f9c0a84…`, conferido byte a byte). O README estava **quatro versões atrás** e
+afirmando algo falso — e o gate que o guarda, `V322-DOC3`
+(`tests_p52_layout.js:1731`), estava **verde**, porque ele pinava o número
+`v3.2.2` literalmente.
+
+### Cadeia arquivo:linha → efeito
+
+- **`.claude/verify/current_phase.json`** registra a **fase de produto** (5.2,
+  `SELADA`, tag `v3.2.1`) — não o que está publicado.
+- **`deploy/`** mora **fora da worktree do git** (`EA-53`): nenhum commit, pin
+  ou stage o alcança.
+- **`preparar_release.py`** escreve em `deploy/<tag>/` e **não** deixa registro
+  no repositório.
+- **Logo**: não existe, em lugar algum rastreado, a resposta para *"qual versão
+  está em produção?"*. O único lugar onde a informação aparecia era a prosa do
+  README — que é justamente o que apodreceu.
+
+**Medido em 2026-09-17**: as releases publicadas no GitHub iam até a **v3.2.2**,
+de 25/08. As v3.2.3, v3.2.4 e v3.2.5 foram para o ar **sem release**, existindo
+só em `deploy/`.
+
+### Por que o gate não pegou
+
+`V322-DOC3` afirmava `/v3\.2\.2[^\n]{0,120}produção publicada/`. Ele media se o
+README **diz** algo, nunca se o que ele diz é **verdade** — e não tinha contra o
+que comparar, porque a verdade não está em lugar nenhum do repositório.
+
+Não é defeito do gate: é o limite dele. Um julgador não pode conferir um fato
+que a árvore não guarda.
+
+### O que foi feito agora
+
+- README corrigido para a v3.2.6, com a v3.2.5 nomeada como rollback e o par
+  v3.2.2/v3.2.1 preservado como histórico.
+- Release **v3.2.6** cortada e conferida (o download do GitHub é byte a byte o
+  artefato em uso), sob autorização do proprietário no chat.
+- `V322-DOC3` **reancorado para a propriedade** em vez do número: ele passa a
+  extrair a versão que o README chama de produção e a que chama de rollback,
+  exigir que sejam distintas, e cobrar coerência com a frase "a versão corrente
+  do produto é a vX". Ficou mais forte num ponto — a forma anterior não pegava
+  "produção e rollback apontando a mesma versão".
+- Título do gate corrigido: dizia *"produção v3.2.1 e candidata v3.2.2"*, o
+  contrário do que o corpo media desde 2026-08-25 (família do `EA-22`).
+
+### O que NÃO foi feito, e é o remédio de raiz
+
+Criar a **fonte de verdade**: um registro rastreado — no espírito do
+`boundary.json` da R6 — dizendo qual tag está publicada, com que sha256 e a
+partir de que commit, escrito pelo `preparar_release.py` no mesmo passo que
+prepara o `deploy/`. Com ele, o `V322-DOC3` deixa de conferir só coerência
+interna e passa a conferir **o fato**.
+
+Isso é **gate/instrumento novo**, e a diretriz de 2026-09-13 diz para não criar
+sem pedido do proprietário. Fica registrado para decisão dele.
+
+**Mitigação enquanto isso**: a reancoragem acima faz o gate parar de apodrecer a
+cada versão — ele não sabe se o número está certo, mas passou a sobreviver à
+mudança em vez de exigir edição. O que continua sem juiz é a **correspondência
+com a realidade**, e ela depende de alguém olhar.
+
+### Observação anexa, medida e não corrigida
+
+A **imagem de abertura** do README vem de `docs_phase5/evidence_v322/` e mostra
+a home **anterior** ao `EA-59`/`EA-63` — botões antigos, marca menor, emblema
+sem o tratamento novo. O próprio `V322-DOC3` declara, em comentário, que *"um
+PNG de um acervo anterior representaria estado visual superado"* — e é o que
+ele está aceitando agora, porque a asserção fixa o diretório do acervo e não a
+atualidade da captura.
+
+Não substituí: promover imagem ao repositório é passo explícito de evidência
+(R11 §2) e o `guard-data` barra binário novo acima de 200 KB. Fica nomeado.
+
+Ver [[EA-53]] — é a mesma raiz: `deploy/` fora do git faz o repositório não
+saber o que está no ar. Ali a consequência foi correção mesclada que não chegava
+ao cliente; aqui é documentação que mente para quem chega de fora.

@@ -445,11 +445,15 @@ Estrutura, na ordem em que o documento realmente sai:
 5. **Gaps de maturidade observados** — com evidência, capability e caminhos de apoio;
 6. **Contexto tecnológico declarado**;
 7. **Interpretação do contexto** e **Como a Fortinet pode apoiar**;
-8. **Jornada de maturidade** e **leitura executiva**;
-9. **Perfil atual × Cenário-alvo de maturidade**;
-10. **Anexo — respostas da sessão**, com as observações registradas.
+8. **Formas de apoio, por produto**: o mesmo apoio reagrupado por produto em vez de por gap, com
+   as capabilities que cada um atende e a divisão do portfólio. Traz a seleção feita na tela — se
+   o engenheiro removeu ou acrescentou algo, o documento sai com a mesma seleção e diz quando a
+   presença de um item é decisão dele;
+9. **Jornada de maturidade** e **leitura executiva**;
+10. **Perfil atual × Cenário-alvo de maturidade**;
+11. **Anexo — respostas da sessão**, com as observações registradas.
 
-As seções 4 a 9 são condicionais: cada uma só aparece quando a sessão tem o dado correspondente
+As seções 4 a 10 são condicionais: cada uma só aparece quando a sessão tem o dado correspondente
 (prioridade declarada, gap observado, contexto tecnológico informado, alvo declarado).
 
 > **O relatório sai igual com e sem contexto tecnológico.** Capa, metadados, legenda, "Como

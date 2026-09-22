@@ -392,6 +392,30 @@
           ".claude/verify/mutation_population.json"
         ]
       }
+    },
+    "d019": {
+      "cmd": "node tests_019_mutants.js",
+      "preflight": true,
+      "targets": [
+        "tests_019_curadoria.js",
+        "tests_019_mutants.js",
+        "tests_session_m48.js",
+        "ui_curation_edit_v32.js",
+        "ui_curation_v32.js",
+        "ui_p52_support_v32.js",
+        "ui_session_v32.js",
+        "ui_v32.js"
+      ],
+      "insumos": {
+        "oraculo": [
+          "tests_019_curadoria.js"
+        ]
+      },
+      "requires": [
+        "node",
+        "python"
+      ],
+      "_trilha": "Demanda 019-curadoria-do-relatorio, W7 (T022) · 2026-09-18 · qa-engineer. Onze mutantes, um por gate mais o D019-M11, que a T012 exigiu para provar que a reancoragem do S4-S5 ainda discrimina. O runner reconstroi o HTML sob mutacao em ARQUIVO EFEMERO (os.tmpdir) e aponta o gate para ele por D019_HTML_OVERRIDE: o gate le o HTML CONSTRUIDO, nao o modulo-fonte, e sem reconstruir a mutacao nao alcancaria o sujeito — TODO mutante sairia SOBREVIVENTE pelo motivo errado. A verificacao nao toca o artefato rastreado (R7 §3) e a restauracao e conferida byte a byte. `tests_session_m48.js` esta em `targets` porque e MUTADO pelo M11, e por isso NAO pode ser insumo. O unico insumo e o oraculo `tests_019_curadoria.js`. SEIS ANCORAS FORAM REANCORADAS durante a implementacao, todas pelo mesmo motivo (EA-4, ancora podre depois de mudanca legitima) e todas com o ATAQUE PRESERVADO: M1/M2/M3 depois do rename `offerings`->`decisions`, M4/M9 porque quem emite proveniencia e declara supressao no papel e o dono da APRESENTACAO e nao o editor, M5 porque a ancora antiga nunca existiu e ganhou um ataque plausivel (podar o catalogo derivado), M7 porque EU havia duplicado a emissao do selo de grupo, M8 porque o arquivo congelado fala com o dono da apresentacao e nao com o owner do estado, e M10 porque ancorava na palavra do enum oposto. O `--preflight` nasce no MESMO commit desta chave (D4 da 013): sem a leitura do argv o IC-4 derrubaria o stage inteiro com a campanha verde."
     }
   }
 }

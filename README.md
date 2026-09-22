@@ -16,13 +16,15 @@ contextuais e um relatório em PDF pronto para leitura executiva.
 
 | versão | o que é | onde está |
 |---|---|---|
-| **v3.2.6** | **produção publicada.** É a versão liberada e atualmente em uso. | [release `v3.2.6`](https://github.com/oflavioc/quickscan-secops/releases/tag/v3.2.6) |
-| **v3.2.5** | **versão anterior**, preservada e verificada como caminho de rollback. | preservada no ambiente de publicação |
+| **v3.2.7** | **produção publicada.** É a versão liberada e atualmente em uso. | [release `v3.2.7`](https://github.com/oflavioc/quickscan-secops/releases/tag/v3.2.7) |
+| **v3.2.6** | **versão anterior**, preservada e verificada como caminho de rollback. | [release `v3.2.6`](https://github.com/oflavioc/quickscan-secops/releases/tag/v3.2.6) |
 | v3.2.2 · v3.2.1 | marcos anteriores, com release própria e auditoria externa registrada | [`v3.2.2`](https://github.com/oflavioc/quickscan-secops/releases/tag/v3.2.2) · [`v3.2.1`](https://github.com/oflavioc/quickscan-secops/releases/tag/v3.2.1) |
 
-**A versão corrente do produto é a v3.2.6.** A v3.2.5 permanece preservada e verificada, disponível
+**A versão corrente do produto é a v3.2.7.** A v3.2.6 permanece preservada e verificada, disponível
 para rollback imediato. As versões v3.2.3 a v3.2.5 foram publicadas no ambiente do proprietário sem
-release própria; a v3.2.6 consolida todas, e as notas dela descrevem o conjunto.
+release própria; a v3.2.6 consolidou todas, e a v3.2.7 acrescenta a **curadoria do relatório** — o
+engenheiro escolhe o que de fato será apresentado, e a seção de apoio passa a agrupar por produto em
+vez de por gap.
 
 **Para avaliar ou distribuir, use o artefato da release** — ele é o mesmo byte a byte que está em uso.
 Um arquivo `*_dev.html` na árvore de trabalho é candidata, nunca release: antes de avaliar ou
@@ -61,7 +63,7 @@ A aplicação é um **único arquivo HTML autocontido**: sem servidor obrigatór
 dependência de runtime.
 
 Baixe o artefato da [release mais recente](https://github.com/oflavioc/quickscan-secops/releases/latest)
-— `quickscan_secops_soccmm_v3_2_6.html` — e abra no navegador (duplo clique, ou `Arquivo → Abrir`).
+— `quickscan_secops_soccmm_v3_2_7.html` — e abra no navegador (duplo clique, ou `Arquivo → Abrir`).
 Não há instalação nem servidor.
 
 > O GitHub **não renderiza HTML como página**: clicar no arquivo mostra o código-fonte e o botão

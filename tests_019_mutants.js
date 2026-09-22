@@ -192,6 +192,19 @@ const MUTANTS = [
     find: 'catch (e) { v32PrintFallback(e); }', repl: 'catch (e) { }',
     reason: /NADA marcou o documento|recebe a TELA/ },
 
+  /* [EA-67] DOIS mutantes para o `D019-CARD1`, e não um, porque as duas
+     alíneas guardam propriedades independentes: uma cai sem a outra notar.
+     Foi exatamente assim que os dois defeitos conviveram sete waves. */
+  { id: "D019-M13", file: F.solucao, gate: "D019-CARD1",
+    desc: "deixar o nome do produto sair duas vezes no card",
+    find: 'nomeDuplicado.parentNode.removeChild(nomeDuplicado);', repl: 'void 0;',
+    reason: /sai mais de uma vez no card/ },
+
+  { id: "D019-M14", file: F.solucao, gate: "D019-CARD1",
+    desc: "montar o card acrescentado sem ícone — acabamento como segundo canal de 'este é de segunda'",
+    find: 'linha.appendChild(tile);', repl: 'void 0;',
+    reason: /card sem ícone/ },
+
   { id: "D019-M11", file: F.gateSes, gate: "S4-S5",
     desc: "ressuscitar a lista de cinco chaves — provar que a reancoragem do S4-S5 ainda discrimina",
     find: 'CANONICAS.concat(["reportCuration"])', repl: 'CANONICAS',

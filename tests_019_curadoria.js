@@ -426,6 +426,59 @@ T("D019-SOL2", "todo produto cai num grupo do portfólio; o sem categoria vai pa
   return true;
 });
 
+/* ==========================================================================
+   [EA-67] O ACABAMENTO DO CARD, e por que ele merece gate.
+
+   Dois defeitos que o proprietário viu numa passada e nenhuma máquina viu em
+   sete waves — porque nenhum dos dez gates olhava para o card como o leitor
+   olha: eles mediam CONJUNTOS (produtos, pares, grupos), nunca a forma.
+
+   1. O nome saía DUAS VEZES. Na visão por gap o `.pt-name` era o título do
+      produto dentro do bloco da capability; consolidado, o título do card já é
+      o produto, e o `.pt-name` repete a palavra duas linhas abaixo. Mover o nó
+      mudou o papel dele, e eu movi sem reavaliar.
+   2. O card ACRESCENTADO saía sem ícone, porque eu o montava do catálogo e não
+      montava o `.icon-tile`. Na tela do proprietário só um card aparecia
+      ilustrado — o único colhido entre quatro.
+
+   A alínea (b) é a que importa mais: o que distingue um card acrescentado de um
+   colhido tem de ser o SELO DE PROVENIÊNCIA, nunca o acabamento. Card mais
+   pobre é um segundo canal dizendo "este aqui é de segunda", e não é isso que
+   a demanda combinou.
+   ========================================================================== */
+T("D019-CARD1", "o card diz o nome do produto UMA vez e todo card tem ícone — acrescentado igual a colhido", () => {
+  const { w, d } = boot();
+  const b = cur(w);
+  const fora = b.catalog().filter(id => b.offered().indexOf(id) < 0)[0];
+  if (!fora) vac("(a)", "todo o catálogo foi ofertado — sem card acrescentado para comparar");
+  b.set(fora, "include");
+  w.__DEV.showResults();
+  const cards = qa(d, "#p52-sec-support > [data-p53-sol-produto]");
+  if (!cards.length) throw new Error("nenhum card na seção de apoio — sem sujeito");
+
+  /* (a) o nome aparece UMA vez por card */
+  const repetidos = cards.filter(c => {
+    const nome = c.getAttribute("data-p53-sol-produto");
+    return qa(c, "*").filter(n => !n.children.length && txt(n) === nome).length > 1;
+  }).map(c => c.getAttribute("data-p53-sol-produto"));
+  if (repetidos.length)
+    throw new Error("o nome do produto sai mais de uma vez no card: " + repetidos.join(", ") +
+      " — consolidar mudou o papel do `.pt-name`, e repetir a palavra é o sintoma");
+
+  /* (b) TODO card tem ícone, inclusive o acrescentado */
+  const semIcone = cards.filter(c => !c.querySelector("img"))
+    .map(c => c.getAttribute("data-p53-sol-produto"));
+  if (semIcone.length)
+    throw new Error("card sem ícone: " + semIcone.join(", ") + " — o que distingue acrescentado de " +
+      "colhido é o selo de proveniência, nunca o acabamento");
+
+  /* (c) não-vacuidade: a alínea (b) precisa ter visto um card ACRESCENTADO */
+  const acrescentado = cards.filter(c => c.querySelector("[data-p53-prov]"));
+  if (!acrescentado.length)
+    vac("(c)", "nenhum card acrescentado nesta sessão — (b) não teria medido o caso que o defeito produziu");
+  return true;
+});
+
 /* ================== C8 · tela e papel, a MESMA seleção ================== */
 T("D019-PAR1", "tela e papel publicam o mesmo conjunto, medido DEPOIS de beforeprint", () => {
   const { w, d } = boot();

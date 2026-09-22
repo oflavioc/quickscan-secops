@@ -7327,7 +7327,42 @@ function wireSafePrint(app){
       b.removeAttribute("onclick"); b.onclick = safePrint;   /* [3.3.2.1-D] rota segura */
     }});
 }
-window.addEventListener("beforeprint", preparePrint);
+/* [EA-66 · 2026-09-22] FALHA DE MONTAGEM NUNCA EMITE A TELA COMO RELATÓRIO.
+
+   O DEFEITO QUE ISTO FECHA, medido em sessão real do proprietário: o PDF saiu
+   com 13 folhas, doze quase em branco e a última com o anexo. Não era o
+   relatório — era A TELA. `preparePrint()` estava pendurado CRU neste evento;
+   qualquer exceção dentro dele deixava `v32-print-mode` sem entrar, e então
+   `.wrap` continuava visível, `#v32-print-report` continuava `display:none`, e
+   o navegador imprimia o workspace. A última página com o anexo é a assinatura
+   do modo de falha: a regra congelada `#annex{break-before:page}` é da era em
+   que imprimir ERA imprimir a tela, e hoje só se manifesta quando esta montagem
+   falha.
+
+   O custo desse silêncio é o pior possível neste produto: o artefato que vai ao
+   cliente sai errado sem que ninguém seja avisado — nem o operador, que vê um
+   diálogo de impressão normal.
+
+   A guarda não conserta a causa; ela tira a falha do escuro. Reusa o estado
+   `v32-print-blocked`, que já existe e já esconde `.wrap`: o resultado é UMA
+   página dizendo o que houve, com a mensagem do erro para relato. Imprimir
+   nada é recuperável; imprimir a tela achando que é o relatório, não. */
+function v32PrintFallback(e){
+  const el = ensurePrintContainer();
+  while (el.firstChild) el.removeChild(el.firstChild);
+  const box = document.createElement("div");
+  box.className = "pr-blocked";
+  box.setAttribute("data-pr-falha", "montagem");
+  box.appendChild(document.createTextNode(
+    "O relatório não pôde ser montado, e por isso nada foi impresso. " +
+    "Cancele a impressão e relate esta mensagem: " + ((e && e.message) || String(e))));
+  el.appendChild(box);
+  document.body.classList.add("v32-print-blocked");
+  if (window.console) console.error("V3.2 print: montagem falhou —", e);
+}
+window.addEventListener("beforeprint", function () {
+  try { preparePrint(); } catch (e) { v32PrintFallback(e); }
+});
 window.addEventListener("afterprint", finishPrint);
 
 /* ---------------- wrapper de apresentação (aditivo; legado intocado) ---------------- */

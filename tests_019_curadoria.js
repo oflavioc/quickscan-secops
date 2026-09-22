@@ -511,6 +511,59 @@ T("D019-SUF1", "com o gate de suficiência FECHADO a curadoria não se oferece e
   return true;
 });
 
+/* ==========================================================================
+   [EA-66] O MODO DE FALHA MAIS CARO DESTE PRODUTO, e ele é SILENCIOSO.
+
+   Medido em sessão real do proprietário: o PDF saiu com 13 folhas, doze quase
+   em branco e a última com o anexo — e não era o relatório, era A TELA. A
+   assinatura é inconfundível: o anexo da tela chama-se "Evidências e
+   observações da sessão" e o do relatório, "Anexo — respostas da sessão"; a
+   regra congelada `#annex{break-before:page}` lhe dá a folha final.
+
+   O mecanismo: `preparePrint()` monta o relatório e SÓ DEPOIS aplica
+   `v32-print-mode`. Exceção na montagem ⇒ classe nunca entra ⇒ `.wrap` visível,
+   `#v32-print-report` oculto ⇒ o navegador imprime o workspace. O operador vê
+   um diálogo de impressão perfeitamente normal.
+
+   A FAMÍLIA JÁ MORDEU ANTES, e isso é o que torna o gate obrigatório: a errata
+   externa B-03 corrigiu exatamente "sem aplicar `v32-print-mode`, deixava
+   `.wrap` visível na impressão" — por outro caminho. Duas instâncias do mesmo
+   defeito, nenhuma máquina afirmando a propriedade. Agora há.
+
+   A injeção de falha é na FRONTEIRA DO BRIDGE: `buildPrintReport()` chama
+   `__P53SOL.printHTML()` direto, e o try/catch do módulo vive DENTRO do método.
+   Substituí-lo faz a exceção subir por onde ela subiria num defeito real —
+   nenhum caminho artificial.
+   ========================================================================== */
+T("D019-PRT1", "montagem do relatório que FALHA não emite a tela como se fosse o relatório", () => {
+  const { w, d } = boot();
+  const bridge = w.__P53SOL;
+  if (!bridge || typeof bridge.printHTML !== "function")
+    vac("(a)", "bridge de apresentação ausente — sem fronteira onde injetar a falha");
+  const original = bridge.printHTML;
+  bridge.printHTML = function () { throw new Error("falha sintética D019-PRT1"); };
+  try { w.dispatchEvent(new w.Event("beforeprint")); }
+  finally { bridge.printHTML = original; }
+
+  const cls = String(d.body.className || "");
+  if (/v32-print-mode/.test(cls))
+    throw new Error("a montagem falhou e o modo de impressão entrou assim mesmo — o papel sairia incompleto");
+  if (!/v32-print-blocked/.test(cls))
+    throw new Error("a montagem falhou e NADA marcou o documento: `.wrap` continua imprimível e o cliente " +
+      "recebe a TELA no lugar do relatório — é o modo de falha do EA-66, e ele é silencioso");
+  const aviso = d.querySelector("#v32-print-report [data-pr-falha]");
+  if (!aviso)
+    throw new Error("falha de montagem sem aviso NO PAPEL — falhar em silêncio é o defeito, não a falha");
+  if (!/D019-PRT1/.test(txt(aviso)))
+    throw new Error("o aviso não carrega a mensagem do erro; sem ela o operador não tem o que relatar");
+  /* a tela não pode ter virado o sujeito impresso */
+  const annexTela = d.querySelector("#annex");
+  if (annexTela && !annexTela.closest(".wrap"))
+    throw new Error("o anexo da TELA saiu de `.wrap` — ele voltaria a imprimir junto");
+  w.__DEV.finishPrint();
+  return true;
+});
+
 /* ============================== resumo ============================== */
 const pass = results.filter(r => r.ok).length;
 const fail = results.length - pass;

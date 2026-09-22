@@ -279,7 +279,22 @@ const PROTECTED = {
      pre-condicao para publicar.
      Identidade anterior:
      6db500439aea5a4264f4220b872fab776b5e37a0b78c9c9606ef67a5c44ee79c */
-  "ui_v32.js": "30a6d48e4aca170c5b3c7bf41100ea1fc1ca20739765ffda945a6ffe16a84670",
+  /* [EA-66 · 2026-09-22] REPIN — fix-finding autorizado pelo proprietario no chat
+     ("Confirmo, comeca pelo 4"), depois de eu descrever o endurecimento.
+     `preparePrint()` deixa de ficar pendurado CRU em `beforeprint`. O defeito
+     que isto fecha foi medido em sessao real: o PDF saiu com 13 folhas, doze
+     quase em branco e a ultima com o anexo DA TELA — porque a montagem lancava,
+     `v32-print-mode` nunca entrava, `.wrap` continuava visivel e o navegador
+     imprimia o workspace como se fosse o relatorio do cliente, em silencio.
+     A guarda NAO conserta a causa; tira a falha do escuro, reusando o estado
+     `v32-print-blocked` que ja existe. Imprimir nada e recuperavel; imprimir a
+     tela achando que e o relatorio, nao.
+     A familia ja havia mordido: a errata externa B-03 corrigiu o mesmo sintoma
+     por outro caminho, e desde entao nenhuma maquina afirmava a propriedade.
+     Agora afirma: `D019-PRT1`, com o mutante `D019-M12` provando que discrimina.
+     Identidade anterior:
+     30a6d48e4aca170c5b3c7bf41100ea1fc1ca20739765ffda945a6ffe16a84670 */
+  "ui_v32.js": "948dc7f93f9be71ea52f506124d4fce9558f85cc500258bf2cfbfaddcd9c723c",
   "ui_ux_v32.js": "a050401145a5ed7af597eae01a9a23826418119769c096db168b3b177a9d3938",
   /* ERRATA DA AUDITORIA EXTERNA · §4.1.1 ("qualquer texto derivado consome a
      mesma decisão canônica de publicabilidade"). A comparação Atual × Alvo

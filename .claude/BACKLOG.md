@@ -5870,3 +5870,77 @@ Não substituí: promover imagem ao repositório é passo explícito de evidênc
 Ver [[EA-53]] — é a mesma raiz: `deploy/` fora do git faz o repositório não
 saber o que está no ar. Ali a consequência foi correção mesclada que não chegava
 ao cliente; aqui é documentação que mente para quem chega de fora.
+
+## EA-66 — falha ao montar o relatório imprime a TELA como se fosse o relatório
+
+**Status**: `resolvido`
+
+> **Fecho — fix-finding, 2026-09-22.** Autorizado pelo proprietário no chat
+> depois de eu descrever o endurecimento. `ui_v32.js` é §29.4; repin com trilha
+> inline. Gate `D019-PRT1`, mutante `D019-M12`.
+
+**Aberto em**: 2026-09-22, por **relato do proprietário depois de conduzir uma
+sessão real** na v3.2.7 recém-publicada: *"o relatório em PDF apareceu com a
+maior parte das páginas em branco, com exceção da última página 13"*.
+
+### O que foi medido, e como se sabe que era a tela
+
+Três provas independentes, sobre o artefato que estava no ar:
+
+1. A página 13 traz **"Evidências e observações da sessão"** — esse é o anexo
+   **da tela** (`renderAnnex()`, Camada 1 congelada). O do relatório chama-se
+   "Anexo — respostas da sessão".
+2. O rodapé daquela página é o rodapé legado da tela, não o do relatório.
+3. **A contagem de folhas bate com a tela, não com o relatório.** Medido no
+   navegador, em mídia de impressão: a tela tem **10.497 px ≈ 11 páginas**, mais
+   o anexo em folha própria e a capa — as 13 folhas relatadas. O relatório tem
+   5.685 px ≈ 6.
+
+As páginas "em branco" são o workspace 5.2 em papel branco: trilho lateral,
+grade e seções que no papel não têm o que mostrar.
+
+### Cadeia arquivo:linha → efeito
+
+1. `ui_v32.js` — `preparePrint()` monta o relatório e **só depois** aplica
+   `v32-print-mode` (`buildPrintReport()` → `el.innerHTML = html` →
+   `classList.add`).
+2. `ui_v32.js:1435` (antes da correção) — `preparePrint` estava pendurado
+   **cru**: `window.addEventListener("beforeprint", preparePrint)`.
+3. Exceção em qualquer ponto da montagem ⇒ a classe nunca entra ⇒ `.wrap`
+   permanece visível e `#v32-print-report` permanece `display:none`.
+4. A regra congelada `#annex{display:block; break-before:page}` — da era em que
+   imprimir **era** imprimir a tela — dá ao anexo a folha final. É a assinatura
+   do modo de falha.
+
+### Por que isto é grave mesmo sendo raro
+
+O artefato que vai ao cliente sai errado **sem que ninguém seja avisado**. O
+operador vê um diálogo de impressão perfeitamente normal. Não há sintoma na
+tela, não há erro visível, não há gate.
+
+### A família já mordeu antes
+
+A **errata externa B-03** corrigiu exatamente *"sem aplicar `v32-print-mode`,
+deixava `.wrap` visível na impressão"* — mesmo sintoma, outro caminho. Duas
+instâncias, e entre elas nenhuma máquina afirmando a propriedade. É a marca do
+`EA-20` numa terceira forma: não é gate tautológico nem gate cego por
+amostragem, é **propriedade sem gate nenhum**.
+
+### O que a correção faz, e o que ela NÃO faz
+
+`preparePrint` passa a rodar sob guarda; a falha reusa o estado
+`v32-print-blocked`, que já existe e já esconde `.wrap`. O resultado é **uma
+página** dizendo o que houve, com a mensagem do erro para relato.
+
+**A guarda não conserta a causa** — a exceção que o proprietário encontrou
+**não foi reproduzida**. Testei no mesmo container, pelo caminho real
+(`beforeprint`, nunca a chamada direta), com curadoria aplicada, painel aberto,
+nove práticas com alvo e três acréscimos do operador: a montagem fecha limpa nas
+quatro combinações. O que a guarda garante é que, quando acontecer de novo, a
+falha **se anuncia** em vez de emitir a tela — e a mensagem dará a causa.
+
+Imprimir nada é recuperável; imprimir a tela achando que é o relatório, não.
+
+Ver [[EA-20]] e [[EA-26]] (medir o PDF por `beforeprint`, nunca por
+`buildPrintReport()` — foi essa disciplina que permitiu reproduzir o caminho
+real e descartar hipóteses).

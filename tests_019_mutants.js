@@ -122,16 +122,27 @@ const MUTANTS = [
        cobertura. */
     reason: /alterou derivado|alterou o que o MOTOR oferece|não podem mudar/ },
 
-  { id: "D019-M6", file: F.solucao, gate: "D019-SOL1",
-    desc: "descartar produto que só aparece como menção curta — perda que o olho não procura",
-    find: 'minis[j].querySelector("b")', repl: 'minis[j].querySelector("b-inexistente")',
-    reason: /SUMIU na visão por solução/ },
-  /* O M6 foi o mutante mais caro desta demanda, e valeu cada rodada: ele saiu
-     SOBREVIVENTE com âncora boa, e o culpado era o oráculo do `D019-SOL1`, que
-     media o DOM consolidado contra ele mesmo. Na sessão de referência todo
-     produto tem um `.prod` completo, então perder as menções curtas não perde
-     PRODUTO — perde o par (produto × capability). Sem medir o par, esta perda é
-     literalmente invisível, que é a definição do que o M6 existe para atacar. */
+  /* ====================================================================
+     D019-M6 · APOSENTADO em 2026-09-22 (EA-68). O id NÃO é reutilizado (R12),
+     no precedente dos M11/M12/M13 da 015.
+
+     Ele atacava a colheita das MENÇÕES CURTAS no DOM — o laço que lia
+     `.prod-mini` — e foi o mutante mais caro desta demanda: saiu SOBREVIVENTE
+     com âncora boa e denunciou que o `D019-SOL1` media o DOM consolidado
+     contra ele mesmo. Pagou o oráculo do `SOL1`, que passou a medir o par
+     (produto × capability) contra o MOTOR.
+
+     Agora o alvo dele deixou de existir, e de um jeito que é melhoria e não
+     perda: com a lista de produtos vindo de `ofertaDoMotor()`, a distinção
+     entre `.prod` e `.prod-mini` é dedup de RENDERIZAÇÃO e não decide mais
+     nada. Um produto não pode sumir por falha de colheita porque não há mais
+     colheita — a propriedade virou INALCANÇÁVEL POR CONSTRUÇÃO, que é a
+     disposição do `product-owner` registrada em `design-decisions.md`.
+
+     Quem guarda a propriedade hoje é o `D019-SOL3`: todo produto que o motor
+     oferece está na visão. É estritamente mais forte do que o M6 conseguia
+     atacar.
+     ==================================================================== */
 
   /* [W4] O ATAQUE MUDOU, e a razão fica escrita. A spec descrevia o M7 como
      "descartar em silêncio o produto sem categoria conhecida" — mas na sessão
@@ -191,6 +202,23 @@ const MUTANTS = [
     desc: "voltar a pendurar preparePrint cru no beforeprint — falha de montagem imprime a TELA",
     find: 'catch (e) { v32PrintFallback(e); }', repl: 'catch (e) { }',
     reason: /NADA marcou o documento|recebe a TELA/ },
+
+  /* [EA-68] O mutante que devolve o produto ao estado em que o proprietário o
+     encontrou: a lista de produtos volta a sair da COLHEITA DO DOM em vez do
+     motor. Numa sessão realista isso faz a visão cair de onze para dois, e é
+     literalmente o defeito medido — não um sintético. */
+  { id: "D019-M15", file: F.solucao, gate: "D019-SOL3",
+    desc: "voltar a derivar a lista de produtos da colheita do DOM — a visão some numa sessão realista",
+    find: 'var produtos = ofertaDoMotor();',
+    repl: 'var produtos = ofertaDoMotor().filter(function (x) { return x.tier === 1; });',
+    reason: /não estão na visão por solução/ },
+
+  /* O qualificador: sem ele os dois tiers viram um só e o relatório afirma
+     mais do que o screening mediu. Ataca a atribuição, não a exibição. */
+  { id: "D019-M16", file: F.solucao, gate: "D019-SOL3",
+    desc: "achatar o qualificador — tudo vira 'após validação' e a distinção do motor se perde",
+    find: '"data-p53-sol-tier": TIER[p.tier] || TIER[2]', repl: '"data-p53-sol-tier": TIER[2]',
+    reason: /qualificador divergente do motor/ },
 
   /* [EA-67] DOIS mutantes para o `D019-CARD1`, e não um, porque as duas
      alíneas guardam propriedades independentes: uma cai sem a outra notar.

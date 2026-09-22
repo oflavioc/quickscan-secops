@@ -183,3 +183,25 @@
   .p53-sol-suprimido { break-inside: avoid; }
   .p53-cur-abrir, .p53-cur-panel { display: none; }
 }
+
+/* [EA-68] A linha de selos do card: grupo do portfólio à esquerda, e o
+   qualificador da indicação à direita. O qualificador só existe no card que o
+   MOTOR ofereceu — o acrescentado pelo engenheiro não tem tier, porque a
+   presença dele não é leitura da avaliação e sim decisão de quem conduziu. */
+.p53-sol-chiprow {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 6px;
+}
+.p53-sol-tierlabel {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .07em;
+  text-transform: uppercase;
+  color: var(--faint);
+  white-space: nowrap;
+}
+[data-p53-sol-tier="prioritaria"] .p53-sol-tierlabel { color: var(--p52-attn); }

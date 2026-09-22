@@ -213,57 +213,105 @@
   /* Um produto por chave, na ordem de PRIMEIRA aparição — que é a ordem em que
      o motor os produziu. Ordenar por outra coisa (alfabética, por exemplo)
      inventaria precedência que o motor não declarou. */
-  function colher(blocos) {
-    var ordem = [], porNome = {}, i, j;
-    function reg(nome) {
-      if (!nome) return null;
-      if (!porNome[nome]) { porNome[nome] = { nome: nome, prod: null, caps: [], contextos: [] }; ordem.push(nome); }
-      return porNome[nome];
-    }
-    for (i = 0; i < blocos.length; i++) {
-      var bloco = blocos[i];
-      var cap = txt(bloco.querySelector("h4"));
-      var why = bloco.querySelector(".why");
-      var prods = bloco.querySelectorAll(".prod");
-      var minis = bloco.querySelectorAll(".prod-mini");
-      for (j = 0; j < prods.length; j++) {
-        var nomeP = txt(prods[j].querySelector(".pt-name"));
-        var regP = reg(nomeP);
-        if (!regP) continue;
-        /* o `.prod` COMPLETO existe uma vez por produto em toda a leitura — é
-           o dedup com precedência do renderer congelado. Guardamos o primeiro
-           e movemos o nó; nunca copiamos, para não duplicar ícone e link. */
-        if (!regP.prod) regP.prod = prods[j];
-        if (cap && regP.caps.indexOf(cap) < 0) regP.caps.push(cap);
-        if (why && regP.contextos.indexOf(txt(why)) < 0) regP.contextos.push(txt(why));
-      }
-      for (j = 0; j < minis.length; j++) {
-        /* MENÇÃO CURTA. É por aqui que um produto desapareceria sem ninguém
-           ver, porque é o que o olho não procura — o mutante `D019-M6` ataca
-           exatamente este laço. */
-        var nomeM = txt(minis[j].querySelector("b"));
-        var regM = reg(nomeM);
-        if (!regM) continue;
-        if (cap && regM.caps.indexOf(cap) < 0) regM.caps.push(cap);
-      }
-    }
-    return ordem.map(function (n) { return porNome[n]; });
+  /* ====================================================================
+     [EA-68] A OFERTA VEM DO MOTOR, e não do que a tela conseguiu mostrar.
+
+     O renderer congelado emite `.apoio-block` apenas para `sev 2`; achado de
+     gap moderado vira entrada na lista "pode fazer sentido — após validação".
+     Colher só `.apoio-block` fazia a consolidação nascer quase vazia na sessão
+     COMUM — medido no relato do proprietário: 2 produtos na visão por solução
+     contra 9 na lista, e nenhum dos nove na visão. Dois de onze.
+
+     E havia incoerência dentro do próprio trabalho: `__CURATION.offered()` já
+     devolvia os onze. O editor oferecia para curar produtos que a vista nunca
+     mostrava — excluir nove deles não fazia efeito visível nenhum.
+
+     A fonte passa a ser a mesma do `offered()` e a mesma que o `D019-SOL1` usa
+     como oráculo: `computeFindings()` + `MAP`. O TIER sai da mesma regra do
+     `buildTiers` congelado — `sev 2` ⇒ prioritária, senão após validação, e o
+     menor vence quando o produto aparece nos dois.
+
+     A lista "pode fazer sentido" fica INTACTA. Removê-la cegaria o
+     `P52-ICON3`, que afirma que os ícones ali são materialmente pintados e só
+     roda no Chromium do CI; e o pedido do proprietário era que os produtos
+     aparecessem TAMBÉM na visão por solução, não que a lista sumisse. A
+     redundância que sobra é decisão dele, com o custo daquele gate na mesa.
+     ==================================================================== */
+  var TIER = { 1: "prioritaria", 2: "validacao" };
+  function aplicarCopy(s) {
+    try {
+      return (window.__P52 && typeof window.__P52.applyCopy === "function")
+        ? window.__P52.applyCopy(s) : s;
+    } catch (e) { return s; }
   }
+  function ofertaDoMotor() {
+    var out = [], porId = {};
+    if (typeof computeFindings !== "function" || typeof MAP === "undefined" ||
+        typeof PRODUCTS === "undefined") return out;
+    var fs;
+    try { fs = (computeFindings() || {}).findings || []; } catch (e) { return out; }
+    for (var i = 0; i < fs.length; i++) {
+      var f = fs[i], m = MAP[f.id];
+      if (!m || !m.lv || !m.lv[f.lvl]) continue;
+      var cands = m.lv[f.lvl].c || [], tier = (f.sev === 2) ? 1 : 2;
+      for (var j = 0; j < cands.length; j++) {
+        var id = cands[j].p, p = PRODUCTS[id];
+        if (!p) continue;
+        var reg = porId[id];
+        if (!reg) { reg = porId[id] = { id: id, nome: p.n, tier: tier, prod: null, caps: [] }; out.push(reg); }
+        if (tier < reg.tier) reg.tier = tier;                 /* menor vence, como no buildTiers */
+        /* O texto da capability vai EXIBIDO, não canônico. Colhendo do DOM eu
+           pegava o `h4` que a camada 5.2 já havia reescrito; lendo do motor,
+           preciso aplicar a mesma transformação — que é pública e declarada
+           justamente para isto (`__P52.applyCopy`). Sem ela o card diz uma
+           coisa e o resto da tela diz outra, e foi o `D019-SOL1` que pegou. */
+        var capExibida = m.cap ? aplicarCopy(m.cap) : "";
+        if (capExibida && reg.caps.indexOf(capExibida) < 0) reg.caps.push(capExibida);
+      }
+    }
+    return out;
+  }
+
+  /* Encontra, no que o renderer congelado emitiu, o `.prod` completo daquele
+     produto — ícone, descrição e link. Só existe para os de `sev 2`; os demais
+     nunca tiveram bloco, e o card deles é montado do catálogo. */
+  function prodLegadoDe(ws, nome) {
+    var prods = ws.querySelectorAll(".apoio-block .prod"), i;
+    for (i = 0; i < prods.length; i++)
+      if (txt(prods[i].querySelector(".pt-name")) === nome) return prods[i];
+    return null;
+  }
+
 
   /* ===================== construção do card por produto =====================
      O selo de grupo nasce em UM lugar só. Ele estava duplicado — card colhido
      e card acrescentado emitiam o mesmo atributo cada um por si — e a campanha
      cobrou na hora: o `D019-M7` saiu `ocorrencias=2`, NÃO EXECUTADO. Âncora
      ambígua é sintoma; a causa era código duplicado, e a correção é a óbvia. */
-  function chipDoGrupo(grupo) {
-    return el("div", { "class": "p53-sol-chip", "data-p53-sol-grupo-nome": grupo }, nomeDoGrupo(grupo));
+  function chipDoGrupo(grupo, tier) {
+    var linha = el("div", { "class": "p53-sol-chiprow" });
+    linha.appendChild(el("span", { "class": "p53-sol-chip", "data-p53-sol-grupo-nome": grupo },
+      nomeDoGrupo(grupo)));
+    /* [EA-68] O qualificador VISÍVEL. O atributo serve ao gate; o leitor
+       precisa da palavra. "Após validação" é o que o próprio screening diz de
+       si mesmo naquela lista: não tem profundidade para priorizar. Esconder
+       essa diferença deixaria o relatório afirmando mais do que mediu. */
+    if (tier) linha.appendChild(el("span", { "class": "p53-sol-tierlabel" },
+      tier === 1 ? "indicação prioritária" : "após validação"));
+    return linha;
   }
   function cardDoProduto(p) {
     var grupo = grupoDoNome(p.nome);
     var card = el("div", {
       "class": "apoio-block p53-sol-card",
       "data-p53-sol-produto": p.nome,
-      "data-p53-sol-grupo": grupo
+      "data-p53-sol-grupo": grupo,
+      /* [EA-68] O QUALIFICADOR. Sem ele os dois tiers viram um só e o leitor
+         perde a distinção que o motor fez: indicação prioritária vem de gap
+         ALTO; "após validação" vem de gap moderado, e o screening não tem
+         profundidade para priorizá-la. Apagar essa diferença seria a curadoria
+         alcançando a DECLARAÇÃO, que é o que a C5 proíbe. */
+      "data-p53-sol-tier": TIER[p.tier] || TIER[2]
     });
     /* ====================================================================
        O GRUPO SE NOMEIA DENTRO DO CARD, e não numa faixa entre os cards.
@@ -283,7 +331,7 @@
        visível porque os cards são ordenados por grupo. Nada foi afrouxado no
        `D010` para isso caber.
        ==================================================================== */
-    card.appendChild(chipDoGrupo(grupo));
+    card.appendChild(chipDoGrupo(grupo, p.tier));
     card.appendChild(el("h4", null, p.nome));
     /* C4 · PROVENIÊNCIA NA TELA. O mesmo marcador nasce no papel, em
        `printHTML()`. Foi o EA-58 que ensinou o modo real de as duas superfícies
@@ -318,6 +366,13 @@
       if (nomeDuplicado && txt(nomeDuplicado) === p.nome && nomeDuplicado.parentNode)
         nomeDuplicado.parentNode.removeChild(nomeDuplicado);
       corpo.appendChild(p.prod);
+    } else {
+      /* [EA-68] Produto de `sev 2` tem `.prod` para mover; o de `sev 1` nunca
+         teve bloco nenhum — a indicação dele vive na lista "pode fazer
+         sentido". O card é montado do CATÁLOGO, com a mesma marcação e o mesmo
+         `productIcon` do renderer congelado, porque o que distingue os dois
+         tiers é o QUALIFICADOR, nunca o acabamento (é a lição do EA-67). */
+      corpo.appendChild(corpoDoCatalogo(p.id, p.nome));
     }
     card.appendChild(corpo);
     if (p.caps.length) {
@@ -388,7 +443,6 @@
     card.appendChild(el("h4", null, p.n));
     card.appendChild(el("div", { "class": "p53-sol-prov", "data-p53-prov": "operador" }, PROV_TXT));
     var corpo = el("div", { "class": "prods" });
-    var linha = el("div", { "class": "prod" });
     /* ====================================================================
        O ÍCONE FALTAVA, e a ausência tinha explicação — não desculpa.
 
@@ -402,21 +456,32 @@
        acrescentado e o colhido sejam indistinguíveis ao olho, que é o ponto:
        o que distingue os dois é o selo de proveniência, nunca o acabamento.
        ==================================================================== */
+    corpo.appendChild(corpoDoCatalogo(id, p.n));
+    card.appendChild(corpo);
+    return card;
+  }
+
+  /* Um `.prod` montado do catálogo, com a MESMA marcação do renderer
+     congelado. Usado pelo card acrescentado pelo operador e pelo card de
+     `sev 1`, que nunca teve bloco para mover. Um só lugar constrói isso: o
+     `D019-M14` já provou que duplicar a construção do ícone é como ele some
+     de um dos caminhos sem ninguém ver. */
+  function corpoDoCatalogo(id, nome) {
+    var p = (typeof PRODUCTS !== "undefined" && PRODUCTS) ? PRODUCTS[id] : null;
+    var linha = el("div", { "class": "prod" });
     if (typeof productIcon === "function") {
       var tile = el("span", { "class": "icon-tile" });
-      tile.appendChild(el("img", { src: productIcon(id), alt: p.n }));
+      tile.appendChild(el("img", { src: productIcon(id), alt: nome }));
       linha.appendChild(tile);
     }
     var texto = el("span", null);
-    if (p.d) texto.appendChild(el("div", { "class": "pt-desc" }, p.d));
-    if (p.u) {
+    if (p && p.d) texto.appendChild(el("div", { "class": "pt-desc" }, p.d));
+    if (p && p.u) {
       var a = el("a", { "class": "pt-link", href: p.u, target: "_blank", rel: "noopener" }, "Página oficial ↗");
       texto.appendChild(a);
     }
     linha.appendChild(texto);
-    corpo.appendChild(linha);
-    card.appendChild(corpo);
-    return card;
+    return linha;
   }
   function acrescimos(jaPresentes) {
     var b = curadoria(); if (!b) return [];
@@ -503,8 +568,20 @@
 
     var legados = blocosLegados(ws);
     if (legados.length) {
-      var produtos = colher(legados);
+      /* [EA-68] A LISTA DE PRODUTOS VEM DO MOTOR, não da colheita do DOM. O
+         Quem decide QUEM entra é `ofertaDoMotor()` — a mesma fonte do
+         `__CURATION.offered()`, que já oferecia os onze enquanto a vista
+         mostrava dois. O `.prod` completo, quando existe, é localizado por
+         `prodLegadoDe()`.
+
+         A colheita por DOM saiu inteira: com a fonte no motor, ela deixou de
+         decidir qualquer coisa e virou código morto. Código morto que sobrevive
+         porque "um mutante aponta para ele" é dívida disfarçada de cobertura —
+         o mutante foi reancorado e a função, removida. */
+      var produtos = ofertaDoMotor();
       if (!produtos.length) return;
+      for (var k = 0; k < produtos.length; k++)
+        produtos[k].prod = prodLegadoDe(ws, produtos[k].nome);
       var cards = [], i;
       /* ==================================================================
          A CURADORIA AGE AQUI, E SÓ AQUI — sobre o que vai à APRESENTAÇÃO.

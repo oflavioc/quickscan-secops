@@ -6098,7 +6098,31 @@ Ver [[EA-20]] e [[EA-57]].
 
 ## EA-68 — a visão por solução ignora a fonte onde quase todos os produtos vivem
 
-**Status**: `aberto`
+**Status**: `resolvido`
+
+> **Fecho — fix-finding, 2026-09-22.** Caminho escolhido pelo proprietário no
+> chat: *"segue com a 1, com fixture de sessão realista"*. Gate `D019-SOL3`,
+> mutantes `D019-M15` e `D019-M16`. `D019-M6` aposentado no mesmo commit.
+>
+> **Medido depois:** na mesma sessão do relato, a visão por solução vai de
+> **2 para 11 produtos** — 9 com qualificador *"após validação"* e 2 com
+> *"indicação prioritária"* —, todos com ícone, e os onze chegam ao papel.
+>
+> **A fonte passou a ser o motor** (`computeFindings()` + `MAP`), a mesma do
+> `__CURATION.offered()` que já devolvia os onze enquanto a vista mostrava
+> dois. O tier sai da mesma regra do `buildTiers` congelado, com o menor
+> vencendo quando o produto aparece nos dois.
+>
+> **A lista "pode fazer sentido" ficou INTACTA**, e isso é decisão declarada:
+> removê-la cegaria o `P52-ICON3`, que afirma que os ícones ali são
+> materialmente pintados e só roda no Chromium do CI. O pedido era que os
+> produtos aparecessem **também** na visão por solução, não que a lista
+> sumisse. **A redundância que sobra é decisão do proprietário**, agora com o
+> custo daquele gate na mesa.
+>
+> **Código morto removido junto:** com a fonte no motor, `colher()` deixou de
+> ter chamador. Mantê-lo porque um mutante apontava para ele seria dívida
+> disfarçada de cobertura — o mutante foi reancorado e a função, removida.
 
 **Aberto em**: 2026-09-22, ao investigar o apontamento 2 do proprietário:
 *"'Centralização de logs' foi uma prioridade declarada, logo, FortiSIEM,

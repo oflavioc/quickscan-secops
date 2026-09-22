@@ -1,7 +1,7 @@
 {
   "_meta": {
     "descricao": "Registry único de pins — fonte de identidade dos artefatos (R8). Hashes = SHA-256 dos blobs de HEAD. Alterar arquivo pinado exige regenerar este registry no MESMO PR, com motivo no commit.",
-    "gerado_de_head": "afcabe8d21c52d5fa6bce25d15972bfd2ec0aa35",
+    "gerado_de_head": "013dc1e7bc77e3c0f33c21e795ead9e1d880f3e0",
     "gerado_em": "2026-09-22",
     "exclusoes": [
       "docs_phase5/**",
@@ -15,7 +15,7 @@
     "baseline_core_zip_sha256": "625079c462be7d44ffd69b1cd85f256382322bd0555ae4b548f21bf30ee5b89d"
   },
   "files": {
-    ".claude/BACKLOG.md": "b2a5bdbac85098ff8fd1817ecb8c698af5e412dad8f1d9674f4cdf914dee2bc8",
+    ".claude/BACKLOG.md": "64c6cfdaaf60c84dff72e3f7196680bb1ef7a7c8482020e6f7895638059d47b0",
     ".claude/agent-memory/README.md": "2f868716c8785119c1d6a02a7715f7b5058ab968f55951410fc82fc45b960a93",
     ".claude/agent-memory/build-engineer/MEMORY.md": "5ed47a73226fea6613b44c2ce70b26e95415033bafbd69a3ada20fa7df0bf950",
     ".claude/agent-memory/build-engineer/feedback_escopo_de_scanner_nos_dois_sentidos.md": "a07b03eb0687bc4f08ff02375684b8441f8d434384c415a3e25b1fe233007527",
@@ -210,7 +210,7 @@
     ".claude/verify/current_phase.json": "235f00d041c4a026290affb3ae3fabfb6268f75baed83ffc5d21ac5579d30733",
     ".claude/verify/env_doctor.py": "c3da72f6cbe6b1084dad68e97b23e0c7c7a4be3ec42623ac626b3e5b08a9369f",
     ".claude/verify/evidence_bridge.json": "8fbf8bca5e6710c709828f839e5f4c6ae552c5fb382429f25aae39b6ad0d291a",
-    ".claude/verify/expected_suites.json": "9ecbaf3f2b38ec8fd110c2c9701cdccd350869337118ccb207549f851b26f341",
+    ".claude/verify/expected_suites.json": "35bb69b60c45bc590c76ec9ff18cf08c1c578a9b7771e8e6157a1ce4e68832cb",
     ".claude/verify/fecho.json": "2a3eb60574b887e9dd8dbbd6626ad17706b24e3a8106385e504a026edfe3684f",
     ".claude/verify/fecho.py": "590b6a41af59512e82096fd8ad779d70cba9f6ec8b57970d57a6c5a1bb94ab41",
     ".claude/verify/fixtures_016/fecho/F1.json": "d688b5bdb9d972d021aa5d9991144b8879daf8e5061d88c5733017b03d1a3bc8",
@@ -333,7 +333,7 @@
     "preparar_release.py": "44b0a74dac345cfb5b27742d5fee51d9941646ec33f1cbb18aa81f98bf31a0cd",
     "prototypes/.gitkeep": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
     "quickscan_secops_soccmm_v3_1_3.html": "d329049147950a5b2a40b2735c3d4bd9a89177fed439efbcb58df01bdeb7ae82",
-    "quickscan_secops_soccmm_v3_2_dev.html": "99739b4b287da257da87c902e755d19be8daeafde449d2e096cd95458a0d46b7",
+    "quickscan_secops_soccmm_v3_2_dev.html": "b54e6407019ab2affa0b637432da6ac07741db903be18341e254320f68154a22",
     "session_roundtrip_report.md": "ffe0d30411cc086681a44fa8d69e1066a0bf26173f15dd8580286787056cf4f8",
     "specs/.gitkeep": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
     "specs/003-marcador-duplicado/fix-finding-registry.md": "dce0be8376f543678b9b214fd2e03e0efbda9f45cd978b909d0cc5208fa456a2",
@@ -451,8 +451,8 @@
     "tests_015_mutants.js": "3a949d1ecd2738c23f56b5277eea136484f2b6c255f78a547c723ba80f5e50fc",
     "tests_016_mutants.js": "91013ea606b4e8b94aa1a3dcbd7408ec6d2f10662a85552ec3d7a74264c4e342",
     "tests_018_mutants.js": "68abe828e6d5d618e43eff715654b8bc64211e530b35f6cb6af09de2f38f39f2",
-    "tests_019_curadoria.js": "3e1428dd18bbd29a32e54a58ebb318abf0f52234fa3a54e31e7a078a4ab5df52",
-    "tests_019_mutants.js": "ceb037b2b1213c9911ebdecab2aa14ed01aa4362ad9ccbd0af2ae3927d3295b2",
+    "tests_019_curadoria.js": "a6c9bb457caeef66fd863f8daa4667cbb6eb5a164af7435e236895914b40ac45",
+    "tests_019_mutants.js": "2d51d0ed999d6b6be3a9655335844951922c1265d9a9608480aac8ff4b5c6bb4",
     "tests_core_mutants.js": "4c7c4bcec9ff0a3fd5f5bc9edce17c4c016dfeb08159529002da2b8db322c732",
     "tests_ea41_instrumento.js": "dc93b175b1be807fe7989645c6a61df73a1909d3a5b56510753059d6f93dfcbc",
     "tests_ea41_mutants.js": "1ce0c3c7444cf4eae710e9ad714fd7fb0b58cb3c0136afce7842e1af6be07301",
@@ -460,7 +460,7 @@
     "tests_journey_m45.js": "84d99be32e122f867dc1620cd1f49e4f3ae9795a32185cc75aa246d8682941f5",
     "tests_m42_m86.js": "d263ee641d699e3c99d71e7c23c4923b3444ca3fdce86a6d5eebdd71e14273ee",
     "tests_p50_chromium.js": "32058b4e980ade446d29dd205cdc98485ae3d2e9fbb66d6ee93be5e8224c8a00",
-    "tests_p50_core.js": "88fd3031cd140e9a70700da9b5193a0c8b290da1ae07a4f71b6df5d5b5bb1506",
+    "tests_p50_core.js": "f57a8336244b6d01f3fc59985afb3ddfa92ccc0b29589efd9da01f6456d852c0",
     "tests_p50_mutants.js": "a78306918c7f27ab08c34cd557ece041e55cc7271169c7f4749b0ebcea058b8b",
     "tests_p51_mutants.js": "dfa4ec651a41d4befd137c12b1b6046f52d1925f674e1746d6b826981a155559",
     "tests_p52_chromium.js": "2556cf2447e02d3f61c6d132360325ac7fe1ded8e0aab37c929f3fd17188063b",
@@ -502,7 +502,7 @@
     "ui_ux_v32.css": "8afbd55f97a3abd10a0a217925807a92161506be7c3ef3a8ff0303a75ebabbf3",
     "ui_ux_v32.js": "a050401145a5ed7af597eae01a9a23826418119769c096db168b3b177a9d3938",
     "ui_v32.css": "acb0eba165ef25e6b97475430e9b042a9b39038be2b9882ec5b3c67a730faa6f",
-    "ui_v32.js": "30a6d48e4aca170c5b3c7bf41100ea1fc1ca20739765ffda945a6ffe16a84670",
+    "ui_v32.js": "948dc7f93f9be71ea52f506124d4fce9558f85cc500258bf2cfbfaddcd9c723c",
     "v3_1_3_functional_snapshot.json": "0abeaa7cc3a7e270fde015791a93bfbdb580803a915871e12811585c99555435"
   }
 }

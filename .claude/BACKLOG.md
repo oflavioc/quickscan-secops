@@ -6013,6 +6013,10 @@ o botão de curadoria aparece sem objeto. Rollback disponível e verificado
 (`deploy/v3.2.6/`), mas não recomendado por mim: voltar não devolve nada que a
 v3.2.7 tenha tirado.
 
+**Corrigido e publicado na v3.2.8** (2026-09-22, PR #95). A produção em
+`127.0.0.1:1337` serve o artefato `87775a0f…`, conferido nas três partes; o
+registro está em `deploy/v3.2.8/`.
+
 Ver [[EA-57]], que esta demanda fechou, e [[EA-20]], de quem este achado é
 parente por amostragem.
 ## EA-66 — falha ao montar o relatório imprime a TELA como se fosse o relatório

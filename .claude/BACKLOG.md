@@ -6156,6 +6156,30 @@ Ver [[EA-20]] e [[EA-57]].
 > ter chamador. Mantê-lo porque um mutante apontava para ele seria dívida
 > disfarçada de cobertura — o mutante foi reancorado e a função, removida.
 
+> ---
+>
+> **O CUSTO DE REMOVER A LISTA, MEDIDO — e ele desmente a minha estimativa.**
+> O proprietário autorizou tirar a lista secundária da tela para acabar com a
+> duplicação. Eu havia estimado o custo em *"uma reancoragem de gate visual,
+> ciclo de uma hora"*. **Estava errado**, e a execução mostrou por quê:
+> remover o título congelado derrubou **cinco gates da demanda 010** —
+> `D010-ARB3`, `INV7`, `CARD1`, `CARD2` e `CARD3` —, todos pela mesma raiz:
+>
+> ```
+> D010-F3: títulos congelados presentes ["Como a Fortinet pode apoiar agora"]
+>        != declarados [..., "Pode fazer sentido — após validação"]
+> ```
+>
+> As **fixtures da 010 declaram** aquele título como presente, por fixture. Não
+> é um gate de apresentação que se reancora: é o **oráculo declarado de outra
+> demanda**, e mudá-lo de dentro de um fix-finding seria exatamente o tipo de
+> alteração que a R10 §1 chama de decidir a direção sem decidir.
+>
+> **Revertido**, com `D010` de volta a 13 PASS · 0 FAIL. A duplicação dos
+> produtos de `sev 1` — card e item de lista — **permanece**, agora com o custo
+> real na mesa: reancorar `P52-ICON3` (Chromium, só CI) **e** as declarações de
+> `D010_DECLARED` em cinco gates. É trabalho de demanda, não de fix-finding.
+
 **Aberto em**: 2026-09-22, ao investigar o apontamento 2 do proprietário:
 *"'Centralização de logs' foi uma prioridade declarada, logo, FortiSIEM,
 FortiAnalyzer e até mesmo FortiSOC, poderiam vir aqui"*. O apontamento é

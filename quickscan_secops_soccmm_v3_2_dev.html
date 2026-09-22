@@ -7327,7 +7327,42 @@ function wireSafePrint(app){
       b.removeAttribute("onclick"); b.onclick = safePrint;   /* [3.3.2.1-D] rota segura */
     }});
 }
-window.addEventListener("beforeprint", preparePrint);
+/* [EA-66 · 2026-09-22] FALHA DE MONTAGEM NUNCA EMITE A TELA COMO RELATÓRIO.
+
+   O DEFEITO QUE ISTO FECHA, medido em sessão real do proprietário: o PDF saiu
+   com 13 folhas, doze quase em branco e a última com o anexo. Não era o
+   relatório — era A TELA. `preparePrint()` estava pendurado CRU neste evento;
+   qualquer exceção dentro dele deixava `v32-print-mode` sem entrar, e então
+   `.wrap` continuava visível, `#v32-print-report` continuava `display:none`, e
+   o navegador imprimia o workspace. A última página com o anexo é a assinatura
+   do modo de falha: a regra congelada `#annex{break-before:page}` é da era em
+   que imprimir ERA imprimir a tela, e hoje só se manifesta quando esta montagem
+   falha.
+
+   O custo desse silêncio é o pior possível neste produto: o artefato que vai ao
+   cliente sai errado sem que ninguém seja avisado — nem o operador, que vê um
+   diálogo de impressão normal.
+
+   A guarda não conserta a causa; ela tira a falha do escuro. Reusa o estado
+   `v32-print-blocked`, que já existe e já esconde `.wrap`: o resultado é UMA
+   página dizendo o que houve, com a mensagem do erro para relato. Imprimir
+   nada é recuperável; imprimir a tela achando que é o relatório, não. */
+function v32PrintFallback(e){
+  const el = ensurePrintContainer();
+  while (el.firstChild) el.removeChild(el.firstChild);
+  const box = document.createElement("div");
+  box.className = "pr-blocked";
+  box.setAttribute("data-pr-falha", "montagem");
+  box.appendChild(document.createTextNode(
+    "O relatório não pôde ser montado, e por isso nada foi impresso. " +
+    "Cancele a impressão e relate esta mensagem: " + ((e && e.message) || String(e))));
+  el.appendChild(box);
+  document.body.classList.add("v32-print-blocked");
+  if (window.console) console.error("V3.2 print: montagem falhou —", e);
+}
+window.addEventListener("beforeprint", function () {
+  try { preparePrint(); } catch (e) { v32PrintFallback(e); }
+});
 window.addEventListener("afterprint", finishPrint);
 
 /* ---------------- wrapper de apresentação (aditivo; legado intocado) ---------------- */
@@ -15541,7 +15576,26 @@ if (window.__DEV) Object.assign(window.__DEV, { openExportModal, openImportPicke
        mesmos nós que o renderer congelado emitiu. Produto que só apareceu como
        menção curta não tem `.prod` — e mesmo assim entra, com o nome que a
        menção carregava. Descartá-lo aqui é o que o `D019-SOL1` reprova. */
-    if (p.prod) corpo.appendChild(p.prod);
+    if (p.prod) {
+      /* ==================================================================
+         O NOME SAÍA DUAS VEZES, e foi o proprietário quem viu.
+
+         Na visão por GAP o `.pt-name` era o título do produto dentro do
+         bloco da capability. Aqui o título do card JÁ é o produto, no `h4`
+         acima — então o `.pt-name` repete a mesma palavra duas linhas
+         abaixo. Consolidar mudou o papel daquele nó, e eu movi o nó sem
+         reavaliar o papel dele.
+
+         Removido, não escondido: nó invisível continua no DOM, entra em
+         contagem e reaparece no dia em que alguém mudar uma regra de CSS.
+         Conferido antes: nenhum gate lê `.pt-name` — a única menção em
+         `tests_*.js` é um comentário meu contando esta história.
+         ================================================================== */
+      var nomeDuplicado = p.prod.querySelector(".pt-name");
+      if (nomeDuplicado && txt(nomeDuplicado) === p.nome && nomeDuplicado.parentNode)
+        nomeDuplicado.parentNode.removeChild(nomeDuplicado);
+      corpo.appendChild(p.prod);
+    }
     card.appendChild(corpo);
     if (p.caps.length) {
       var lista = el("ul", { "class": "p53-sol-caps" });
@@ -15560,11 +15614,34 @@ if (window.__DEV) Object.assign(window.__DEV, { openExportModal, openImportPicke
      as que NUNCA podem ser ocultadas. Ele perde os blocos e recebe uma linha
      dizendo para onde eles foram. Sem isso ele ficaria visível, vazio e
      mentindo — pior que a redundância que a demanda veio resolver. */
+  /* ====================================================================
+     [EA-67] O DISCLOSURE VAZIO SAI DE CENA — e sair é mais honesto que ficar.
+
+     Na W4 eu deixei o `<details>` "Possíveis formas de apoio aos demais gaps
+     altos" no lugar, com um ponteiro dizendo que o conteúdo foi consolidado.
+     O proprietário leu na tela e foi direto ao ponto: *"essa informação ali
+     polui a tela e é desnecessária"*. Ele tem razão — o quadro anuncia um
+     conteúdo que não está mais ali e custa uma leitura para dizer "olhe em
+     outro lugar".
+
+     POR QUE REMOVER, E NÃO OCULTAR. Esse `<details>` é âncora nomeada do
+     `D010-ARB3 (b)`, entre as que "nunca podem ser ocultadas" — e eu poderia
+     escondê-lo com classe própria, que o censo daquele gate não enxerga. Seria
+     contornar pela letra: a regra existe para impedir que conteúdo da Camada 1
+     desapareça sem substituto, e o teste dela é o DOM.
+
+     Aqui há substituto, e ele é integral: os blocos MIGRARAM para a seção de
+     apoio, consolidados por produto. O que sobra é uma casca cujo rótulo
+     promete o que ela não tem. Casca vazia removida é subtração honesta;
+     casca vazia escondida é a mesma subtração fingindo não ter acontecido.
+
+     A remoção é CONDICIONAL e medida: só quando não sobrou `.apoio-block` nem
+     `.t-item` dentro. Disclosure com conteúdo próprio nunca é tocado.
+     ==================================================================== */
   function ponteiro(det) {
-    if (!det || det.querySelector(".p53-sol-ptr")) return;
-    var corpo = det.querySelector("div") || det;
-    corpo.appendChild(el("p", { "class": "p53-sol-ptr" },
-      "As formas de apoio desta leitura estão consolidadas por produto na seção “Formas de apoio”."));
+    if (!det) return;
+    if (det.querySelector(".apoio-block") || det.querySelector(".t-item")) return;
+    if (det.parentNode) det.parentNode.removeChild(det);
   }
 
   /* ============== o produto que o engenheiro ACRESCENTOU ==============
@@ -15589,8 +15666,25 @@ if (window.__DEV) Object.assign(window.__DEV, { openExportModal, openImportPicke
     card.appendChild(el("div", { "class": "p53-sol-prov", "data-p53-prov": "operador" }, PROV_TXT));
     var corpo = el("div", { "class": "prods" });
     var linha = el("div", { "class": "prod" });
+    /* ====================================================================
+       O ÍCONE FALTAVA, e a ausência tinha explicação — não desculpa.
+
+       O card colhido traz o `.prod` do renderer congelado, que já vem com o
+       `.icon-tile`. O acrescentado eu montava do catálogo e simplesmente não
+       montei o ícone: na tela do proprietário, só `Serviços FortiGuard`
+       aparecia ilustrado, porque era o único card colhido entre os quatro.
+
+       A fonte é a MESMA do renderer congelado — `productIcon(id)`, com a
+       mesma estrutura `.icon-tile > img`. Copiar a marcação garante que o
+       acrescentado e o colhido sejam indistinguíveis ao olho, que é o ponto:
+       o que distingue os dois é o selo de proveniência, nunca o acabamento.
+       ==================================================================== */
+    if (typeof productIcon === "function") {
+      var tile = el("span", { "class": "icon-tile" });
+      tile.appendChild(el("img", { src: productIcon(id), alt: p.n }));
+      linha.appendChild(tile);
+    }
     var texto = el("span", null);
-    texto.appendChild(el("div", { "class": "pt-name" }, p.n));
     if (p.d) texto.appendChild(el("div", { "class": "pt-desc" }, p.d));
     if (p.u) {
       var a = el("a", { "class": "pt-link", href: p.u, target: "_blank", rel: "noopener" }, "Página oficial ↗");

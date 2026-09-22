@@ -426,6 +426,59 @@ T("D019-SOL2", "todo produto cai num grupo do portfólio; o sem categoria vai pa
   return true;
 });
 
+/* ==========================================================================
+   [EA-67] O ACABAMENTO DO CARD, e por que ele merece gate.
+
+   Dois defeitos que o proprietário viu numa passada e nenhuma máquina viu em
+   sete waves — porque nenhum dos dez gates olhava para o card como o leitor
+   olha: eles mediam CONJUNTOS (produtos, pares, grupos), nunca a forma.
+
+   1. O nome saía DUAS VEZES. Na visão por gap o `.pt-name` era o título do
+      produto dentro do bloco da capability; consolidado, o título do card já é
+      o produto, e o `.pt-name` repete a palavra duas linhas abaixo. Mover o nó
+      mudou o papel dele, e eu movi sem reavaliar.
+   2. O card ACRESCENTADO saía sem ícone, porque eu o montava do catálogo e não
+      montava o `.icon-tile`. Na tela do proprietário só um card aparecia
+      ilustrado — o único colhido entre quatro.
+
+   A alínea (b) é a que importa mais: o que distingue um card acrescentado de um
+   colhido tem de ser o SELO DE PROVENIÊNCIA, nunca o acabamento. Card mais
+   pobre é um segundo canal dizendo "este aqui é de segunda", e não é isso que
+   a demanda combinou.
+   ========================================================================== */
+T("D019-CARD1", "o card diz o nome do produto UMA vez e todo card tem ícone — acrescentado igual a colhido", () => {
+  const { w, d } = boot();
+  const b = cur(w);
+  const fora = b.catalog().filter(id => b.offered().indexOf(id) < 0)[0];
+  if (!fora) vac("(a)", "todo o catálogo foi ofertado — sem card acrescentado para comparar");
+  b.set(fora, "include");
+  w.__DEV.showResults();
+  const cards = qa(d, "#p52-sec-support > [data-p53-sol-produto]");
+  if (!cards.length) throw new Error("nenhum card na seção de apoio — sem sujeito");
+
+  /* (a) o nome aparece UMA vez por card */
+  const repetidos = cards.filter(c => {
+    const nome = c.getAttribute("data-p53-sol-produto");
+    return qa(c, "*").filter(n => !n.children.length && txt(n) === nome).length > 1;
+  }).map(c => c.getAttribute("data-p53-sol-produto"));
+  if (repetidos.length)
+    throw new Error("o nome do produto sai mais de uma vez no card: " + repetidos.join(", ") +
+      " — consolidar mudou o papel do `.pt-name`, e repetir a palavra é o sintoma");
+
+  /* (b) TODO card tem ícone, inclusive o acrescentado */
+  const semIcone = cards.filter(c => !c.querySelector("img"))
+    .map(c => c.getAttribute("data-p53-sol-produto"));
+  if (semIcone.length)
+    throw new Error("card sem ícone: " + semIcone.join(", ") + " — o que distingue acrescentado de " +
+      "colhido é o selo de proveniência, nunca o acabamento");
+
+  /* (c) não-vacuidade: a alínea (b) precisa ter visto um card ACRESCENTADO */
+  const acrescentado = cards.filter(c => c.querySelector("[data-p53-prov]"));
+  if (!acrescentado.length)
+    vac("(c)", "nenhum card acrescentado nesta sessão — (b) não teria medido o caso que o defeito produziu");
+  return true;
+});
+
 /* ================== C8 · tela e papel, a MESMA seleção ================== */
 T("D019-PAR1", "tela e papel publicam o mesmo conjunto, medido DEPOIS de beforeprint", () => {
   const { w, d } = boot();
@@ -508,6 +561,59 @@ T("D019-SUF1", "com o gate de suficiência FECHADO a curadoria não se oferece e
   if (gate !== "blocked") vac("(a)", "a fixture não produziu gate fechado (medido: " + gate + ")");
   const controle = d.querySelector("[data-p53-abrir-curadoria]");
   if (controle) throw new Error("curadoria oferecida com resultado bloqueado — não há resultado publicado para curar");
+  return true;
+});
+
+/* ==========================================================================
+   [EA-66] O MODO DE FALHA MAIS CARO DESTE PRODUTO, e ele é SILENCIOSO.
+
+   Medido em sessão real do proprietário: o PDF saiu com 13 folhas, doze quase
+   em branco e a última com o anexo — e não era o relatório, era A TELA. A
+   assinatura é inconfundível: o anexo da tela chama-se "Evidências e
+   observações da sessão" e o do relatório, "Anexo — respostas da sessão"; a
+   regra congelada `#annex{break-before:page}` lhe dá a folha final.
+
+   O mecanismo: `preparePrint()` monta o relatório e SÓ DEPOIS aplica
+   `v32-print-mode`. Exceção na montagem ⇒ classe nunca entra ⇒ `.wrap` visível,
+   `#v32-print-report` oculto ⇒ o navegador imprime o workspace. O operador vê
+   um diálogo de impressão perfeitamente normal.
+
+   A FAMÍLIA JÁ MORDEU ANTES, e isso é o que torna o gate obrigatório: a errata
+   externa B-03 corrigiu exatamente "sem aplicar `v32-print-mode`, deixava
+   `.wrap` visível na impressão" — por outro caminho. Duas instâncias do mesmo
+   defeito, nenhuma máquina afirmando a propriedade. Agora há.
+
+   A injeção de falha é na FRONTEIRA DO BRIDGE: `buildPrintReport()` chama
+   `__P53SOL.printHTML()` direto, e o try/catch do módulo vive DENTRO do método.
+   Substituí-lo faz a exceção subir por onde ela subiria num defeito real —
+   nenhum caminho artificial.
+   ========================================================================== */
+T("D019-PRT1", "montagem do relatório que FALHA não emite a tela como se fosse o relatório", () => {
+  const { w, d } = boot();
+  const bridge = w.__P53SOL;
+  if (!bridge || typeof bridge.printHTML !== "function")
+    vac("(a)", "bridge de apresentação ausente — sem fronteira onde injetar a falha");
+  const original = bridge.printHTML;
+  bridge.printHTML = function () { throw new Error("falha sintética D019-PRT1"); };
+  try { w.dispatchEvent(new w.Event("beforeprint")); }
+  finally { bridge.printHTML = original; }
+
+  const cls = String(d.body.className || "");
+  if (/v32-print-mode/.test(cls))
+    throw new Error("a montagem falhou e o modo de impressão entrou assim mesmo — o papel sairia incompleto");
+  if (!/v32-print-blocked/.test(cls))
+    throw new Error("a montagem falhou e NADA marcou o documento: `.wrap` continua imprimível e o cliente " +
+      "recebe a TELA no lugar do relatório — é o modo de falha do EA-66, e ele é silencioso");
+  const aviso = d.querySelector("#v32-print-report [data-pr-falha]");
+  if (!aviso)
+    throw new Error("falha de montagem sem aviso NO PAPEL — falhar em silêncio é o defeito, não a falha");
+  if (!/D019-PRT1/.test(txt(aviso)))
+    throw new Error("o aviso não carrega a mensagem do erro; sem ela o operador não tem o que relatar");
+  /* a tela não pode ter virado o sujeito impresso */
+  const annexTela = d.querySelector("#annex");
+  if (annexTela && !annexTela.closest(".wrap"))
+    throw new Error("o anexo da TELA saiu de `.wrap` — ele voltaria a imprimir junto");
+  w.__DEV.finishPrint();
   return true;
 });
 

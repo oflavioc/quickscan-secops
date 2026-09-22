@@ -5987,3 +5987,215 @@ v3.2.7 tenha tirado.
 
 Ver [[EA-57]], que esta demanda fechou, e [[EA-20]], de quem este achado é
 parente por amostragem.
+## EA-66 — falha ao montar o relatório imprime a TELA como se fosse o relatório
+
+**Status**: `resolvido`
+
+> **Fecho — fix-finding, 2026-09-22.** Autorizado pelo proprietário no chat
+> depois de eu descrever o endurecimento. `ui_v32.js` é §29.4; repin com trilha
+> inline. Gate `D019-PRT1`, mutante `D019-M12`.
+
+**Aberto em**: 2026-09-22, por **relato do proprietário depois de conduzir uma
+sessão real** na v3.2.7 recém-publicada: *"o relatório em PDF apareceu com a
+maior parte das páginas em branco, com exceção da última página 13"*.
+
+### O que foi medido, e como se sabe que era a tela
+
+Três provas independentes, sobre o artefato que estava no ar:
+
+1. A página 13 traz **"Evidências e observações da sessão"** — esse é o anexo
+   **da tela** (`renderAnnex()`, Camada 1 congelada). O do relatório chama-se
+   "Anexo — respostas da sessão".
+2. O rodapé daquela página é o rodapé legado da tela, não o do relatório.
+3. **A contagem de folhas bate com a tela, não com o relatório.** Medido no
+   navegador, em mídia de impressão: a tela tem **10.497 px ≈ 11 páginas**, mais
+   o anexo em folha própria e a capa — as 13 folhas relatadas. O relatório tem
+   5.685 px ≈ 6.
+
+As páginas "em branco" são o workspace 5.2 em papel branco: trilho lateral,
+grade e seções que no papel não têm o que mostrar.
+
+### Cadeia arquivo:linha → efeito
+
+1. `ui_v32.js` — `preparePrint()` monta o relatório e **só depois** aplica
+   `v32-print-mode` (`buildPrintReport()` → `el.innerHTML = html` →
+   `classList.add`).
+2. `ui_v32.js:1435` (antes da correção) — `preparePrint` estava pendurado
+   **cru**: `window.addEventListener("beforeprint", preparePrint)`.
+3. Exceção em qualquer ponto da montagem ⇒ a classe nunca entra ⇒ `.wrap`
+   permanece visível e `#v32-print-report` permanece `display:none`.
+4. A regra congelada `#annex{display:block; break-before:page}` — da era em que
+   imprimir **era** imprimir a tela — dá ao anexo a folha final. É a assinatura
+   do modo de falha.
+
+### Por que isto é grave mesmo sendo raro
+
+O artefato que vai ao cliente sai errado **sem que ninguém seja avisado**. O
+operador vê um diálogo de impressão perfeitamente normal. Não há sintoma na
+tela, não há erro visível, não há gate.
+
+### A família já mordeu antes
+
+A **errata externa B-03** corrigiu exatamente *"sem aplicar `v32-print-mode`,
+deixava `.wrap` visível na impressão"* — mesmo sintoma, outro caminho. Duas
+instâncias, e entre elas nenhuma máquina afirmando a propriedade. É a marca do
+`EA-20` numa terceira forma: não é gate tautológico nem gate cego por
+amostragem, é **propriedade sem gate nenhum**.
+
+### O que a correção faz, e o que ela NÃO faz
+
+`preparePrint` passa a rodar sob guarda; a falha reusa o estado
+`v32-print-blocked`, que já existe e já esconde `.wrap`. O resultado é **uma
+página** dizendo o que houve, com a mensagem do erro para relato.
+
+**A guarda não conserta a causa** — a exceção que o proprietário encontrou
+**não foi reproduzida**. Testei no mesmo container, pelo caminho real
+(`beforeprint`, nunca a chamada direta), com curadoria aplicada, painel aberto,
+nove práticas com alvo e três acréscimos do operador: a montagem fecha limpa nas
+quatro combinações. O que a guarda garante é que, quando acontecer de novo, a
+falha **se anuncia** em vez de emitir a tela — e a mensagem dará a causa.
+
+Imprimir nada é recuperável; imprimir a tela achando que é o relatório, não.
+
+Ver [[EA-20]] e [[EA-26]] (medir o PDF por `beforeprint`, nunca por
+`buildPrintReport()` — foi essa disciplina que permitiu reproduzir o caminho
+real e descartar hipóteses).
+
+## EA-67 — acabamento da visão por solução: nome em duplicata, card sem ícone e disclosure vazio
+
+**Status**: `resolvido`
+
+> **Fecho — fix-finding, 2026-09-22.** Gate `D019-CARD1`, mutantes `D019-M13` e
+> `D019-M14`. Nenhum arquivo protegido tocado.
+
+**Aberto em**: 2026-09-22, por **relato do proprietário depois de conduzir uma
+sessão real** na v3.2.7, em três apontamentos de uma passada só.
+
+### Os três defeitos
+
+1. **O nome do produto saía duas vezes em todo card.** Na visão por gap o
+   `.pt-name` era o título do produto dentro do bloco da capability. Consolidado
+   por produto, o título do card **já é** o produto — e o `.pt-name` repete a
+   mesma palavra duas linhas abaixo. Mover o nó mudou o papel dele, e eu movi
+   sem reavaliar o papel.
+2. **O card acrescentado pelo engenheiro saía sem ícone.** O card colhido traz o
+   `.prod` do renderer congelado, que já vem com `.icon-tile`; o acrescentado eu
+   montava do catálogo e não montei o ícone. Na tela do proprietário só
+   `Serviços FortiGuard` aparecia ilustrado — o único colhido entre quatro.
+3. **O disclosure vazio ficava na tela anunciando conteúdo que migrou.** Eu
+   deixara o `<details>` "Possíveis formas de apoio aos demais gaps altos" no
+   lugar, com um ponteiro para a seção consolidada. Palavras do proprietário:
+   *"essa informação ali polui a tela e é desnecessária"*.
+
+### Por que nenhum gate pegou
+
+**Os doze gates da demanda mediam CONJUNTOS** — produtos, pares
+(produto × capability), grupos, chaves de sessão. Nenhum olhava para o card
+**como o leitor olha**: a forma, o acabamento, o que se repete.
+
+É a quarta forma da família `EA-20` nesta série, e a mais difícil de antecipar:
+não é gate tautológico, nem cego por amostragem, nem propriedade sem gate — é
+**gate medindo a dimensão errada**. Conjunto certo, forma errada.
+
+### A decisão do item 3, e por que não foi ocultar
+
+O `<details>` é âncora nomeada do `D010-ARB3 (b)`, entre as que *"nunca podem
+ser ocultadas"*. Eu poderia escondê-lo com classe própria — o censo daquele gate
+só enxerga `v32-hidden` — e passaria. **Seria contornar pela letra.** A regra
+existe para impedir que conteúdo da Camada 1 desapareça sem substituto.
+
+Aqui há substituto e ele é integral: os blocos **migraram** para a seção de
+apoio. O que sobrava era uma casca cujo rótulo promete o que ela não tem. Casca
+vazia removida é subtração honesta; casca vazia escondida é a mesma subtração
+fingindo não ter acontecido.
+
+Medido depois da remoção: `D010` 13 PASS · 0 FAIL, com **duas** âncoras
+restantes em `(b)` — a alínea continua com sujeito e não caiu em vacuidade.
+
+### O que o gate novo afirma
+
+`D019-CARD1`, em três alíneas: o nome sai **uma** vez por card; **todo** card
+tem ícone; e a (c) exige que um card **acrescentado** tenha sido medido, senão a
+segunda alínea não teria visto o caso que o defeito produziu.
+
+Dois mutantes, e não um, porque as duas primeiras alíneas guardam propriedades
+independentes — uma cai sem a outra notar, que foi exatamente como os dois
+defeitos conviveram por sete waves.
+
+> **O que distingue um card acrescentado de um colhido tem de ser o selo de
+> proveniência, nunca o acabamento.** Card mais pobre é um segundo canal
+> dizendo "este aqui é de segunda", e não é isso que a demanda combinou.
+
+Ver [[EA-20]] e [[EA-57]].
+
+## EA-68 — a visão por solução ignora a fonte onde quase todos os produtos vivem
+
+**Status**: `aberto`
+
+**Aberto em**: 2026-09-22, ao investigar o apontamento 2 do proprietário:
+*"'Centralização de logs' foi uma prioridade declarada, logo, FortiSIEM,
+FortiAnalyzer e até mesmo FortiSOC, poderiam vir aqui"*. O apontamento é
+sintoma; a causa é maior do que ele.
+
+### O que foi medido
+
+Sessão reproduzida do relato do proprietário — quase tudo em nível 1 (gap
+moderado), dois achados em nível 0 (gap alto), três prioridades declaradas:
+
+| | |
+|---|---|
+| achados na sessão | **15** |
+| deles com `sev 2` | **2** |
+| produtos na **visão por solução** | **2** — FortiSOAR, Serviços FortiGuard |
+| produtos em *"pode fazer sentido — após validação"* (`.t-item`) | **9** |
+| desses 9, quantos aparecem na visão por solução | **zero** |
+
+**A consolidação por produto cobre 2 de 11 produtos.** Os outros nove estão na
+tela, logo abaixo, noutra estrutura.
+
+### Cadeia
+
+1. O renderer congelado emite `.apoio-block` **apenas para `sev 2`**
+   (`quickscan_secops_soccmm_v3_1_3.html:890+`, `prioSev2.length ? ... :`).
+   Achado de gap moderado não gera bloco de apoio; gera entrada `.t-item` na
+   lista *"pode fazer sentido — após validação"*.
+2. `ui_p52_support_v32.js` — `blocosLegados()` colhe **só** `.apoio-block`.
+3. Logo, numa sessão dominada por gaps moderados — que é a sessão comum — a
+   visão por solução nasce quase vazia, e a informação fica na lista antiga.
+
+### Por que nenhum gate pegou, e é a quinta forma da mesma família
+
+O `boot()` de `tests_019_curadoria.js` responde **tudo em nível 0**. Nessa
+fixture *todo* achado é `sev 2`, *todo* achado vira `.apoio-block`, e a
+consolidação enxerga 100% dos produtos — 15 blocos → 9 cards, que é o número
+que a spec cita e que eu medi em sete waves.
+
+A fixture cobre o **extremo improvável**: uma operação em que tudo está no pior
+nível. A sessão real do proprietário tem quase tudo no nível intermediário, e
+ali a demanda entrega 18% do que promete.
+
+É parente direto do [[EA-65]] — lá a cegueira era no eixo *contexto declarado*,
+aqui é no eixo *severidade das respostas*. Duas fixturas, um caminho cada.
+
+### O que isto significa para a demanda 019
+
+A 019 existe para substituir a leitura por gap por uma leitura por produto. Numa
+sessão comum ela **não substitui**: convivem a visão por solução com dois cards
+e a lista antiga com nove produtos, dizendo coisas diferentes sobre o mesmo
+assessment. É pior do que antes da demanda, porque agora são duas superfícies
+desalinhadas em vez de uma.
+
+### Decisão que pertence ao proprietário
+
+A saída natural é a visão por solução consolidar **as duas fontes** — o
+`.apoio-block` de `sev 2` e o `.t-item` de `sev 1` —, com o produto aparecendo
+uma vez e o **qualificador** dizendo de onde veio: indicação prioritária ou
+"após validação".
+
+Isso **muda o desenho aprovado na Fase 1 da 019** e por isso não é minha
+decisão. O refinamento da demanda não previu a distinção de severidade porque a
+medição da Fase 0 foi feita na mesma fixture de nível 0.
+
+Relacionado: [[EA-56]], cuja emenda mede o mesmo vão pelo lado do papel —
+*"a tabela de apoio do relatório cobre 40% dos gaps"*. É a mesma lacuna vista de
+outro ângulo, e a correção deste achado muda aquele número.

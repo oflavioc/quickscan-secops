@@ -182,6 +182,29 @@ const MUTANTS = [
      não estaria discriminando coisa alguma e a reancoragem teria sido só uma
      permissão a mais. Roda a suíte de SESSÃO, não a da 019, e por isso não
      reconstrói o HTML: a mutação é no arquivo de teste, não numa fonte. */
+  /* [EA-66] O mutante que devolve o produto ao estado em que o proprietário o
+     encontrou: `preparePrint` pendurado CRU no evento. Sob ele, a exceção de
+     montagem sobe sem guarda, `v32-print-mode` nunca entra, e o navegador
+     imprime a TELA como se fosse o relatório do cliente — em silêncio. É o
+     defeito real, não um sintético: foi assim que o PDF saiu com 13 folhas. */
+  { id: "D019-M12", file: F.papel, gate: "D019-PRT1",
+    desc: "voltar a pendurar preparePrint cru no beforeprint — falha de montagem imprime a TELA",
+    find: 'catch (e) { v32PrintFallback(e); }', repl: 'catch (e) { }',
+    reason: /NADA marcou o documento|recebe a TELA/ },
+
+  /* [EA-67] DOIS mutantes para o `D019-CARD1`, e não um, porque as duas
+     alíneas guardam propriedades independentes: uma cai sem a outra notar.
+     Foi exatamente assim que os dois defeitos conviveram sete waves. */
+  { id: "D019-M13", file: F.solucao, gate: "D019-CARD1",
+    desc: "deixar o nome do produto sair duas vezes no card",
+    find: 'nomeDuplicado.parentNode.removeChild(nomeDuplicado);', repl: 'void 0;',
+    reason: /sai mais de uma vez no card/ },
+
+  { id: "D019-M14", file: F.solucao, gate: "D019-CARD1",
+    desc: "montar o card acrescentado sem ícone — acabamento como segundo canal de 'este é de segunda'",
+    find: 'linha.appendChild(tile);', repl: 'void 0;',
+    reason: /card sem ícone/ },
+
   { id: "D019-M11", file: F.gateSes, gate: "S4-S5",
     desc: "ressuscitar a lista de cinco chaves — provar que a reancoragem do S4-S5 ainda discrimina",
     find: 'CANONICAS.concat(["reportCuration"])', repl: 'CANONICAS',

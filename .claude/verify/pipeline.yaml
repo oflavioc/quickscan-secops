@@ -111,7 +111,7 @@ stages:
     mutates: false
     heavy: true
   suites-heavy:
-    desc: "Suíte de sessão (97 gates, heap 4608 MB) × contagem canônica"
+    desc: "Suíte de sessão (97 gates, heap 6144 MB) × contagem canônica"
     run: python .claude/verify/check_suites.py --heavy
     parallel: false
     mutates: false

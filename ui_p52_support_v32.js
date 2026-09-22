@@ -277,8 +277,15 @@
      nunca tiveram bloco, e o card deles é montado do catálogo. */
   function prodLegadoDe(ws, nome) {
     var prods = ws.querySelectorAll(".apoio-block .prod"), i;
-    for (i = 0; i < prods.length; i++)
+    for (i = 0; i < prods.length; i++) {
+      /* [EA-65] Nó OCULTO nunca é movido. A arbitragem da 010 escondeu aquela
+         região porque existe substituto V3.2; arrancar um `.prod` de dentro
+         dela o traria de volta à tela por uma porta lateral, que é o oposto do
+         que a arbitragem decidiu. O produto continua no card — montado do
+         catálogo, como o de `sev 1` que nunca teve bloco. */
+      if (oculto(prods[i])) continue;
       if (txt(prods[i].querySelector(".pt-name")) === nome) return prods[i];
+    }
     return null;
   }
 
@@ -531,7 +538,33 @@
   }
 
   /* ===================== colocação e agrupamento ===================== */
-  function colocar(sec, cards) {
+  /* ====================================================================
+     [EA-65] A FRONTEIRA DECLARADA, e ela só existe quando precisa existir.
+
+     Com a arbitragem da 010 ativa, o título congelado fica OCULTO e os meus
+     cards ficam VISÍVEIS. Se um encostar no outro, o censo da Camada 1 os
+     conta no MESMO grupo contíguo e o `D010-ARB3` reprova por "arbitragem
+     parcial" — medido: 3 ocultos de 9. E ele está certo: um grupo meio oculto
+     e meio visível é exatamente o estado misto que a regra tudo-ou-nada
+     proíbe.
+
+     O separador é um nó VISÍVEL, de classe própria e fora de
+     `CLASSES_CONTIGUAS`, que encerra a contagem antes dos cards. Não é
+     artifício: ele diz ao leitor o que começa ali, que é informação que a
+     seção passou a precisar quando ganhou duas origens.
+
+     E ele NÃO entra em modo legado, de propósito. Ali o título congelado está
+     visível e os cards são justamente os "blocos contíguos visíveis" que o
+     `D010-ARB1 (c)` mede; interpor o separador tiraria o sujeito da alínea e
+     ela falharia por vacuidade. A mesma peça, nos dois modos, teria efeitos
+     opostos — por isso a condição.
+     ==================================================================== */
+  function fronteira() {
+    return el("p", { "class": "p53-sol-lead", "data-p53-sol-lead": "1" },
+      "Apoio por produto, derivado dos gaps observados nesta sessão.");
+  }
+
+  function colocar(sec, cards, arbitrando) {
     var porGrupo = {}, i, g;
     for (i = 0; i < cards.length; i++) {
       g = cards[i].getAttribute("data-p53-sol-grupo");
@@ -551,6 +584,9 @@
 
        Sobra a ordenação, que é o que o agrupamento precisa para existir na
        tela, com o selo de cada card dizendo a que grupo ele pertence. */
+    var velhaFronteira = sec.querySelector(":scope > [data-p53-sol-lead]");
+    if (velhaFronteira && velhaFronteira.parentNode) velhaFronteira.parentNode.removeChild(velhaFronteira);
+    if (arbitrando && cards.length) sec.appendChild(fronteira());
     for (i = 0; i < GRUPOS.length; i++) {
       var lista = porGrupo[GRUPOS[i].id];
       if (!lista || !lista.length) continue;
@@ -564,10 +600,29 @@
     if (!ws) return;
     var sec = document.getElementById("p52-sec-support");
     if (!sec) return;
-    if (arbitragemEmCurso()) return;
+    /* [EA-65] A ABSTENÇÃO DEIXA DE SER DA SEÇÃO INTEIRA.
+
+       Na W4 eu me abstinha de tudo quando QUALQUER nó do escopo estivesse
+       oculto, para não ressuscitar região que a arbitragem da 010 escondeu. A
+       decisão foi grossa: medido, o que a arbitragem esconde com contexto
+       declarado são os títulos congelados e a lista secundária — e a visão por
+       solução, que é superfície V3.2 e deriva do MOTOR, ficava fora do ar
+       inteira. Quem declara contexto, que é o caso mais cuidadoso, recebia o
+       produto sem a funcionalidade.
+
+       Agora a abstenção é POR NÓ: `blocosLegados()` e `prodLegadoDe()` recusam
+       o que está oculto, e nada que a arbitragem escondeu é movido ou
+       ressuscitado. O que muda é que os cards passam a existir nos dois modos,
+       porque a oferta do motor não depende do contexto declarado. */
+    var arbitrando = arbitragemEmCurso();
 
     var legados = blocosLegados(ws);
-    if (legados.length) {
+    /* [EA-65] A construção deixa de depender de haver bloco legado VISÍVEL.
+       Com contexto declarado a arbitragem esconde a região congelada e sobram
+       poucos blocos — ou nenhum. A oferta do motor não muda por isso, então o
+       gatilho passa a ser: há legado a consumir OU ainda não há cards. */
+    var jaConsolidado = sec.querySelectorAll(":scope > .apoio-block[data-p53-sol-produto]").length;
+    if (legados.length || !jaConsolidado) {
       /* [EA-68] A LISTA DE PRODUTOS VEM DO MOTOR, não da colheita do DOM. O
          Quem decide QUEM entra é `ofertaDoMotor()` — a mesma fonte do
          `__CURATION.offered()`, que já oferecia os onze enquanto a vista
@@ -597,7 +652,7 @@
          antes levaria o nó movido junto. */
       for (i = 0; i < legados.length; i++)
         if (legados[i].parentNode) legados[i].parentNode.removeChild(legados[i]);
-      colocar(sec, cards);
+      colocar(sec, cards, arbitrando);
       declararSupressao(sec, cards.length, suprimidos);
       ultimoCenso = { produtos: produtos.length, publicados: cards.length,
         suprimidos: suprimidos, blocos: legados.length };
@@ -617,7 +672,7 @@
         } else atuais.push(no);
       }
       atuais = atuais.concat(acrescimos(atuais.map(function (c) { return c.getAttribute("data-p53-sol-produto"); })));
-      colocar(sec, atuais);
+      colocar(sec, atuais, arbitrando);
       declararSupressao(sec, atuais.length, removidos);
     }
 

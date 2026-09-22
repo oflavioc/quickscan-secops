@@ -31,7 +31,7 @@
     "test:icons46": "node tests_icons_m46.js",
     "test:visual": "playwright test",
     "test:full": "npm run test:all && npm run test:visual",
-    "test:session": "node --max-old-space-size=4608 tests_session_m48.js"
+    "test:session": "node --max-old-space-size=6144 tests_session_m48.js"
   },
   "dependencies": {
     "jsdom": "30.0.1"

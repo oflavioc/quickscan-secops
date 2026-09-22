@@ -92,6 +92,14 @@ function boot(opts) {
   const ids = w.eval("QS.map(q=>q.id)");
   ids.forEach(id => w.__DEV.setAnswerById(id, nivel));
   if (o.poucasRespostas) ids.slice(3).forEach(id => w.__DEV.setAnswerById(id, null));
+  /* [EA-68] SESSÃO REALISTA. A fixture padrão responde TUDO em nível 0, onde
+     todo achado é `sev 2`, todo achado vira `.apoio-block` e a consolidação
+     enxerga 100% dos produtos. É o extremo improvável — uma operação em que
+     tudo está no pior nível —, e foi essa amostragem única que deixou o EA-68
+     passar por sete waves.
+     `altos` põe alguns achados em `sev 2` sobre um fundo de nível 1, que é a
+     forma da sessão real: gaps moderados predominando, poucos altos. */
+  if (o.altos) o.altos.forEach(id => w.__DEV.setAnswerById(id, 0));
   w.__DEV.setPriorities(o.prios || PRIOS);
   w.__DEV.showResults();
   return { w, d };
@@ -423,6 +431,84 @@ T("D019-SOL2", "todo produto cai num grupo do portfólio; o sem categoria vai pa
   const rotulo = d.querySelector('[data-p53-sol-grupo-nome="nao-classificado"]');
   if (naoClass.length && !rotulo)
     throw new Error("há produto não classificado e o grupo não se nomeia — descarte silencioso é o que o C7 proíbe");
+  return true;
+});
+
+/* ==========================================================================
+   [EA-68] TODO PRODUTO QUE O MOTOR OFERECE APARECE NA VISÃO POR SOLUÇÃO —
+   e este gate nasce numa SESSÃO REALISTA, de propósito.
+
+   O defeito que ele fecha: o renderer congelado emite `.apoio-block` apenas
+   para `sev 2`; achado de gap moderado vira entrada na lista "pode fazer
+   sentido — após validação". A consolidação colhia só `.apoio-block`, então
+   numa sessão dominada por gaps moderados — a sessão comum — ela nascia quase
+   vazia enquanto a lista antiga carregava tudo.
+
+   Medido no relato do proprietário: 15 achados, 2 com `sev 2`, **2 produtos na
+   visão por solução contra 9 na lista**, e nenhum dos nove na visão. Dois de
+   onze.
+
+   E HAVIA UMA INCOERÊNCIA DENTRO DO PRÓPRIO TRABALHO: `__CURATION.offered()`
+   já devolvia os 11 — o editor oferecia para curar produtos que a vista nunca
+   mostrou. Excluir nove deles não fazia nada visível.
+
+   A FIXTURE É O CONSERTO MAIS IMPORTANTE. Os doze gates anteriores rodam com
+   tudo em nível 0, onde todo achado é `sev 2` e a consolidação enxerga 100%
+   dos produtos — os "15 blocos → 9 cards" que a spec cita. Amostragem única do
+   extremo improvável. Aqui o fundo é nível 1, com poucos altos, que é a forma
+   da sessão real.
+   ========================================================================== */
+T("D019-SOL3", "em sessão REALISTA, todo produto que o motor oferece está na visão por solução, qualificado", () => {
+  const { w, d } = boot({ nivel: 1, altos: ["mandate", "incident-response"],
+                          prios: ["logs", "endpoint", "monitoring-coverage"] });
+  const b = cur(w);
+  const ofertados = b.offered();
+  if (ofertados.length < 4)
+    vac("(a)", "a fixture não produziu ofertas suficientes (" + ofertados.length + ") — sem sujeito");
+  /* NÃO-VACUIDADE DA PRÓPRIA FIXTURE: ela só serve se houver as DUAS
+     severidades. Com um tier só, o gate voltaria a medir um caminho. */
+  const sevs = w.eval("(function(){var s={};((computeFindings()||{}).findings||[])" +
+                      ".forEach(function(f){s[f.sev]=1;});return Object.keys(s).join(',');})()");
+  if (String(sevs).indexOf("1") < 0 || String(sevs).indexOf("2") < 0)
+    vac("(a)", "a fixture não tem as duas severidades (" + sevs + ") — voltaria a medir um caminho só");
+
+  const P = w.eval("PRODUCTS");
+  const esperados = new Set(ofertados.map(id => (P[id] && P[id].n) || id));
+  const cards = qa(d, "#p52-workspace [data-p53-sol-produto]");
+  const vistos = new Set(cards.map(c => c.getAttribute("data-p53-sol-produto")));
+
+  const sumiram = [...esperados].filter(n => !vistos.has(n));
+  if (sumiram.length)
+    throw new Error(sumiram.length + " de " + esperados.size + " produtos OFERECIDOS pelo motor não estão " +
+      "na visão por solução: " + sumiram.join(", ") + " — a consolidação não substitui a leitura antiga, " +
+      "ela convive com ela dizendo coisa diferente (EA-68)");
+  const nasceram = [...vistos].filter(n => !esperados.has(n));
+  if (nasceram.length)
+    throw new Error("produto na visão que o motor não ofereceu: " + nasceram.join(", "));
+
+  /* (b) o QUALIFICADOR diz de onde o produto veio, e bate com o motor */
+  const tierDoMotor = w.eval("(function(){var o={},fs=(computeFindings()||{}).findings||[];" +
+    "for(var i=0;i<fs.length;i++){var f=fs[i],m=MAP[f.id];if(!m||!m.lv||!m.lv[f.lvl])continue;" +
+    "var c=m.lv[f.lvl].c||[];for(var j=0;j<c.length;j++){var t=(f.sev===2)?1:2;" +
+    "o[c[j].p]=Math.min(o[c[j].p]||9,t);}}return o;})()");
+  const rotulo = { 1: "prioritaria", 2: "validacao" };
+  const erradas = [];
+  ofertados.forEach(id => {
+    const nome = (P[id] && P[id].n) || id;
+    const card = cards.filter(c => c.getAttribute("data-p53-sol-produto") === nome)[0];
+    if (!card) return;
+    const tier = card.getAttribute("data-p53-sol-tier");
+    if (tier !== rotulo[tierDoMotor[id]])
+      erradas.push(nome + ": card diz " + JSON.stringify(tier) + ", motor diz " +
+        JSON.stringify(rotulo[tierDoMotor[id]]));
+  });
+  if (erradas.length)
+    throw new Error("qualificador divergente do motor — " + erradas.slice(0, 4).join(" · ") +
+      "; sem ele o leitor não distingue indicação prioritária de 'após validação'");
+  /* (c) as duas qualificações precisam ter aparecido, senão (b) mediu metade */
+  const tiers = new Set(cards.map(c => c.getAttribute("data-p53-sol-tier")));
+  if (tiers.size < 2)
+    vac("(c)", "a visão trouxe um qualificador só (" + [...tiers].join(",") + ") — (b) mediu metade");
   return true;
 });
 

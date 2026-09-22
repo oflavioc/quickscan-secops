@@ -1,0 +1,596 @@
+{
+  "390": [
+    {
+      "familia": "arquitetura",
+      "rotulo": "SaaS permitido?iNão informadoSimNã",
+      "lh": 21,
+      "centro": 11,
+      "recuo": 109
+    },
+    {
+      "familia": "arquitetura",
+      "rotulo": "Processamento local obrigatório?iN",
+      "lh": 21,
+      "centro": 11,
+      "recuo": 161
+    },
+    {
+      "familia": "arquitetura",
+      "rotulo": "Ambiente OT/isolado?iNão informado",
+      "lh": 21,
+      "centro": 11,
+      "recuo": 144
+    },
+    {
+      "familia": "arquitetura",
+      "rotulo": "Preferência por plataforma unifica",
+      "lh": 21,
+      "centro": 11,
+      "recuo": 161
+    },
+    {
+      "familia": "arquitetura",
+      "rotulo": "Perfil do ambienteiNão informadoCl",
+      "lh": 21,
+      "centro": 11,
+      "recuo": 115
+    },
+    {
+      "familia": "arquitetura",
+      "rotulo": "Residência/localidade de dadosiNão",
+      "lh": 21,
+      "centro": 11,
+      "recuo": 161
+    },
+    {
+      "familia": "sinal",
+      "rotulo": "Incidente ativoiHá um incidente de",
+      "lh": 20,
+      "centro": 12,
+      "recuo": 107
+    },
+    {
+      "familia": "sinal",
+      "rotulo": "Suspeita de comprometimentoiHá ind",
+      "lh": 20,
+      "centro": 12,
+      "recuo": 107
+    },
+    {
+      "familia": "sinal",
+      "rotulo": "Preocupação com ransomwareiPreocup",
+      "lh": 20,
+      "centro": 12,
+      "recuo": 107
+    },
+    {
+      "familia": "sinal",
+      "rotulo": "Prontidão de IRiInteresse declarad",
+      "lh": 20,
+      "centro": 12,
+      "recuo": 107
+    },
+    {
+      "familia": "sinal",
+      "rotulo": "Interesse em SOC AssessmentiIntere",
+      "lh": 20,
+      "centro": 12,
+      "recuo": 107
+    },
+    {
+      "familia": "sinal",
+      "rotulo": "Desenvolvimento de SOCiInteresse d",
+      "lh": 20,
+      "centro": 12,
+      "recuo": 107
+    },
+    {
+      "familia": "sinal",
+      "rotulo": "Preocupação com BECiPreocupação co",
+      "lh": 20,
+      "centro": 12,
+      "recuo": 107
+    },
+    {
+      "familia": "sinal",
+      "rotulo": "Segurança de e-mailiPreocupação de",
+      "lh": 20,
+      "centro": 12,
+      "recuo": 107
+    },
+    {
+      "familia": "sinal",
+      "rotulo": "Vazamento de dadosiPreocupação com",
+      "lh": 20,
+      "centro": 12,
+      "recuo": 107
+    },
+    {
+      "familia": "sinal",
+      "rotulo": "Insider riskiPreocupação com risco",
+      "lh": 20,
+      "centro": 12,
+      "recuo": 107
+    },
+    {
+      "familia": "sinal",
+      "rotulo": "Compliance de proteção de dadosiEx",
+      "lh": 20,
+      "centro": 12,
+      "recuo": 107
+    },
+    {
+      "familia": "sinal",
+      "rotulo": "Shadow AIiUso de ferramentas de IA",
+      "lh": 20,
+      "centro": 12,
+      "recuo": 107
+    },
+    {
+      "familia": "sinal",
+      "rotulo": "Risco e governança do uso de IAiGo",
+      "lh": 20,
+      "centro": 12,
+      "recuo": 107
+    },
+    {
+      "familia": "sinal",
+      "rotulo": "Aplicações corporativas de IA (cop",
+      "lh": 20,
+      "centro": 12,
+      "recuo": 107
+    },
+    {
+      "familia": "sinal",
+      "rotulo": "Uso de LLM privadoiModelos executa",
+      "lh": 20,
+      "centro": 12,
+      "recuo": 107
+    },
+    {
+      "familia": "sinal",
+      "rotulo": "Agentes autônomos de IAiSistemas q",
+      "lh": 20,
+      "centro": 12,
+      "recuo": 107
+    },
+    {
+      "familia": "sinal",
+      "rotulo": "Segurança de runtime de IAiProteçã",
+      "lh": 20,
+      "centro": 12,
+      "recuo": 107
+    },
+    {
+      "familia": "sinal",
+      "rotulo": "Prompt injectioniManipulação da en",
+      "lh": 20,
+      "centro": 12,
+      "recuo": 107
+    },
+    {
+      "familia": "sinal",
+      "rotulo": "Vazamento de dados via LLMiSaída i",
+      "lh": 20,
+      "centro": 12,
+      "recuo": 107
+    },
+    {
+      "familia": "sinal",
+      "rotulo": "Risco de identidadeiPreocupação co",
+      "lh": 20,
+      "centro": 12,
+      "recuo": 107
+    },
+    {
+      "familia": "sinal",
+      "rotulo": "Requisito de PAMiExiste requisito ",
+      "lh": 20,
+      "centro": 12,
+      "recuo": 107
+    },
+    {
+      "familia": "sinal",
+      "rotulo": "Necessidade específica de EDRiExis",
+      "lh": 20,
+      "centro": 12,
+      "recuo": 107
+    }
+  ],
+  "1440": [
+    {
+      "familia": "arquitetura",
+      "rotulo": "SaaS permitido?iNão informadoSimNã",
+      "lh": 21,
+      "centro": 11,
+      "recuo": 109
+    },
+    {
+      "familia": "arquitetura",
+      "rotulo": "Processamento local obrigatório?iN",
+      "lh": 21,
+      "centro": 11,
+      "recuo": 207
+    },
+    {
+      "familia": "arquitetura",
+      "rotulo": "Ambiente OT/isolado?iNão informado",
+      "lh": 21,
+      "centro": 11,
+      "recuo": 144
+    },
+    {
+      "familia": "arquitetura",
+      "rotulo": "Preferência por plataforma unifica",
+      "lh": 21,
+      "centro": 11,
+      "recuo": 231
+    },
+    {
+      "familia": "arquitetura",
+      "rotulo": "Perfil do ambienteiNão informadoCl",
+      "lh": 21,
+      "centro": 11,
+      "recuo": 167
+    },
+    {
+      "familia": "arquitetura",
+      "rotulo": "Residência/localidade de dadosiNão",
+      "lh": 21,
+      "centro": 11,
+      "recuo": 197
+    },
+    {
+      "familia": "sinal",
+      "rotulo": "Incidente ativoiHá um incidente de",
+      "lh": 20,
+      "centro": 12,
+      "recuo": 134
+    },
+    {
+      "familia": "sinal",
+      "rotulo": "Suspeita de comprometimentoiHá ind",
+      "lh": 20,
+      "centro": 12,
+      "recuo": 230
+    },
+    {
+      "familia": "sinal",
+      "rotulo": "Preocupação com ransomwareiPreocup",
+      "lh": 20,
+      "centro": 12,
+      "recuo": 229
+    },
+    {
+      "familia": "sinal",
+      "rotulo": "Prontidão de IRiInteresse declarad",
+      "lh": 20,
+      "centro": 12,
+      "recuo": 138
+    },
+    {
+      "familia": "sinal",
+      "rotulo": "Interesse em SOC AssessmentiIntere",
+      "lh": 20,
+      "centro": 12,
+      "recuo": 224
+    },
+    {
+      "familia": "sinal",
+      "rotulo": "Desenvolvimento de SOCiInteresse d",
+      "lh": 20,
+      "centro": 12,
+      "recuo": 197
+    },
+    {
+      "familia": "sinal",
+      "rotulo": "Preocupação com BECiPreocupação co",
+      "lh": 20,
+      "centro": 12,
+      "recuo": 179
+    },
+    {
+      "familia": "sinal",
+      "rotulo": "Segurança de e-mailiPreocupação de",
+      "lh": 20,
+      "centro": 12,
+      "recuo": 168
+    },
+    {
+      "familia": "sinal",
+      "rotulo": "Vazamento de dadosiPreocupação com",
+      "lh": 20,
+      "centro": 12,
+      "recuo": 171
+    },
+    {
+      "familia": "sinal",
+      "rotulo": "Insider riskiPreocupação com risco",
+      "lh": 20,
+      "centro": 12,
+      "recuo": 110
+    },
+    {
+      "familia": "sinal",
+      "rotulo": "Compliance de proteção de dadosiEx",
+      "lh": 20,
+      "centro": 12,
+      "recuo": 251
+    },
+    {
+      "familia": "sinal",
+      "rotulo": "Shadow AIiUso de ferramentas de IA",
+      "lh": 20,
+      "centro": 12,
+      "recuo": 109
+    },
+    {
+      "familia": "sinal",
+      "rotulo": "Risco e governança do uso de IAiGo",
+      "lh": 20,
+      "centro": 12,
+      "recuo": 240
+    },
+    {
+      "familia": "sinal",
+      "rotulo": "Aplicações corporativas de IA (cop",
+      "lh": 20,
+      "centro": 12,
+      "recuo": 253
+    },
+    {
+      "familia": "sinal",
+      "rotulo": "Uso de LLM privadoiModelos executa",
+      "lh": 20,
+      "centro": 12,
+      "recuo": 165
+    },
+    {
+      "familia": "sinal",
+      "rotulo": "Agentes autônomos de IAiSistemas q",
+      "lh": 20,
+      "centro": 12,
+      "recuo": 201
+    },
+    {
+      "familia": "sinal",
+      "rotulo": "Segurança de runtime de IAiProteçã",
+      "lh": 20,
+      "centro": 12,
+      "recuo": 212
+    },
+    {
+      "familia": "sinal",
+      "rotulo": "Prompt injectioniManipulação da en",
+      "lh": 20,
+      "centro": 12,
+      "recuo": 145
+    },
+    {
+      "familia": "sinal",
+      "rotulo": "Vazamento de dados via LLMiSaída i",
+      "lh": 20,
+      "centro": 12,
+      "recuo": 220
+    },
+    {
+      "familia": "sinal",
+      "rotulo": "Risco de identidadeiPreocupação co",
+      "lh": 20,
+      "centro": 12,
+      "recuo": 163
+    },
+    {
+      "familia": "sinal",
+      "rotulo": "Requisito de PAMiExiste requisito ",
+      "lh": 20,
+      "centro": 12,
+      "recuo": 151
+    },
+    {
+      "familia": "sinal",
+      "rotulo": "Necessidade específica de EDRiExis",
+      "lh": 20,
+      "centro": 12,
+      "recuo": 229
+    }
+  ],
+  "1920": [
+    {
+      "familia": "arquitetura",
+      "rotulo": "SaaS permitido?iNão informadoSimNã",
+      "lh": 21,
+      "centro": 11,
+      "recuo": 109
+    },
+    {
+      "familia": "arquitetura",
+      "rotulo": "Processamento local obrigatório?iN",
+      "lh": 21,
+      "centro": 11,
+      "recuo": 207
+    },
+    {
+      "familia": "arquitetura",
+      "rotulo": "Ambiente OT/isolado?iNão informado",
+      "lh": 21,
+      "centro": 11,
+      "recuo": 144
+    },
+    {
+      "familia": "arquitetura",
+      "rotulo": "Preferência por plataforma unifica",
+      "lh": 21,
+      "centro": 11,
+      "recuo": 231
+    },
+    {
+      "familia": "arquitetura",
+      "rotulo": "Perfil do ambienteiNão informadoCl",
+      "lh": 21,
+      "centro": 11,
+      "recuo": 167
+    },
+    {
+      "familia": "arquitetura",
+      "rotulo": "Residência/localidade de dadosiNão",
+      "lh": 21,
+      "centro": 11,
+      "recuo": 197
+    },
+    {
+      "familia": "sinal",
+      "rotulo": "Incidente ativoiHá um incidente de",
+      "lh": 20,
+      "centro": 12,
+      "recuo": 134
+    },
+    {
+      "familia": "sinal",
+      "rotulo": "Suspeita de comprometimentoiHá ind",
+      "lh": 20,
+      "centro": 12,
+      "recuo": 230
+    },
+    {
+      "familia": "sinal",
+      "rotulo": "Preocupação com ransomwareiPreocup",
+      "lh": 20,
+      "centro": 12,
+      "recuo": 229
+    },
+    {
+      "familia": "sinal",
+      "rotulo": "Prontidão de IRiInteresse declarad",
+      "lh": 20,
+      "centro": 12,
+      "recuo": 138
+    },
+    {
+      "familia": "sinal",
+      "rotulo": "Interesse em SOC AssessmentiIntere",
+      "lh": 20,
+      "centro": 12,
+      "recuo": 224
+    },
+    {
+      "familia": "sinal",
+      "rotulo": "Desenvolvimento de SOCiInteresse d",
+      "lh": 20,
+      "centro": 12,
+      "recuo": 197
+    },
+    {
+      "familia": "sinal",
+      "rotulo": "Preocupação com BECiPreocupação co",
+      "lh": 20,
+      "centro": 12,
+      "recuo": 179
+    },
+    {
+      "familia": "sinal",
+      "rotulo": "Segurança de e-mailiPreocupação de",
+      "lh": 20,
+      "centro": 12,
+      "recuo": 168
+    },
+    {
+      "familia": "sinal",
+      "rotulo": "Vazamento de dadosiPreocupação com",
+      "lh": 20,
+      "centro": 12,
+      "recuo": 171
+    },
+    {
+      "familia": "sinal",
+      "rotulo": "Insider riskiPreocupação com risco",
+      "lh": 20,
+      "centro": 12,
+      "recuo": 110
+    },
+    {
+      "familia": "sinal",
+      "rotulo": "Compliance de proteção de dadosiEx",
+      "lh": 20,
+      "centro": 12,
+      "recuo": 251
+    },
+    {
+      "familia": "sinal",
+      "rotulo": "Shadow AIiUso de ferramentas de IA",
+      "lh": 20,
+      "centro": 12,
+      "recuo": 109
+    },
+    {
+      "familia": "sinal",
+      "rotulo": "Risco e governança do uso de IAiGo",
+      "lh": 20,
+      "centro": 12,
+      "recuo": 240
+    },
+    {
+      "familia": "sinal",
+      "rotulo": "Aplicações corporativas de IA (cop",
+      "lh": 20,
+      "centro": 12,
+      "recuo": 261
+    },
+    {
+      "familia": "sinal",
+      "rotulo": "Uso de LLM privadoiModelos executa",
+      "lh": 20,
+      "centro": 12,
+      "recuo": 165
+    },
+    {
+      "familia": "sinal",
+      "rotulo": "Agentes autônomos de IAiSistemas q",
+      "lh": 20,
+      "centro": 12,
+      "recuo": 201
+    },
+    {
+      "familia": "sinal",
+      "rotulo": "Segurança de runtime de IAiProteçã",
+      "lh": 20,
+      "centro": 12,
+      "recuo": 212
+    },
+    {
+      "familia": "sinal",
+      "rotulo": "Prompt injectioniManipulação da en",
+      "lh": 20,
+      "centro": 12,
+      "recuo": 145
+    },
+    {
+      "familia": "sinal",
+      "rotulo": "Vazamento de dados via LLMiSaída i",
+      "lh": 20,
+      "centro": 12,
+      "recuo": 220
+    },
+    {
+      "familia": "sinal",
+      "rotulo": "Risco de identidadeiPreocupação co",
+      "lh": 20,
+      "centro": 12,
+      "recuo": 163
+    },
+    {
+      "familia": "sinal",
+      "rotulo": "Requisito de PAMiExiste requisito ",
+      "lh": 20,
+      "centro": 12,
+      "recuo": 151
+    },
+    {
+      "familia": "sinal",
+      "rotulo": "Necessidade específica de EDRiExis",
+      "lh": 20,
+      "centro": 12,
+      "recuo": 229
+    }
+  ]
+}

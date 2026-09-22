@@ -205,3 +205,16 @@
   white-space: nowrap;
 }
 [data-p53-sol-tier="prioritaria"] .p53-sol-tierlabel { color: var(--p52-attn); }
+
+/* [EA-65] A fronteira entre a região congelada e os cards. Ela só é emitida
+   quando a arbitragem da 010 está ativa — ver a razão no módulo. Aqui ela
+   precisa parecer o que é: uma linha de contexto, não um card órfão. */
+.p53-sol-lead {
+  margin: 14px 0 2px;
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--muted);
+}
+@media (min-width: 1180px) {
+  .p53-sol-lead { grid-column: 1 / -1; }
+}

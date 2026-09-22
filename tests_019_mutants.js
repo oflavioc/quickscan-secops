@@ -203,6 +203,24 @@ const MUTANTS = [
     find: 'catch (e) { v32PrintFallback(e); }', repl: 'catch (e) { }',
     reason: /NADA marcou o documento|recebe a TELA/ },
 
+  /* [EA-65] DOIS mutantes, e eles atacam DIREÇÕES OPOSTAS da mesma peça. O
+     M17 devolve a abstenção grossa — a visão some com contexto declarado. O
+     M18 faz a fronteira aparecer SEMPRE, inclusive em modo legado, onde ela
+     tira do `D010-ARB1 (c)` os blocos contíguos visíveis que a alínea mede.
+     Um gate que só medisse um lado deixaria passar a metade errada, e foi
+     medir um lado só que produziu este achado. */
+  { id: "D019-M17", file: F.solucao, gate: "D019-CTX1",
+    desc: "devolver a abstenção da seção inteira — a visão some com contexto declarado",
+    find: 'var arbitrando = arbitragemEmCurso();',
+    repl: 'if (arbitragemEmCurso()) return; var arbitrando = false;',
+    reason: /ausentes da visão COM contexto declarado/ },
+
+  { id: "D019-M18", file: F.solucao, gate: "D019-CTX1",
+    desc: "emitir a fronteira SEMPRE — em modo legado ela zera o sujeito do D010-ARB1",
+    find: 'if (arbitrando && cards.length) sec.appendChild(fronteira());',
+    repl: 'if (cards.length) sec.appendChild(fronteira());',
+    reason: /apareceu em modo LEGADO/ },
+
   /* [EA-68] O mutante que devolve o produto ao estado em que o proprietário o
      encontrou: a lista de produtos volta a sair da COLHEITA DO DOM em vez do
      motor. Numa sessão realista isso faz a visão cair de onze para dois, e é

@@ -5905,7 +5905,35 @@ ao cliente; aqui é documentação que mente para quem chega de fora.
 
 ## EA-65 — a visão por solução não existe quando há contexto tecnológico declarado
 
-**Status**: `aberto`
+**Status**: `resolvido`
+
+> **Fecho — fix-finding, 2026-09-22.** Gate `D019-CTX1`, mutantes `D019-M17` e
+> `D019-M18`. Nenhum arquivo protegido tocado.
+>
+> **Medido:** com contexto declarado, a visão vai de **0 para 11 cards** — os
+> mesmos onze que o motor oferece.
+>
+> **A abstenção passou a ser POR NÓ.** `blocosLegados()` e `prodLegadoDe()`
+> recusam o que está oculto, então nada que a arbitragem da 010 escondeu é
+> movido ou ressuscitado; o produto continua no card, montado do catálogo, como
+> já acontece com os de `sev 1`.
+>
+> **E a armadilha da W4 voltou, agora medida em vez de adivinhada.** Com a
+> arbitragem ativa o título congelado fica OCULTO e os cards ficam VISÍVEIS;
+> encostados, o censo da Camada 1 os conta no mesmo grupo contíguo e o
+> `D010-ARB3` reprova por *"arbitragem parcial — 3 ocultos de 9"*. Ele está
+> certo: grupo meio oculto e meio visível é o estado misto que a regra
+> tudo-ou-nada proíbe.
+>
+> A saída é uma **fronteira declarada** — nó visível, de classe própria, fora
+> de `CLASSES_CONTIGUAS` — que encerra a contagem antes dos cards. **E ela é
+> condicional**: em modo legado o título está visível e os cards SÃO os "blocos
+> contíguos visíveis" que o `D010-ARB1 (c)` mede; interpor a fronteira ali
+> tiraria o sujeito da alínea e o gate cairia por vacuidade.
+>
+> **A mesma peça, nos dois modos, tem efeitos opostos.** Por isso o gate mede as
+> duas direções e há um mutante para cada — medir um lado só foi exatamente o
+> que produziu este achado.
 
 **Aberto em**: 2026-09-22, por mim, ao medir o papel para avaliar se a emenda do
 `EA-56` (PR #82) ainda descrevia o produto. **Defeito meu, publicado na v3.2.7** —

@@ -100,6 +100,20 @@ function boot(opts) {
      `altos` põe alguns achados em `sev 2` sobre um fundo de nível 1, que é a
      forma da sessão real: gaps moderados predominando, poucos altos. */
   if (o.altos) o.altos.forEach(id => w.__DEV.setAnswerById(id, 0));
+  /* [EA-65] CONTEXTO TECNOLÓGICO DECLARADO — o outro eixo cego.
+     Declarar contexto tira o runtime do modo legado e liga a arbitragem da
+     demanda 010, que oculta a região congelada porque existe substituto V3.2.
+     Todos os gates anteriores rodam SEM contexto; foi essa amostragem que
+     deixou a visão por solução sumir inteira no caminho principal do produto —
+     porque contexto declarado é justamente o que o Quickscan pede para não
+     recomendar coisa incompatível com o ambiente do cliente. */
+  if (o.contexto) {
+    const V = w.__DEV.V32;
+    ["security-analytics", "soc-platform"].forEach(c => {
+      if (V.TECH_LANDSCAPE[c]) V.TECH_LANDSCAPE[c].presence = "NONE";
+    });
+    V.ARCHITECTURE_CONTEXT.saasAllowed = "yes";
+  }
   w.__DEV.setPriorities(o.prios || PRIOS);
   w.__DEV.showResults();
   return { w, d };
@@ -509,6 +523,71 @@ T("D019-SOL3", "em sessão REALISTA, todo produto que o motor oferece está na v
   const tiers = new Set(cards.map(c => c.getAttribute("data-p53-sol-tier")));
   if (tiers.size < 2)
     vac("(c)", "a visão trouxe um qualificador só (" + [...tiers].join(",") + ") — (b) mediu metade");
+  return true;
+});
+
+/* ==========================================================================
+   [EA-65] A VISÃO POR SOLUÇÃO EXISTE TAMBÉM COM CONTEXTO DECLARADO.
+
+   O defeito: eu me abstinha da seção INTEIRA quando qualquer nó do escopo
+   estivesse oculto — guarda que nasceu na W4 para não ressuscitar região que a
+   arbitragem da 010 escondeu. A decisão foi grossa. Medido: bastava UMA
+   capability declarada para a funcionalidade sumir, tela e papel, e contexto
+   declarado é o caminho mais cuidadoso do produto, não uma borda.
+
+   Nenhum dos gates anteriores viu, porque nenhum declara contexto. Segundo
+   eixo cego da mesma família, depois da severidade (EA-68).
+
+   AS TRÊS ALÍNEAS, e a terceira é a que me protege de mim mesmo:
+     (a) com contexto declarado, a visão cobre o que o motor oferece;
+     (b) a FRONTEIRA existe nesse modo — é o nó que encerra a contagem do censo
+         da Camada 1 antes dos cards, impedindo o grupo meio oculto e meio
+         visível que o `D010-ARB3` reprova;
+     (c) a fronteira NÃO existe em modo legado — ali o título congelado está
+         visível e os cards SÃO os "blocos contíguos visíveis" do
+         `D010-ARB1 (c)`; interpor a fronteira tiraria o sujeito da alínea.
+
+   A mesma peça, nos dois modos, tem efeitos opostos. Medir só um lado deixaria
+   passar a metade errada — e foi medir só um lado que produziu este achado.
+   ========================================================================== */
+T("D019-CTX1", "com contexto tecnológico DECLARADO a visão por solução existe, e a fronteira do censo é condicional", () => {
+  const { w, d } = boot({ nivel: 1, altos: ["mandate", "incident-response"], contexto: true,
+                          prios: ["logs", "endpoint", "monitoring-coverage"] });
+  if (w.__DEV.V32.isLegacyModeV32() !== false)
+    vac("(a)", "a fixture não saiu do modo legado — não há contexto declarado para medir");
+  const b = cur(w);
+  const P = w.eval("PRODUCTS");
+  const esperados = new Set(b.offered().map(id => (P[id] && P[id].n) || id));
+  if (esperados.size < 4) vac("(a)", "oferta pequena demais (" + esperados.size + ") — sem sujeito");
+  const vistos = new Set(qa(d, "#p52-workspace [data-p53-sol-produto]")
+    .map(c => c.getAttribute("data-p53-sol-produto")));
+  const sumiram = [...esperados].filter(n => !vistos.has(n));
+  if (sumiram.length)
+    throw new Error(sumiram.length + " de " + esperados.size + " produtos ausentes da visão COM contexto " +
+      "declarado: " + sumiram.slice(0, 5).join(", ") + " — quem declara contexto, que é o caso mais " +
+      "cuidadoso, recebia o produto sem a funcionalidade (EA-65)");
+
+  const sec = d.getElementById("p52-sec-support");
+  const ocultosNoEscopo = qa(sec, ":scope > .v32-hidden").length;
+  if (!ocultosNoEscopo)
+    vac("(b)", "a arbitragem não ocultou nada nesta fixture — a alínea da fronteira ficaria sem sujeito");
+  const fronteira = sec.querySelector(":scope > [data-p53-sol-lead]");
+  if (!fronteira)
+    throw new Error("com arbitragem ativa e cards visíveis, falta a fronteira que encerra a contagem do " +
+      "censo — sem ela o grupo contíguo fica meio oculto e meio visível, que é o que o D010-ARB3 reprova");
+  const cardsDepois = qa(sec, ":scope > [data-p53-sol-produto]")
+    .filter(c => fronteira.compareDocumentPosition(c) & 4 /* DOCUMENT_POSITION_FOLLOWING */);
+  if (!cardsDepois.length)
+    throw new Error("a fronteira existe mas não precede os cards — ela só serve no lugar certo");
+
+  /* (c) e em modo LEGADO ela não pode existir */
+  const L = boot({ nivel: 1, altos: ["mandate", "incident-response"],
+                   prios: ["logs", "endpoint", "monitoring-coverage"] });
+  if (L.w.__DEV.V32.isLegacyModeV32() !== true)
+    vac("(c)", "a fixture de controle não está em modo legado — a alínea não compara o que promete");
+  if (L.d.querySelector("#p52-sec-support > [data-p53-sol-lead]"))
+    throw new Error("a fronteira apareceu em modo LEGADO — ali ela tira do `D010-ARB1 (c)` justamente os " +
+      "blocos contíguos visíveis que a alínea mede, e o gate cai por vacuidade");
   return true;
 });
 

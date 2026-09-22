@@ -6028,3 +6028,70 @@ Imprimir nada é recuperável; imprimir a tela achando que é o relatório, não
 Ver [[EA-20]] e [[EA-26]] (medir o PDF por `beforeprint`, nunca por
 `buildPrintReport()` — foi essa disciplina que permitiu reproduzir o caminho
 real e descartar hipóteses).
+
+## EA-67 — acabamento da visão por solução: nome em duplicata, card sem ícone e disclosure vazio
+
+**Status**: `resolvido`
+
+> **Fecho — fix-finding, 2026-09-22.** Gate `D019-CARD1`, mutantes `D019-M13` e
+> `D019-M14`. Nenhum arquivo protegido tocado.
+
+**Aberto em**: 2026-09-22, por **relato do proprietário depois de conduzir uma
+sessão real** na v3.2.7, em três apontamentos de uma passada só.
+
+### Os três defeitos
+
+1. **O nome do produto saía duas vezes em todo card.** Na visão por gap o
+   `.pt-name` era o título do produto dentro do bloco da capability. Consolidado
+   por produto, o título do card **já é** o produto — e o `.pt-name` repete a
+   mesma palavra duas linhas abaixo. Mover o nó mudou o papel dele, e eu movi
+   sem reavaliar o papel.
+2. **O card acrescentado pelo engenheiro saía sem ícone.** O card colhido traz o
+   `.prod` do renderer congelado, que já vem com `.icon-tile`; o acrescentado eu
+   montava do catálogo e não montei o ícone. Na tela do proprietário só
+   `Serviços FortiGuard` aparecia ilustrado — o único colhido entre quatro.
+3. **O disclosure vazio ficava na tela anunciando conteúdo que migrou.** Eu
+   deixara o `<details>` "Possíveis formas de apoio aos demais gaps altos" no
+   lugar, com um ponteiro para a seção consolidada. Palavras do proprietário:
+   *"essa informação ali polui a tela e é desnecessária"*.
+
+### Por que nenhum gate pegou
+
+**Os doze gates da demanda mediam CONJUNTOS** — produtos, pares
+(produto × capability), grupos, chaves de sessão. Nenhum olhava para o card
+**como o leitor olha**: a forma, o acabamento, o que se repete.
+
+É a quarta forma da família `EA-20` nesta série, e a mais difícil de antecipar:
+não é gate tautológico, nem cego por amostragem, nem propriedade sem gate — é
+**gate medindo a dimensão errada**. Conjunto certo, forma errada.
+
+### A decisão do item 3, e por que não foi ocultar
+
+O `<details>` é âncora nomeada do `D010-ARB3 (b)`, entre as que *"nunca podem
+ser ocultadas"*. Eu poderia escondê-lo com classe própria — o censo daquele gate
+só enxerga `v32-hidden` — e passaria. **Seria contornar pela letra.** A regra
+existe para impedir que conteúdo da Camada 1 desapareça sem substituto.
+
+Aqui há substituto e ele é integral: os blocos **migraram** para a seção de
+apoio. O que sobrava era uma casca cujo rótulo promete o que ela não tem. Casca
+vazia removida é subtração honesta; casca vazia escondida é a mesma subtração
+fingindo não ter acontecido.
+
+Medido depois da remoção: `D010` 13 PASS · 0 FAIL, com **duas** âncoras
+restantes em `(b)` — a alínea continua com sujeito e não caiu em vacuidade.
+
+### O que o gate novo afirma
+
+`D019-CARD1`, em três alíneas: o nome sai **uma** vez por card; **todo** card
+tem ícone; e a (c) exige que um card **acrescentado** tenha sido medido, senão a
+segunda alínea não teria visto o caso que o defeito produziu.
+
+Dois mutantes, e não um, porque as duas primeiras alíneas guardam propriedades
+independentes — uma cai sem a outra notar, que foi exatamente como os dois
+defeitos conviveram por sete waves.
+
+> **O que distingue um card acrescentado de um colhido tem de ser o selo de
+> proveniência, nunca o acabamento.** Card mais pobre é um segundo canal
+> dizendo "este aqui é de segunda", e não é isso que a demanda combinou.
+
+Ver [[EA-20]] e [[EA-57]].

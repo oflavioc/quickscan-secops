@@ -5495,7 +5495,35 @@ o apoio que já existe, e nada é inventado.
 
 ## EA-57 — a seção de apoio nas prioridades declaradas é redundante e não é editável
 
-**Status**: `aberto`
+**Status**: `resolvido`
+
+> **Fecho — demanda `019-curadoria-do-relatorio`, PR #88, mesclado em
+> 2026-09-21.** Este achado virou a demanda que o proprietário pediu, e ela entregou
+> as duas metades: a **redundância** (a seção passa a agrupar por produto em vez
+> de por gap — medido, 15 blocos → 9 cards, com `Serviços FortiGuard` deixando de
+> aparecer cinco vezes) e a **edição** (`ui_curation_edit_v32.js`, onde o
+> engenheiro mantém, remove ou acrescenta).
+>
+> **Os três custos que este achado nomeou foram pagos, um a um:**
+>
+> - **estado persistido** — `reportCuration`, sexta chave canônica em
+>   `ui_session_v32.js` (§29.4, autorizado em 2026-09-17), omitida quando nada
+>   foi declarado, o que preserva `missing ≠ {}` (INV-8);
+> - **papel** — `buildPrintReport()` consome a mesma seleção da tela, e o papel é
+>   **derivado** dos cards, não recalculado: a igualdade tela×papel virou
+>   propriedade de construção em vez de coincidência a conferir (`D019-PAR1`);
+> - **proveniência** — `[data-p53-prov]` nas duas superfícies, e **só** em item
+>   cuja PRESENÇA é decisão do operador. O gate `D019-PROV1` mede as duas
+>   direções: o selo existe onde deve **e não existe onde não deve**, porque
+>   rótulo que aparece em tudo não distingue nada.
+>
+> O ponto que este achado dizia não ser negociável — não inventar recomendação —
+> ficou executável: a curadoria é **seleção**, e o editor não tem campo de texto
+> por desenho. O `D019-CUR1` tenta redigir a cada execução para provar que
+> continua não tendo.
+
+**Aberto em**: 2026-09-14, por relato do proprietário (apontamento 4 do
+`EA-55`), que pediu explicitamente que virasse demanda própria.
 
 **Aberto em**: 2026-09-14, por relato do proprietário (apontamento 4 do
 `EA-55`), que pediu explicitamente que virasse demanda própria.

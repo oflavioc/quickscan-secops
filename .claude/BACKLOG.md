@@ -6279,3 +6279,162 @@ medição da Fase 0 foi feita na mesma fixture de nível 0.
 Relacionado: [[EA-56]], cuja emenda mede o mesmo vão pelo lado do papel —
 *"a tabela de apoio do relatório cobre 40% dos gaps"*. É a mesma lacuna vista de
 outro ângulo, e a correção deste achado muda aquele número.
+
+## EA-69 — dois rótulos técnicos do MAP não trazem o acrônimo que os outros trazem
+
+**Status**: `aberto`
+
+Relatado pelo proprietário em **sessão real na v3.2.8**, 2026-09-22:
+*"Centralização de logs não mostra SIEM (SIEM) e Visibilidade de rede não
+mostra o acrônimo para Network Detection & Response (NDR)."*
+
+### O que foi medido
+
+O `MAP` congelado tem padrão, e ele é consistente na maioria dos rótulos
+técnicos — o acrônimo entre parênteses, junto do nome em português:
+
+| qid | `MAP[qid].cap` | acrônimo |
+|---|---|---|
+| `policies` | Políticas de segurança e privacidade **(LGPD)** | sim |
+| `detection-lifecycle` | Ciclo de vida de detecção **(detection engineering)** | sim |
+| `endpoint` | Detecção e resposta em endpoint **(EDR)** | sim |
+| `external-surface` | Gestão de exposição externa **(EASM/DRPS)** | sim |
+| **`logs`** | Análise centralizada, correlação e retenção de eventos | **não** |
+| **`network-visibility`** | Network Detection & Response | **não** |
+
+Quatro de seis seguem o padrão; os dois que fogem são exatamente os dois que o
+proprietário apontou. O relato está certo e é verificável.
+
+### Cadeia arquivo:linha → efeito
+
+- `quickscan_secops_soccmm_v3_1_3.html:448` — `"logs":{cap:"Análise centralizada,
+  correlação e retenção de eventos"`
+- `quickscan_secops_soccmm_v3_1_3.html:454` — `"network-visibility":{cap:"Network
+  Detection & Response"`
+- consumido por `ui_v32.js:1136` (`capCanon = MAP[f.id].cap`), que por decisão
+  declarada no próprio comentário usa **um único dono do nome** para que a tabela
+  de apoio e o motor não divirjam.
+
+### Por que isto NÃO é um fix-finding meu
+
+O texto vive na **Camada 1 V3.1.3, classe `frozen`**. A R6 §5 manda parar e
+nomear o rito; como a Porta A segue **pendente de ratificação (Q3)**, qualquer
+toque ali é **Porta B — spec + auditoria independente humana**. Não é decisão
+minha e não se contorna pela letra.
+
+### A assimetria que barateia metade do problema
+
+Para `logs`, o acrônimo **já existe** do lado V3.2: `engine_v32.js:47` nomeia
+`security-analytics` como *"Analytics de segurança (SIEM/data lake)"*. A
+superfície mostra o nome da Camada 1 em vez do da V3.2 — é escolha de fonte, não
+invenção de texto.
+
+Para `network-visibility`, `"(NDR)"` **não existe em lugar nenhum**:
+`engine_v32.js:54` também diz apenas *"Network Detection & Response"*. Ali é
+texto novo, sem atalho.
+
+### Encaminhamento — decisão do proprietário
+
+| caminho | alcance | custo |
+|---|---|---|
+| Porta B na Camada 1 | os dois, na fonte certa | spec + auditoria humana |
+| trocar a fonte do nome na superfície V3.2 | só `logs` | barato, mas cria duas redações para a mesma capability — exatamente o que `ui_v32.js:1131-1135` documenta como decisão deliberada de evitar |
+| não agir | nenhum | zero |
+
+**Recomendação registrada:** anotar e não agir agora. É legibilidade, não
+correção de conteúdo, e a rota que resolve de verdade custa uma auditoria
+humana. **Decisão do proprietário no chat, 2026-09-22: anotar como achado e não
+agir** — *"Concordo, anota o 2 como achado"*.
+
+Ver [[EA-47]], que é a mesma família pelo lado do glossário: rótulo que envelhece
+em silêncio porque ninguém compara contra o padrão dos irmãos.
+
+## EA-70 — o (i) dos sinais cai numa linha nova, e é reincidência do EA-60 (11)
+
+**Status**: `resolvido`
+
+> **Fecho — fix-finding, 2026-09-22.** Correção em `ui_p52_workspace_v32.css`
+> (terceira coluna na grade do rótulo de sinal; grade no lugar de flex no
+> rótulo de arquitetura) e gate novo `V322-HELPGEO1` no Chromium.
+>
+> **O gate foi visto FALHAR antes de passar**, e a medição está abaixo. Não
+> era formalidade: ele achou DUAS instâncias que ninguém tinha relatado.
+>
+> **Vermelho** (CSS revertido): 22 sinais × 3 viewports, cada um com a medida
+> — *centro do (i) a 31px do topo, altura de linha 20px*. Mais **três campos
+> de arquitetura a 390px**.
+>
+> **A terceira instância é o achado dentro do achado**: os campos de
+> arquitetura continuaram vermelhos DEPOIS da correção dos sinais, porque a
+> mudança não os tocava. Ou seja, **a correção do `EA-60` (11) funcionava em
+> 1440/1920 e quebrava em 390px** — e ficou assim desde então porque nasceu
+> sem gate. A raiz é a mesma num disfarce: em `flex` o nome do campo é item
+> **anônimo**, e não há seletor que o alcance para mandá-lo encolher; em
+> viewport estreito ele tomava a linha inteira e empurrava o (i) para baixo.
+> Grade alcança o que flex não alcança.
+>
+> **Verde depois das duas correções:** `V322-HELPGEO1` 1 PASS · 0 FAIL, nas
+> duas famílias, nos três viewports.
+>
+> **Três instâncias do mesmo defeito, das quais o proprietário viu UMA.** É
+> a medida do que custou não ter escrito o gate na primeira vez.
+
+Relatado pelo proprietário em **sessão real na v3.2.8**, 2026-09-22:
+*"O (i) de informação ficou fora do padrão em 'Requisitos ou preocupações
+específicas'."*
+
+### Cadeia arquivo:linha → efeito
+
+`ui_p52_workspace_v32.css:2096` declara o `<label>` de cada sinal como grade de
+**duas** colunas:
+
+```css
+#v32editor .v32-signals > label {
+  display: grid;
+  grid-template-columns: 18px minmax(0, 1fr);
+}
+```
+
+A caixa ocupa `(1,1)` por posicionamento explícito (`:2105-2109`); o texto é
+anônimo e cai em `(2,1)` por auto-posicionamento; o botão `(i)`, terceiro item,
+vai para **a próxima célula livre — `(1,2)`**. Daí ele aparecer numa linha nova,
+alinhado à coluna da caixa, em vez de ao lado do rótulo.
+
+`ui_p52_workspace_v32.css:2112` tenta o contrário e **não pode funcionar**:
+
+```css
+#v32editor .v32-signals > label > .p52-caphelp-btn { margin-left: 6px; vertical-align: -5px; }
+```
+
+`vertical-align` não tem efeito sobre item de grade. A regra **declara uma
+intenção que o layout contradiz** — e o comentário acima dela afirma
+textualmente *"o controle de ajuda acompanha o rótulo e não abre coluna nova"*.
+
+### A parte que é reincidência, e o erro é meu
+
+O `EA-60` item (11) era **este mesmo sintoma** nos campos de arquitetura, e foi
+corrigido com classe própria (`p52-fieldhelp-arch`, `:695-699`). No comentário
+daquela correção — `ui_p52_workspace_v32.js:1541-1543` — eu escrevi que os sinais
+*"têm checkbox e não podem virar grade"*.
+
+**Raciocínio nunca medido, e errado**: os sinais **já eram** grade desde
+`:2096`, com o mesmo defeito. Corrigi um irmão, declarei o outro imune por
+inspeção e segui.
+
+### Por que nenhum gate pegou
+
+- `V322-HELP3` (`tests_p52_layout.js:1281`) afirma **existência e ordem no DOM**
+  do controle `(i)`, nunca **posição** — e não poderia: jsdom não tem layout.
+- Posição só se julga no Chromium (KI-3). Conferido em `tests_p52_chromium.js`:
+  há medição de geometria de trilho, seções, cards e radar — **de nenhum
+  controle `(i)`**.
+- Logo a correção do `EA-60` (11) também nasceu **sem gate**. Foi por isso que o
+  irmão pôde quebrar em silêncio: não havia sensor nenhum nessa dimensão.
+
+> **Correção verificada só a olho não deixa sensor para o próximo caso.** O
+> EA-60 (11) foi aceito por inspeção visual; o gate que faltou ali é exatamente o
+> que teria reprovado este. Um gate novo aqui não é cerimônia — é a dívida
+> daquela correção sendo paga.
+
+Ver [[EA-60]], de quem este é reincidência direta, e [[EA-20]], por ser mais uma
+propriedade que nenhum portão media.

@@ -2249,13 +2249,26 @@ body[data-uxscreen="refinement"] #ux-progress-mobile{ display:none !important; }
      (12) O selo do bundle não pode quebrar linha: ele qualifica o item ao
      lado, e sozinho numa linha parece rótulo de outra coisa.
      ========================================================================== */
-  /* `flex-direction: row` é explícito de propósito: `.v32-arch label` declara
-     `column`, e sem reverter aqui o (i) continuava empilhado. Medido. */
+  /* EA-70 · a correção (11a) funcionava em 1440/1920 e QUEBRAVA em 390px, e
+     ninguém soube porque ela nasceu sem gate. Em flex o nome é um item
+     ANÔNIMO — não há seletor que o alcance para mandá-lo encolher —, então em
+     viewport estreito ele tomava a linha inteira e empurrava o (i) para
+     baixo: o mesmo defeito que (11a) dizia ter corrigido, medido a 60px do
+     topo com altura de linha de 21px.
+
+     Grade resolve o que flex não alcança: a coluna do nome é
+     `minmax(0, max-content)` — abraça o texto quando cabe, encolhe e quebra
+     DENTRO dela quando não cabe — e o (i) tem célula própria na mesma linha.
+     `align-self: start` o mantém na PRIMEIRA linha do nome, e não no meio
+     vertical de um nome de duas linhas. O `<select>` é quem abre linha nova,
+     que sempre foi a intenção. */
   #v32editor label.p52-fieldhelp-arch {
-    display: flex; flex-direction: row; flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: minmax(0, max-content) auto;
     align-items: center; gap: 6px 8px;
   }
-  #v32editor label.p52-fieldhelp-arch > select { flex: 1 0 100%; }
+  #v32editor label.p52-fieldhelp-arch > .p52-caphelp-btn { align-self: start; }
+  #v32editor label.p52-fieldhelp-arch > select { grid-column: 1 / -1; }
 
   #v32editor details.v32-group details.v32-siggroup[data-p52-grp="open"] {
     border-left-width: 1px; border-left-color: var(--line);
@@ -3652,9 +3665,20 @@ body[data-uxscreen="refinement"] #ux-progress-mobile{ display:none !important; }
     align-items: start;
     padding: 12px 4px 4px;
   }
+  /* EA-70 · o (i) caía numa LINHA NOVA, alinhado à coluna da caixa.
+     A grade tinha DUAS colunas: a caixa ocupa (1,1) por posicionamento
+     explícito, o texto é anônimo e cai em (2,1) por auto-posicionamento, e o
+     botão — terceiro item — ia para a próxima célula livre, que é (1,2).
+     Uma TERCEIRA coluna dá lugar a ele na mesma linha. A do meio é
+     `max-content` e não `1fr` de propósito: com `1fr` a coluna do texto
+     engoliria o espaço restante e empurraria o (i) para a borda direita do
+     cartão, longe do rótulo que ele explica; `minmax(0, max-content)` faz a
+     coluna abraçar o texto quando ele cabe e encolher (quebrando dentro dela)
+     quando não cabe. Reincidência do EA-60 (11), que era este mesmo sintoma
+     nos campos de arquitetura. */
   #v32editor .v32-signals > label {
     display: grid;
-    grid-template-columns: 18px minmax(0, 1fr);
+    grid-template-columns: 18px minmax(0, max-content) auto;
     align-items: start;
     column-gap: 10px; row-gap: 0;
     min-height: 24px;
@@ -3667,8 +3691,15 @@ body[data-uxscreen="refinement"] #ux-progress-mobile{ display:none !important; }
     /* alinha a caixa com a PRIMEIRA linha do rótulo, não com o bloco inteiro */
     align-self: start; transform: translateY(1px);
   }
-  /* o controle de ajuda acompanha o rótulo e não abre coluna nova */
-  #v32editor .v32-signals > label > .p52-caphelp-btn { margin-left: 6px; vertical-align: -5px; }
+  /* EA-70 · o controle de ajuda acompanha o rótulo e não abre LINHA nova.
+     A redação anterior dizia isto e não podia cumprir: `vertical-align` não
+     tem efeito sobre item de grade, e sem célula própria o botão era empurrado
+     para a linha seguinte. Agora a posição é DECLARADA, não torcida. */
+  #v32editor .v32-signals > label > .p52-caphelp-btn {
+    grid-column: 3; grid-row: 1;
+    align-self: start; justify-self: start;
+    transform: translateY(1px);
+  }
   #v32editor .v32-signals > label > .p52-caphelp-pop { grid-column: 1 / -1; }
   #v32editor .v32-bundles {
     display: grid;

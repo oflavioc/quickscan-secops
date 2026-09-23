@@ -143,12 +143,12 @@
     },
     "p52chromium": {
       "cmd": "node tests_p52_chromium.js",
-      "pass": 55,
+      "pass": 56,
       "fail": 0,
       "requires": [
         "chromium"
       ],
-      "_trilha": "44->55 na integração da v3.2.2: +11 gates chromium da release; medido pelo job visual do CI (run 32887668115, SUCCESS)"
+      "_trilha": "44->55 na integração da v3.2.2: +11 gates chromium da release; medido pelo job visual do CI (run 32887668115, SUCCESS). 55->56 no fix-finding do EA-70 (2026-09-22): +1 gate, V322-HELPGEO1, que mede a GEOMETRIA do controle (i) — dimensão que nenhum portão media, e por isso o EA-60 (11) pôde nascer sem sensor e quebrar em 390px sem ninguém saber. MEDIDO LOCALMENTE, com Chromium instalado: o gate isolado fecha 1 PASS · 0 FAIL depois das duas correções, e foi VISTO FALHAR antes delas (22 sinais x 3 viewports + 3 campos de arquitetura a 390px). A suíte inteira aqui devolve 51 PASS · 5 FAIL, e os CINCO têm a MESMA causa, declarada na própria mensagem do gate: poppler-utils (pdftotext/pdftoppm) ausente nesta máquina — P52-PDF4/5/6/7 e P52-TGT4 falham FECHADO em vez de pular em silêncio, que é a R10 §2 funcionando. Nenhum deles toca CSS de editor. A confirmação canônica do 56/0 é o job visual do CI deste PR."
     },
     "d011chromium": {
       "cmd": "node tests_011_chromium.js",

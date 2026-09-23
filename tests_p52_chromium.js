@@ -6323,6 +6323,86 @@ async function v322cContrast(browser, errs) {
     !detail.length, detail);
 }
 
+/* ==========================================================================
+   EA-70 · O CONTROLE `(i)` ACOMPANHA O RÓTULO — NUNCA ABRE LINHA NOVA.
+
+   Esta propriedade não existia em portão nenhum, e a ausência tem uma data:
+   o `EA-60` item (11) corrigiu EXATAMENTE este sintoma nos campos de
+   arquitetura, por inspeção visual, sem deixar sensor. Meses depois o mesmo
+   defeito apareceu nos SINAIS, e nada ficou vermelho — porque nada media.
+
+   Por que aqui e não em jsdom: `V322-HELP3` (tests_p52_layout.js) afirma
+   EXISTÊNCIA e ORDEM no DOM do `(i)` e faz isso bem; posição é layout, e
+   layout não existe em jsdom. Só o Chromium julga esta dimensão.
+
+   O oráculo é geométrico e vale para as DUAS famílias, que têm anatomia
+   diferente (sinal = caixa + texto; arquitetura = nome + `<select>` em
+   bloco): o CENTRO VERTICAL do botão tem de cair dentro da PRIMEIRA LINHA do
+   rótulo que ele explica. Quando o botão é empurrado para a linha seguinte —
+   o defeito — o centro cai a uma altura de linha inteira de distância, e a
+   separação entre os dois estados é grande demais para ser ruído.
+   ========================================================================== */
+async function v322HelpGeo(browser, errs) {
+  const detail = [], observed = {};
+  for (const vp of [{ w: 1440, h: 900 }, { w: 1920, h: 1080 }, { w: 390, h: 844 }]) {
+    const pg = await browser.newPage({ viewport: { width: vp.w, height: vp.h } });
+    pg.on("pageerror", e => errs.push("V322-HELPGEO1: " + String(e.message)));
+    try {
+      await pg.goto(HTML_URL);
+      await toResults(pg, FX52.P52_F1);
+      await pg.click("#v32cta");
+      await pg.waitForTimeout(300);
+      await pg.evaluate(() => { document.querySelectorAll("#v32editor details").forEach(d => { d.open = true; }); });
+      await pg.waitForTimeout(400);
+      const m = await pg.evaluate(() => {
+        const out = [];
+        const labs = Array.from(document.querySelectorAll("#v32editor label.p52-fieldhelp"));
+        labs.forEach(l => {
+          const btn = l.querySelector(':scope > [data-p52="cap-help"]');
+          if (!btn) return;
+          const lr = l.getBoundingClientRect(), br = btn.getBoundingClientRect();
+          if (!lr.height || !br.height) return;              /* invisível: não se mede */
+          const cs = getComputedStyle(l);
+          let lh = parseFloat(cs.lineHeight);
+          if (!isFinite(lh)) lh = parseFloat(cs.fontSize) * 1.45;
+          out.push({
+            familia: l.classList.contains("p52-fieldhelp-arch") ? "arquitetura" : "sinal",
+            rotulo: (l.textContent || "").replace(/\s+/g, " ").trim().slice(0, 34),
+            lh: Math.round(lh),
+            /* deslocamento do CENTRO do botão em relação ao topo do rótulo */
+            centro: Math.round(br.top + br.height / 2 - lr.top),
+            /* o botão vem DEPOIS de alguma coisa na horizontal, nunca na margem */
+            recuo: Math.round(br.left - lr.left)
+          });
+        });
+        return out;
+      });
+      observed[vp.w] = m;
+      if (m.length < 15) {
+        detail.push(vp.w + ": apenas " + m.length + " controles (i) medidos — sensor cego");
+        continue;
+      }
+      m.forEach(b => {
+        if (b.centro >= b.lh)
+          detail.push(vp.w + "/" + b.familia + " “" + b.rotulo + "”: o (i) caiu para fora da primeira linha " +
+            "(centro a " + b.centro + "px do topo, altura de linha " + b.lh + "px)");
+        if (b.recuo <= 0)
+          detail.push(vp.w + "/" + b.familia + " “" + b.rotulo + "”: o (i) está na margem esquerda do rótulo " +
+            "(recuo " + b.recuo + "px) — não há rótulo à esquerda dele");
+      });
+      /* as duas famílias precisam estar representadas: corrigir uma e cegar a
+         outra foi exatamente o que produziu este achado */
+      const fams = new Set(m.map(b => b.familia));
+      if (!fams.has("sinal") || !fams.has("arquitetura"))
+        detail.push(vp.w + ": famílias medidas = " + Array.from(fams).join("/") + " — falta uma das duas");
+    } finally { await pg.close(); }
+  }
+  evidence322("V322-HELPGEO1-ajuda-geometria.json", observed);
+  T("V322-HELPGEO1",
+    "o controle (i) fica na primeira linha do rótulo que explica, nas duas famílias (sinais e arquitetura), nos três viewports",
+    !detail.length, detail);
+}
+
 /* ============================== execução ============================== */
 (async () => {
   const errs = [];
@@ -6381,6 +6461,8 @@ async function v322cContrast(browser, errs) {
     if (shouldRun("V322C-PRN1")) await v322cPrint(browser, errs);
     if (shouldRun("V322C-RFL1")) await v322cReflow(browser, errs);
     if (shouldRun("V322C-CON1")) await v322cContrast(browser, errs);
+    /* EA-70 · geometria do controle (i), a dimensão que nenhum portão media */
+    if (shouldRun("V322-HELPGEO1")) await v322HelpGeo(browser, errs);
   } finally {
     await browser.close();
     try { fs.rmSync(PDF_TMP, { recursive: true, force: true }); } catch (e) { /* temporário */ }

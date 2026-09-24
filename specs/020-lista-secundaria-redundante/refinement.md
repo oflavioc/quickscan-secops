@@ -113,7 +113,7 @@ Nenhum termo novo. *Qualificador*, *visão por solução* e *arbitragem* já est
 |---|---|---|
 | 1 | (2026-09-22) remover a lista secundária? | *"Sobre o ponto 3, sim, prossiga"* — executado, **revertido** ao medir o custo real |
 | 2 | (2026-09-24) seguir com os três itens abertos | *"Vamos seguir com todas"* — abriu esta demanda |
-| 3 | **PENDENTE — o portão desta fase** | ver abaixo |
+| 3 | a redundância incomoda mais do que o custo de removê-la? | **NÃO** — *"Não remover a lista, fecha a 020 como refutada"* (2026-09-24). Demanda **refutada** no portão; ver [relatorio-final.md](relatorio-final.md) |
 
 ## A pergunta do portão
 

@@ -1,18 +1,16 @@
 {
   "demanda": "020-lista-secundaria-redundante",
-  "phase": "refinement",
+  "phase": "done",
   "spec_dir": "specs/020-lista-secundaria-redundante",
   "branch": "chore/019-erratas",
   "brief": "A lista secundaria 'Pode fazer sentido — apos validacao' virou REDUNDANTE em 2026-09-22, quando o EA-68 fez a visao por solucao derivar do motor: ela foi de 2 para 11 produtos, 9 deles com o qualificador 'apos validacao' — exatamente a populacao da lista. A consolidacao ja foi feita; o que sobra e residuo. Esta demanda decide se o residuo sai.",
   "refinement": {
-    "status": "awaiting_approval",
-    "notes": "ABERTA EM 2026-09-24 sob 'Vamos seguir com todas'. E DEMANDA e nao fix-finding por duas razoes registradas: o fecho do EA-68 declara 'a lista ficou INTACTA, e isso e decisao declarada', e a spec da 019 (Fase 1) lista 'pode fazer sentido' na coluna CURAVEL — remover contradiz desenho aprovado (R4: na duvida, e demanda). CUSTO MEDIDO, e ele ja desmentiu uma estimativa minha de 'uma hora': a tentativa de 2026-09-22 derrubou CINCO gates da 010 (D010-ARB3, INV7, CARD1, CARD2, CARD3), todos porque as fixtures D010-F3 DECLARAM o titulo congelado como presente. Nao e gate de apresentacao que se reancora: e o oraculo declarado de OUTRA demanda. Foi revertido, com D010 de volta a 13/13. Escopo real: (1) D010_DECLARED em cinco gates, (2) P52-ICON3 reancorado (Chromium, so CI), (3) a remocao em si, que e a parte pequena. O PORTAO tem UMA pergunta e ela e a demanda inteira: a redundancia incomoda mais do que o custo de remove-la? Registrada tambem a terceira via que NAO recomendo — manter a lista e mudar o qualificador dos cards —, porque trata o sintoma e a duplicacao continua.",
-    "approved_at": null
+    "status": "done",
+    "notes": "ABERTA EM 2026-09-24 sob 'Vamos seguir com todas'. E DEMANDA e nao fix-finding por duas razoes registradas: o fecho do EA-68 declara 'a lista ficou INTACTA, e isso e decisao declarada', e a spec da 019 (Fase 1) lista 'pode fazer sentido' na coluna CURAVEL — remover contradiz desenho aprovado (R4: na duvida, e demanda). CUSTO MEDIDO, e ele ja desmentiu uma estimativa minha de 'uma hora': a tentativa de 2026-09-22 derrubou CINCO gates da 010 (D010-ARB3, INV7, CARD1, CARD2, CARD3), todos porque as fixtures D010-F3 DECLARAM o titulo congelado como presente. Nao e gate de apresentacao que se reancora: e o oraculo declarado de OUTRA demanda. Foi revertido, com D010 de volta a 13/13. Escopo real: (1) D010_DECLARED em cinco gates, (2) P52-ICON3 reancorado (Chromium, so CI), (3) a remocao em si, que e a parte pequena. O PORTAO tem UMA pergunta e ela e a demanda inteira: a redundancia incomoda mais do que o custo de remove-la? Registrada tambem a terceira via que NAO recomendo — manter a lista e mudar o qualificador dos cards —, porque trata o sintoma e a duplicacao continua. || REFUTADA no portao em 2026-09-24. Resposta do proprietario no chat: \"Nao remover a lista, fecha a 020 como refutada\". Custo estrutural (oraculo declarado de OUTRA demanda, cinco gates) contra beneficio estetico (um produto visto duas vezes, sem afirmacao falsa): \"nao\" e a resposta proporcional. A redundancia vira DECISAO CONFIRMADA em design-decisions.md, para nao voltar como achado (R13). Nenhum commit de codigo nesta demanda.",
+    "approved_at": "2026-09-24"
   },
-  "fecho_pendente": {
-    "motivo": "A demanda esta MESCLADA em develop na fase `refinement` DE PROPOSITO, e a divida e a decisao que falta, nao trabalho que eu deva fazer. O portao da Fase 0 tem UMA pergunta e ela e do proprietario: a redundancia da lista secundaria incomoda mais do que o custo de remove-la (cinco gates da 010 cujas fixtures DECLARAM o titulo congelado presente, mais o P52-ICON3)? Mesclei o refinamento em vez de segura-lo numa branch porque registro que vive so em branch e registro que ninguem le — o custo medido e o enquadramento precisam estar na develop para sustentar a decisao. Enquanto ela nao vem, a demanda nao avanca para `specify`, e nenhuma linha de produto muda. Se a resposta for `nao remover`, a demanda fecha como refutada e este refinamento permanece como o registro de por que nao se mexeu.",
-    "dono": "proprietario (Flavio Costa) — portao da Fase 0",
-    "prazo": "2026-12-31",
-    "declarado_em": "2026-09-24"
+  "tdd_waiver": {
+    "motivo": "Demanda REFUTADA no portao da Fase 0: nao houve gate a escrever porque nao houve comportamento a implementar. A R3 exige red provado para tarefa tipo `feature`/`fix`; aqui nao existe tarefa — a demanda nunca chegou a `tasks`. Waiver e o registro honesto disso, e o compliance-audit o LISTA a cada execucao, que e a funcao dele: rastro, nao obstaculo. Nenhum commit de codigo nesta demanda; o produto esta byte-identico.",
+    "data": "2026-09-24"
   }
 }

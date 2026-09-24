@@ -1,0 +1,16 @@
+{
+  "demanda": "021-cobertura-do-apoio",
+  "phase": "specify",
+  "spec_dir": "specs/021-cobertura-do-apoio",
+  "branch": "feature/021-cobertura-do-apoio",
+  "brief": "11 dos 15 gaps chegam ao relatorio do cliente SEM caminho de apoio, nas duas configuracoes de contexto (medido 2026-09-24). E o EA-56 na forma que assumiu depois da emenda de 2026-09-15. A descoberta que muda o custo: a Camada 1 congelada JA declara produto e justificativa para os quinze qids em MAP[qid].lv[nivel].c — inclusive a trilha de capacitacao que o EA-56 dizia nao ter onde morar. Nada precisa ser inventado; o produto simplesmente nao le.",
+  "refinement": {
+    "status": "approved",
+    "notes": "ABERTA EM 2026-09-24, item 1 da particao do EA-58 (proprietario no chat: 'Vamos fazer o lote do EA-58' e depois 'Sim, comeca pelo 1'). A PARTICAO FOI PROPOSTA POR MIM E ACEITA: o 'lote' do EA-58 nao e homogeneo — mistura vocabulario (rotulos SIEM/NDR), cobertura (este item), catalogo (FortiNAC, que NAO EXISTE em camada nenhuma) e SCORES (que muda a NOTA e ainda e 'candidata' em design-decisions, nem achado e). Juntar tudo numa auditoria humana so e como um rito de governanca vira carimbo. NAO E PORTA B: o MAP e LIDO, nunca escrito. Custa autorizacao nominal §29.4 (ui_v32.js) + emenda da §UAT-07 (QIDS_AUTORIZADOS em tests_p50_core.js:3556). TRES DESENHOS, DOIS DESCARTADOS POR MEDICAO: (A) escrever 11 entradas a mao — exige conteudo editorial inventado e tabela a mao apodrece (doenca que o EA-68 pagou); (B) derivar tudo do MAP e aposentar a tabela — ESTREITARIA os quatro que hoje funcionam (detection-lifecycle cairia de 4 produtos para 1), regressao disfarcada de melhoria; (C) RECOMENDADA — a tabela vira excecao curada e o MAP e o padrao: cobertura 4 -> 15 com ZERO regressao e ZERO invencao. O portao tem uma pergunta: confirma o C, e com ele a emenda da §UAT-07? || PORTAO FECHADO em 2026-09-24. Proprietario no chat: \"Confirmo o C, com a emenda da §UAT-07\". Desenho C aprovado (tabela = excecao curada, MAP = padrao) E a emenda da ancora normativa aprovada no mesmo ato — sem ela o P51-REC1 barraria o C, corretamente.",
+    "approved_at": "2026-09-24"
+  },
+  "specify": {
+    "status": "in_progress",
+    "notes": "Fase 1 iniciada em 2026-09-24, logo apos o portao da Fase 0."
+  }
+}

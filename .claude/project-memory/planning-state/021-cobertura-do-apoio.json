@@ -1,6 +1,6 @@
 {
   "demanda": "021-cobertura-do-apoio",
-  "phase": "specify",
+  "phase": "plan",
   "spec_dir": "specs/021-cobertura-do-apoio",
   "branch": "feature/021-cobertura-do-apoio",
   "brief": "11 dos 15 gaps chegam ao relatorio do cliente SEM caminho de apoio, nas duas configuracoes de contexto (medido 2026-09-24). E o EA-56 na forma que assumiu depois da emenda de 2026-09-15. A descoberta que muda o custo: a Camada 1 congelada JA declara produto e justificativa para os quinze qids em MAP[qid].lv[nivel].c — inclusive a trilha de capacitacao que o EA-56 dizia nao ter onde morar. Nada precisa ser inventado; o produto simplesmente nao le.",
@@ -10,7 +10,12 @@
     "approved_at": "2026-09-24"
   },
   "specify": {
-    "status": "in_progress",
-    "notes": "Fase 1 iniciada em 2026-09-24, logo apos o portao da Fase 0."
+    "status": "approved",
+    "approved_at": "2026-09-24",
+    "notes": "Spec aprovada pelo proprietario no chat, 2026-09-24: \"Aprovada, segue para o plano\". Nove criterios com gate e mutante. O C1 (zero regressao nos quatro curados) e o mais duro de proposito: e a alinea que separa o desenho C do B. O C6 nasceu na escrita da spec e nao estava no portao — com DUAS origens de bloco, o aviso fixo do EA-48 passa a MENTIR para metade deles, porque o bloco derivado E a ancoragem canonica e nao diverge dela."
+  },
+  "plan": {
+    "status": "awaiting_approval",
+    "notes": "Fase 2 escrita em 2026-09-24. UMA FUNCAO, UM IF: a mudanca troca o `if (!m) return \"\"` de qsGapSupportHTML() (ui_v32.js:1127) por uma segunda fonte. Nenhum modulo novo, nenhum estado novo, nenhum bridge novo — a demanda nao cria dado, le dois que ja existem. EM ui_v32.js E NAO NA CAMADA 5.x porque e la que buildPrintReport() monta o RELATORIO, e o EA-56 mediu que o problema e pior no PAPEL: o ponteiro do EA-55 vive na 5.2 e nao alcanca o PDF. Resolver na 5.2 repetiria o mesmo erro com outro nome. Boundary: produto + generated; §29.4 (autorizacao nominal + repin inline), NUNCA frozen — se a implementacao precisar ESCREVER no MAP, ela saiu do desenho e PARA (R6 §5). W3 e W4 nao sao paralelas de proposito: a emenda da §UAT-07 so pode ser medida contra a cobertura nova, e faze-la antes deixaria o P51-REC1 verde por VACUIDADE, autorizando qids que ainda nao recebem apoio. Protipo dispensado: a pergunta que so codigo responderia ja foi respondida por sonda na Fase 0."
   }
 }

@@ -4,8 +4,17 @@
     "demanda": "016-registro-contra-execucao",
     "owner": "qa-engineer",
     "o_que_e_autoral_e_o_que_e_medido": {
-      "autoral": ["piso", "excluidas_por_r13", "populacao", "sonda.casos (o esperado de cada caso)"],
-      "medido_por_execucao": ["_meta.prova_de_carga (wave 5, T061 — pela campanha d016)", "_meta.prova_de_carga_leitura_fase4 (Fase 4 — por git/disco, oráculo independente do gate)", "piso.merges_ate_piso (Fase 6, 2026-09-04 — censo IMUTÁVEL de merges first-parent até o piso, inclusive: `git rev-list --count --merges --first-parent 921977c…` = 39 = fecho.py:ler_merges; asserido pelo gate a cada execução — `_meta.censo_de_leitura`)"],
+      "autoral": [
+        "piso",
+        "excluidas_por_r13",
+        "populacao",
+        "sonda.casos (o esperado de cada caso)"
+      ],
+      "medido_por_execucao": [
+        "_meta.prova_de_carga (wave 5, T061 — pela campanha d016)",
+        "_meta.prova_de_carga_leitura_fase4 (Fase 4 — por git/disco, oráculo independente do gate)",
+        "piso.merges_ate_piso (Fase 6, 2026-09-04 — censo IMUTÁVEL de merges first-parent até o piso, inclusive: `git rev-list --count --merges --first-parent 921977c…` = 39 = fecho.py:ler_merges; asserido pelo gate a cada execução — `_meta.censo_de_leitura`)"
+      ],
       "regra": "Número medido NUNCA é rebaixado para caber no verde (R10 §1). Lido ≠ medido é achado, não ajuste."
     },
     "prova_de_carga": {
@@ -36,10 +45,22 @@
       },
       "por_que_nao_so_o_veredito": "F7/F8/F9/F10/F13/F15/F17/F23 e P3/P7/P8/P10 são FAIL que o vocabulário T10 de vereditos não distingue entre si nem do caso vizinho; pinar só o veredito deixaria vivo um julgador que reprova pela razão errada (sobrevivente disfarçado, spec 014). O total `problemas` é o par de controle: um julgador que acuse sujeito a mais (o piso, uma integração de main) diverge mesmo com o sujeito certo.",
       "codigos": [
-        "fecho_pendente-invalida", "fecho_pendente-vencida", "fecho_pendente-obsoleta", "fecho_pendente-prematura",
-        "demanda-fora-da-maquina", "merge-fora-de-pr", "artefato-ausente", "exclusao-obsoleta", "exclusao-malformada",
-        "registro-sem-branch", "piso-invalido", "origin-develop-ausente",
-        "fase-nao-done", "fora-da-populacao", "base-nao-develop", "evento-sem-base",
+        "fecho_pendente-invalida",
+        "fecho_pendente-vencida",
+        "fecho_pendente-obsoleta",
+        "fecho_pendente-prematura",
+        "demanda-fora-da-maquina",
+        "merge-fora-de-pr",
+        "artefato-ausente",
+        "exclusao-obsoleta",
+        "exclusao-malformada",
+        "registro-sem-branch",
+        "piso-invalido",
+        "origin-develop-ausente",
+        "fase-nao-done",
+        "fora-da-populacao",
+        "base-nao-develop",
+        "evento-sem-base",
         "historico-raso"
       ],
       "codigo_17_historico_raso": "(E016-8, fix-finding EA-39, 2026-09-05 — decisão de forma do product-owner em .claude/BACKLOG.md §EA-39) global IMPEDITIVO, o terceiro: emitido SÓ quando o leitor afirma origin_develop.cadeia_integra false — o clone é raso (git rev-parse --is-shallow-repository = true) e a cadeia first-parent de refs/remotes/origin/develop termina em commit cujo objeto tem pais que o clone não tem (git cat-file -p <fim da cadeia>). Nenhuma posição relativa ao piso é julgável: todo sujeito-demanda sai NÃO DETERMINÁVEL com este código, esteja o piso na cadeia (F25) ou fora dela (F26). Precedência forma → origin/develop ausente → historico-raso → piso fora da cadeia. Detalhe obrigatório (T10): o SHA em que a cadeia termina, a posição do piso ou 'fora do trecho lido', e o remédio git fetch --unshallow origin — git fetch origin develop NÃO repara (prova-de-carga.md §11.3 e §12.1, E.1). Truncamento por graft/refs/replace ou fora da cadeia first-parent não ganha código (R12): cai na guarda de censo, que existe para o que não tem nome",
@@ -81,16 +102,29 @@
   },
   "excluidas_por_r13": {
     "003-marcador-duplicado": {
-      "artefatos_ausentes": ["relatorio-final.md", "spec-validate.md"],
+      "artefatos_ausentes": [
+        "relatorio-final.md",
+        "spec-validate.md"
+      ],
       "fonte": "fechada sob a Onda 2 (PR #13, 486f3ff, 2026-08-25), antes de existir Fase 6 com spec-validate; R13 'fases seladas sob o processo antigo'; P4 do portão da Fase 0 da 016"
     },
     "009-leitura-do-relatorio": {
-      "artefatos_ausentes": ["spec-validate.md"],
+      "artefatos_ausentes": [
+        "spec-validate.md"
+      ],
       "fonte": "fecho retroativo 2026-09-04 (PR #37, chore/fecho-009-013) com conformance só no JSON; P4 do portão da Fase 0 da 016 — escrita retroativa opcional, fora da demanda; se acontecer, esta entrada sai no mesmo commit (C3 b)"
     },
     "010-recomendacao-sem-vao": {
-      "artefatos_ausentes": ["spec-validate.md"],
+      "artefatos_ausentes": [
+        "spec-validate.md"
+      ],
       "fonte": "idem 009 (PR #37); P4 do portão da Fase 0 da 016"
+    },
+    "020-lista-secundaria-redundante": {
+      "artefatos_ausentes": [
+        "spec-validate.md"
+      ],
+      "fonte": "REFUTADA no portao da Fase 0 em 2026-09-24 (proprietario no chat: \"Nao remover a lista, fecha a 020 como refutada\"). Nao ha spec-validate.md porque NAO HOUVE SPEC a validar: a demanda parou na Fase 0 e nunca avancou para `specify`. O relatorio-final.md existe e carrega o veredito, a pergunta, o custo medido (cinco gates da 010 cujas fixtures D010-F3 DECLARAM o titulo congelado presente) e a razao de \"nao\" ser a resposta proporcional. Excluir spec-validate aqui nao dispensa validacao nenhuma — valida-se spec, e nao houve."
     }
   },
   "populacao": {
@@ -107,43 +141,280 @@
     "fixtures": ".claude/verify/fixtures_016/fecho/",
     "total": 37,
     "casos": [
-      { "id": "F1",  "modo": "pos", "esperado": "MESCLADA SEM FECHO",        "oraculo": "mensagem",       "codigo": null,                        "problemas": 1 },
-      { "id": "F2",  "modo": "pos", "esperado": "MESCLADA SEM FECHO",        "oraculo": "ancestralidade", "codigo": null,                        "problemas": 1 },
-      { "id": "F3",  "modo": "pos", "esperado": "EM VOO",                    "oraculo": null,             "codigo": null,                        "problemas": 0 },
-      { "id": "F4",  "modo": "pos", "esperado": "ANTERIOR AO PISO",          "oraculo": "mensagem",       "codigo": null,                        "problemas": 0 },
-      { "id": "F5",  "modo": "pos", "esperado": "CONFORME",                  "oraculo": "mensagem",       "codigo": null,                        "problemas": 0 },
-      { "id": "F6",  "modo": "pos", "esperado": "FECHO PENDENTE DECLARADO",  "oraculo": "mensagem",       "codigo": null,                        "problemas": 0 },
-      { "id": "F7",  "modo": "pos", "esperado": "MESCLADA SEM FECHO",        "oraculo": "mensagem",       "codigo": "fecho_pendente-vencida",    "problemas": 1 },
-      { "id": "F8",  "modo": "pos", "esperado": "MESCLADA SEM FECHO",        "oraculo": "mensagem",       "codigo": "fecho_pendente-invalida",   "problemas": 1 },
-      { "id": "F9",  "modo": "pos", "esperado": "CONFORME",                  "oraculo": "mensagem",       "codigo": "fecho_pendente-obsoleta",   "problemas": 1 },
-      { "id": "F10", "modo": "pos", "esperado": "EM VOO",                    "oraculo": null,             "codigo": "fecho_pendente-prematura",  "problemas": 1 },
-      { "id": "F11", "modo": "pos", "esperado": "MESCLADA SEM FECHO",        "oraculo": "mensagem",       "codigo": "demanda-fora-da-maquina",   "problemas": 1 },
-      { "id": "F12", "modo": "pos", "esperado": "FORA DA POPULAÇÃO",         "oraculo": "mensagem",       "codigo": null,                        "problemas": 0 },
-      { "id": "F13", "modo": "pos", "esperado": "FORA DA POPULAÇÃO",         "oraculo": null,             "codigo": "merge-fora-de-pr",          "problemas": 1 },
-      { "id": "F14", "modo": "pos", "esperado": "FORA DA POPULAÇÃO",         "oraculo": null,             "codigo": null,                        "problemas": 0 },
-      { "id": "F15", "modo": "pos", "esperado": "MESCLADA SEM FECHO",        "oraculo": "mensagem",       "codigo": "artefato-ausente",          "problemas": 1 },
-      { "id": "F16", "modo": "pos", "esperado": "CONFORME",                  "oraculo": "mensagem",       "codigo": null,                        "problemas": 0 },
-      { "id": "F17", "modo": "pos", "esperado": "CONFORME",                  "oraculo": "mensagem",       "codigo": "exclusao-obsoleta",         "problemas": 1 },
-      { "id": "F18", "modo": "pos", "esperado": "NÃO DETERMINÁVEL",          "oraculo": null,             "codigo": "registro-sem-branch",       "problemas": 1 },
-      { "id": "F19", "modo": "pos", "esperado": "MESCLADA SEM FECHO",        "oraculo": "mensagem",       "codigo": null,                        "problemas": 1 },
-      { "id": "F20", "modo": "pos", "esperado": "NÃO DETERMINÁVEL",          "oraculo": null,             "codigo": "piso-invalido",             "problemas": 1 },
-      { "id": "F21", "modo": "pos", "esperado": "NÃO DETERMINÁVEL",          "oraculo": null,             "codigo": "piso-invalido",             "problemas": 1 },
-      { "id": "F22", "modo": "pos", "esperado": "NÃO DETERMINÁVEL",          "oraculo": null,             "codigo": "origin-develop-ausente",    "problemas": 1 },
-      { "id": "F23", "modo": "pos", "esperado": "MESCLADA SEM FECHO",        "oraculo": "mensagem",       "codigo": "artefato-ausente",          "problemas": 2 },
-      { "id": "F24", "modo": "pos", "esperado": "MESCLADA SEM FECHO",        "oraculo": "mensagem",       "codigo": "fecho_pendente-invalida",   "problemas": 1 },
-      { "id": "F25", "modo": "pos", "esperado": "NÃO DETERMINÁVEL",          "oraculo": null,             "codigo": "historico-raso",            "problemas": 1 },
-      { "id": "F26", "modo": "pos", "esperado": "NÃO DETERMINÁVEL",          "oraculo": null,             "codigo": "historico-raso",            "problemas": 1 },
-      { "id": "P1",  "modo": "pre", "esperado": "LIBERADO",                  "codigo": null },
-      { "id": "P2",  "modo": "pre", "esperado": "FECHO PENDENTE",            "codigo": "fase-nao-done" },
-      { "id": "P3",  "modo": "pre", "esperado": "FECHO PENDENTE",            "codigo": "demanda-fora-da-maquina" },
-      { "id": "P4",  "modo": "pre", "esperado": "NÃO JULGADO",               "codigo": "fora-da-populacao" },
-      { "id": "P5",  "modo": "pre", "esperado": "NÃO JULGADO",               "codigo": "base-nao-develop" },
-      { "id": "P6",  "modo": "pre", "esperado": "NÃO JULGADO",               "codigo": "evento-sem-base" },
-      { "id": "P7",  "modo": "pre", "esperado": "FECHO PENDENTE",            "codigo": "fecho_pendente-obsoleta" },
-      { "id": "P8",  "modo": "pre", "esperado": "FECHO PENDENTE",            "codigo": "artefato-ausente" },
-      { "id": "P9",  "modo": "pre", "esperado": "LIBERADO",                  "codigo": null },
-      { "id": "P10", "modo": "pre", "esperado": "FECHO PENDENTE",            "codigo": "fecho_pendente-prematura" },
-      { "id": "P11", "modo": "pre", "esperado": "FECHO PENDENTE",            "codigo": "fase-nao-done" }
+      {
+        "id": "F1",
+        "modo": "pos",
+        "esperado": "MESCLADA SEM FECHO",
+        "oraculo": "mensagem",
+        "codigo": null,
+        "problemas": 1
+      },
+      {
+        "id": "F2",
+        "modo": "pos",
+        "esperado": "MESCLADA SEM FECHO",
+        "oraculo": "ancestralidade",
+        "codigo": null,
+        "problemas": 1
+      },
+      {
+        "id": "F3",
+        "modo": "pos",
+        "esperado": "EM VOO",
+        "oraculo": null,
+        "codigo": null,
+        "problemas": 0
+      },
+      {
+        "id": "F4",
+        "modo": "pos",
+        "esperado": "ANTERIOR AO PISO",
+        "oraculo": "mensagem",
+        "codigo": null,
+        "problemas": 0
+      },
+      {
+        "id": "F5",
+        "modo": "pos",
+        "esperado": "CONFORME",
+        "oraculo": "mensagem",
+        "codigo": null,
+        "problemas": 0
+      },
+      {
+        "id": "F6",
+        "modo": "pos",
+        "esperado": "FECHO PENDENTE DECLARADO",
+        "oraculo": "mensagem",
+        "codigo": null,
+        "problemas": 0
+      },
+      {
+        "id": "F7",
+        "modo": "pos",
+        "esperado": "MESCLADA SEM FECHO",
+        "oraculo": "mensagem",
+        "codigo": "fecho_pendente-vencida",
+        "problemas": 1
+      },
+      {
+        "id": "F8",
+        "modo": "pos",
+        "esperado": "MESCLADA SEM FECHO",
+        "oraculo": "mensagem",
+        "codigo": "fecho_pendente-invalida",
+        "problemas": 1
+      },
+      {
+        "id": "F9",
+        "modo": "pos",
+        "esperado": "CONFORME",
+        "oraculo": "mensagem",
+        "codigo": "fecho_pendente-obsoleta",
+        "problemas": 1
+      },
+      {
+        "id": "F10",
+        "modo": "pos",
+        "esperado": "EM VOO",
+        "oraculo": null,
+        "codigo": "fecho_pendente-prematura",
+        "problemas": 1
+      },
+      {
+        "id": "F11",
+        "modo": "pos",
+        "esperado": "MESCLADA SEM FECHO",
+        "oraculo": "mensagem",
+        "codigo": "demanda-fora-da-maquina",
+        "problemas": 1
+      },
+      {
+        "id": "F12",
+        "modo": "pos",
+        "esperado": "FORA DA POPULAÇÃO",
+        "oraculo": "mensagem",
+        "codigo": null,
+        "problemas": 0
+      },
+      {
+        "id": "F13",
+        "modo": "pos",
+        "esperado": "FORA DA POPULAÇÃO",
+        "oraculo": null,
+        "codigo": "merge-fora-de-pr",
+        "problemas": 1
+      },
+      {
+        "id": "F14",
+        "modo": "pos",
+        "esperado": "FORA DA POPULAÇÃO",
+        "oraculo": null,
+        "codigo": null,
+        "problemas": 0
+      },
+      {
+        "id": "F15",
+        "modo": "pos",
+        "esperado": "MESCLADA SEM FECHO",
+        "oraculo": "mensagem",
+        "codigo": "artefato-ausente",
+        "problemas": 1
+      },
+      {
+        "id": "F16",
+        "modo": "pos",
+        "esperado": "CONFORME",
+        "oraculo": "mensagem",
+        "codigo": null,
+        "problemas": 0
+      },
+      {
+        "id": "F17",
+        "modo": "pos",
+        "esperado": "CONFORME",
+        "oraculo": "mensagem",
+        "codigo": "exclusao-obsoleta",
+        "problemas": 1
+      },
+      {
+        "id": "F18",
+        "modo": "pos",
+        "esperado": "NÃO DETERMINÁVEL",
+        "oraculo": null,
+        "codigo": "registro-sem-branch",
+        "problemas": 1
+      },
+      {
+        "id": "F19",
+        "modo": "pos",
+        "esperado": "MESCLADA SEM FECHO",
+        "oraculo": "mensagem",
+        "codigo": null,
+        "problemas": 1
+      },
+      {
+        "id": "F20",
+        "modo": "pos",
+        "esperado": "NÃO DETERMINÁVEL",
+        "oraculo": null,
+        "codigo": "piso-invalido",
+        "problemas": 1
+      },
+      {
+        "id": "F21",
+        "modo": "pos",
+        "esperado": "NÃO DETERMINÁVEL",
+        "oraculo": null,
+        "codigo": "piso-invalido",
+        "problemas": 1
+      },
+      {
+        "id": "F22",
+        "modo": "pos",
+        "esperado": "NÃO DETERMINÁVEL",
+        "oraculo": null,
+        "codigo": "origin-develop-ausente",
+        "problemas": 1
+      },
+      {
+        "id": "F23",
+        "modo": "pos",
+        "esperado": "MESCLADA SEM FECHO",
+        "oraculo": "mensagem",
+        "codigo": "artefato-ausente",
+        "problemas": 2
+      },
+      {
+        "id": "F24",
+        "modo": "pos",
+        "esperado": "MESCLADA SEM FECHO",
+        "oraculo": "mensagem",
+        "codigo": "fecho_pendente-invalida",
+        "problemas": 1
+      },
+      {
+        "id": "F25",
+        "modo": "pos",
+        "esperado": "NÃO DETERMINÁVEL",
+        "oraculo": null,
+        "codigo": "historico-raso",
+        "problemas": 1
+      },
+      {
+        "id": "F26",
+        "modo": "pos",
+        "esperado": "NÃO DETERMINÁVEL",
+        "oraculo": null,
+        "codigo": "historico-raso",
+        "problemas": 1
+      },
+      {
+        "id": "P1",
+        "modo": "pre",
+        "esperado": "LIBERADO",
+        "codigo": null
+      },
+      {
+        "id": "P2",
+        "modo": "pre",
+        "esperado": "FECHO PENDENTE",
+        "codigo": "fase-nao-done"
+      },
+      {
+        "id": "P3",
+        "modo": "pre",
+        "esperado": "FECHO PENDENTE",
+        "codigo": "demanda-fora-da-maquina"
+      },
+      {
+        "id": "P4",
+        "modo": "pre",
+        "esperado": "NÃO JULGADO",
+        "codigo": "fora-da-populacao"
+      },
+      {
+        "id": "P5",
+        "modo": "pre",
+        "esperado": "NÃO JULGADO",
+        "codigo": "base-nao-develop"
+      },
+      {
+        "id": "P6",
+        "modo": "pre",
+        "esperado": "NÃO JULGADO",
+        "codigo": "evento-sem-base"
+      },
+      {
+        "id": "P7",
+        "modo": "pre",
+        "esperado": "FECHO PENDENTE",
+        "codigo": "fecho_pendente-obsoleta"
+      },
+      {
+        "id": "P8",
+        "modo": "pre",
+        "esperado": "FECHO PENDENTE",
+        "codigo": "artefato-ausente"
+      },
+      {
+        "id": "P9",
+        "modo": "pre",
+        "esperado": "LIBERADO",
+        "codigo": null
+      },
+      {
+        "id": "P10",
+        "modo": "pre",
+        "esperado": "FECHO PENDENTE",
+        "codigo": "fecho_pendente-prematura"
+      },
+      {
+        "id": "P11",
+        "modo": "pre",
+        "esperado": "FECHO PENDENTE",
+        "codigo": "fase-nao-done"
+      }
     ]
   }
 }

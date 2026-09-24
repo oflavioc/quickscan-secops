@@ -383,13 +383,22 @@ const MUTANTS = [
                 { tipo: "merge", oraculo_detalhe: "#9",  veredito: "MESCLADA SEM FECHO", codigo: "demanda-fora-da-maquina", detalhe_contem: ["feature/000-"] }] } },
 
   { id: "D016-M20", gate: "D016-FEC3", modo: ARVORE,
-    desc: "árvore: as três exclusões R13 retiradas — a prova de carga das exclusões: 003 (2 artefatos), 009 (1), 010 (1)",
+    /* 2026-09-24 · a população das exclusões passou de TRÊS para QUATRO: a demanda
+       020-lista-secundaria-redundante foi REFUTADA no portão da Fase 0 e fechou sem
+       `spec-validate.md`, porque não houve SPEC a validar. Este mutante retira as
+       exclusões e exige que o gate acuse CADA demanda que depende delas — logo o
+       sujeito novo ENTRA, e a asserção fica mais forte, não mais fraca: são quatro
+       cargas provadas em vez de três. Contrapartida conferida: com o mutante, 4
+       acusações; sem ele, 0. Não é afrouxamento de expectativa (R10 §1) — é a mesma
+       propriedade medida sobre a população de hoje. */
+    desc: "árvore: as quatro exclusões R13 retiradas — a prova de carga das exclusões: 003 (2 artefatos), 009 (1), 010 (1), 020 (1)",
     edicoes: [{ file: F.reg, find: EXCL_LINHA, repl: '  "excluidas_por_r13_retiradas_D016_M20": {' }],
-    espera: { problemas: 3, globais: [],
+    espera: { problemas: 4, globais: [],
               sujeitos: [
                 { id: "003-marcador-duplicado",   veredito: "MESCLADA SEM FECHO", codigo: "artefato-ausente", oraculo: "mensagem", oraculo_detalhe: "#13", detalhe_contem: ["done sem relatorio-final.md, spec-validate.md"] },
                 { id: "009-leitura-do-relatorio", veredito: "MESCLADA SEM FECHO", codigo: "artefato-ausente", oraculo: "mensagem", oraculo_detalhe: "#24", detalhe_contem: ["done sem spec-validate.md"] },
-                { id: "010-recomendacao-sem-vao", veredito: "MESCLADA SEM FECHO", codigo: "artefato-ausente", oraculo: "mensagem", oraculo_detalhe: "#31", detalhe_contem: ["done sem spec-validate.md"] }] } },
+                { id: "010-recomendacao-sem-vao", veredito: "MESCLADA SEM FECHO", codigo: "artefato-ausente", oraculo: "mensagem", oraculo_detalhe: "#31", detalhe_contem: ["done sem spec-validate.md"] },
+                { id: "020-lista-secundaria-redundante", veredito: "MESCLADA SEM FECHO", codigo: "artefato-ausente", oraculo: "mensagem", detalhe_contem: ["done sem spec-validate.md"] }] } },
 
   { id: "D016-M21", gate: "D016-FEC4", modo: ARVORE,
     desc: "árvore: válvula VÁLIDA escrita na 016 (em voo) — válvula antes do vencimento (T5, C4 d); ver ciclo de vida no cabeçalho",

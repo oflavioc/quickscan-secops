@@ -6346,6 +6346,43 @@ correção de conteúdo, e a rota que resolve de verdade custa uma auditoria
 humana. **Decisão do proprietário no chat, 2026-09-22: anotar como achado e não
 agir** — *"Concordo, anota o 2 como achado"*.
 
+### MEDIÇÃO DE 2026-09-24 — o custo é MAIOR do que eu havia declarado
+
+Em 2026-09-24 o proprietário disse *"Vamos seguir com todas"*. Antes de escrever
+a spec da Porta B, medi o que eu **não** tinha medido: se o rótulo entra no
+payload funcional do M41.
+
+**Entra.** Sonda executada sobre cópia do HTML construído, em scratchpad, sem
+tocar arquivo protegido:
+
+```
+node harness_m41_v313.js <cópia com os dois acrônimos>      --compare v3_1_3_functional_snapshot.json
+→ exit 1 · 9 campos divergentes em 4 dos 9 cenários
+  (S2_critico_total · S3_misto_com_prioridades · S5_na_pesado · S6_moderado_total)
+  TODOS em `$.scenarios[*].tiers.t2[*].reasons[*]`
+```
+
+`MAP[qid].cap` é o texto do **"Por que apareceu"**, e o "Por que apareceu" é
+payload funcional — INV-7, narrativa determinística derivada de evidência.
+
+**O que isso muda, e muda muito.** Eu havia dito que a correção custava *"spec +
+auditoria independente humana"*. Está incompleto: ela custa **também repinar
+`declared.m41_payload_sha256`**, que é a própria régua D2 — o número que decide,
+em toda mudança futura do engine, se ela é Porta A ou Porta B. A R8 §3 é
+explícita: mudar pin declarativo *"é ato de governança, nunca efeito colateral"*.
+
+Não é impossível nem proibido. É que deixa de ser uma correção de legibilidade e
+passa a ser **mexer no instrumento que mede todas as outras mudanças** — para
+acrescentar dois parênteses a dois rótulos.
+
+**Recomendação revista, e mais firme que a anterior:** não agir. O benefício é
+legibilidade; o custo é reescrever a régua. Se um dia a Camada 1 for reaberta por
+outro motivo — aí sim, estes dois rótulos entram de carona, com o repin já
+justificado por aquele motivo maior.
+
+**Aguarda decisão do proprietário com este número na mesa.** A autorização de
+2026-09-24 foi dada sem ele.
+
 Ver [[EA-47]], que é a mesma família pelo lado do glossário: rótulo que envelhece
 em silêncio porque ninguém compara contra o padrão dos irmãos.
 

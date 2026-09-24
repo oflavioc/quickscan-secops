@@ -5670,6 +5670,28 @@ A decisão é do proprietário. Ver [[EA-56]], que é a instância mais cara des
 achado, e a linha de `design-decisions.md` sobre `SCORES = [0, 1.7, 3.3, 5]`,
 que é a mais estrutural.
 
+### Instância medida em 2026-09-24 — e ela reforça a saída 1
+
+O `EA-69` nasceu como achado próprio em 2026-09-22, de apontamento do
+proprietário em sessão real, e **é este achado outra vez**. A sonda dele mede
+com mais precisão o que este registro já afirmava:
+
+```
+cópia do HTML com (SIEM) e (NDR) nos dois rótulos, harness --compare
+→ 9 campos divergentes em 4 dos 9 cenários
+  TODOS em $.scenarios[*].tiers.t2[*].reasons[*]
+```
+
+Dois parênteses em dois rótulos movem o payload em quatro cenários, e portanto
+exigem repinar `declared.m41_payload_sha256` — a régua que decide Porta A ×
+Porta B para **todas** as mudanças futuras do engine.
+
+**O que a instância acrescenta ao encaminhamento:** nada de novo, e é esse o
+ponto. A **saída 1** — uma Porta B levando o lote inteiro — já era a resposta em
+2026-09-15, e cada pedido novo do proprietário que cai aqui só aumenta o
+denominador do mesmo custo fixo. A fila hoje: `EA-56`, os seis pedidos de
+conteúdo, `SCORES`, e agora `(SIEM)`/`(NDR)` do `EA-69`.
+
 ## EA-61 — a redação do selo do bundle está pinada por gate em suíte protegida
 
 **Status**: `aberto`
@@ -6282,7 +6304,38 @@ outro ângulo, e a correção deste achado muda aquele número.
 
 ## EA-69 — dois rótulos técnicos do MAP não trazem o acrônimo que os outros trazem
 
-**Status**: `aberto`
+**Status**: `aberto` · **instância do [[EA-58]]**, não achado independente
+
+> **CORREÇÃO DE REGISTRO, 2026-09-24 — este achado JÁ EXISTIA.**
+>
+> O `EA-58`, aberto em **2026-09-15 a pedido explícito do proprietário**, nomeia
+> estes dois casos **pelo nome**: *"acrescentar `(NDR)` a um rótulo, para ficar
+> coerente com o `(EDR)` que o vizinho já tem, muda o SHA do payload"* e
+> *"`SIEM` no rótulo de logs"* entre os seis pedidos represados. E já trazia a
+> medição por execução, com os três rótulos extraídos do payload.
+>
+> Abri o `EA-69` em 2026-09-22 sem ver isso, e em 2026-09-24 gastei um ciclo de
+> medição **remedindo o que o `EA-58` já tinha medido**. A sonda confirmou o
+> número com mais precisão — 9 campos em 4 dos 9 cenários, todos em `reasons` —,
+> mas a conclusão era conhecida desde o dia 15.
+>
+> **Por que escapou:** ao investigar o apontamento da sessão real fui do sintoma
+> para o código (`MAP` → Camada 1 → rito), sem varrer o backlog por achado
+> anterior no mesmo arquivo. `EA-58` e `EA-69` tocam a MESMA linha do MESMO
+> arquivo; um grep de `MAP[qid].cap` no `BACKLOG.md` teria bastado.
+>
+> **O id permanece** (R12: ids nunca renumeram, achado não se apaga). O que muda
+> é o estatuto: deixa de ser pergunta própria e passa a ser **mais uma instância
+> da fila que o `EA-58` já descreve**.
+>
+> **E a recomendação muda junto.** Eu havia escrito *"não agir"*. A saída 1 do
+> `EA-58` é melhor e já estava escrita: **não agir SOZINHO — entrar no lote**.
+> Se toda mudança de conteúdo cai em Porta B, que seja **uma** Porta B levando
+> o lote inteiro (`EA-56` + os seis pedidos + `SCORES` + estes dois rótulos),
+> porque *"a auditoria independente humana é o custo dominante e não dobra por
+> levar mais conteúdo"*.
+>
+> A decisão continua do proprietário, e agora é **uma só** em vez de duas.
 
 Relatado pelo proprietário em **sessão real na v3.2.8**, 2026-09-22:
 *"Centralização de logs não mostra SIEM (SIEM) e Visibilidade de rede não

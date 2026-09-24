@@ -53,11 +53,10 @@ primeira redação do gate só conferia que o relatório não estava vazio — e
 isso que o `D019-M2` sobreviveu na W3. A alínea nova é o que o critério sempre
 quis dizer.
 
-> **Errata E1 proposta**: substituir *"relatório byte-idêntico ao construído sem
+> **Errata E1 · RATIFICADA** (proprietário no chat, 2026-09-24: *"Vamos seguir com todas"*): substituir *"relatório byte-idêntico ao construído sem
 > a demanda"* por *"o conjunto publicado é exatamente o ofertado pelo motor, e a
 > chave de curadoria está ausente — nunca `null` nem `{}`"*.
-> **Ratificação é do proprietário**, no chat. Escrita sob a delegação de
-> 2026-08-29, que cobre portões de fase e não invariante nem critério selado.
+> Aplicada ao `spec.md` em 2026-09-24, no mesmo ato.
 
 ### Gap 2 — item 14, `spec-errada`: "mesmo commit" é incompatível com janela vermelha visível
 
@@ -78,9 +77,9 @@ em `known_issues.json` para apagar esse vermelho e **não fiz**: o arquivo está
 vazio, nenhuma demanda deste repositório usou essa porta, e a janela vermelha do
 TDD é visível de propósito. Apagá-la seria silenciar em vez de medir.
 
-> **Errata E2 proposta**: alinhar a frase da spec à R10 §3 — *"no mesmo PR"* —, e
+> **Errata E2 · RATIFICADA** (proprietário no chat, 2026-09-24: *"Vamos seguir com todas"*): alinhar a frase da spec à R10 §3 — *"no mesmo PR"* —, e
 > registrar que a entrada acontece na wave de fecho, depois do green.
-> **Ratificação é do proprietário.**
+> Aplicada ao `spec.md` em 2026-09-24, no mesmo ato.
 
 ### Gap 3 — não é gap: a fixture do `D019-PROV1` foi corrigida durante a W6
 
@@ -124,7 +123,7 @@ entregar — invisível para toda a máquina, porque nenhuma máquina o observav
   superfícies **e que reincluir a devolve**: exclusão irreversível não é
   curadoria, é destruição.
 
-> **Errata E3 proposta**: acrescentar à spec o critério `C11` — *"a leitura
+> **Errata E3 · RATIFICADA** (proprietário no chat, 2026-09-24: *"Vamos seguir com todas"*): acrescentar à spec o critério `C11` — *"a leitura
 > arquitetural é curável, e a decisão vale nas duas superfícies"* —, com o
 > `D019-PAR1 (c)` como gate. **Ratificação é do proprietário.**
 
@@ -164,3 +163,19 @@ Chromium e ficaram `[FAIL] campanha EXIGIDA (alvo mudou) mas ambiente sem
 chromium`. É a **KI-3** — execução canônica no job `visual` do CI. A T023 já
 condiciona o fecho a esse job verde, e **a geometria da visão por solução é o
 único risco que esta máquina não julga**.
+
+## Errata E4 — nascida depois desta validação
+
+Encontrada em **2026-09-24**, ao aplicar as três erratas acima: o contrato da
+spec declarava `reportCuration.offerings`, e a implementação usa `decisions`.
+Não é escolha de estilo — `"offerings"` é um dos treze nomes de campo derivado
+que o gate congelado `S4-S5` proíbe no documento de sessão, e com o nome antigo
+ele reprovava. A divergência vivia só na prosa da spec desde a W2.
+
+> **Errata E4 · RATIFICADA** (proprietário no chat, 2026-09-24: *"Vamos seguir
+> com todas"*): o contrato passa a declarar `decisions`. Corrige o **registro**,
+> nunca o comportamento.
+
+**Por que escapou a esta validação:** o `spec-validate` conferiu os dez critérios
+e os gates, e não releu o bloco de contratos contra o código — a mesma forma do
+`EA-47`, item em `§Não mudam` certificado por diff vazio em vez de releitura.

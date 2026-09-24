@@ -19,12 +19,26 @@ Fronteira, decidida no portão da Fase 0: **seleção, nunca redação.**
 
 Namespace `D019-*`. Suíte nova `tests_019_curadoria.js`; mutantes em
 `tests_019_mutants.js`. Contagem declarada a entrar em `expected_suites.json`
-**no mesmo commit** dos gates (R10 §3).
+**no mesmo PR** dos gates (R10 §3), **na wave de fecho, depois do green**.
+
+> **Errata E2 · RATIFICADA** (proprietário no chat, 2026-09-24: *"Vamos seguir
+> com todas"*). A redação anterior era *"no mesmo commit"* — mais estrita do que
+> a R10 §3 que ela própria cita, e **inexequível**: cumprir ao pé da letra na W1
+> significaria registrar como esperada a contagem de uma suíte que nascia em
+> **3 PASS · 7 FAIL**, o red do TDD. O registro é oráculo de contagem VERDE: ou
+> enshrinaria o vermelho como alvo (R10 §1), ou reprovaria a cada commit contra
+> um alvo que só se cumpre no fim.
+>
+> Consequência assumida na execução: o stage `suites` ficou vermelho da W1 à W7,
+> nomeando as duas suítes fora do registro. Considerei declarar exceção nominal
+> em `known_issues.json` para apagar esse vermelho e **não fiz** — a janela
+> vermelha do TDD é visível de propósito, e apagá-la seria silenciar em vez de
+> medir.
 
 | # | Critério | Gate · arquivo · asserção | Mutante previsto |
 |---|---|---|---|
 | C1 | **Curadoria é seleção, nunca redação.** Nenhum texto do relatório tem origem no estado de curadoria | `D019-CUR1` · o estado só contém **ids** e valores de **enum fechado**; nenhuma chave de texto livre; e nenhum texto impresso casa com valor vindo do estado | **M1**: acrescentar campo de texto livre ao estado e imprimi-lo ⇒ CUR1 vermelho |
-| C2 | **Ausência ≠ supressão.** Sessão sem curadoria declarada produz relatório **idêntico** ao de hoje | `D019-CUR2` · relatório com a chave **ausente** é byte-idêntico ao construído sem a demanda; `missing ≠ null ≠ {}` | **M2**: ausência passa a significar "excluir tudo" ⇒ CUR2 vermelho |
+| C2 | **Ausência ≠ supressão.** Sessão sem curadoria declarada não tem nada suprimido | `D019-CUR2` · o conjunto **publicado** é exatamente o **ofertado** pelo motor, e a chave de curadoria está **ausente** — nunca `null` nem `{}` | **M2**: ausência passa a significar "excluir tudo" ⇒ CUR2 vermelho |
 | C3 | **Entrada canônica (INV-8).** Export só inputs; import recomputa | `D019-INV8` · a sexta chave entra em `captureCanonicalInputs()`; roundtrip preserva; injeção de campo derivado é recusada | **M3**: serializar a lista de recomendações resultante junto ⇒ INV8 vermelho |
 | C4 | **Proveniência, nas DUAS superfícies.** Todo item cuja presença é decisão do operador leva rótulo, na tela **e** no papel | `D019-PROV1` · para cada item curado, existe marcador de proveniência no DOM da tela **e** em `#v32-print-report` | **M4**: remover o rótulo **só no papel** ⇒ PROV1 vermelho (é assim que isso quebra de verdade) |
 | C5 | **A curadoria não alcança medição nem declaração.** | `D019-MED1` · score, estágio, suficiência, gaps, prioridades e cenário-alvo **idênticos** com e sem curadoria; **payload M41 byte-idêntico** ao pinado | **M5**: deixar a curadoria filtrar a lista de `findings` ⇒ MED1 vermelho |
@@ -33,9 +47,29 @@ Namespace `D019-*`. Suíte nova `tests_019_curadoria.js`; mutantes em
 | C8 | **Tela e papel exibem a MESMA seleção.** | `D019-PAR1` · o conjunto publicado na tela é igual ao de `#v32-print-report`, medido **após `beforeprint`** | **M8**: aplicar a curadoria só na tela ⇒ PAR1 vermelho |
 | C9 | **Supressão total não produz vazio mudo.** | `D019-VAZ1` · curadoria que exclui tudo produz seção **com declaração da supressão**, nunca seção vazia nem seção ausente | **M9**: renderizar seção vazia ⇒ VAZ1 vermelho |
 | C10 | **Gate de suficiência fechado ⇒ curadoria indisponível.** | `D019-SUF1` · com o gate `blocked`, o controle de curadoria não existe e o estado não é lido | **M10**: oferecer curadoria com resultado bloqueado ⇒ SUF1 vermelho |
+| C11 | **A leitura arquitetural é curável, e a decisão vale nas duas superfícies.** | `D019-PAR1 (c)` · excluir a leitura arquitetural a retira da tela **e** do papel, e reincluir a devolve às duas — com fixture própria, porque a sessão de referência não declara contexto e sem contexto a leitura não existe | **M17**: honrar a exclusão só numa das superfícies ⇒ PAR1 (c) vermelho |
 
 > **C5 é o critério de aceite mais duro da demanda.** Se o payload M41 divergir,
 > a demanda **para** — não se negocia Porta B para uma mudança de apresentação.
+
+> **Errata E1 · RATIFICADA** (proprietário no chat, 2026-09-24: *"Vamos seguir
+> com todas"*). A C2 exigia relatório **byte-idêntico ao construído sem a
+> demanda**. Isso era verdade quando a spec foi escrita e deixou de ser em
+> **2026-09-18**, quando o proprietário decidiu, no chat, consolidar os 15 blocos
+> de apoio em 9 cards de produto. Consolidar **é** mudar o relatório: a exigência
+> e a decisão são incompatíveis por construção, e a decisão é posterior e do
+> proprietário — logo é a asserção que cede, nunca o contrário.
+>
+> **O que a C2 protege continua medido, e com mais dentes:** a redação nova exige
+> que o conjunto publicado seja exatamente o ofertado pelo motor. A primeira
+> versão do gate só conferia que o relatório não estava vazio — e foi por isso
+> que o `D019-M2` sobreviveu na W3.
+>
+> **Errata E3 · RATIFICADA** na mesma decisão: nasce a **C11**. A tabela do portão
+> da Fase 0 punha a leitura arquitetural na coluna *curável*; a spec da Fase 1 não
+> a levou a nenhum dos dez critérios, e as sete waves seguiram a spec. A demanda
+> teria fechado com dez gates verdes e um item combinado por entregar — invisível
+> para toda a máquina, porque nenhuma máquina o observava.
 
 ## Comportamento especificado
 
@@ -97,10 +131,23 @@ Agrupamento pela divisão oficial do portfólio, com **três regras de borda**:
 
 ```
 reportCuration: {
-  offerings: { "<offeringId>": "include" | "exclude" },
+  decisions: { "<offeringId>": "include" | "exclude" },
   architectureNote: "include" | "exclude"
 }
 ```
+
+> **Errata E4 · RATIFICADA** (proprietário no chat, 2026-09-24: *"Vamos seguir
+> com todas"*). O contrato dizia `offerings`; a implementação usa `decisions`, e
+> **tinha de usar**: `"offerings"` é um dos treze nomes de campo derivado que o
+> gate congelado `S4-S5` proíbe no documento de sessão — o engine usa a palavra
+> para o que ELE oferece, e a INV-8 recusa derivado serializado como fonte. Com o
+> nome antigo o `S4-S5` reprovava, corretamente. Achado por sonda durante a W2,
+> não por leitura.
+>
+> `decisions` também diz melhor o que o mapa é: ausência da chave ⇒ o motor
+> decide; `include` ⇒ publica mesmo sem oferta; `exclude` ⇒ não publica mesmo com
+> oferta. Esta errata **corrige o registro**, não o comportamento: a divergência
+> vivia só na prosa da spec desde a W2.
 
 - **Owner do estado** (R9 §5): `core-engineer`, exposto por bridge; a
   renderização apenas consome.

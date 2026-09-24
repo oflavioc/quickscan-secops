@@ -1,7 +1,7 @@
 {
   "_meta": {
     "descricao": "Registry único de pins — fonte de identidade dos artefatos (R8). Hashes = SHA-256 dos blobs de HEAD. Alterar arquivo pinado exige regenerar este registry no MESMO PR, com motivo no commit.",
-    "gerado_de_head": "7150b1c2eab2f6d6a468eaedbc28d7e7eadac734",
+    "gerado_de_head": "23f8fa78b2f67a36ab3653687331ecaef25a3942",
     "gerado_em": "2026-09-24",
     "exclusoes": [
       "docs_phase5/**",
@@ -451,7 +451,7 @@
     "tests_014_regra_morta.js": "9f682946c929200f552041de725aa279d2baa607cf0345cc70f14fbc3f7a8115",
     "tests_015_apoio.js": "8a8efde0bf12b5441fbc4e5216927f041e8c12d387f2ae6184ba9b95426f5b60",
     "tests_015_mutants.js": "3a949d1ecd2738c23f56b5277eea136484f2b6c255f78a547c723ba80f5e50fc",
-    "tests_016_mutants.js": "91013ea606b4e8b94aa1a3dcbd7408ec6d2f10662a85552ec3d7a74264c4e342",
+    "tests_016_mutants.js": "e895e53fc58075250fb6da8db4dc19560afc192f44c0ad1f433079023146d649",
     "tests_018_mutants.js": "68abe828e6d5d618e43eff715654b8bc64211e530b35f6cb6af09de2f38f39f2",
     "tests_019_curadoria.js": "490b3c20843537a6ff5d5b2f8a711ee716346d124f266d959e3f94bf3f96bac2",
     "tests_019_mutants.js": "07beb38c4958b210a208d1b3d5a48922f166f5a4f554f71013442f7da2423376",

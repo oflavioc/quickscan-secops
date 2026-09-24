@@ -26,11 +26,11 @@ mesmo PR**, na wave de fecho, depois do green (errata E2 da 019, ratificada).
 |---|---|---|---|
 | C1 | **Zero regressão nos curados.** Os 4 qids da tabela renderizam exatamente o de hoje | `D021-CUR1` · para cada qid de `QS_GAP_SUPPORT`, o bloco lista **todas** as opções da tabela e **nenhuma** a mais; oráculo é a tabela | **M1**: a derivação passa na frente da tabela ⇒ CUR1 vermelho |
 | C2 | **Cobertura completa.** Gap cujo qid tem candidato no `MAP` no nível respondido **recebe** bloco | `D021-COB1` · sessão com os 15 em nível 0 produz **15** blocos; nenhum gap com candidato fica mudo | **M2**: manter o `return ""` para quem não está na tabela ⇒ COB1 vermelho |
-| C3 | **Silêncio só quando não há o que dizer.** Sem candidato ⇒ **sem bloco**, nunca bloco vazio | `D021-VAZ1` · com `lv[n].c` vazio, zero `[data-pr-gap-support]` para aquele qid — e a alínea (b) prova que a ausência é **daquele** qid, não da seção | **M3**: emitir bloco com lista vazia ⇒ VAZ1 vermelho |
+| C3 | **A cláusula de silêncio é inalcançável por construção — e um sensor avisa se deixar de ser.** | `D021-VAZ1` · (a) **todo** qid com gap tem candidato no nível respondido; (b) **nenhum** bloco vazio em lugar nenhum. Ver errata **E1** | **M3**: emitir bloco com lista vazia ⇒ VAZ1 (b) vermelho |
 | C4 | **A justificativa vem do `MAP`, não é inventada.** | `D021-FON1` · para cada opção derivada, o texto do "porquê" **é** o `c[].w` do `MAP`; nenhuma redação própria | **M4**: substituir o `w` por texto fixo ⇒ FON1 vermelho |
 | C5 | **Nível respondido, nunca nível fixo.** | `D021-NIV1` · sessão com níveis **diferentes** por qid produz, em cada bloco, os candidatos do nível **daquele** qid | **M5**: ler sempre `lv[0]` ⇒ NIV1 vermelho |
 | C6 | **Ancoragem declarada por bloco.** Bloco da tabela e bloco derivado partem de fontes diferentes e **dizem qual** | `D021-ANC1` · todo bloco tem `data-pr-gap-ancora` ∈ {`capability`,`nivel`}; o texto visível casa com o atributo; bloco derivado **não** repete o aviso de divergência da tabela | **M6**: marcar todo bloco como `capability` ⇒ ANC1 vermelho |
-| C7 | **Tela e papel publicam o mesmo apoio.** | `D021-PAR1` · o conjunto de qids com bloco é **igual** na tela e em `#v32-print-report`, medido **após `beforeprint`** | **M7**: derivar só na tela ⇒ PAR1 vermelho |
+| C7 | **O apoio derivado chega ao RELATÓRIO REAL** — o artefato que o cliente recebe | `D021-PAR1` · após `beforeprint` (nunca por chamada direta a `buildPrintReport()` — `EA-26`), `#v32-print-report` traz bloco para **todos** os qids com gap. Ver errata **E2** | **M7**: derivar fora do caminho do papel ⇒ PAR1 vermelho |
 | C8 | **Contexto não declarado continua "validar aderência".** | `D021-CTX1` · sem contexto, todo bloco — curado ou derivado — traz a ressalva; com contexto, traz o estado declarado | **M8**: recomendar sem contexto no ramo derivado ⇒ CTX1 vermelho |
 | C9 | **A âncora normativa deixa de ser lista de nomes.** | `P51-REC1` emendado · `QIDS_AUTORIZADOS` passa a ser **derivado da fonte congelada** (os qids do `MAP` com candidato), não quatro literais | **M9**: reintroduzir a lista de quatro ⇒ P51-REC1 vermelho na cobertura nova |
 
@@ -38,6 +38,62 @@ mesmo PR**, na wave de fecho, depois do green (errata E2 da 019, ratificada).
 > portão exatamente por violá-lo: derivar tudo estreitaria `detection-lifecycle`
 > de quatro produtos para um. Se a implementação estreitar qualquer um dos
 > quatro, ela **parou de ser o desenho aprovado**.
+
+## Erratas da Fase 4 — duas premissas minhas, falsas, achadas ao escrever o red
+
+Escrever os gates **antes** da implementação é o que expôs as duas. É exatamente
+para isto que a R3 ordena assim.
+
+> ### Errata E1 · o `C3` descrevia um caso INALCANÇÁVEL por construção
+>
+> A redação original pedia bloco ausente quando o qid não tem candidato no nível
+> respondido. **Esse estado não existe no produto.** Medido:
+>
+> ```
+> nível 0 → 15 gaps · 15 qids com candidato
+> nível 1 → 15 gaps · 15 qids com candidato
+> nível 2 → 0 gaps  · 0 qids com candidato
+> ```
+>
+> Sempre que há gap, há candidato; quando não há candidato, não há gap. Escrever
+> um gate com fixture que force esse estado seria **fazer o produto mentir para
+> caber no critério** — o erro que o `D019-PROV1` já cometeu e que custou uma
+> correção de fixture na 019.
+>
+> **`C3` reformulado, e fica mais forte:** a cláusula defensiva permanece no
+> código e é **declarada inalcançável por construção** (disposição do
+> `product-owner` na 010, registrada em `design-decisions.md`: *declarada, sem
+> mutante, não reportar como código morto*). O gate passa a medir **a invariante
+> que a torna inalcançável** — todo qid com gap tem candidato no nível respondido
+> — mais *"nenhum bloco vazio em lugar nenhum"*. As duas são executáveis, e a
+> primeira é o sensor que avisa **se o catálogo mudar** e a cláusula virar
+> alcançável.
+
+> ### Errata E2 · o `C7` supunha uma superfície de tela que NÃO EXISTE
+>
+> A redação original exigia que tela e papel publicassem o mesmo apoio. Medido
+> após `showResults()` e depois de `beforeprint`:
+>
+> ```
+> TELA   ·  #pr-findings: 0  ·  [data-pr-gap-support]: 0
+> PAPEL  ·  #v32-print-report: 1  ·  [data-pr-gap-support]: 4
+> ```
+>
+> `qsGapSupportHTML()` é chamada num **único** sítio — `ui_v32.js:1269`, dentro
+> de `buildPrintReport()`. O bloco é **superfície de papel, e só**. A tela tem
+> outra superfície de apoio, a visão por solução da camada 5.2, por desenho.
+>
+> Um gate de paridade entre duas superfícies das quais **uma não tem o objeto**
+> passaria por vacuidade ou reprovaria por motivo errado. É a família do `EA-20`
+> — portão prometendo o que não mede.
+>
+> **`C7` reformulado:** mede que o apoio derivado **chega ao relatório real**,
+> montado por `beforeprint` e nunca por chamada direta a `buildPrintReport()`
+> (lição do `EA-26`). É onde o `EA-56` mediu o problema, e é o artefato que o
+> cliente recebe.
+
+Nenhuma das duas muda o **desenho** aprovado no portão — mudam a **formulação de
+dois gates**, e nas duas direções para mais rigor, nunca menos.
 
 ## Comportamento especificado
 

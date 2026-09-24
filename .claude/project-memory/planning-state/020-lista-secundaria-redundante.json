@@ -8,5 +8,11 @@
     "status": "awaiting_approval",
     "notes": "ABERTA EM 2026-09-24 sob 'Vamos seguir com todas'. E DEMANDA e nao fix-finding por duas razoes registradas: o fecho do EA-68 declara 'a lista ficou INTACTA, e isso e decisao declarada', e a spec da 019 (Fase 1) lista 'pode fazer sentido' na coluna CURAVEL — remover contradiz desenho aprovado (R4: na duvida, e demanda). CUSTO MEDIDO, e ele ja desmentiu uma estimativa minha de 'uma hora': a tentativa de 2026-09-22 derrubou CINCO gates da 010 (D010-ARB3, INV7, CARD1, CARD2, CARD3), todos porque as fixtures D010-F3 DECLARAM o titulo congelado como presente. Nao e gate de apresentacao que se reancora: e o oraculo declarado de OUTRA demanda. Foi revertido, com D010 de volta a 13/13. Escopo real: (1) D010_DECLARED em cinco gates, (2) P52-ICON3 reancorado (Chromium, so CI), (3) a remocao em si, que e a parte pequena. O PORTAO tem UMA pergunta e ela e a demanda inteira: a redundancia incomoda mais do que o custo de remove-la? Registrada tambem a terceira via que NAO recomendo — manter a lista e mudar o qualificador dos cards —, porque trata o sintoma e a duplicacao continua.",
     "approved_at": null
+  },
+  "fecho_pendente": {
+    "motivo": "A demanda esta MESCLADA em develop na fase `refinement` DE PROPOSITO, e a divida e a decisao que falta, nao trabalho que eu deva fazer. O portao da Fase 0 tem UMA pergunta e ela e do proprietario: a redundancia da lista secundaria incomoda mais do que o custo de remove-la (cinco gates da 010 cujas fixtures DECLARAM o titulo congelado presente, mais o P52-ICON3)? Mesclei o refinamento em vez de segura-lo numa branch porque registro que vive so em branch e registro que ninguem le — o custo medido e o enquadramento precisam estar na develop para sustentar a decisao. Enquanto ela nao vem, a demanda nao avanca para `specify`, e nenhuma linha de produto muda. Se a resposta for `nao remover`, a demanda fecha como refutada e este refinamento permanece como o registro de por que nao se mexeu.",
+    "dono": "proprietario (Flavio Costa) — portao da Fase 0",
+    "prazo": "2026-12-31",
+    "declarado_em": "2026-09-24"
   }
 }

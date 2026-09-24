@@ -13,5 +13,11 @@
     "motivo": "Demanda REFUTADA no portao da Fase 0: nao houve gate a escrever porque nao houve comportamento a implementar. A R3 exige red provado para tarefa tipo `feature`/`fix`; aqui nao existe tarefa — a demanda nunca chegou a `tasks`. Waiver e o registro honesto disso, e o compliance-audit o LISTA a cada execucao, que e a funcao dele: rastro, nao obstaculo. Nenhum commit de codigo nesta demanda; o produto esta byte-identico.",
     "data": "2026-09-24"
   },
-  "pr_url": "https://github.com/oflavioc/quickscan-secops/pull/100"
+  "pr_url": "https://github.com/oflavioc/quickscan-secops/pull/100",
+  "validate": {
+    "status": "done",
+    "conformance": "NAO SE APLICA, e a razao e estrutural, nao uma dispensa: conformance mede a implementacao contra a SPEC, e esta demanda nao teve spec — foi REFUTADA no portao da Fase 0 e nunca avancou para `specify`. Nao ha o que conferir porque nao ha o que foi prometido. O equivalente honesto do 100% aqui e: NENHUM commit de codigo, produto byte-identico, e o veredito registrado em specs/020-lista-secundaria-redundante/relatorio-final.md com a pergunta, o custo medido (cinco gates da 010) e a razao de \"nao\" ser a resposta proporcional.",
+    "aceite_de_intencao": "Proprietario no chat, 2026-09-24: \"Nao remover a lista, fecha a 020 como refutada\". O aceite aqui e da REFUTACAO, nao de entrega — a demanda cumpriu a funcao dela ao produzir a medicao que sustenta o \"nao\".",
+    "decisao_confirmada": "A redundancia entra em .claude/rules/design-decisions.md como DECISAO CONFIRMADA, com fonte e custo, para nao voltar como achado (R13)."
+  }
 }

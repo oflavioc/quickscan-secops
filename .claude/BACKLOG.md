@@ -6304,7 +6304,9 @@ outro ângulo, e a correção deste achado muda aquele número.
 
 ## EA-69 — dois rótulos técnicos do MAP não trazem o acrônimo que os outros trazem
 
-**Status**: `aberto` · **instância do [[EA-58]]**, não achado independente
+**Status**: `aberto`
+
+**Instância do [[EA-58]]**, não achado independente.
 
 > **CORREÇÃO DE REGISTRO, 2026-09-24 — este achado JÁ EXISTIA.**
 >

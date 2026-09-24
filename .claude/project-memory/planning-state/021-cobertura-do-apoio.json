@@ -1,6 +1,6 @@
 {
   "demanda": "021-cobertura-do-apoio",
-  "phase": "tasks",
+  "phase": "red",
   "spec_dir": "specs/021-cobertura-do-apoio",
   "branch": "feature/021-cobertura-do-apoio",
   "brief": "11 dos 15 gaps chegam ao relatorio do cliente SEM caminho de apoio, nas duas configuracoes de contexto (medido 2026-09-24). E o EA-56 na forma que assumiu depois da emenda de 2026-09-15. A descoberta que muda o custo: a Camada 1 congelada JA declara produto e justificativa para os quinze qids em MAP[qid].lv[nivel].c — inclusive a trilha de capacitacao que o EA-56 dizia nao ter onde morar. Nada precisa ser inventado; o produto simplesmente nao le.",
@@ -20,7 +20,13 @@
     "approved_at": "2026-09-24"
   },
   "tasks": {
-    "status": "awaiting_approval",
-    "notes": "Fase 3 escrita em 2026-09-24. Doze tarefas, cinco waves. TRES ORDENS NAO NEGOCIAVEIS, cada uma com razao medida: (1) T002 antes de T004 — o red commitado antes da implementacao, licao que o EA-70 cobrou nesta mesma semana quando um gate escrito DEPOIS da correcao teria nascido sem nunca ter sido visto falhar; (2) W3 antes de W4 — emendar a §UAT-07 antes da cobertura existir deixaria o P51-REC1 verde por VACUIDADE; (3) T011 (gen_pins) por ultimo — pin regenerado antes da ultima mudanca e pin que nasce velho. DIVIDA DA ESTRUTURA DECLARADA: os agentes de papel nao estao disponiveis como subagentes nesta sessao, logo autor do gate e implementador sao o MESMO sujeito e a separacao de poderes da R3 §2 NAO EXISTE aqui. Nao e licenca: a mitigacao e a ordem (red commitado antes) e o mutante por gate, que e o que resta de independente. Precedente 018 e 019."
+    "status": "approved",
+    "notes": "Fase 3 escrita em 2026-09-24. Doze tarefas, cinco waves. TRES ORDENS NAO NEGOCIAVEIS, cada uma com razao medida: (1) T002 antes de T004 — o red commitado antes da implementacao, licao que o EA-70 cobrou nesta mesma semana quando um gate escrito DEPOIS da correcao teria nascido sem nunca ter sido visto falhar; (2) W3 antes de W4 — emendar a §UAT-07 antes da cobertura existir deixaria o P51-REC1 verde por VACUIDADE; (3) T011 (gen_pins) por ultimo — pin regenerado antes da ultima mudanca e pin que nasce velho. DIVIDA DA ESTRUTURA DECLARADA: os agentes de papel nao estao disponiveis como subagentes nesta sessao, logo autor do gate e implementador sao o MESMO sujeito e a separacao de poderes da R3 §2 NAO EXISTE aqui. Nao e licenca: a mitigacao e a ordem (red commitado antes) e o mutante por gate, que e o que resta de independente. Precedente 018 e 019.",
+    "approved_at": "2026-09-24"
+  },
+  "red": {
+    "status": "proven",
+    "commit": "6c9ecf9ffe9799d75d368f07d7bf3b7fafb08bd2",
+    "notes": "RED commitado em 2026-09-24: 2 PASS · 6 FAIL de 8. O 11-de-15 do D021-COB1 bate EXATAMENTE com a medicao da Fase 0 — o gate ve o mesmo problema que a sonda viu. DOIS VERDES DECLARADOS, nao escondidos: D021-CUR1 (mede que os quatro curados nao regridem; hoje nada os toca, e o poder dele vem do mutante M1) e D021-VAZ1 (e SENSOR, nao red: afirma a invariante que torna a clausula de silencio inalcancavel). DUAS ERRATAS DE SPEC achadas AO ESCREVER O RED, que e para isto que a R3 ordena assim: E1 — o C3 descrevia caso INALCANCAVEL (sempre que ha gap ha candidato; medido 15/15 nos niveis 0 e 1, 0/0 no nivel 2), reformulado para medir a invariante de alcancabilidade + 'nenhum bloco vazio'; E2 — o C7 supunha superficie de TELA que NAO EXISTE (medido: tela 0 blocos, papel 4; qsGapSupportHTML tem UM sitio de chamada, dentro de buildPrintReport), reformulado para medir o relatorio real via beforeprint. ERRO MEU CORRIGIDO ANTES DO COMMIT: o primeiro oraculo casava titulo de card contra QS[].lbl e perdia `mandate` em silencio (card diz 'Direcionamento e objetivos', lbl diz 'Mandato e objetivos') — media 14 onde ha 15. Trocado por computeFindings(), da Camada 1. So apareceu porque o numero nao fechou com a sonda da Fase 0."
   }
 }

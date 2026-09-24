@@ -65,11 +65,25 @@ const MUTANTS = [
     repl: "const m = curado;",
     reason: /ficaram MUDOS/ },
 
-  { id: "D021-M3", file: F.papel, gate: "D021-VAZ1", cmd: CMD,
-    desc: "emitir bloco mesmo sem candidato — bloco vazio promete caminho e não entrega",
-    find: "if (!cand.length) return null;",
-    repl: "if (false) return null;",
-    reason: /sem nenhuma opção|bloco vazio/ },
+  /* ==========================================================================
+     D021-M3 · APOSENTADO em 2026-09-24, e o id NÃO é reutilizado (R12).
+
+     Ele atacava a guarda `if (!cand.length) return null;` esperando bloco vazio.
+     Executado, saiu SOBREVIVENTE — e a causa não é gate fraco: é que a guarda é
+     **inalcançável por construção**. Medido: sempre que há gap, há candidato
+     (níveis 0 e 1 → 15 gaps/15 candidatos; nível 2 → 0 gaps/0 candidatos).
+     Removê-la não muda nada observável, logo o mutante é EQUIVALENTE.
+
+     É a disposição do `product-owner` na demanda 010, registrada em
+     `design-decisions.md`: cláusula defensiva inalcançável por construção é
+     *declarada, sem mutante* — e mutante equivalente entra como dívida declarada,
+     **nunca como par vazio na coluna de mutantes**.
+
+     A METADE ESTÁTICA DA PROVA tem gate: o `D021-VAZ1 (a)` afirma que todo gap
+     tem candidato no nível respondido. Se o catálogo mudar e a guarda virar
+     alcançável, ele reprova e AVISA — e aí um mutante novo, com id novo, passa a
+     fazer sentido.
+     ========================================================================== */
 
   { id: "D021-M4", file: F.papel, gate: "D021-FON1", cmd: CMD,
     desc: "trocar o porquê do MAP por redação própria — a segunda fonte que o EA-68 custou sete waves para eliminar",
@@ -81,7 +95,11 @@ const MUTANTS = [
     desc: "ler sempre o nível 0 em vez do nível respondido — o gap deixa de ser o do cliente",
     find: "const cand = (m && m.lv && m.lv[f.lvl] && m.lv[f.lvl].c) || [];",
     repl: "const cand = (m && m.lv && m.lv[0] && m.lv[0].c) || [];",
-    reason: /que só existe no nível 0 — leu nível fixo/ },
+    /* as DUAS mensagens do NIV1 são detecção correta do mesmo defeito: ou o
+       bloco deixa de citar o produto do nível respondido, ou passa a citar um
+       que só existe no nível 0. Exigir só a segunda tornava o mutante
+       SOBREVIVENTE por precisão de regex, não por falha de gate. */
+    reason: /que só existe no nível 0 — leu nível fixo|\(nível 1\) não cita/ },
 
   { id: "D021-M6", file: F.papel, gate: "D021-ANC1", cmd: CMD,
     desc: "marcar todo bloco como ancorado na capability — o aviso do EA-48 volta a mentir para metade deles",

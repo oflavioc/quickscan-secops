@@ -1123,12 +1123,48 @@ function qsCapIdForQid(qid){
   }
   return null;
 }
+/* ==========================================================================
+   [021] SEGUNDA FONTE DE APOIO — a Camada 1 já sabia, e o produto não lia.
+
+   Até 2026-09-24 a tabela curada acima cobria QUATRO qids e os outros ONZE
+   recebiam `""`: o relatório observava o gap e calava sobre ele. Medido nas
+   duas configurações de contexto — 15 gaps, 4 com caminho, 11 sem.
+
+   O `MAP` congelado declara candidato E justificativa para os quinze, por
+   nível respondido — inclusive a trilha de capacitação que o `EA-56` deu como
+   sem-onde-morar (`training` → Service-Bundle, "treinamento e certificação").
+   Ler o `MAP` não o altera: `frozen` é proibição de ESCRITA, e por isso esta
+   demanda não abre Porta B nem repina a régua D2.
+
+   A tabela continua PRIMEIRO e por decisão do portão da Fase 0: derivar tudo
+   estreitaria `detection-lifecycle` de quatro produtos para um — era o desenho
+   B, descartado por ser regressão disfarçada de melhoria.
+   ========================================================================== */
+function qsGapSupportDerivado(f){
+  const m = MAP[f.id];
+  const cand = (m && m.lv && m.lv[f.lvl] && m.lv[f.lvl].c) || [];
+  if (!cand.length) return null;
+  /* normaliza para a MESMA forma que o renderizador já consome — um só caminho
+     de renderização; dois divergiriam em silêncio, que é o `EA-58` pelo outro
+     lado. O `w` é o do MAP, nunca redação própria: segunda fonte de texto foi o
+     que o `EA-68` custou sete waves para eliminar. */
+  return { cap: m.cap, opts: cand.map(o => ({ n: o.p, w: o.w })) };
+}
 function qsGapSupportHTML(f){
-  const m = QS_GAP_SUPPORT[f.id];
-  if (!m) return "";
+  const curado = QS_GAP_SUPPORT[f.id];
   const capId = qsCapIdForQid(f.id);
   const L = capId && V32.TECH_LANDSCAPE ? V32.TECH_LANDSCAPE[capId] : null;
   const declarado = !!(L && L.presence && L.presence !== "UNSET");
+  const m = curado || qsGapSupportDerivado(f);
+  if (!m) return "";
+  /* ANCORAGEM DECLARADA POR BLOCO. O aviso de divergência do `EA-48` foi escrito
+     quando TODOS os blocos partiam da capability; com duas origens ele passaria a
+     mentir para metade deles, porque o bloco derivado É a ancoragem canônica e
+     não diverge dela. Aviso que aparece em tudo não distingue nada. */
+  const ancora = curado ? "capability" : "nivel";
+  const fonte = curado
+    ? `<div class="pr-gapsup-why" data-pr-gap-fonte>Esta lista parte da <b>capability</b> associada ao gap, não do nível respondido na pergunta — por isso pode não coincidir com outras listas deste relatório. A <b>ancoragem canônica</b> desta sessão é a que parte da pergunta e do nível respondido; esta lista é complementar.</div>`
+    : "";
   /* A capability nomeada aqui é a CANÔNICA do runtime (`MAP[qid].cap`), não uma
      segunda redação própria: um único dono do nome evita que a tabela de apoio
      e o motor divirjam — e permite que o gate compare contra fonte externa à
@@ -1137,17 +1173,17 @@ function qsGapSupportHTML(f){
   const cabec = `<div class="pr-gapsup-cap" data-pr-gap-cap>Para a capability <b>${esc32(capCanon)}</b>:</div>`;
   if (!declarado){
     /* sem contexto declarado não se recomenda: valida-se. */
-    return `<div class="pr-gapsup" data-pr-gap-support data-pr-gap-qid="${escAttr(f.id)}"><div class="pr-gapsup-h">Possíveis caminhos de apoio</div>
+    return `<div class="pr-gapsup" data-pr-gap-support data-pr-gap-qid="${escAttr(f.id)}" data-pr-gap-ancora="${escAttr(ancora)}"><div class="pr-gapsup-h">Possíveis caminhos de apoio</div>
       ${cabec}
       <div class="pr-gapsup-why" data-pr-gap-why>Contexto tecnológico não declarado para esta capability: as opções abaixo exigem <b>validar aderência</b> antes de qualquer recomendação.</div>
-      <div class="pr-gapsup-why" data-pr-gap-fonte>Esta lista parte da <b>capability</b> associada ao gap, não do nível respondido na pergunta — por isso pode não coincidir com outras listas deste relatório. A <b>ancoragem canônica</b> desta sessão é a que parte da pergunta e do nível respondido; esta lista é complementar.</div>
+      ${fonte}
       <ul class="pr-gapsup-list">${m.opts.map(o=>`<li data-pr-gap-opt><b>${esc32(o.n)}</b> — <span class="pr-mut">${esc32(o.w)}; validar aderência ao contexto do cliente.</span></li>`).join("")}</ul></div>`;
   }
   const estado = PRESENCE_LABELS[L.presence] || L.presence;
-  return `<div class="pr-gapsup" data-pr-gap-support data-pr-gap-qid="${escAttr(f.id)}"><div class="pr-gapsup-h">Possíveis caminhos de apoio</div>
+  return `<div class="pr-gapsup" data-pr-gap-support data-pr-gap-qid="${escAttr(f.id)}" data-pr-gap-ancora="${escAttr(ancora)}"><div class="pr-gapsup-h">Possíveis caminhos de apoio</div>
     ${cabec}
     <div class="pr-gapsup-why" data-pr-gap-why>Apareceu porque o gap acima foi observado e o contexto declarado para esta capability é <b>${esc32(estado)}</b>. As opções são caminhos possíveis, a validar — não são requisito nem compra recomendada.</div>
-    <div class="pr-gapsup-why" data-pr-gap-fonte>Esta lista parte da <b>capability</b> associada ao gap, não do nível respondido na pergunta — por isso pode não coincidir com outras listas deste relatório. A <b>ancoragem canônica</b> desta sessão é a que parte da pergunta e do nível respondido; esta lista é complementar.</div>
+    ${fonte}
     <ul class="pr-gapsup-list">${m.opts.map(o=>`<li data-pr-gap-opt><b>${esc32(o.n)}</b> — <span class="pr-mut">${esc32(o.w)}.</span></li>`).join("")}</ul></div>`;
 }
 

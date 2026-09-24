@@ -106,9 +106,17 @@ function boot(opts) {
   if (o.niveis) Object.keys(o.niveis).forEach(id => w.__DEV.setAnswerById(id, o.niveis[id]));
   if (o.contexto) {
     const V = w.__DEV.V32;
-    ["security-analytics", "soc-platform"].forEach(c => {
-      if (V.TECH_LANDSCAPE[c]) V.TECH_LANDSCAPE[c].presence = "NONE";
-    });
+    /* AS CAPABILITIES PRECISAM ALCANÇAR qid DERIVADO. A primeira versão desta
+       fixture declarava `security-analytics` e `soc-platform`: a primeira mapeia
+       para `logs`, que é CURADO, e a segunda não tem qid nenhum. Resultado — o
+       eixo "contexto declarado" existia no nome e não tocava um único bloco
+       derivado, e o mutante `M7` (derivar só sem contexto, que é a forma do
+       `EA-65`) SOBREVIVEU. Gate cego por amostragem, dentro do gate que eu
+       escrevi para caçar exatamente isso.
+       `endpoint-detection` → `endpoint` e `network-detection` →
+       `network-visibility` são derivados, e é por eles que o eixo passa. */
+    ["endpoint-detection", "network-detection", "incident-management", "security-analytics"]
+      .forEach(c => { if (V.TECH_LANDSCAPE[c]) V.TECH_LANDSCAPE[c].presence = "NONE"; });
     V.ARCHITECTURE_CONTEXT.saasAllowed = "yes";
   }
   w.__DEV.setPriorities(o.prios || ["endpoint", "logs", "network-visibility"]);
@@ -155,6 +163,21 @@ const candidatos = (w, qid, nivel) => {
   const m = mapa(w)[qid];
   return ((m && m.lv && m.lv[nivel] && m.lv[nivel].c) || []);
 };
+
+/* COPY DE APRESENTAÇÃO — o oráculo tem de comparar contra o que o produto
+   PUBLICA, e o produto passa o texto do motor por uma tabela de substituição
+   DECLARADA (`P52_COPY`, REV B · COPY-B, fechada e ordenada).
+
+   A primeira versão deste gate comparou contra o `w` cru do `MAP` e reprovou o
+   `mandate`: o MAP diz "formalização de charter" e o papel publica "formalização
+   do documento de direcionamento" — que é **exatamente** a entrada declarada na
+   tabela. O gate estava errado, o produto certo.
+
+   É a mesma lição que o `EA-68` já tinha pago: a `ofertaDoMotor()` passa as
+   capabilities por `__P52.applyCopy` pelo mesmo motivo. Comparar contra o texto
+   cru transformaria uma localização aprovada em falso defeito — e transformaria
+   este gate num que reprova o produto por fazer o combinado. */
+const copy = (w, s) => (w.__P52 && typeof w.__P52.applyCopy === "function") ? w.__P52.applyCopy(s) : s;
 
 /* ==========================================================================
    C1 · ZERO REGRESSÃO NOS CURADOS
@@ -255,11 +278,12 @@ T("D021-FON1", "o porquê de cada opção derivada é o texto do próprio MAP, s
     const qid = qidDo(b), t = txt(b);
     candidatos(w, qid, nivelDe(w, qid)).forEach(c => {
       pares++;
-      if (t.indexOf(c.p) < 0)
-        throw new Error("derivado '" + qid + "' não cita o produto '" + c.p + "' que o MAP declara");
-      if (c.w && t.indexOf(c.w) < 0)
+      const produto = copy(w, c.p), porque = copy(w, c.w || "");
+      if (t.indexOf(produto) < 0)
+        throw new Error("derivado '" + qid + "' não cita o produto '" + produto + "' que o MAP declara");
+      if (porque && t.indexOf(porque) < 0)
         throw new Error("derivado '" + qid + "': o porquê publicado não é o do MAP — esperado \"" +
-                        c.w + "\"");
+                        porque + "\" (texto do MAP após a copy declarada)");
     });
   });
   if (pares < 8) vac("(b)", "apenas " + pares + " pares (produto, porquê) conferidos");
@@ -372,7 +396,17 @@ T("D021-CTX1", "sem contexto declarado todo bloco traz a ressalva de validação
   const rel = papel(w, d);
   const todos = blocos(rel);
   if (todos.length < 10) vac("(a)", "só " + todos.length + " blocos — cobertura ausente");
-  const semRessalva = todos.filter(b => !/validar aderência/i.test(txt(b))).map(qidDo);
+  /* A RESSALVA É A FRASE DO "POR QUE APARECEU", não qualquer ocorrência solta.
+     A primeira versão procurava /validar aderência/ em QUALQUER lugar do bloco —
+     e cada opção, no ramo sem contexto, já termina com "validar aderência ao
+     contexto do cliente". Bastava isso para o gate passar, e o mutante `M8`
+     (trocar a frase que diz que as opções EXIGEM validação) SOBREVIVEU.
+     Medir o observável certo: a declaração de que a lista exige validação ANTES
+     de qualquer recomendação. */
+  const semRessalva = todos.filter(b => {
+    const why = txt(b.querySelector("[data-pr-gap-why]"));
+    return !/exigem .*validar aderência.* antes de qualquer recomendação/i.test(why);
+  }).map(qidDo);
   if (semRessalva.length)
     throw new Error(semRessalva.length + " bloco(s) sem a ressalva com contexto NÃO declarado: " +
                     semRessalva.join(", ") + " — contexto ausente nunca vira recomendação");

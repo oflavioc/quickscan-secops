@@ -293,8 +293,25 @@ const PROTECTED = {
      por outro caminho, e desde entao nenhuma maquina afirmava a propriedade.
      Agora afirma: `D019-PRT1`, com o mutante `D019-M12` provando que discrimina.
      Identidade anterior:
-     30a6d48e4aca170c5b3c7bf41100ea1fc1ca20739765ffda945a6ffe16a84670 */
-  "ui_v32.js": "948dc7f93f9be71ea52f506124d4fce9558f85cc500258bf2cfbfaddcd9c723c",
+     30a6d48e4aca170c5b3c7bf41100ea1fc1ca20739765ffda945a6ffe16a84670
+
+     REPIN DE 2026-09-24 · demanda 021-cobertura-do-apoio, autorizacao nominal
+     §29.4 no portao da Fase 0 ("Confirmo o C, com a emenda da §UAT-07").
+     MOTIVO: a tabela de apoio cobria QUATRO dos quinze qids e os outros ONZE
+     recebiam `""` — o relatorio observava o gap e CALAVA sobre ele. Medido nas
+     duas configuracoes de contexto: 15 gaps, 4 com caminho, 11 sem.
+     A correcao acrescenta `qsGapSupportDerivado()`, que le
+     `MAP[qid].lv[nivel].c` — a Camada 1 ja declarava candidato e justificativa
+     para os quinze, inclusive a trilha de capacitacao que o `EA-56` deu como
+     sem-onde-morar. LER o MAP nao o altera: `frozen` proibe ESCRITA, e por isso
+     esta demanda nao abre Porta B nem toca `declared.m41_payload_sha256`.
+     A tabela curada continua sendo consultada PRIMEIRO, por decisao do portao:
+     derivar tudo estreitaria `detection-lifecycle` de quatro produtos para um.
+     Cobertura medida depois: 4 -> 15. Gates `D021-*` (8 PASS · 0 FAIL) e
+     campanha `d021` (7 DETECTADO · 0 SOBREVIVENTE).
+     Identidade anterior:
+     948dc7f93f9be71ea52f506124d4fce9558f85cc500258bf2cfbfaddcd9c723c */
+  "ui_v32.js": "d56d11abc1c37cfd0e7f5c191852099849f7ad819c186b63a0215fdb17cb004f",
   "ui_ux_v32.js": "a050401145a5ed7af597eae01a9a23826418119769c096db168b3b177a9d3938",
   /* ERRATA DA AUDITORIA EXTERNA · §4.1.1 ("qualquer texto derivado consome a
      mesma decisão canônica de publicabilidade"). A comparação Atual × Alvo
@@ -3500,6 +3517,28 @@ T("P51-RPT6", "estágio coerente entre KPI, régua, jornada, leitura executiva e
    julgador. Ela é DECLARADA NO PRODUTO desde o `EA-48` — o bloco de gaps avisa
    que as listas podem não coincidir e nomeia a canônica —, e a medição está no
    fecho do `EA-26`. Sem gate novo, por diretriz do proprietário de 2026-09-13. */
+/* [021] HELPERS DA EMENDA DA §UAT-07.
+   `candidatosDoMapa` lê a fonte congelada — `MAP[qid].lv[nível respondido].c` —,
+   com o nível vindo do PRÓPRIO achado do motor (`computeFindings()`), nunca de
+   uma segunda leitura das respostas.
+   `p51Copy` aplica a substituição de apresentação declarada (`P52_COPY`, REV B ·
+   COPY-B) antes de comparar: o produto publica o texto do motor DEPOIS da copy,
+   e comparar contra o cru transformaria uma localização aprovada em falso
+   defeito. É a lição que o `EA-68` pagou. */
+function candidatosDoMapa(w, qid) {
+  const f = (w.eval("computeFindings().findings") || []).find(x => x.id === qid);
+  if (!f) return [];
+  const m = w.eval("MAP")[qid];
+  return ((m && m.lv && m.lv[f.lvl] && m.lv[f.lvl].c) || []);
+}
+function qidsDaFonteCongelada(w) {
+  return (w.eval("computeFindings().findings") || [])
+    .filter(f => candidatosDoMapa(w, f.id).length)
+    .map(f => f.id);
+}
+const p51Copy = (w, s) =>
+  (w.__P52 && typeof w.__P52.applyCopy === "function") ? w.__P52.applyCopy(s) : s;
+
 T("P51-REC1", "recomendações acionáveis junto do gap, sem overclaim", () => {
   const R = boot();
   R.w.__DEV.setArq(0);
@@ -3535,7 +3574,11 @@ T("P51-REC1", "recomendações acionáveis junto do gap, sem overclaim", () => {
     if (!apoio) return;
     const qid = apoio.getAttribute("data-pr-gap-qid");
     if (!qid) throw new Error("bloco de apoio sem identificação do gap");
-    if (!TAB[qid]) throw new Error("apoio anexado a um gap fora da tabela canônica: '" + qid + "'");
+    /* [021] O apoio passou a ter DUAS fontes: a tabela curada e o `MAP`
+       congelado. A alínea continua proibindo apoio anexado a gap sem fonte —
+       o que mudou é que agora há duas, e a autorizada é a UNIÃO delas. */
+    if (!TAB[qid] && !candidatosDoMapa(R.w, qid).length)
+      throw new Error("apoio anexado a um gap sem fonte declarada: '" + qid + "'");
     /* Oráculo INDEPENDENTE da tabela de apoio: a capability nomeada tem de ser
        a canônica do motor para AQUELE qid. Comparar com a própria tabela seria
        equivalente por construção e deixava passar o apoio anexado ao gap errado. */
@@ -3544,17 +3587,37 @@ T("P51-REC1", "recomendações acionáveis junto do gap, sem overclaim", () => {
     if (!capCanon) throw new Error("qid '" + qid + "' sem capability canônica no motor");
     if (capTxt.indexOf(capCanon) < 0)
       throw new Error("apoio do gap '" + qid + "' declara '" + capTxt + "', canônica é '" + capCanon + "'");
-    TAB[qid].opts.forEach(o => {
-      if (txt(apoio).indexOf(o.n) < 0)
-        throw new Error("apoio do gap '" + qid + "' não lista a opção '" + o.n + "'");
+    /* [021] a lista exigida vem da fonte DAQUELE bloco: tabela se curado,
+       `MAP` no nível respondido se derivado. Exigir a tabela de um bloco
+       derivado reprovaria o produto por fazer o combinado. */
+    const exigidas = TAB[qid] ? TAB[qid].opts.map(o => o.n)
+                              : candidatosDoMapa(R.w, qid).map(o => o.p);
+    exigidas.forEach(nome => {
+      if (txt(apoio).indexOf(p51Copy(R.w, nome)) < 0)
+        throw new Error("apoio do gap '" + qid + "' não lista a opção '" + nome + "'");
     });
   });
-  /* ÂNCORA NORMATIVA, externa ao produto: a diretriz da Phase 5.1 (§UAT-07)
-     nomeia o mapeamento mínimo — casos de uso de detecção, centralização de
-     logs, automação e gestão de vulnerabilidades. Validar a tabela contra ela
-     mesma seria equivalente por construção; por isso o conjunto autorizado é
-     declarado AQUI e o produto é conferido contra ele. */
-  const QIDS_AUTORIZADOS = ["detection-lifecycle", "logs", "automation", "vulnerability-management"];
+  /* ÂNCORA NORMATIVA, externa ao produto.
+
+     EMENDA DA §UAT-07 — demanda 021, ratificada pelo proprietário no chat em
+     2026-09-24: "Confirmo o C, com a emenda da §UAT-07".
+
+     ANTES: quatro literais — `detection-lifecycle`, `logs`, `automation`,
+     `vulnerability-management` —, o mapeamento mínimo que a Phase 5.1 nomeou.
+     Enquanto a tabela curada era a única fonte, a lista ERA a âncora.
+
+     DEPOIS: a âncora é a FONTE CONGELADA. O conjunto autorizado passa a ser os
+     qids que o `MAP` declara com candidato no nível respondido — que é
+     exatamente o que a demanda 021 fez o produto ler.
+
+     ISTO NÃO AFROUXA (R10 §1). A alínea que proíbe apoio fora do autorizado
+     continua existindo e continua reprovando; o que muda é DE ONDE vem a lista.
+     E ela deixa de apodrecer, porque ninguém a edita à mão.
+
+     A CONTRAPARTIDA TEM MUTANTE: o `D021-M9` reintroduz os quatro literais e
+     precisa deixar este gate VERMELHO na cobertura nova. Sem ele, "a âncora
+     passou a ser derivada" seria afirmação sem prova. */
+  const QIDS_AUTORIZADOS = qidsDaFonteCongelada(R.w);
   const qidsVistos = cards.map(c => { const a = c.querySelector("[data-pr-gap-support]");
     return a ? a.getAttribute("data-pr-gap-qid") : null; }).filter(Boolean);
   qidsVistos.forEach(qid => {

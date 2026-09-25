@@ -442,7 +442,12 @@ Estrutura, na ordem em que o documento realmente sai:
    **régua 0–5** com a posição do score entre os seis estágios e o marcador **“Você está aqui”**.
    A régua está dentro do resumo. A primeira página termina aqui;
 4. **Prioridades declaradas pelo negócio**, já na **página 2**;
-5. **Gaps de maturidade observados** — com evidência, capability e caminhos de apoio;
+5. **Gaps de maturidade observados** — com evidência, capability e caminhos de apoio. **Todo gap
+   observado recebe caminho de apoio**, e não apenas alguns: até setembro de 2026 a tabela cobria
+   quatro das quinze perguntas e o relatório observava os outros onze gaps sem dizer por onde
+   começar. Os caminhos continuam sendo **possibilidades a validar**, nunca requisito nem compra
+   recomendada — e quando o contexto tecnológico não foi declarado, o documento diz explicitamente
+   que a aderência precisa ser validada antes de qualquer recomendação;
 6. **Contexto tecnológico declarado**;
 7. **Interpretação do contexto** e **Como a Fortinet pode apoiar**;
 8. **Formas de apoio, por produto**: o mesmo apoio reagrupado por produto em vez de por gap, com

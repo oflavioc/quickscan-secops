@@ -3574,11 +3574,50 @@ T("P51-REC1", "recomendações acionáveis junto do gap, sem overclaim", () => {
     if (!apoio) return;
     const qid = apoio.getAttribute("data-pr-gap-qid");
     if (!qid) throw new Error("bloco de apoio sem identificação do gap");
-    /* [021] O apoio passou a ter DUAS fontes: a tabela curada e o `MAP`
-       congelado. A alínea continua proibindo apoio anexado a gap sem fonte —
-       o que mudou é que agora há duas, e a autorizada é a UNIÃO delas. */
-    if (!TAB[qid] && !candidatosDoMapa(R.w, qid).length)
-      throw new Error("apoio anexado a um gap sem fonte declarada: '" + qid + "'");
+    /* [021 · corrigido em 2026-09-26] O apoio passou a ter DUAS fontes: a tabela
+       curada e o `MAP` congelado.
+
+       A PRIMEIRA REDAÇÃO DESTA ALÍNEA ENFRAQUECEU O GATE, e quem denunciou foi a
+       campanha: `M51-07` — que move a chave da tabela para outro qid — saiu
+       SOBREVIVENTE. A redação era `!TAB[qid] && !candidatosDoMapa(...).length`,
+       e como TODO qid tem candidato no `MAP` a segunda metade nunca dispara: a
+       cláusula virou inalcançável. União de fontes sem origem declarada é o
+       mesmo que fonte nenhuma.
+
+       A forma certa respeita a ORIGEM que o próprio bloco declara: quem diz
+       `capability` tem de estar na tabela; quem diz `nivel` tem de ter candidato
+       no `MAP` no nível respondido. Assim a alínea volta a discriminar, e passa a
+       discriminar nas DUAS origens em vez de uma. */
+    const anc = apoio.getAttribute("data-pr-gap-ancora");
+    if (anc !== "capability" && anc !== "nivel")
+      throw new Error("bloco de apoio de '" + qid + "' sem ancoragem declarada: '" + anc + "'");
+    if (anc === "capability" && !TAB[qid])
+      throw new Error("apoio anexado a um gap fora da tabela canônica: '" + qid + "' (declara ancoragem por capability)");
+    if (anc === "nivel" && !candidatosDoMapa(R.w, qid).length)
+      throw new Error("apoio anexado a um gap sem candidato no MAP: '" + qid + "' (declara ancoragem por nível)");
+    /* A ENTRADA CURADA NÃO PODE CONTRADIZER O MOTOR.
+
+       Esta alínea repõe o poder discriminante que a emenda da §UAT-07 tirou sem
+       eu perceber, e a campanha denunciou: o `M51-07` move a chave da tabela de
+       `detection-lifecycle` para `training` e, com a âncora normativa derivada da
+       fonte congelada, ninguém mais reclamava. O resultado seria o relatório
+       oferecendo FortiSIEM, FortiAnalyzer e FortiSOAR para um gap de CAPACITAÇÃO.
+
+       A alínea anterior não pegava porque, para bloco curado, a tabela era ao
+       mesmo tempo FONTE e ORÁCULO — a tautologia que o `EA-68` já custou. O
+       oráculo tem de vir de FORA dela: a tabela pode ser mais LARGA que o `MAP`
+       (ela parte da capability, ele do nível respondido), mas não pode ser
+       DISJUNTA. Medido nos quatro curados reais: interseção não vazia em todos.
+       Sob o mutante, `training` × `FortiGuard-Service-Bundle` dá vazio. */
+    if (anc === "capability") {
+      const doMapa = candidatosDoMapa(R.w, qid).map(c => c.p);
+      const daTabela = TAB[qid].opts.map(o => o.n);
+      const comum = daTabela.filter(nome => doMapa.some(p => nome.indexOf(p) >= 0 || p.indexOf(nome) >= 0));
+      if (doMapa.length && !comum.length)
+        throw new Error("a tabela curada de '" + qid + "' é DISJUNTA do que o motor oferece para ele — " +
+          "tabela=" + JSON.stringify(daTabela) + " · motor=" + JSON.stringify(doMapa) +
+          " · a entrada foi anexada ao gap errado");
+    }
     /* Oráculo INDEPENDENTE da tabela de apoio: a capability nomeada tem de ser
        a canônica do motor para AQUELE qid. Comparar com a própria tabela seria
        equivalente por construção e deixava passar o apoio anexado ao gap errado. */

@@ -6552,3 +6552,61 @@ inspeção e segui.
 
 Ver [[EA-60]], de quem este é reincidência direta, e [[EA-20]], por ser mais uma
 propriedade que nenhum portão media.
+
+## EA-71 — o gate que prova "tudo-ou-nada" da arbitragem não distingue TUDO de NADA
+
+**Status**: `aberto`
+
+**Aberto em**: 2026-09-26, durante a demanda 021, ao investigar um sobrevivente
+da campanha `d010`. **Não é da 021** — provado abaixo.
+
+### O que foi medido
+
+O mutante `D010-M20` faz a arbitragem **parar no título**: em vez de
+`node.classList.toggle("v32-hidden", hide)`, ele faz `remove("v32-hidden")` — ou
+seja, **nada é ocultado**. O gate `D010-ARB3`, que existe para provar *"tudo-ou-nada
+e sem transbordo"*, **passa**.
+
+```
+D010-M20 aplicado · D010-ARB3 → PASS
+```
+
+### Por que passa, e é o mecanismo que importa
+
+A arbitragem é tudo-ou-nada por construção: `ocultos` tem de valer **0** ou
+`conhecidos.length`. Com o mutante, `ocultos = 0` — e zero satisfaz a condição.
+
+**O gate não distingue "arbitrou tudo" de "não arbitrou nada".** Ele afirma a
+consistência da arbitragem sem nunca afirmar que ela **aconteceu**.
+
+### A prova de que NÃO é da demanda 021
+
+Medido substituindo `ui_v32.js` pela versão da `develop` — sem uma linha da 021 —,
+reconstruindo e reaplicando o mutante:
+
+```
+M20 sobre o ui_v32.js da DEVELOP · D010-ARB3 → PASS
+```
+
+Comportamento idêntico. A demanda 021 toca `qsGapSupportHTML()`, que é superfície
+de **papel**; o `D010-ARB3` mede o censo de **tela**.
+
+### Cadeia arquivo:linha → efeito
+
+- `ui_v32.js` — `if (hiding && allowed) node.classList.toggle("v32-hidden", hide);`
+  (a linha que o mutante ataca)
+- `tests_010_vao.js` — `D010-ARB3`, alínea de tudo-ou-nada: arbitragem parcial
+  reprova, arbitragem **ausente** não.
+
+### Encaminhamento
+
+Falta a alínea que afirma a **ocorrência**: com a arbitragem ligada e substituto
+presente, o conjunto oculto tem de ser **não vazio**. Hoje isso é assumido, nunca
+medido — e por isso um mutante que desliga a arbitragem inteira passa.
+
+**Não corrigido na 021 de propósito**: é gate de outra demanda, e alterá-lo de
+dentro desta seria o que a R10 §1 proíbe — a lição que a 020 mediu e a 021 pagou
+com três waves quando colidiu com a C2 da 015.
+
+Ver [[EA-20]], de quem este é mais uma instância: portão que promete mais do que
+mede.

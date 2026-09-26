@@ -1,7 +1,7 @@
 {
   "_meta": {
     "descricao": "Registry único de pins — fonte de identidade dos artefatos (R8). Hashes = SHA-256 dos blobs de HEAD. Alterar arquivo pinado exige regenerar este registry no MESMO PR, com motivo no commit.",
-    "gerado_de_head": "1810d82e9c29495dd3f52c8b26ab671022fc2601",
+    "gerado_de_head": "6ba25fbdfa9b84707a451eb787f016e6bc274431",
     "gerado_em": "2026-09-26",
     "exclusoes": [
       "docs_phase5/**",
@@ -15,7 +15,7 @@
     "baseline_core_zip_sha256": "625079c462be7d44ffd69b1cd85f256382322bd0555ae4b548f21bf30ee5b89d"
   },
   "files": {
-    ".claude/BACKLOG.md": "b18c2423f5f563ff6d6a486e4f5aaef8fbcdd2558df9872e8768b034e0ed03d1",
+    ".claude/BACKLOG.md": "5dcb535d840dddcc48e499b854058a1b6a8f393fdd6c26e312fcc5cbe394cc28",
     ".claude/agent-memory/README.md": "2f868716c8785119c1d6a02a7715f7b5058ab968f55951410fc82fc45b960a93",
     ".claude/agent-memory/build-engineer/MEMORY.md": "5ed47a73226fea6613b44c2ce70b26e95415033bafbd69a3ada20fa7df0bf950",
     ".claude/agent-memory/build-engineer/feedback_escopo_de_scanner_nos_dois_sentidos.md": "a07b03eb0687bc4f08ff02375684b8441f8d434384c415a3e25b1fe233007527",
@@ -437,6 +437,8 @@
     "specs/020-lista-secundaria-redundante/relatorio-final.md": "72a9d672ba6c0ff9ddc010ff7917f87dc5b2245eb0abb3210842de28001429c0",
     "specs/021-cobertura-do-apoio/plan.md": "790b379c9338d1a3f46fd225726a8092844387280d5026d28dd2b9f9f0067103",
     "specs/021-cobertura-do-apoio/refinement.md": "5ad5f27dc24570da44eae89fa60a33f30900a74237d1ecb32b1a6c1020bfa76c",
+    "specs/021-cobertura-do-apoio/relatorio-final.md": "46765619234ebf28d4fd4032bed1abf1eaecc8f4621e90dc631fc54d047dd002",
+    "specs/021-cobertura-do-apoio/spec-validate.md": "2b0242908e765a97dda01a66a95b31a72fc3d639f0bcc57ac10c3950e52ad7b9",
     "specs/021-cobertura-do-apoio/spec.md": "e959736c5eea52350ab65eb24b0ef688aaac2e9ce7bccf192465811a39179376",
     "specs/021-cobertura-do-apoio/tasks.md": "d7ad9160f46ab688e59acbaf1c7bb4c17bc32d40f071dff98da55ff073d4396a",
     "specs/PHASE_5_0_REV_A.md": "22e729174c6a3c5dd620da5330b03eb96d9eb6fc6e64eba097c2bde55eb0a510",

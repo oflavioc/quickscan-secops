@@ -1,7 +1,7 @@
 {
   "_meta": {
     "descricao": "Registry único de pins — fonte de identidade dos artefatos (R8). Hashes = SHA-256 dos blobs de HEAD. Alterar arquivo pinado exige regenerar este registry no MESMO PR, com motivo no commit.",
-    "gerado_de_head": "6ba25fbdfa9b84707a451eb787f016e6bc274431",
+    "gerado_de_head": "acae500f4b52e391e5f899de7f09a69ec7f515f6",
     "gerado_em": "2026-09-26",
     "exclusoes": [
       "docs_phase5/**",
@@ -15,7 +15,7 @@
     "baseline_core_zip_sha256": "625079c462be7d44ffd69b1cd85f256382322bd0555ae4b548f21bf30ee5b89d"
   },
   "files": {
-    ".claude/BACKLOG.md": "5dcb535d840dddcc48e499b854058a1b6a8f393fdd6c26e312fcc5cbe394cc28",
+    ".claude/BACKLOG.md": "426e5b08ff945601af1b1d224656c77503745b097cef20bd5dd88f602dd0489b",
     ".claude/agent-memory/README.md": "2f868716c8785119c1d6a02a7715f7b5058ab968f55951410fc82fc45b960a93",
     ".claude/agent-memory/build-engineer/MEMORY.md": "5ed47a73226fea6613b44c2ce70b26e95415033bafbd69a3ada20fa7df0bf950",
     ".claude/agent-memory/build-engineer/feedback_escopo_de_scanner_nos_dois_sentidos.md": "a07b03eb0687bc4f08ff02375684b8441f8d434384c415a3e25b1fe233007527",
@@ -470,9 +470,9 @@
     "tests_journey_m45.js": "84d99be32e122f867dc1620cd1f49e4f3ae9795a32185cc75aa246d8682941f5",
     "tests_m42_m86.js": "d263ee641d699e3c99d71e7c23c4923b3444ca3fdce86a6d5eebdd71e14273ee",
     "tests_p50_chromium.js": "32058b4e980ade446d29dd205cdc98485ae3d2e9fbb66d6ee93be5e8224c8a00",
-    "tests_p50_core.js": "f42a1fc0037db57550447f9dcad70c5bd75474aaa933b93d49ba572eb121903d",
+    "tests_p50_core.js": "04810d7f40314a6c4629ff1a1e30a8ee3eb7f992f82370e62cf07aecb3212a14",
     "tests_p50_mutants.js": "a78306918c7f27ab08c34cd557ece041e55cc7271169c7f4749b0ebcea058b8b",
-    "tests_p51_mutants.js": "dfa4ec651a41d4befd137c12b1b6046f52d1925f674e1746d6b826981a155559",
+    "tests_p51_mutants.js": "fd99780dfb39dfb62c2ee18ef842706d461feaba11589b69677fa59daee2acb4",
     "tests_p52_chromium.js": "7d32e3b376951ed10e5d965fa823b88b099ffc35f18bbe07a92b155cc9e10b14",
     "tests_p52_layout.js": "c44fef4a8db7ba14de9a4f59bbd58c4fb72c63854bf94b326236f9191f96d6f8",
     "tests_p52_mutants.js": "35d60c1798315339679d24fb081d116d387dc857ba06017a4a9584dd9ae0b0cf",

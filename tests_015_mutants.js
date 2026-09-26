@@ -118,8 +118,34 @@ const H3_BASE = '<h3>Leitura base — contexto tecnológico não informado</h3>'
    propriedade para ancoragem por nível, M7 segue reusando o atributo errado. */
 const FONTE_TXT = 'Esta lista parte da <b>capability</b> associada ao gap, não do nível respondido na pergunta — por isso pode não coincidir com outras listas deste relatório. A <b>ancoragem canônica</b> desta sessão é a que parte da pergunta e do nível respondido; esta lista é complementar.';
 /* A indentação FAZ PARTE da âncora: é ela que separa os dois ramos. */
-const FONTE_NDECL = NL + '      <div class="pr-gapsup-why" data-pr-gap-fonte>' + FONTE_TXT + '</div>';
-const FONTE_DECL  = NL + '    <div class="pr-gapsup-why" data-pr-gap-fonte>' + FONTE_TXT + '</div>';
+/* ==========================================================================
+   [E19 · 2026-09-26] REANCORAGEM — o EA-4 mordeu este arquivo pela segunda vez,
+   e desta vez fui eu quem apodreceu as âncoras.
+
+   A demanda 021 unificou o nó de ancoragem: os dois ramos de `qsGapSupportHTML`
+   deixaram de carregar o literal e passaram a interpolar `${fonte}`, calculado
+   UMA vez. As constantes antigas — o literal inline, uma por ramo — saíram de
+   `ocorrencias=1` para `ocorrencias=0`, e M5/M6/M7 caíram em NÃO EXECUTADO.
+   Âncora podre não aparece como vermelho: aparece como SILÊNCIO, e foi o
+   preflight que a nomeou.
+
+   OS TRÊS ATAQUES SÃO PRESERVADOS, só mudam de sítio:
+     M5 · suprimir a ancoragem no ramo DECLARADO  → tira `${fonte}` daquele ramo
+     M6 · inverter a propriedade (ancorar no NÍVEL) → reescreve o texto na fonte única
+     M7 · herdar `data-pr-gap-why` em vez do atributo próprio → idem, no atributo
+
+   E O M5 FICOU MAIS FORTE, não mais fraco: com fonte única, suprimir num ramo só
+   é exatamente o tipo de divergência que o produto agora torna difícil — o
+   mutante ataca a costura que sobrou. */
+const FONTE_UNICA = [
+  "const fonte = curado",
+  '    ? `<div class="pr-gapsup-why" data-pr-gap-fonte>' + FONTE_TXT + '</div>`',
+  '    : "";'
+].join(NL);
+const FONTE_NO_RAMO_DECL = [
+  "    ${fonte}",
+  '    <ul class="pr-gapsup-list">'
+].join(NL);
 const LI7_TXT = 'O relatório pode trazer <b>mais de uma lista</b> de possibilidades para o mesmo gap: elas partem de catálogos e ancoragens diferentes e <b>não se somam</b> como recomendação.';
 const LI7 = '<li>' + LI7_TXT + '</li>';
 /* M17/M18: os dois sitios de titulo/lista que a errata E1 nomeou. */
@@ -166,20 +192,28 @@ const MUTANTS = [
 
   { id: "D015-M5", file: V32JS,
     desc: "emitir a ancoragem só no ramo NÃO DECLARADO (suprimir o nó no ramo declarado)",
-    find: FONTE_DECL,
-    repl: "",
+    find: FONTE_NO_RAMO_DECL,
+    repl: '    <ul class="pr-gapsup-list">',
     gate: "D015-ANC1", only: "D015-ANC1", reason: /ramo DECL: \d+\/\d+ nó\(s\) sem a declaração de ancoragem/ },
 
   { id: "D015-M6", file: V32JS,
     desc: "trocar o texto por afirmação de ancoragem POR NÍVEL (inverter a propriedade)",
-    find: FONTE_NDECL,
-    repl: NL + '      <div class="pr-gapsup-why" data-pr-gap-fonte>Esta lista parte do nível respondido na pergunta, e acompanha o que foi assinalado.</div>',
+    find: FONTE_UNICA,
+    repl: [
+      "const fonte = curado",
+      '    ? `<div class="pr-gapsup-why" data-pr-gap-fonte>Esta lista parte do nível respondido na pergunta, e acompanha o que foi assinalado.</div>`',
+      '    : "";'
+    ].join(NL),
     gate: "D015-ANC1", only: "D015-ANC1", reason: /nó\(s\) não atribuem a ancoragem à CAPABILITY/ },
 
   { id: "D015-M7", file: V32JS,
     desc: "reusar `data-pr-gap-why` em vez do atributo próprio (herdar o atributo que P51-REC1 mede)",
-    find: FONTE_NDECL,
-    repl: NL + '      <div class="pr-gapsup-why" data-pr-gap-why>' + FONTE_TXT + '</div>',
+    find: FONTE_UNICA,
+    repl: [
+      "const fonte = curado",
+      '    ? `<div class="pr-gapsup-why" data-pr-gap-why>' + FONTE_TXT + '</div>`',
+      '    : "";'
+    ].join(NL),
     gate: "D015-ANC1", only: "D015-ANC1", reason: /bloco\(s\) sem exatamente 1 \[data-pr-gap-fonte\]/ },
 
   { id: "D015-M8", file: V32JS,
@@ -210,7 +244,15 @@ const MUTANTS = [
     desc: "suprimir as opções listadas dos qids de QS_GAP_SUPPORT (forma AMPLA — rota T5, recusada)",
     find: UL_NDECL_FULL,
     repl: '<ul class="pr-gapsup-list">${[].map(' + 'o=>' + BQ + '<li data-pr-gap-opt><b>${esc32(o.n)}</b> — <span class="pr-mut">${esc32(o.w)}; validar aderência ao contexto do cliente.</span></li>' + BQ + ').join("")}</ul></div>',
-    gate: "D015-NOSUB1", only: "D015-NOSUB1", reason: /\(b\) E\d+: nomes de \[data-pr-gap-opt\]/ },
+    /* [E19 · 2026-09-26] A alínea (b) do D015-NOSUB1 deixou de comparar por
+       IGUALDADE — o critério C5 diz "nada foi REMOVIDO", e a igualdade afirmava
+       também "nada foi acrescentado", metade que o C5 nunca pediu. Com a nova
+       redação a mensagem mudou, e o M15 saiu SOBREVIVENTE por PRECISÃO DE REGEX,
+       não por falha de gate: a supressão foi detectada, com outro texto.
+       As duas mensagens são detecção correta da mesma coisa — o conjunto de
+       opções mudou contra a âncora. */
+    gate: "D015-NOSUB1", only: "D015-NOSUB1",
+    reason: /\(b\) E\d+: (nomes de \[data-pr-gap-opt\]|REMOVIDO de \[data-pr-gap-opt\]|acréscimo NÃO DECLARADO)/ },
 
   { id: "D015-M19", file: V32JS,
     desc: "duplicar NO PAPEL o título de outra seção — o único carrasco da metade sem cobertura congelada",

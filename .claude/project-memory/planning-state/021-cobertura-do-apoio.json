@@ -1,6 +1,6 @@
 {
   "demanda": "021-cobertura-do-apoio",
-  "phase": "validate",
+  "phase": "done",
   "spec_dir": "specs/021-cobertura-do-apoio",
   "branch": "feature/021-cobertura-do-apoio",
   "brief": "11 dos 15 gaps chegam ao relatorio do cliente SEM caminho de apoio, nas duas configuracoes de contexto (medido 2026-09-24). E o EA-56 na forma que assumiu depois da emenda de 2026-09-15. A descoberta que muda o custo: a Camada 1 congelada JA declara produto e justificativa para os quinze qids em MAP[qid].lv[nivel].c — inclusive a trilha de capacitacao que o EA-56 dizia nao ter onde morar. Nada precisa ser inventado; o produto simplesmente nao le.",
@@ -38,5 +38,6 @@
     "conformance": "7 de 9 (77,8%) contra a spec COMO APROVADA · 9 de 9 (100%) com as erratas E1 e E2 ratificadas. AS DUAS FICAM, no precedente da 018 e da 019: apagar a de 77,8% esconderia que a spec pedia duas coisas que o produto nao podia cumprir — o C3 descrevia estado INALCANCAVEL por construcao (sempre que ha gap ha candidato, medido 15/15 nos niveis 0 e 1) e o C7 supunha superficie de TELA que NAO EXISTE (medido: tela 0 blocos, papel 4). As duas foram achadas AO ESCREVER O RED, que e para isto que a R3 ordena a fase antes da implementacao.",
     "aceite_de_intencao": "Pendente do proprietario. O produto entrega o que a Fase 0 pediu: 4 -> 15 gaps com caminho de apoio, sem invencao de conteudo e sem tocar arquivo frozen.",
     "notes": "QUATRO MUTANTES SOBREVIVERAM na primeira execucao e TRES ACUSARAM O GATE, dois deles o gate desta propria demanda: a fixture de 'contexto declarado' declarava capabilities que NAO ALCANCAM qid derivado — o eixo existia no nome. Familia EA-20 dentro do gate escrito para caca-la. O quarto (D021-M3) e EQUIVALENTE POR CONSTRUCAO e foi aposentado com id preservado."
-  }
+  },
+  "pr_url": "https://github.com/oflavioc/quickscan-secops/pull/101"
 }

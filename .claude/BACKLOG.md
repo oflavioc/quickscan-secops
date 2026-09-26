@@ -5460,7 +5460,29 @@ sem rito. A camada já é a dona da recomposição da tela; nenhum arquivo
 
 ## EA-56 — a trilha de capacitação não tem onde morar: os três caminhos estão bloqueados
 
-**Status**: `aberto`
+**Status**: `resolvido`
+
+> **Fecho — demanda 021-cobertura-do-apoio, 2026-09-26.** O achado mudou de forma
+> na emenda de 2026-09-15 — de *"falta a trilha de capacitação"* para *"a tabela de
+> apoio cobre 40% dos gaps"* —, e foi essa forma que a 021 fechou.
+>
+> **Medido: 4 → 15.** Todo gap observado passa a trazer caminho de apoio.
+>
+> **A trilha de capacitação já morava na Camada 1, e o produto não lia.** O
+> encaminhamento deste achado supunha que o conteúdo teria de ser ESCRITO, e era
+> por isso que ele parecia caro — os três caminhos "bloqueados" eram três formas
+> de escrever. O `MAP` congelado já declarava:
+>
+> ```
+> training → FortiGuard-Service-Bundle
+>            "treinamento e certificação (Cybersecurity Professional Education)"
+> ```
+>
+> Nenhuma Porta B, nenhum repin da régua D2: **ler o `MAP` não o altera**.
+>
+> Custou uma colisão com a C2 selada da demanda 015 — resolvida pela errata `E19`,
+> ratificada pelo proprietário —, e o cross-check que a teria antecipado não foi
+> feito. Registro completo em `specs/021-cobertura-do-apoio/relatorio-final.md`.
 
 **Aberto em**: 2026-09-14, ao implementar o `EA-55`. O proprietário decidiu o
 conteúdo (`training.fortinet.com`) e eu **não consegui entregá-lo** sem

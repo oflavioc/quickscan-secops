@@ -127,7 +127,19 @@ function R(fxId) {
 }
 const qa = (n, s) => Array.from(n.querySelectorAll(s));
 const txt = el => (el ? (el.textContent || "").replace(/\s+/g, " ").trim() : "");
-const nomeCap = (w, id) => w.__DEV.V32.CAPABILITIES[id].name;
+/* ERRATA (2026-09-27, EA-69) · o nome procurado no DOM é o nome LIDO.
+   Desde que os rótulos passaram pela tabela fechada `P52_COPY`, dois deles
+   ("Network Detection & Response" e "Gestão de exposição externa (EASM/DRPS)")
+   têm o MESMO texto no catálogo e no MAP, e a substituição alcança os dois
+   lados — o leitor vê um nome só, que é o ponto. Procurar o literal congelado
+   no DOM faria este gate reprovar o produto CERTO. A decisão de QUEM deve ser
+   nomeado continua vindo do estado congelado (`split.com` / `split.sem`); o que
+   se traduz é só a agulha com que se procura. Precedente: `P51-REC1` (021) e
+   `P50-VOC1` (mesma errata). */
+const nomeCap = (w, id) => {
+  const bruto = w.__DEV.V32.CAPABILITIES[id].name;
+  return (w.__P52 && typeof w.__P52.applyCopy === "function") ? w.__P52.applyCopy(bruto) : bruto;
+};
 
 /* Nenhum gate de TELA pode medir com o relatório impresso montado no mesmo
    documento: os dois emitem os mesmos seletores e o censo somaria as duas
@@ -262,6 +274,15 @@ function papel(w, d) {
   if (r && r.blocked) throw new Error("preparePrint() bloqueado por rascunho de contexto não salvo");
   const el = d.getElementById("v32-print-report");
   if (!el) throw new Error("#v32-print-report ausente depois de preparePrint()");
+  /* ERRATA (2026-09-27, EA-69) · O PAPEL MEDIDO É O PAPEL ENTREGUE.
+     `preparePrint()` monta o relatório; quem o ENTREGA é o evento `beforeprint`,
+     e há passagens de apresentação registradas nele — entre elas a tabela
+     fechada `P52_COPY`, que reescreve os rótulos de capability. Chamar só
+     `preparePrint()` media um artefato INTERMEDIÁRIO, que o cliente nunca vê:
+     o gate afirmava sobre nomes que o PDF não imprime. Medido quando a troca de
+     rótulos passou na tela e reprovou no papel — a divergência era do oráculo,
+     não do produto. O evento é idempotente e roda depois da montagem. */
+  w.dispatchEvent(new w.Event("beforeprint"));
   return el;
 }
 /* Ordem canônica do relatório impresso — TRANSCRITA da âncora viva de

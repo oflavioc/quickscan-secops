@@ -314,6 +314,21 @@ function renderBlocks(app){
         <button class="btn2" id="v32clear">Limpar contexto tecnológico</button>
       </div>
       <div id="v32editor" class="v32-hidden"></div>`;
+    /* EA-74 · o censo da SESSÃO, publicado para quem só lê o DOM.
+       A camada de apresentação (workspace 5.2) NÃO pode chamar o domínio — o
+       `P52-GOV1` reprova, e com razão: dono de layout que consulta o motor
+       deixa de ser dono de layout. Mas o índice lateral precisa do número da
+       SESSÃO, e ele não existia no DOM: os cards de prioridade não carregam
+       tag de severidade, então contar `.f-tag` dava "0 altos" exatamente quando
+       os altos viravam prioridade (medido: motor 3 altos, DOM 0).
+       O domínio publica o que já calculou; quem apresenta lê daqui. */
+    {
+      const censo = computeFindings().findings || [];
+      let qsAlto = 0, qsModerado = 0;
+      censo.forEach(f => { if (f.sev === 2) qsAlto++; else if (f.sev === 1) qsModerado++; });
+      p.setAttribute("data-qs-censo-alto", String(qsAlto));
+      p.setAttribute("data-qs-censo-moderado", String(qsModerado));
+    }
     const clr = document.getElementById("v32clear");
     if (clr) clr.onclick = ()=>{ V32.resetLandscapeToUnset(); lastCtx=null; renderBlocks(app); if (window.__uxDecor) window.__uxDecor(app); };
   }

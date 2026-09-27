@@ -4266,6 +4266,18 @@ T("P50-VOC1", "EA-23: o chip de contexto declara o nome avaliado quando a capabi
   if (!CAPS.length) throw new Error("catálogo de capabilities vazio");
 
   /* esperado, recomputado da regra: apelido SE E SOMENTE SE 1 pergunta e nomes divergentes */
+  /* ERRATA (2026-09-27, EA-69) · O ORÁCULO COMPARA NO VOCABULÁRIO DO LEITOR.
+     A DECISÃO "declara ou não declara" continua recomputada do estado congelado,
+     como o cabeçalho exige — é ela que o renderer também toma, e compará-la com
+     o módulo seria tautologia. O que muda é o LADO RENDERIZADO: desde que os
+     rótulos de capability passaram pela tabela fechada `P52_COPY`, o texto que
+     o leitor recebe não é mais o literal congelado, e exigir o literal faria o
+     gate reprovar o produto CERTO — o mesmo erro que a errata de 2026-09-13
+     corrigiu logo abaixo. A substituição é declarada e fechada; aplicá-la aqui
+     mede a mesma invariante na língua em que ela é lida. Precedente: `P51-REC1`
+     (demanda 021), pelo mesmo motivo e com o mesmo acessório. */
+  const copy = t => (w.__P52 && typeof w.__P52.applyCopy === "function")
+    ? w.__P52.applyCopy(t) : t;
   const esperado = {};
   CAPS.forEach(c => {
     const alvo = (c.qids.length === 1 && capDe[c.qids[0]] && capDe[c.qids[0]] !== c.name)
@@ -4291,12 +4303,12 @@ T("P50-VOC1", "EA-23: o chip de contexto declara o nome avaliado quando a capabi
     /* (a) divergente e 1:1 → o nome avaliado está DECLARADO, literal */
     if (alvo) {
       if (!alias) throw new Error("capability " + id + " não declara o nome avaliado «" + alvo + "»");
-      if (txt(alias).indexOf(alvo) < 0)
+      if (txt(alias).indexOf(copy(alvo)) < 0)
         throw new Error("apelido de " + id + " não contém o nome avaliado: «" + txt(alias) + "»");
       comAlias++;
       /* (b) o nome acessível carrega o apelido — senão o leitor de tela fica com
          um nome que não aparece em nenhuma outra seção do relatório */
-      if (accName(chip).indexOf(alvo) < 0)
+      if (accName(chip).indexOf(copy(alvo)) < 0)
         throw new Error("nome acessível de " + id + " sem o nome avaliado: «" + accName(chip) + "»");
     } else {
       /* (c) agregada (>1 pergunta), sem pergunta, ou nomes iguais → SEM apelido.
@@ -4321,9 +4333,9 @@ T("P50-VOC1", "EA-23: o chip de contexto declara o nome avaliado quando a capabi
       const tAlias = txt(alias), tCap = txt(chip.querySelector(".p50-presence-cap"));
       if (tAlias === tCap)
         throw new Error("apelido de " + id + " é idêntico ao nome do chip");
-      if (tAlias === alvo)
+      if (tAlias === copy(alvo))
         throw new Error("apelido de " + id + " justapõe o nome sem declarar o que ele é");
-      if (tAlias.length <= alvo.length)
+      if (tAlias.length <= copy(alvo).length)
         throw new Error("apelido de " + id + " sem moldura declarativa: «" + tAlias + "»");
     }
   });

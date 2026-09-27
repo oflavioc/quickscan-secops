@@ -214,7 +214,20 @@
     ["Gestão de exposição externa (EASM/DRPS)",
      "External Attack Surface Management (EASM)"],
     ["Ciclo de vida de detecção (detection engineering)",
-     "Detection Engineering"]
+     "Detection Engineering"],
+    /* O CATÁLOGO NÃO ENTRA, e a ausência é decisão medida.
+       `MAP[qid].cap` (capability a desenvolver) e `V32.CAPABILITIES[id].name`
+       (rótulo de catálogo) são vocabulários distintos POR DESENHO, e o
+       `P50-VOC1` (EA-23) existe para mantê-los ligados: o chip de contexto
+       declara o nome avaliado ao lado do nome de catálogo.
+
+       Tentei reescrever os dois lados e medi o resultado: os nomes ficam
+       IGUAIS, e o chip passa a ler "Incident Response (IR) — avaliada como
+       «Incident Response (IR)»". A ponte que o EA-23 construiu vira eco.
+
+       O catálogo é o vocabulário de quem preenche o Landscape; a avaliação é o
+       de quem lê o diagnóstico. O proprietário apontou os rótulos da AVALIAÇÃO,
+       e é só neles que se mexe. */
   ];
   /* Nós cujo texto é do USUÁRIO ou é citação literal: nunca reescritos. */
   /* O bloqueio é sobre o TEXTO DO USUÁRIO e sobre citações literais — não
@@ -250,25 +263,23 @@
      exclui por desenho os gaps escolhidos como prioridade. Literalmente
      verdadeiro, e lido como "esta organizacao nao tem gaps altos".
 
-     O censo passa a vir do MOTOR (`computeFindings`), que e o oraculo da
-     sessao inteira e nao depende de qual secao renderiza o que — mesma licao
+     O censo passa a vir do DOMINIO, publicado por ui_v32.js em #v32panel
+     (`data-qs-censo-*`): esta camada e dona de LAYOUT e nao pode consultar o
+     motor — o P52-GOV1 reprova, e com razao. Quem calcula publica, quem
+     apresenta le — mesma licao
      da 021, onde um oraculo lido do DOM perdeu um card em silencio.
 
      Ausencia do motor devolve `null`, e quem chama omite o rotulo: rotulo
      ausente e honesto, numero errado nao e (R10 §2). */
   function p52CensoSessao() {
-    var f;
-    try {
-      if (typeof computeFindings !== "function") return null;
-      f = (computeFindings() || {}).findings;
-    } catch (e) { return null; }
-    if (!f || typeof f.length !== "number") return null;
-    var alto = 0, moderado = 0, i;
-    for (i = 0; i < f.length; i++) {
-      if (f[i] && f[i].sev === 2) alto++;
-      else if (f[i] && f[i].sev === 1) moderado++;
-    }
-    return { alto: alto, moderado: moderado };
+    var painel = document.getElementById("v32panel");
+    if (!painel) return null;
+    var a = painel.getAttribute("data-qs-censo-alto");
+    var m = painel.getAttribute("data-qs-censo-moderado");
+    if (a === null || m === null) return null;
+    a = parseInt(a, 10); m = parseInt(m, 10);
+    if (isNaN(a) || isNaN(m)) return null;
+    return { alto: a, moderado: m };
   }
 
   function p52CopyGuard(node, root) {
@@ -300,7 +311,11 @@
     for (var a = 0; a < attrs.length; a++) {
       ["aria-label", "placeholder"].forEach(function (name) {
         var val = attrs[a].getAttribute(name);
-        if (!val || !/[Mm]andato|charter/.test(val)) return;
+        /* EA-69 · segundo pré-filtro literal, achado pelo P50-VOC1: o nome
+           ACESSÍVEL ficava no vocabulário antigo enquanto o visível mudava —
+           leitor de tela e leitor de tela em desacordo é pior que nenhuma
+           troca. Deriva da tabela, como o do texto. */
+        if (!val || !p52CopyToca(val)) return;
         var o = val;
         for (var k2 = 0; k2 < P52_COPY.length; k2++) o = o.split(P52_COPY[k2][0]).join(P52_COPY[k2][1]);
         if (o !== val) { attrs[a].setAttribute(name, o); trocas++; }

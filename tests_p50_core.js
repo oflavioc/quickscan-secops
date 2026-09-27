@@ -311,7 +311,27 @@ const PROTECTED = {
      campanha `d021` (7 DETECTADO · 0 SOBREVIVENTE).
      Identidade anterior:
      948dc7f93f9be71ea52f506124d4fce9558f85cc500258bf2cfbfaddcd9c723c */
-  "ui_v32.js": "d56d11abc1c37cfd0e7f5c191852099849f7ad819c186b63a0215fdb17cb004f",
+  /* AUTORIZACAO NOMINAL §29.4 do proprietario, no chat, em 2026-09-27, POR
+     ARQUIVO (`ui_v32.js`) e valida so para este trabalho — o lote de correcoes
+     da sessao real na v3.2.9. Pedida DEPOIS de o portao barrar, e nao antes de
+     editar: o `P50-GOV1` reprovou em 63/65 e a R6 manda parar e nomear o rito.
+
+     MOTIVO (EA-74): o indice lateral dizia "0 altos" quando os gaps altos da
+     sessao viravam prioridade. Medido: motor 3 altos + 12 moderados, DOM 0 + 12
+     — os cards de prioridade nao carregam tag de severidade, e o numero da
+     SESSAO nao existia no DOM. A primeira correcao chamou `computeFindings()`
+     de dentro do workspace e o `P52-GOV1` reprovou com razao: dono de layout
+     que consulta o motor deixa de ser dono de layout.
+
+     A EDICAO: oito linhas, no fecho do render do painel, que PUBLICAM em
+     `#v32panel` (`data-qs-censo-alto` / `data-qs-censo-moderado`) o censo que o
+     dominio ja calculara para outros fins. Nao muda decisao, nao muda texto,
+     nao muda ordem — so expoe numero existente para quem so le o DOM.
+     Alternativas medidas antes de pedir: contar no DOM (informacao ausente) e
+     publicar de `ui_journey_v32.js` (tambem protegido).
+     Identidade anterior:
+     d56d11abc1c37cfd0e7f5c191852099849f7ad819c186b63a0215fdb17cb004f */
+  "ui_v32.js": "a38b913fdf1e6a1e6ecba8ef4e1bcb24a4fc822efca3710d53d29155eded49d0",
   "ui_ux_v32.js": "a050401145a5ed7af597eae01a9a23826418119769c096db168b3b177a9d3938",
   /* ERRATA DA AUDITORIA EXTERNA · §4.1.1 ("qualquer texto derivado consome a
      mesma decisão canônica de publicabilidade"). A comparação Atual × Alvo

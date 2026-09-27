@@ -275,6 +275,47 @@ antes do plano (R3 §1), e é escrito pelo `qa-engineer` — nunca pelo implemen
 |---|---|---|---|
 | **C1** | **O título do bloco de prioridades V3.2 deixa de prometer apoio e passa a nomear a leitura que entrega** — porque a promessa é falsa em 2 dos 4 estados do bloco (refinamento, M3). Vale nas **duas** superfícies, com a assimetria do sufixo declarada em C1(d) | **`D015-TIT1`** · (a) o eyebrow de `#v32prio` **não contém** `/apoi(o\|ar\|a)/i`; (b) **contém** a substring exata `· contexto V3.2`; (c) o `<h3>` que precede `#pr-sup-prio` no papel tem **oração principal idêntica** à do eyebrow após remover o sufixo; (d) o `<h3>` do papel **não** contém o sufixo; (e) o eyebrow ≠ e não é substring do título congelado `"Como a Fortinet pode apoiar nas prioridades declaradas"`; (f) **não-vacuidade**: `#v32prio` e `#pr-sup-prio` existem nas fixtures usadas, e a alínea nomeia o estado se não existirem; **(g) [E1] unicidade** — o texto trimado do eyebrow é **único** entre `#app .eyebrow, #app h3`, e o do `<h3>` do papel é único em `#v32-print-report`; **(h1) [E2 · partida] pertinência** — o texto do eyebrow não pertence a `HIDE_EYEBROWS` (`ui_v32.js:109-110`) nem às suas duas cópias; asserção sobre o **fonte**; **(h2) [E2 · cláusula sentinela, sem mutante]** — o nó **nunca** recebe `.v32-hidden` em E1–E8; gatilho de falsificação nomeado: mudança do escopo de varredura de `hideLegacyRecommendation` | **M1** restaurar o literal antigo do eyebrow ⇒ (a) morre · **M2** apagar o sufixo ⇒ (b) morre · **M3** editar só a tela ⇒ (c) morre · **M4** copiar o sufixo para o papel ⇒ (d) morre · **M17** [E1, corrigido em E3] **emitir o `section-title` da tela duas vezes** ⇒ (g) morre, e **só** (g) — a forma literal que eu havia escrito (trocar o texto pelo de outro título) ~~levaria junto o sufixo e reprovaria por (b)~~: detecção incidental não é kill. ~~*prova fraca: `N40` também mataria*~~ — **falso, ver E3** · **M18** [E1, reatribuído em E2] pôr o eyebrow em `HIDE_EYEBROWS` ⇒ **(h1)** morre — ~~e `U15` cai junto~~ **falso, ver E2.1** · **M19** [E2] duplicar **no papel** o título de outra seção ⇒ (g) morre — **único carrasco da metade sem cobertura congelada** |
 | **C2** | **O bloco de apoio junto do gap declara a própria ancoragem** — que a lista parte da *capability* do gap, não do nível respondido. É a metade alcançável de T3 com `ui_v32.js` (a outra metade vive em arquivo não autorizado; ver "Resíduo declarado") | **`D015-ANC1`** · (a) todo `[data-pr-gap-support]` traz **exatamente 1** nó `[data-pr-gap-fonte]`, atributo **próprio** (nunca outro valor de `data-pr-gap-why`, que `P51-REC1` já mede); (b) o texto casa a **propriedade** — ancoragem por capability **e** negação explícita de ancoragem por nível — por duas expressões independentes, nunca pela frase inteira; (c) presente nos **dois** ramos de `qsGapSupportHTML` (contexto declarado e não declarado), medido em duas fixtures; (d) o nó **não** nomeia produto (`!/Forti[A-Z]/`) nem repete a lista; (e) **não-vacuidade**: o conjunto de `[data-pr-gap-support]` é não vazio e a contagem é a esperada em cada fixture, declarada no gate | **M5** emitir só no ramo "não declarado" ⇒ (c) morre · **M6** trocar o texto por afirmação de ancoragem por nível ⇒ (b) morre · **M7** reusar `data-pr-gap-why` em vez do atributo próprio ⇒ (a) morre |
+
+> ### Errata E19 · C2 — RATIFICADA (proprietário no chat, 2026-09-26:
+> *"Ratifico a errata da C2 da 015, segue"*)
+>
+> **O título da C2 sempre foi a forma geral** — *"o bloco de apoio declara a
+> PRÓPRIA ancoragem"*. O que foi escrito com **uma** origem em mente é o
+> parêntese: *"que a lista parte da capability, não do nível respondido"*,
+> verdadeiro enquanto a tabela curada era a única fonte.
+>
+> A demanda **021-cobertura-do-apoio** deu ao produto uma **segunda origem** — o
+> bloco derivado do `MAP`, ancorado no **nível respondido**, que é a ancoragem
+> canônica da sessão. Para ele, as duas expressões da alínea (b) seriam **duas
+> afirmações falsas**; fazer o produto mentir para caber no critério é o erro que
+> o `D019-PROV1` já custou.
+>
+> **O que muda no gate `D015-ANC1`:** as alíneas (a)-(d) passam a se aplicar aos
+> blocos **ancorados na capability**, onde a propriedade tem sujeito, e nasce a
+> **(f)**: *todo bloco declara a própria ancoragem, e o ancorado no nível NÃO
+> repete o aviso de divergência* — porque ele **é** a ancoragem canônica.
+>
+> **NADA FOI AFROUXADO (R10 §1).** Toda asserção que existia continua valendo,
+> sobre o mesmo conjunto de antes; há asserção **nova** sobre o conjunto que
+> antes não existia. A campanha fechou **15/15**.
+>
+> **Efeito colateral medido e emendado no mesmo ato:**
+> - as fixtures declaravam `gapSupportQids`/`ramos` por estado, e o produto passou
+>   de 4 para 9 blocos. A declaração passou a ser **por origem** — HEAD e ÂNCORA —,
+>   porque a âncora imutável é artefato do passado e continua com a cobertura de
+>   quatro. Forçar um a caber no outro destruiria o que o `D015-NOSUB1` prova.
+> - a alínea (b) do `D015-NOSUB1` exigia **igualdade** de opções contra a âncora.
+>   O C5 diz *"nada foi REMOVIDO"*; a igualdade afirmava também *"nada foi
+>   acrescentado"*, metade que o C5 **nunca pediu** e que só se sustentava porque
+>   a 015 não acrescentava nada. Agora: âncora ⊆ HEAD **e** o acréscimo tem de ser
+>   exatamente o declarado em `optsAcrescidos`. Acréscimo não declarado reprova —
+>   o delta ganhou oráculo, em vez de virar permissão.
+> - `M5`/`M6`/`M7` caíram em `ocorrencias=0` porque a 021 unificou o nó numa fonte
+>   única. **É o `EA-4` mordendo este arquivo pela segunda vez**, e desta vez fui
+>   eu quem apodreceu as âncoras. Reancorados com os três ataques preservados.
+> - `M15` saiu SOBREVIVENTE por **precisão de regex**, não por falha de gate: a
+>   alínea reescrita detecta a supressão com outra mensagem.
+
 | **C3** | **A regra geral entra na caixa "Como interpretar este relatório"** — um 7º item, **estático**, dizendo que o relatório pode apresentar mais de uma lista de possibilidades para o mesmo gap, que elas partem de catálogos e ancoragens diferentes, e que **não se somam** como recomendação | **`D015-HOWTO1`** · (a) `#pr-howto li` = **7**, dentro da faixa 5–8 que `P51-DOC12` (`tests_p50_core.js:3825-3826`) e o gate de PDF (`tests_p50_chromium.js:3595`) exigem; (b) **[emendada em E1]** as **duas** métricas sob o mesmo limite de 900, cada uma nomeada com a sua suíte: **crua** — `txt(#pr-howto).length`, que é `textContent` puro, medida por `P51-DOC12` (`tests_p50_core.js:3827-3828`), **hoje 585**, e é a que **reprova primeiro**; **normalizada** — `.replace(/\s+/g," ").trim().length`, medida pelo gate de PDF (`tests_p50_chromium.js:3570-3571`, `:3597`), **hoje 544**. Orçamento do 7º item: **≤ 308 caracteres visíveis**. As duas medidas ficam registradas no gate, antes e depois; (c) o novo item casa a propriedade (duas expressões: "mais de uma lista" + "não se somam"), nunca a frase; (d) a caixa continua **estática** — `outerHTML` idêntico entre duas sessões de dados diferentes; (e) os 6 conteúdos exigidos por `P51-DOC12:3831-3837` continuam casando | **M8** tornar o item função da sessão ⇒ (d) morre · **M9** remover o item ⇒ (a) e (c) morrem · **M10** escrever o item longo o bastante para estourar 900 ⇒ (b) morre |
 | ~~**C4**~~ **DERRUBADO (E1)** | ~~**O resíduo `C × I` é declarado na tela, e só onde ele existe** — quando a leitura congelada da Camada 1 está visível, uma linha diz que o cenário-alvo pode listar os mesmos itens porque as duas partem do mesmo catálogo congelado, ancorados de formas diferentes~~ · **Razão da queda em E1**: acrescentaria texto à tela que o cliente chamou de carregada, num host que não é o certo | ~~**`D015-RES1`** · (a) com a Camada 1 **visível** (estados E1 e E2), `#v32panel` traz **exatamente 1** `[data-v32-relacao="catalogo-unico"]`; (b) com a Camada 1 **oculta** (estado E3), o nó **não existe**; (c) o texto é **condicional** e **não afirma** a existência do cenário-alvo; (d) o nó não nomeia produto e a contagem de `.v32-decl-row` fica inalterada; (e) **não-vacuidade**: em E1 e E2 a Camada 1 está de fato visível~~ · **gate não é escrito** | ~~**M11** · **M12** · **M13**~~ — **aposentados, ids não reusados** (R12) |
 | **C5** | **Nada é removido** — a ratificação do proprietário, como asserção. É o instrumento que a 010 só construiu depois da reprovação (E18) | **`D015-NOSUB1`** · contra **âncora de commit imutável + SHA** (R10 §5, nunca `HEAD:`), nos estados E1–E8: (a) o conjunto de `data-cap` de `#v32prio` é **idêntico**; (b) o conjunto de nomes em `[data-pr-gap-opt]` é **idêntico**; (c) os conjuntos de `data-cap` de `#pr-sup-prio`, `#pr-sup-base` e `#pr-sup-maturity` são **idênticos**; (d) `txt(#pr-support).length` e `txt(#pr-findings).length` **não diminuem** — **[E2] esta alínea é REDE, não guarda**: em entrega aditiva não detecta subtração menor que a própria adição; as guardas são (a)(b)(c), que comparam **conjuntos**, e (d) não pode ser citada como prova de que nada sumiu; (e) **não-vacuidade**: cada conjunto comparado é não vazio em ao menos uma fixture, nomeada no gate | **M14** colapsar em aviso o card de prioridade sem payload (a rota S4, recusada) ⇒ (a) morre — **[E2] exige o estado E8**, sem ele nascia SOBREVIVENTE · **M15** [E2 · **forma ampla**] suprimir as opções dos **quatro** qids de `QS_GAP_SUPPORT` ⇒ (b) **e** (d) morrem, queda medida de **~1.100 chars**. ~~Forma estreita (só o qid que é prática-alvo) ⇒ (b) e (d)~~ — **falso em (d), ver E2.2**; na forma estreita (d) ficaria sem carrasco |

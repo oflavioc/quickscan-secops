@@ -182,7 +182,21 @@ const MUTANTS = [
 
   { id: "M51-07", desc: "recomendação é anexada ao gap errado",
     file: F.uiv32, gate: "P51-REC1", cmd: "node tests_p50_core.js", only: "P51-REC1",
-    reason: /FortiClient|escopo de endpoint|apoio/i,
+    /* [021 · 2026-09-26] A alínea que mata este mutante MUDOU DE TEXTO, e o
+       mutante saiu SOBREVIVENTE por PRECISÃO DE REGEX, não por falha de gate —
+       terceira vez nesta rodada.
+
+       Antes, quem o matava era o `QIDS_AUTORIZADOS` com quatro literais:
+       `training` não estava na lista e o gate acusava "fora do mapeamento
+       normativo". A emenda da §UAT-07 (demanda 021) tornou a âncora DERIVADA da
+       fonte congelada, e `training` passou a estar autorizado — o carrasco sumiu.
+
+       O carrasco novo é melhor e vem de FORA da tabela: a entrada curada não pode
+       ser DISJUNTA do que o motor oferece para aquele qid. Sob o mutante,
+       `training` lista FortiSIEM/FortiAnalyzer/FortiSOAR/FortiSOC enquanto o motor
+       oferece FortiGuard-Service-Bundle — interseção vazia, e o relatório estaria
+       recomendando SIEM para um gap de CAPACITAÇÃO. */
+    reason: /FortiClient|escopo de endpoint|apoio|é DISJUNTA do que o motor oferece/i,
     find: `const QS_GAP_SUPPORT = {
   "detection-lifecycle": {`,
     repl: `const QS_GAP_SUPPORT = {

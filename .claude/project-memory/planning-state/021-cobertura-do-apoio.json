@@ -1,0 +1,43 @@
+{
+  "demanda": "021-cobertura-do-apoio",
+  "phase": "done",
+  "spec_dir": "specs/021-cobertura-do-apoio",
+  "branch": "feature/021-cobertura-do-apoio",
+  "brief": "11 dos 15 gaps chegam ao relatorio do cliente SEM caminho de apoio, nas duas configuracoes de contexto (medido 2026-09-24). E o EA-56 na forma que assumiu depois da emenda de 2026-09-15. A descoberta que muda o custo: a Camada 1 congelada JA declara produto e justificativa para os quinze qids em MAP[qid].lv[nivel].c — inclusive a trilha de capacitacao que o EA-56 dizia nao ter onde morar. Nada precisa ser inventado; o produto simplesmente nao le.",
+  "refinement": {
+    "status": "approved",
+    "notes": "ABERTA EM 2026-09-24, item 1 da particao do EA-58 (proprietario no chat: 'Vamos fazer o lote do EA-58' e depois 'Sim, comeca pelo 1'). A PARTICAO FOI PROPOSTA POR MIM E ACEITA: o 'lote' do EA-58 nao e homogeneo — mistura vocabulario (rotulos SIEM/NDR), cobertura (este item), catalogo (FortiNAC, que NAO EXISTE em camada nenhuma) e SCORES (que muda a NOTA e ainda e 'candidata' em design-decisions, nem achado e). Juntar tudo numa auditoria humana so e como um rito de governanca vira carimbo. NAO E PORTA B: o MAP e LIDO, nunca escrito. Custa autorizacao nominal §29.4 (ui_v32.js) + emenda da §UAT-07 (QIDS_AUTORIZADOS em tests_p50_core.js:3556). TRES DESENHOS, DOIS DESCARTADOS POR MEDICAO: (A) escrever 11 entradas a mao — exige conteudo editorial inventado e tabela a mao apodrece (doenca que o EA-68 pagou); (B) derivar tudo do MAP e aposentar a tabela — ESTREITARIA os quatro que hoje funcionam (detection-lifecycle cairia de 4 produtos para 1), regressao disfarcada de melhoria; (C) RECOMENDADA — a tabela vira excecao curada e o MAP e o padrao: cobertura 4 -> 15 com ZERO regressao e ZERO invencao. O portao tem uma pergunta: confirma o C, e com ele a emenda da §UAT-07? || PORTAO FECHADO em 2026-09-24. Proprietario no chat: \"Confirmo o C, com a emenda da §UAT-07\". Desenho C aprovado (tabela = excecao curada, MAP = padrao) E a emenda da ancora normativa aprovada no mesmo ato — sem ela o P51-REC1 barraria o C, corretamente.",
+    "approved_at": "2026-09-24"
+  },
+  "specify": {
+    "status": "approved",
+    "approved_at": "2026-09-24",
+    "notes": "Spec aprovada pelo proprietario no chat, 2026-09-24: \"Aprovada, segue para o plano\". Nove criterios com gate e mutante. O C1 (zero regressao nos quatro curados) e o mais duro de proposito: e a alinea que separa o desenho C do B. O C6 nasceu na escrita da spec e nao estava no portao — com DUAS origens de bloco, o aviso fixo do EA-48 passa a MENTIR para metade deles, porque o bloco derivado E a ancoragem canonica e nao diverge dela."
+  },
+  "plan": {
+    "status": "approved",
+    "notes": "Fase 2 escrita em 2026-09-24. UMA FUNCAO, UM IF: a mudanca troca o `if (!m) return \"\"` de qsGapSupportHTML() (ui_v32.js:1127) por uma segunda fonte. Nenhum modulo novo, nenhum estado novo, nenhum bridge novo — a demanda nao cria dado, le dois que ja existem. EM ui_v32.js E NAO NA CAMADA 5.x porque e la que buildPrintReport() monta o RELATORIO, e o EA-56 mediu que o problema e pior no PAPEL: o ponteiro do EA-55 vive na 5.2 e nao alcanca o PDF. Resolver na 5.2 repetiria o mesmo erro com outro nome. Boundary: produto + generated; §29.4 (autorizacao nominal + repin inline), NUNCA frozen — se a implementacao precisar ESCREVER no MAP, ela saiu do desenho e PARA (R6 §5). W3 e W4 nao sao paralelas de proposito: a emenda da §UAT-07 so pode ser medida contra a cobertura nova, e faze-la antes deixaria o P51-REC1 verde por VACUIDADE, autorizando qids que ainda nao recebem apoio. Protipo dispensado: a pergunta que so codigo responderia ja foi respondida por sonda na Fase 0.",
+    "approved_at": "2026-09-24"
+  },
+  "tasks": {
+    "status": "approved",
+    "notes": "Fase 3 escrita em 2026-09-24. Doze tarefas, cinco waves. TRES ORDENS NAO NEGOCIAVEIS, cada uma com razao medida: (1) T002 antes de T004 — o red commitado antes da implementacao, licao que o EA-70 cobrou nesta mesma semana quando um gate escrito DEPOIS da correcao teria nascido sem nunca ter sido visto falhar; (2) W3 antes de W4 — emendar a §UAT-07 antes da cobertura existir deixaria o P51-REC1 verde por VACUIDADE; (3) T011 (gen_pins) por ultimo — pin regenerado antes da ultima mudanca e pin que nasce velho. DIVIDA DA ESTRUTURA DECLARADA: os agentes de papel nao estao disponiveis como subagentes nesta sessao, logo autor do gate e implementador sao o MESMO sujeito e a separacao de poderes da R3 §2 NAO EXISTE aqui. Nao e licenca: a mitigacao e a ordem (red commitado antes) e o mutante por gate, que e o que resta de independente. Precedente 018 e 019.",
+    "approved_at": "2026-09-24"
+  },
+  "red": {
+    "status": "proven",
+    "commit": "6c9ecf9ffe9799d75d368f07d7bf3b7fafb08bd2",
+    "notes": "RED commitado em 2026-09-24: 2 PASS · 6 FAIL de 8. O 11-de-15 do D021-COB1 bate EXATAMENTE com a medicao da Fase 0 — o gate ve o mesmo problema que a sonda viu. DOIS VERDES DECLARADOS, nao escondidos: D021-CUR1 (mede que os quatro curados nao regridem; hoje nada os toca, e o poder dele vem do mutante M1) e D021-VAZ1 (e SENSOR, nao red: afirma a invariante que torna a clausula de silencio inalcancavel). DUAS ERRATAS DE SPEC achadas AO ESCREVER O RED, que e para isto que a R3 ordena assim: E1 — o C3 descrevia caso INALCANCAVEL (sempre que ha gap ha candidato; medido 15/15 nos niveis 0 e 1, 0/0 no nivel 2), reformulado para medir a invariante de alcancabilidade + 'nenhum bloco vazio'; E2 — o C7 supunha superficie de TELA que NAO EXISTE (medido: tela 0 blocos, papel 4; qsGapSupportHTML tem UM sitio de chamada, dentro de buildPrintReport), reformulado para medir o relatorio real via beforeprint. ERRO MEU CORRIGIDO ANTES DO COMMIT: o primeiro oraculo casava titulo de card contra QS[].lbl e perdia `mandate` em silencio (card diz 'Direcionamento e objetivos', lbl diz 'Mandato e objetivos') — media 14 onde ha 15. Trocado por computeFindings(), da Camada 1. So apareceu porque o numero nao fechou com a sonda da Fase 0."
+  },
+  "implement": {
+    "status": "done",
+    "notes": "W3/W4/W5 fechadas. BLOQUEIO DA C2 DA 015 RESOLVIDO pela errata E19, ratificada pelo proprietario em 2026-09-26. Tres efeitos colaterais medidos e emendados no mesmo ato: (1) as fixtures passaram a declarar estado POR ORIGEM (HEAD x ANCORA), porque a ancora imutavel e artefato do passado com a cobertura de quatro; (2) a alinea (b) do D015-NOSUB1 exigia IGUALDADE onde o C5 diz 'nada foi removido' — trocada por ancora ⊆ HEAD + delta declarado em optsAcrescidos; (3) M5/M6/M7 da 015 cairam em ocorrencias=0 porque a 021 unificou o no numa fonte unica (EA-4 mordendo aquele arquivo pela segunda vez, e desta vez por minha causa) — reancorados com os ataques preservados."
+  },
+  "validate": {
+    "status": "done",
+    "conformance": "7 de 9 (77,8%) contra a spec COMO APROVADA · 9 de 9 (100%) com as erratas E1 e E2 ratificadas. AS DUAS FICAM, no precedente da 018 e da 019: apagar a de 77,8% esconderia que a spec pedia duas coisas que o produto nao podia cumprir — o C3 descrevia estado INALCANCAVEL por construcao (sempre que ha gap ha candidato, medido 15/15 nos niveis 0 e 1) e o C7 supunha superficie de TELA que NAO EXISTE (medido: tela 0 blocos, papel 4). As duas foram achadas AO ESCREVER O RED, que e para isto que a R3 ordena a fase antes da implementacao.",
+    "aceite_de_intencao": "Pendente do proprietario. O produto entrega o que a Fase 0 pediu: 4 -> 15 gaps com caminho de apoio, sem invencao de conteudo e sem tocar arquivo frozen.",
+    "notes": "QUATRO MUTANTES SOBREVIVERAM na primeira execucao e TRES ACUSARAM O GATE, dois deles o gate desta propria demanda: a fixture de 'contexto declarado' declarava capabilities que NAO ALCANCAM qid derivado — o eixo existia no nome. Familia EA-20 dentro do gate escrito para caca-la. O quarto (D021-M3) e EQUIVALENTE POR CONSTRUCAO e foi aposentado com id preservado."
+  },
+  "pr_url": "https://github.com/oflavioc/quickscan-secops/pull/101"
+}

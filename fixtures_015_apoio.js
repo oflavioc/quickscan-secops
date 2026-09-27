@@ -92,8 +92,31 @@ const D015_E2 = {
   arch: { saasAllowed: "yes" },
   estado: {
     legado: false, v32prio: true, v32support: true, camada1Visivel: true,
-    gapSupportQids: ["detection-lifecycle", "automation", "logs", "vulnerability-management"],
-    ramos: ["NDECL", "NDECL", "NDECL", "NDECL"],
+    /* [E19 · 2026-09-26] A demanda 021 fez o relatório cobrir TODO gap com
+       candidato na Camada 1, e não só os quatro da §UAT-07. O conjunto
+       declarado aqui é MEDIDO por execução nesta fixture, não estimado:
+       nove qids, na ordem em que o produto os emite. Declarado anterior:
+       ["detection-lifecycle", "automation", "logs", "vulnerability-management"] */
+    gapSupportQids: ["mandate", "governance", "policies", "team-capacity", "training",
+                     "detection-lifecycle", "automation", "logs", "vulnerability-management"],
+    /* [E19] a ANCORA IMUTAVEL e um artefato do passado: cobertura de quatro,
+       como era antes da demanda 021. Declarada aqui para que o D015-NOSUB1
+       continue provando o que ele existe para provar — que nada foi REMOVIDO
+       em relacao a ela. */
+    gapSupportQidsAncora: ["detection-lifecycle", "automation", "logs", "vulnerability-management"],
+    /* [E19] O DELTA DA DEMANDA 021, declarado e não permitido em branco: os
+       produtos que os cinco blocos derivados acrescentam em relação à âncora.
+       MEDIDO por execução. Acréscimo fora desta lista reprova o D015-NOSUB1 (b)
+       — o C5 diz "nada foi removido", e o que é acrescentado tem dono. */
+    optsAcrescidos: ["FortiGuard-MDR-Service", "FortiGuard-Service-Bundle",
+                     "FortiGuard-Service-Bundle", "FortiGuard-Service-Bundle",
+                     "FortiGuard-Service-Bundle", "SOCaaS"],
+    /* [E19] a ancora emite QUATRO blocos — os curados. Os cinco derivados
+       nao existiam nela, e o ramo de cada curado e o mesmo de hoje. */
+    ramosAncora: ["NDECL", "NDECL", "NDECL", "NDECL"],
+    /* [E19 · 2026-09-26] MEDIDO por execução nesta fixture: com a cobertura da
+       demanda 021 são NOVE blocos, os cinco primeiros derivados do MAP. */
+    ramos: ["NDECL", "NDECL", "NDECL", "NDECL", "NDECL", "NDECL", "NDECL", "NDECL", "NDECL"],
     prTarget: true, suficiencia: true, prSupport: true, prFindings: true
   }
 };
@@ -111,8 +134,31 @@ const D015_E3 = {
   presence: { "security-analytics": "PRESENT" }, arch: { saasAllowed: "yes" },
   estado: {
     legado: false, v32prio: true, v32support: true, camada1Visivel: false,
-    gapSupportQids: ["detection-lifecycle", "automation", "logs", "vulnerability-management"],
-    ramos: ["NDECL", "NDECL", "DECL", "NDECL"],
+    /* [E19 · 2026-09-26] A demanda 021 fez o relatório cobrir TODO gap com
+       candidato na Camada 1, e não só os quatro da §UAT-07. O conjunto
+       declarado aqui é MEDIDO por execução nesta fixture, não estimado:
+       nove qids, na ordem em que o produto os emite. Declarado anterior:
+       ["detection-lifecycle", "automation", "logs", "vulnerability-management"] */
+    gapSupportQids: ["mandate", "governance", "policies", "team-capacity", "training",
+                     "detection-lifecycle", "automation", "logs", "vulnerability-management"],
+    /* [E19] a ANCORA IMUTAVEL e um artefato do passado: cobertura de quatro,
+       como era antes da demanda 021. Declarada aqui para que o D015-NOSUB1
+       continue provando o que ele existe para provar — que nada foi REMOVIDO
+       em relacao a ela. */
+    gapSupportQidsAncora: ["detection-lifecycle", "automation", "logs", "vulnerability-management"],
+    /* [E19] O DELTA DA DEMANDA 021, declarado e não permitido em branco: os
+       produtos que os cinco blocos derivados acrescentam em relação à âncora.
+       MEDIDO por execução. Acréscimo fora desta lista reprova o D015-NOSUB1 (b)
+       — o C5 diz "nada foi removido", e o que é acrescentado tem dono. */
+    optsAcrescidos: ["FortiGuard-MDR-Service", "FortiGuard-Service-Bundle",
+                     "FortiGuard-Service-Bundle", "FortiGuard-Service-Bundle",
+                     "FortiGuard-Service-Bundle", "SOCaaS"],
+    /* [E19] a ancora emite QUATRO blocos — os curados. Os cinco derivados
+       nao existiam nela, e o ramo de cada curado e o mesmo de hoje. */
+    ramosAncora: ["NDECL", "NDECL", "DECL", "NDECL"],
+    /* [E19 · 2026-09-26] MEDIDO por execução nesta fixture: com a cobertura da
+       demanda 021 são NOVE blocos, os cinco primeiros derivados do MAP. */
+    ramos: ["NDECL", "NDECL", "NDECL", "NDECL", "NDECL", "NDECL", "NDECL", "DECL", "NDECL"],
     prTarget: true, suficiencia: true, prSupport: true, prFindings: true
   }
 };
@@ -138,8 +184,31 @@ const D015_E4 = {
   arch: { saasAllowed: "yes" },
   estado: {
     legado: false, v32prio: true, v32support: true, camada1Visivel: false,
-    gapSupportQids: ["detection-lifecycle", "automation", "logs", "vulnerability-management"],
-    ramos: ["DECL", "DECL", "DECL", "DECL"],
+    /* [E19 · 2026-09-26] A demanda 021 fez o relatório cobrir TODO gap com
+       candidato na Camada 1, e não só os quatro da §UAT-07. O conjunto
+       declarado aqui é MEDIDO por execução nesta fixture, não estimado:
+       nove qids, na ordem em que o produto os emite. Declarado anterior:
+       ["detection-lifecycle", "automation", "logs", "vulnerability-management"] */
+    gapSupportQids: ["mandate", "governance", "policies", "team-capacity", "training",
+                     "detection-lifecycle", "automation", "logs", "vulnerability-management"],
+    /* [E19] a ANCORA IMUTAVEL e um artefato do passado: cobertura de quatro,
+       como era antes da demanda 021. Declarada aqui para que o D015-NOSUB1
+       continue provando o que ele existe para provar — que nada foi REMOVIDO
+       em relacao a ela. */
+    gapSupportQidsAncora: ["detection-lifecycle", "automation", "logs", "vulnerability-management"],
+    /* [E19] O DELTA DA DEMANDA 021, declarado e não permitido em branco: os
+       produtos que os cinco blocos derivados acrescentam em relação à âncora.
+       MEDIDO por execução. Acréscimo fora desta lista reprova o D015-NOSUB1 (b)
+       — o C5 diz "nada foi removido", e o que é acrescentado tem dono. */
+    optsAcrescidos: ["FortiGuard-MDR-Service", "FortiGuard-Service-Bundle",
+                     "FortiGuard-Service-Bundle", "FortiGuard-Service-Bundle",
+                     "FortiGuard-Service-Bundle", "SOCaaS"],
+    /* [E19] a ancora emite QUATRO blocos — os curados. Os cinco derivados
+       nao existiam nela, e o ramo de cada curado e o mesmo de hoje. */
+    ramosAncora: ["DECL", "DECL", "DECL", "DECL"],
+    /* [E19 · 2026-09-26] MEDIDO por execução nesta fixture: com a cobertura da
+       demanda 021 são NOVE blocos, os cinco primeiros derivados do MAP. */
+    ramos: ["NDECL", "NDECL", "NDECL", "NDECL", "NDECL", "DECL", "DECL", "DECL", "DECL"],
     prTarget: true, suficiencia: true, prSupport: true, prFindings: true
   }
 };
@@ -154,8 +223,31 @@ const D015_E5 = {
   vec: d015Vec, targets: D015_ALVOS, arch: { saasAllowed: "yes" },
   estado: {
     legado: false, v32prio: false, v32support: true, camada1Visivel: true,
-    gapSupportQids: ["detection-lifecycle", "automation", "logs", "vulnerability-management"],
-    ramos: ["NDECL", "NDECL", "NDECL", "NDECL"],
+    /* [E19 · 2026-09-26] A demanda 021 fez o relatório cobrir TODO gap com
+       candidato na Camada 1, e não só os quatro da §UAT-07. O conjunto
+       declarado aqui é MEDIDO por execução nesta fixture, não estimado:
+       nove qids, na ordem em que o produto os emite. Declarado anterior:
+       ["detection-lifecycle", "automation", "logs", "vulnerability-management"] */
+    gapSupportQids: ["mandate", "governance", "policies", "team-capacity", "training",
+                     "detection-lifecycle", "automation", "logs", "vulnerability-management"],
+    /* [E19] a ANCORA IMUTAVEL e um artefato do passado: cobertura de quatro,
+       como era antes da demanda 021. Declarada aqui para que o D015-NOSUB1
+       continue provando o que ele existe para provar — que nada foi REMOVIDO
+       em relacao a ela. */
+    gapSupportQidsAncora: ["detection-lifecycle", "automation", "logs", "vulnerability-management"],
+    /* [E19] O DELTA DA DEMANDA 021, declarado e não permitido em branco: os
+       produtos que os cinco blocos derivados acrescentam em relação à âncora.
+       MEDIDO por execução. Acréscimo fora desta lista reprova o D015-NOSUB1 (b)
+       — o C5 diz "nada foi removido", e o que é acrescentado tem dono. */
+    optsAcrescidos: ["FortiGuard-MDR-Service", "FortiGuard-Service-Bundle",
+                     "FortiGuard-Service-Bundle", "FortiGuard-Service-Bundle",
+                     "FortiGuard-Service-Bundle", "SOCaaS"],
+    /* [E19] a ancora emite QUATRO blocos — os curados. Os cinco derivados
+       nao existiam nela, e o ramo de cada curado e o mesmo de hoje. */
+    ramosAncora: ["NDECL", "NDECL", "NDECL", "NDECL"],
+    /* [E19 · 2026-09-26] MEDIDO por execução nesta fixture: com a cobertura da
+       demanda 021 são NOVE blocos, os cinco primeiros derivados do MAP. */
+    ramos: ["NDECL", "NDECL", "NDECL", "NDECL", "NDECL", "NDECL", "NDECL", "NDECL", "NDECL"],
     prTarget: true, suficiencia: true, prSupport: true, prFindings: true
   }
 };
@@ -170,8 +262,31 @@ const D015_E6 = {
   vec: d015Vec, priorities: ["automation", "logs"], arch: { saasAllowed: "yes" },
   estado: {
     legado: false, v32prio: true, v32support: true, camada1Visivel: true,
-    gapSupportQids: ["detection-lifecycle", "automation", "logs", "vulnerability-management"],
-    ramos: ["NDECL", "NDECL", "NDECL", "NDECL"],
+    /* [E19 · 2026-09-26] A demanda 021 fez o relatório cobrir TODO gap com
+       candidato na Camada 1, e não só os quatro da §UAT-07. O conjunto
+       declarado aqui é MEDIDO por execução nesta fixture, não estimado:
+       nove qids, na ordem em que o produto os emite. Declarado anterior:
+       ["detection-lifecycle", "automation", "logs", "vulnerability-management"] */
+    gapSupportQids: ["mandate", "governance", "policies", "team-capacity", "training",
+                     "detection-lifecycle", "automation", "logs", "vulnerability-management"],
+    /* [E19] a ANCORA IMUTAVEL e um artefato do passado: cobertura de quatro,
+       como era antes da demanda 021. Declarada aqui para que o D015-NOSUB1
+       continue provando o que ele existe para provar — que nada foi REMOVIDO
+       em relacao a ela. */
+    gapSupportQidsAncora: ["detection-lifecycle", "automation", "logs", "vulnerability-management"],
+    /* [E19] O DELTA DA DEMANDA 021, declarado e não permitido em branco: os
+       produtos que os cinco blocos derivados acrescentam em relação à âncora.
+       MEDIDO por execução. Acréscimo fora desta lista reprova o D015-NOSUB1 (b)
+       — o C5 diz "nada foi removido", e o que é acrescentado tem dono. */
+    optsAcrescidos: ["FortiGuard-MDR-Service", "FortiGuard-Service-Bundle",
+                     "FortiGuard-Service-Bundle", "FortiGuard-Service-Bundle",
+                     "FortiGuard-Service-Bundle", "SOCaaS"],
+    /* [E19] a ancora emite QUATRO blocos — os curados. Os cinco derivados
+       nao existiam nela, e o ramo de cada curado e o mesmo de hoje. */
+    ramosAncora: ["NDECL", "NDECL", "NDECL", "NDECL"],
+    /* [E19 · 2026-09-26] MEDIDO por execução nesta fixture: com a cobertura da
+       demanda 021 são NOVE blocos, os cinco primeiros derivados do MAP. */
+    ramos: ["NDECL", "NDECL", "NDECL", "NDECL", "NDECL", "NDECL", "NDECL", "NDECL", "NDECL"],
     prTarget: false, suficiencia: true, prSupport: true, prFindings: true
   }
 };
@@ -230,8 +345,31 @@ const D015_E8 = {
   presence: { "external-exposure": "PRESENT" }, arch: { saasAllowed: "yes" },
   estado: {
     legado: false, v32prio: true, v32support: true, camada1Visivel: true,
-    gapSupportQids: ["detection-lifecycle", "automation", "logs", "vulnerability-management"],
-    ramos: ["NDECL", "NDECL", "NDECL", "NDECL"],
+    /* [E19 · 2026-09-26] A demanda 021 fez o relatório cobrir TODO gap com
+       candidato na Camada 1, e não só os quatro da §UAT-07. O conjunto
+       declarado aqui é MEDIDO por execução nesta fixture, não estimado:
+       nove qids, na ordem em que o produto os emite. Declarado anterior:
+       ["detection-lifecycle", "automation", "logs", "vulnerability-management"] */
+    gapSupportQids: ["mandate", "governance", "policies", "team-capacity", "training",
+                     "detection-lifecycle", "automation", "logs", "vulnerability-management"],
+    /* [E19] a ANCORA IMUTAVEL e um artefato do passado: cobertura de quatro,
+       como era antes da demanda 021. Declarada aqui para que o D015-NOSUB1
+       continue provando o que ele existe para provar — que nada foi REMOVIDO
+       em relacao a ela. */
+    gapSupportQidsAncora: ["detection-lifecycle", "automation", "logs", "vulnerability-management"],
+    /* [E19] O DELTA DA DEMANDA 021, declarado e não permitido em branco: os
+       produtos que os cinco blocos derivados acrescentam em relação à âncora.
+       MEDIDO por execução. Acréscimo fora desta lista reprova o D015-NOSUB1 (b)
+       — o C5 diz "nada foi removido", e o que é acrescentado tem dono. */
+    optsAcrescidos: ["FortiGuard-MDR-Service", "FortiGuard-Service-Bundle",
+                     "FortiGuard-Service-Bundle", "FortiGuard-Service-Bundle",
+                     "FortiGuard-Service-Bundle", "SOCaaS"],
+    /* [E19] a ancora emite QUATRO blocos — os curados. Os cinco derivados
+       nao existiam nela, e o ramo de cada curado e o mesmo de hoje. */
+    ramosAncora: ["NDECL", "NDECL", "NDECL", "NDECL"],
+    /* [E19 · 2026-09-26] MEDIDO por execução nesta fixture: com a cobertura da
+       demanda 021 são NOVE blocos, os cinco primeiros derivados do MAP. */
+    ramos: ["NDECL", "NDECL", "NDECL", "NDECL", "NDECL", "NDECL", "NDECL", "NDECL", "NDECL"],
     prTarget: true, suficiencia: true, prSupport: true, prFindings: true
   }
 };
@@ -361,7 +499,10 @@ function d015Camada1Visivel(d) {
    LITERAIS de `fx.estado` — nunca contra um objeto recalculado no mesmo passe.
    Divergência falha ALTO, nomeando estado, campo, observado e declarado.
    `pr` é o host do relatório impresso já montado pelo chamador. */
-function d015AssertFixtureStates(w, d, pr, fx) {
+/* [E19 · 2026-09-26] `origem` entra aqui, e nao no applier: e este quem COMPARA
+   o estado declarado. Sem ela o comportamento e o de HEAD — nenhum chamador
+   antigo muda de significado. */
+function d015AssertFixtureStates(w, d, pr, fx, origem) {
   const e = fx.estado, erros = [];
   const cmp = (campo, obtido, esperado) => {
     const a = JSON.stringify(obtido), b = JSON.stringify(esperado);
@@ -377,8 +518,11 @@ function d015AssertFixtureStates(w, d, pr, fx) {
   if (!pr) erros.push("#v32-print-report ausente — o papel não foi montado e nenhum estado de papel seria medido");
   else {
     const gs = Array.from(pr.querySelectorAll("[data-pr-gap-support]"));
-    cmp("gapSupportQids", gs.map(n => n.getAttribute("data-pr-gap-qid")), e.gapSupportQids);
-    cmp("ramos", gs.map(d015RamoDe), e.ramos);
+    const naAncora = origem === "ANCORA";
+    const qidsEsperados = (naAncora && e.gapSupportQidsAncora) ? e.gapSupportQidsAncora : e.gapSupportQids;
+    const ramosEsperados = (naAncora && e.ramosAncora) ? e.ramosAncora : e.ramos;
+    cmp("gapSupportQids" + (naAncora ? "@ancora" : ""), gs.map(n => n.getAttribute("data-pr-gap-qid")), qidsEsperados);
+    cmp("ramos" + (naAncora ? "@ancora" : ""), gs.map(d015RamoDe), ramosEsperados);
     cmp("#pr-target", !!pr.querySelector("#pr-target"), e.prTarget);
     cmp("#pr-support", !!pr.querySelector("#pr-support"), e.prSupport);
     cmp("#pr-findings", !!pr.querySelector("#pr-findings"), e.prFindings);

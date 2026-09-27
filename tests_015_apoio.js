@@ -234,7 +234,7 @@ function censo(origem, fxId) {
   /* ---- PAPEL ---- */
   w.__DEV.preparePrint();
   const pr = d.querySelector("#v32-print-report");
-  FX.d015AssertFixtureStates(w, d, pr, fx);      /* estado declarado, provado antes de julgar */
+  FX.d015AssertFixtureStates(w, d, pr, fx, origem);  /* estado declarado, provado antes de julgar */
   const supPrio = pr.querySelector("#pr-sup-prio");
   const h3Prio = supPrio ? supPrio.previousElementSibling : null;
   const howto = pr.querySelector("#pr-howto");
@@ -252,6 +252,9 @@ function censo(origem, fxId) {
     return {
       qid: n.getAttribute("data-pr-gap-qid"),
       ramo: FX.d015RamoDe(n),
+      /* [E19] a ancoragem DECLARADA pelo bloco — o observável que a demanda 021
+         criou para que um aviso único deixasse de mentir para metade deles. */
+      ancora: n.getAttribute("data-pr-gap-ancora"),
       nFonte: fontes.length,
       fonteTexto: f0 ? (f0.textContent || "").replace(/\s+/g, " ").trim() : null,
       fonteTemAtributoProprio: f0 ? f0.hasAttribute("data-pr-gap-fonte") : null,
@@ -532,43 +535,67 @@ T("D015-ANC1", "C2 · todo [data-pr-gap-support] declara ancoragem por capabilit
       " · sem gap (nomeados): " + semGap.join(","));
   });
 
-  g.passo("(a) exatamente 1 [data-pr-gap-fonte] por bloco, com atributo PRÓPRIO e irmão de [data-pr-gap-why]", () => {
+  /* ==========================================================================
+     ERRATA E19 · C2 — ratificada pelo proprietário no chat em 2026-09-26
+     ("Ratifico a errata da C2 da 015, segue"), demanda 021-cobertura-do-apoio.
+
+     O TÍTULO da C2 sempre foi a forma geral: "o bloco de apoio declara a PRÓPRIA
+     ancoragem". O que foi escrito com UMA origem em mente é o parêntese — "que a
+     lista parte da capability, não do nível respondido" —, verdadeiro enquanto a
+     tabela curada era a única fonte.
+
+     A demanda 021 deu ao produto uma SEGUNDA origem: o bloco derivado do `MAP`,
+     ancorado no NÍVEL RESPONDIDO, que é a ancoragem canônica da sessão. Para ele,
+     as duas expressões da alínea (b) seriam DUAS AFIRMAÇÕES FALSAS — e fazer o
+     produto mentir para caber no critério é o erro que o `D019-PROV1` já custou.
+
+     A alínea passa a se aplicar aos blocos ANCORADOS NA CAPABILITY, que é onde a
+     propriedade tem sujeito, e nasce a (d) para a outra origem. NADA FOI
+     AFROUXADO (R10 §1): toda asserção que existia continua valendo, sobre o mesmo
+     conjunto de antes, e há asserção NOVA sobre o conjunto que antes não existia.
+     ========================================================================== */
+  const capNos = nos.filter(n => n.ancora !== "nivel");
+  const nivNos = nos.filter(n => n.ancora === "nivel");
+
+  g.passo("(a) exatamente 1 [data-pr-gap-fonte] por bloco ancorado na CAPABILITY, com atributo PRÓPRIO e irmão de [data-pr-gap-why]", () => {
     if (!okE) return vac("(a)", "conjunto não estabelecido em (e)");
-    const ruins = nos.filter(n => n.nFonte !== 1);
+    if (!capNos.length) vac("(a)", "nenhum bloco ancorado na capability — sujeito ausente");
+    const ruins = capNos.filter(n => n.nFonte !== 1);
     if (ruins.length)
-      throw new Error(ruins.length + "/" + nos.length + " bloco(s) sem exatamente 1 [data-pr-gap-fonte] · ex.: " +
+      throw new Error(ruins.length + "/" + capNos.length + " bloco(s) sem exatamente 1 [data-pr-gap-fonte] · ex.: " +
         ruins.slice(0, 3).map(n => n.estado + "/" + n.qid + "=" + n.nFonte).join(", "));
-    const herdeiros = nos.filter(n => n.fonteHerdaWhy);
+    const herdeiros = capNos.filter(n => n.fonteHerdaWhy);
     if (herdeiros.length)
       throw new Error(herdeiros.length + " nó(s) reusam `data-pr-gap-why` em vez do atributo próprio — quebraria P51-REC1 sem tocar no código dele");
-    const dentro = nos.filter(n => n.fonteDentroDeWhy);
+    const dentro = capNos.filter(n => n.fonteDentroDeWhy);
     if (dentro.length)
       throw new Error(dentro.length + " nó(s) nasceram DENTRO de [data-pr-gap-why]; o contrato é ser IRMÃO");
-    const naoIrmaos = nos.filter(n => n.fonteIrmaDeWhy === false);
+    const naoIrmaos = capNos.filter(n => n.fonteIrmaDeWhy === false);
     if (naoIrmaos.length)
       throw new Error(naoIrmaos.length + " nó(s) não são irmãos de [data-pr-gap-why] · ex.: " +
         naoIrmaos.slice(0, 3).map(n => n.estado + "/" + n.qid).join(", "));
-    const whyDemais = nos.filter(n => n.nWhy !== 1);
+    const whyDemais = capNos.filter(n => n.nWhy !== 1);
     if (whyDemais.length)
       throw new Error("a contagem de [data-pr-gap-why] deixou de ser 1 em " + whyDemais.length + " bloco(s) — P51-REC1 mediria outra coisa");
   });
 
-  g.passo("(b) o texto casa a PROPRIEDADE por duas expressões independentes (capability × negação de nível)", () => {
+  g.passo("(b) no bloco ancorado na CAPABILITY o texto casa a PROPRIEDADE por duas expressões independentes (capability × negação de nível)", () => {
     if (!okE) return vac("(b)", "conjunto não estabelecido em (e)");
-    const semTexto = nos.filter(n => !n.fonteTexto);
+    if (!capNos.length) vac("(b)", "nenhum bloco ancorado na capability — sujeito ausente");
+    const semTexto = capNos.filter(n => !n.fonteTexto);
     if (semTexto.length) throw new Error(semTexto.length + " nó(s) de ancoragem sem texto algum");
-    const semCap = nos.filter(n => !RE_ANC_CAP.test(n.fonteTexto));
+    const semCap = capNos.filter(n => !RE_ANC_CAP.test(n.fonteTexto));
     if (semCap.length)
-      throw new Error(semCap.length + "/" + nos.length + " nó(s) não atribuem a ancoragem à CAPABILITY (" + RE_ANC_CAP + ") · ex.: " +
+      throw new Error(semCap.length + "/" + capNos.length + " nó(s) não atribuem a ancoragem à CAPABILITY (" + RE_ANC_CAP + ") · ex.: " +
         JSON.stringify((semCap[0].fonteTexto || "").slice(0, 140)));
-    const semNeg = nos.filter(n => !RE_ANC_NEG_NIVEL.test(n.fonteTexto));
+    const semNeg = capNos.filter(n => !RE_ANC_NEG_NIVEL.test(n.fonteTexto));
     if (semNeg.length)
-      throw new Error(semNeg.length + "/" + nos.length + " nó(s) não NEGAM ancoragem por nível (" + RE_ANC_NEG_NIVEL + ") · ex.: " +
+      throw new Error(semNeg.length + "/" + capNos.length + " nó(s) não NEGAM ancoragem por nível (" + RE_ANC_NEG_NIVEL + ") · ex.: " +
         JSON.stringify((semNeg[0].fonteTexto || "").slice(0, 140)));
     /* P51-REC1 fatia `host.textContent` por "." (`tests_p50_core.js:3418`):
        frase sem ponto final se funde à vizinha e pode arrastar "FortiClient"
        para fora do escopo de endpoint — reprovaria suíte congelada. */
-    const semPonto = nos.filter(n => !/\.\s*$/.test(n.fonteTexto));
+    const semPonto = capNos.filter(n => !/\.\s*$/.test(n.fonteTexto));
     if (semPonto.length)
       throw new Error(semPonto.length + " nó(s) não terminam em ponto final — o scanner de P51-REC1 fundiria a frase à vizinha");
   });
@@ -576,7 +603,7 @@ T("D015-ANC1", "C2 · todo [data-pr-gap-support] declara ancoragem por capabilit
   g.passo("(c) presente nos DOIS ramos de qsGapSupportHTML, medido em fixtures distintas", () => {
     if (!okE) return vac("(c)", "conjunto não estabelecido em (e)");
     const porRamo = { DECL: [], NDECL: [] };
-    nos.forEach(n => { if (porRamo[n.ramo]) porRamo[n.ramo].push(n); });
+    capNos.forEach(n => { if (porRamo[n.ramo]) porRamo[n.ramo].push(n); });
     ["NDECL", "DECL"].forEach(r => {
       if (!porRamo[r].length)
         vac("(c)", "nenhum nó no ramo " + r + " — o ramo não foi exercido por fixture alguma e M5 sobreviveria");
@@ -597,18 +624,43 @@ T("D015-ANC1", "C2 · todo [data-pr-gap-support] declara ancoragem por capabilit
 
   g.passo("(d) o nó não nomeia produto e não repete a lista de opções", () => {
     if (!okE) return vac("(d)", "conjunto não estabelecido em (e)");
-    const comProduto = nos.filter(n => /Forti[A-Z]/.test(n.fonteTexto || ""));
+    const comProduto = capNos.filter(n => /Forti[A-Z]/.test(n.fonteTexto || ""));
     if (comProduto.length)
       throw new Error(comProduto.length + " nó(s) nomeiam produto (/Forti[A-Z]/) · ex.: " +
         JSON.stringify((comProduto[0].fonteTexto || "").slice(0, 140)));
-    const repetem = nos.filter(n => (n.opts || []).some(o => o && (n.fonteTexto || "").indexOf(o) >= 0));
+    const repetem = capNos.filter(n => (n.opts || []).some(o => o && (n.fonteTexto || "").indexOf(o) >= 0));
     if (repetem.length)
       throw new Error(repetem.length + " nó(s) repetem nome(s) da lista de opções dentro da declaração de ancoragem");
     /* overclaim de P51-REC1 (`:3429`): o caminho seguro é não usar nenhuma */
     const OVER = [/é obrigatório/i, /requisito obrigatório/i, /solução completa/i, /compra recomendada/i];
-    const over = nos.filter(n => OVER.some(re => re.test(n.fonteTexto || "")));
+    const over = capNos.filter(n => OVER.some(re => re.test(n.fonteTexto || "")));
     if (over.length)
       throw new Error(over.length + " nó(s) usam expressão de overclaim guardada por P51-REC1");
+  });
+
+  /* [E19] A ALÍNEA NOVA — a outra origem, que antes não existia.
+     O bloco derivado do `MAP` É a ancoragem canônica da sessão: ele não diverge
+     dela, logo não tem o que declarar como divergência. Repetir ali o aviso da
+     (b) seria um aviso que aparece em tudo, e aviso que aparece em tudo não
+     distingue nada — foi por isso que o `EA-48` teve de existir.
+     Esta alínea é o que impede a generalização de virar afrouxamento: ela EXIGE
+     a ausência, e exige que a ancoragem esteja DECLARADA nos dois casos. */
+  g.passo("(f) todo bloco declara a própria ancoragem, e o ancorado no NÍVEL não repete o aviso de divergência", () => {
+    if (!okE) return vac("(f)", "conjunto não estabelecido em (e)");
+    const semAncora = nos.filter(n => n.ancora !== "capability" && n.ancora !== "nivel");
+    if (semAncora.length)
+      throw new Error(semAncora.length + "/" + nos.length + " bloco(s) sem ancoragem declarada · ex.: " +
+        semAncora.slice(0, 3).map(n => n.estado + "/" + n.qid + "=" + n.ancora).join(", "));
+    if (!nivNos.length)
+      vac("(f)", "nenhum bloco ancorado no nível — a origem que a demanda 021 criou não foi exercida, " +
+        "e o M6 da 015 sobreviveria por ausência de sujeito");
+    const comAviso = nivNos.filter(n => n.nFonte !== 0);
+    if (comAviso.length)
+      throw new Error(comAviso.length + "/" + nivNos.length + " bloco(s) ancorados no nível REPETEM o aviso " +
+        "de divergência — eles SÃO a ancoragem canônica e não divergem dela · ex.: " +
+        comAviso.slice(0, 3).map(n => n.estado + "/" + n.qid).join(", "));
+    g.nota("ancoragem declarada em " + nos.length + " bloco(s): " + capNos.length + " por capability · " +
+      nivNos.length + " por nível");
   });
 }));
 
@@ -760,9 +812,27 @@ T("D015-NOSUB1", "C5 · nada foi removido em E1..E8 contra a âncora imutável "
     /* (a) conjunto de data-cap de #v32prio */
     if ((A.v32prioCaps !== null || H.v32prioCaps !== null) && !igual(A.v32prioCaps, H.v32prioCaps))
       erros.push("(a) " + e + ": #v32prio caps âncora=" + JSON.stringify(conj(A.v32prioCaps)) + " ≠ HEAD=" + JSON.stringify(conj(H.v32prioCaps)));
-    /* (b) conjunto de nomes em [data-pr-gap-opt] */
-    if (!igual(A.opts, H.opts))
-      erros.push("(b) " + e + ": nomes de [data-pr-gap-opt] âncora=" + JSON.stringify(conj(A.opts)) + " ≠ HEAD=" + JSON.stringify(conj(H.opts)));
+    /* (b) conjunto de nomes em [data-pr-gap-opt]
+       [E19 · 2026-09-26] A alínea exigia IGUALDADE. O critério C5 diz "nada foi
+       REMOVIDO" — a igualdade afirmava também "nada foi ACRESCENTADO", metade que
+       o C5 nunca pediu e que só se sustentava porque a 015 não acrescentava nada.
+       A demanda 021 acrescenta por desenho aprovado: cobre TODO gap com candidato
+       na Camada 1, e não só os quatro da §UAT-07.
+
+       O QUE ENTRA NO LUGAR NÃO É "SUPERSET E PRONTO", que seria afrouxar de
+       verdade: a âncora tem de estar CONTIDA em HEAD (nada removido, que é o C5) E
+       o acréscimo tem de ser exatamente o DECLARADO na fixture (`optsAcrescidos`).
+       Acréscimo não declarado reprova — o delta ganhou oráculo próprio em vez de
+       virar permissão. */
+    const faltamNoHead = conj(A.opts).filter(x => conj(H.opts).indexOf(x) < 0);
+    if (faltamNoHead.length)
+      erros.push("(b) " + e + ": REMOVIDO de [data-pr-gap-opt] " + JSON.stringify(faltamNoHead) +
+        " — âncora=" + JSON.stringify(conj(A.opts)) + " ⊄ HEAD=" + JSON.stringify(conj(H.opts)));
+    const acrescidos = conj(H.opts).filter(x => conj(A.opts).indexOf(x) < 0);
+    const declarados = conj(FX.D015_FIXTURES[e].estado.optsAcrescidos || []);
+    if (!igual(acrescidos, declarados))
+      erros.push("(b) " + e + ": acréscimo NÃO DECLARADO em [data-pr-gap-opt] · obtido " +
+        JSON.stringify(acrescidos) + " · declarado " + JSON.stringify(declarados));
     /* (c) data-cap de #pr-sup-prio, #pr-sup-base, #pr-sup-maturity */
     [["#pr-sup-prio", "supPrioCaps"], ["#pr-sup-base", "supBaseCaps"], ["#pr-sup-maturity", "supMatCaps"]].forEach(([nome, k]) => {
       if (!igual(A[k], H[k]))

@@ -523,7 +523,13 @@ const MUTANTS = [
     id: "P52-RB6",
     desc: "reintroduzir 'mandato' na linguagem apresentada",
     file: P52JS,
-    find: `      if (!/[Mm]andato|charter|—/.test(v)) continue;`,
+    /* REANCORADO em 2026-09-27 (EA-69). O pré-filtro do caminhador deixou de ser
+       literal e passou a ser derivado da própria tabela — a âncora antiga
+       (`/[Mm]andato|charter|—/`) foi a zero ocorrências e o mutante virou NÃO
+       EXECUTADO, que é como âncora podre aparece: silêncio, não falha. A
+       MUTAÇÃO é a mesma (desligar o caminhador devolve o jargão às duas
+       superfícies) e o carrasco é o mesmo `P52-COPY1`; só a linha mudou. */
+    find: `      if (!p52CopyToca(v)) continue;`,
     repl: `      continue;   /* MUTANTE: o jargão volta para a tela e para o relatório */`,
     gate: "P52-COPY1", cmd: "node tests_p52_layout.js", only: "P52-COPY1",
     reason: /jargão na tela|pergunta ainda usa jargão/

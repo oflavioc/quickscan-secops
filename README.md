@@ -16,17 +16,20 @@ contextuais e um relatório em PDF pronto para leitura executiva.
 
 | versão | o que é | onde está |
 |---|---|---|
-| **v3.2.8** | **produção publicada.** É a versão liberada e atualmente em uso. | [release `v3.2.8`](https://github.com/oflavioc/quickscan-secops/releases/tag/v3.2.8) |
-| **v3.2.7** | **versão anterior**, preservada e verificada como caminho de rollback. | [release `v3.2.7`](https://github.com/oflavioc/quickscan-secops/releases/tag/v3.2.7) |
-| v3.2.6 · v3.2.2 · v3.2.1 | marcos anteriores, com release própria e auditoria externa registrada | [`v3.2.6`](https://github.com/oflavioc/quickscan-secops/releases/tag/v3.2.6) · [`v3.2.2`](https://github.com/oflavioc/quickscan-secops/releases/tag/v3.2.2) · [`v3.2.1`](https://github.com/oflavioc/quickscan-secops/releases/tag/v3.2.1) |
+| **v3.2.9** | **produção publicada.** É a versão liberada e atualmente em uso. | [release `v3.2.9`](https://github.com/oflavioc/quickscan-secops/releases/tag/v3.2.9) |
+| **v3.2.8** | **versão anterior**, preservada e verificada como caminho de rollback. | [release `v3.2.8`](https://github.com/oflavioc/quickscan-secops/releases/tag/v3.2.8) |
+| v3.2.7 · v3.2.6 · v3.2.2 · v3.2.1 | marcos anteriores, com release própria e auditoria externa registrada | [`v3.2.7`](https://github.com/oflavioc/quickscan-secops/releases/tag/v3.2.7) · [`v3.2.6`](https://github.com/oflavioc/quickscan-secops/releases/tag/v3.2.6) · [`v3.2.2`](https://github.com/oflavioc/quickscan-secops/releases/tag/v3.2.2) · [`v3.2.1`](https://github.com/oflavioc/quickscan-secops/releases/tag/v3.2.1) |
 
-**A versão corrente do produto é a v3.2.8.** A v3.2.7 permanece preservada e verificada, disponível
+**A versão corrente do produto é a v3.2.9.** A v3.2.8 permanece preservada e verificada, disponível
 para rollback imediato. As versões v3.2.3 a v3.2.5 foram publicadas no ambiente do proprietário sem
 release própria; a v3.2.6 consolidou todas, a v3.2.7 acrescentou a **curadoria do relatório** — o
 engenheiro escolhe o que de fato será apresentado, e a seção de apoio agrupa por produto em vez de
-por gap — e a **v3.2.8 corrige os cinco defeitos que a primeira sessão real com a curadoria
-encontrou**, entre eles o relatório em PDF que saía quase todo em branco e a visão por solução que
-desaparecia justamente quando o contexto tecnológico era declarado.
+por gap — a **v3.2.8 corrigiu os cinco defeitos que a primeira sessão real com a curadoria
+encontrou** — entre eles o relatório em PDF que saía quase todo em branco e a visão por solução que
+desaparecia justamente quando o contexto tecnológico era declarado — e a **v3.2.9 leva a cobertura
+do apoio de 4 para 15**: onze gaps que chegavam ao cliente sem dizer por onde começar, entre eles
+capacidade do time, capacitação e resposta a incidentes, passam a trazer caminho. O conteúdo não foi
+escrito, foi lido da camada congelada da avaliação — o motor é byte a byte o mesmo da v3.2.8.
 
 **Para avaliar ou distribuir, use o artefato da release** — ele é o mesmo byte a byte que está em uso.
 Um arquivo `*_dev.html` na árvore de trabalho é candidata, nunca release: antes de avaliar ou

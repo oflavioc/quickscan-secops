@@ -584,14 +584,11 @@
     font-size: 12.5px; font-style: italic; color: var(--faint);
   }
 
-  /* ponteiro para o apoio que o renderer já listou em outra seção; os nomes
-     vêm do DOM, nunca deste arquivo (`P52-REC1` proíbe produto aqui) */
-  .p52-hint {
-    margin-top: 10px; padding-top: 8px; border-top: 1px dashed var(--line);
-    font-size: 13px; line-height: 1.55;
+  /* EA-74 · a seção de gaps nomeia quantos altos foram lidos como prioridade.
+     Mesmo peso visual do subtítulo que a antecede: é ressalva, não conteúdo. */
+  .p52-gaps-fora {
+    color: var(--faint); font-size: 13px; margin: -6px 0 12px; max-width: 720px;
   }
-  .p52-hint-rot { color: var(--faint); margin-right: 6px; }
-  .p52-hint-val { color: var(--text); overflow-wrap: anywhere; }
 
   .p52-sec .apoio-block .pt-desc { overflow-wrap: anywhere; }
   .p52-prod-ctx {

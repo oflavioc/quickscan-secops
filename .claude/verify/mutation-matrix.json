@@ -1203,6 +1203,7 @@
       "harness": "d010 (tests_010_mutants.js)",
       "gate": "D010-ARB3",
       "invariante": "C3 - arbitragem tudo-ou-nada: titulo e blocos contiguos, nunca um terceiro conjunto",
+      "classificacao": "gate sem poder discriminante (achado EA-71) — o D010-ARB3 nao pode falhar por construcao sob o escopo do workspace 5.2",
       "ultima_prova": {
         "data": "2026-09-26",
         "resultado": "SOBREVIVENTE",

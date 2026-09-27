@@ -6553,7 +6553,7 @@ inspeção e segui.
 Ver [[EA-60]], de quem este é reincidência direta, e [[EA-20]], por ser mais uma
 propriedade que nenhum portão media.
 
-## EA-71 — o gate que prova "tudo-ou-nada" da arbitragem não distingue TUDO de NADA
+## EA-71 — o gate que prova "tudo-ou-nada" da arbitragem não pode falhar
 
 **Status**: `aberto`
 

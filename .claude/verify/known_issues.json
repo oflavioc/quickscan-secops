@@ -3,5 +3,17 @@
     "descricao": "Exceções nominais dos lints — cada uma com remoção prevista. Padrão herdado da referência: scanner sem auto-exclusão nominal falha no próprio gate; exceção sem prazo vira permissão permanente. O compliance-audit lista todas e exige remocao_prevista. HISTÓRICO: KI-1 cumprida pela demanda 003; KI-2/KI-3 cumpridas na Onda 4 (job visual calibrado no CI em 6 rodadas: playwright 67/37 canônico, P50 27/27, P52 44/44 com âncora imutável, campanha p52 72/72 por trigger). KI-4 CUMPRIDA E REMOVIDA em 2026-09-01 pela demanda 014 (T050): o sobrevivente perdoado (p51/M51-01) foi APOSENTADO com substituição nominal por D014-M10, no mesmo commit — exceção cujo objeto deixa de existir vira permissão a fantasma, e IC-9.2 a reprova. Trilha em mutation-matrix.json → dividas_declaradas.",
     "onda": 1
   },
-  "issues": []
+  "issues": [
+    {
+      "id": "KI-5",
+      "lint": "mutation-sobrevivente",
+      "excecao": {
+        "harness": "d010",
+        "mutante": "D010-M20",
+        "gate": "D010-ARB3"
+      },
+      "motivo": "EA-71 (.claude/BACKLOG.md) — gate que NÃO PODE FALHAR. A âncora é única (preflight C1, ocorrencias == 1), a mutação é aplicada e D010-ARB3 RODA E PASSA, por três razões somadas: (a) aceita conjunto oculto vazio, e o mutante oculta zero; (b) é guarda de ALCANCE sob o escopo [data-p52-legacy-scope=\"support\"], com 0/3 âncoras dentro do escopo varrido, e o próprio comentário do gate declara que não pode falhar enquanto o escopo for o do workspace 5.2; e o par only=\"D010-ARB3\" impede que outro gate tenha a chance. Medido em 2026-09-26 com a suíte INTEIRA sem filtro: 13 PASS · 0 FAIL — nenhum dos treze gates vê, embora a mutação altere o produto (o censo de âncoras cai de 3 para 2, o <details> 'demais gaps altos' some), diferença impressa em g.nota e não em asserção. PRÉ-EXISTENTE À DEMANDA 021, provado em worktree limpa de origin/develop (e9e1e6b), árvore inteira: 23/24 dos dois lados. Datado: era DETECTADO no CI do PR #91 (2026-09-22, 24/24); a demanda 019 alterou 299 linhas de ui_p52_support_v32.js — que não é alvo declarado de campanha nenhuma, ver EA-72 — e revertê-lo sozinho na worktree devolve 24/24. A invariante C3 NÃO está arranhada no produto: censo são pré-019 × develop é idêntico byte a byte, e não há defeito visível na v3.2.8.",
+      "remocao_prevista": "Correção do EA-71 — a alínea que afirma a OCORRÊNCIA da arbitragem (conjunto oculto não vazio com substituto presente) e o censo de âncoras promovido de nota a asserção. É gate da demanda 010 e não se altera de dentro da 021 (R10 §1). No dia em que a ultima_prova voltar a KILL, IC-9.3 REPROVA esta entrada e força a remoção."
+    }
+  ]
 }

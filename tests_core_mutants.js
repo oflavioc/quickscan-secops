@@ -21,6 +21,26 @@ const HERE = __dirname;
 const sha = p => crypto.createHash("sha256").update(fs.readFileSync(p)).digest("hex");
 const PY = process.platform === "win32" ? "python" : "python3";
 
+/* ── FONTE ÚNICA DO COMANDO DO GATE `SESSION 4.8` (achado EA-72) ─────────────
+   Este harness trazia `--max-old-space-size=4608` numa CÓPIA LITERAL do script
+   `test:session` do package.json. A 019 fez a suíte de sessão crescer e o dono
+   do valor subiu para 6144 (package.json + pipeline.yaml); a cópia ficou para
+   trás. Efeito medido em 2026-09-26, worktree de controle sobre origin/develop:
+   com 4608 o gate não conclui e `CM1` aparece como SOBREVIVENTE — gate ÍNTEGRO,
+   campanha quebrada; trocado só esse número, 3 DETECTADO · 0 SOBREVIVENTE.
+   Um sobrevivente falso é pior que um gate ausente: ele acusa o gate errado.
+   O valor passa a ter UM dono. Ausência é FAIL ALTO, nunca silêncio (R10 §2):
+   preferir um default aqui recriaria exatamente a cópia que apodreceu. */
+const CMD_SESSION = (() => {
+  const pkg = JSON.parse(fs.readFileSync(path.join(HERE, "package.json"), "utf8"));
+  const cmd = (pkg.scripts || {})["test:session"];
+  if (typeof cmd !== "string" || !/\btests_session_m48\.js\b/.test(cmd))
+    throw new Error("package.json não declara `scripts[\"test:session\"]` apontando para " +
+      "tests_session_m48.js — o comando do gate SESSION 4.8 ficou sem fonte. " +
+      "A campanha RECUSA rodar com valor inventado (EA-72).");
+  return cmd;
+})();
+
 const SESS = path.join(HERE, "ui_session_v32.js");
 const UIJS = path.join(HERE, "ui_v32.js");
 const REFJS = path.join(HERE, "ui_refinement_v32.js");
@@ -35,7 +55,7 @@ const MUTANTS = [
     file: SESS,
     find: `  if (hasReservedDerived(I,0)) return err("O arquivo contém resultados derivados; sessões transportam apenas entradas.");`,
     repl: `  if (false) return err("O arquivo contém resultados derivados; sessões transportam apenas entradas.");   /* MUTANTE CM1 */`,
-    gate: "SESSION 4.8", cmd: "node --max-old-space-size=4608 tests_session_m48.js",
+    gate: "SESSION 4.8", cmd: CMD_SESSION,
     reason: /1 FAIL/
   },
   {

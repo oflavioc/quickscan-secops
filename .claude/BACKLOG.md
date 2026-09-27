@@ -6581,32 +6581,146 @@ consistência da arbitragem sem nunca afirmar que ela **aconteceu**.
 
 ### A prova de que NÃO é da demanda 021
 
-Medido substituindo `ui_v32.js` pela versão da `develop` — sem uma linha da 021 —,
-reconstruindo e reaplicando o mutante:
+**Controle válido** (2026-09-26): `git worktree add --detach <tmp> origin/develop`
+— árvore INTEIRA da base, não arquivo trocado dentro da branch. Campanha `d010`
+rodada lá, restauração byte a byte OK:
 
 ```
-M20 sobre o ui_v32.js da DEVELOP · D010-ARB3 → PASS
+D010 MUTATION: 23/24 · SOBREVIVENTE D010-M20      (origin/develop e9e1e6b)
+D010 MUTATION: 23/24 · SOBREVIVENTE D010-M20      (branch da 021, medido pelo CI)
 ```
 
-Comportamento idêntico. A demanda 021 toca `qsGapSupportHTML()`, que é superfície
-de **papel**; o `D010-ARB3` mede o censo de **tela**.
+Idêntico dos dois lados. A 021 toca `qsGapSupportHTML()`, superfície de **papel**;
+o `D010-ARB3` mede censo de **tela**.
+
+> **Errata de método.** A primeira redação deste achado provava a não-autoria
+> trocando só `ui_v32.js` pela versão da develop **dentro da branch**. Isso não é
+> controle: o arquivo trocado convive com harness, fixtures e fontes de build da
+> branch. O veredito calhou de estar certo, e o método não — tanto que, ao ver no
+> CI do PR #91 que o mutante morria quatro dias antes, a conclusão foi invertida e
+> anunciada como regressão própria antes de haver controle. Registrado para não
+> se repetir.
+
+### Quando parou de morrer, e por quê
+
+O `D010-M20` era DETECTADO até o CI do PR #91 (2026-09-22, `24/24`). O que mudou
+não foi alvo declarado de campanha nenhuma: a demanda 019 alterou **299 linhas**
+de `ui_p52_support_v32.js`. Revertendo SÓ esse arquivo ao estado pré-019, na
+worktree de controle:
+
+```
+D010 MUTATION: 24/24 · D010-M20 DETECTADO
+```
+
+Uma variável, veredito invertido. Ver [[EA-72]], que é a razão de ninguém ter
+notado por quatro dias.
+
+### O gate não pode falhar — e o produto MUDA sem que ninguém olhe
+
+Com o mutante aplicado, a suíte `d010` INTEIRA, sem o filtro `only`:
+
+```
+D010 RECOMENDAÇÃO SEM VÃO: 13 PASS · 0 FAIL de 13
+```
+
+**Treze gates, nenhum vê.** E a mutação *é* observável: o censo da alínea (b)
+cai de três âncoras para duas — o `<details> 'demais gaps altos'` desaparece:
+
+```
+são     · âncoras presentes: #review, #restart, <details> 'demais gaps altos'   (0/3 no escopo)
+mutado  · âncoras presentes: #review, #restart                                  (0/2 no escopo)
+```
+
+Essa diferença é impressa num `g.nota`, **não numa asserção**. O gate enxerga e
+não julga.
+
+As três razões se somam, e cada uma sozinha já bastaria:
+
+1. **(a) aceita `∅`** — a arbitragem tem de ocultar 0 ou tudo; o mutante oculta 0.
+2. **(b) é inofensiva por declaração** — sob o workspace 5.2 a varredura tem
+   escopo `[data-p52-legacy-scope="support"]`, e o próprio comentário do gate
+   registra `DENTRO do escopo varrido: 0/3 — nenhuma: (b) é guarda de ALCANCE,
+   não pode falhar enquanto o escopo for o do workspace 5.2`.
+3. **O par `only: "D010-ARB3"`** impede que qualquer outro gate tenha a chance.
+
+### O que este achado NÃO é
+
+Censo do produto **são**, pré-019 × develop: saída **idêntica, byte a byte**. A
+invariante C3 não foi arranhada e **não há defeito visível na v3.2.8**. O que se
+perdeu foi a redundância que tornava o mutante visível — o dano é à prova, não ao
+produto.
 
 ### Cadeia arquivo:linha → efeito
 
 - `ui_v32.js` — `if (hiding && allowed) node.classList.toggle("v32-hidden", hide);`
   (a linha que o mutante ataca)
-- `tests_010_vao.js` — `D010-ARB3`, alínea de tudo-ou-nada: arbitragem parcial
-  reprova, arbitragem **ausente** não.
+- `tests_010_vao.js` — `D010-ARB3`, alínea (a): arbitragem parcial reprova,
+  arbitragem **ausente** não; alínea (b): guarda de alcance, sem poder de falhar.
+- `ui_p52_support_v32.js` — a mudança da 019 que retirou o caso que fazia (a) ver.
 
 ### Encaminhamento
 
 Falta a alínea que afirma a **ocorrência**: com a arbitragem ligada e substituto
-presente, o conjunto oculto tem de ser **não vazio**. Hoje isso é assumido, nunca
-medido — e por isso um mutante que desliga a arbitragem inteira passa.
+presente, o conjunto oculto tem de ser **não vazio**. E o censo de âncoras, hoje
+uma nota, tem de virar asserção — quem observa e não julga não é portão.
 
 **Não corrigido na 021 de propósito**: é gate de outra demanda, e alterá-lo de
 dentro desta seria o que a R10 §1 proíbe — a lição que a 020 mediu e a 021 pagou
-com três waves quando colidiu com a C2 da 015.
+com três waves quando colidiu com a C2 da 015. Enquanto não for corrigido, o
+sobrevivente está declarado em `.claude/verify/known_issues.json` como exceção
+nominal `mutation-sobrevivente` (IC-9), com prazo e com este achado como credor:
+a exceção mantém o mutante CONTADO e reprova sozinha no dia em que ele voltar a
+morrer.
 
 Ver [[EA-20]], de quem este é mais uma instância: portão que promete mais do que
 mede.
+
+## EA-72 — o gatilho das campanhas vigia menos do que a campanha depende
+
+**Status**: `aberto`
+
+**Aberto em**: 2026-09-26, durante a demanda 021, ao investigar por que dois
+sobreviventes passaram quatro dias sem ser notados.
+
+### O que foi medido
+
+As campanhas só rodam quando um **alvo declarado** muda (`check_mutation.py`:
+`nenhum alvo mudou desde a base — campanha não exigida`). Os alvos:
+
+```
+core  = [ui_session_v32.js, ui_v32.js, ui_refinement_v32.js, tests_core_mutants.js]
+d010  = [ui_v32.js, ui_target_v32.js, tests_010_vao.js, fixtures_010_vao.js, tests_010_mutants.js]
+```
+
+Mas a campanha `d010` **reconstrói o HTML** e roda o gate sobre ele. O HTML é
+montado a partir de fontes que **não estão na lista** — entre elas
+`ui_p52_support_v32.js`, alterado em 299 linhas pela 019, que foi exatamente o
+que tirou o poder discriminante do `D010-ARB3` ([[EA-71]]).
+
+O mesmo vale para o `core`: o gate é `tests_session_m48.js`, e o **comando** que o
+invoca morava numa cópia literal do `package.json` — nenhum dos dois é alvo.
+Quando o `package.json` subiu o heap de 4608 para 6144, a cópia ficou para trás e
+o `CM1` virou sobrevivente falso.
+
+### O mecanismo
+
+O gatilho protege contra o custo de rodar tudo sempre, e o preço é uma lista que
+precisa acompanhar a dependência real da campanha. Ela não acompanhou. Pior: o
+silêncio é **indistinguível de saúde** — `campanha não exigida` é impresso como
+`[OK]`, e quatro merges seguidos passaram verdes com dois gates já sem poder.
+
+### Encaminhamento
+
+Duas direções, e a segunda é a que fecha a classe:
+
+1. **Estender os alvos** de `core` e `d010` para as fontes que entram no build —
+   remédio imediato, mas volta a apodrecer na próxima fonte nova.
+2. **Derivar o gatilho da dependência real** — a campanha já conhece o que
+   reconstrói; a lista podia sair daí em vez de ser redigida à mão. Fonte única,
+   como o comando do gate passou a ser (corrigido na 021, `tests_core_mutants.js`).
+
+Enquanto não houver remédio, vale a regra de leitura: `campanha não exigida` não
+é prova de saúde da campanha — é ausência de medição, e a R10 §2 não deixa
+confundir as duas.
+
+Ver [[EA-20]], de quem este é instância no **gatilho**, e não no gate.

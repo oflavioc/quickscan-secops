@@ -96,6 +96,12 @@ function boot(opts) {
   const base = ("nivel" in o) ? o.nivel : 1;
   ids.forEach(id => w.__DEV.setAnswerById(id, base));
   if (o.niveis) Object.keys(o.niveis).forEach(id => w.__DEV.setAnswerById(id, o.niveis[id]));
+  if (o.sinais) {
+    const V = w.__DEV.V32;
+    V.SESSION_SIGNALS.insiderRiskConcern = true;
+    V.SESSION_SIGNALS.dataLeakageConcern = true;
+    V.SESSION_SIGNALS.shadowAIConcern = true;
+  }
   if (o.contexto) {
     const V = w.__DEV.V32;
     ["endpoint-detection", "network-detection", "incident-management", "security-analytics"]
@@ -330,22 +336,36 @@ T("D022-PAP1", "C9 · a onda existe no papel, não só na tela", () => {
   return true;
 });
 
-T("D022-PROD1", "C10 · contexto tecnológico indexado por PRODUTO, sem perder sinal", () => {
-  const { w, d } = boot({ nivel: 1, contexto: true });
-  const rel = papel(w, d);
-  const cards = qa(rel, "[data-qs22-produto]");
-  if (!cards.length) vac("(a)", "nenhum card indexado por produto — o eixo não mudou");
-  const nomes = cards.map(c => c.getAttribute("data-qs22-produto"));
-  const dup = nomes.filter((n, i) => nomes.indexOf(n) !== i);
-  if (dup.length) throw new Error("produto repetido: " + JSON.stringify(Array.from(new Set(dup))));
-  const multi = cards.filter(c => (c.getAttribute("data-qs22-caps") || "").split(",").filter(Boolean).length > 1);
+T("D022-PROD1", "C10 (errata E2) · todo produto aparece UMA vez na visão por produto, com sinais unidos", () => {
+  /* ERRATA E2 (2026-09-28, ratificada no chat). A redação original exigia
+     reindexar a seção por CAPABILITY. Medido: a visão por produto já existe
+     (`pr-sup-solucao`, da 019) e já lista cada produto uma vez — o que faltava
+     era o produto habilitado por SINAL DECLARADO, que nunca chegava lá porque
+     `ofertaDoMotor()` deriva só de `computeFindings() + MAP`.
+     O gate mede a seção que já se chama "por produto", e não a que responde
+     "por que este produto apareceu para esta necessidade". */
+  const { w, d } = boot({ nivel: 1, contexto: true, sinais: true });
+  const sol = papel(w, d).querySelector("#pr-sup-solucao");
+  if (!sol) vac("(a)", "a seção por produto não foi emitida nesta fixture");
+  const cards = qa(sol, "[data-p53-sol-produto]");
+  if (!cards.length) vac("(a)", "nenhum card de produto na seção — sujeito vazio");
+
+  /* (a) nenhum produto repetido */
+  const nomes = cards.map(c => c.getAttribute("data-p53-sol-produto"));
+  const dup = Array.from(new Set(nomes.filter((n, i) => nomes.indexOf(n) !== i)));
+  if (dup.length) throw new Error("produto repetido na visão por produto: " + JSON.stringify(dup));
+
+  /* (b) o habilitado por SINAL chegou — é o caso que o EA-75 relatou, e sem ele
+     esta alínea seria vácuo disfarçado de verde */
+  const porSinal = cards.filter(c => (c.getAttribute("data-qs22-sinais") || "").trim());
+  if (!porSinal.length)
+    throw new Error("nenhum produto habilitado por sinal na visão por produto — " +
+      "é exatamente o buraco que o EA-75 relatou");
+
+  /* (c) quem serve mais de uma capability traz TODAS, unidas — nunca a primeira */
+  const multi = cards.filter(c => qa(c, "[data-p53-sol-cap]").length > 1);
   if (!multi.length)
-    vac("(b)", "nenhum produto serve mais de uma capability nesta fixture — o caso do EA-75 não é exercitado");
-  multi.forEach(c => {
-    if (!(c.getAttribute("data-qs22-sinais") || "").trim())
-      throw new Error("produto multi-capability perdeu os sinais ao fundir: " +
-        c.getAttribute("data-qs22-produto"));
-  });
+    vac("(c)", "nenhum produto serve mais de uma capability nesta fixture — o caso do EA-75 não é exercitado");
   return true;
 });
 

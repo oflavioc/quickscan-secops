@@ -82,6 +82,40 @@ alvos e calaria sobre as demais. Passa a ser:
 Continua sendo **igualdade**, e agora cobre o caso que a original não via: nada
 sai do relatório, nem o que foi excluído do investimento.
 
+## Errata E2 (2026-09-28) — o EA-75 se resolve onde a visão por produto JÁ existe
+
+Ratificada pelo proprietário no chat (*"Vamos de B"*), depois de medição na W3.
+
+**O que foi medido.** A seção *"Formas de apoio, por produto"* (`pr-sup-solucao`,
+da demanda 019) **já existe e já lista cada produto uma vez**. Mas:
+
+```
+FortiDLP em pr-sup-solucao    : 0 ocorrências
+FortiDLP em pr-interp/support : 2 ocorrências   <- a duplicata relatada
+```
+
+A causa: `ofertaDoMotor()` (`ui_p52_support_v32.js`) deriva de
+`computeFindings() + MAP` — **só produto puxado por gap**. Produto habilitado por
+**sinal declarado** vem dos contextos do motor e nunca chegava lá.
+
+**C10 emendado.** Deixa de exigir a reindexação da seção por capability e passa a
+exigir:
+
+> Todo produto aparece **exatamente uma vez** na visão por produto, com
+> capabilities e sinais **unidos** — inclusive o habilitado por sinal declarado.
+> Medido em `pr-sup-solucao`.
+
+Três razões, e a primeira não é custo: a seção por capability **responde outra
+pergunta** — *por que este produto apareceu para esta necessidade* —, e vista assim
+a repetição não é duplicata, é a mesma resposta dada a duas perguntas. Segunda:
+`design-decisions.md` já registra que a visão por solução **convive** com a leitura
+por gap; reindexar contrariaria decisão confirmada sem que ninguém tenha pedido.
+Terceira: o `pr-sup-solucao` estar incompleto **é, ele mesmo, um defeito** — a
+seção que se chama "por produto" não listava todos —, e esta rota o corrige.
+
+O custo evitado está medido: reindexar a seção por capability exigiria reancorar
+**55 asserções em 5 suítes**, uma `§29.4` e outra selada por errata própria.
+
 ## Comportamento especificado
 
 **Entrada** (tudo já declarado, nada inferido): respostas (`ans`), prioridades

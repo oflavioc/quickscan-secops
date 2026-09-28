@@ -79,6 +79,10 @@
     "__P53CUR": {
       "owner": "ui_curation_edit_v32.js",
       "nota": "editor de curadoria (demanda 019 W5). Shape fechado { __installed, diag() }, no precedente do __D011. NAO e dono de estado (R9 §5): le e escreve pelo __CURATION, que e do core-engineer. Toda escrita passa por __CURATION.set(), que recusa id fora do catalogo e valor fora do enum — e por isso este editor nao tem campo de texto."
+    },
+    "__QS22": {
+      "owner": "ui_ondas_v32.js",
+      "nota": "escalonamento de investimento — derivado e puro; ondas(entrada) sem I/O, sem DOM, sem estado"
     }
   }
 }

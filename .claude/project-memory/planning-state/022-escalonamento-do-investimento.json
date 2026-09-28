@@ -1,18 +1,18 @@
 {
   "demanda": "022-escalonamento-do-investimento",
-  "phase": "refinement",
+  "phase": "specify",
   "spec_dir": "specs/022-escalonamento-do-investimento",
   "branch": "feature/022-escalonamento-do-investimento",
   "brief": "O motor responde 'o que serve aqui?' por capability, quinze vezes isoladas, e o cliente pergunta 'por onde eu comeco?' uma vez. Relato do proprietario apos sessao real na v3.2.9: nao faz sentido fornecer produto para toda lacuna observada, e o escalonamento tem de funcionar TAMBEM sem cenario-alvo. Qualifica a 021, que resolveu a cobertura (4 -> 15) mas nao a encenacao. CORRECAO DE CUSTO medida nesta fase: o payload M41 congelado NAO contem conceito algum do motor V3.2 (endpoint-detection, TECHNOLOGY_WHITESPACE, supportMode: zero ocorrencias) — os tiers que ele afirma vem de buildTiers da Camada 1 V3.1.3. Mudar quem o motor V3.2 recomenda NAO move a regua D2, ao contrario do que eu afirmei duas vezes antes de medir.",
   "refinement": {
-    "status": "pending",
-    "notes": "Tres desenhos, com recomendacao pelo (A): camada de escalonamento ACIMA do motor, no precedente exato do ui_target_v32.js ('camada prospectiva; engine intocado'). Nenhum arquivo frozen tocado, regua imovel, e o motor segue auditavel sozinho. (B) mudar classify/resolveCandidates cai no rito do boundary porque engine_v32.js e frozen — a Porta A seria elegivel (payload byte-identico) mas segue pendente de ratificacao (Q3). (C) so curadoria, refutado pelo proprio relato. ESCOPO inclui o EA-75 (contexto indexado por produto): a unidade de decisao passa a ser o investimento e o eixo da secao tem de ser o mesmo, e reestruturar buildSupportHTML duas vezes custaria dois ciclos de reancoragem das 55 assercoes que dependem das ancoras atuais. FORA: itens 2 e 3 do lote EA-58 (catalogo e SCORES), que sao conteudo novo e mudanca de nota. TRES PERGUNTAS ABERTAS ao proprietario: o teto de itens simultaneos sem cenario-alvo, o destino do que fica fora da primeira onda, e se o cenario-alvo substitui ou combina com as prioridades declaradas.",
-    "approved_at": null
+    "status": "approved",
+    "notes": "Tres desenhos, com recomendacao pelo (A): camada de escalonamento ACIMA do motor, no precedente exato do ui_target_v32.js ('camada prospectiva; engine intocado'). Nenhum arquivo frozen tocado, regua imovel, e o motor segue auditavel sozinho. (B) mudar classify/resolveCandidates cai no rito do boundary porque engine_v32.js e frozen — a Porta A seria elegivel (payload byte-identico) mas segue pendente de ratificacao (Q3). (C) so curadoria, refutado pelo proprio relato. ESCOPO inclui o EA-75 (contexto indexado por produto): a unidade de decisao passa a ser o investimento e o eixo da secao tem de ser o mesmo, e reestruturar buildSupportHTML duas vezes custaria dois ciclos de reancoragem das 55 assercoes que dependem das ancoras atuais. FORA: itens 2 e 3 do lote EA-58 (catalogo e SCORES), que sao conteudo novo e mudanca de nota. TRES PERGUNTAS ABERTAS ao proprietario: o teto de itens simultaneos sem cenario-alvo, o destino do que fica fora da primeira onda, e se o cenario-alvo substitui ou combina com as prioridades declaradas. APROVADA pelo proprietario no chat em 2026-09-28 ('Aprovada, segue para o spec'), depois de ratificar as decisoes de conteudo em 2026-09-27 ('Sigo com as suas recomendacoes') e de pedir a regra do teto ('O teto tem que sair da maturidade, me propoe uma regra'). Refinement reescrito para conformar ao template da R12 — a primeira versao nao seguia as secoes obrigatorias.",
+    "approved_at": "2026-09-28"
   },
   "specify": {
     "status": "pending",
     "approved_at": null,
-    "notes": ""
+    "notes": "14 criterios, todos com gate e mutante previstos. TRES NASCERAM DO CROSS-CHECK POR LEITURA da spec selada PHASE_5_0_REV_B.md (identidade 4f1583c7 conferida): UX-P6 :267 (visao derivada declara proveniencia) -> C12; UX-P7 :270 (nao depender so de cor) -> C11; UX-P8 :274 (trocar visualizacao nao altera score nem estado canonico) -> C13. Resultado negativo registrado: nada sobre teto/onda/escalonamento na selada. C5 exige IGUALDADE entre a uniao das ondas e o conjunto coberto pela 021 — inclusao passaria com o produto escondendo gap. Contrato novo: bridge __QS22.ondas(), FUNCAO PURA sem DOM e sem estado, que e o que torna C13 mensuravel e da oraculo independente da renderizacao. ESTADO NOVO: nenhum — a demanda deriva. BOUNDARY: nenhum frozen tocado; ui_v32.js (PROTEGIDO §29.4) sera tocado na Fase 5 e a autorizacao esta PARADA no portao desta spec, nunca depois de editar."
   },
   "plan": {
     "status": "pending",

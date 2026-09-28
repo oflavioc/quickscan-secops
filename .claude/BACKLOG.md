@@ -6328,6 +6328,53 @@ outro ângulo, e a correção deste achado muda aquele número.
 
 **Status**: `aberto`
 
+> **EMENDA DE ROTA, 2026-09-27 — a conclusão "Porta B" avaliou UMA rota só.**
+>
+> Este achado (e o [[EA-58]] que o contém) concluíram que corrigir um rótulo de
+> exibição exige Porta B, porque o texto vive em arquivo `frozen` e está dentro do
+> payload M41. A primeira metade é verdadeira; a conclusão não segue.
+>
+> **A rota de APRESENTAÇÃO já existia, já tinha precedente aceito, e nenhuma das
+> duas análises a considerou.** Medido em 2026-09-27:
+>
+> ```
+> "Mandato e objetivos"        -> 5 ocorrencias no payload M41 congelado
+> "Direcionamento e objetivos" -> 0 ocorrencias no payload M41 congelado
+> ```
+>
+> E é *"Direcionamento e objetivos"* que o produto mostra hoje, pela tabela
+> `P52_COPY` (`ui_p52_workspace_v32.js:128`). Ou seja: **uma string que vive
+> DENTRO do payload congelado já foi trocada no que o cliente vê, sem tocar no
+> arquivo `frozen` e sem mover a régua D2** — o payload segue byte-idêntico ao
+> pinado, como toda release desde então comprova.
+>
+> Acrescentar `(NDR)` e `(SIEM)` tem **exatamente a mesma forma**.
+>
+> **Isto não é contornar o portão pela letra.** O `P52_COPY` é tabela FECHADA e
+> DECLARADA de substituição de apresentação, auditável numa tela, e foi usada
+> para uma string da mesmíssima classe. Contornar seria editar o congelado
+> alegando que o gate não olha; aqui a régua continua medindo o mesmo objeto e
+> continua imóvel, porque o objeto não mudou — mudou a apresentação dele.
+>
+> **A consequência é maior que estes dois rótulos.** A premissa do `EA-58` —
+> *"corrigir um rótulo custa o mesmo que mudar uma decisão"* — é **falsa para
+> rótulos de exibição**. Se vale para `(NDR)` e `(SIEM)`, vale para boa parte dos
+> seis pedidos represados, e o lote deixa de precisar de uma Porta B para existir.
+>
+> **O que continua exigindo Porta B**: mudar o que o motor DECIDE — quem é
+> recomendado, em que tier, sob que condição. Esse payload muda por construção.
+> A fronteira real não é "frozen versus não-frozen"; é **decisão versus
+> apresentação**, e o `EA-58` merece ser reescrito em torno disso.
+>
+> **Limites medidos desta rota**, para não vendê-la mais barata do que é:
+> a substituição é textual e se aplica ao texto renderizado, logo (a) exige grep
+> do literal antigo nas suítes antes de qualquer troca, porque a string pode ser
+> observável de invariante; (b) precisa de âncora que não colida por substring; e
+> (c) não serve para o que o motor decide, só para como o nome aparece.
+>
+> Decidido sob delegação de 2026-08-29 levar esta emenda ao proprietário junto da
+> tabela de rótulos proposta; a ratificação da tabela é dele.
+
 **Instância do [[EA-58]]**, não achado independente.
 
 > **CORREÇÃO DE REGISTRO, 2026-09-24 — este achado JÁ EXISTIA.**
@@ -6724,3 +6771,131 @@ Enquanto não houver remédio, vale a regra de leitura: `campanha não exigida` 
 confundir as duas.
 
 Ver [[EA-20]], de quem este é instância no **gatilho**, e não no gate.
+
+## EA-73 — o apoio Fortinet decora o card de PRIORIDADE, e só quando calha de casar
+
+**Status**: `aberto`
+
+**Aberto em**: 2026-09-27, por relato do proprietário após sessão real na v3.2.9.
+
+### O relato
+
+> *"aqui não é para colocar solução Fortinet, é para mostrar apenas as prioridades
+> selecionadas e nas capabilities relacionadas"*
+
+Na seção **2 · Prioridades do negócio**, o card *Centralização de logs* trazia
+`Apoio possível, a validar: FortiSIEM · FortiAnalyzer`. Os outros dois cards da
+mesma seção não traziam nada.
+
+### O que foi medido
+
+Não é defeito de implementação — é **comportamento deliberado do [[EA-55]]**:
+
+```
+/* EA-55 · passagens que cruzam SEÇÕES: o ponteiro de apoio lê a lista
+   "após validação" (seção 7) para decorar cards das seções 2 e 4. */
+p52SupportHints(flow);
+```
+
+`ui_p52_workspace_v32.js:1020` percorre `.prio-decl`, casa o texto da capability
+contra o índice de validação e só emite quando há produto correspondente. Por isso
+saiu em **um** dos três cards: os outros dois não casaram.
+
+A inconsistência que o proprietário viu é consequência direta do desenho: a
+decoração é condicional, e condicional sem regra visível lê-se como defeito. **Ou
+aparece nos três, ou em nenhum** — o meio-termo é o pior dos casos.
+
+### Encaminhamento
+
+Restringir `p52SupportHints` à seção 4 (gaps), onde o apoio pertence. É pequeno,
+mas **reverte parte de uma correção anterior**: entra em
+`.claude/rules/design-decisions.md`, nunca em silêncio (R13).
+
+Ver [[EA-55]], de quem este reverte metade, e [[EA-20]] pela condicional que
+promete regra e entrega coincidência.
+
+## EA-74 — o contador de gaps promete a sessão e mede a seção
+
+**Status**: `aberto`
+
+**Aberto em**: 2026-09-27, por relato do proprietário após sessão real na v3.2.9.
+
+### O relato
+
+> *"Gaps observados apareceu nessa sessão '0 altos - 9 moderados', o que não faz
+> sentido, visto que as prioridades do negócios seriam também os principais gaps
+> altos."*
+
+### O que foi medido
+
+`ui_p52_workspace_v32.js:2229` conta dentro da seção, e só dentro dela:
+
+```
+var gsec = document.getElementById("p52-sec-gaps");
+var hi = gsec ? gsec.querySelectorAll(".f-tag.sev-a").length : 0;
+var mo = gsec ? gsec.querySelectorAll(".f-tag.sev-m").length : 0;
+return hi + " altos · " + mo + " moderados";
+```
+
+A seção de gaps exclui, **por desenho**, os gaps escolhidos como prioridade — o
+próprio subtítulo diz *"Também foram observados gaps que não foram selecionados
+entre as prioridades declaradas nesta sessão."* Quando os três altos da sessão
+viram prioridade, a conta da seção é literalmente `0 altos`.
+
+Literalmente verdadeiro; **enganoso como leitura da sessão**, que é o que o índice
+lateral parece oferecer. Quem lê `0 altos` entende *"esta organização não tem gaps
+altos"*.
+
+### O defeito de raiz, que é maior que o contador
+
+**Virar prioridade faz o gap sumir da leitura de gaps.** O contador é apenas onde
+isso aflora. Trocar só o escopo da contagem move o silêncio de lugar: o rótulo
+passaria a dizer `3 altos` e a seção mostraria nove cartões.
+
+### Encaminhamento
+
+Decidido com o proprietário em 2026-09-27: o contador passa a medir a **sessão
+inteira**, e a seção de gaps ganha a linha que nomeia quantos altos estão nas
+prioridades, com ponteiro para a seção 2 — as duas metades juntas, porque só a
+primeira troca uma omissão por outra.
+
+Ver [[EA-20]], de quem este é instância: número que promete mais do que mede.
+
+## EA-75 — produto que serve duas capabilities aparece duas vezes, e a alavancagem some
+
+**Status**: `aberto`
+
+**Aberto em**: 2026-09-27, por relato do proprietário após sessão real na v3.2.9.
+
+### O relato
+
+> *"Quando uma tecnologia estiver associada a mais de uma capability, por exemplo,
+> Risco Interno e Prevenção de Perda de Dados como sinal declarado, aparece
+> FortiDLP. Aqui poderia aparecer a solução apenas uma vez, em vez de duplicar."*
+
+### O que foi medido
+
+A seção **Contexto tecnológico** é organizada **por capability**: cada bloco traz
+as ofertas daquela capability. `FortiDLP` serve *Risco interno* e *Prevenção de
+perda de dados*, e sai duas vezes — cada ocorrência legítima na sua caixa, com o
+mesmo sinal declarado (`Insider risk, Shadow AI`) repetido.
+
+### Por que não é só cosmético
+
+A repetição **esconde o melhor argumento do produto**. O leitor vê dois itens; o
+que existe é **um produto cobrindo duas necessidades** — exatamente a alavancagem
+que justifica investimento. Organizar por capability torna invisível o que mais
+pesa na decisão de compra.
+
+E isto se liga ao que o proprietário pediu sobre o motor: se a unidade de decisão
+é o **investimento**, o eixo da seção tem de ser o investimento, não a capability.
+
+### Encaminhamento
+
+Decidido com o proprietário em 2026-09-27: a seção passa a ser **indexada por
+produto**, com as capabilities como atributo. Ao fundir, sinais e capabilities são
+**unidos**, nunca escolhidos — `FortiDLP` sai uma vez dizendo *Risco interno ·
+Prevenção de perda de dados*, preservando o sinal declarado de cada.
+
+Ver [[EA-68]], que já moveu a visão por solução para derivar do motor — este segue
+a mesma direção.

@@ -2143,14 +2143,11 @@ body[data-uxscreen="refinement"] #ux-progress-mobile{ display:none !important; }
     font-size: 12.5px; font-style: italic; color: var(--faint);
   }
 
-  /* ponteiro para o apoio que o renderer já listou em outra seção; os nomes
-     vêm do DOM, nunca deste arquivo (`P52-REC1` proíbe produto aqui) */
-  .p52-hint {
-    margin-top: 10px; padding-top: 8px; border-top: 1px dashed var(--line);
-    font-size: 13px; line-height: 1.55;
+  /* EA-74 · a seção de gaps nomeia quantos altos foram lidos como prioridade.
+     Mesmo peso visual do subtítulo que a antecede: é ressalva, não conteúdo. */
+  .p52-gaps-fora {
+    color: var(--faint); font-size: 13px; margin: -6px 0 12px; max-width: 720px;
   }
-  .p52-hint-rot { color: var(--faint); margin-right: 6px; }
-  .p52-hint-val { color: var(--text); overflow-wrap: anywhere; }
 
   .p52-sec .apoio-block .pt-desc { overflow-wrap: anywhere; }
   .p52-prod-ctx {
@@ -6275,6 +6272,21 @@ function renderBlocks(app){
         <button class="btn2" id="v32clear">Limpar contexto tecnológico</button>
       </div>
       <div id="v32editor" class="v32-hidden"></div>`;
+    /* EA-74 · o censo da SESSÃO, publicado para quem só lê o DOM.
+       A camada de apresentação (workspace 5.2) NÃO pode chamar o domínio — o
+       `P52-GOV1` reprova, e com razão: dono de layout que consulta o motor
+       deixa de ser dono de layout. Mas o índice lateral precisa do número da
+       SESSÃO, e ele não existia no DOM: os cards de prioridade não carregam
+       tag de severidade, então contar `.f-tag` dava "0 altos" exatamente quando
+       os altos viravam prioridade (medido: motor 3 altos, DOM 0).
+       O domínio publica o que já calculou; quem apresenta lê daqui. */
+    {
+      const censo = computeFindings().findings || [];
+      let qsAlto = 0, qsModerado = 0;
+      censo.forEach(f => { if (f.sev === 2) qsAlto++; else if (f.sev === 1) qsModerado++; });
+      p.setAttribute("data-qs-censo-alto", String(qsAlto));
+      p.setAttribute("data-qs-censo-moderado", String(qsModerado));
+    }
     const clr = document.getElementById("v32clear");
     if (clr) clr.onclick = ()=>{ V32.resetLandscapeToUnset(); lastCtx=null; renderBlocks(app); if (window.__uxDecor) window.__uxDecor(app); };
   }
@@ -11884,7 +11896,61 @@ if (window.__DEV) Object.assign(window.__DEV, { openExportModal, openImportPicke
     ["Não avaliado — evidência insuficiente", "Não avaliado: evidência insuficiente"],
     ["Estágio não determinado — dados insuficientes", "Estágio não determinado: dados insuficientes"],
     ["Não pontua — entra como item de validação no resultado.",
-     "Não pontua. Entra como item de validação no resultado."]
+     "Não pontua. Entra como item de validação no resultado."],
+    /* ==========================================================================
+       EA-69 / EA-58 · os rótulos de capability ganham o nome de mercado.
+
+       Relato do proprietário em sessão real na v3.2.9: "Centralização de logs
+       não mostra SIEM", "Network Detection & Response não tem (NDR)", e o
+       rótulo de endpoint em português onde o padrão de mercado é inglês.
+
+       POR QUE AQUI, E NÃO NA CAMADA 1. O texto nasce em
+       quickscan_secops_soccmm_v3_1_3.html, classe `frozen`, e está DENTRO do
+       payload M41 — editá-lo moveria a régua D2 e cairia em Porta B. Esta
+       tabela já resolveu exatamente essa forma antes: "Mandato e objetivos"
+       tem 5 ocorrências no payload congelado e 0 de "Direcionamento e
+       objetivos", e é o segundo que o produto mostra desde então, com o
+       payload byte-idêntico ao pinado em toda release. A régua mede o objeto,
+       e o objeto não mudou — mudou a apresentação dele.
+
+       O LIMITE DA REGRA, ratificado pelo proprietário em 2026-09-27: nome de
+       mercado só onde a capability É uma categoria de tecnologia. Onde ela é
+       PROCESSO ou GENTE — capacidade do time, conhecimento operacional,
+       cobertura de monitoramento, governança, políticas, competências,
+       vulnerabilidades — o rótulo continua em português. Traduzir tudo faria
+       cada gap soar como categoria a comprar, que é o oposto do que a
+       curadoria existe para encenar.
+
+       Sete de quinze entram. As oito de fora estão nomeadas acima, e a
+       ausência delas é decisão registrada, não esquecimento.
+       ========================================================================== */
+    ["Análise centralizada, correlação e retenção de eventos",
+     "Security Information and Event Management (SIEM)"],
+    ["Detecção e resposta em endpoint (EDR)",
+     "Endpoint Detection and Response (EDR)"],
+    ["Network Detection & Response",
+     "Network Detection and Response (NDR)"],
+    ["Orquestração e automação de resposta",
+     "Security Orchestration, Automation and Response (SOAR)"],
+    ["Gestão e execução de resposta a incidentes",
+     "Incident Response (IR)"],
+    ["Gestão de exposição externa (EASM/DRPS)",
+     "External Attack Surface Management (EASM)"],
+    ["Ciclo de vida de detecção (detection engineering)",
+     "Detection Engineering"],
+    /* O CATÁLOGO NÃO ENTRA, e a ausência é decisão medida.
+       `MAP[qid].cap` (capability a desenvolver) e `V32.CAPABILITIES[id].name`
+       (rótulo de catálogo) são vocabulários distintos POR DESENHO, e o
+       `P50-VOC1` (EA-23) existe para mantê-los ligados: o chip de contexto
+       declara o nome avaliado ao lado do nome de catálogo.
+
+       Tentei reescrever os dois lados e medi o resultado: os nomes ficam
+       IGUAIS, e o chip passa a ler "Incident Response (IR) — avaliada como
+       «Incident Response (IR)»". A ponte que o EA-23 construiu vira eco.
+
+       O catálogo é o vocabulário de quem preenche o Landscape; a avaliação é o
+       de quem lê o diagnóstico. O proprietário apontou os rótulos da AVALIAÇÃO,
+       e é só neles que se mexe. */
   ];
   /* Nós cujo texto é do USUÁRIO ou é citação literal: nunca reescritos. */
   /* O bloqueio é sobre o TEXTO DO USUÁRIO e sobre citações literais — não
@@ -11892,6 +11958,53 @@ if (window.__DEV) Object.assign(window.__DEV, { openExportModal, openImportPicke
      PERGUNTA, que é apresentação e precisa acompanhar a linguagem nova. */
   var P52_COPY_BLOCK = "textarea, input, select, option, .fnote, .anote, .aitem .anote, " +
     ".pr-obs, .v32-techs, [data-p50=\"note\"], [data-p52=\"cap-help-text\"], footer";
+  /* ── ÂNCORAS DO CAMINHADOR, DERIVADAS DA TABELA (EA-69) ───────────────────
+     O pré-filtro deste caminhador era literal — mandato, charter ou travessão —
+     e cobria por acaso TODAS as entradas de então. Acrescentar entrada nova sem
+     lembrar dele produziria SILÊNCIO: a troca declarada na tabela simplesmente
+     não aconteceria, o caminhador nem visitaria o nó, e nada acusaria. Medido
+     em 2026-09-27, ao preparar a troca dos rótulos de capability — as sete
+     entradas novas teriam nascido mudas.
+
+     As âncoras passam a sair da PRÓPRIA tabela: o pré-filtro não pode mais
+     divergir do que ele filtra, e entrada nova passa a valer sozinha. Mesmo
+     remédio de classe que o comando do gate SESSION 4.8 recebeu no EA-72 —
+     cópia literal de um valor com dono é dívida que vence sem avisar. */
+  var P52_COPY_ANCORAS = (function () {
+    var a = [], i;
+    for (i = 0; i < P52_COPY.length; i++) a.push(P52_COPY[i][0]);
+    return a;
+  })();
+  function p52CopyToca(v) {
+    for (var i = 0; i < P52_COPY_ANCORAS.length; i++)
+      if (v.indexOf(P52_COPY_ANCORAS[i]) >= 0) return true;
+    return false;
+  }
+  /* ── CENSO DA SESSAO, NAO DA SECAO (EA-74) ───────────────────────────────
+     O indice lateral dizia "0 altos" quando os tres altos da sessao viravam
+     prioridade: ele contava `.f-tag` DENTRO de #p52-sec-gaps, e aquela secao
+     exclui por desenho os gaps escolhidos como prioridade. Literalmente
+     verdadeiro, e lido como "esta organizacao nao tem gaps altos".
+
+     O censo passa a vir do DOMINIO, publicado por ui_v32.js em #v32panel
+     (`data-qs-censo-*`): esta camada e dona de LAYOUT e nao pode consultar o
+     motor — o P52-GOV1 reprova, e com razao. Quem calcula publica, quem
+     apresenta le — mesma licao
+     da 021, onde um oraculo lido do DOM perdeu um card em silencio.
+
+     Ausencia do motor devolve `null`, e quem chama omite o rotulo: rotulo
+     ausente e honesto, numero errado nao e (R10 §2). */
+  function p52CensoSessao() {
+    var painel = document.getElementById("v32panel");
+    if (!painel) return null;
+    var a = painel.getAttribute("data-qs-censo-alto");
+    var m = painel.getAttribute("data-qs-censo-moderado");
+    if (a === null || m === null) return null;
+    a = parseInt(a, 10); m = parseInt(m, 10);
+    if (isNaN(a) || isNaN(m)) return null;
+    return { alto: a, moderado: m };
+  }
+
   function p52CopyGuard(node, root) {
     for (var e = node.parentElement; e && e !== root.parentElement; e = e.parentElement) {
       if (e.matches && e.matches(P52_COPY_BLOCK)) return false;
@@ -11907,7 +12020,7 @@ if (window.__DEV) Object.assign(window.__DEV, { openExportModal, openImportPicke
     for (var i = 0; i < pend.length; i++) {
       var t = pend[i], v = t.nodeValue;
       if (!v || v.indexOf("\u0000") >= 0) continue;
-      if (!/[Mm]andato|charter|—/.test(v)) continue;
+      if (!p52CopyToca(v)) continue;
       if (!p52CopyGuard(t, root)) continue;
       var out = v;
       for (var k = 0; k < P52_COPY.length; k++) {
@@ -11921,7 +12034,11 @@ if (window.__DEV) Object.assign(window.__DEV, { openExportModal, openImportPicke
     for (var a = 0; a < attrs.length; a++) {
       ["aria-label", "placeholder"].forEach(function (name) {
         var val = attrs[a].getAttribute(name);
-        if (!val || !/[Mm]andato|charter/.test(val)) return;
+        /* EA-69 · segundo pré-filtro literal, achado pelo P50-VOC1: o nome
+           ACESSÍVEL ficava no vocabulário antigo enquanto o visível mudava —
+           leitor de tela e leitor de tela em desacordo é pior que nenhuma
+           troca. Deriva da tabela, como o do texto. */
+        if (!val || !p52CopyToca(val)) return;
         var o = val;
         for (var k2 = 0; k2 < P52_COPY.length; k2++) o = o.split(P52_COPY[k2][0]).join(P52_COPY[k2][1]);
         if (o !== val) { attrs[a].setAttribute(name, o); trocas++; }
@@ -12647,17 +12764,6 @@ if (window.__DEV) Object.assign(window.__DEV, { openExportModal, openImportPicke
     return "";
   }
 
-  function p52ValidationIndex(flow) {
-    var idx = [], items = flow.querySelectorAll(".t-list .t-item"), i;
-    for (i = 0; i < items.length; i++) {
-      var t = txt(items[i]);
-      var corte = t.indexOf(" — ");
-      if (corte <= 0) continue;
-      idx.push({ prod: t.slice(0, corte).trim(), texto: t });
-    }
-    return idx;
-  }
-
   /* --------------------------------------------------------------------------
      NÃO confundir com a "trilha de capacitação" pedida pelo proprietário em
      2026-09-14 (`training.fortinet.com`). Ela NÃO cabe aqui e não foi feita:
@@ -12725,32 +12831,6 @@ if (window.__DEV) Object.assign(window.__DEV, { openExportModal, openImportPicke
       }
       b.parentNode.replaceChild(ul, b);
       bn.classList.add("p52-banner-split");
-    }
-  }
-
-  function p52SupportHints(flow) {
-    var idx = p52ValidationIndex(flow);
-    var cards = flow.querySelectorAll(".prio-decl"), i, j;
-    for (i = 0; i < cards.length; i++) {
-      var card = cards[i];
-      if (card.getAttribute("data-p52-hint")) continue;
-      var cap = p52CapOf(card);
-      if (!cap) continue;
-      var prods = [];
-      for (j = 0; j < idx.length; j++)
-        if (idx[j].texto.indexOf(cap) >= 0 && prods.indexOf(idx[j].prod) < 0) prods.push(idx[j].prod);
-      if (!prods.length) continue;
-      var box = el("div", { "class": "p52-hint", "data-p52-hint-kind": "validar" });
-      box.appendChild(el("span", { "class": "p52-hint-rot" }, "Apoio possível, a validar:"));
-      box.appendChild(document.createTextNode(" "));   /* espaço REAL: a margem
-         do CSS separa na tela mas não no `textContent` — sem isto o rótulo e o
-         primeiro produto saem grudados na cópia e no leitor de tela */
-      box.appendChild(el("span", { "class": "p52-hint-val" }, prods.join(" · ")));
-      /* o rodapé de procedência é o último elemento do card por desenho (canto
-         inferior direito): o ponteiro entra ANTES dele, nunca depois */
-      var src = card.querySelector(":scope > .p52-prio-src");
-      if (src) card.insertBefore(box, src); else card.appendChild(box);
-      card.setAttribute("data-p52-hint", "1");
     }
   }
 
@@ -13937,11 +14017,10 @@ if (window.__DEV) Object.assign(window.__DEV, { openExportModal, openImportPicke
       return rows ? (rows + (rows === 1 ? " capability" : " capabilities")) : "opcional";
     }
     if (key === "gaps") {
-      var gsec = document.getElementById("p52-sec-gaps");
-      var hi = gsec ? gsec.querySelectorAll(".f-tag.sev-a").length : 0;
-      var mo = gsec ? gsec.querySelectorAll(".f-tag.sev-m").length : 0;
-      if (!hi && !mo) return "";
-      return hi + " altos · " + mo + " moderados";
+      var censo = p52CensoSessao();          /* EA-74 · a SESSAO, nao a secao */
+      if (!censo) return "";
+      if (!censo.alto && !censo.moderado) return "";
+      return censo.alto + " altos · " + censo.moderado + " moderados";
     }
     if (key === "evidence") {
       var res = document.getElementById("p50-results");
@@ -14642,10 +14721,45 @@ if (window.__DEV) Object.assign(window.__DEV, { openExportModal, openImportPicke
     if (secExec) p52ExecPair(secExec);
     p52DomainBars(flow);
     p52MarkIcons(flow);
-    /* EA-55 · passagens que cruzam SEÇÕES, e por isso só podem rodar com o
-       fluxo inteiro montado: o ponteiro de apoio lê a lista "após validação"
-       (seção 7) para decorar cards das seções 2 e 4. */
-    p52SupportHints(flow);
+    /* ── A OUTRA METADE DO EA-74 ──────────────────────────────────────────────
+     Trocar so o escopo da contagem moveria o silencio de lugar: o indice
+     passaria a dizer "3 altos" e a secao mostraria doze cartoes, e o leitor
+     procuraria tres que nao estao la. A secao passa a NOMEAR quantos altos
+     estao fora dela, e onde eles estao.
+
+     A conta e por diferenca — total da sessao menos o que esta renderizado
+     aqui —, e nao por leitura da lista de prioridades: assim ela continua
+     certa se algum alto sair desta secao por qualquer outro motivo. */
+  function p52GapsForaDaSecao(flow) {
+    var gsec = flow ? flow.querySelector("#" + secId("gaps")) : null;
+    if (!gsec || gsec.getAttribute("data-p52-gaps-fora")) return;
+    var censo = p52CensoSessao();
+    if (!censo) return;
+    var aqui = gsec.querySelectorAll(".f-tag.sev-a").length;
+    var fora = censo.alto - aqui;
+    gsec.setAttribute("data-p52-gaps-fora", String(fora > 0 ? fora : 0));
+    if (fora <= 0) return;
+    var p = el("p", { "class": "p52-gaps-fora" },
+      fora === 1
+        ? "1 gap alto desta sessão foi declarado como prioridade do negócio e é lido na seção 2."
+        : fora + " gaps altos desta sessão foram declarados como prioridades do negócio e são lidos na seção 2.");
+    var apos = gsec.querySelector(":scope > p");
+    if (apos && apos.nextSibling) gsec.insertBefore(p, apos.nextSibling);
+    else if (apos) gsec.appendChild(p);
+    else gsec.insertBefore(p, gsec.firstChild);
+  }
+
+  /* EA-73 · o ponteiro de apoio SAIU do card de prioridade (2026-09-27).
+     Relato do proprietario em sessao real na v3.2.9: a secao de prioridades
+     e para as prioridades selecionadas e suas capabilities, nao para solucao
+     Fortinet. O EA-55 fazia `p52SupportHints` decorar `.prio-decl` lendo a
+     lista "apos validacao"; medido, ela so pousava em card de PRIORIDADE
+     (3 de 3 na tela, 0 no papel), embora o comentario prometesse as secoes
+     2 e 4 — logo nao ha o que preservar na secao de gaps.
+     `p52ValidationIndex` saiu junto: sem este chamador, seria codigo morto,
+     e o CSS `.p52-hint*` saiu na mesma passagem pela mesma razao.
+     Reverte metade do EA-55; registrado em .claude/rules/design-decisions.md. */
+    p52GapsForaDaSecao(flow);   /* EA-74 · a secao nomeia o que nao mostra */
     p52ProdBullets(flow);
     p52SplitBanner(flow);      /* EA-60 · item 9 */
 

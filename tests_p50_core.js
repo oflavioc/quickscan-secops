@@ -311,7 +311,27 @@ const PROTECTED = {
      campanha `d021` (7 DETECTADO · 0 SOBREVIVENTE).
      Identidade anterior:
      948dc7f93f9be71ea52f506124d4fce9558f85cc500258bf2cfbfaddcd9c723c */
-  "ui_v32.js": "d56d11abc1c37cfd0e7f5c191852099849f7ad819c186b63a0215fdb17cb004f",
+  /* AUTORIZACAO NOMINAL §29.4 do proprietario, no chat, em 2026-09-27, POR
+     ARQUIVO (`ui_v32.js`) e valida so para este trabalho — o lote de correcoes
+     da sessao real na v3.2.9. Pedida DEPOIS de o portao barrar, e nao antes de
+     editar: o `P50-GOV1` reprovou em 63/65 e a R6 manda parar e nomear o rito.
+
+     MOTIVO (EA-74): o indice lateral dizia "0 altos" quando os gaps altos da
+     sessao viravam prioridade. Medido: motor 3 altos + 12 moderados, DOM 0 + 12
+     — os cards de prioridade nao carregam tag de severidade, e o numero da
+     SESSAO nao existia no DOM. A primeira correcao chamou `computeFindings()`
+     de dentro do workspace e o `P52-GOV1` reprovou com razao: dono de layout
+     que consulta o motor deixa de ser dono de layout.
+
+     A EDICAO: oito linhas, no fecho do render do painel, que PUBLICAM em
+     `#v32panel` (`data-qs-censo-alto` / `data-qs-censo-moderado`) o censo que o
+     dominio ja calculara para outros fins. Nao muda decisao, nao muda texto,
+     nao muda ordem — so expoe numero existente para quem so le o DOM.
+     Alternativas medidas antes de pedir: contar no DOM (informacao ausente) e
+     publicar de `ui_journey_v32.js` (tambem protegido).
+     Identidade anterior:
+     d56d11abc1c37cfd0e7f5c191852099849f7ad819c186b63a0215fdb17cb004f */
+  "ui_v32.js": "a38b913fdf1e6a1e6ecba8ef4e1bcb24a4fc822efca3710d53d29155eded49d0",
   "ui_ux_v32.js": "a050401145a5ed7af597eae01a9a23826418119769c096db168b3b177a9d3938",
   /* ERRATA DA AUDITORIA EXTERNA · §4.1.1 ("qualquer texto derivado consome a
      mesma decisão canônica de publicabilidade"). A comparação Atual × Alvo
@@ -4266,6 +4286,18 @@ T("P50-VOC1", "EA-23: o chip de contexto declara o nome avaliado quando a capabi
   if (!CAPS.length) throw new Error("catálogo de capabilities vazio");
 
   /* esperado, recomputado da regra: apelido SE E SOMENTE SE 1 pergunta e nomes divergentes */
+  /* ERRATA (2026-09-27, EA-69) · O ORÁCULO COMPARA NO VOCABULÁRIO DO LEITOR.
+     A DECISÃO "declara ou não declara" continua recomputada do estado congelado,
+     como o cabeçalho exige — é ela que o renderer também toma, e compará-la com
+     o módulo seria tautologia. O que muda é o LADO RENDERIZADO: desde que os
+     rótulos de capability passaram pela tabela fechada `P52_COPY`, o texto que
+     o leitor recebe não é mais o literal congelado, e exigir o literal faria o
+     gate reprovar o produto CERTO — o mesmo erro que a errata de 2026-09-13
+     corrigiu logo abaixo. A substituição é declarada e fechada; aplicá-la aqui
+     mede a mesma invariante na língua em que ela é lida. Precedente: `P51-REC1`
+     (demanda 021), pelo mesmo motivo e com o mesmo acessório. */
+  const copy = t => (w.__P52 && typeof w.__P52.applyCopy === "function")
+    ? w.__P52.applyCopy(t) : t;
   const esperado = {};
   CAPS.forEach(c => {
     const alvo = (c.qids.length === 1 && capDe[c.qids[0]] && capDe[c.qids[0]] !== c.name)
@@ -4291,12 +4323,12 @@ T("P50-VOC1", "EA-23: o chip de contexto declara o nome avaliado quando a capabi
     /* (a) divergente e 1:1 → o nome avaliado está DECLARADO, literal */
     if (alvo) {
       if (!alias) throw new Error("capability " + id + " não declara o nome avaliado «" + alvo + "»");
-      if (txt(alias).indexOf(alvo) < 0)
+      if (txt(alias).indexOf(copy(alvo)) < 0)
         throw new Error("apelido de " + id + " não contém o nome avaliado: «" + txt(alias) + "»");
       comAlias++;
       /* (b) o nome acessível carrega o apelido — senão o leitor de tela fica com
          um nome que não aparece em nenhuma outra seção do relatório */
-      if (accName(chip).indexOf(alvo) < 0)
+      if (accName(chip).indexOf(copy(alvo)) < 0)
         throw new Error("nome acessível de " + id + " sem o nome avaliado: «" + accName(chip) + "»");
     } else {
       /* (c) agregada (>1 pergunta), sem pergunta, ou nomes iguais → SEM apelido.
@@ -4321,9 +4353,9 @@ T("P50-VOC1", "EA-23: o chip de contexto declara o nome avaliado quando a capabi
       const tAlias = txt(alias), tCap = txt(chip.querySelector(".p50-presence-cap"));
       if (tAlias === tCap)
         throw new Error("apelido de " + id + " é idêntico ao nome do chip");
-      if (tAlias === alvo)
+      if (tAlias === copy(alvo))
         throw new Error("apelido de " + id + " justapõe o nome sem declarar o que ele é");
-      if (tAlias.length <= alvo.length)
+      if (tAlias.length <= copy(alvo).length)
         throw new Error("apelido de " + id + " sem moldura declarativa: «" + tAlias + "»");
     }
   });

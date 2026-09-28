@@ -1,7 +1,7 @@
 {
   "_meta": {
     "descricao": "Registry único de pins — fonte de identidade dos artefatos (R8). Hashes = SHA-256 dos blobs de HEAD. Alterar arquivo pinado exige regenerar este registry no MESMO PR, com motivo no commit.",
-    "gerado_de_head": "9f1346f0d8160e746f1669a35584d18c92fb68c1",
+    "gerado_de_head": "bf85a658cb9dcef889d9ad0e4fbdfb8916de784f",
     "gerado_em": "2026-09-27",
     "exclusoes": [
       "docs_phase5/**",
@@ -15,7 +15,7 @@
     "baseline_core_zip_sha256": "625079c462be7d44ffd69b1cd85f256382322bd0555ae4b548f21bf30ee5b89d"
   },
   "files": {
-    ".claude/BACKLOG.md": "79e5be776fda357f1ebe1dbcff546605531d8d2aa883a924f5712fd44eb6fdc5",
+    ".claude/BACKLOG.md": "10574bd1fb7cbf29cb359ab832d5655c0f7e1a849fe182aeb493aa7ed3cca7af",
     ".claude/agent-memory/README.md": "2f868716c8785119c1d6a02a7715f7b5058ab968f55951410fc82fc45b960a93",
     ".claude/agent-memory/build-engineer/MEMORY.md": "5ed47a73226fea6613b44c2ce70b26e95415033bafbd69a3ada20fa7df0bf950",
     ".claude/agent-memory/build-engineer/feedback_escopo_de_scanner_nos_dois_sentidos.md": "a07b03eb0687bc4f08ff02375684b8441f8d434384c415a3e25b1fe233007527",
@@ -269,7 +269,7 @@
     ".claude/verify/mutation_population.json": "7893a00adc8d087bfb0244e2b580d58772de567b35326af2d0c098e6d4025141",
     ".claude/verify/pipeline.yaml": "e9733fb0b74014221dfeb37ca6332118d4c2b6f3e7ec7577a96b068f2a79f325",
     ".claude/verify/regra_morta.js": "d04a0638a82dbf8a9f7f83d8b416653db5178619a61a87655213f699e3a31dab",
-    ".claude/verify/regra_morta.json": "ccff260f8cd90894b162c3e605bda434ff12084fdadb875d741860a2492850b9",
+    ".claude/verify/regra_morta.json": "48b4119c3bbb023897c97bf64acf2901b0c516f06abeb78a38393cbe11d58eec",
     ".claude/verify/regra_morta_seletor.js": "67723c7515264a81ef375910ee357ba944af47ae0d9cc9de6338a8bda3e68a9b",
     ".claude/verify/run.sh": "a404fa877e0fdb94987ae66d3170a2fc9aec8a6138204051aba89395ad22e1aa",
     ".gitattributes": "37bb36fb03aa6edbf1ce9fdc3bb9cb705e0317da970df37783777795bbcdcdb9",
@@ -333,7 +333,7 @@
     "preparar_release.py": "44b0a74dac345cfb5b27742d5fee51d9941646ec33f1cbb18aa81f98bf31a0cd",
     "prototypes/.gitkeep": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
     "quickscan_secops_soccmm_v3_1_3.html": "d329049147950a5b2a40b2735c3d4bd9a89177fed439efbcb58df01bdeb7ae82",
-    "quickscan_secops_soccmm_v3_2_dev.html": "a82b8362855073d66750af21ae8b56b1193b315764848f4f2da1d0761b869bcf",
+    "quickscan_secops_soccmm_v3_2_dev.html": "7265a10d846857c4e800a4a34ec309642c2bd6895f958e521b50df4b4c21a22a",
     "session_roundtrip_report.md": "ffe0d30411cc086681a44fa8d69e1066a0bf26173f15dd8580286787056cf4f8",
     "specs/.gitkeep": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
     "specs/003-marcador-duplicado/fix-finding-registry.md": "dce0be8376f543678b9b214fd2e03e0efbda9f45cd978b909d0cc5208fa456a2",
@@ -448,7 +448,7 @@
     "tests_009_leitura.js": "4322961372c4505dd7abb2202c5a0e895f1ba6ac0c43575a8956c68ab5e28cdd",
     "tests_009_mutants.js": "6a5223149058eaca31056e528805c3847df7f7ae16c87c545412890d628135d4",
     "tests_010_mutants.js": "ba6427c0eef9a3166bac4e88403843b96ab4e5f5d0102b48a30800d7bdfeb6c7",
-    "tests_010_vao.js": "c07286b456806f1b8a7654f69f4326893578f7faaf90c33f324315886ae5f20f",
+    "tests_010_vao.js": "5a0987f982d070b3f4c496ae450191bd61d4c9cb09fb42b99596ebb5b3dde147",
     "tests_011_chromium.js": "8a35766bd889143e4d05749700d8fc82026ed703f86191a13947197ce9b6e16e",
     "tests_011_mutants.js": "bdc420cfecd352124d0a657a194e13b08d5a9ffd724a760fc059303cc70de19c",
     "tests_011_prioridade.js": "b8fce56a38f2e9ac18fdbddcc76b278ab2e84eaa5eaea82495a8dd868982c7b6",
@@ -470,12 +470,12 @@
     "tests_journey_m45.js": "84d99be32e122f867dc1620cd1f49e4f3ae9795a32185cc75aa246d8682941f5",
     "tests_m42_m86.js": "d263ee641d699e3c99d71e7c23c4923b3444ca3fdce86a6d5eebdd71e14273ee",
     "tests_p50_chromium.js": "32058b4e980ade446d29dd205cdc98485ae3d2e9fbb66d6ee93be5e8224c8a00",
-    "tests_p50_core.js": "04810d7f40314a6c4629ff1a1e30a8ee3eb7f992f82370e62cf07aecb3212a14",
+    "tests_p50_core.js": "b5f6c84df7c22e9f9183f29a53489f77e691b2e92c904ae7f810f3a73a89915a",
     "tests_p50_mutants.js": "a78306918c7f27ab08c34cd557ece041e55cc7271169c7f4749b0ebcea058b8b",
     "tests_p51_mutants.js": "fd99780dfb39dfb62c2ee18ef842706d461feaba11589b69677fa59daee2acb4",
     "tests_p52_chromium.js": "7d32e3b376951ed10e5d965fa823b88b099ffc35f18bbe07a92b155cc9e10b14",
     "tests_p52_layout.js": "c44fef4a8db7ba14de9a4f59bbd58c4fb72c63854bf94b326236f9191f96d6f8",
-    "tests_p52_mutants.js": "35d60c1798315339679d24fb081d116d387dc857ba06017a4a9584dd9ae0b0cf",
+    "tests_p52_mutants.js": "65a83ce0303bae3b2e672d200c396447bbc6ba8f15959ac3984d43c7543d7925",
     "tests_ref_m44.js": "5fe2e3336b20a018a5981371523306b771907ce7f5688002076066ab9ad1325c",
     "tests_session_m48.js": "e7e167f5babbd1feb61a12953861a796d05e1f8e3e9ef1c347d4dccc4c0830fd",
     "tests_target_m431.js": "b167f704eeaa2fbf5bcd6b4c260c6ab7b2e2443a5b03c84f74e7f0411753a1d2",
@@ -504,15 +504,15 @@
     "ui_p50_v32.css": "60dc3f324015d011b0210cf0794b8e4951e62a26be4878799b27d75ed1317023",
     "ui_p52_support_v32.css": "c98bdbe375d0b0e1f84b00f1503e8a2a78ad615634b81314835256ab1faf67d6",
     "ui_p52_support_v32.js": "bb2083d951bf76bb957eed6512a50bb9be56b38faff42465fc9edb87a67bf84e",
-    "ui_p52_workspace_v32.css": "a0f1a3353ad2e2ba7f58565acb30a99cad9ae3075079e772d64197afefc8e2be",
-    "ui_p52_workspace_v32.js": "e550a93cddf190089edaf646b92b9f596c6133f257c9a697de108d7a4af38fb0",
+    "ui_p52_workspace_v32.css": "33064df36426322f8f3e29e25b95d771b610c259e3476ac7f9a2ea0d336d133d",
+    "ui_p52_workspace_v32.js": "b5244b4e0b56cb5a224b1dc0b2aab17b53d47f94c841646c984f0330ec5927e6",
     "ui_refinement_v32.js": "ade18a9afd265966feb40cb9f2926e20f5ffd2534dcfe7ec602e46cc6d01132c",
     "ui_session_v32.js": "e1463eb769cdd00262b911307a114671d61a5c3bc1a61f039886473b8ef96787",
     "ui_target_v32.js": "81adcb219b606a444dbf046fabeee4d46c411b74a69012896f6e26c90f3c8f5c",
     "ui_ux_v32.css": "8afbd55f97a3abd10a0a217925807a92161506be7c3ef3a8ff0303a75ebabbf3",
     "ui_ux_v32.js": "a050401145a5ed7af597eae01a9a23826418119769c096db168b3b177a9d3938",
     "ui_v32.css": "acb0eba165ef25e6b97475430e9b042a9b39038be2b9882ec5b3c67a730faa6f",
-    "ui_v32.js": "d56d11abc1c37cfd0e7f5c191852099849f7ad819c186b63a0215fdb17cb004f",
+    "ui_v32.js": "a38b913fdf1e6a1e6ecba8ef4e1bcb24a4fc822efca3710d53d29155eded49d0",
     "v3_1_3_functional_snapshot.json": "0abeaa7cc3a7e270fde015791a93bfbdb580803a915871e12811585c99555435"
   }
 }

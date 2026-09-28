@@ -15522,7 +15522,7 @@ if (window.__DEV) Object.assign(window.__DEV, { openExportModal, openImportPicke
   if (typeof window === "undefined" || window.__QS22__installed) return;
   window.__QS22__installed = true;
 
-  var MOTIVO_ALVO = "alvo declarado igual ao nível atual — a organização declarou que não vai subir esta prática";
+  var MOTIVO_ALVO = "cenário-alvo declarado, e esta prática ficou de fora — a organização não a elegeu para subir";
 
   /* A régua, lida do bridge. Devolve `null` quando ela não existe, e quem chama
      trata a ausência NOMEANDO — nunca inventando um teto (R10 §2). */
@@ -15577,17 +15577,39 @@ if (window.__DEV) Object.assign(window.__DEV, { openExportModal, openImportPicke
       ordem.push(f);
     });
 
-    /* (1) EXCLUSÃO POR ALVO — antes de qualquer seleção (spec §Comportamento,
-       passo 4). Prática cujo alvo declarado é igual ao nível atual é prática que
-       a organização decidiu não subir: ela sai do enquadramento de INVESTIMENTO,
-       e o motivo é declarado. Sair em silêncio é o que o C7 proíbe. */
+    /* (1) EXCLUSÃO PELA AUSÊNCIA DECLARADA — errata E1 da spec, 2026-09-28.
+       A redação original excluía a prática cujo alvo fosse IGUAL ao atual. Esse
+       estado não existe depois de um render: `setTarget` o aceita e
+       `revalidateTargets` o apaga (medido na W1; é a candidata registrada em
+       design-decisions.md). O critério se apoiava em estado que o produto
+       descarta por desenho.
+
+       O sinal que PERSISTE é o inverso: cenário-alvo declarado e prática deixada
+       DE FORA dele. A organização elegeu o que vai subir; o que não elegeu, não
+       sobe — e isso é declaração dela, não omissão do produto, por isso o motivo
+       é nomeado.
+
+       Sem alvo algum, ninguém é excluído: ausência de cenário não é declaração
+       de nada. */
     var excluidas = [];
     var fora = {};
-    Object.keys(alvos).forEach(function (qid) {
-      if (!(qid in nivelDe)) return;                  /* sem gap: nada a investir */
-      if (alvos[qid] !== nivelDe[qid]) return;        /* alvo acima do atual: segue elegível */
-      fora[qid] = true;
-      excluidas.push({ qid: qid, motivo: MOTIVO_ALVO });
+    var haCenario = Object.keys(alvos).length > 0;
+    if (haCenario) {
+      ordem.forEach(function (f) {
+        if (f.id in alvos) return;                    /* eleita para subir */
+        fora[f.id] = true;
+        excluidas.push({ qid: f.id, motivo: MOTIVO_ALVO });
+      });
+    }
+
+    /* A exclusão governa só o que o MOTOR acrescenta. Prioridade declarada e
+       ausência de alvo são duas declarações do mesmo cliente apontando para
+       lados opostos: a prioridade vence (C2/D2), e por isso ela é retirada da
+       exclusão em vez de a contradição virar narrativa. */
+    prioridades.forEach(function (qid) {
+      if (!fora[qid]) return;
+      delete fora[qid];
+      excluidas = excluidas.filter(function (x) { return x.qid !== qid; });
     });
 
     var elegiveis = ordem.filter(function (f) { return !fora[f.id]; });

@@ -220,7 +220,13 @@ T("D022-COB1", "C5 · a união das ondas é IGUAL ao conjunto coberto pela 021",
   const rel = papel(w, d);
   const comApoio = qa(rel, "[data-pr-gap-support]").map(b => b.getAttribute("data-pr-gap-qid")).sort();
   if (!comApoio.length) vac("(a)", "nenhum gap com caminho de apoio no papel — sujeito vazio");
-  const uniao = r.primeira.concat(r.seguintes).sort();
+  /* ERRATA E1 · a união inclui as EXCLUÍDAS. A redação original só se sustentava
+     quando não havia exclusão alguma: com o C7 vivo, a união ficaria menor que a
+     cobertura e o gate reprovaria o produto certo — ou, pior, passaria na fixture
+     sem alvos e calaria sobre as demais. Continua sendo IGUALDADE: nada sai do
+     relatório, nem o que foi excluído do investimento. */
+  const uniao = r.primeira.concat(r.seguintes)
+    .concat((r.excluidas || []).map(e => e.qid)).sort();
   const faltam = comApoio.filter(q => uniao.indexOf(q) < 0);
   const sobram = uniao.filter(q => comApoio.indexOf(q) < 0);
   if (faltam.length || sobram.length)
@@ -243,20 +249,49 @@ T("D022-CRIT1", "C6 · a onda seguinte declara o critério que a produziu", () =
   return true;
 });
 
-T("D022-ALVO1", "C7 · alvo igual ao atual sai do enquadramento, NOMEADAMENTE", () => {
+T("D022-ALVO1", "C7 (errata E1) · prática fora do cenário-alvo declarado sai do enquadramento, NOMEADAMENTE", () => {
+  /* ERRATA E1 (2026-09-28, ratificada no chat). A redação original media "alvo
+     IGUAL ao atual", estado que não sobrevive a um render: `setTarget` o aceita e
+     `revalidateTargets` o apaga. O gate media algo que o produto descarta.
+     O sinal passa a ser a AUSÊNCIA declarada — cenário-alvo existe e a prática
+     ficou de fora. Emendar âncora normativa sem conferir o carrasco foi o que
+     produziu o `M51-07` sobrevivente na 021; aqui o mutante correspondente (`M7`)
+     nasce COM esta forma, e as alíneas abaixo dão a ele três estados de falha
+     alcançáveis em vez de um. */
   const { w, d } = boot({ nivel: 1, contexto: true, prios: ["endpoint"],
-                          alvos: { "network-visibility": 1 } });
+                          alvos: { "vulnerability-management": 3 } });
   const r = ondas(w);
   const excl = (r.excluidas || []).map(e => e.qid);
+
+  /* (a) quem ficou de fora do cenário é excluído */
   if (excl.indexOf("network-visibility") < 0)
-    throw new Error("prática com alvo == atual não foi excluída: " + JSON.stringify(excl));
-  if (r.primeira.indexOf("network-visibility") >= 0)
-    throw new Error("prática declarada como não-subir recebeu frente");
+    throw new Error("prática fora do cenário-alvo não foi excluída: " + JSON.stringify(excl));
+  /* (b) quem foi ELEITO no cenário não é excluído */
+  if (excl.indexOf("vulnerability-management") >= 0)
+    throw new Error("prática eleita no cenário-alvo foi excluída");
+  /* (c) prioridade declarada NUNCA é alcançada pela exclusão (C2/D2) */
+  if (excl.indexOf("endpoint") >= 0)
+    throw new Error("prioridade declarada foi excluída — a exclusão governa só o que o motor acrescenta");
+  if (r.primeira.indexOf("endpoint") < 0)
+    throw new Error("prioridade declarada perdeu a frente");
+  /* (d) o motivo é declarado — silêncio é o que o C7 proíbe */
   const motivo = (r.excluidas.find(e => e.qid === "network-visibility") || {}).motivo;
-  if (!motivo) throw new Error("exclusão sem motivo declarado — silêncio é o que o C7 proíbe");
-  if (txt(papel(w, d)).indexOf("network-visibility") < 0 &&
-      !/alvo igual|não vai subir|mantida no nível/i.test(txt(papel(w, d))))
-    throw new Error("o papel não nomeia a exclusão");
+  if (!motivo || !motivo.trim()) throw new Error("exclusão sem motivo declarado");
+  /* (e) BORDA: sem cenário algum, ninguém é excluído — ausência de cenário não é
+     declaração de nada. É esta alínea que impede o mutante "excluir sempre". */
+  const semAlvo = boot({ nivel: 1, contexto: true, prios: ["endpoint"] });
+  const exclSem = (ondas(semAlvo.w).excluidas || []).map(e => e.qid);
+  if (exclSem.length)
+    throw new Error("sem cenário-alvo declarado houve exclusão: " + JSON.stringify(exclSem));
+  /* (f) e o papel NOMEIA a exclusão, em nó PRÓPRIO.
+     A primeira redação desta alínea procurava o texto "cenário-alvo" em qualquer
+     lugar do relatório — e passava VAZIA, porque a seção de cenário-alvo já usa
+     essa expressão por outro motivo. Gate que casa texto alheio afirma o que não
+     mediu (EA-20), e este aqui foi escrito justamente para caçar isso. O nó é
+     nominal e carrega o qid, então só a exclusão real o satisfaz. */
+  const noExcl = papel(w, d).querySelector("[data-qs22-excluida='network-visibility']");
+  if (!noExcl) throw new Error("o papel não traz nó de exclusão para `network-visibility`");
+  if (!txt(noExcl)) throw new Error("nó de exclusão sem texto — só marcação não nomeia nada");
   return true;
 });
 

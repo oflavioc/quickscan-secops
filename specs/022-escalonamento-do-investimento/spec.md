@@ -32,6 +32,56 @@ Suíte nova: `tests_022_escalonamento.js`. Campanha: `tests_022_mutants.js`.
 escondendo gap, que é exatamente o que a D5 proíbe. O oráculo do conjunto sai de
 `computeFindings()`, não do DOM — lição da 021.
 
+## Errata E1 (2026-09-28) — o sinal de exclusão muda, e o C5 muda junto
+
+Ratificada pelo proprietário no chat (*"Segue com a A"*), depois de medição na
+Fase 5 · W1.
+
+**O que foi medido.** O `C7` original dizia: *prática com alvo explícito igual ao
+atual sai do enquadramento*. Esse estado **não existe** depois de um render:
+
+```
+setTarget("network-visibility", 1)  -> true
+overrides logo após                 : {"network-visibility":1}
+overrides após showResults()        : {}            <- revalidateTargets apagou
+overrides com alvo ACIMA do atual   : {"vulnerability-management":3}   <- sobrevive
+```
+
+É a candidata de `design-decisions.md` — *"`setTarget` aceita alvo igual ao atual;
+`revalidateTargets` o remove depois"* — agora com consequência: ela invalidava um
+critério aprovado.
+
+**C7 emendado.** O sinal passa a ser a **ausência declarada**:
+
+> Quando a organização declarou um cenário-alvo e **deixou uma prática de fora**,
+> é essa ausência que diz *"não vou subir esta"*. A prática sai do enquadramento
+> de **investimento do motor**, nomeadamente.
+
+Três razões pelas quais a forma nova é melhor que a original, e não só possível:
+**persiste** ao render; é **mais barata** de declarar (omitir, em vez de registrar
+alvo igual ao atual); e **não depende** de uma assimetria que segue candidata não
+ratificada.
+
+**A exclusão não alcança prioridade declarada.** Prioridade e ausência de alvo são
+duas declarações do mesmo cliente que apontam para lados opostos; a prioridade
+vence, e não há contradição a narrar porque a exclusão governa apenas **o que o
+motor acrescenta** — que é exatamente o alcance do teto (D2/D6).
+
+**Borda explícita**: sem nenhum alvo declarado, **ninguém é excluído**. Ausência de
+cenário não é declaração de nada.
+
+**C5 emendado junto, e esta metade eu só enxerguei ao escrever a errata.** A
+redação original — *união(primeira, seguintes) == cobertura da 021* — só se
+sustenta quando não há exclusão alguma. Com o `C7` vivo, a união ficaria menor que
+a cobertura e o gate reprovaria o produto certo; ou, pior, passaria na fixture sem
+alvos e calaria sobre as demais. Passa a ser:
+
+> união(**primeira** ∪ **seguintes** ∪ **excluidas**) == conjunto de gaps com
+> caminho de apoio.
+
+Continua sendo **igualdade**, e agora cobre o caso que a original não via: nada
+sai do relatório, nem o que foi excluído do investimento.
+
 ## Comportamento especificado
 
 **Entrada** (tudo já declarado, nada inferido): respostas (`ans`), prioridades

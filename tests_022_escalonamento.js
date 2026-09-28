@@ -190,11 +190,17 @@ T("D022-TENS1", "C3 · prioridades acima do teto são NOMEADAS, nunca podadas", 
     " prioridades e teto " + r.teto);
   if (r.tensao.declaradas !== 3 || r.tensao.teto !== r.teto)
     throw new Error("`tensao` não traz os dois números: " + JSON.stringify(r.tensao));
-  const t = txt(papel(w, d));
+  /* NÓ NOMINAL, não varredura do relatório inteiro. A primeira redação procurava
+     os dois números em `txt(papel(...))` — e passava VAZIA: um relatório inteiro
+     contém "2" e "3" por mil motivos, e o nome do estágio aparece na régua duas
+     seções acima. Gate que casa texto alheio afirma o que não mediu (EA-20). */
+  const noT = papel(w, d).querySelector("[data-qs22-tensao]");
+  if (!noT) throw new Error("o papel não traz nó de tensão");
+  const t = txt(noT);
   if (t.indexOf(String(r.tensao.declaradas)) < 0 || t.indexOf(String(r.tensao.teto)) < 0)
-    throw new Error("o papel não traz os dois números da tensão");
-  if (!/Gerenciado|Inicial|Definido|Inexistente|otimiza|Quantitativ/i.test(t))
-    throw new Error("o papel não nomeia o estágio que produziu o teto");
+    throw new Error("o nó de tensão não traz os dois números: " + JSON.stringify(t));
+  if (!r.estagio || t.indexOf(r.estagio) < 0)
+    throw new Error("o nó de tensão não nomeia o estágio: " + JSON.stringify(t));
   return true;
 });
 
@@ -209,8 +215,11 @@ T("D022-SUFI1", "C4 · sem suficiência não há escalonamento, e isso é dito",
   const prios = w.eval("Array.from(businessPriority)");
   const extras = r.primeira.filter(q => prios.indexOf(q) < 0);
   if (extras.length) throw new Error("o motor acrescentou sem suficiência: " + JSON.stringify(extras));
-  if (!/insufici|não há evidência suficiente|sem suficiência/i.test(txt(papel(w, d))))
-    throw new Error("o papel não diz por que não há escalonamento");
+  /* NÓ NOMINAL, pelo mesmo motivo: "insuficiente" já aparece no relatório sempre
+     que o gate de suficiência fecha, e a alínea passaria sem medir nada. */
+  const noS = papel(w, d).querySelector("[data-qs22-sem-teto]");
+  if (!noS) throw new Error("o papel não traz nó declarando a ausência de escalonamento");
+  if (!txt(noS)) throw new Error("nó de ausência sem texto — marcação não diz por quê");
   return true;
 });
 

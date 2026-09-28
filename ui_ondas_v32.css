@@ -1,0 +1,52 @@
+/* ============================================================================
+   [022] ONDAS DE INVESTIMENTO — prefixo `.qs22-` (R9 §6).
+
+   A onda NUNCA depende de cor para ser distinguida (UX-P7 da spec selada 5.0
+   REV B, :270, e critério C11): cada onda carrega rótulo textual próprio, e o
+   que este arquivo faz é hierarquia e respiro — nada aqui é o único portador de
+   significado. Remover esta folha inteira mantém a leitura correta, só mais
+   feia; é assim que o `D022-A11Y1` consegue medir texto e não pintura.
+   ============================================================================ */
+
+  .qs22-sec { margin-top: 18px; }
+
+  .qs22-onda {
+    border-left: 3px solid var(--line);
+    padding: 2px 0 2px 12px;
+    margin: 12px 0;
+  }
+  .qs22-onda[data-qs22-onda="primeira"] { border-left-color: var(--red-text); }
+
+  .qs22-rot {
+    font-weight: 600; font-size: 13.5px; letter-spacing: .01em;
+    margin-bottom: 4px;
+  }
+  .qs22-nota {
+    color: var(--faint); font-size: 13px; line-height: 1.55;
+    margin: 2px 0 8px; max-width: 720px;
+  }
+
+  .qs22-frente {
+    font-size: 13.5px; line-height: 1.6; padding: 2px 0;
+    overflow-wrap: anywhere;
+  }
+  /* a adiada é a mesma coisa, mais discreta — a distinção que IMPORTA é o
+     rótulo da onda que a contém, não este tom */
+  .qs22-frente[data-qs22-adiada] { color: var(--faint); }
+
+  .qs22-tensao {
+    margin: 12px 0; padding: 8px 12px;
+    border: 1px dashed var(--line); border-radius: 4px;
+    font-size: 13px; line-height: 1.55; max-width: 720px;
+  }
+
+  .qs22-excl-bloco { margin-top: 14px; }
+  .qs22-excl {
+    font-size: 13px; line-height: 1.55; padding: 2px 0;
+    overflow-wrap: anywhere;
+  }
+
+  /* papel: a seção não abre folha só para si, e o rótulo não fica órfão no pé */
+  #v32-print-report .qs22-onda,
+  #v32-print-report .qs22-tensao { break-inside: avoid; page-break-inside: avoid; }
+  #v32-print-report .qs22-rot { break-after: avoid; page-break-after: avoid; }

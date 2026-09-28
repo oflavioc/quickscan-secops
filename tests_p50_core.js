@@ -4195,6 +4195,7 @@ T("P51-DOC13", "manual descreve o score geral e a ordem do relatório como o pro
     { ids: ["pr-maturity"], re: /resumo de maturidade/i },
     { ids: ["pr-prios"], re: /prioridades declaradas pelo neg[óo]cio/i },
     { ids: ["pr-findings"], re: /gaps de maturidade observados/i },
+    { ids: ["pr-ondas"], re: /por onde come[çc]ar/i },          /* [022] escalonamento */
     { ids: ["pr-landscape"], re: /contexto tecnol[óo]gico declarado/i },
     { ids: ["pr-interp", "pr-support"], re: /interpreta[çc][ãa]o do contexto/i },
     { ids: ["pr-sup-solucao"], re: /formas de apoio, por produto/i },

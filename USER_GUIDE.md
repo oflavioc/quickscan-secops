@@ -448,17 +448,25 @@ Estrutura, na ordem em que o documento realmente sai:
    começar. Os caminhos continuam sendo **possibilidades a validar**, nunca requisito nem compra
    recomendada — e quando o contexto tecnológico não foi declarado, o documento diz explicitamente
    que a aderência precisa ser validada antes de qualquer recomendação;
-6. **Contexto tecnológico declarado**;
-7. **Interpretação do contexto** e **Como a Fortinet pode apoiar**;
-8. **Formas de apoio, por produto**: o mesmo apoio reagrupado por produto em vez de por gap, com
+6. **Por onde começar** — o escalonamento do investimento. O relatório deixa de tratar os gaps
+   como uma lista de compras simultânea e passa a dizer **quantas frentes a organização sustenta
+   ao mesmo tempo**, a partir do estágio de maturidade que ele já mediu: no estágio *Gerenciado*,
+   duas; no *Definido*, três. As **prioridades declaradas pelo negócio entram sempre**, mesmo acima
+   desse indicativo — e quando excedem, o documento **nomeia a tensão** em vez de podar a escolha do
+   cliente. O que fica de fora da primeira onda **permanece no relatório**, como onda seguinte, com
+   o critério dito. Sem evidência suficiente não há estágio, logo não há escalonamento, e isso é
+   declarado em vez de assumido;
+7. **Contexto tecnológico declarado**;
+8. **Interpretação do contexto** e **Como a Fortinet pode apoiar**;
+9. **Formas de apoio, por produto**: o mesmo apoio reagrupado por produto em vez de por gap, com
    as capabilities que cada um atende e a divisão do portfólio. Traz a seleção feita na tela — se
    o engenheiro removeu ou acrescentou algo, o documento sai com a mesma seleção e diz quando a
    presença de um item é decisão dele;
-9. **Jornada de maturidade** e **leitura executiva**;
-10. **Perfil atual × Cenário-alvo de maturidade**;
-11. **Anexo — respostas da sessão**, com as observações registradas.
+10. **Jornada de maturidade** e **leitura executiva**;
+11. **Perfil atual × Cenário-alvo de maturidade**;
+12. **Anexo — respostas da sessão**, com as observações registradas.
 
-As seções 4 a 10 são condicionais: cada uma só aparece quando a sessão tem o dado correspondente
+As seções 4 a 11 são condicionais: cada uma só aparece quando a sessão tem o dado correspondente
 (prioridade declarada, gap observado, contexto tecnológico informado, alvo declarado).
 
 > **O relatório sai igual com e sem contexto tecnológico.** Capa, metadados, legenda, "Como

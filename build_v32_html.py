@@ -29,6 +29,7 @@ UXCSS = HERE / "ui_ux_v32.css"
 P50CSS = HERE / "ui_p50_v32.css"
 P52CSS = HERE / "ui_p52_workspace_v32.css"
 D011CSS = HERE / "ui_d011_prioridade_v32.css"
+ONDASCSS = HERE / "ui_ondas_v32.css"   # [022] prefixo .qs22-
 P53SOLCSS = HERE / "ui_p52_support_v32.css"   # [019 · W4]
 UICSS = HERE / "ui_v32.css"
 OUT = Path(sys.argv[1]) if len(sys.argv) > 1 else HERE / "quickscan_secops_soccmm_v3_2_dev.html"
@@ -86,8 +87,9 @@ assert html.count("</style>") == 1, "style tag não único"
 p50css = open(P50CSS, encoding="utf-8").read()
 p52css = open(P52CSS, encoding="utf-8").read()
 d011css = open(D011CSS, encoding="utf-8").read()
+ondascss = open(ONDASCSS, encoding="utf-8").read()
 p53solcss = open(P53SOLCSS, encoding="utf-8").read()
-html = html.replace("</style>", "\n/* V32_CSS_BEGIN */\n" + uicss + "\n/* V32_CSS_END */\n/* V32_UXCSS_BEGIN */\n" + uxcss + "\n/* V32_UXCSS_END */\n/* V32_P50CSS_BEGIN */\n" + p50css + "\n/* V32_P50CSS_END */\n/* V32_P52CSS_BEGIN */\n" + p52css + "\n/* V32_P52CSS_END */\n/* V32_D011CSS_BEGIN */\n" + d011css + "\n/* V32_D011CSS_END */\n/* V32_P53SOLCSS_BEGIN */\n" + p53solcss + "\n/* V32_P53SOLCSS_END */\n</style>")
+html = html.replace("</style>", "\n/* V32_CSS_BEGIN */\n" + uicss + "\n/* V32_CSS_END */\n/* V32_UXCSS_BEGIN */\n" + uxcss + "\n/* V32_UXCSS_END */\n/* V32_P50CSS_BEGIN */\n" + p50css + "\n/* V32_P50CSS_END */\n/* V32_P52CSS_BEGIN */\n" + p52css + "\n/* V32_P52CSS_END */\n/* V32_D011CSS_BEGIN */\n" + d011css + "\n/* V32_D011CSS_END */\n/* V32_P53SOLCSS_BEGIN */\n" + p53solcss + "\n/* V32_P53SOLCSS_END */\n/* V32_ONDASCSS_BEGIN */\n" + ondascss + "\n/* V32_ONDASCSS_END */\n</style>")
 html = html.replace("Quickscan SecOps · SOC-CMM · v3.1.3", "Quickscan SecOps · SOC-CMM · v3.2-dev (engine)")
 open(OUT, "w", encoding="utf-8", newline="\n").write(html)   # [Onda-0] LF por construção em qualquer SO
 print("build ok →", OUT, "| sha256(engine):", hashlib.sha256(engine.encode()).hexdigest()[:16])

@@ -114,7 +114,11 @@ function boot(opts) {
       " — alvo abaixo do atual não é cenário válido (INV-5)");
   });
   w.__DEV.setPriorities("prios" in o ? o.prios : ["endpoint", "logs", "network-visibility"]);
-  w.__DEV.showResults();
+  /* `semRender` existe para o `D022-INV1`: ele precisa do estado canônico ANTES
+     de qualquer passagem de apresentação. Medido — a campanha cobrou: com o
+     snapshot tomado depois do primeiro render, uma escrita QUE ACONTECE no
+     render já está no "antes", e o gate compara duas fotos do mesmo estrago. */
+  if (!o.semRender) w.__DEV.showResults();
   return { w, d };
 }
 
@@ -311,10 +315,17 @@ T("D022-ALVO1", "C7 (errata E1) · prática fora do cenário-alvo declarado sai 
 });
 
 T("D022-ALVO2", "C8 · o alvo não abre frente nova nem aumenta o teto", () => {
+  /* QUATRO ALVOS, não um. Com um só, a exclusão do C7 esvazia os elegíveis e a
+     vaga extra que o mutante `D022-M8` abre não tem o que preencher — ele
+     SOBREVIVEU assim. A fixture precisa de mais elegíveis do que vagas para que
+     somar alvo ao teto produza efeito observável. */
   const semAlvo = boot({ nivel: 1, contexto: true, prios: ["endpoint"] });
   const comAlvo = boot({ nivel: 1, contexto: true, prios: ["endpoint"],
-                         alvos: { "vulnerability-management": 3 } });
+                         alvos: { "vulnerability-management": 3, "policies": 3,
+                                  "governance": 3, "knowledge": 3 } });
   const a = ondas(semAlvo.w), b = ondas(comAlvo.w);
+  if (b.primeira.length > b.teto && b.prioridades !== undefined)
+    throw new Error("a primeira onda excedeu o teto: " + b.primeira.length + " > " + b.teto);
   if (a.teto !== b.teto)
     throw new Error("o alvo mexeu no teto: " + a.teto + " → " + b.teto);
   if (a.primeira.length !== b.primeira.length)
@@ -363,9 +374,17 @@ T("D022-PROD1", "C10 (errata E2) · todo produto aparece UMA vez na visão por p
       "é exatamente o buraco que o EA-75 relatou");
 
   /* (c) quem serve mais de uma capability traz TODAS, unidas — nunca a primeira */
-  const multi = cards.filter(c => qa(c, "[data-p53-sol-cap]").length > 1);
+  /* A ALÍNEA OLHA O PRODUTO POR SINAL, não qualquer um. A primeira redação
+     aceitava qualquer card com duas capabilities — e os puxados por GAP já as
+     têm, então o mutante `D022-M10`, que guarda só a primeira capability no
+     caminho POR SINAL, SOBREVIVEU. O sujeito da alínea tem de ser o sujeito do
+     achado. */
+  const multi = porSinal.filter(c => qa(c, "[data-p53-sol-cap]").length > 1);
   if (!multi.length)
-    vac("(c)", "nenhum produto serve mais de uma capability nesta fixture — o caso do EA-75 não é exercitado");
+    throw new Error("o produto habilitado por sinal traz " +
+      porSinal.map(c => c.getAttribute("data-p53-sol-produto") + ":" +
+        qa(c, "[data-p53-sol-cap]").length).join(", ") +
+      " capability(ies) — o EA-75 relatou produto servindo DUAS, e a fusão tem de trazer as duas");
   return true;
 });
 
@@ -397,14 +416,20 @@ T("D022-PROV1", "C12 · a onda declara sua proveniência (UX-P6 selada)", () => 
 });
 
 T("D022-INV1", "C13 · escalonar não altera score, suficiência nem estado canônico (UX-P8)", () => {
-  const { w, d } = boot({ nivel: 1, contexto: true });
+  /* O SNAPSHOT VEM ANTES DO PRIMEIRO RENDER. A primeira redação tomava `antes`
+     depois de `showResults()` — e o mutante `D022-M13`, que faz o escalonamento
+     escrever em `businessPriority`, SOBREVIVEU: a escrita acontecia durante o
+     render, entrava no "antes", e o gate comparava duas fotos do mesmo estrago.
+     Gate que mede tarde demais afirma o que não viu. */
+  const { w, d } = boot({ nivel: 1, contexto: true, semRender: true });
   const antes = w.__DEV.legacySnapshot();
-  ondas(w);                       /* o contrato puro */
+  w.__DEV.showResults();          /* a passagem de apresentação, que chama as ondas */
+  ondas(w);                       /* o contrato puro, invocado de novo */
   papel(w, d);                    /* e a montagem do relatório */
   const depois = w.__DEV.legacySnapshot();
   if (antes !== depois)
-    throw new Error("o estado canônico mudou ao escalonar — diff de " +
-      Math.abs(antes.length - depois.length) + " byte(s)");
+    throw new Error("o estado canônico mudou ao escalonar — " +
+      Math.abs(antes.length - depois.length) + " byte(s) de diferença");
   return true;
 });
 

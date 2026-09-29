@@ -119,6 +119,12 @@
       "pass": 8,
       "fail": 0,
       "_trilha": "Demanda 021-cobertura-do-apoio, W5 · 2026-09-24. A contagem 8 PASS · 0 FAIL e MEDIDA POR EXECUCAO depois da W3/W4, e NAO coincide com os nove criterios da spec — sao OITO gates aqui porque o C9 (emenda da §UAT-07) e medido pelo P51-REC1, em tests_p50_core.js, gate de outra fase alterado por esta demanda. Coincidencia NAO presumida: conferida. HISTORICO DA JANELA VERMELHA, que fica de proposito: o RED commitado em 6c9ecf9 media 2 PASS · 6 FAIL — o D021-COB1 acusando '11 de 15 gaps tem candidato no MAP e ficaram MUDOS', numero que bate EXATAMENTE com a sonda da Fase 0. Dois gates nasceram VERDES e isso vai declarado: D021-CUR1 (mede que os quatro curados nao regridem; hoje nada os toca, e o poder dele vem do mutante M1) e D021-VAZ1 (e SENSOR, nao red: afirma a invariante que torna a clausula de silencio inalcancavel por construcao)."
+    },
+    "d022": {
+      "cmd": "node tests_022_escalonamento.js",
+      "pass": 14,
+      "fail": 0,
+      "_trilha": "Demanda 022-escalonamento-do-investimento, W4 · 2026-09-29. Contagem MEDIDA POR EXECUCAO, 14 PASS · 0 FAIL, coincidindo com os 14 criterios da spec — coincidencia conferida, nao presumida. HISTORICO DA JANELA VERMELHA, que fica de proposito: o RED commitado em 538d91c media 1 PASS · 13 FAIL. O unico verde de nascenca foi o D022-BND1 (nenhum frozen tocado), declarado no cabecalho da suite em vez de escondido — o poder dele vem do mutante M13 e ele existe para seguir afirmando isso DEPOIS das waves 2 e 3. TRES ALINEAS NASCERAM VAZIAS e o placar CAIU de 8 para 6 quando foram corrigidas, antes da implementacao: ALVO1(f), TENS1 e SUFI1 procuravam texto no relatorio INTEIRO — 'cenario-alvo', os digitos do teto e 'insufici' ja aparecem la por outros motivos. Viraram no nominal com qid."
     }
   },
   "heavy": {

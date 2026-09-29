@@ -265,6 +265,17 @@
       "importante_texto": 0,
       "importante_com_var": 0,
       "outras": {}
+    },
+    {
+      "camada": 7,
+      "folha": "ui_ondas_v32.css",
+      "regras": 12,
+      "declaracoes": 63,
+      "media": 0,
+      "regras_com_importante": 0,
+      "importante_texto": 0,
+      "importante_com_var": 0,
+      "outras": {}
     }
   ],
   "censo_fixado_em": "2026-09-22",

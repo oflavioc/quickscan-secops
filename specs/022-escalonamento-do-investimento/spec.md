@@ -116,6 +116,22 @@ seção que se chama "por produto" não listava todos —, e esta rota o corrige
 O custo evitado está medido: reindexar a seção por capability exigiria reancorar
 **55 asserções em 5 suítes**, uma `§29.4` e outra selada por errata própria.
 
+## Errata E3 (2026-09-30) — a letra do C1, alinhada ao que foi aprovado
+
+O C1 escreveu `teto = max(1, Math.round(overall))`. A implementação usa o **índice
+da banda de `__QS_STAGE_RULER`** que contém o `overall` — numericamente idêntico,
+porque as fronteiras de `stageOf` (`0.5 / 1.5 / 2.5 / 3.5 / 4.5`) são exatamente
+as de `Math.round`, e foi essa medição que sustentou o D1 do refinamento.
+
+A troca foi **proposta no plano e aprovada com ele** (2026-09-28), com o motivo
+escrito: um `Math.round` próprio seria a quarta cópia literal de um valor com dono
+na mesma semana. Faltou propagar a letra para cá, e é o que esta errata faz — quem
+ler a spec daqui a um ano não deve encontrar uma fórmula que o código não usa.
+
+O gate **não** foi afrouxado (R10 §1): o `D022-TETO1` recomputa o esperado de
+`stageOf` lido do artefato, nunca de tabela transcrita, e exige ≥ 4 tetos distintos
+na varredura — teto constante não passa.
+
 ## Comportamento especificado
 
 **Entrada** (tudo já declarado, nada inferido): respostas (`ans`), prioridades

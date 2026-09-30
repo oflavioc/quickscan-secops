@@ -1,6 +1,6 @@
 {
   "demanda": "022-escalonamento-do-investimento",
-  "phase": "red",
+  "phase": "validate",
   "spec_dir": "specs/022-escalonamento-do-investimento",
   "branch": "feature/022-escalonamento-do-investimento",
   "brief": "O motor responde 'o que serve aqui?' por capability, quinze vezes isoladas, e o cliente pergunta 'por onde eu comeco?' uma vez. Relato do proprietario apos sessao real na v3.2.9: nao faz sentido fornecer produto para toda lacuna observada, e o escalonamento tem de funcionar TAMBEM sem cenario-alvo. Qualifica a 021, que resolveu a cobertura (4 -> 15) mas nao a encenacao. CORRECAO DE CUSTO medida nesta fase: o payload M41 congelado NAO contem conceito algum do motor V3.2 (endpoint-detection, TECHNOLOGY_WHITESPACE, supportMode: zero ocorrencias) — os tiers que ele afirma vem de buildTiers da Camada 1 V3.1.3. Mudar quem o motor V3.2 recomenda NAO move a regua D2, ao contrario do que eu afirmei duas vezes antes de medir.",
@@ -27,17 +27,17 @@
   "red": {
     "status": "proven",
     "commit": "538d91c",
-    "notes": "D022 ESCALONAMENTO: 1 PASS · 13 FAIL de 14, commitado em 538d91c. Cada falha nomeia a causa; nenhuma e crash ambiguo. D022-BND1 nasce VERDE e isso esta declarado no cabecalho da suite — ele mede que nenhum frozen foi tocado, hoje nada os toca, e o poder dele vem do mutante M13. DUAS PREMISSAS CONFERIDAS ANTES DE COMMITAR, porque gate que nao chega a exercitar sua assercao nao provou nada: (1) C5 exige IGUALDADE entre a uniao das ondas e a cobertura da 021, e eu suspeitava que fosse inalcancavel — medido na fixture: 15 findings, 15 com apoio, ZERO sem; a igualdade e o criterio certo e nao precisou virar inclusao, que passaria com o produto escondendo gap. (2) a fixture da overall 1,7 => banda 2 => teto 2 com 3 prioridades, entao o caso de tensao do C3 e exercitado de verdade. T002 (campanha tests_022_mutants.js) NAO foi escrita nesta fase e a razao e estrutural, nao esquecimento: mutante precisa de ANCORA em codigo real, e ui_ondas_v32.js so nasce na W1. A campanha entra COM a W1, no mesmo commit da implementacao, como a R3 §5 exige (gate novo so e aceito matando um mutante escrito para ele). A tabela de tarefas colocou T002 na wave 0 por otimismo meu; a correcao fica registrada aqui em vez de a tabela ser reescrita para parecer certa."
+    "notes": "D022 ESCALONAMENTO: 1 PASS · 13 FAIL de 14, commitado em 538d91c. Cada falha nomeia a causa; nenhuma e crash ambiguo. D022-BND1 nasce VERDE e isso esta declarado no cabecalho da suite — ele mede que nenhum frozen foi tocado, hoje nada os toca, e o poder dele vem do mutante M13. DUAS PREMISSAS CONFERIDAS ANTES DE COMMITAR, porque gate que nao chega a exercitar sua assercao nao provou nada: (1) C5 exige IGUALDADE entre a uniao das ondas e a cobertura da 021, e eu suspeitava que fosse inalcancavel — medido na fixture: 15 findings, 15 com apoio, ZERO sem; a igualdade e o criterio certo e nao precisou virar inclusao, que passaria com o produto escondendo gap. (2) a fixture da overall 1,7 => banda 2 => teto 2 com 3 prioridades, entao o caso de tensao do C3 e exercitado de verdade. T002 (campanha tests_022_mutants.js) NAO foi escrita nesta fase e a razao e estrutural, nao esquecimento: mutante precisa de ANCORA em codigo real, e ui_ondas_v32.js so nasce na W1. A campanha entra COM a W1, no mesmo commit da implementacao, como a R3 §5 exige (gate novo so e aceito matando um mutante escrito para ele). A tabela de tarefas colocou T002 na wave 0 por otimismo meu; a correcao fica registrada aqui em vez de a tabela ser reescrita para parecer certa. (a campanha entrou com a W4, como previsto na correcao acima.)"
   },
   "implement": {
-    "status": "pending",
-    "notes": ""
+    "status": "done",
+    "notes": "W1 modulo puro + bridge + builder · W2 apresentacao (tela e papel) · W3 EA-75 pela errata E2 · W4 campanha 13/13 e registros canonicos. TRES ERRATAS, todas de medicao e nenhuma de conveniencia: E1 (o C7 se apoiava em estado que revalidateTargets descarta; o C5 mudou junto porque a uniao original so se sustentava sem exclusao), E2 (o EA-75 se resolve onde a visao por produto ja existia — 55 assercoes de custo evitado), E3 (a letra do C1 alinhada ao que o plano aprovou). SETE DEFEITOS MEUS achados pelos portoes: tres alineas vazias (placar caiu de 8 para 6 antes de implementar), data-qs22-frente nas duas ondas, camada de layout chamando o dominio (P52-GOV1), guard por pr.n quando o motor usa name, chave por id duplicando quatro produtos, escopo alargado sem pedido, e tres gates frouxos que a campanha cobrou. O pior: o D022-INV1 media DEPOIS do primeiro render e afirmava a UX-P8 selada sem te-la medido."
   },
   "validate": {
-    "status": "pending",
-    "conformance": null,
-    "aceite_de_intencao": null,
-    "notes": ""
+    "status": "done",
+    "conformance": "14/14 · 100%",
+    "aceite_de_intencao": "aceito",
+    "notes": "spec-validate 14/14 com a errata E3 declarada (divergencia de LETRA no C1: a spec escreveu Math.round e a implementacao usa o indice da banda de __QS_STAGE_RULER — numericamente identicos, troca aprovada no plano, faltou propagar). Aceite de intencao ACEITO: o refinamento pedia encenacao derivada do que a organizacao ja declarou, funcionando tambem sem cenario-alvo, e e o que existe. O que NAO se certifica, e esta escrito: que a leitura ficou boa — isso se mede em sessao real, que foi como esta demanda nasceu. Dois achados abertos no caminho: EA-76 (a derivacao 'o que o motor ofereceu' em duas copias, a segunda porteira da primeira — quinta instancia da mesma classe na semana) e EA-77 (bridges.json com owner errado). M41 9794b267 identico ao pinado; 4 frozen OK; ui_v32.js §29.4 sob autorizacao de 2026-09-28 pedida ANTES de editar."
   },
   "pr_url": null
 }

@@ -451,13 +451,16 @@
       "insumos": {
         "oraculo": [
           "tests_022_escalonamento.js"
+        ],
+        "populacao": [
+          "ui_curation_v32.js"
         ]
       },
       "requires": [
         "node",
         "python"
       ],
-      "_trilha": "Demanda 022-escalonamento-do-investimento, W4 · 2026-09-29. Treze mutantes, um por criterio, exceto o C14, cujo carrasco e o par baseline/m41 do pipeline. MEDIDO: 13 DETECTADO · 0 SOBREVIVENTE · 0 NAO EXECUTADO. ui_curation_v32.js entra nos targets embora nenhum mutante o ataque: e ele que decide QUEM chega a visao por produto (decide() devolve exclude para o que nao esta em offered()), e foi ali que o EA-75 morria. Mudanca nele TEM de reexecutar esta campanha, senao o D022-PROD1 volta a medir um caminho que outro modulo fechou. TRES SOBREVIVENTES DA PRIMEIRA EXECUCAO eram fragilidade do GATE, nao do codigo — os tres desta demanda: M8 (a exclusao do C7 esvaziava os elegiveis e a vaga extra nao tinha o que preencher; fixture passou a declarar quatro alvos), M10 (a alinea aceitava qualquer card com duas capabilities, e os puxados por gap ja as tem; passou a olhar o produto POR SINAL, que e o sujeito do achado), M13 (o snapshot era tomado DEPOIS do primeiro render, e a escrita que o mutante introduz acontece durante ele — o gate comparava duas fotos do mesmo estrago). Na segunda execucao o M10 saiu SOBREVIVENTE 'por motivo diferente': o reason ficou velho porque eu mudei a mensagem do gate ao fortalece-lo. Atualizado o reason, nunca o ataque."
+      "_trilha": "Demanda 022-escalonamento-do-investimento, W4 · 2026-09-29. Treze mutantes, um por criterio, exceto o C14, cujo carrasco e o par baseline/m41 do pipeline. MEDIDO: 13 DETECTADO · 0 SOBREVIVENTE · 0 NAO EXECUTADO. ui_curation_v32.js entra nos targets embora nenhum mutante o ataque: e ele que decide QUEM chega a visao por produto (decide() devolve exclude para o que nao esta em offered()), e foi ali que o EA-75 morria. Mudanca nele TEM de reexecutar esta campanha, senao o D022-PROD1 volta a medir um caminho que outro modulo fechou. TRES SOBREVIVENTES DA PRIMEIRA EXECUCAO eram fragilidade do GATE, nao do codigo — os tres desta demanda: M8 (a exclusao do C7 esvaziava os elegiveis e a vaga extra nao tinha o que preencher; fixture passou a declarar quatro alvos), M10 (a alinea aceitava qualquer card com duas capabilities, e os puxados por gap ja as tem; passou a olhar o produto POR SINAL, que e o sujeito do achado), M13 (o snapshot era tomado DEPOIS do primeiro render, e a escrita que o mutante introduz acontece durante ele — o gate comparava duas fotos do mesmo estrago). Na segunda execucao o M10 saiu SOBREVIVENTE 'por motivo diferente': o reason ficou velho porque eu mudei a mensagem do gate ao fortalece-lo. Atualizado o reason, nunca o ataque. ui_curation_v32.js entra como INSUMO de classe `populacao`, e nao como alvo mudo: `offered()` define o CONJUNTO de produtos que pode chegar a visao por produto, e `decide()` devolve exclude para tudo fora dele. Foi essa populacao que barrou o FortiDLP depois de o coletor ja o encontrar. O D017-REL2 acusou o alvo fantasma — alvo sem razao de classe declarada — e tinha razao: sem a classe, quem le o mapa nao sabe POR QUE aquele arquivo dispara esta campanha."
     }
   }
 }

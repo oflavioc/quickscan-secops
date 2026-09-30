@@ -320,8 +320,15 @@ const MUTANTS = [
        O ATAQUE NÃO MUDOU: o `repl` continua removendo EXATAMENTE o bloco CSS
        do d011 e mais nada — o bloco da 019 é preservado no lugar, para que a
        mutação isole o que promete isolar. */
-    find: '/* V32_P52CSS_END */\\n/* V32_D011CSS_BEGIN */\\n" + d011css + "\\n/* V32_D011CSS_END */\\n/* V32_P53SOLCSS_BEGIN */\\n" + p53solcss + "\\n/* V32_P53SOLCSS_END */\\n</style>")',
-    repl: '/* V32_P52CSS_END */\\n/* V32_P53SOLCSS_BEGIN */\\n" + p53solcss + "\\n/* V32_P53SOLCSS_END */\\n</style>")   # MUTANTE D011-M18',
+    /* [022 · 2026-09-30] REANCORADO DE NOVO, e pela MESMA razao da 019: a folha
+       `ui_ondas_v32.css` entrou na injecao do builder e a ancora voltou a
+       `ocorrencias=0`. E o EA-4 atingindo campanha alheia, denunciado pelo stage
+       `mutation` — segunda vez que este mutante paga o preco de o builder
+       concatenar todas as folhas numa linha so.
+       O ATAQUE NAO MUDOU: o `repl` remove EXATAMENTE o bloco CSS do d011 e mais
+       nada; os blocos da 019 e da 022 ficam preservados no lugar. */
+    find: '/* V32_P52CSS_END */\\n/* V32_D011CSS_BEGIN */\\n" + d011css + "\\n/* V32_D011CSS_END */\\n/* V32_P53SOLCSS_BEGIN */\\n" + p53solcss + "\\n/* V32_P53SOLCSS_END */\\n/* V32_ONDASCSS_BEGIN */\\n" + ondascss + "\\n/* V32_ONDASCSS_END */\\n</style>")',
+    repl: '/* V32_P52CSS_END */\\n/* V32_P53SOLCSS_BEGIN */\\n" + p53solcss + "\\n/* V32_P53SOLCSS_END */\\n/* V32_ONDASCSS_BEGIN */\\n" + ondascss + "\\n/* V32_ONDASCSS_END */\\n</style>")   # MUTANTE D011-M18',
     gate: "D011-PRT1",
     reason: /bloco CSS do módulo ausente ou duplicado no HTML construído: 0×/
   },

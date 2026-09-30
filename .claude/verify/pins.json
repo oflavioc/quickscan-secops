@@ -1,7 +1,7 @@
 {
   "_meta": {
     "descricao": "Registry único de pins — fonte de identidade dos artefatos (R8). Hashes = SHA-256 dos blobs de HEAD. Alterar arquivo pinado exige regenerar este registry no MESMO PR, com motivo no commit.",
-    "gerado_de_head": "184f996cb6d361f7327a44bd0f04fb512c512db8",
+    "gerado_de_head": "87468eed20aeb2a8f0c6b39a2c84c4159c8a3f23",
     "gerado_em": "2026-09-30",
     "exclusoes": [
       "docs_phase5/**",
@@ -265,7 +265,7 @@
     ".claude/verify/invariants.json": "b8571facafbe6098cc643886cd158f877dd702c0cba6ca5addff34fc3e10bee6",
     ".claude/verify/known_issues.json": "00e5487f60ad8bb7f9023dcd011cfb8cf4d9aff64ae3927b3512ef9d1ea9e3af",
     ".claude/verify/mutation-matrix.json": "02fcb528fcf2b8fdfcfe11b58d354cda48c8cd06ecb9fb12ad3d632798a134c4",
-    ".claude/verify/mutation_map.json": "e8e560d3bf9799e3985324e32e7117e0f32e8409108e294b42d28f7a2e1dce7c",
+    ".claude/verify/mutation_map.json": "0b7165f3b3375a9b670d6211981887e1b0bf9a8e70b0b40f20c1230eaa95b4e0",
     ".claude/verify/mutation_population.json": "7893a00adc8d087bfb0244e2b580d58772de567b35326af2d0c098e6d4025141",
     ".claude/verify/pipeline.yaml": "e9733fb0b74014221dfeb37ca6332118d4c2b6f3e7ec7577a96b068f2a79f325",
     ".claude/verify/regra_morta.js": "d04a0638a82dbf8a9f7f83d8b416653db5178619a61a87655213f699e3a31dab",
@@ -456,9 +456,9 @@
     "tests_010_mutants.js": "ba6427c0eef9a3166bac4e88403843b96ab4e5f5d0102b48a30800d7bdfeb6c7",
     "tests_010_vao.js": "39f47d8bb89e51dcb15ede13113480907a9fb51c042720457ce91fb0374b1c7c",
     "tests_011_chromium.js": "8a35766bd889143e4d05749700d8fc82026ed703f86191a13947197ce9b6e16e",
-    "tests_011_mutants.js": "bdc420cfecd352124d0a657a194e13b08d5a9ffd724a760fc059303cc70de19c",
+    "tests_011_mutants.js": "65ecc6274bca5bb971dfe49cc778d0dcce28cd727f854feabf0f902f258284bf",
     "tests_011_prioridade.js": "b8fce56a38f2e9ac18fdbddcc76b278ab2e84eaa5eaea82495a8dd868982c7b6",
-    "tests_014_mutants.js": "c1482a0e168e29d48543c99d55548c1ab14cc3602625cf1439d389b2cff46c21",
+    "tests_014_mutants.js": "84865041ef0a99264f0fe02676f8ef21b61929885d6105b84ed9dc07db3764c1",
     "tests_014_mutants_visual.js": "6fadbb55fd0302ee951d3f8ee9c6d79828784253989e94f7534f98f7ea5438b6",
     "tests_014_regra_morta.js": "9f682946c929200f552041de725aa279d2baa607cf0345cc70f14fbc3f7a8115",
     "tests_015_apoio.js": "5fcd244a6a8b6b2ef8a6518bfc1e46dc7fce660519bbbdc008aa225d5e30bebc",

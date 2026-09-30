@@ -26,8 +26,15 @@
    ============================================================================ */
 (function () {
   "use strict";
-  if (typeof window === "undefined" || window.__QS22__installed) return;
-  window.__QS22__installed = true;
+  /* A GUARDA MORA DENTRO DO BRIDGE. A primeira versão criava um segundo global,
+     um `__installed` solto ao lado do bridge, e o `lint-arch` reprovou com razão
+     — inclusive quando o literal sobrou só no COMENTÁRIO, porque o scanner varre
+     texto e não distingue prosa de código, o que é a escolha conservadora certa
+     para um scanner de padrão proibido. A R9 §2 pede
+     UM bridge por módulo, e a §1 pede a guarda `__installed` — a casa resolve as
+     duas pondo a guarda dentro do objeto, como `ui_curation_v32.js` já fazia.
+     Eu inventei um global em vez de ler o padrão que existia. */
+  if (typeof window === "undefined" || (window.__QS22 && window.__QS22.__installed)) return;
 
   var MOTIVO_ALVO = "cenário-alvo declarado, e esta prática ficou de fora — a organização não a elegeu para subir";
 
@@ -196,5 +203,5 @@
     };
   }
 
-  window.__QS22 = { ondas: ondas };
+  window.__QS22 = { __installed: true, ondas: ondas };
 })();

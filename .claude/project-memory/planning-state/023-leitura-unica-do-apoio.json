@@ -1,0 +1,43 @@
+{
+  "demanda": "023-leitura-unica-do-apoio",
+  "phase": "refinement",
+  "spec_dir": "specs/023-leitura-unica-do-apoio",
+  "branch": "feature/023-leitura-unica-do-apoio",
+  "brief": "Sem contexto tecnologico declarado — o caso comum — a secao Formas de apoio apresenta o MESMO conjunto duas vezes: a lista congelada 'Pode fazer sentido — apos validacao' e os cards por produto, sem nada dizendo que sao a mesma coisa. Relato do proprietario em sessao real na v3.2.10. REVERTE a refutacao da demanda 020, registrada em design-decisions.md em 2026-09-24 — reversao do proprietario em 2026-10-01 ('Vamos de C'), amparada em medicao que a 020 nao tinha: aquela demanda avaliou UMA rota, agora sao tres.",
+  "refinement": {
+    "status": "pending",
+    "notes": "ESTA DEMANDA NAO E 'implementar o que foi pedido', e isso esta escrito no enquadramento. As tres rotas conhecidas custam invariante: remover derruba 5 gates da 010 (as fixtures D010-F3 declaram o titulo presente no DOM); alargar hasSubstituteV32 deixa o D010-ARB1 SEM SUJEITO (toda sessao com gap tem card por produto, logo 'sem substituto' so existiria sem gap algum); e a linha explicativa so cabe no fim da secao, depois do momento em que o leitor se confundiu — as duas posicoes uteis estao fechadas, medidas: antes do titulo o p52Classify reclassifica o no para outra secao (foi parar em p52-sec-gaps) e entre a lista e os cards o D010-ARB1 (c) reprova por vacuidade. A demanda existe para achar uma QUARTA rota ou para o proprietario decidir conscientemente qual invariante vale menos que a legibilidade. A PISTA PRINCIPAL e que a C1 da 010 — 'sem substituto, a congelada permanece visivel' — foi escrita quando a visao por produto NAO existia; hoje ela existe sempre e e independente de contexto (EA-65/EA-68). A proposicao descreve um mundo que mudou: existe substituto e ele nao e contado. Pode ser invariante que envelheceu e precisa ser reescrita pelo dono dela, e nao tautologia. MEDIDO: SEM contexto hasSubstitute=false, 0 nos ocultos, lista visivel, 11 cards; COM contexto hasSubstitute=true, 3 nos ocultos, lista oculta, 11 cards. A redundancia aparece so sem contexto declarado. B5 e o caso que mais protege a C1: curadoria que esvazie a visao por produto faz o substituto deixar de existir NAQUELA sessao, e a lista congelada tem de voltar. RESULTADO LEGITIMO POSSIVEL: concluir que nenhuma rota vale o preco e manter a refutacao, com a emenda registrando a segunda tentativa.",
+    "approved_at": null
+  },
+  "specify": {
+    "status": "pending",
+    "approved_at": null,
+    "notes": ""
+  },
+  "plan": {
+    "status": "pending",
+    "notes": "",
+    "approved_at": null
+  },
+  "tasks": {
+    "status": "pending",
+    "notes": "",
+    "approved_at": null
+  },
+  "red": {
+    "status": "pending",
+    "commit": null,
+    "notes": ""
+  },
+  "implement": {
+    "status": "pending",
+    "notes": ""
+  },
+  "validate": {
+    "status": "pending",
+    "conformance": null,
+    "aceite_de_intencao": null,
+    "notes": ""
+  },
+  "pr_url": null
+}

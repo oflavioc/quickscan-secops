@@ -664,6 +664,14 @@
     var velhaFronteira = sec.querySelector(":scope > [data-p53-sol-lead]");
     if (velhaFronteira && velhaFronteira.parentNode) velhaFronteira.parentNode.removeChild(velhaFronteira);
     if (arbitrando && cards.length) sec.appendChild(fronteira());
+    /* ANCORA NO TITULO CONGELADO, nao no primeiro filho. Inserir em
+       `sec.firstChild` parecia obvio e nao sobrevive: a passagem do workspace
+       recria o `<h2>` da secao no topo numa passagem seguinte e leva o no
+       junto — medido, o `<p>` entrava e sumia. Antes do primeiro
+       `.section-title` e a posicao que a regra exige (o `hiding` de
+       `hideLegacyRecommendation` so liga A PARTIR do titulo) e que o layout
+       respeita. No sem titulo congelado na secao, nada a ligar. */
+
     for (i = 0; i < GRUPOS.length; i++) {
       var lista = porGrupo[GRUPOS[i].id];
       if (!lista || !lista.length) continue;

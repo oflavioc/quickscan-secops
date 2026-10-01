@@ -223,12 +223,20 @@ const MUTANTS = [
        O ATAQUE NÃO MUDOU: o `repl` continua injetando UMA folha fantasma que
        não existe no disco, e o kill continua sendo a varredura recusar ALTO
        nomeando `ui_d014_m7_fantasma.css` em vez de varrer por baixo. */
+    /* [022 · 2026-09-30] REANCORADO DE NOVO, mesma causa da 019: a folha
+       `ui_ondas_v32.css` entrou na injecao e mudaram AS DUAS coisas em que este
+       mutante ancora — a leitura e a linha de `html.replace`. O ATAQUE NAO
+       MUDOU: o `repl` segue injetando UMA folha fantasma que nao existe no
+       disco, e o kill continua sendo a varredura recusar ALTO nomeando
+       `ui_d014_m7_fantasma.css` em vez de varrer por baixo. */
     find: String.raw`d011css = open(D011CSS, encoding="utf-8").read()
+ondascss = open(ONDASCSS, encoding="utf-8").read()
 p53solcss = open(P53SOLCSS, encoding="utf-8").read()
-html = html.replace("</style>", "\n/* V32_CSS_BEGIN */\n" + uicss + "\n/* V32_CSS_END */\n/* V32_UXCSS_BEGIN */\n" + uxcss + "\n/* V32_UXCSS_END */\n/* V32_P50CSS_BEGIN */\n" + p50css + "\n/* V32_P50CSS_END */\n/* V32_P52CSS_BEGIN */\n" + p52css + "\n/* V32_P52CSS_END */\n/* V32_D011CSS_BEGIN */\n" + d011css + "\n/* V32_D011CSS_END */\n/* V32_P53SOLCSS_BEGIN */\n" + p53solcss + "\n/* V32_P53SOLCSS_END */\n</style>")`,
+html = html.replace("</style>", "\n/* V32_CSS_BEGIN */\n" + uicss + "\n/* V32_CSS_END */\n/* V32_UXCSS_BEGIN */\n" + uxcss + "\n/* V32_UXCSS_END */\n/* V32_P50CSS_BEGIN */\n" + p50css + "\n/* V32_P50CSS_END */\n/* V32_P52CSS_BEGIN */\n" + p52css + "\n/* V32_P52CSS_END */\n/* V32_D011CSS_BEGIN */\n" + d011css + "\n/* V32_D011CSS_END */\n/* V32_P53SOLCSS_BEGIN */\n" + p53solcss + "\n/* V32_P53SOLCSS_END */\n/* V32_ONDASCSS_BEGIN */\n" + ondascss + "\n/* V32_ONDASCSS_END */\n</style>")`,
     repl: String.raw`D014CSS = HERE / "ui_d014_m7_fantasma.css"   # MUTANTE D014-M7: folha nova, varredura nao avisada
 d014css = open(D014CSS, encoding="utf-8").read()
 d011css = open(D011CSS, encoding="utf-8").read()
+ondascss = open(ONDASCSS, encoding="utf-8").read()
 p53solcss = open(P53SOLCSS, encoding="utf-8").read()
 html = html.replace("</style>", "\n/* V32_CSS_BEGIN */\n" + uicss + "\n/* V32_CSS_END */\n/* V32_UXCSS_BEGIN */\n" + uxcss + "\n/* V32_UXCSS_END */\n/* V32_P50CSS_BEGIN */\n" + p50css + "\n/* V32_P50CSS_END */\n/* V32_P52CSS_BEGIN */\n" + p52css + "\n/* V32_P52CSS_END */\n/* V32_D011CSS_BEGIN */\n" + d011css + "\n/* V32_D011CSS_END */\n/* V32_P53SOLCSS_BEGIN */\n" + p53solcss + "\n/* V32_P53SOLCSS_END */\n/* V32_D014CSS_BEGIN */\n" + d014css + "\n/* V32_D014CSS_END */\n</style>")` },
 

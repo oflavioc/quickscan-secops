@@ -6899,3 +6899,98 @@ Prevenção de perda de dados*, preservando o sinal declarado de cada.
 
 Ver [[EA-68]], que já moveu a visão por solução para derivar do motor — este segue
 a mesma direção.
+
+## EA-76 — "o que o motor ofereceu" é derivado em dois lugares, e nada obriga os dois a andarem juntos
+
+**Status**: `aberto`
+
+**Aberto em**: 2026-09-29, durante a W3 da demanda 022, ao descobrir por que um
+produto entrava na lista do coletor e o card nunca chegava ao DOM.
+
+### O que foi medido
+
+A mesma derivação — *o conjunto que o motor ofereceu nesta sessão*, varrendo
+`computeFindings()` e `MAP` — existe **duas vezes**, em módulos diferentes:
+
+| onde | função | para quê |
+|---|---|---|
+| `ui_p52_support_v32.js:247` | `ofertaDoMotor()` | monta os cards da visão por produto |
+| `ui_curation_v32.js:75` | `ofertados()` | diz ao operador o que ele pode curar |
+
+E a segunda é **porteira da primeira**: `decisaoDe()` consulta `decide()`, que
+devolve `exclude` para todo id fora de `offered()`. Um produto pode estar no
+coletor e ser barrado pelo outro módulo, sem que nada acuse.
+
+Medido no episódio que o revelou:
+
+```
+produtos (ofertaDoMotor)  12   — FortiDLP incluído
+cards                     11   — FortiDLP fora
+offered()                 11   — sem fortidlp
+decide("FortiDLP")        exclude
+```
+
+Estendi uma das cópias e o produto continuou sem chegar à tela. O diagnóstico
+custou quatro ciclos porque a suspeita natural — a guarda de idempotência — estava
+errada, e só a instrumentação mostrou onde ele morria.
+
+### O mecanismo
+
+Não é duplicação de código por descuido: os dois módulos têm donos diferentes e
+ordens de injeção diferentes, e o de curadoria é o **dono do estado** (R9 §5). O
+que falta é a fonte única: hoje quem altera uma cópia não tem como saber que a
+outra existe, e a única prova de que divergiram é um produto sumindo da tela.
+
+### Cadeia arquivo:linha → efeito
+
+- `ui_curation_v32.js:75` — `ofertados()`, o laço sobre `computeFindings()` + `MAP`
+- `ui_p52_support_v32.js:247` — `ofertaDoMotor()`, o mesmo laço
+- `ui_p52_support_v32.js` — `decisaoDe()` → `__CURATION.decide()` devolve `exclude`
+  para id fora de `offered()`, e o card morre no filtro sem aviso
+
+### Encaminhamento
+
+Fonte única: a derivação passa a viver num lugar só — candidato natural é o módulo
+de curadoria, que já é dono do estado —, e o de apresentação consome por bridge,
+acrescentando só o que é de apresentação (capabilities exibidas, sinais, tier).
+
+**Não corrigido na 022 de propósito**: a demanda estendeu as duas cópias para não
+travar, e consertar a estrutura é mudança de contrato entre dois módulos com ordem
+de injeção declarada — R10 §1.
+
+Ver [[EA-72]], que é a mesma classe (cópia literal de um valor com dono): esta é a
+**quinta instância medida na mesma semana**, ao lado do heap do `SESSION 4.8`, dos
+dois pré-filtros do caminhador da copy e da âncora do `P52-RB6`.
+
+## EA-77 — o registro de bridges declara um dono que não é o dono
+
+**Status**: `aberto`
+
+**Aberto em**: 2026-09-28, durante a Fase 2 da demanda 022.
+
+### O que foi medido
+
+`.claude/verify/bridges.json` declara:
+
+```json
+"__QS_STAGE_RULER": { "owner": "ui_ux_v32.js", "nota": "régua de estágios" }
+```
+
+A implementação vive em **`ui_v32.js:991`**. O registro está errado desde que
+nasceu, e o `lint-arch` não pega: ele verifica que todo `window.__*` **esteja**
+registrado, não que o `owner` declarado seja quem realmente o instala.
+
+### Por que importa mais do que parece
+
+O registro de bridges é o mapa que a R9 §2 criou para que "um módulo por
+delegação" funcione — quem vai mexer numa superfície precisa saber de quem ela é.
+Dono errado manda o próximo trabalho para o arquivo errado, que é justamente o
+custo que o registro existe para evitar.
+
+### Encaminhamento
+
+Corrigir a entrada, e — o que vale mais — dar dentes à alínea: o gate pode
+conferir que o arquivo declarado como `owner` **contém** a atribuição
+`window.__NOME =`. Sem isso, a próxima entrada errada nasce igual.
+
+Ver [[EA-20]], de quem este é instância: registro que promete mais do que verifica.

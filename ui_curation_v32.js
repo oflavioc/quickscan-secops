@@ -86,6 +86,47 @@
         if (p && !vistos[p]) { vistos[p] = true; out.push(p); }
       }
     }
+    /* [022 · errata E2 — EA-75] O HABILITADO POR SINAL TAMBEM FOI OFERECIDO.
+
+       Este laco deriva de `computeFindings() + MAP`: so o puxado por GAP. Mas a
+       curadoria e o PORTEIRO — `decide()` devolve "exclude" para o que nao esta
+       aqui —, e por isso um produto habilitado por sinal declarado nunca chegava
+       a visao por produto, mesmo depois de o coletor dela passar a encontra-lo.
+       Medido: `offered()` com 11 itens, `decide("FortiDLP")` = "exclude", e o
+       card morria no filtro sem que nada acusasse.
+
+       O que o motor oferece por sinal e oferta igual: o operador tem de poder
+       decidir sobre ela como decide sobre o resto. Nao inclui-la aqui era a
+       curadoria opinando por omissao. */
+    try {
+      if (typeof V32 !== "undefined" && typeof V32.buildRecommendationContext === "function") {
+        var ctxs = (V32.buildRecommendationContext() || {}).contexts || {};
+        Object.keys(ctxs).forEach(function (capId) {
+          ((ctxs[capId] || {}).candidates || []).forEach(function (cd) {
+            if (!cd || cd.itemKind !== "offering") return;
+            if (!(cd.signals && cd.signals.length)) return;
+            var pr = (V32.OFFERINGS && V32.OFFERINGS[cd.itemId]) || null;
+            var nome = pr && (pr.n || pr.name);
+            if (!nome) return;
+            /* a chave da curadoria e a do catalogo da Camada 1, quando existe —
+               e `catalogo()` valida contra ela; sem isso `set()` recusaria a
+               decisao do operador sobre este produto. */
+            var chave = null, k2;
+            if (typeof PRODUCTS !== "undefined" && PRODUCTS) {
+              for (k2 in PRODUCTS) {
+                if (!Object.prototype.hasOwnProperty.call(PRODUCTS, k2)) continue;
+                if (PRODUCTS[k2] && PRODUCTS[k2].n === nome) { chave = k2; break; }
+              }
+            }
+            if (!chave) return;              /* fora do catalogo curavel: nao se inventa id */
+            if (!vistos[chave]) { vistos[chave] = true; out.push(chave); }
+          });
+        });
+      }
+    } catch (e) {
+      if (typeof console !== "undefined" && console.error)
+        console.error("[022] oferta por sinal nao entrou em offered():", e && e.message);
+    }
     return out;
   }
 

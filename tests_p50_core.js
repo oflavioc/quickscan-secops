@@ -331,7 +331,29 @@ const PROTECTED = {
      publicar de `ui_journey_v32.js` (tambem protegido).
      Identidade anterior:
      d56d11abc1c37cfd0e7f5c191852099849f7ad819c186b63a0215fdb17cb004f */
-  "ui_v32.js": "a38b913fdf1e6a1e6ecba8ef4e1bcb24a4fc822efca3710d53d29155eded49d0",
+  /* AUTORIZACAO NOMINAL §29.4 do proprietario, no chat, em 2026-09-28, POR
+     ARQUIVO (`ui_v32.js`) e valida so para a demanda 022. Pedida no PORTAO DA
+     SPEC, antes de qualquer edicao — a ordem que a R6 §5 manda. No lote
+     anterior ela foi pedida DEPOIS, e o P50-GOV1 reprovou em 63/65; a diferenca
+     entre os dois casos e o registro, nao a intencao.
+
+     MOTIVO (022 · C9/C12/C13): o relatorio ganha a secao "Por onde comecar" — as
+     ondas de investimento —, e ela precisa existir no PAPEL, que e o que chega
+     ao cliente. A decisao NAO vive aqui: `ui_ondas_v32.js` (`__QS22.ondas`,
+     funcao pura, sem DOM e sem estado) decide, e este arquivo so renderiza o
+     que ela decidiu. O `D022-PAP1` compara o conjunto impresso contra o
+     contrato, entao divergir entre os dois reprova.
+
+     TAMBEM AQUI: `qs22Entrada()` e `qs22Rotulo()`, e a chamada em
+     `buildPrintReport()` DEPOIS dos gaps — a ordem e decisao de leitura ("por
+     onde comecar" so significa algo para quem ja sabe o que ha para comecar) e
+     moveu junto o pin de ordem do P51-DOC13 e a §12 do USER_GUIDE.md.
+
+     Nenhum arquivo `frozen` foi tocado, e a regua D2 nao se moveu: payload M41
+     9794b267... identico ao pinado.
+     Identidade anterior:
+     a38b913fdf1e6a1e6ecba8ef4e1bcb24a4fc822efca3710d53d29155eded49d0 */
+  "ui_v32.js": "35139e68dc7f338a708f52681323586d6904101ca5d99e106311377437c0d72f",
   "ui_ux_v32.js": "a050401145a5ed7af597eae01a9a23826418119769c096db168b3b177a9d3938",
   /* ERRATA DA AUDITORIA EXTERNA · §4.1.1 ("qualquer texto derivado consome a
      mesma decisão canônica de publicabilidade"). A comparação Atual × Alvo
@@ -4195,6 +4217,7 @@ T("P51-DOC13", "manual descreve o score geral e a ordem do relatório como o pro
     { ids: ["pr-maturity"], re: /resumo de maturidade/i },
     { ids: ["pr-prios"], re: /prioridades declaradas pelo neg[óo]cio/i },
     { ids: ["pr-findings"], re: /gaps de maturidade observados/i },
+    { ids: ["pr-ondas"], re: /por onde come[çc]ar/i },          /* [022] escalonamento */
     { ids: ["pr-landscape"], re: /contexto tecnol[óo]gico declarado/i },
     { ids: ["pr-interp", "pr-support"], re: /interpreta[çc][ãa]o do contexto/i },
     { ids: ["pr-sup-solucao"], re: /formas de apoio, por produto/i },

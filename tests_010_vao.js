@@ -291,6 +291,7 @@ function papel(w, d) {
    suíte alheia (R10 §6). Se a ordem mudar, ESTE literal muda por edição
    explícita e a divergência vira decisão (R10 §1). */
 const D010_ORDEM_PAPEL = ["pr-cover", "pr-howto", "pr-maturity", "pr-prios", "pr-findings",
+  "pr-ondas",   /* [022] escalonamento — depois dos gaps, antes do contexto */
   "pr-landscape", "pr-interp", "pr-support", "pr-sup-solucao", "pr-journey", "pr-target", "pr-annex"];
 /* [019 · T020 · 2026-09-18] `pr-sup-solucao` entrou na ordem, e ele é
    CONDICIONAL: existe quando há apoio por solução a publicar, e não existe

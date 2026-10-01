@@ -406,3 +406,22 @@ pelo `compliance-audit` (seção `backlog`): `aberto` · `resolvido` · `refutad
 · `transferido`. Nunca prosa livre; refutado mantém a linha de status limpa e
 risca o restante (R2 §5).
 _Evitar_: situação, estado (genérico), "Status: aberto." em prosa
+
+**Frente de investimento**:
+Capability para a qual o relatório propõe investimento na onda corrente. É a
+unidade que o teto conta — capability sem gap não vira frente, porque não há o
+que investir, e isso não é corte pelo teto.
+_Evitar_: recomendação, item, produto sugerido
+
+**Onda**:
+Conjunto de frentes apresentado junto, com a primeira sendo o que se ataca agora.
+O que não cabe na primeira é declarado como onda seguinte, nunca removido do
+relatório — a distinção é entre *quando*, não entre *se*.
+_Evitar_: fase, etapa, roadmap, sprint
+
+**Teto de frentes**:
+Número máximo de frentes que o relatório abre por conta própria, derivado do
+estágio de maturidade que ele já mediu — é o índice da banda de
+`__QS_STAGE_RULER` que contém o score geral, com piso 1. Não alcança prioridade
+declarada pelo negócio, e não existe quando não há suficiência.
+_Evitar_: limite, quota, capacidade, budget

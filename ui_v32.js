@@ -308,6 +308,7 @@ function renderBlocks(app){
       <div class="v32-block" id="v32decl">${declared || '<div class="v32-neutral">Nenhuma capability declarada.</div>'}</div>
       <div class="section-title"><div class="eyebrow">Interpretação do contexto</div></div>
       <div class="v32-block" id="v32interp">${interp || '<div class="v32-neutral">Sem itens a interpretar.</div>'}</div>
+      <div id="v32ondas">${qs22OndasHTML()}</div>
       <div id="v32support">${buildSupportHTML(lastCtx, !haSubstituto)}</div>
       <div class="v32-cta-box">
         <button class="btn2" id="v32cta" aria-expanded="false">Editar contexto tecnológico</button>
@@ -1254,6 +1255,106 @@ function publishableStats(stats, suff){
   return stats.map(s => Object.assign({}, s, { score: null }));
 }
 
+/* ==========================================================================
+   [022] ONDAS DE INVESTIMENTO — apresentação.
+
+   A decisão vive em `ui_ondas_v32.js` (`__QS22.ondas`, função pura, acima do
+   motor). Aqui só se RENDERIZA o que ela decidiu: este bloco não escolhe frente,
+   não calcula teto e não lê régua. Se a decisão e a apresentação divergirem, o
+   `D022-PAP1` reprova — ele compara o conjunto impresso contra o contrato.
+
+   TODO NÓ É NOMINAL. Os gates desta demanda nasceram medindo texto solto no
+   relatório inteiro e passavam VAZIOS: um relatório contém "2" e "3" por mil
+   motivos, e "cenário-alvo" e "insuficiente" já aparecem em outras seções. Três
+   alíneas foram reescritas para nó nominal com qid — e é por isso que cada
+   coisa aqui carrega o seu próprio `data-qs22-*`.
+   ========================================================================== */
+function qs22Entrada(){
+  const statsQ = DOMS.map((_,i)=>domStat(i));
+  const suffQ = dataSufficiency(statsQ);
+  const scoredQ = statsQ.filter(s=>s.score!==null);
+  const overallQ = suffQ && scoredQ.length
+    ? Math.round(scoredQ.reduce((a,s)=>a+s.score,0)/scoredQ.length*10)/10 : null;
+  return {
+    findings: computeFindings().findings || [],
+    prioridades: Array.from(businessPriority),
+    alvos: (typeof TARGET_PROFILE !== "undefined" && TARGET_PROFILE.overrides)
+      ? TARGET_PROFILE.overrides : {},
+    overall: overallQ,
+    suff: suffQ
+  };
+}
+
+function qs22Rotulo(qid, findings){
+  const f = findings.find(x=>x.id===qid);
+  if (!f) return qid;
+  const q = QS[f.k];
+  const cap = (MAP[qid] && MAP[qid].cap) ? MAP[qid].cap : "";
+  return cap ? (q.lbl + " — " + cap) : q.lbl;
+}
+
+function qs22OndasHTML(){
+  if (typeof window === "undefined" || !window.__QS22) return "";
+  const ent = qs22Entrada();
+  if (!ent.findings.length) return "";
+  const r = window.__QS22.ondas(ent);
+  /* FRENTE é da ONDA CORRENTE — é o verbete do glossário, e é por isso que o
+     atributo não é o mesmo nos dois casos. A primeira redação usava
+     `data-qs22-frente` nas duas ondas e o `D022-PAP1` acusou: o papel dizia
+     quinze frentes onde o contrato decidira três. O gate estava certo e a
+     emissão, errada — o que se corrige é a emissão. */
+  const fr = (qid, corrente) => `<div class="qs22-frente" ${corrente ? "data-qs22-frente" : "data-qs22-adiada"}="${escAttr(qid)}">${esc32(qs22Rotulo(qid, ent.findings))}</div>`;
+
+  let h = `<div class="pr-sec qs22-sec" id="pr-ondas"><h2>Por onde começar</h2>`;
+
+  if (r.teto === null){
+    /* Sem suficiência não há estágio, logo não há teto — e o produto DIZ, em vez
+       de escalonar sobre número que não existe (C4/D4). */
+    h += `<div class="qs22-nota" data-qs22-sem-teto>A evidência ainda não é suficiente para
+      determinar o estágio de maturidade, e sem estágio não há indicativo de quantas frentes
+      sustentar ao mesmo tempo. Abaixo ficam apenas as prioridades declaradas nesta sessão.</div>`;
+  }
+
+  if (r.primeira.length){
+    const prov = r.teto === null
+      ? "prioridades declaradas na sessão"
+      : "prioridades declaradas na sessão e estágio de maturidade medido";
+    h += `<div class="qs22-onda" data-qs22-onda="primeira" data-qs22-prov="${escAttr(prov)}">
+      <div class="qs22-rot" data-qs22-rotulo>Primeira onda — o que atacar agora</div>
+      ${r.primeira.map(q=>fr(q,true)).join("")}</div>`;
+  }
+
+  if (r.seguintes.length){
+    const criterio = r.teto === null
+      ? "Sem estágio determinado, estas ficam para depois das prioridades declaradas."
+      : `No estágio ${esc32(r.estagio)}, o indicativo é ${r.teto} frente${r.teto===1?"":"s"} simultânea${r.teto===1?"":"s"} — estas ficam para as ondas seguintes.`;
+    const prov = r.teto === null
+      ? "o que excede as prioridades declaradas"
+      : "teto de frentes do estágio " + r.estagio;
+    h += `<div class="qs22-onda" data-qs22-onda="seguinte" data-qs22-prov="${escAttr(prov)}">
+      <div class="qs22-rot" data-qs22-rotulo>Ondas seguintes — depois das primeiras</div>
+      <div class="qs22-nota">${criterio}</div>
+      ${r.seguintes.map(q=>fr(q,false)).join("")}</div>`;
+  }
+
+  if (r.tensao){
+    /* NOMEAR, nunca podar (C3/D3): o cliente declarou três prioridades e o
+       produto não tem autoridade para desfazer. O que ele pode fazer é dizer o
+       que um consultor diria. */
+    h += `<div class="qs22-tensao" data-qs22-tensao>${r.tensao.declaradas} prioridades declaradas.
+      No estágio ${esc32(r.estagio)}, o indicativo é ${r.tensao.teto} frentes simultâneas — as demais
+      tendem a competir por orçamento e por gente com as primeiras.</div>`;
+  }
+
+  if (r.excluidas && r.excluidas.length){
+    h += `<div class="qs22-excl-bloco"><div class="qs22-rot">Fora do enquadramento de investimento</div>`
+      + r.excluidas.map(e=>`<div class="qs22-excl" data-qs22-excluida="${escAttr(e.qid)}">${esc32(qs22Rotulo(e.qid, ent.findings))} — <span class="pr-mut">${esc32(e.motivo)}</span></div>`).join("")
+      + `</div>`;
+  }
+
+  return h + `</div>`;
+}
+
 function buildPrintReport(){
   const ctxRes = V32.buildRecommendationContext();               /* recompute — nunca cache */
   const ctxs = ctxRes.contexts;
@@ -1318,6 +1419,13 @@ function buildPrintReport(){
         <div><i class="pr-lab">Evidência declarada:</i> ${esc32(opt.t)}${opt.d?` — <span class="pr-mut">${esc32(opt.d)}</span>`:""}</div>
         ${cap?`<div><i class="pr-lab">Capability a desenvolver:</i> ${esc32(cap)}</div>`:""}
         ${obs}${qsGapSupportHTML(f)}</div>`;}).join("")}</div>`;
+  /* [022] AS ONDAS VEM DEPOIS DOS GAPS, e a ordem e decisao de leitura:
+     "por onde comecar" so significa alguma coisa para quem ja sabe o que ha
+     para comecar. Antes dos gaps, a secao referenciaria praticas que o leitor
+     ainda nao viu; aqui, ela encena o que acabou de ser lido e prepara as
+     secoes de apoio que vem a seguir. A ordem e pinada por `P51-DOC13` e
+     descrita no manual §12 — os dois se movem junto, nunca um so. */
+  h += qs22OndasHTML();
   /* ==========================================================================
      ERRATA DA AUDITORIA EXTERNA · B-02 (e B-03 por construção)
 

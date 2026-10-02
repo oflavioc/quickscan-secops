@@ -60,7 +60,17 @@ const { JSDOM } = require("jsdom");
 const FX = require("./fixtures_010_vao.js");
 
 const HERE = __dirname;
-const HTML_PATH = path.join(HERE, "quickscan_secops_soccmm_v3_2_dev.html");
+/* [023 · 2026-10-02] OVERRIDE DE ARTEFATO, e ele nao muda assercao nenhuma.
+   A campanha `tests_023_mutants.js` tem um mutante — `D023-M5b`, que desfaz a
+   clausula da errata `E4` — cujo carrasco e o `D010-ARB1`, porque nenhuma fixture
+   da 023 tem suficiencia fechada. Sem este override a suite leria sempre o
+   artefato RASTREADO, a mutacao nao alcancaria o sujeito e o mutante sairia
+   SOBREVIVENTE pelo motivo errado: falso negativo de campanha, que e pior que
+   campanha nenhuma. Reconstruir sobre o arquivo rastreado esta proibido (R7 §3),
+   entao a rota e a mesma que `tests_022_escalonamento.js` e a propria `d023` ja
+   usam. Sem a variavel, o comportamento e byte-identico ao anterior. */
+const HTML_PATH = process.env.D010_HTML_OVERRIDE ||
+  path.join(HERE, "quickscan_secops_soccmm_v3_2_dev.html");
 const HTML = fs.readFileSync(HTML_PATH, "utf8");
 const TGT_JS_PATH = path.join(HERE, "ui_target_v32.js");
 const TGT_SRC = fs.readFileSync(TGT_JS_PATH, "utf8");

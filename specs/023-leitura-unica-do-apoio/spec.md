@@ -36,7 +36,7 @@ Suíte nova: `tests_023_leitura.js`. Campanha: `tests_023_mutants.js`.
 | # | Critério | Gate (id · arquivo · asserção) | Mutante previsto |
 |---|---|---|---|
 | **C1** | Sem contexto declarado, **com** produto publicado, a leitura congelada é **oculta** — **inclusive em modo legado** (errata **E1**) | `D023-OCU1` · `tests_023_leitura.js` · o caso do relato: os nós da Camada 1 saem com `v32-hidden`, os cards por produto **permanecem visíveis**, e a seção passa a ter **uma** leitura | `M1` · manter o predicado antigo · `M1b` · restaurar a imunidade do ramo legado |
-| **C2** | **Nada piora com contexto declarado** | `D023-REG1` · idem · censo idêntico ao de hoje: 3 nós ocultos, cards intactos | `M2` · o predicado novo deixar de valer com contexto |
+| **C2** | **Nada piora com contexto declarado**, e a segunda fonte é **aditiva** | `D023-REG1` · idem · censo idêntico ao de hoje, cards intactos, e — alínea (d), nascida da campanha — com contexto declarado E produto suprimido a congelada **continua oculta**, porque os cards de capability seguem sendo substituto | `M2b` · a segunda fonte substituir a primeira em vez de somar |
 | **C3** | Curadoria suprime **tudo** ⇒ o substituto some ⇒ a congelada **volta visível** | `D023-SUP1` · idem · exclui os ofertados; cards = 0; Camada 1 **visível**; aviso de supressão presente | `M3` · ignorar a curadoria no predicado — o vão da 010 de volta |
 | **C4** | Tudo-ou-nada preservado | `D023-ARB1` · idem · o conjunto oculto é **∅ ou exatamente** a Camada 1, nunca parcial | `M4` · ocultar o título e parar |
 | **C5** | O `D010-ARB1` segue com **sujeito alcançável** | `D023-SUJ1` · idem · a fixture nova de "substituto suprimido" produz `hasSubstitute === false` **e** Camada 1 presente e visível | `M5` · tornar o predicado sempre verdadeiro |
@@ -193,14 +193,29 @@ autorização §29.4 de 2026-10-01 — a classe tocada não muda, a contagem sim
 
 **E há uma dependência estrutural que o plano não tinha visto**: os cards por
 produto são `.apoio-block` **contíguos ao título congelado**, e `.apoio-block`
-é classe permitida na varredura de `hideLegacyRecommendation`. Ligar a
-arbitragem sem mais nada **ocultaria os cards junto com a lista**. O que os
-protege é a `fronteira()` (`ui_p52_support_v32.js:639`), inserida só quando
-`arbitragemEmCurso()` vê nó oculto no escopo — e ela **não é inserida em modo
-legado**, de propósito, por causa da alínea que E1 manda emendar. O `D023-OCU1`
-mede as **duas** metades (congelada oculta **e** cards visíveis) e mede também a
-**segunda** passagem de render, porque a fronteira lê o DOM já arbitrado e o ramo
-de idempotência do decorador reaproveita os cards que já existem.
+é classe permitida na varredura de `hideLegacyRecommendation`. O `D023-OCU1` mede
+por isso as **duas** metades — congelada oculta **e** cards visíveis — e mede
+também a **segunda** passagem de render.
+
+> **CORREÇÃO DE 2026-10-02, pela campanha de mutação.** A primeira redação deste
+> parágrafo afirmava que ligar a arbitragem sem mais nada *"ocultaria os cards
+> junto com a lista"*, e que o que os protegia era a `fronteira()`
+> (`ui_p52_support_v32.js:639`). **Medido, é falso.** O mutante `D023-M2` remove a
+> fronteira; com o artefato reconstruído e sondado em **três renders
+> consecutivos, nas duas fixtures**, o resultado foi `cards=11 ocultos=0` nas
+> seis medições. A ocultação nunca alcança os cards porque o decorador da 5.2 os
+> **repõe** depois da varredura, e `colocar()` não devolve nó com `v32-hidden`.
+>
+> O que a `fronteira()` protege é o **censo** — é o que o comentário do autor
+> dela diz (`:617-638`): encerrar a contagem antes dos cards para que o grupo
+> contíguo não seja lido como meio oculto e meio visível. É oráculo, não
+> apresentação, e pertence à demanda **019**. Por isso o carrasco do `D023-M2` é
+> o `D019-CTX1`, descoberto quando ele saiu **sobrevivente** contra o gate que eu
+> lhe havia atribuído.
+>
+> A asserção do `D023-OCU1` **não muda**: a hipótese ter sido falsa não a torna
+> desnecessária — um gate que só medisse a ocultação passaria com a seção vazia.
+> O que muda é a razão declarada, que agora é a medida.
 
 ## Fora de escopo
 

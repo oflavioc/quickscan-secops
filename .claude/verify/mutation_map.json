@@ -461,6 +461,38 @@
         "python"
       ],
       "_trilha": "Demanda 022-escalonamento-do-investimento, W4 · 2026-09-29. Treze mutantes, um por criterio, exceto o C14, cujo carrasco e o par baseline/m41 do pipeline. MEDIDO: 13 DETECTADO · 0 SOBREVIVENTE · 0 NAO EXECUTADO. ui_curation_v32.js entra nos targets embora nenhum mutante o ataque: e ele que decide QUEM chega a visao por produto (decide() devolve exclude para o que nao esta em offered()), e foi ali que o EA-75 morria. Mudanca nele TEM de reexecutar esta campanha, senao o D022-PROD1 volta a medir um caminho que outro modulo fechou. TRES SOBREVIVENTES DA PRIMEIRA EXECUCAO eram fragilidade do GATE, nao do codigo — os tres desta demanda: M8 (a exclusao do C7 esvaziava os elegiveis e a vaga extra nao tinha o que preencher; fixture passou a declarar quatro alvos), M10 (a alinea aceitava qualquer card com duas capabilities, e os puxados por gap ja as tem; passou a olhar o produto POR SINAL, que e o sujeito do achado), M13 (o snapshot era tomado DEPOIS do primeiro render, e a escrita que o mutante introduz acontece durante ele — o gate comparava duas fotos do mesmo estrago). Na segunda execucao o M10 saiu SOBREVIVENTE 'por motivo diferente': o reason ficou velho porque eu mudei a mensagem do gate ao fortalece-lo. Atualizado o reason, nunca o ataque. ui_curation_v32.js entra como INSUMO de classe `populacao`, e nao como alvo mudo: `offered()` define o CONJUNTO de produtos que pode chegar a visao por produto, e `decide()` devolve exclude para tudo fora dele. Foi essa populacao que barrou o FortiDLP depois de o coletor ja o encontrar. O D017-REL2 acusou o alvo fantasma — alvo sem razao de classe declarada — e tinha razao: sem a classe, quem le o mapa nao sabe POR QUE aquele arquivo dispara esta campanha."
+    },
+    "d023": {
+      "cmd": "node tests_023_mutants.js",
+      "preflight": true,
+      "targets": [
+        "tests_023_leitura.js",
+        "tests_023_mutants.js",
+        "ui_v32.js",
+        "ui_p52_support_v32.js",
+        "ui_curation_v32.js",
+        "fixtures_010_vao.js",
+        "tests_010_vao.js",
+        "tests_019_curadoria.js"
+      ],
+      "insumos": {
+        "oraculo": [
+          "tests_023_leitura.js",
+          "tests_010_vao.js",
+          "tests_019_curadoria.js"
+        ],
+        "populacao": [
+          "ui_curation_v32.js"
+        ],
+        "fixture": [
+          "fixtures_010_vao.js"
+        ]
+      },
+      "requires": [
+        "node",
+        "python"
+      ],
+      "_trilha": "Demanda 023-leitura-unica-do-apoio, W2 - 2026-10-02. Doze mutantes; MEDIDO: 12 DETECTADO - 0 SOBREVIVENTE - 0 NAO EXECUTADO. POR QUE ESTA CAMPANHA CARREGA MAIS PESO: oito dos nove gates da demanda nasceram VERDES, porque a demanda muda duas expressoes booleanas e o unico vermelho de nascenca foi o D023-OCU1. Guarda que nasce verde tem o poder no mutante; campanha fraca aqui deixaria oito gates sendo decoracao sem ninguem perceber. Dai os pares M1/M1b, M2/M2b, M5/M5b e M8/M8b: quatro propriedades tem mais de uma forma plausivel de serem desfeitas. DOIS CARRASCOS MORAM EM SUITE ALHEIA, declarados: o M5b desfaz a clausula da errata E4 (gate de suficiencia fechado nao substitui) e nenhuma das oito fixtures da 023 tem suff false, entao quem o mata e o D010-ARB1, ancorado na D010-F3 exatamente por isso; o M2 remove a fronteira() e quem o mata e o D019-CTX1. O CARRASCO DO M2 FOI DESCOBERTO PELA CAMPANHA, e e o achado desta wave: ele saiu SOBREVIVENTE contra o D023-REG1, que era o gate que eu lhe havia dado. A sobrevivencia acusou a minha HIPOTESE, nao o codigo — eu havia escrito na errata E3 da spec e no cabecalho da suite que sem a fronteira os cards por produto seriam ocultados junto com a lista congelada. Medido com o artefato reconstruido e sondado em tres renders nas duas fixtures: cards=11 ocultos=0 nas seis medicoes. O decorador da 5.2 REPOE os cards depois da varredura e colocar() nao devolve no com v32-hidden. O que a fronteira protege e o CENSO, que e oraculo e pertence a demanda 019. A errata e a nota foram corrigidas; o ataque nao mudou uma virgula, e o M2b nasceu para devolver carrasco proprio ao D023-REG1 (a segunda fonte substituir a primeira em vez de somar), junto com a fixture F8 e a alinea (d). INSUMOS: ui_curation_v32.js e `populacao` porque published() define o conjunto que o predicado le — mudanca nele muda o veredito da arbitragem sem tocar ui_v32.js. fixtures_010_vao.js e `fixture` porque d010HasSubstitute e a reimplementacao da spec §1 que o D023-SUJ1 consome. tests_010_vao.js e tests_019_curadoria.js sao `oraculo` porque sao eles que matam M5b e M2."
     }
   }
 }

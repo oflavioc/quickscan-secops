@@ -47,27 +47,37 @@
        emendado, porque ele afirma que a `fronteira()` não existe em modo legado
        e a fixture de controle dele publica 11 produtos.
 
-   2 · OS CARDS POR PRODUTO SÃO `.apoio-block` CONTÍGUOS AO TÍTULO CONGELADO.
-       Medido no escopo de apoio, sem contexto declarado: logo depois da
-       `.t-list` congelada vêm os ONZE `.apoio-block.p53-sol-card`. A regra de
-       `hideLegacyRecommendation` oculta o título e os nós permitidos contíguos
-       — e `.apoio-block` é permitido. Ligar o predicado sem mais nada
-       ocultaria os cards JUNTO com a lista, que é o oposto do pedido.
+   2 · OS CARDS POR PRODUTO SÃO `.apoio-block` CONTÍGUOS AO TÍTULO CONGELADO —
+       MAS NÃO SÃO OCULTADOS COM ELE, e a primeira redação desta nota afirmava o
+       contrário.
 
-       O que hoje os protege é a `fronteira()` do `ui_p52_support_v32.js:639`:
-       um `<p data-p53-sol-lead>` fora das classes contíguas, inserido só quando
-       `arbitragemEmCurso()` vê algum nó oculto no escopo. Com contexto
-       declarado ele está lá (medido); sem contexto declarado ele NÃO está, de
-       propósito — o próprio comentário do autor diz que interpor o separador em
-       modo legado tiraria o sujeito do `D010-ARB1 (c)`.
+       O fato: no escopo de apoio, sem contexto declarado, logo depois da
+       `.t-list` congelada vêm os ONZE `.apoio-block.p53-sol-card`, e
+       `.apoio-block` é classe permitida na varredura de
+       `hideLegacyRecommendation`. Daí eu concluí — e escrevi na errata `E3` da
+       spec — que ligar a arbitragem ocultaria os cards junto com a lista.
 
-       Logo o `D023-OCU1` mede as DUAS metades: a lista congelada oculta E os
-       cards visíveis. Um gate que só medisse a primeira passaria com a seção
-       vazia.
+       MEDIDO, É FALSO. Com o mutante `D023-M2` (que remove a `fronteira()`) o
+       artefato foi reconstruído e sondado em três renders consecutivos, nas duas
+       fixtures: `cards=11 ocultos=0` em todas as seis medições. A ocultação não
+       os alcança porque o decorador da 5.2 REPÕE os cards depois da varredura, e
+       `colocar()` nunca devolve nó com `v32-hidden`.
+
+       O que a `fronteira()` protege, então, é o CENSO — exatamente o que o
+       comentário do autor dela diz (`ui_p52_support_v32.js:617-638`): ela encerra
+       a contagem antes dos cards para que o grupo contíguo não seja lido como
+       meio oculto e meio visível. É oráculo, não apresentação. Por isso o
+       carrasco do `D023-M2` é o `D019-CTX1`, da demanda que a introduziu, e não
+       um gate desta.
+
+       O `D023-OCU1` continua medindo as DUAS metades — lista oculta E cards
+       visíveis — e isso continua certo: um gate que só medisse a primeira
+       passaria com a seção vazia, e a hipótese ter sido falsa não torna a
+       asserção desnecessária.
 
    3 · A CAMADA 1 NUNCA É IMPRESSA, ENTÃO O PAPEL NÃO PODE MEDIR OCULTAÇÃO.
        Medido: ZERO dos três títulos de `HIDE_EYEBROWS` aparecem em
-       `#v32-print-report`, em qualquer das sete fixtures. É desenho selado da
+       `#v32-print-report`, em qualquer das oito fixtures. É desenho selado da
        010 (C13, `afirmaPreservacao` falsy em todo sítio de `buildPrintReport`).
        A redação da spec para o C6 — "tudo de C1–C4 medido no relatório" — é
        portanto INALCANÇÁVEL ao pé da letra, e um gate escrito assim fecharia
@@ -158,7 +168,14 @@ const F = {
   F6: { nome: "modo legado sem produto publicado", nivel: 3, prios: [] },
   /* F7 · modo legado com a curadoria suprimindo tudo: o substituto existia e o
      operador o desfez, no mundo em que a V3.2 não governava nada. */
-  F7: { nome: "modo legado com substituto suprimido", prios: [], suprimirTudo: true }
+  F7: { nome: "modo legado com substituto suprimido", prios: [], suprimirTudo: true },
+  /* F8 · contexto declarado E curadoria suprimindo tudo. Existe para medir que a
+     segunda fonte é ADITIVA e não substitutiva: aqui a visão por produto está
+     vazia e o substituto continua existindo, pelos cards de capability. Sem esta
+     fixture, um defeito que TROCASSE a cláusula de capability pela de produto
+     publicado passaria por todos os outros gates — foi a campanha que cobrou. */
+  F8: { nome: "contexto declarado com a visão por produto suprimida",
+        presence: { "endpoint-detection": "NONE" }, suprimirTudo: true }
 };
 
 function boot(fx, opts) {
@@ -342,6 +359,25 @@ T("D023-REG1", "C2 · nada piora com contexto declarado (censo e cards idêntico
   const oc = cardsProdutoOcultos(d);
   if (oc.length) throw new Error("cards por produto ocultos com contexto declarado: " +
     JSON.stringify(oc.map(x => x.getAttribute("data-p53-sol-produto"))));
+  /* (d) A SEGUNDA FONTE É ADITIVA, NÃO SUBSTITUTIVA. Com contexto declarado e a
+     visão por produto SUPRIMIDA, o substituto continua existindo — pelos cards
+     de capability, que são a fonte original do predicado. Um defeito que trocasse
+     uma cláusula pela outra devolveria a Camada 1 aqui, com os cards de
+     capability na tela: duas leituras de novo, e nenhum outro gate desta suíte
+     veria. A alínea nasceu porque a campanha cobrou (`D023-M2b`). */
+  const F8 = boot(F.F8);
+  if (publicados(F8.w).length !== 0)
+    vac("(d)", "a supressão não esvaziou a publicação na fixture de contexto declarado");
+  const sup = F8.d.getElementById("v32support");
+  if (!sup || !qa(sup, ".v32-card").length)
+    vac("(d)", "`#v32support` sem card de capability — a cláusula original do predicado não tem sujeito aqui");
+  const congF8 = censo(F8.d).filter(x => !x.produto);
+  if (!congF8.length) vac("(d)", "nenhum nó congelado presente");
+  const visF8 = congF8.filter(x => !x.oculto).map(x => x.chave);
+  if (visF8.length)
+    throw new Error("com contexto declarado e visão por produto suprimida a Camada 1 VOLTOU, " +
+      "embora os cards de capability continuem na tela — a segunda fonte substituiu a primeira " +
+      "em vez de somar: " + JSON.stringify(visF8));
   return true;
 });
 
@@ -372,10 +408,10 @@ T("D023-SUP1", "C3 · curadoria suprime tudo ⇒ sem substituto ⇒ a congelada 
   return true;
 });
 
-T("D023-ARB1", "C4 · tudo-ou-nada: o grupo congelado é ∅ ou INTEIRO, nunca parcial, nas sete fixtures", () => {
+T("D023-ARB1", "C4 · tudo-ou-nada: o grupo congelado é ∅ ou INTEIRO, nunca parcial, nas oito fixtures", () => {
   const parciais = [];
   /* A CONTA DE GRUPOS MEDIDOS EXISTE PORQUE SEM ELA O GATE É VACUOSO: se as
-     sete fixtures devolvessem censo vazio, `parciais` ficaria vazio e a
+     oito fixtures devolvessem censo vazio, `parciais` ficaria vazio e a
      alínea fecharia verde sem ter olhado grupo algum. Medido na Fase 4 — é a
      mesma forma de vácuo que o red da 022 achou em três alíneas. */
   let gruposMedidos = 0;
@@ -398,7 +434,7 @@ T("D023-ARB1", "C4 · tudo-ou-nada: o grupo congelado é ∅ ou INTEIRO, nunca p
         parciais.push(k + " · grupo \"" + g + "\": " + ocultos + " oculto(s) de " + nos.length);
     });
   });
-  if (!gruposMedidos) vac("(a)", "nenhum grupo congelado em nenhuma das sete fixtures — a regra tudo-ou-nada não teve sujeito");
+  if (!gruposMedidos) vac("(a)", "nenhum grupo congelado em nenhuma das oito fixtures — a regra tudo-ou-nada não teve sujeito");
   if (parciais.length) throw new Error("arbitragem PARCIAL: " + parciais.join(" | "));
   return true;
 });
@@ -426,7 +462,7 @@ T("D023-PAP1", "C6 · o papel acompanha a tela — no que o papel carrega, e o r
   /* A OCULTAÇÃO DA CAMADA 1 NÃO É MEDÍVEL AQUI, e isso é declarado em vez de
      fingido: a Camada 1 nunca é impressa (010 · C13), e medido nesta Fase 4
      nenhum dos três títulos de `HIDE_EYEBROWS` aparece em `#v32-print-report`
-     em nenhuma das sete fixtures. Um gate que procurasse ocultação no papel
+     em nenhuma das oito fixtures. Um gate que procurasse ocultação no papel
      fecharia verde por ausência de sujeito.
      O que o papel CARREGA e esta alínea mede: o conjunto de cards impressos e o
      aviso de supressão — isto é, a COERÊNCIA entre as duas superfícies. */
@@ -469,7 +505,7 @@ T("D023-PAP1", "C6 · o papel acompanha a tela — no que o papel carrega, e o r
   return true;
 });
 
-T("D023-DOM1", "C7 · nada é REMOVIDO — o título e a lista congelados existem nas sete fixtures", () => {
+T("D023-DOM1", "C7 · nada é REMOVIDO — o título e a lista congelados existem nas oito fixtures", () => {
   const faltando = [];
   Object.keys(F).forEach(k => {
     const { d } = boot(F[k]);

@@ -580,6 +580,18 @@ Alocação de id da série `EA-*` é do `doc-writer`, **depois de conferir a
 | **A4 · frase falsa** | `ui_v32.js:615` × `hideLegacyRecommendation` | **Corrigido nesta demanda** (C5). Registrar como achado **resolvido pela 010**, com o gate que o mede |
 | **Divergência doc×código inerte** | `tests_p52_layout.js:63-64` — `P52_CANONICAL_ORDER` tem `evidence` antes de `support`, ordem inversa à de `P52_SECTIONS`; o literal não é usado pelos gates | Insumo para o `qa-engineer`; fora do escopo |
 
+### E19 · O predicado da §1 troca de SUJEITO — "sem substituto" deixa de significar "sem contexto declarado"
+
+| | |
+|---|---|
+| **O que estava escrito** | §1: há substituto quando existe capability com apresentação `card`, classificação ≠ `CONTEXT_NOT_INFORMED` e payload não vazio. Como card de capability só nasce com contexto tecnológico declarado, "sem substituto" equivalia, na prática, a "sem contexto declarado" |
+| **Fato medido — a proposição envelheceu** | A `C1` desta demanda foi escrita quando a **visão por produto não existia**. Desde o `EA-65`/`EA-68` (2026-09-22) ela existe **sempre** e é **independente de contexto declarado**: medido, 11 cards por produto tanto com contexto quanto sem. Então *"sem substituto, a congelada permanece visível"* passou a descrever um mundo que mudou — **existe substituto, e ele não era contado**. O custo disso é o defeito que o proprietário relatou em 2026-10-01: sem contexto declarado, a seção de apoio mostra **o mesmo conjunto duas vezes** |
+| **O que passa a valer** | O predicado ganha uma segunda fonte: **produto publicado** na visão por produto, lido de `__CURATION.published()` — que é a definição que a própria seção usa para montar os cards, não uma derivação nova. E ganha uma **guarda**: com o **gate de suficiência fechado** o produto publicado **não** substitui (errata `E4` da demanda 023), porque leitura que o produto declara não-publicável não desloca a que ele publica — é a INV-3 pelo lado da apresentação |
+| **O sujeito novo, e por que é mais forte** | "Sem substituto" deixa de ser "contexto não declarado" — que é o caso comum e passou a significar o contrário — e passa a ser **supressão**: a curadoria removeu tudo, ou o gate de suficiência está fechado. O segundo caso cobre o que a redação original não alcançava: o operador **desfazendo o substituto deliberadamente**. É o vão que esta demanda existe para impedir, agora cobrindo quem o abre de propósito |
+| **Consequência nos gates desta demanda, medida** | `D010-ARB1` reancorado em **`D010-F3`** (gate fechado) — a única das sete fixtures em que não há substituto **e** os blocos contíguos da Camada 1 continuam no DOM; `D010-ARB4` em **`D010-F5b`**; o controle legado de `censoContraLegado` passou a **suprimir a curadoria**, porque "modo legado" sozinho deixou de ser linha de base não-arbitrada (a demanda 023 estendeu a arbitragem ao modo legado). Quatro valores declarados de `substituto` viraram `true` em `D010_DECLARED`, com trilha. As fixtures **`D010-F5`/`D010-F5b`** nasceram aqui, derivadas de `F1`/`F1b`. A suíte fecha **13 PASS · 0 FAIL**, como antes |
+| **Autorização** | Emenda a oráculo declarado desta demanda, **ratificada pelo proprietário no chat em 2026-10-01** (*"Aprovado, ratifico a emenda e autorizo o ui_v32.js"*) e **estendida ao modo legado em 2026-10-02** (*"Vamos com a B"*). Precedente de rito: a errata `E19` da demanda 015 |
+| **Classe** | Invariante que envelheceu porque o mundo que ela descrevia mudou — não tautologia, e não defeito de redação. Registro completo em `specs/023-leitura-unica-do-apoio/spec.md`, erratas `E1`–`E4` |
+
 ## Fora de escopo
 
 Herdado do `refinement.md` (seção "Fora de escopo (explícito)", itens 1–11) e,

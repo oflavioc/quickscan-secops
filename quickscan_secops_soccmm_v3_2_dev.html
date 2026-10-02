@@ -6290,7 +6290,22 @@ function renderBlocks(app){
   const p = ensurePanel(app);
   const legacy = V32.isLegacyModeV32();
   if (legacy){
-    hideLegacyRecommendation(app, false);
+    /* [023 · E1] O RAMO LEGADO DEIXA DE SER IMUNE À ARBITRAGEM — e só a ela.
+       Antes desta errata o argumento era a constante `false`: sessão em que nada
+       foi declarado nunca consultava o predicado, e era exatamente a sessão do
+       relato de 2026-10-01 — a mais comum, a que o facilitador produz sem abrir o
+       editor de contexto.
+       A cláusula revogada já era parcialmente falsa: a visão por produto
+       renderiza em modo legado desde o `EA-65`/`EA-68`, e `published()` é
+       IDÊNTICO nos dois modos (medido nas cinco fixtures da 010: 4/4, 4/4, 6/6,
+       5/5, 7/7). O substituto existe igual aqui; o que faltava era contá-lo.
+       `null` como argumento é deliberado: em modo legado `buildRecommendationContext()`
+       devolve `contexts:{}`, logo a cláusula de capability é falsa por construção
+       e o predicado se reduz à de produto publicado. Passar `null` diz isso em vez
+       de montar um contexto que o próprio engine recusa a produzir.
+       O que NÃO atravessa, e o `D023-LEG1 (c)` mede: `#v32support` continua
+       ausente e o convite ao editor continua sendo oferecido logo abaixo. */
+    hideLegacyRecommendation(app, hasSubstituteV32(null));
     p.innerHTML = `
       <div class="v32-cta-box">
         <button class="btn2" id="v32cta" aria-expanded="false">Adicionar contexto tecnológico</button>
@@ -6743,14 +6758,47 @@ function presentationOf(id, c){
    O predicado é de SESSÃO — resíduo declarado em C3 do refinamento: sessão assimétrica
    oculta a Camada 1 e deixa a capability sem contexto muda na seção de apoio; o resíduo
    é fechado no card-alvo e sinalizado no bloco de ausência, não escondido. */
+/* [023 · V1] A SEGUNDA FONTE — produto PUBLICADO na visão por produto.
+   A `C1` da 010 foi escrita quando a visão por produto não existia. Hoje ela
+   existe sempre e é independente de contexto declarado (`EA-65`/`EA-68`), então a
+   proposição "sem substituto, a congelada permanece visível" descrevia um mundo
+   que mudou: existe substituto, e ele não era contado.
+   `published()` é a DEFINIÇÃO que a seção já usa para montar os cards —
+   ofertados menos excluídos, mais os incluídos pelo operador. Nenhuma derivação
+   nova nasce aqui; nasce um LEITOR de derivação existente, que é o que evita uma
+   instância nova da classe do `EA-76`.
+   Ausência do módulo, ou qualquer erro, devolve FALSO — e falso é o
+   comportamento de hoje. A curadoria pode RETIRAR o substituto; ela nunca é
+   pré-condição para que a Camada 1 continue visível. */
+function temProdutoPublicadoV32(){
+  try {
+    if (typeof window === "undefined" || !window.__CURATION || !window.__CURATION.__installed) return false;
+    /* [023 · E4] GATE DE SUFICIÊNCIA FECHADO ⇒ NÃO SUBSTITUI, e isto foi medido
+       antes de ser escrito. A visão por produto publica mesmo com o gate fechado
+       (medido: 5 produtos sob `D010-F3`), e sem esta cláusula a leitura congelada
+       sairia da tela por causa de uma leitura que o próprio produto declara
+       não-publicável — o `D010-ARB3 (c)` acusou exatamente isso, comparando um
+       conjunto visível vazio contra os três nós da linha de base.
+       A regra é a INV-3 pelo lado da apresentação: o que não é publicável não
+       desloca o que é. Com o gate fechado o cliente FICA com a leitura
+       congelada, que é o desfecho conservador que a 010 existe para garantir. */
+    if (!dataSufficiency(DOMS.map((_, i) => domStat(i)))) return false;
+    const pub = window.__CURATION.published();
+    return Array.isArray(pub) && pub.length > 0;
+  } catch (e) { return false; }
+}
 function hasSubstituteV32(ctxRes){
   const ctxs = (ctxRes && ctxRes.contexts) || {};
-  return Object.keys(ctxs).some(id => {
+  const porCapability = Object.keys(ctxs).some(id => {
     const c = ctxs[id];
     if (presentationOf(id, c) !== "card") return false;
     if (c.classification==="CONTEXT_NOT_INFORMED") return false;
     return ((c.candidates||[]).length + (c.services||[]).length + (c.notes||[]).length) > 0;
   });
+  /* [023 · V1] O predicado deixa de ser função só do motor e passa a consultar o
+     estado do operador. É deliberado e tem guarda: o `D023-SUP1`/`D023-SUJ1`
+     medem que o sujeito do `D010-ARB1` continua alcançável pela supressão. */
+  return porCapability || temProdutoPublicadoV32();
 }
 /* [010 · E18] "O ENGINE PRODUZIU ALGO PARA ESTA CAPABILITY?" — helper único da
    semântica de payload (R9 §8), lido do resultado de `buildRecommendationContext()`

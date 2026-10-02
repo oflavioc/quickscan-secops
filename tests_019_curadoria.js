@@ -543,9 +543,8 @@ T("D019-SOL3", "em sessão REALISTA, todo produto que o motor oferece está na v
      (b) a FRONTEIRA existe nesse modo — é o nó que encerra a contagem do censo
          da Camada 1 antes dos cards, impedindo o grupo meio oculto e meio
          visível que o `D010-ARB3` reprova;
-     (c) a fronteira NÃO existe em modo legado — ali o título congelado está
-         visível e os cards SÃO os "blocos contíguos visíveis" do
-         `D010-ARB1 (c)`; interpor a fronteira tiraria o sujeito da alínea.
+     (c) a fronteira existe em modo legado SE E SOMENTE SE há arbitragem em
+         curso ali — ver a emenda de 2026-10-02, abaixo.
 
    A mesma peça, nos dois modos, tem efeitos opostos. Medir só um lado deixaria
    passar a metade errada — e foi medir só um lado que produziu este achado.
@@ -580,14 +579,54 @@ T("D019-CTX1", "com contexto tecnológico DECLARADO a visão por solução exist
   if (!cardsDepois.length)
     throw new Error("a fronteira existe mas não precede os cards — ela só serve no lugar certo");
 
-  /* (c) e em modo LEGADO ela não pode existir */
+  /* ==========================================================================
+     (c) EMENDA DE 2026-10-02 — demanda 023, errata `E1`. A ALÍNEA MUDOU DE
+     PROPOSIÇÃO, e a antiga tinha virado falsa.
+
+     Até esta data ela afirmava que a fronteira NÃO pode existir em modo legado,
+     e o motivo declarado era proteger o sujeito do `D010-ARB1 (c)` — os "blocos
+     contíguos visíveis". A demanda 023 estendeu a arbitragem ao modo legado
+     (porque a sessão do relato de 2026-10-01 era exatamente essa) e reancorou o
+     `D010-ARB1` na `D010-F3`. O sujeito que esta alínea protegia deixou de morar
+     aqui, e a proibição ficou sem razão de ser.
+
+     A proposição nova é a que a `fronteira()` sempre teve no código, agora
+     medida nos dois lados: ela existe SE E SOMENTE SE há arbitragem em curso no
+     escopo. Dois controles, e o par é o que impede a tautologia:
+       · legado COM produto publicado  → arbitragem ligada → fronteira PRESENTE;
+       · legado SEM produto publicado  → nada oculto       → fronteira AUSENTE.
+     A segunda metade é a que ainda proíbe o que a redação antiga proibia: a
+     fronteira não pode brotar onde não há nada a separar.
+     ========================================================================== */
   const L = boot({ nivel: 1, altos: ["mandate", "incident-response"],
                    prios: ["logs", "endpoint", "monitoring-coverage"] });
   if (L.w.__DEV.V32.isLegacyModeV32() !== true)
     vac("(c)", "a fixture de controle não está em modo legado — a alínea não compara o que promete");
-  if (L.d.querySelector("#p52-sec-support > [data-p53-sol-lead]"))
-    throw new Error("a fronteira apareceu em modo LEGADO — ali ela tira do `D010-ARB1 (c)` justamente os " +
-      "blocos contíguos visíveis que a alínea mede, e o gate cai por vacuidade");
+  const curL = cur(L.w);
+  if (!curL.published().length)
+    vac("(c)", "a fixture de controle legada não publica produto — a primeira metade da alínea ficaria sem sujeito");
+  const ocultosLegado = qa(L.d.getElementById("p52-sec-support"), ":scope > .v32-hidden").length;
+  if (!ocultosLegado)
+    throw new Error("em modo legado COM produto publicado nada foi ocultado — a arbitragem da errata E1 " +
+      "não atravessou, e é ela que faz a seção ter uma leitura só");
+  if (!L.d.querySelector("#p52-sec-support > [data-p53-sol-lead]"))
+    throw new Error("com arbitragem em curso em modo LEGADO, falta a fronteira que encerra a contagem do " +
+      "censo — sem ela o grupo contíguo fica meio oculto e meio visível");
+  /* e o controle da OUTRA metade: sem produto publicado não há arbitragem, e a
+     fronteira não pode existir */
+  const S = boot({ nivel: 1, altos: ["mandate", "incident-response"],
+                   prios: ["logs", "endpoint", "monitoring-coverage"] });
+  const curS = cur(S.w);
+  curS.offered().forEach(id => curS.set(id, "exclude"));
+  S.w.__DEV.showResults();
+  if (curS.published().length !== 0)
+    vac("(c)", "a supressão não esvaziou a publicação — o controle da segunda metade não existe");
+  if (qa(S.d.getElementById("p52-sec-support"), ":scope > .v32-hidden").length)
+    throw new Error("sem produto publicado algo foi OCULTADO em modo legado — a Camada 1 perdeu o substituto " +
+      "e deveria ficar inteira (é o vão que a demanda 010 existe para impedir)");
+  if (S.d.querySelector("#p52-sec-support > [data-p53-sol-lead]"))
+    throw new Error("a fronteira existe SEM arbitragem em curso — ela só serve para separar o que está " +
+      "oculto do que está visível, e aqui não há nada a separar");
   return true;
 });
 

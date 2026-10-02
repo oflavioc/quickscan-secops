@@ -69,6 +69,11 @@ const D015_ALVOS = { "detection-lifecycle": 2, "logs": 2, "automation": 1, "vuln
 -------------------------------------------------------------------------- */
 const D015_E1 = {
   id: "E1", nome: "legado puro · nada declarado",
+  /* [023 · emenda de 2026-10-02] SEM `suprimirCuradoria`, e de propósito: medido,
+     esta fixture não oferta produto algum, logo não há substituto a suprimir e
+     `camada1Visivel: true` continua verdadeiro sozinho. A primeira redação da
+     emenda a incluiu por simetria e o guarda de não-vacuidade a recusou —
+     "nada ofertado pelo motor — a supressão ficaria sem sujeito". */
   vec: () => 2,
   targets: { "detection-lifecycle": 3, "logs": 3, "automation": 3, "vulnerability-management": 3 },
   estado: {
@@ -90,6 +95,15 @@ const D015_E2 = {
   id: "E2", nome: "vão de contexto parcial · sem substituto",
   vec: d015Vec, priorities: ["automation", "logs"], targets: D015_ALVOS,
   arch: { saasAllowed: "yes" },
+  /* [023 · emenda de 2026-10-02] A DECLARAÇÃO DE CONTEXTO DEIXOU DE BASTAR para
+     esta fixture ser "sem substituto". A demanda 023 fez o produto publicado
+     contar como substituto, e esta sessão publica — então a Camada 1 passaria a
+     ser ocultada e `camada1Visivel: true` viraria falso, derrubando as CINCO
+     asserções desta suíte por uma raiz só (medido: 0 PASS · 5 FAIL, todas com a
+     mesma mensagem). A supressão da curadoria devolve a propriedade que define a
+     fixture, sem mexer em nenhum dos outros estados declarados — conferidos por
+     execução, não presumidos. */
+  suprimirCuradoria: true,
   estado: {
     legado: false, v32prio: true, v32support: true, camada1Visivel: true,
     /* [E19 · 2026-09-26] A demanda 021 fez o relatório cobrir TODO gap com
@@ -220,6 +234,10 @@ const D015_E4 = {
 -------------------------------------------------------------------------- */
 const D015_E5 = {
   id: "E5", nome: "sem prioridades declaradas · #v32prio não nasce",
+  /* [023 · emenda de 2026-10-02] Ver a nota da `E2`: produto publicado passou a
+     contar como substituto, e esta fixture declara `camada1Visivel: true`. A
+     supressão da curadoria é o que mantém a propriedade declarada verdadeira. */
+  suprimirCuradoria: true,
   vec: d015Vec, targets: D015_ALVOS, arch: { saasAllowed: "yes" },
   estado: {
     legado: false, v32prio: false, v32support: true, camada1Visivel: true,
@@ -259,6 +277,10 @@ const D015_E5 = {
 -------------------------------------------------------------------------- */
 const D015_E6 = {
   id: "E6", nome: "sem cenário-alvo · #pr-target legitimamente ausente",
+  /* [023 · emenda de 2026-10-02] Ver a nota da `E2`: produto publicado passou a
+     contar como substituto, e esta fixture declara `camada1Visivel: true`. A
+     supressão da curadoria é o que mantém a propriedade declarada verdadeira. */
+  suprimirCuradoria: true,
   vec: d015Vec, priorities: ["automation", "logs"], arch: { saasAllowed: "yes" },
   estado: {
     legado: false, v32prio: true, v32support: true, camada1Visivel: true,
@@ -341,6 +363,10 @@ const D015_E7 = {
 -------------------------------------------------------------------------- */
 const D015_E8 = {
   id: "E8", nome: "prioridade declarada sem gap · card neutro (presentationOf === null) + sobrevivente",
+  /* [023 · emenda de 2026-10-02] Ver a nota da `E2`: produto publicado passou a
+     contar como substituto, e esta fixture declara `camada1Visivel: true`. A
+     supressão da curadoria é o que mantém a propriedade declarada verdadeira. */
+  suprimirCuradoria: true,
   vec: d015Vec, priorities: ["external-surface", "automation"], targets: D015_ALVOS,
   presence: { "external-exposure": "PRESENT" }, arch: { saasAllowed: "yes" },
   estado: {
@@ -431,6 +457,29 @@ function d015ApplyResults(w, d, fx) {
   w.__DEV.showResults();
   d015ApplyContext(w, d, fx);
   w.__DEV.showResults();
+  /* [023 · emenda de 2026-10-02] A SUPRESSAO DA CURADORIA, pela unica porta de
+     escrita dela (R9 §5). Existe por causa da errata da demanda 023: produto
+     publicado passou a contar como substituto, e a fixture `E2` — cuja razao de
+     ser e "Camada 1 VISIVEL e #v32prio presente ao mesmo tempo" — perdia essa
+     propriedade sem ela. Falha ALTO sem sujeito: fixture de supressao que nao
+     suprime nada seria um estado declarado falso. */
+  if (fx.suprimirCuradoria) {
+    /* AUSENCIA DO MODULO E CASO LEGITIMO AQUI, e so aqui: `D015-NOSUB1` e
+       `D015-GOV1` aplicam as fixtures sobre a ANCORA IMUTAVEL `382338b`, um
+       artefato em que a curadoria nao existe. Naquele build o predicado antigo
+       vigora, a Camada 1 fica visivel sozinha e `camada1Visivel: true` continua
+       verdadeiro — nao ha nada a suprimir porque nada passou a substituir.
+       Oferta VAZIA com o modulo PRESENTE continua falhando alto: ai a fixture
+       perdeu o sujeito de verdade. */
+    if (!w.__CURATION || !w.__CURATION.__installed) return fx;
+    const off = w.__CURATION.offered();
+    if (!off.length)
+      throw new Error(fx.id + ": nada ofertado pelo motor — a supressao ficaria sem sujeito");
+    off.forEach(id => w.__CURATION.set(id, "exclude"));
+    w.__DEV.showResults();
+    if (w.__CURATION.published().length !== 0)
+      throw new Error(fx.id + ": a supressao nao esvaziou a publicacao");
+  }
   return fx;
 }
 

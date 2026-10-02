@@ -369,8 +369,38 @@ const D010_F4 = {
   screen: "results"
 };
 
+/* ---------------------------------------------------------------------------
+   D010-F5 e D010-F5b · O VÃO REANCORADO (emenda de 2026-10-02, demanda 023)
+
+   São `D010-F1` e `D010-F1b` com UM passo a mais: a curadoria EXCLUI tudo o que
+   o motor ofereceu. Nada no estado do engine muda — `suprimirCuradoria` age
+   depois do render, pela única porta de escrita da curadoria (`__CURATION.set`),
+   e o que ela alcança é o que se PUBLICA.
+
+   POR QUE FIXTURE NOVA, e não emenda em F1/F1b: sob o predicado emendado F1 e
+   F1b passam a TER substituto, e esse é o comportamento novo que a 023 entrega.
+   Emendá-las reescreveria asserções que já vigoram em dez outros gates — é a
+   mesma razão que a emenda de 2026-08-30 registrou ao criar a F4.
+
+   O SUJEITO NOVO É MAIS FORTE: antes "sem substituto" era "contexto não
+   declarado", que é o caso comum e passou a significar o contrário; agora é
+   "o substituto foi SUPRIMIDO", inclusive pela mão do operador. É o vão que a
+   010 existe para impedir, cobrindo quem o abre de propósito.
+--------------------------------------------------------------------------- */
+const D010_F5 = Object.assign({}, D010_F1, {
+  id: "D010-F5",
+  name: "vão reancorado · substituto suprimido pela curadoria",
+  suprimirCuradoria: true
+});
+const D010_F5b = Object.assign({}, D010_F1b, {
+  id: "D010-F5b",
+  name: "vão reancorado sem prioridades · ramo !hasPrio com substituto suprimido",
+  suprimirCuradoria: true
+});
+
 const D010_FIXTURES = { "D010-F1": D010_F1, "D010-F1b": D010_F1b, "D010-F2": D010_F2,
-                        "D010-F3": D010_F3, "D010-F4": D010_F4 };
+                        "D010-F3": D010_F3, "D010-F4": D010_F4,
+                        "D010-F5": D010_F5, "D010-F5b": D010_F5b };
 
 /* ===================== aplicação sobre o runtime real ===================== */
 
@@ -417,6 +447,23 @@ function d010ApplyResults(w, d, fx) {
   w.__DEV.showResults();
   d010ApplyContext(w, d, fx);
   w.__DEV.showResults();
+  /* [023 · emenda de 2026-10-02] A SUPRESSÃO VEM DEPOIS DO RENDER, e pela porta
+     canônica. `__CURATION.set` é a única escrita da curadoria (R9 §5): nenhum
+     derivado é tocado à mão, e o que a decisão alcança é o que se publica. Falha
+     ALTO se não houver nada ofertado — fixture de supressão sem sujeito seria um
+     gate vacuoso disfarçado de cenário. */
+  if (fx.suprimirCuradoria) {
+    if (!w.__CURATION || !w.__CURATION.__installed)
+      throw new Error(fx.id + ": `__CURATION` ausente — a fixture de supressão não tem como suprimir");
+    const off = w.__CURATION.offered();
+    if (!off.length)
+      throw new Error(fx.id + ": nada ofertado pelo motor — a fixture de supressão ficaria sem sujeito");
+    off.forEach(id => w.__CURATION.set(id, "exclude"));
+    w.__DEV.showResults();
+    if (w.__CURATION.published().length !== 0)
+      throw new Error(fx.id + ": a supressão não esvaziou a publicação — " +
+        w.__CURATION.published().length + " item(ns) ainda publicado(s)");
+  }
   return fx;
 }
 
@@ -579,17 +626,54 @@ function d010PresentationOf(w, id, c) {
   return null;
 }
 
-/* "Há substituto?" — o predicado da spec §1, com as TRÊS cláusulas, como
-   oráculo. Reimplementado da spec, não lido de `__DEV.hasSubstitute`: quem lê o
-   produto para julgar o produto não julga nada. */
+/* "Há substituto?" — o predicado da spec §1, como oráculo. Reimplementado da
+   spec, não lido de `__DEV.hasSubstitute`: quem lê o produto para julgar o
+   produto não julga nada.
+
+   ==========================================================================
+   EMENDA DE 2026-10-02 — A SEGUNDA FONTE (demanda 023, erratas da spec §1)
+   ==========================================================================
+   A `C1` desta demanda foi escrita quando a visão por produto NÃO existia.
+   Hoje ela existe sempre e é independente de contexto declarado
+   (`EA-65`/`EA-68`), e por isso a proposição "sem substituto, a congelada
+   permanece visível" descrevia um mundo que mudou: existe substituto, e ele não
+   era contado. A emenda é **ratificada pelo proprietário em 2026-10-01**
+   (predicado da §1 e fixture do `D010-ARB1`) e **estendida ao modo legado em
+   2026-10-02** (errata `E1` da 023, rota B).
+
+   O invariante que esta demanda protege fica MAIS FORTE, não mais fraco: o
+   sujeito de "sem substituto" deixa de ser "contexto não declarado" — que hoje é
+   o caso comum e não deveria significar ausência de substituto — e passa a ser
+   a SUPRESSÃO, inclusive a que o operador faz deliberadamente. É o vão que a 010
+   existe para impedir, agora cobrindo quem o abre de propósito.
+
+   `published()` é a DEFINIÇÃO que a seção usa para montar os cards; lê-la do
+   bridge é consumir o contrato declarado, não reimplementar derivação (seria a
+   terceira cópia, classe do `EA-76`). Ausência do módulo devolve FALSO, que é o
+   comportamento anterior à emenda. */
+function d010ProdutoPublicado(w) {
+  try {
+    if (!w.__CURATION || !w.__CURATION.__installed) return false;
+    /* [023 · E4] GATE DE SUFICIENCIA FECHADO NAO SUBSTITUI. A visao por produto
+       publica mesmo com o gate fechado (medido: 5 itens sob `D010-F3`), e sem esta
+       clausula uma leitura que o proprio produto declara nao-publicavel tiraria a
+       congelada da tela. E a INV-3 pelo lado da apresentacao, e e o que devolve
+       sujeito ao `D010-ARB1`: com o gate fechado NAO ha substituto, e a Camada 1
+       fica — com os blocos contiguos dela intactos. */
+    if (JSON.parse(w.__DEV.legacySnapshot()).suff !== true) return false;
+    const pub = w.__CURATION.published();
+    return Array.isArray(pub) && pub.length > 0;
+  } catch (e) { return false; }
+}
 function d010HasSubstitute(w, res) {
   const ctxs = (res || w.__DEV.V32.buildRecommendationContext()).contexts;
-  return Object.keys(ctxs).some(id => {
+  const porCapability = Object.keys(ctxs).some(id => {
     const c = ctxs[id];
     if (d010PresentationOf(w, id, c) !== "card") return false;
     if (c.classification === "CONTEXT_NOT_INFORMED") return false;
     return ((c.candidates || []).length + (c.services || []).length + (c.notes || []).length) > 0;
   });
+  return porCapability || d010ProdutoPublicado(w);
 }
 
 /* Capabilities de apresentação `base`. Os DOIS conjuntos existem porque não são
@@ -728,7 +812,11 @@ function d010FrozenTitles(d) {
    código. */
 const D010_DECLARED = {
   "D010-F1": {
-    legacy: false, suff: true, substituto: false,
+    /* [023 · emenda de 2026-10-02] `substituto` passou de FALSE para TRUE: sob o
+       predicado emendado o produto publicado conta como substituto, e esta fixture
+       publica. Valor MEDIDO por execução, não estimado. O vão reancorado vive em
+       `D010-F5`/`D010-F5b`, que suprimem a curadoria. */
+    legacy: false, suff: true, substituto: true,
     arch: { saasAllowed: "yes" },
     landscapeDeclarada: {},
     prioridades: ["automation", "endpoint"],
@@ -752,7 +840,11 @@ const D010_DECLARED = {
     titulosCongelados: [{ texto: "Como a Fortinet pode apoiar nas prioridades declaradas" }]
   },
   "D010-F1b": {
-    legacy: false, suff: true, substituto: false,
+    /* [023 · emenda de 2026-10-02] `substituto` passou de FALSE para TRUE: sob o
+       predicado emendado o produto publicado conta como substituto, e esta fixture
+       publica. Valor MEDIDO por execução, não estimado. O vão reancorado vive em
+       `D010-F5`/`D010-F5b`, que suprimem a curadoria. */
+    legacy: false, suff: true, substituto: true,
     arch: { saasAllowed: "yes" },
     landscapeDeclarada: {},
     prioridades: [],
@@ -804,6 +896,11 @@ const D010_DECLARED = {
                     supportMode: "DIRECT", candidates: ["fortianalyzer", "fortisiem", "fortisiem-cloud"], services: [] }
   },
   "D010-F3": {
+    /* [023 · emenda de 2026-10-02] `substituto` CONTINUA FALSE, e o motivo mudou:
+       esta fixture publica 5 produtos, mas o gate de suficiência está FECHADO e a
+       errata `E4` decidiu que leitura não-publicável não desloca a congelada. É por
+       isso que ELA passou a ser a âncora do `D010-ARB1` — é a única das sete em que
+       não há substituto E os blocos contíguos da Camada 1 continuam no lugar. */
     legacy: false, suff: false, substituto: false,
     arch: { saasAllowed: "yes" },
     landscapeDeclarada: {},
@@ -852,7 +949,11 @@ const D010_DECLARED = {
     diferencialC9: { qid: "vulnerability-management", nivel: 0, alvo: 1, gateAberto: false }
   },
   "D010-F4": {
-    legacy: false, suff: true, substituto: false,
+    /* [023 · emenda de 2026-10-02] `substituto` passou de FALSE para TRUE: sob o
+       predicado emendado o produto publicado conta como substituto, e esta fixture
+       publica. Valor MEDIDO por execução, não estimado. O vão reancorado vive em
+       `D010-F5`/`D010-F5b`, que suprimem a curadoria. */
+    legacy: false, suff: true, substituto: true,
     arch: { saasAllowed: "yes" },
     landscapeDeclarada: {},
     prioridades: ["automation", "endpoint"],
@@ -1097,6 +1198,17 @@ const D010_VACUIDADES_CONHECIDAS = [
 ];
 
 /* ===================== conferência dos estados declarados ================== */
+
+/* [023 · emenda de 2026-10-02] OS ESTADOS DE F5/F5b SÃO DERIVADOS, NUNCA COPIADOS.
+   A supressão da curadoria age sobre o que se PUBLICA e não toca estado de engine
+   algum: contextos, `MAP`, candidatos, serviços, apresentações e títulos
+   congelados saem idênticos aos de F1/F1b. A única diferença é o predicado.
+   Copiar os dezesseis campos à mão criaria a sétima instância da classe de
+   defeito que esta base de código mais paga — valor com dono em outro lugar,
+   transcrito. O `d010AssertFixtureStates` confere os dezesseis por execução, logo
+   a derivação é afirmada e provada, não suposta. */
+D010_DECLARED["D010-F5"] = Object.assign({}, D010_DECLARED["D010-F1"], { substituto: false });
+D010_DECLARED["D010-F5b"] = Object.assign({}, D010_DECLARED["D010-F1b"], { substituto: false });
 
 const _eqL = (a, b) => a.slice().sort().join("|") === b.slice().sort().join("|");
 
@@ -1529,13 +1641,13 @@ function d010AssertFixtureStates(w, fx) {
 }
 
 module.exports = {
-  D010_F1, D010_F1b, D010_F2, D010_F3, D010_F4, D010_FIXTURES, D010_DECLARED,
+  D010_F1, D010_F1b, D010_F2, D010_F3, D010_F4, D010_F5, D010_F5b, D010_FIXTURES, D010_DECLARED,
   D010_GAP_QIDS, D010_ALVOS_VAO, D010_ALVOS_SERVICO, D010_HIDE_EYEBROWS,
   D010_EQUIVALENCIA_NOME, D010_VACUIDADES_CONHECIDAS, D010_DECLARACOES_OBRIGATORIAS,
   d010VecVao, d010ApplyContext, d010ApplyResults,
   d010Eval, d010Answers, d010ConfirmedCount, d010ComparisonPublishable,
   d010MapItems, d010MapKeys, d010ProductName, d010ServiceName, d010EquivalenciaNome,
   d010CapOf, d010EnablerCount, d010StateWith, d010StateOf, d010CtxStateOf, d010TargetsByState,
-  d010PresentationOf, d010HasSubstitute, d010BasePresented, d010BaseInV32Base, d010CardsSemPayload,
+  d010PresentationOf, d010HasSubstitute, d010ProdutoPublicado, d010BasePresented, d010BaseInV32Base, d010CardsSemPayload,
   d010ServicesByCapability, d010TargetEnablers, d010FrozenTitles, d010AssertFixtureStates
 };

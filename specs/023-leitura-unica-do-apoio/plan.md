@@ -2,6 +2,15 @@
 
 > Fase 2 · dono: tech-lead · consome a [spec](spec.md) aprovada.
 
+> **EMENDA DE 2026-10-02 (errata `E1`/`E3` da spec).** O desenho abaixo vale, e
+> ganhou uma segunda metade: a Fase 4 mediu que o caso do relato é **modo
+> legado**, onde o ramo legado de `renderBlocks` (`ui_v32.js:249`) passa a
+> constante `false` e o predicado **não é consultado**. O proprietário escolheu
+> estender a arbitragem ao modo legado (rota **B**, 2026-10-02). Então **duas**
+> expressões mudam, não uma — as duas em `ui_v32.js`, sob a mesma autorização
+> §29.4. E a W1 passa a incluir a emenda ao `D019-CTX1 (c)` (`T003a`), terceiro
+> oráculo alheio tocado. Detalhe e custo medido: erratas `E1` e `E3` da spec.
+
 ## Desenho
 
 **Uma função muda.** `hasSubstituteV32` (`ui_v32.js:702`) ganha uma segunda fonte:

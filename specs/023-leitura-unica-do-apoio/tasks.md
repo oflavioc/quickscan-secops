@@ -6,15 +6,17 @@ Consome a [spec](spec.md) (C1–C9) e o [plano](plan.md) (W0–W4).
 
 | Id | Wave | Dono (agente) | Tipo | [P] | Descrição | Gate associado |
 |---|---|---|---|---|---|---|
-| T001 | 0 | `qa-engineer` | feature | | Suíte `tests_023_leitura.js` com os 9 gates; fixtures dos cinco cenários da §Comportamento. **Executar e commitar o FAIL** | `D023-*` (todos) |
+| T001 | 0 | `qa-engineer` | feature | | Suíte `tests_023_leitura.js` com os 9 gates; fixtures dos cenários da §Comportamento — **sete** depois da errata `E1`, com os três do modo legado. **Executar e commitar o FAIL** | `D023-*` (todos) |
 | T002 | 1 | `core-engineer` | feature | | `hasSubstituteV32` (`ui_v32.js`, §29.4 autorizado em 2026-10-01) ganha a segunda fonte, sob guarda de `typeof` — sem `__CURATION`, comportamento de hoje | `D023-OCU1` · `D023-REG1` · `D023-SUP1` |
+| T002a | 1 | `core-engineer` | feature | | **Errata `E1`**: o ramo legado de `renderBlocks` (`ui_v32.js:249`) deixa de passar a constante `false` e passa o mesmo veredito — e os cards por produto **não** podem ser ocultados junto (a `fronteira()` é condicionada a `arbitragemEmCurso()`, que só vê o DOM depois) | `D023-OCU1` · `D023-LEG1` |
+| T003a | 1 | `qa-engineer` | fix | | **Errata `E1`**: a alínea **(c)** do `D019-CTX1` emendada — a fronteira passa a existir em modo legado quando há produto publicado, e o motivo declarado nela (proteger o sujeito do `D010-ARB1 (c)`) é o sujeito que a T004 reancora | `D019-CTX1` |
 | T003 | 1 | `qa-engineer` | fix | | Fixture nova de **substituto suprimido** em `fixtures_010_vao.js` e o oráculo `d010HasSubstitute` emendado — a reimplementação da spec §1 acompanha a emenda, senão o gate mede uma regra que o produto não segue mais | `D010-ARB1` · `D023-SUJ1` |
 | T004 | 1 | `qa-engineer` | fix | | `D010-ARB1` reancorado na fixture nova; as outras quatro alíneas da 010 conferidas **por execução**, não por leitura | `d010` inteiro |
 | T005 | 1 | `product-owner` | doc | `[P]` | Errata no `specs/010-recomendacao-sem-vao/spec.md` §1: o predicado muda de sujeito, com a ratificação de 2026-10-01 citada | `compliance` |
 | T006 | 2 | `qa-engineer` | feature | | Campanha `tests_023_mutants.js` com M1–M8; `--preflight` provando `ocorrencias == 1` por âncora | contrato C1 da 013 |
 | T007 | 2 | `qa-engineer` | chore | `[P]` | Entrada `d023` em `mutation_map.json` — targets incluem `ui_curation_v32.js` como insumo de classe `populacao`, porque é ele que define o que `published()` devolve | `D017` |
 | T008 | 2 | `build-engineer` | chore | `[P]` | `d023` em `expected_suites.json`, na contagem medida | `suites` (R10 §3) |
-| T009 | 3 | `qa-engineer` | fix | | Regressão medida nas suítes que tocam a seção de apoio: `d010`, `d015`, `d019`, `d021`, `d022`, `p52layout` | `suites` |
+| T009 | 3 | `qa-engineer` | fix | | Regressão medida nas suítes que tocam a seção de apoio: `d010`, `d015`, `d019`, `d021`, `d022`, `p52layout` — com a errata `E1`, `d019` passa a ser **esperado vermelho até a T003a**, e isso é verificado, não assumido | `suites` |
 | T010 | 3 | `qa-engineer` | chore | `[P]` | `IC-4` em todas as campanhas: o predicado muda uma linha de `ui_v32.js`, que é alvo de `d010`, `d022`, `p52` e `core` | `IC-4` (preflight) |
 | T011 | 3 | `build-engineer` | chore | | `gen_pins.py` + repin `§29.4` de `ui_v32.js` em `tests_p50_core.js`, com a autorização de 2026-10-01 registrada no próprio pin | `baseline` · `boundary` · `P50-GOV1` |
 | T012 | 4 | `qa-engineer` | chore | | `run.sh` completo + `compliance-audit.sh` + campanha `d023` verde + `spec-validate.md` | pipeline inteiro |
@@ -46,6 +48,20 @@ de quatro campanhas. Mudar linha em arquivo-alvo apodrece âncora — aconteceu 
 vezes nesta sessão, com o `P52-RB6` e com o par `D011-M18`/`D014-M7`.
 
 **T011 é a última antes da validação**: repin no meio vira trilha falsa.
+
+**ERRATA `E1` (2026-10-02) — `T002a` e `T003a` nasceram na Fase 4, e entram na
+W1 junto com as três que já eram indivisíveis.** A medição do red mostrou que o
+caso do relato é **modo legado**, onde o predicado nem é consultado; o
+proprietário escolheu a rota **B** (estender a arbitragem ao modo legado) depois
+de confirmar que não usou o editor de contexto na sessão real. Os ids novos
+levam sufixo de letra porque `T003`…`T014` já estão citados em commits e no
+planning-state (R12: número citado nunca renumera).
+
+A W1 passa de três tarefas indivisíveis para **cinco**, e a razão é a mesma:
+`T002`+`T002a` mudam o comportamento, `T003`+`T004` reancoram o oráculo da 010 e
+`T003a` o da 019. Commitar qualquer subconjunto deixaria a árvore com gate de
+outra demanda vermelho **por motivo certo** — que é exatamente o vermelho que
+não se publica. Os arquivos têm donos distintos e não colidem (R5 §3).
 
 ## O que NÃO está aqui, e por quê
 

@@ -23,21 +23,29 @@
    Fase 0 descreveu. As três ficam aqui porque são o motivo da forma dos gates,
    e estão registradas no `relatorio-final.md` da demanda como achados da Fase 4.
 
-   1 · "SEM CONTEXTO DECLARADO" SÃO DOIS MUNDOS, E O PREDICADO SÓ ALCANÇA UM.
+   1 · "SEM CONTEXTO DECLARADO" SÃO DOIS MUNDOS, E O PREDICADO SÓ ALCANÇAVA UM.
        Sessão em que NADA foi declarado — nem landscape, nem arquitetura, nem
        sinal, nem plataforma — é MODO LEGADO (`engine_v32.js:305`). Ali
        `renderBlocks` toma o ramo legado e chama
        `hideLegacyRecommendation(app, false)` INCONDICIONALMENTE: o predicado
-       não é consultado, e alargá-lo não muda nada. Medido:
+       não é consultado, e alargá-lo não mudaria nada. Medido:
 
          nada declarado      | legado=true  | hasSub=false | 0 ocultos | 11 cards
          só `saasAllowed=yes`| legado=false | hasSub=false | 0 ocultos | 11 cards
          capability `NONE`   | legado=false | hasSub=true  | 3 ocultos | 11 cards
 
-       A redundância do relato existe nas DUAS primeiras linhas. A demanda
-       alcança a SEGUNDA. A primeira é o sujeito do `D023-LEG1`, que exige o
-       contrário — e por isso o `D023-OCU1` mede a segunda, nominalmente, em vez
-       de encenar a primeira e nascer impossível.
+       A redundância do relato existe nas DUAS primeiras linhas, e o
+       proprietário confirmou em 2026-10-02 que a sessão real era a PRIMEIRA —
+       a spec como estava não corrigiria o caso relatado. ERRATA `E1`: o modo
+       legado entra no escopo (rota B, decisão do proprietário no chat). O
+       `D023-OCU1` passa a medir os DOIS mundos, nominalmente, e o `D023-LEG1`
+       troca de sujeito: em modo legado a arbitragem atravessa, e NADA MAIS.
+
+       O preço está medido na errata `E1` da spec, e é maior do que o da spec
+       original: sob o predicado novo as CINCO fixtures da 010 têm substituto, e
+       um TERCEIRO oráculo alheio — a alínea (c) do `D019-CTX1` — tem de ser
+       emendado, porque ele afirma que a `fronteira()` não existe em modo legado
+       e a fixture de controle dele publica 11 produtos.
 
    2 · OS CARDS POR PRODUTO SÃO `.apoio-block` CONTÍGUOS AO TÍTULO CONGELADO.
        Medido no escopo de apoio, sem contexto declarado: logo depois da
@@ -59,7 +67,7 @@
 
    3 · A CAMADA 1 NUNCA É IMPRESSA, ENTÃO O PAPEL NÃO PODE MEDIR OCULTAÇÃO.
        Medido: ZERO dos três títulos de `HIDE_EYEBROWS` aparecem em
-       `#v32-print-report`, em qualquer das cinco fixtures. É desenho selado da
+       `#v32-print-report`, em qualquer das sete fixtures. É desenho selado da
        010 (C13, `afirmaPreservacao` falsy em todo sítio de `buildPrintReport`).
        A redação da spec para o C6 — "tudo de C1–C4 medido no relatório" — é
        portanto INALCANÇÁVEL ao pé da letra, e um gate escrito assim fecharia
@@ -141,8 +149,16 @@ const F = {
   F3: { nome: "substituto suprimido pela curadoria", arch: { saasAllowed: "yes" }, suprimirTudo: true },
   /* F4 · sem gap algum: não há recomendação legada a esconder nem produto. */
   F4: { nome: "sem gap algum", nivel: 3, prios: [], arch: { saasAllowed: "yes" } },
-  /* F5 · modo legado puro: NADA declarado. A V3.2 não governa. */
-  F5: { nome: "modo legado puro", prios: [] }
+  /* F5 · MODO LEGADO COM PRODUTO PUBLICADO — o caso do relato (errata `E1`).
+     Nada declarado: nem landscape, nem arquitetura, nem sinal, nem plataforma.
+     Medido: legado=true, offered=11, published=11. */
+  F5: { nome: "modo legado COM produto publicado (o caso do relato)", prios: [] },
+  /* F6 · modo legado SEM produto: nível 3 em tudo, sem prioridade declarada.
+     Medido: legado=true, offered=0. É o sujeito do `D023-LEG1` depois de `E1`. */
+  F6: { nome: "modo legado sem produto publicado", nivel: 3, prios: [] },
+  /* F7 · modo legado com a curadoria suprimindo tudo: o substituto existia e o
+     operador o desfez, no mundo em que a V3.2 não governava nada. */
+  F7: { nome: "modo legado com substituto suprimido", prios: [], suprimirTudo: true }
 };
 
 function boot(fx, opts) {
@@ -255,49 +271,54 @@ function papel(w, d) {
 
 /* ========================================================================== */
 
-T("D023-OCU1", "C1 · sem contexto de capability e COM produto publicado, a congelada é oculta e os cards ficam", () => {
-  const { w, d } = boot(F.F1);
-  /* (a) pré-condição NOMINAL: fora do legado, nada de capability declarado, e
-     produto publicado. Sem ela o gate mediria outro mundo — ver nota 1 do
-     cabeçalho. */
-  if (w.__DEV.V32.isLegacyModeV32() !== false)
-    vac("(a)", "a fixture caiu em MODO LEGADO — ali a arbitragem não é exercida e o critério não se aplica (é o sujeito do D023-LEG1)");
-  const pub = publicados(w);
-  if (!pub.length)
-    vac("(a)", "nenhum produto publicado — sem substituto não há o que arbitrar");
-  if (d023Substituto(w) !== true)
-    vac("(a)", "o predicado da spec §Comportamento não vê substituto nesta fixture — a fixture deixou de ser o caso do relato");
-  /* (b) a leitura congelada sai: nenhum título nem bloco congelado visível */
-  const c1 = censo(d);
-  if (!c1.length) vac("(b)", "nenhum título de HIDE_EYEBROWS presente na tela");
-  const congeladosVisiveis = c1.filter(x => !x.produto && !x.oculto).map(x => x.chave);
-  /* (c) e a leitura que FICA é a dos cards — medida na MESMA passagem, porque
-     ocultar a lista e levar os cards junto satisfaria (b) com a seção vazia. */
-  const todos = cardsProduto(d), ocultos = cardsProdutoOcultos(d);
+T("D023-OCU1", "C1 · com produto publicado a congelada é oculta e os cards ficam — nos DOIS mundos (errata E1)", () => {
+  /* AS DUAS ALÍNEAS SÃO OS DOIS MUNDOS da nota 1 do cabeçalho, e a (a) é a do
+     relato. Medir só uma deixaria passar exatamente o defeito que o
+     proprietário viu: `legadoEsperado` é parte da pré-condição, nominalmente,
+     para que uma fixture que escorregue de modo não passe por engano. */
   const erros = [];
-  if (congeladosVisiveis.length)
-    erros.push("leitura congelada AINDA VISÍVEL: " + JSON.stringify(congeladosVisiveis));
-  if (!todos.length)
-    erros.push("nenhum card por produto na tela — a leitura que deveria ficar não existe");
-  if (ocultos.length)
-    erros.push("cards por produto OCULTOS junto com a congelada: " +
-      JSON.stringify(ocultos.map(c => c.getAttribute("data-p53-sol-produto"))));
-  if (todos.length !== pub.length)
-    erros.push("cards na tela (" + todos.length + ") ≠ publicados pela curadoria (" + pub.length + ")");
-  /* (d) e o mesmo depois de UMA SEGUNDA passagem de render. A fronteira que
-     protege os cards é inserida por `arbitragemEmCurso()`, que LÊ o DOM já
-     arbitrado; e o ramo de idempotência do decorador reaproveita os cards que
-     já existem. Medir só a primeira passagem deixaria passar o estado em que a
-     segunda volta com os cards ocultos. */
-  w.__DEV.showResults();
-  const c2 = censo(d);
-  const congVis2 = c2.filter(x => !x.produto && !x.oculto).map(x => x.chave);
-  const oc2 = cardsProdutoOcultos(d);
-  if (congVis2.length)
-    erros.push("após re-render, leitura congelada VISÍVEL de novo: " + JSON.stringify(congVis2));
-  if (oc2.length)
-    erros.push("após re-render, cards por produto OCULTOS: " +
-      JSON.stringify(oc2.map(c => c.getAttribute("data-p53-sol-produto"))));
+  [["(a) modo legado", F.F5, true], ["(b) fora do legado", F.F1, false]].forEach(par => {
+    const nome = par[0], fx = par[1], legadoEsperado = par[2];
+    const { w, d } = boot(fx);
+    if (w.__DEV.V32.isLegacyModeV32() !== legadoEsperado)
+      vac(nome, "a fixture não está no modo que a alínea mede · esperado legado=" + legadoEsperado);
+    const pub = publicados(w);
+    if (!pub.length)
+      vac(nome, "nenhum produto publicado — sem substituto não há o que arbitrar");
+    if (d023Substituto(w) !== true)
+      vac(nome, "o predicado da spec §Comportamento não vê substituto nesta fixture");
+    const c1 = censo(d);
+    if (!c1.length) vac(nome, "nenhum título de HIDE_EYEBROWS presente na tela");
+    /* a leitura congelada SAI */
+    const congeladosVisiveis = c1.filter(x => !x.produto && !x.oculto).map(x => x.chave);
+    if (congeladosVisiveis.length)
+      erros.push(nome + " · leitura congelada AINDA VISÍVEL: " + JSON.stringify(congeladosVisiveis));
+    /* e a leitura que FICA é a dos cards — medida na MESMA passagem, porque
+       ocultar a lista e levar os cards junto satisfaria a primeira metade com a
+       seção vazia. É a nota 2 do cabeçalho: os cards são `.apoio-block`
+       contíguos ao título, e `.apoio-block` é classe permitida na varredura. */
+    const todos = cardsProduto(d), ocultos = cardsProdutoOcultos(d);
+    if (!todos.length)
+      erros.push(nome + " · nenhum card por produto na tela — a leitura que deveria ficar não existe");
+    if (ocultos.length)
+      erros.push(nome + " · cards por produto OCULTOS junto com a congelada: " +
+        JSON.stringify(ocultos.map(c => c.getAttribute("data-p53-sol-produto"))));
+    if (todos.length !== pub.length)
+      erros.push(nome + " · cards na tela (" + todos.length + ") ≠ publicados pela curadoria (" + pub.length + ")");
+    /* e o mesmo depois de UMA SEGUNDA passagem de render. A fronteira que
+       protege os cards é inserida por `arbitragemEmCurso()`, que LÊ o DOM já
+       arbitrado; e o ramo de idempotência do decorador reaproveita os cards que
+       já existem. Medir só a primeira passagem deixaria passar o estado em que a
+       segunda volta com os cards ocultos. */
+    w.__DEV.showResults();
+    const congVis2 = censo(d).filter(x => !x.produto && !x.oculto).map(x => x.chave);
+    const oc2 = cardsProdutoOcultos(d);
+    if (congVis2.length)
+      erros.push(nome + " · após re-render, leitura congelada VISÍVEL de novo: " + JSON.stringify(congVis2));
+    if (oc2.length)
+      erros.push(nome + " · após re-render, cards por produto OCULTOS: " +
+        JSON.stringify(oc2.map(c => c.getAttribute("data-p53-sol-produto"))));
+  });
   if (erros.length) throw new Error(erros.join(" | "));
   return true;
 });
@@ -351,10 +372,10 @@ T("D023-SUP1", "C3 · curadoria suprime tudo ⇒ sem substituto ⇒ a congelada 
   return true;
 });
 
-T("D023-ARB1", "C4 · tudo-ou-nada: o grupo congelado é ∅ ou INTEIRO, nunca parcial, nas cinco fixtures", () => {
+T("D023-ARB1", "C4 · tudo-ou-nada: o grupo congelado é ∅ ou INTEIRO, nunca parcial, nas sete fixtures", () => {
   const parciais = [];
   /* A CONTA DE GRUPOS MEDIDOS EXISTE PORQUE SEM ELA O GATE É VACUOSO: se as
-     cinco fixtures devolvessem censo vazio, `parciais` ficaria vazio e a
+     sete fixtures devolvessem censo vazio, `parciais` ficaria vazio e a
      alínea fecharia verde sem ter olhado grupo algum. Medido na Fase 4 — é a
      mesma forma de vácuo que o red da 022 achou em três alíneas. */
   let gruposMedidos = 0;
@@ -377,7 +398,7 @@ T("D023-ARB1", "C4 · tudo-ou-nada: o grupo congelado é ∅ ou INTEIRO, nunca p
         parciais.push(k + " · grupo \"" + g + "\": " + ocultos + " oculto(s) de " + nos.length);
     });
   });
-  if (!gruposMedidos) vac("(a)", "nenhum grupo congelado em nenhuma das cinco fixtures — a regra tudo-ou-nada não teve sujeito");
+  if (!gruposMedidos) vac("(a)", "nenhum grupo congelado em nenhuma das sete fixtures — a regra tudo-ou-nada não teve sujeito");
   if (parciais.length) throw new Error("arbitragem PARCIAL: " + parciais.join(" | "));
   return true;
 });
@@ -405,7 +426,7 @@ T("D023-PAP1", "C6 · o papel acompanha a tela — no que o papel carrega, e o r
   /* A OCULTAÇÃO DA CAMADA 1 NÃO É MEDÍVEL AQUI, e isso é declarado em vez de
      fingido: a Camada 1 nunca é impressa (010 · C13), e medido nesta Fase 4
      nenhum dos três títulos de `HIDE_EYEBROWS` aparece em `#v32-print-report`
-     em nenhuma das cinco fixtures. Um gate que procurasse ocultação no papel
+     em nenhuma das sete fixtures. Um gate que procurasse ocultação no papel
      fecharia verde por ausência de sujeito.
      O que o papel CARREGA e esta alínea mede: o conjunto de cards impressos e o
      aviso de supressão — isto é, a COERÊNCIA entre as duas superfícies. */
@@ -448,7 +469,7 @@ T("D023-PAP1", "C6 · o papel acompanha a tela — no que o papel carrega, e o r
   return true;
 });
 
-T("D023-DOM1", "C7 · nada é REMOVIDO — o título e a lista congelados existem nas cinco fixtures", () => {
+T("D023-DOM1", "C7 · nada é REMOVIDO — o título e a lista congelados existem nas sete fixtures", () => {
   const faltando = [];
   Object.keys(F).forEach(k => {
     const { d } = boot(F[k]);
@@ -489,22 +510,45 @@ T("D023-BND1", "C8 · nenhum arquivo `frozen` foi tocado", () => {
   return true;
 });
 
-T("D023-LEG1", "C9 · em modo legado a V3.2 não governa e a congelada permanece", () => {
-  const { w, d } = boot(F.F5);
-  /* (a) pré-condição: é modo legado DE FATO */
-  if (w.__DEV.V32.isLegacyModeV32() !== true)
-    vac("(a)", "a fixture não está em modo legado — nada declarado deveria bastar");
-  /* (b) nada da Camada 1 oculto */
-  const c = censo(d);
-  const congelados = c.filter(x => !x.produto);
-  if (!congelados.length) vac("(b)", "nenhum nó congelado presente em modo legado");
-  const oc = congelados.filter(x => x.oculto).map(x => x.chave);
-  if (oc.length) throw new Error("a V3.2 arbitrou em MODO LEGADO: " + JSON.stringify(oc));
-  /* (c) e nada mais no escopo foi ocultado — o predicado não pode vazar para cá
-     por outro caminho. É esta alínea que o mutante M8 ataca. */
-  const vazou = cardsProdutoOcultos(d);
-  if (vazou.length) throw new Error("cards por produto ocultos em modo legado: " +
-    JSON.stringify(vazou.map(x => x.getAttribute("data-p53-sol-produto"))));
+T("D023-LEG1", "C9 · em modo legado a arbitragem atravessa, e NADA MAIS (errata E1)", () => {
+  /* O SUJEITO DESTE GATE TROCOU, e a troca é a errata `E1`. Antes ele afirmava
+     "em modo legado a V3.2 não governa"; medido, essa frase já era parcialmente
+     falsa — a visão por produto renderiza os 11 cards em modo legado hoje,
+     desde o `EA-65`/`EA-68`. Agora ele afirma duas coisas mais precisas, e a
+     segunda é a que de fato protege o modo legado. */
+  const erros = [];
+  /* (a) e (b) · SEM substituto, a congelada permanece — por ausência de oferta
+     (F6) e por supressão pelo operador (F7). São os dois jeitos de não haver
+     substituto, e o segundo é o que a 010 existe para cobrir. */
+  [["(a) sem produto publicado", F.F6, false], ["(b) substituto suprimido", F.F7, true]].forEach(par => {
+    const nome = par[0], fx = par[1], exigeAviso = par[2];
+    const { w, d } = boot(fx);
+    if (w.__DEV.V32.isLegacyModeV32() !== true)
+      vac(nome, "a fixture não está em modo legado — nada declarado deveria bastar");
+    if (publicados(w).length !== 0)
+      vac(nome, "há " + publicados(w).length + " produto(s) publicado(s) — a alínea mede a AUSÊNCIA de substituto");
+    const congelados = censo(d).filter(x => !x.produto);
+    if (!congelados.length) vac(nome, "nenhum nó congelado presente em modo legado");
+    const oc = congelados.filter(x => x.oculto).map(x => x.chave);
+    if (oc.length)
+      erros.push(nome + " · a V3.2 ocultou a Camada 1 SEM substituto algum: " + JSON.stringify(oc));
+    if (exigeAviso && !d.querySelector("[data-p53-suprimido]"))
+      erros.push(nome + " · supressão não declarada ao leitor em modo legado");
+  });
+  /* (c) · E NADA MAIS ATRAVESSA. É esta alínea que carrega o peso depois de
+     `E1`: a arbitragem passa a valer em modo legado, e só ela. A superfície de
+     apoio V3.2 (`#v32support`) continua AUSENTE e o convite ao editor de
+     contexto continua PRESENTE — medido hoje nas três fixtures legadas. É a
+     alínea que o mutante `M8b` ataca. */
+  [["F5", F.F5], ["F6", F.F6], ["F7", F.F7]].forEach(par => {
+    const nome = par[0], { w, d } = boot(par[1]);
+    if (w.__DEV.V32.isLegacyModeV32() !== true) vac("(c) " + nome, "a fixture não está em modo legado");
+    if (d.getElementById("v32support"))
+      erros.push("(c) " + nome + " · `#v32support` APARECEU em modo legado — a V3.2 passou a governar mais que a arbitragem");
+    if (!d.getElementById("v32cta"))
+      erros.push("(c) " + nome + " · o convite ao editor de contexto SUMIU em modo legado");
+  });
+  if (erros.length) throw new Error(erros.join(" | "));
   return true;
 });
 

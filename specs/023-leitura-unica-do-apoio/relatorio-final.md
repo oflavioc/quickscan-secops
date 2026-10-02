@@ -88,7 +88,20 @@ estágio que falhou. As duas asserções foram emendadas para medir a regra nas
 **duas** direções — oculto com substituto, visível sem ele —, o que é mais forte
 do que a redação original, e o quinto oráculo entrou na conta.
 
-**6 · O `tdd` recusou prosa no `red.commit`.** Pus `"b4e3fd4 (1a prova) + o commit
+**6 · A campanha `p52` tinha 16 não-KILL, e TRÊS eram meus.** O controle em
+worktree limpa de `origin/develop` devolveu 13; os três de diferença — `P52-M8`,
+`P52-RA8`, `P52-RA8B` — foram de **3/3 DETECTADO** no controle a **0/3** no
+branch. Em modo legado sob arbitragem o catálogo de ícones vai de 9 para 29
+tiles, 20 ocultos, e os ocultos vêm primeiro: a deduplicação por `alt|tamanho`
+tomava a chave com um nó de retângulo zero, e dois gates de fase 5.2 passaram a
+medir o invisível.
+
+Rota **C**: a guarda de tile não desenhado entrou nos dois gates — fortalecimento,
+porque eles prometem medir o que o navegador desenha — e a causa virou **`EA-81`**.
+Sem o controle de árvore inteira eu teria chamado os 16 de pré-existentes e aberto
+o PR com três mutantes mortos pela minha mudança.
+
+**7 · O `tdd` recusou prosa no `red.commit`.** Pus `"b4e3fd4 (1a prova) + o commit
 desta errata"` num campo que uma máquina resolve. Quarta vez nesta sessão que um
 campo de vocabulário fechado cobra.
 

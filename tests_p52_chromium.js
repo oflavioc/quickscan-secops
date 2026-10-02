@@ -479,6 +479,21 @@ async function icon1(browser, errs) {
       const imgs = Array.from(document.querySelectorAll(".icon-tile img"));
       for (const img of imgs) {
         const tile = img.closest(".icon-tile");
+        /* [023 · emenda de 2026-10-02] TILE QUE O NAVEGADOR NAO DESENHA NAO E
+           SUJEITO — e a guarda vem ANTES do `seen[key]`, de proposito.
+           Estes dois gates prometem medir "o peso optico que o navegador desenha"
+           e "o catalogo EXIBIDO". Eles deduplicavam por `alt|tamanho` guardando a
+           PRIMEIRA ocorrencia em ordem de documento, sem olhar se ela e visivel —
+           e com isso uma copia OCULTA podia tomar a chave e cegar a medicao.
+           Medido na demanda 023: em modo legado sob arbitragem o catalogo vai de
+           9 para 29 tiles, 20 deles ocultos, e os ocultos vem PRIMEIRO. Tres
+           mutantes de geometria (P52-M8, P52-RA8, P52-RA8B) passaram a SOBREVIVER
+           — 3/3 DETECTADO no controle de `origin/develop` (8f166d3), 0/3 aqui.
+           A causa de haver copia oculta e defeito de produto, registrado em
+           `EA-81`; ESTA emenda conserta o gate, que media o invisivel e por isso
+           nao podia ver a mutacao. E fortalecimento: passa a medir o que o
+           cliente ve. Ratificada pelo proprietario no chat em 2026-10-02. */
+        if (!tile || !tile.getClientRects().length) continue;
         const tr = tile.getBoundingClientRect(), ir = img.getBoundingClientRect();
         const key = (img.getAttribute("alt") || "") + "|" + (tile.classList.contains("sm") ? "sm" : "lg");
         if (seen[key]) continue; seen[key] = 1;
@@ -1118,6 +1133,7 @@ async function icon2(browser, errs) {
       const out = [], seen = {};
       for (const img of Array.from(document.querySelectorAll(".icon-tile img"))) {
         const tile = img.closest(".icon-tile");
+        if (!tile || !tile.getClientRects().length) continue;   /* [023] ver a nota em icon1 */
         const key = (img.getAttribute("alt") || "") + "|" + (tile.classList.contains("sm") ? "sm" : "lg");
         if (seen[key]) continue; seen[key] = 1;
         const tr = tile.getBoundingClientRect(), ir = img.getBoundingClientRect();

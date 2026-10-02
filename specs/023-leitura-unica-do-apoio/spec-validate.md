@@ -79,6 +79,24 @@ helper que declarava "sem substituto" para um estado que passou a ter um:
 | **019** | `D019-CTX1 (c)` trocou de proposição e ganhou **três** controles; `reason` do `D019-M18` atualizado, ataque intacto | idem |
 | **p50** | pin inline `§29.4` de `ui_v32.js` repinado, com identidade anterior no próprio pin | 2026-10-01 |
 | **M3.1 (fase 4.x)** | `U1` e `U7` de `tests_ui_m31.js` exigiam *"apoio legado VISÍVEL"* em modo legado, **incondicionalmente** — a cláusula exata que a `E1` revogou. Passaram a medir a **regra nas duas direções**: oculto com substituto, visível sem ele, com pré-condição de sujeito | 2026-10-02 |
+| **p52 chromium (fase 5.2)** | `P52-ICON1` e `P52-ICON2` deduplicavam tiles por `alt\|tamanho` guardando a **primeira** ocorrência em ordem de documento, **sem olhar visibilidade**. Ganharam guarda de tile não desenhado, ANTES da deduplicação | 2026-10-02 |
+
+**O sexto oráculo foi o mais caro, e só apareceu porque o controle foi rodado em
+árvore inteira.** A execução direta do `check_mutation.py` acusou 16 não-KILL na
+campanha `p52`; o controle em worktree limpa de `origin/develop` (`8f166d3`)
+devolveu **13**. Os três de diferença — `P52-M8`, `P52-RA8`, `P52-RA8B` — eram
+meus: **3/3 DETECTADO no controle, 0/3 no branch**.
+
+A causa, medida: em modo legado sob arbitragem o catálogo de ícones vai de **9
+para 29 tiles, 20 ocultos**, e os ocultos vêm primeiro em ordem de documento —
+então a chave de deduplicação era tomada por um nó de retângulo zero e a medição
+media o invisível. É a armadilha do oráculo que lê o DOM transformado.
+
+**Rota C, decidida pelo proprietário em 2026-10-02**: o gate é consertado aqui
+(ele promete *"o peso óptico que o navegador desenha"* e aceitava nó invisível —
+a guarda é fortalecimento), e a causa vira demanda própria, **`EA-81`**. Depois da
+guarda: `P52-ICON1`/`ICON2` 2 PASS · 0 FAIL sem mutação, e os três mutantes
+**3/3 DETECTADO**.
 
 **O quinto oráculo foi encontrado tarde, e a causa foi minha.** O `ui31` estava
 vermelho desde a W1, e eu relatei a W2 dizendo *"todas verdes menos p50core"* —

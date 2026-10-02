@@ -1,6 +1,6 @@
 {
   "demanda": "023-leitura-unica-do-apoio",
-  "phase": "tasks",
+  "phase": "red",
   "spec_dir": "specs/023-leitura-unica-do-apoio",
   "branch": "feature/023-leitura-unica-do-apoio",
   "brief": "Sem contexto tecnologico declarado — o caso comum — a secao Formas de apoio apresenta o MESMO conjunto duas vezes: a lista congelada 'Pode fazer sentido — apos validacao' e os cards por produto, sem nada dizendo que sao a mesma coisa. Relato do proprietario em sessao real na v3.2.10. REVERTE a refutacao da demanda 020, registrada em design-decisions.md em 2026-09-24 — reversao do proprietario em 2026-10-01 ('Vamos de C'), amparada em medicao que a 020 nao tinha: aquela demanda avaliou UMA rota, agora sao tres.",
@@ -20,14 +20,14 @@
     "approved_at": "2026-10-02"
   },
   "tasks": {
-    "status": "pending",
+    "status": "approved",
     "notes": "14 tarefas em 5 waves. T002/T003/T004 entram JUNTAS — trocar o predicado sem reancorar o D010-ARB1 deixaria a arvore com gate de outra demanda vermelho por motivo certo; arquivos distintos, sem colisao. T003 e tipada FIX e nao doc: d010HasSubstitute e a reimplementacao da spec §1 na fixture, existe para o gate nao virar tautologia, e emenda-la MUDA o que o gate mede — foi tratar reancoragem como mexida inocua que produziu o M51-07 sobrevivente na 021. T004 confere as outras quatro alineas da 010 por EXECUCAO: a 020 mediu que cinco gates dependem daquele titulo, e 'nao deve afetar' e hipotese ate rodar. T010 nao e zelo: o predicado muda uma linha de ui_v32.js, alvo declarado de quatro campanhas, e mudar linha em arquivo-alvo apodrece ancora — aconteceu duas vezes nesta sessao (P52-RB6 e o par D011-M18/D014-M7). FORA: EA-76 e EA-77 seguem abertos; esta demanda LE published() em vez de criar uma terceira copia, o que nao agrava o EA-76 e tambem nao o resolve.",
-    "approved_at": null
+    "approved_at": "2026-10-02"
   },
   "red": {
-    "status": "pending",
-    "commit": null,
-    "notes": ""
+    "status": "proven",
+    "commit": "b4e3fd4",
+    "notes": "8 PASS - 1 FAIL de 9, medido antes de qualquer linha de produto. O vermelho e o D023-OCU1, o criterio do relato. OITO NASCEM VERDES e esta declarado no cabecalho da suite: a demanda muda uma expressao booleana e os oito sao guardas cujo poder vem do mutante, nao do red — a campanha pareada vem na W2. TRES ACHADOS DE FASE 4 que mudam a leitura da spec. (1) 'Sem contexto declarado' sao DOIS mundos: sessao em que NADA foi declarado e MODO LEGADO (engine_v32.js:305) e ali renderBlocks chama hideLegacyRecommendation(app,false) incondicionalmente — o predicado nao e consultado e alarga-lo NAO muda nada. Medido: nada declarado legado=true hasSub=false 0 ocultos 11 cards; so saasAllowed=yes legado=false hasSub=false 0 ocultos 11 cards; capability NONE legado=false hasSub=true 3 ocultos 11 cards. A redundancia existe nos dois primeiros; a demanda alcanca o segundo. O primeiro e o sujeito do D023-LEG1, que exige o contrario. PENDE DECISAO DO PROPRIETARIO: a sessao real que originou o relato e provavelmente a do modo legado, e nesse caso esta demanda NAO corrige o caso relatado. (2) Os cards por produto sao .apoio-block CONTIGUOS ao titulo congelado, e .apoio-block e classe permitida na varredura de hideLegacyRecommendation: ligar o predicado sem mais nada ocultaria os cards JUNTO com a lista. O que os protege e a fronteira() de ui_p52_support_v32.js:639, inserida so quando arbitragemEmCurso() ve no oculto no escopo — presente com contexto declarado, ausente sem ele, de proposito. O OCU1 mede as duas metades e mede tambem a SEGUNDA passagem de render, porque a fronteira le o DOM ja arbitrado e o ramo de idempotencia do decorador reaproveita cards existentes. (3) A Camada 1 nunca e impressa (medido: zero dos tres titulos de HIDE_EYEBROWS em #v32-print-report, nas cinco fixtures), logo o C6 ao pe da letra e INALCANCAVEL e fecharia verde por ausencia de sujeito — o EA-20 do lado de dentro. O D023-PAP1 mede o que o papel carrega e declara o que nao pode medir, com contraprova que avisa se a premissa mudar. DOIS BURACOS DE VACUIDADE NOS PROPRIOS GATES VERDES, fechados antes do commit: ARB1 fecharia verde com censo vazio nas cinco fixtures (agora conta grupos medidos) e PAP1 provaria coerencia com 0===0===0 sob F3 (agora cada fixture traz a sua expectativa). E um defeito de ORACULO: a primeira redacao contou 22 cards na tela porque depois do beforeprint o relatorio impresso emite data-p53-sol-produto no mesmo documento."
   },
   "implement": {
     "status": "pending",

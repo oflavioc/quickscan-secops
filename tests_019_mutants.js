@@ -215,11 +215,21 @@ const MUTANTS = [
     repl: 'if (arbitragemEmCurso()) return; var arbitrando = false;',
     reason: /ausentes da visão COM contexto declarado/ },
 
+  /* REASON ATUALIZADO em 2026-10-02, e o ATAQUE nao mudou. A emenda da demanda
+     023 (errata E1) estendeu a arbitragem ao modo legado, e com isso a mensagem
+     "apareceu em modo LEGADO" deixou de existir no gate: emitir a fronteira ali
+     passou a ser CERTO quando ha arbitragem. A propriedade atacada continua a
+     mesma — a fronteira so pode nascer da CONJUNCAO (arbitragem E cards) —, e
+     este mutante SOBREVIVEU na campanha de 2026-10-02 porque os dois primeiros
+     controles da alinea nao a separavam: no de supressao `cards.length` e zero,
+     entao a guarda de contagem sozinha escondia o defeito. O gate ganhou um
+     TERCEIRO controle (suficiencia fechada: cards presentes, zero oculto) e volta
+     a matar. Atualizado o reason, nunca o ataque. */
   { id: "D019-M18", file: F.solucao, gate: "D019-CTX1",
-    desc: "emitir a fronteira SEMPRE — em modo legado ela zera o sujeito do D010-ARB1",
+    desc: "emitir a fronteira SEMPRE — a guarda de contagem no lugar da conjuncao com a arbitragem",
     find: 'if (arbitrando && cards.length) sec.appendChild(fronteira());',
     repl: 'if (cards.length) sec.appendChild(fronteira());',
-    reason: /apareceu em modo LEGADO/ },
+    reason: /NENHUMA arbitragem em curso|apareceu em modo LEGADO/ },
 
   /* [EA-68] O mutante que devolve o produto ao estado em que o proprietário o
      encontrou: a lista de produtos volta a sair da COLHEITA DO DOM em vez do

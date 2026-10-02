@@ -627,6 +627,34 @@ T("D019-CTX1", "com contexto tecnológico DECLARADO a visão por solução exist
   if (S.d.querySelector("#p52-sec-support > [data-p53-sol-lead]"))
     throw new Error("a fronteira existe SEM arbitragem em curso — ela só serve para separar o que está " +
       "oculto do que está visível, e aqui não há nada a separar");
+  /* ==========================================================================
+     TERCEIRO CONTROLE — CARDS PRESENTES E NENHUMA ARBITRAGEM, e ele nasceu de um
+     SOBREVIVENTE.
+
+     O `D019-M18` troca `if (arbitrando && cards.length)` por `if (cards.length)`:
+     emitir a fronteira SEMPRE. Depois da emenda de 2026-10-02 ele passou a
+     SOBREVIVER, e a sobrevivência mostrou que os dois controles acima não bastam —
+     no de supressão `cards.length` é ZERO, então a guarda de contagem sozinha
+     esconde o defeito, e a alínea nunca chega a medir `arbitrando`.
+
+     O estado que separa as duas condições é o do gate de suficiência FECHADO:
+     medido, `cards=1` com `ocultosNoEscopo=0` — há card e não há arbitragem,
+     porque a errata `E4` da demanda 023 decidiu que leitura não-publicável não
+     desloca a congelada. É o único estado em que as duas metades da conjunção
+     divergem, e é por isso que ele é o controle.
+     ========================================================================== */
+  const I = boot({ poucasRespostas: true, prios: ["logs", "endpoint"] });
+  const secI = I.d.getElementById("p52-sec-support");
+  if (!secI) vac("(c)", "`#p52-sec-support` ausente no controle de suficiência fechada");
+  const cardsI = qa(secI, ":scope > [data-p53-sol-produto]").length;
+  if (!cardsI)
+    vac("(c)", "o controle de suficiência fechada não traz card algum — sem card, a guarda de contagem " +
+      "esconderia o defeito e a alínea mediria a conjunção errada");
+  if (qa(secI, ":scope > .v32-hidden").length)
+    vac("(c)", "há nó oculto sob suficiência fechada — o controle deixou de ter 'cards sem arbitragem'");
+  if (secI.querySelector(":scope > [data-p53-sol-lead]"))
+    throw new Error("a fronteira apareceu com " + cardsI + " card(s) e NENHUMA arbitragem em curso — " +
+      "a condição que a emite é a conjunção das duas, e a guarda de contagem não substitui a de arbitragem");
   return true;
 });
 

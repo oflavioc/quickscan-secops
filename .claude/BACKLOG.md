@@ -6994,3 +6994,96 @@ conferir que o arquivo declarado como `owner` **contém** a atribuição
 `window.__NOME =`. Sem isso, a próxima entrada errada nasce igual.
 
 Ver [[EA-20]], de quem este é instância: registro que promete mais do que verifica.
+
+## EA-78 — item sem atalho desenha uma caixa vazia que lê como checkbox
+
+**Status**: `resolvido`
+
+**Aberto em**: 2026-10-01, por relato do proprietário após sessão real na v3.2.10.
+
+### O relato
+
+> *"Voltamos com aqueles problemas das numerações limitadas para selecionar
+> manualmente as opções na tela de definição de prioridades"*
+
+### O que foi medido — e NÃO é regressão da numeração
+
+A demanda 011 decidiu isto de propósito. `C2`: *"item sem atalho não exibe glifo;
+o elemento `.key` **permanece no DOM** (alinhamento)"*. Com 15 gaps e teclas de 1
+a 9, seis itens ficam sem atalho, e o gate `D011-KEY2` prova que o comportamento é
+o especificado.
+
+**O defeito é a consequência visual, que nunca foi especificada.** A caixa vem do
+congelado — `.opt .key{ flex:0 0 26px; height:26px; … border … }` — e o módulo da
+011 só esconde o glifo **no papel**. Na tela, o item sem atalho fica com uma caixa
+vazia de 26px **com borda**, ao lado de nove com número: o leitor vê dois controles
+diferentes onde há um, e o vazio lê como *checkbox desmarcado*.
+
+### Correção
+
+Uma regra no CSS do próprio módulo, agora também para a tela.
+`visibility: hidden` preserva os 26px — que é exatamente o alinhamento que a `C2`
+queria — e cobre o item **selecionado**, onde `.opt.sel .key` pintaria a caixa.
+
+**Escrita em forma multilinha de propósito**: a regra equivalente do bloco de
+impressão é a âncora **byte a byte** do mutante `D011-M20`, e uma cópia idêntica a
+levaria a `ocorrencias=2`, reprovando o `IC-4` e derrubando o stage `mutation`
+inteiro com a campanha correta.
+
+**E a prosa do comentário não cita o literal do bloco de impressão**: o
+`D011-PRT1(a)` exige exatamente um por arquivo e conta **por texto**, sem
+distinguir comentário de regra. A primeira redação citou, e o gate contou dois —
+terceira vez nesta sessão que um comentário derruba um portão.
+
+Medido depois: `D011 NUMERAÇÃO: 6 PASS · 0 FAIL` · âncoras todas em
+`ocorrencias == 1`.
+
+## EA-79 — sem contexto declarado, a seção de apoio mostra duas leituras sem dizer que são a mesma
+
+**Status**: `aberto`
+
+**Aberto em**: 2026-10-01, por relato do proprietário após sessão real na v3.2.10.
+
+### O relato
+
+> *"Não entendi essa divisão de lista e depois card em 'formas de apoio', para mim,
+> está um pouco confusa essa seção e ela poderia ser mais direta"*
+
+### O que foi medido
+
+A arbitragem da 010 **já sabe esconder** aquela lista — `HIDE_EYEBROWS` inclui
+`"Pode fazer sentido — após validação"` pelo nome. Ela não dispara porque
+`hasSubstituteV32` exige um **card de capability V3.2**, que só existe com contexto
+tecnológico declarado:
+
+```
+SEM contexto | hasSubstitute=false | 0 nós ocultos | lista legada VISÍVEL | 11 cards por produto
+COM contexto | hasSubstitute=true  | 3 nós ocultos | lista legada OCULTA  | 11 cards por produto
+```
+
+A **visão por produto existe nos dois casos** (desde o `EA-65`/`EA-68`). Então a
+redundância aparece exatamente onde o cliente é mais comum — sessão sem contexto
+declarado — e some quando ele declara.
+
+### As três rotas, todas medidas
+
+| rota | custo medido |
+|---|---|
+| **remover a lista** (a demanda 020) | 5 gates da 010 caem: as fixtures `D010-F3` declaram o título **presente no DOM** |
+| **alargar `hasSubstituteV32`** | o `D010-ARB1` fica **sem sujeito**: toda sessão com gap tem card por produto, logo "sem substituto" só existiria sem gap algum — e aí não há recomendação legada. A `C1` da 010 viraria tautologia |
+| **explicar com uma linha** | as duas posições úteis estão fechadas: antes do título o `p52Classify` **reclassifica o nó para outra seção** (medido: foi parar em `p52-sec-gaps`); entre a lista e os cards o `D010-ARB1 (c)` reprova por **vacuidade** (medido, confirmando o aviso do autor da `fronteira()`). Sobra o fim da seção — depois do momento em que o leitor se confundiu |
+
+### Encaminhamento
+
+**Vira demanda própria**, por decisão do proprietário em 2026-10-01 (*"Vamos de C"*),
+que **reverte a refutação da 020** registrada em `design-decisions.md`. A reversão é
+dele e está amparada em medição que a 020 não tinha: aquela demanda avaliou **uma**
+rota (remover) e concluiu pelo custo dela; agora são três, com o custo de cada uma.
+
+A linha explicativa **foi implementada e retirada no mesmo ciclo**: funcionava, mas
+só na posição de fim de seção, e seria removida pela demanda estrutural logo em
+seguida.
+
+Ver [[EA-20]] pelo que a rota do meio produziria — gate que promete asserção e
+entrega tautologia —, e a entrada da 020 em `design-decisions.md`, que esta demanda
+emenda em vez de contradizer em silêncio.

@@ -4006,6 +4006,37 @@ body[data-uxscreen="refinement"] #ux-progress-mobile{ display:none !important; }
    Zero contato com o pipeline de impressão congelado (§29.6): nada em
    `buildPrintReport`, `preparePrint`, `beforeprint`/`afterprint`. A regra vive
    em arquivo novo e alcança só `.d011-*`. */
+  /* ======================================================================
+     [EA-78] O ITEM SEM ATALHO DEIXA DE PARECER UM CHECKBOX.
+
+     A `C2` da demanda 011 decidiu que o `.key` PERMANECE no DOM quando nao ha
+     atalho — alinhamento —, e so isso. A consequencia visual nunca foi
+     especificada: a caixa de 26px com borda vem do congelado (`.opt .key`), e
+     um item sem glifo fica com uma caixa VAZIA que le como checkbox
+     desmarcado. Com 15 gaps e teclas de 1 a 9, sao seis itens assim, ao lado
+     de nove com numero — e o leitor ve dois controles diferentes onde ha um.
+
+     `visibility: hidden` preserva os 26px, que e exatamente o alinhamento que
+     a C2 queria, e cobre tambem o item SELECIONADO (onde `.opt.sel .key`
+     pinta a caixa de vermelho).
+
+     A FORMA MULTILINHA E DELIBERADA. A regra equivalente ja existe no bloco
+     de impressao abaixo, numa linha so, e e a ancora BYTE A BYTE do mutante
+     `D011-M20`. Escrever esta identica levaria aquela ancora a
+     `ocorrencias=2`, reprovando o `IC-4` e derrubando o stage `mutation`
+     inteiro com a campanha correta — o proprio cabecalho deste arquivo ja
+     registra essa classe de custo para o caso do `:not()`.
+
+     E A PROSA NAO CITA O LITERAL que o `D011-PRT1(a)` conta: ele exige
+     EXATAMENTE um bloco de impressao neste arquivo e mede por texto, sem
+     distinguir comentario de regra. Citar o literal aqui o fez contar dois —
+     terceira vez nesta sessao que um comentario meu derruba um portao, e a
+     escolha conservadora do scanner esta certa (R10 §10).
+     ====================================================================== */
+  .d011-key[data-d011="mudo"]{
+    visibility: hidden;
+  }
+
 @media print{
   .d011-key[data-d011="atalho"]{ visibility: hidden; }
   .d011-key[data-d011="mudo"]{ visibility: hidden; }
@@ -16572,6 +16603,14 @@ if (window.__DEV) Object.assign(window.__DEV, { openExportModal, openImportPicke
     var velhaFronteira = sec.querySelector(":scope > [data-p53-sol-lead]");
     if (velhaFronteira && velhaFronteira.parentNode) velhaFronteira.parentNode.removeChild(velhaFronteira);
     if (arbitrando && cards.length) sec.appendChild(fronteira());
+    /* ANCORA NO TITULO CONGELADO, nao no primeiro filho. Inserir em
+       `sec.firstChild` parecia obvio e nao sobrevive: a passagem do workspace
+       recria o `<h2>` da secao no topo numa passagem seguinte e leva o no
+       junto — medido, o `<p>` entrava e sumia. Antes do primeiro
+       `.section-title` e a posicao que a regra exige (o `hiding` de
+       `hideLegacyRecommendation` so liga A PARTIR do titulo) e que o layout
+       respeita. No sem titulo congelado na secao, nada a ligar. */
+
     for (i = 0; i < GRUPOS.length; i++) {
       var lista = porGrupo[GRUPOS[i].id];
       if (!lista || !lista.length) continue;

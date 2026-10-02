@@ -1,6 +1,6 @@
 {
   "demanda": "023-leitura-unica-do-apoio",
-  "phase": "specify",
+  "phase": "plan",
   "spec_dir": "specs/023-leitura-unica-do-apoio",
   "branch": "feature/023-leitura-unica-do-apoio",
   "brief": "Sem contexto tecnologico declarado — o caso comum — a secao Formas de apoio apresenta o MESMO conjunto duas vezes: a lista congelada 'Pode fazer sentido — apos validacao' e os cards por produto, sem nada dizendo que sao a mesma coisa. Relato do proprietario em sessao real na v3.2.10. REVERTE a refutacao da demanda 020, registrada em design-decisions.md em 2026-09-24 — reversao do proprietario em 2026-10-01 ('Vamos de C'), amparada em medicao que a 020 nao tinha: aquela demanda avaliou UMA rota, agora sao tres.",
@@ -10,13 +10,13 @@
     "approved_at": "2026-10-01"
   },
   "specify": {
-    "status": "pending",
-    "approved_at": null,
-    "notes": "A QUARTA ROTA EXISTE, e nasceu de medicao feita nesta fase: ofertados 11 -> curadoria exclui os 11 -> cards 0 -> aviso de supressao presente. 'Sem substituto' continua ALCANCAVEL, nao pela ausencia de contexto declarado — que hoje e o caso comum e nao deveria significar ausencia de substituto — mas pela SUPRESSAO. O D010-ARB1 e REANCORADO, nao esvaziado: troca de sujeito, e o novo e mais forte porque cobre o caso em que o OPERADOR desfaz o substituto deliberadamente — exatamente o vao que a 010 existe para impedir. O B5 do refinamento, escrito como o teste mais duro contra a propria hipotese, e o que a salva. 9 criterios; C3 e C5 sao o par que sustenta a demanda — sem eles, alargar o predicado seria o custo inaceitavel que o refinamento mediu. ESTA SPEC EMENDA A DEMANDA 010 (predicado da §1 e fixture do D010-ARB1): oraculo declarado de outra demanda, precisa de RATIFICACAO do proprietario, precedente da errata E19 da 015. BOUNDARY: nenhum frozen tocado; ui_v32.js (§29.4, o predicado vive em :702) sera tocado e a autorizacao esta PARADA no portao desta spec."
+    "status": "approved",
+    "approved_at": "2026-10-01",
+    "notes": "A QUARTA ROTA EXISTE, e nasceu de medicao feita nesta fase: ofertados 11 -> curadoria exclui os 11 -> cards 0 -> aviso de supressao presente. 'Sem substituto' continua ALCANCAVEL, nao pela ausencia de contexto declarado — que hoje e o caso comum e nao deveria significar ausencia de substituto — mas pela SUPRESSAO. O D010-ARB1 e REANCORADO, nao esvaziado: troca de sujeito, e o novo e mais forte porque cobre o caso em que o OPERADOR desfaz o substituto deliberadamente — exatamente o vao que a 010 existe para impedir. O B5 do refinamento, escrito como o teste mais duro contra a propria hipotese, e o que a salva. 9 criterios; C3 e C5 sao o par que sustenta a demanda — sem eles, alargar o predicado seria o custo inaceitavel que o refinamento mediu. ESTA SPEC EMENDA A DEMANDA 010 (predicado da §1 e fixture do D010-ARB1): oraculo declarado de outra demanda, precisa de RATIFICACAO do proprietario, precedente da errata E19 da 015. BOUNDARY: nenhum frozen tocado; ui_v32.js (§29.4, o predicado vive em :702) sera tocado e a autorizacao esta PARADA no portao desta spec. APROVADA pelo proprietario no chat em 2026-10-01, junto da RATIFICACAO da emenda a demanda 010 (predicado da §1 e fixture do D010-ARB1) e da AUTORIZACAO NOMINAL §29.4 para ui_v32.js nesta demanda ('Aprovado, ratifico a emenda e autorizo o ui_v32.js'). As tres pedidas no portao, antes de qualquer edicao."
   },
   "plan": {
     "status": "pending",
-    "notes": "",
+    "notes": "UMA FUNCAO MUDA: hasSubstituteV32 ganha segunda fonte, `__CURATION.published()` — que ja existe e e exatamente 'ofertados menos excluidos, mais os incluidos pelo operador', a mesma definicao que a secao usa para montar os cards. Nao ha derivacao nova; ha um LEITOR novo de derivacao existente — o que evita criar uma sexta instancia da classe do EA-76. CUSTO DECLARADO: o predicado deixa de ser funcao so do motor e passa a consultar o estado do operador. E deliberado — o C3 existe porque o operador PODE desfazer o substituto — e o C5 e o guarda, medindo que o sujeito do D010-ARB1 continua alcancavel. W1 E INDIVISIVEL por decisao de desenho: trocar o predicado sem reancorar o D010-ARB1 deixaria a arvore com um gate de outra demanda vermelho por motivo CERTO, e commitar assim seria publicar um vermelho que nao e achado. Dois arquivos, donos distintos, sem colisao (R5 §3), mas entram juntos. A CAMPANHA VEM NA W2 e nao na W0 — mutante precisa de ancora em codigo real, licao que a 022 registrou depois de eu colocar a campanha na wave do red por otimismo. SEM PROTOTIPO: a pergunta que so codigo responderia ja foi respondida na Fase 1 (curadoria exclui 11 -> 0 cards).",
     "approved_at": null
   },
   "tasks": {

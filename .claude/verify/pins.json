@@ -1,7 +1,7 @@
 {
   "_meta": {
     "descricao": "Registry único de pins — fonte de identidade dos artefatos (R8). Hashes = SHA-256 dos blobs de HEAD. Alterar arquivo pinado exige regenerar este registry no MESMO PR, com motivo no commit.",
-    "gerado_de_head": "75dbce63c8e48a854fd35a1aa902ac31b1bf039e",
+    "gerado_de_head": "cc992fe976b8d1420a79da10cc65e19fbe32c4bd",
     "gerado_em": "2026-10-02",
     "exclusoes": [
       "docs_phase5/**",
@@ -15,7 +15,7 @@
     "baseline_core_zip_sha256": "625079c462be7d44ffd69b1cd85f256382322bd0555ae4b548f21bf30ee5b89d"
   },
   "files": {
-    ".claude/BACKLOG.md": "8f502c20a71d47087bc678ace5ed938fb01c32c07bfb99550a030a196900f7fc",
+    ".claude/BACKLOG.md": "9e7be57354647f1338c024b469b0340745a0d835181681e4dfe9f0a3415590a2",
     ".claude/agent-memory/README.md": "2f868716c8785119c1d6a02a7715f7b5058ab968f55951410fc82fc45b960a93",
     ".claude/agent-memory/build-engineer/MEMORY.md": "5ed47a73226fea6613b44c2ce70b26e95415033bafbd69a3ada20fa7df0bf950",
     ".claude/agent-memory/build-engineer/feedback_escopo_de_scanner_nos_dois_sentidos.md": "a07b03eb0687bc4f08ff02375684b8441f8d434384c415a3e25b1fe233007527",
@@ -449,8 +449,8 @@
     "specs/022-escalonamento-do-investimento/tasks.md": "645f08377e33e15f75e23a90260f546ad80b14ddfe1175f13aaf1704879d6054",
     "specs/023-leitura-unica-do-apoio/plan.md": "a14f7eaec014acc0c3c7f137aa9e95d5bca6af489d4cde6e82be889dd84cbaef",
     "specs/023-leitura-unica-do-apoio/refinement.md": "cd9c3cda9ed91ea62edd9e62b9cb03120894e7a8c3045d23e93f683b50fb5dfd",
-    "specs/023-leitura-unica-do-apoio/relatorio-final.md": "6869ddfcec529c28ef72dc7e530637dabf18275c473d7acfa6d5d714d0e30e54",
-    "specs/023-leitura-unica-do-apoio/spec-validate.md": "c6781db48139c00711577403448a138e634c9974e4deaa7d00a385d53b01dddb",
+    "specs/023-leitura-unica-do-apoio/relatorio-final.md": "f543a8e6cda2dcc4004e037303c2564634295eb6a73dccb77e08bb8357280629",
+    "specs/023-leitura-unica-do-apoio/spec-validate.md": "437b3e70f7bba1727ac85888d2f2085be9f736b9253fa9aa3fea5240161b3631",
     "specs/023-leitura-unica-do-apoio/spec.md": "1c293d35f9e047a4a36def543c27511859bf1800ffc92793e96e96b96044d334",
     "specs/023-leitura-unica-do-apoio/tasks.md": "57c3ce0a0628b9e9a382eb5b077f190807ceeee235bd0e63c00436dc9cf588a1",
     "specs/PHASE_5_0_REV_A.md": "22e729174c6a3c5dd620da5330b03eb96d9eb6fc6e64eba097c2bde55eb0a510",
@@ -489,7 +489,7 @@
     "tests_p50_core.js": "d5e154ffb32a2dce333221bb3c1db88ef3e550ee85a13fccab65e27c4ba5ea01",
     "tests_p50_mutants.js": "a78306918c7f27ab08c34cd557ece041e55cc7271169c7f4749b0ebcea058b8b",
     "tests_p51_mutants.js": "fd99780dfb39dfb62c2ee18ef842706d461feaba11589b69677fa59daee2acb4",
-    "tests_p52_chromium.js": "7d32e3b376951ed10e5d965fa823b88b099ffc35f18bbe07a92b155cc9e10b14",
+    "tests_p52_chromium.js": "ab097f378fb1f06be9159a8469e0d2638a8b24a16be8635ad55d01bb50128e40",
     "tests_p52_layout.js": "c44fef4a8db7ba14de9a4f59bbd58c4fb72c63854bf94b326236f9191f96d6f8",
     "tests_p52_mutants.js": "65a83ce0303bae3b2e672d200c396447bbc6ba8f15959ac3984d43c7543d7925",
     "tests_ref_m44.js": "5fe2e3336b20a018a5981371523306b771907ce7f5688002076066ab9ad1325c",

@@ -30,16 +30,62 @@ function T(id, label, fn){
 const q = (d,s)=>d.querySelector(s);
 const txt = el => (el ? el.textContent : "");
 
+/* ==========================================================================
+   EMENDA DE 2026-10-02 — demanda 023, errata `E1`. DUAS ASSERCOES DESTA SUITE
+   AFIRMAVAM A CLAUSULA QUE A ERRATA REVOGOU.
+
+   `U1` e `U7` exigiam "apoio legado VISIVEL" em modo legado, incondicionalmente.
+   Isso era verdade enquanto o ramo legado de `renderBlocks()` passava a constante
+   `false` para a arbitragem. A demanda 023 estendeu a arbitragem ao modo legado —
+   porque a sessao do relato de 2026-10-01 era justamente essa, e ali o predicado
+   nem era consultado —, e com produto publicado a leitura congelada passa a ser
+   ocultada tambem aqui.
+
+   A clausula revogada JA ERA parcialmente falsa: a visao por produto renderiza em
+   modo legado desde o `EA-65`/`EA-68`, e `published()` e identico nos dois modos.
+
+   AS DUAS ASSERCOES FICARAM MAIS FORTES, nao mais fracas: em vez de uma direcao
+   ("visivel"), medem a REGRA nas duas — visivel sem substituto, oculto com ele.
+   A unica forma de passar e o produto seguir o predicado, e um defeito que
+   ignorasse a arbitragem em modo legado agora reprova aqui tambem.
+
+   Ratificada pelo proprietario no chat em 2026-10-02 ("Vamos com a B").
+   ========================================================================== */
+function apoioLegadoVisivel(d){
+  return Array.from(d.querySelectorAll(".section-title .eyebrow"))
+    .some(e=>e.textContent.includes("Como a Fortinet pode apoiar") && !e.closest(".v32-hidden"));
+}
+/* suprime tudo o que o motor ofereceu, pela unica porta de escrita da curadoria */
+function semSubstituto(w){
+  if (!w.__CURATION || !w.__CURATION.__installed) return false;
+  const off = w.__CURATION.offered();
+  if (!off.length) return false;                    /* nada a suprimir: ja nao ha substituto */
+  off.forEach(id=>w.__CURATION.set(id,"exclude"));
+  w.__DEV.showResults();
+  return w.__CURATION.published().length === 0;
+}
+/* A REGRA nas DUAS direcoes. Devolve false se qualquer uma das metades falhar, e
+   exige que a fixture tenha SUJEITO: sem produto ofertado a primeira metade seria
+   verdadeira por vazio. */
+function apoioLegadoSegueOSubstituto(w,d){
+  const comSubstituto = w.__CURATION && w.__CURATION.__installed &&
+                        w.__CURATION.published().length > 0;
+  if (!comSubstituto) return false;                 /* sem sujeito, nao se afirma nada */
+  if (apoioLegadoVisivel(d)) return false;          /* com substituto, tem de estar oculto */
+  if (!semSubstituto(w)) return false;              /* a supressao tem de valer */
+  return apoioLegadoVisivel(d);                     /* e sem substituto, tem de voltar */
+}
+
 /* U1 — posição/legacy: nada preenchido = V3.1.3 intacta + CTA correto */
 T("U1","legacy: CTA presente com textos exatos; blocos V3.2 ausentes; apoio legado visível; legacyMode true",()=>{
   const {w,d} = boot(); answerAll(w,1); w.__DEV.showResults();
   const cta = q(d,"#v32cta");
   const sub = q(d,".v32-sub");
-  const apoioVisible = Array.from(d.querySelectorAll(".section-title .eyebrow"))
-    .some(e=>e.textContent.includes("Como a Fortinet pode apoiar") && !e.closest(".v32-hidden"));
+  /* [023 · E1] a REGRA nas duas direcoes, em vez da antiga "visivel" incondicional */
+  const legadoOk = apoioLegadoSegueOSubstituto(w,d);
   return cta && cta.textContent==="Adicionar contexto tecnológico" &&
     sub && sub.textContent.includes("Opcional · refine a interpretação") &&
-    !q(d,"#v32decl") && !q(d,"#v32interp") && apoioVisible &&
+    !q(d,"#v32decl") && !q(d,"#v32interp") && legadoOk &&
     w.__DEV.V32.isLegacyModeV32()===true;
 });
 
@@ -134,10 +180,11 @@ T("U7","'Limpar contexto tecnológico' restaura legacyMode e o apoio legado vis�
   q(d,"#v32save").click();
   if (w.__DEV.V32.isLegacyModeV32()) return false;
   q(d,"#v32clear").click();
-  const apoioVisible = Array.from(d.querySelectorAll(".section-title"))
-    .filter(t=>txt(t).includes("Como a Fortinet pode apoiar"))
-    .every(t=>!t.classList.contains("v32-hidden"));
-  return w.__DEV.V32.isLegacyModeV32()===true && apoioVisible && !q(d,"#v32decl");
+  /* [023 · E1] limpar o contexto restaura o modo legado; o que a leitura congelada
+     faz ali passou a seguir o substituto, e e isso que se mede — nas duas
+     direcoes, nao so na que valia antes da errata */
+  return w.__DEV.V32.isLegacyModeV32()===true &&
+    apoioLegadoSegueOSubstituto(w,d) && !q(d,"#v32decl");
 });
 
 /* U8 — coveredCapabilities: só em soc-platform + terceiro; FortiSOC não exibe */

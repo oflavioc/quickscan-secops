@@ -7087,3 +7087,107 @@ seguida.
 Ver [[EA-20]] pelo que a rota do meio produziria — gate que promete asserção e
 entrega tautologia —, e a entrada da 020 em `design-decisions.md`, que esta demanda
 emenda em vez de contradizer em silêncio.
+
+## EA-80 — a supressão da curadoria deixa a seção de apoio com o título e nada embaixo
+
+**Status**: `aberto`
+
+**Aberto em**: 2026-10-02, medido na W1 da demanda 023.
+
+### A cadeia
+
+`ui_p52_support_v32.js:744` remove os `.apoio-block` legados do DOM **depois** de
+migrar o `.prod` de cada um para os cards por produto — a consolidação do `EA-65`.
+A remoção é **incondicional**: acontece tenha a curadoria publicado onze cards ou
+zero. Com a curadoria excluindo tudo, `cards.length` é 0, `declararSupressao()`
+escreve o aviso, e a seção fica com o **título congelado visível e nenhum bloco
+embaixo dele**.
+
+Medido sob a fixture `D010-F5` (que é `D010-F1` + supressão total):
+
+```
+censo da Camada 1: 1 nó — só o título. Blocos contíguos: ZERO.
+mesma sessão sem supressão: título + 2 `.apoio-block` congelados
+```
+
+**É pré-existente**, e isso foi conferido no build anterior à demanda 023: a
+sonda de 2026-10-02 sobre `saasAllowed=yes` + supressão total já devolvia
+`[titulo, titulo, bloco t-list]`, sem os `.apoio-block`. A 023 não causou; ela
+tornou o defeito **load-bearing**, porque passou a ser a visibilidade da Camada 1
+o que a arbitragem devolve quando o substituto é suprimido — e o que ela devolve
+está vazio.
+
+### Por que importa
+
+A `C1` da demanda 010 promete que *"a Camada 1 não desaparece sem substituto"*. Com
+a supressão, o título fica e o **conteúdo** não — o cliente lê um cabeçalho de
+recomendação sem recomendação alguma, mais um aviso dizendo que itens foram
+retirados. A promessa é cumprida na letra e falha no que ela queria dizer.
+
+### Consequência já paga
+
+É por isto que o `D010-ARB1` foi reancorado na `D010-F3` (gate de suficiência
+fechado) e **não** na fixture de supressão: a alínea `(c)` dele mede blocos
+contíguos visíveis, e sob supressão não existe nenhum. Ficou registrado no
+próprio gate, com a razão.
+
+### Encaminhamento
+
+Demanda própria ou fix-finding — o núcleo é decidir o que a seção mostra quando a
+curadoria esvazia a publicação: devolver os blocos congelados (não removê-los
+quando `cards.length === 0`), ou declarar que o aviso de supressão É a leitura
+daquele estado. A primeira preserva a Camada 1 e é mais barata; a segunda muda o
+que a `C1` da 010 promete e precisa do `product-owner`.
+
+Ver [[EA-76]] e a errata `E19` de `specs/010-recomendacao-sem-vao/spec.md`.
+
+## EA-81 — em modo legado sob arbitragem, o catálogo de ícones fica duplicado e oculto
+
+**Status**: `aberto`
+
+**Aberto em**: 2026-10-02, medido na W4 da demanda 023.
+
+### A cadeia
+
+A errata `E1` da demanda 023 estendeu a arbitragem da 010 ao **modo legado**. Ali
+`hideLegacyRecommendation` passa a ocultar a região congelada, e o decorador da
+5.2 tem **abstenção por nó** (`ui_p52_support_v32.js:206-211`): `blocosLegados()`
+recusa o que está oculto. Consequência — ele **não consome** os `.apoio-block`
+congelados e monta os cards por produto ao lado, com tiles próprios.
+
+Medido na fixture dos gates de ícone (vetor de 15 zeros, nada declarado):
+
+```
+origin/develop (8f166d3)   .icon-tile img: 9 total · 0 ocultos · 9 alts distintos
+branch da 023              .icon-tile img: 29 total · 20 OCULTOS · 10 alts
+                           FortiGuard: 3 (0 ocultos) → 6 (3 ocultos)
+```
+
+Vinte tiles que o cliente não vê continuam no DOM, e o catálogo inteiro existe em
+duas cópias — a congelada oculta e a nova visível.
+
+### O que isso já custou
+
+**Cegou dois gates de outra fase.** `P52-ICON1` e `P52-ICON2` deduplicavam por
+`alt|tamanho` guardando a **primeira** ocorrência em ordem de documento, sem
+olhar visibilidade — e as ocultas passaram a vir primeiro. Três mutantes de
+geometria (`P52-M8`, `P52-RA8`, `P52-RA8B`) foram de DETECTADO a SOBREVIVENTE:
+**3/3 no controle de `origin/develop`, 0/3 no branch**, em worktree limpa de
+árvore inteira.
+
+O **gate** foi consertado na própria 023 (guarda de tile não desenhado, decisão
+do proprietário em 2026-10-02 — rota C), e passou a medir o que o cliente vê. A
+**causa** não: é este achado.
+
+### Encaminhamento
+
+Demanda própria. O núcleo é o que o decorador faz com bloco congelado **oculto**
+em modo legado: hoje se abstém, e a abstenção foi desenhada no `EA-65` para o
+cenário em que a arbitragem escondia região que a V3.2 não ia substituir — o que
+deixou de ser verdade. As duas rotas aparentes:
+
+- **consumir mesmo oculto** quando há card a publicar, eliminando a cópia morta;
+- **não ocultar** o que o decorador vai consumir — ordenação, raio maior.
+
+Ver [[EA-80]], que é da mesma família (o que a seção mostra quando a publicação
+esvazia), e a errata `E1` de `specs/023-leitura-unica-do-apoio/spec.md`.

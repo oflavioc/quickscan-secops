@@ -353,7 +353,33 @@ const PROTECTED = {
      9794b267... identico ao pinado.
      Identidade anterior:
      a38b913fdf1e6a1e6ecba8ef4e1bcb24a4fc822efca3710d53d29155eded49d0 */
-  "ui_v32.js": "35139e68dc7f338a708f52681323586d6904101ca5d99e106311377437c0d72f",
+  /* DEMANDA 023 (`023-leitura-unica-do-apoio`) · AUTORIZACAO NOMINAL §29.4.
+     O proprietario autorizou no chat, em 2026-10-01, com a frase literal
+     "Aprovado, ratifico a emenda e autorizo o ui_v32.js", no portao da Fase 1 —
+     onde a autorizacao foi PEDIDA e estava declarada como PARADA na propria spec.
+     A autorizacao e NOMINAL, por arquivo, e vale so para a 023.
+
+     DUAS EXPRESSOES mudaram, e as duas sao de arbitragem de camada:
+       1 · `hasSubstituteV32()` ganhou a segunda fonte — produto PUBLICADO na
+           visao por produto, lido de `__CURATION.published()` sob guarda de
+           `typeof`, mais a clausula da errata E4 (gate de suficiencia FECHADO
+           nao substitui). Nasceu `temProdutoPublicadoV32()`;
+       2 · o ramo LEGADO de `renderBlocks()` deixou de passar a constante `false`
+           e passa o mesmo veredito (errata E1, rota B ratificada em 2026-10-02).
+
+     A REGRA de ocultacao e a lista `HIDE_EYEBROWS` sao byte-identicas; nenhum
+     arquivo `frozen` foi tocado e a regua D2 nao se moveu — payload M41
+     9794b267... identico ao pinado, conferido pelo stage `m41`.
+
+     POR QUE A SEGUNDA EXPRESSAO EXISTE: medido na Fase 4, a sessao que originou o
+     relato nao usou o editor de contexto, logo era MODO LEGADO — onde o predicado
+     nem era consultado. A spec como estava nao corrigiria o caso relatado.
+
+     Identidade medida sobre o blob de HEAD (`git show HEAD:ui_v32.js`), que e a
+     fonte canonica da R2 §2 e nao se move enquanto uma campanha muta a arvore.
+     Identidade anterior:
+     35139e68dc7f338a708f52681323586d6904101ca5d99e106311377437c0d72f */
+  "ui_v32.js": "d9215fd65e9433b6174cf27fc94215e60da1014d0b660360cc1eb724306c4339",
   "ui_ux_v32.js": "a050401145a5ed7af597eae01a9a23826418119769c096db168b3b177a9d3938",
   /* ERRATA DA AUDITORIA EXTERNA · §4.1.1 ("qualquer texto derivado consome a
      mesma decisão canônica de publicabilidade"). A comparação Atual × Alvo

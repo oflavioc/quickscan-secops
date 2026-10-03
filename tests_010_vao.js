@@ -60,7 +60,17 @@ const { JSDOM } = require("jsdom");
 const FX = require("./fixtures_010_vao.js");
 
 const HERE = __dirname;
-const HTML_PATH = path.join(HERE, "quickscan_secops_soccmm_v3_2_dev.html");
+/* [023 · 2026-10-02] OVERRIDE DE ARTEFATO, e ele nao muda assercao nenhuma.
+   A campanha `tests_023_mutants.js` tem um mutante — `D023-M5b`, que desfaz a
+   clausula da errata `E4` — cujo carrasco e o `D010-ARB1`, porque nenhuma fixture
+   da 023 tem suficiencia fechada. Sem este override a suite leria sempre o
+   artefato RASTREADO, a mutacao nao alcancaria o sujeito e o mutante sairia
+   SOBREVIVENTE pelo motivo errado: falso negativo de campanha, que e pior que
+   campanha nenhuma. Reconstruir sobre o arquivo rastreado esta proibido (R7 §3),
+   entao a rota e a mesma que `tests_022_escalonamento.js` e a propria `d023` ja
+   usam. Sem a variavel, o comportamento e byte-identico ao anterior. */
+const HTML_PATH = process.env.D010_HTML_OVERRIDE ||
+  path.join(HERE, "quickscan_secops_soccmm_v3_2_dev.html");
 const HTML = fs.readFileSync(HTML_PATH, "utf8");
 const TGT_JS_PATH = path.join(HERE, "ui_target_v32.js");
 const TGT_SRC = fs.readFileSync(TGT_JS_PATH, "utf8");
@@ -192,6 +202,23 @@ function ocultosDiretos(d) {
   return Array.from(escopoApoio(d).children).filter(n => n.classList && n.classList.contains("v32-hidden"));
 }
 /* Censo V3.2 → rota canônica para o legado → censo legado. ORDEM OBRIGATÓRIA. */
+/* ==========================================================================
+   EMENDA DE 2026-10-02 (demanda 023, errata `E1`) — O CONTROLE PRECISOU DE UM
+   SEGUNDO PASSO, E É ISSO QUE O TORNA CONTROLE DE NOVO.
+
+   Até esta data "modo legado" bastava como linha de base não-arbitrada: ali o
+   argumento de `hideLegacyRecommendation` era a constante `false`. A errata `E1`
+   estendeu a arbitragem ao modo legado — porque a sessão do relato de 2026-10-01
+   era justamente essa —, e com isso `resetLandscapeToUnset()` sozinho passou a
+   devolver um render TAMBÉM arbitrado quando há produto publicado. Medido: o
+   `D010-ARB3 (c)` caiu por vacuidade declarada ("vazio contra vazio"), o que é a
+   suíte funcionando — ela avisou em vez de comparar lixo.
+
+   A linha de base passa a ser "modo legado E sem substituto", e a segunda metade
+   se obtém pela única porta de escrita da curadoria. É mais honesto do que o
+   controle anterior: o que o gate quer é a Camada 1 como ela é SEM a V3.2 pôr
+   nada no lugar, e agora isso está dito nas duas dimensões em vez de uma.
+   ========================================================================== */
 function censoContraLegado(w, d, gate) {
   const antes = censoCamada1(d);
   if (!antes.length)
@@ -200,9 +227,17 @@ function censoContraLegado(w, d, gate) {
   w.__DEV.showResults();
   if (w.__DEV.V32.isLegacyModeV32() !== true)
     throw new Error(gate + ": resetLandscapeToUnset() não devolveu o runtime ao modo legado — o segundo render não é comparável");
+  /* [023 · E1] e sem substituto, senão a linha de base vem arbitrada */
+  if (w.__CURATION && w.__CURATION.__installed) {
+    w.__CURATION.offered().forEach(id => w.__CURATION.set(id, "exclude"));
+    w.__DEV.showResults();
+    if (w.__CURATION.published().length !== 0)
+      throw new Error(gate + ": a curadoria não esvaziou a publicação no controle legado — " +
+        "a linha de base continuaria arbitrada e a comparação não mediria o que promete");
+  }
   const depois = censoCamada1(d);
   if (!visiveis(depois).length)
-    vac(gate, "o render em modo legado não expõe nó algum da Camada 1 — a comparação seria vazio contra vazio");
+    vac(gate, "o render em modo legado E sem substituto não expõe nó algum da Camada 1 — a comparação seria vazio contra vazio");
   return { v32: antes, legado: depois };
 }
 
@@ -347,8 +382,22 @@ function rotuloQid(w, qid) {
 /* ============================================================================
    C1 · D010-ARB1 — o vão deixa de existir
    ========================================================================== */
-T("D010-ARB1", "C1 · sem substituto, a recomendação congelada permanece VISÍVEL (D010-F1)", () => gate(g => {
-  const { w, d } = R("D010-F1");
+/* EMENDA DE 2026-10-02 (demanda 023) — O SUJEITO TROCOU, E FICOU MAIS FORTE.
+   Era "contexto declarado sem capability declarada" (`D010-F1`). Sob o predicado
+   emendado essa sessão TEM substituto — o produto publicado na visão por produto —,
+   e manter a fixture antiga aqui seria afirmar o contrário do que o produto faz.
+   O sujeito novo é a SUPRESSÃO (`D010-F5`): o operador desfez o substituto. Cobre o
+   caso em que o vão é aberto DE PROPÓSITO, que é mais do que a redação original
+   alcançava. Ratificado pelo proprietário em 2026-10-01 e estendido em 2026-10-02. */
+T("D010-ARB1", "C1 · sem substituto, a recomendação congelada permanece VISÍVEL (D010-F3)", () => gate(g => {
+  /* A ÂNCORA É A F3, e a escolha foi MEDIDA, não preferida. Das sete fixtures,
+     ela é a única em que NÃO há substituto E os blocos contíguos da Camada 1
+     continuam no DOM: nas que publicam produto o decorador da 019 CONSOME os
+     `.apoio-block` congelados, e na de supressão (`D010-F5`) eles já foram
+     consumidos antes de a supressão acontecer — medido, e registrado como achado
+     próprio. A supressão continua coberta, pelos `D023-SUP1`/`D023-SUJ1`, que são
+     os gates da demanda que a introduziu. */
+  const { w, d } = R("D010-F3");
   exigeTelaLimpa(d, "D010-ARB1");
   let censo = [];
   /* (a) pré-condição declarada: fora do modo legado, e sem substituto */
@@ -503,8 +552,10 @@ T("D010-ARB3", "C3 · tudo-ou-nada e sem transbordo, nas quatro fixturas (F1/F2/
 /* ============================================================================
    C4 · D010-ARB4 — os dois ramos seguem a mesma arbitragem
    ========================================================================== */
-T("D010-ARB4", "C4 · o ramo !hasPrio ('apoiar agora') segue a mesma arbitragem (D010-F1b)", () => gate(g => {
-  const A = R("D010-F1b");
+/* EMENDA DE 2026-10-02 (demanda 023) — mesma troca de sujeito do `D010-ARB1`, no
+   ramo sem prioridades. `D010-F5b` é `D010-F1b` com a curadoria suprimindo tudo. */
+T("D010-ARB4", "C4 · o ramo !hasPrio ('apoiar agora') segue a mesma arbitragem (D010-F5b)", () => gate(g => {
+  const A = R("D010-F5b");
   exigeTelaLimpa(A.d, "D010-ARB4");
   const censo = censoCamada1(A.d);
   /* (a) o título do ramo sem prioridades está presente e VISÍVEL */
@@ -522,7 +573,7 @@ T("D010-ARB4", "C4 · o ramo !hasPrio ('apoiar agora') segue a mesma arbitragem 
   });
   /* (c) a mesma sessão COM prioridades dá o mesmo veredito de arbitragem */
   g.passo("(c) mesmo veredito com e sem prioridades declaradas", () => {
-    const B = R("D010-F1");
+    const B = R("D010-F5");        /* [023] o par de controle acompanha a troca de sujeito */
     const vA = FX.d010HasSubstitute(A.w), vB = FX.d010HasSubstitute(B.w);
     if (vA !== vB) throw new Error("veredito de arbitragem difere entre F1b e F1: " + vA + " × " + vB);
     const cA = censoCamada1(A.d), cB = censoCamada1(B.d);

@@ -125,6 +125,12 @@
       "pass": 14,
       "fail": 0,
       "_trilha": "Demanda 022-escalonamento-do-investimento, W4 · 2026-09-29. Contagem MEDIDA POR EXECUCAO, 14 PASS · 0 FAIL, coincidindo com os 14 criterios da spec — coincidencia conferida, nao presumida. HISTORICO DA JANELA VERMELHA, que fica de proposito: o RED commitado em 538d91c media 1 PASS · 13 FAIL. O unico verde de nascenca foi o D022-BND1 (nenhum frozen tocado), declarado no cabecalho da suite em vez de escondido — o poder dele vem do mutante M13 e ele existe para seguir afirmando isso DEPOIS das waves 2 e 3. TRES ALINEAS NASCERAM VAZIAS e o placar CAIU de 8 para 6 quando foram corrigidas, antes da implementacao: ALVO1(f), TENS1 e SUFI1 procuravam texto no relatorio INTEIRO — 'cenario-alvo', os digitos do teto e 'insufici' ja aparecem la por outros motivos. Viraram no nominal com qid."
+    },
+    "d023": {
+      "cmd": "node tests_023_leitura.js",
+      "pass": 9,
+      "fail": 0,
+      "_trilha": "Demanda 023-leitura-unica-do-apoio, W2 - 2026-10-02. Contagem MEDIDA POR EXECUCAO, 9 PASS - 0 FAIL, coincidindo com os 9 criterios da spec — coincidencia conferida, nao presumida. HISTORICO DA JANELA VERMELHA, que fica de proposito: o RED foi provado DUAS vezes. Em b4e3fd4, 8 PASS - 1 FAIL; o unico vermelho era o D023-OCU1, o criterio do relato. Depois das erratas E1/E2/E3 — nascidas da propria Fase 4, quando se mediu que a sessao do relato era MODO LEGADO e que a spec como estava nao a corrigiria — o red foi reprovado em a92d9ea, mesmo placar com sete fixtures e o OCU1 medindo os dois mundos. OITO DOS NOVE NASCERAM VERDES e isso esta declarado no cabecalho da suite: a demanda muda duas expressoes booleanas, e o poder dos oito guardas vem da campanha d023, nao do red. DOIS BURACOS DE VACUIDADE nos proprios gates verdes foram fechados antes do commit do red: o ARB1 fecharia verde com censo vazio nas fixtures (passou a contar grupos medidos) e o PAP1 provaria coerencia com 0===0===0 (cada fixture passou a trazer a sua expectativa). A nona fixture e a alinea (d) do REG1 nasceram DEPOIS, cobradas pela campanha, quando o M2 saiu sobrevivente."
     }
   },
   "heavy": {

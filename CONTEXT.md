@@ -425,3 +425,15 @@ estágio de maturidade que ele já mediu — é o índice da banda de
 `__QS_STAGE_RULER` que contém o score geral, com piso 1. Não alcança prioridade
 declarada pelo negócio, e não existe quando não há suficiência.
 _Evitar_: limite, quota, capacidade, budget
+
+**Substituto**:
+Leitura V3.2 que a seção de apoio pode apresentar NO LUGAR da recomendação
+congelada da Camada 1 — e cuja existência é a condição para ocultá-la. Um caso
+pertence quando o relatório publica, naquela sessão, ao menos uma leitura própria
+de apoio sob o gate de suficiência ABERTO: card de capability com conteúdo do
+motor, ou produto publicado na visão por produto. Não pertence o que o próprio
+relatório declara não-publicável, nem o que a curadoria retirou. A lista canônica
+de produtos publicados vive em `__CURATION.published()` e o predicado em
+`hasSubstituteV32()` — este verbete define o CRITÉRIO e referencia a fonte, nunca
+a copia (R12 / `EA-47`).
+_Evitar_: alternativa, equivalente, troca, recomendação V3.2

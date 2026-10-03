@@ -479,6 +479,21 @@ async function icon1(browser, errs) {
       const imgs = Array.from(document.querySelectorAll(".icon-tile img"));
       for (const img of imgs) {
         const tile = img.closest(".icon-tile");
+        /* [023 · emenda de 2026-10-02] TILE QUE O NAVEGADOR NAO DESENHA NAO E
+           SUJEITO — e a guarda vem ANTES do `seen[key]`, de proposito.
+           Estes dois gates prometem medir "o peso optico que o navegador desenha"
+           e "o catalogo EXIBIDO". Eles deduplicavam por `alt|tamanho` guardando a
+           PRIMEIRA ocorrencia em ordem de documento, sem olhar se ela e visivel —
+           e com isso uma copia OCULTA podia tomar a chave e cegar a medicao.
+           Medido na demanda 023: em modo legado sob arbitragem o catalogo vai de
+           9 para 29 tiles, 20 deles ocultos, e os ocultos vem PRIMEIRO. Tres
+           mutantes de geometria (P52-M8, P52-RA8, P52-RA8B) passaram a SOBREVIVER
+           — 3/3 DETECTADO no controle de `origin/develop` (8f166d3), 0/3 aqui.
+           A causa de haver copia oculta e defeito de produto, registrado em
+           `EA-81`; ESTA emenda conserta o gate, que media o invisivel e por isso
+           nao podia ver a mutacao. E fortalecimento: passa a medir o que o
+           cliente ve. Ratificada pelo proprietario no chat em 2026-10-02. */
+        if (!tile || !tile.getClientRects().length) continue;
         const tr = tile.getBoundingClientRect(), ir = img.getBoundingClientRect();
         const key = (img.getAttribute("alt") || "") + "|" + (tile.classList.contains("sm") ? "sm" : "lg");
         if (seen[key]) continue; seen[key] = 1;
@@ -676,7 +691,27 @@ async function rec1g(browser, errs) {
       const cards = Array.from(sec.querySelectorAll(":scope > .apoio-block"))
         .map(c => { const r = c.getBoundingClientRect();
           return { l: Math.round(r.left), t: Math.round(r.top + window.scrollY), w: Math.round(r.width) }; });
+      /* [023 · emenda de 2026-10-02] SO O QUE TEM LAYOUT ENTRA NA MEDICAO DE
+         LAYOUT. Este gate afirma que "os titulos de funcao continuam em faixa
+         propria, de largura total" — proposicao sobre o que o navegador desenha.
+         No `display:none` tem largura ZERO e nao esta em faixa alguma: medi-lo e
+         reprovar por invisibilidade, nao por geometria errada.
+         A errata `E1` da demanda 023 estendeu a arbitragem ao modo legado, e com
+         isso titulos congelados OCULTOS passaram a conviver no mesmo escopo com
+         os visiveis. Medido: as duas linhas "nao ocupa a faixa completa"
+         apontavam exatamente os dois titulos que a arbitragem havia escondido.
+         A causa de existir copia oculta e defeito de produto (`EA-81`); esta
+         emenda conserta a MEDICAO, e e fortalecimento — o gate passa a medir a
+         faixa de quem esta na tela, sem poder ser satisfeito nem reprovado por
+         no invisivel. Ratificada pelo proprietario em 2026-10-02 (rota C). */
+      const desenhado = e => {
+        const cs = getComputedStyle(e);
+        if (cs.display === "none" || cs.visibility === "hidden") return false;
+        const r = e.getBoundingClientRect();
+        return r.width > 0 && r.height > 0;
+      };
       const titles = Array.from(sec.querySelectorAll(":scope > .section-title"))
+        .filter(desenhado)
         .map(t => ({ text: (t.textContent || "").trim(), w: Math.round(t.getBoundingClientRect().width) }));
       return { display: getComputedStyle(sec).display, cards, titles,
         declared: sec.getAttribute("data-p52-support-cards"),
@@ -700,7 +735,14 @@ async function rec1g(browser, errs) {
     await mob.goto(HTML_URL);
     await toResults(mob, FX52.P52_F1);
     const mm = await mob.evaluate(() => Array.from(
-      document.querySelectorAll("#p52-sec-support > .apoio-block")).map(c => Math.round(c.getBoundingClientRect().left)));
+      document.querySelectorAll("#p52-sec-support > .apoio-block"))
+      .filter(e => {                                   /* [023] ver a nota acima */
+        const cs = getComputedStyle(e);
+        if (cs.display === "none" || cs.visibility === "hidden") return false;
+        const r = e.getBoundingClientRect();
+        return r.width > 0 && r.height > 0;
+      })
+      .map(c => Math.round(c.getBoundingClientRect().left)));
     if (new Set(mm).size > 1) detail.push("mobile: apoio em mais de uma coluna");
     observed.mobile = mm;
     await mob.close();
@@ -1118,6 +1160,7 @@ async function icon2(browser, errs) {
       const out = [], seen = {};
       for (const img of Array.from(document.querySelectorAll(".icon-tile img"))) {
         const tile = img.closest(".icon-tile");
+        if (!tile || !tile.getClientRects().length) continue;   /* [023] ver a nota em icon1 */
         const key = (img.getAttribute("alt") || "") + "|" + (tile.classList.contains("sm") ? "sm" : "lg");
         if (seen[key]) continue; seen[key] = 1;
         const tr = tile.getBoundingClientRect(), ir = img.getBoundingClientRect();
@@ -3677,6 +3720,30 @@ async function icon3(browser, errs) {
   try {
     await pgL.goto(HTML_URL);
     await toResults(pgL, { vec: FX52.P52_F1.vec, priorities: FX52.P52_F1.priorities });
+    /* [023 · emenda de 2026-10-02] A PREMISSA DA NOTA ACIMA PRECISOU DE UM PASSO.
+       O autor deste gate ja tratou a armadilha: mede (2) e (3) SEM contexto
+       declarado, porque "medi-las com contexto seria medir um bloco
+       `display:none` e chamar isso de aprovacao". A errata `E1` da demanda 023
+       estendeu a arbitragem ao modo legado, e com isso "sem contexto declarado"
+       deixou de garantir bloco VISIVEL: com produto publicado a leitura congelada
+       e ocultada tambem ali. Medido — as duas listas vinham com `caixa 0x0` e o
+       gate reprovava dizendo "tile presente no DOM mas nao pintado", que e
+       exatamente a leitura certa de um bloco oculto.
+       A condicao que o gate sempre quis e "a lista congelada esta NA TELA", e
+       hoje isso se obtem retirando o substituto. A supressao usa a unica porta de
+       escrita da curadoria e falha ALTO se nao houver o que suprimir, para que a
+       medicao nunca fique sem sujeito. */
+    await pgL.evaluate(() => {
+      if (!window.__CURATION || !window.__CURATION.__installed)
+        throw new Error("P52-ICON3/t2: `__CURATION` ausente — nao ha como retirar o substituto");
+      const off = window.__CURATION.offered();
+      if (!off.length)
+        throw new Error("P52-ICON3/t2: nada ofertado pelo motor — a lista congelada ficaria sem sujeito");
+      off.forEach(id => window.__CURATION.set(id, "exclude"));
+      window.__DEV.showResults();
+      if (window.__CURATION.published().length !== 0)
+        throw new Error("P52-ICON3/t2: a supressao nao esvaziou a publicacao");
+    });
     await pgL.waitForTimeout(200);
     const listas = await pgL.evaluate(async () => {
       const seen = e => { const cs = getComputedStyle(e);

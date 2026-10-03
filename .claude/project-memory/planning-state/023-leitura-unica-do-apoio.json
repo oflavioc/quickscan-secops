@@ -1,6 +1,6 @@
 {
   "demanda": "023-leitura-unica-do-apoio",
-  "phase": "validate",
+  "phase": "done",
   "spec_dir": "specs/023-leitura-unica-do-apoio",
   "branch": "feature/023-leitura-unica-do-apoio",
   "brief": "Sem contexto tecnologico declarado — o caso comum — a secao Formas de apoio apresenta o MESMO conjunto duas vezes: a lista congelada 'Pode fazer sentido — apos validacao' e os cards por produto, sem nada dizendo que sao a mesma coisa. Relato do proprietario em sessao real na v3.2.10. REVERTE a refutacao da demanda 020, registrada em design-decisions.md em 2026-09-24 — reversao do proprietario em 2026-10-01 ('Vamos de C'), amparada em medicao que a 020 nao tinha: aquela demanda avaliou UMA rota, agora sao tres.",

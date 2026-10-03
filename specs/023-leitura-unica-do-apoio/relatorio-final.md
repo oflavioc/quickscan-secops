@@ -101,6 +101,18 @@ porque eles prometem medir o que o navegador desenha — e a causa virou **`EA-8
 Sem o controle de árvore inteira eu teria chamado os 16 de pré-existentes e aberto
 o PR com três mutantes mortos pela minha mudança.
 
+E o mesmo controle, aplicado à **suíte** `p52chromium`, achou outros dois:
+`P52-ICON3` (que obtinha "lista congelada na tela" não declarando contexto — o que
+deixou de bastar) e `P52-REC1g` (que media faixa e coluna de nós `display:none`).
+Controle 51/5, branch 49/7, branch depois das emendas **51/5 — igualdade com o
+controle**, com as cinco remanescentes sendo `poppler-utils` ausente.
+
+**O preço da rota B não apareceu no produto; apareceu nos oráculos.** Seis suítes,
+dez gates. A errata `E1` previu duas suítes, e a conta subiu em toda wave — porque
+cada um deles codificava, à sua maneira, a proposição *"a leitura congelada está
+visível quando o contexto não foi declarado"*: verdadeira por anos, falsa desde
+esta demanda.
+
 **7 · O `tdd` recusou prosa no `red.commit`.** Pus `"b4e3fd4 (1a prova) + o commit
 desta errata"` num campo que uma máquina resolve. Quarta vez nesta sessão que um
 campo de vocabulário fechado cobra.

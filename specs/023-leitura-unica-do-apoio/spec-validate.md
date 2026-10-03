@@ -79,7 +79,24 @@ helper que declarava "sem substituto" para um estado que passou a ter um:
 | **019** | `D019-CTX1 (c)` trocou de proposição e ganhou **três** controles; `reason` do `D019-M18` atualizado, ataque intacto | idem |
 | **p50** | pin inline `§29.4` de `ui_v32.js` repinado, com identidade anterior no próprio pin | 2026-10-01 |
 | **M3.1 (fase 4.x)** | `U1` e `U7` de `tests_ui_m31.js` exigiam *"apoio legado VISÍVEL"* em modo legado, **incondicionalmente** — a cláusula exata que a `E1` revogou. Passaram a medir a **regra nas duas direções**: oculto com substituto, visível sem ele, com pré-condição de sujeito | 2026-10-02 |
-| **p52 chromium (fase 5.2)** | `P52-ICON1` e `P52-ICON2` deduplicavam tiles por `alt\|tamanho` guardando a **primeira** ocorrência em ordem de documento, **sem olhar visibilidade**. Ganharam guarda de tile não desenhado, ANTES da deduplicação | 2026-10-02 |
+| **p52 chromium (fase 5.2)** | **quatro gates**. `P52-ICON1`/`P52-ICON2` deduplicavam tiles por `alt\|tamanho` guardando a **primeira** ocorrência em ordem de documento, sem olhar visibilidade → guarda de tile não desenhado, ANTES da deduplicação. `P52-ICON3` obtinha "lista congelada na tela" **não declarando contexto**, o que deixou de bastar → passa a retirar o substituto. `P52-REC1g` media faixa e coluna de nós `display:none` → mede só o que tem layout | 2026-10-02 |
+
+**Seis suítes, dez gates, e nenhum enfraquecido.** A errata `E1` previu duas
+suítes; a conta subiu em cada wave, sempre pela mesma natureza — fixture ou
+asserção que codificava *"a leitura congelada está visível quando o contexto não
+foi declarado"*, proposição verdadeira por anos e que esta demanda tornou falsa.
+
+**O fecho do `p52chromium` é por igualdade com o controle, não por verde:**
+
+```
+origin/develop (8f166d3)   51 PASS · 5 FAIL  → PDF7, PDF4, PDF5, PDF6, TGT4
+branch, antes das emendas  49 PASS · 7 FAIL  → as 5 + REC1g + ICON3
+branch, depois             51 PASS · 5 FAIL  → as 5, idêntico ao controle
+```
+
+As cinco remanescentes são **`poppler-utils` ausente** nesta máquina, não
+divergência de produto — a prova de papel não foi executada, e o job `visual` do
+CI a executa. Declarado, não escondido.
 
 **O sexto oráculo foi o mais caro, e só apareceu porque o controle foi rodado em
 árvore inteira.** A execução direta do `check_mutation.py` acusou 16 não-KILL na

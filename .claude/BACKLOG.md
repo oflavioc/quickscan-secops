@@ -7275,3 +7275,70 @@ aqui:
 A segunda rota tem a forma do guarda que já existe e custo medido menor; a
 primeira preserva o atalho. Ver [[EA-83]], que pergunta se este hook **chega a
 ser despachado**, e o `EA-37`, que construiu o par deste guarda.
+
+## EA-83 — ninguém mediu se o harness despacha hook com matcher `Bash`: os dois guardas da R11 ficam inertes juntos, e o fecho do `EA-37` faz a pergunta parecer respondida
+
+**Status**: `aberto`
+
+**Aberto em**: 2026-10-10, medido pelo orquestrador nas configurações do HEAD
+(`232448f`).
+
+### Cadeia arquivo:linha → efeito
+
+- **`.claude/settings.json:53-65`** — um **único** grupo `PreToolUse` com
+  `"matcher": "Bash"` (`:54`) carrega os dois guardas: `guard-data.sh` (`:58`)
+  e `guard-add.sh` (`:62`). O outro grupo (`:41`) é `"matcher": "Write|Edit"`,
+  com `guard-boundary.sh`/`guard-tdd.sh`.
+- **Efeito do agrupamento**: o despacho dos dois é **comum**. Se o matcher
+  dispara, os dois disparam; **se não dispara, os dois estão inertes juntos** —
+  e aí a R11 fica sem metade mecânica nenhuma e o `EA-37` volta a depender de
+  disciplina. Uma condição, dois guardas: a pergunta é **uma só para os dois**.
+- **`.claude/BACKLOG.md:3371`** — `grep -a 'matcher'` no backlog dá **uma**
+  ocorrência em 7193 linhas, e é a linha do fecho do próprio `EA-37`. O
+  despacho nunca foi objeto de achado nem de medição registrada.
+- **`.claude/BACKLOG.md:3374-3378`** — o que o fecho do `EA-37` provou, na
+  redação dele: o hook **existe**, está **registrado** em `settings.json:62`, e
+  "alimentado com `{"tool_name":"Bash","tool_input":{"command":"git add -A"}}`,
+  devolve exit 2". Isso é um **payload entregue por stdin ao script** — mede a
+  **lógica do script**, que era a metade em dúvida em 2026-09-13.
+- **O que o fecho não tocou**: se o harness, diante de uma chamada real da
+  ferramenta `Bash`, **invoca** o grupo de `:53-65`. Nenhum registro afirma
+  isso, em nenhuma data.
+
+### Por que o registro atual piora o problema
+
+O `EA-37` está **`resolvido`** (`.claude/BACKLOG.md:3318`) desde a varredura de
+2026-09-13, e o fecho encerra com "nenhum resíduo foi identificado na
+varredura". Para quem lê o registro, a defesa mecânica está provada — e a
+próxima pergunta não é feita. **Verde falso é pior que vermelho.**
+
+Esta é a forma exata da família `EA-31` (`aberto`, `.claude/BACKLOG.md:2492`),
+"o registro da prova não é comparado com a execução da prova", e do `EA-39`
+(`:3543`), onde "0 merges" não distinguia "não há" de "não consegui caminhar".
+O `EA-5` (`:764`) é a origem da forma do argumento — "o número não distingue
+não executei de executei e escapou" — e está **`refutado`**: o que sobrevive
+dele é a família, não o achado.
+
+**Isto não reabre o `EA-37`** (R2 §5: refutação e fecho registrados
+permanecem). O `EA-37` cobrava a existência do hook, e o hook existe — aquilo
+foi medido e está certo. Este achado tem id próprio porque cobra outra
+proposição, que nunca foi medida.
+
+### Encaminhamento
+
+`fix-finding`, dono `build-engineer`, e o produto é uma **medição** antes de
+qualquer correção: provar por execução que uma chamada real da ferramenta
+`Bash` dispara o grupo `:53-65`. O resultado decide o resto —
+
+- **despacha**: registrar a prova com a execução citável e fechar; a R11 tem
+  metade mecânica viva, e o `EA-82` passa a ser o único vão.
+- **não despacha**: os dois guardas são prosa executável que nunca executa — a
+  R11 e o `EA-37` ficam sem defesa mecânica. A reabertura do `EA-37`, nesse
+  caso, é decisão de quem pode tomá-la, não efeito colateral deste registro.
+
+Um **controle negativo** é indispensável no desenho dessa medição: um guarda
+que nunca sai zero, ou um comando que ele deve barrar e que o harness deixaria
+passar. Sem isso, "não houve bloqueio" não distingue "despachou e aprovou" de
+"não despachou" — que é precisamente o defeito que este achado descreve, e
+seria medi-lo com o instrumento que ele acusa. Ver [[EA-82]], o outro vão da
+mesma defesa, e [[EA-31]].

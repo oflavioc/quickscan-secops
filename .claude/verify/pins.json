@@ -1,8 +1,8 @@
 {
   "_meta": {
     "descricao": "Registry único de pins — fonte de identidade dos artefatos (R8). Hashes = SHA-256 dos blobs de HEAD. Alterar arquivo pinado exige regenerar este registry no MESMO PR, com motivo no commit.",
-    "gerado_de_head": "b449b4569efaf0ed861a5290cc39f4fcff1ab80e",
-    "gerado_em": "2026-10-10",
+    "gerado_de_head": "0fff362d98b35a22decc66be52df2ef20beead07",
+    "gerado_em": "2026-10-11",
     "exclusoes": [
       "docs_phase5/**",
       ".claude/project-memory/** (estado de processo — muda por fase; validado pelo stage state, não por pin)",
@@ -153,12 +153,13 @@
     ".claude/agents/qa-engineer.md": "83859f5c61b24ba327da542f560cf1ecdd03113a3b3c2a78f677762658dacc81",
     ".claude/agents/tech-lead.md": "6f1066563db68ae9776ccbea6541bdae68ef4e6f078c75f931e91cdb04779dee",
     ".claude/agents/ui-engineer.md": "695180ac8d71be7cd89a13fdb6e803d1f3f30ad44911aba7d306bf2a1a5a6708",
+    ".claude/hooks/README-dispatch.md": "36c58de7ad852e303c36fd38b3316e791f3d2fe047af7adf8804df4194cf679c",
     ".claude/hooks/README-guard-add.md": "0a2b6bf0f51a943748563225790442e720713e7161797621722ff5f455eb23ec",
-    ".claude/hooks/guard-add.sh": "2e4b26177a5ff235173c35b8a3c9e9ef79a7032e2e477fd769fd9a279d8710dd",
+    ".claude/hooks/guard-add.sh": "1f4bd3d2d58cbbfb1896e58f0e7961f8100b2ce3293e25a020681ec9de2d2c9d",
     ".claude/hooks/guard-boundary.sh": "2ffbed8b15e2dfdf61a5e49dc90e49f4fb47765bda5a8081dafe4103f63afdf4",
-    ".claude/hooks/guard-data.sh": "1f5e71dfc002c4d3b48b814914aa757910fc3473b91ff627b071a8263e231b4b",
+    ".claude/hooks/guard-data.sh": "320e5968a596f4b5c55b294031472e7d8e988a44a7b2d56dec7604cbe15ea312",
     ".claude/hooks/guard-tdd.sh": "44d726cf06fdb0ed99cec8ce6eb4160e1b59bfdc1ccb5ce4a625bec5d9821820",
-    ".claude/hooks/lib/common.sh": "eaf980a5e0d08cf97c4fd5fb2d69f4433e990caa4ea2f96834e2b88a7c2f3f4e",
+    ".claude/hooks/lib/common.sh": "b000d753884e1887ec94947bec5f8dcb81a70e0b8d98b06b28a48956ea7cf608",
     ".claude/hooks/post-turn-verify.sh": "e46d2c17c4d7b0164154bd5220e2696011482da3dd49b28c41b90a844a89ea1a",
     ".claude/hooks/state-eval.sh": "f15c4df2e181f3f1b8db64bc6aedb46883d7600418f1c28a16446037b13d6b6e",
     ".claude/rules/boundary.md": "327888a7af5719d2bb264058457d1c6782f62a6dcaa506fdf844336a55da47f4",

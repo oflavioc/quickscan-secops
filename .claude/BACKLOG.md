@@ -7433,3 +7433,74 @@ aqui**:
 A escolha entre aprovar e barrar no caso indeterminado **não é do agente**: é a
 mesma decisão de proprietário que o [[EA-85]] isola. Ver [[EA-82]] e o `EA-37`,
 que construiu o guarda irmão.
+
+## EA-85 — o `guard-data` falha ABERTO quando o python não está disponível: no ambiente degradado em que mais se precisa dele, o guarda aprova tudo em silêncio
+
+**Status**: `aberto`
+
+**Aberto em**: 2026-10-11. Devolvido pelo `build-engineer` no encaminhamento do
+`EA-82`. **Pré-existente**: o conserto do `EA-82` não introduziu nem removeu
+este comportamento.
+
+### Cadeia arquivo:linha → efeito
+
+- **`.claude/hooks/lib/common.sh:13`** —
+  `PYBIN=python3; command -v python3 >/dev/null 2>&1 || PYBIN=python`. Se
+  nenhum dos dois existe no PATH, `PYBIN` fica valendo `python` e **toda**
+  invocação dele falha. Não há checagem posterior: o valor é usado como se
+  fosse válido.
+- **`.claude/hooks/lib/common.sh:18-32`** — `payload_get` é implementado **em
+  python**. Sem python, o hook não consegue nem ler o comando que deveria
+  julgar.
+- **`.claude/hooks/guard-data.sh:16`, `:21`** — `CMD` sai vazio e o pré-filtro
+  `case "$CMD" in *git*commit*) ;; *) exit 0;; esac` cai no `*`: **saída zero
+  aqui**, antes de qualquer checagem.
+- **`.claude/hooks/guard-data.sh:67-172`** — ainda que `CMD` chegasse, `ANALISE`
+  sairia vazia e `case "$(… head -1)" in commit) ;; *) exit 0;; esac` (`:169`)
+  dá a **segunda saída zero**.
+- **`.claude/hooks/guard-data.sh:193-221`** — e com `FALHAS` vazia, `:221`
+  `[ -z "$FALHAS" ] && exit 0` dá a **terceira**.
+- **Efeito**: três pontos de saída, todos no mesmo sentido. Sem python, o
+  guarda da R11 aprova qualquer commit sem emitir uma linha — e o silêncio é
+  indistinguível do silêncio de um commit limpo.
+
+**O que o conserto do `EA-82` mudou aqui (e o que não mudou)**: não mudou a
+direção — o guarda já falhava aberto antes. Mudou a **superfície**: a decisão
+"isto é mesmo um `git commit`?" passou a vir da análise em python
+(`:67-172`), que antes era usada só para listar achados sobre o índice. A
+dependência de python ficou carregando uma decisão a mais. É observação de
+escopo, não achado novo.
+
+### A tensão, que é real e não se resolve aqui
+
+Um guarda **fail-closed** barraria **todo** commit num ambiente sem python —
+inclusive commit de documentação, inclusive o commit que consertaria o
+ambiente. Um guarda **fail-open** é o que existe hoje: não guarda exatamente
+quando o ambiente está quebrado. Há rotas intermediárias aparentes
+(degradar para uma checagem em shell puro sobre os nomes dos arquivos
+estagiados; barrar só as classes detectáveis sem python; exigir ack nominal),
+e nenhuma delas é escolha do `doc-writer` nem do orquestrador.
+
+**Quem decide a direção é o proprietário.** Se a decisão for "fail-open é o
+desenho", o destino do registro não é fecho e sim `transferido` para
+[`design-decisions.md`](rules/design-decisions.md) (R13), com a fonte da
+confirmação — e aí a R11 passa a declarar, por escrito, que sua metade
+mecânica é condicional ao ambiente.
+
+### O que isto não é
+
+Não é a família do `E6` ("SKIP silencioso é FAIL", R10 §2): aquilo é sobre
+**gate** de pipeline, que tem stage 0 (`env-doctor`) para declarar ambiente
+antes de rodar. Um hook de sessão não tem stage 0 — roda no ambiente que a
+sessão tiver, sem ninguém ter validado nada. A semelhança é de forma; a
+mitigação do `E6` não alcança este caso. O que o `env-doctor` faz (FAIL em
+`python < 3.10`, `.claude/verify/env_doctor.py:9`) protege o **pipeline**, não
+o hook.
+
+### Encaminhamento
+
+`fix-finding`, dono `build-engineer`, **mas o portão é do proprietário**: a
+direção do erro (aberto vs. fechado) é decisão dele, e sem ela não há conserto
+a executar. Ver [[EA-82]], cujo conserto escolheu recusar no caso que não sabia
+julgar, e [[EA-84]], que tem exatamente a mesma pergunta pendente para o caso
+"raiz do comando indeterminável".

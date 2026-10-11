@@ -7276,6 +7276,41 @@ A segunda rota tem a forma do guarda que já existe e custo medido menor; a
 primeira preserva o atalho. Ver [[EA-83]], que pergunta se este hook **chega a
 ser despachado**, e o `EA-37`, que construiu o par deste guarda.
 
+### O que foi feito (2026-10-11) — status **inalterado**
+
+O veredito de fecho é do `qa-engineer` (R5); este registro só descreve o que
+existe no código, com os commits citáveis. Conserto em **`3521230`**
+(`fix(EA-82): guard-data recusa git commit que não passa pelo índice`) e repin
+do registry em **`8878d6a`**.
+
+Rota escolhida: **recusar**, a segunda das duas do encaminhamento acima.
+`.claude/hooks/guard-data.sh:21` alargou o pré-filtro barato;
+`:67-167` tokeniza o comando com `shlex`, remove corpo de heredoc e decide pela
+gramática do git quem é o subcomando; `:169-187` recusa com `exit 2` e mensagem
+que nomeia o motivo e o caminho nominal da R11 §3. Auto-exclusão nominal
+(R10 §10) em `:46-50`: prosa que **cita** a forma proibida não aciona o guarda —
+este bloco do backlog é um dos citadores.
+
+**Nota 1 — o conserto cobre escopo maior que a cadeia literal deste achado.**
+Além de `-a`/`--all`, recusa também pathspec após `--`
+(`guard-data.sh:148-149`): `git commit -m x -- <pathspec>` commita a árvore
+ignorando o índice — **vetor gêmeo**, mesma causa raiz, input diferente. Foi
+**medido pelo `build-engineer`**, não inferido. Registra-se aqui como escopo
+maior do conserto, e **não** como id novo: a proposição é a mesma.
+
+**Nota 2 — residual declarado, com o endereço da declaração.** Fica fora da
+cobertura: pathspec **posicional sem `--`** (`git commit arquivo -m x`; e
+`git commit -ma x`, que o git lê como `-m a` mais o pathspec `x`), além de
+`-i`/`-o` com caminho posicional. Distinguir pathspec de valor de opção exigiria
+a tabela completa de opções do git, e errar ali é **falso positivo em commit
+legítimo**. O residual está declarado em comentário no próprio guarda —
+**`.claude/hooks/guard-data.sh:52-56`** — e não só neste registro.
+
+**O que o conserto NÃO alcança**, e por isso tem id próprio: [[EA-84]] (o
+guarda mede o índice da pasta primária, mesmo em commit nominal) e [[EA-85]] (o
+guarda falha aberto sem python). Nenhum dos dois é efeito deste conserto, e
+nenhum dos dois é resolvido por ele.
+
 ## EA-83 — ninguém mediu se o harness despacha hook com matcher `Bash`: os dois guardas da R11 ficam inertes juntos, e o fecho do `EA-37` faz a pergunta parecer respondida
 
 **Status**: `aberto`
@@ -7342,6 +7377,49 @@ passar. Sem isso, "não houve bloqueio" não distingue "despachou e aprovou" de
 "não despachou" — que é precisamente o defeito que este achado descreve, e
 seria medi-lo com o instrumento que ele acusa. Ver [[EA-82]], o outro vão da
 mesma defesa, e [[EA-31]].
+
+### O que foi feito (2026-10-11) — status **inalterado**
+
+A medição que este achado pede **ainda não existe**: ela é do proprietário, em
+sessão nova. O que foi entregue é o **instrumento** — commit **`0fff362`**
+(`fix(EA-83): instrumento de despacho — os guardas da R11 registram a própria
+invocação`) e repin em **`13d6510`**.
+
+- **`.claude/hooks/lib/common.sh:70-89`** — `log_dispatch`: uma linha por
+  (guarda, sessão) em `.claude/hooks/dispatch.log`, com timestamp UTC, nome do
+  guarda, id de sessão, `$0` e `$PWD` (`:86`). Deduplicação por chave (`:81`),
+  teto duro de 400 linhas rotacionando para 200 (`:82-85`), tudo em subshell
+  com saídas em `/dev/null` e `|| true` (`:88`) — falha de registro **não**
+  silencia o guarda. Sem python e sem jq: só `date` e `grep`.
+- **`.claude/hooks/guard-data.sh:13`** e **`.claude/hooks/guard-add.sh:38`** —
+  a chamada é a **primeira** instrução de cada guarda, antes de qualquer saída
+  antecipada: o log existir é evidência **positiva** de invocação, que é o
+  controle que a cadeia acima exige (ausência de bloqueio não distingue
+  "despachou e aprovou" de "não despachou").
+- O arquivo é **ignorado pelo git** (`.gitignore:5`, `*.log`) — R7 §3:
+  verificação nunca escreve na árvore versionada.
+
+**O que o instrumento não prova** está declarado nele mesmo
+(`lib/common.sh:65-69`): que o `exit 2` chega ao usuário e aborta a chamada
+(despacho ≠ enforcement); que a decisão do guarda está correta; que o matcher
+cobre toda forma de chamada de `Bash` — só as que ocorreram.
+
+**Pendências que condicionam a medição**, ambas com id próprio:
+
+- [[EA-87]] — a cópia que o harness executa é a da pasta primária, e a branch em
+  que ela está hoje **não contém `log_dispatch`** (`grep -c` → `0` em
+  `guard-data.sh` e em `lib/common.sh`). Medir a partir dali hoje devolveria
+  "log ausente" por falta do instrumento, não por falta de despacho — a mesma
+  ambiguidade que este achado denuncia. Medir exige a primária numa branch que
+  carregue o instrumento.
+- [[EA-84]] — `log_dispatch` usa o mesmo `project_root()` e grava em
+  `"$raiz/.claude/hooks/dispatch.log"` (`lib/common.sh:73-75`): o log aparece no
+  clone **primário**, não na worktree de trabalho. Quem for conferir precisa
+  saber onde procurar.
+
+Hoje **não existe `dispatch.log` em nenhum dos dois clones** — conferido nesta
+sessão, e sem valor probatório pelo primeiro item acima. Status segue `aberto`
+até haver execução citável.
 
 ## EA-84 — o `guard-data` resolve a raiz do repositório pelo cwd do próprio processo: num commit disparado de qualquer worktree, ele inspeciona o índice da pasta PRIMÁRIA
 

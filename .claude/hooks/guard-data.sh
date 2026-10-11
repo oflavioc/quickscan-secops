@@ -7,6 +7,11 @@
 set -uo pipefail
 . "$(dirname "$0")/lib/common.sh"
 
+# EA-83 — evidência positiva de invocação, ANTES de qualquer saída
+# antecipada: o log existir prova que o harness despachou este grupo.
+# Nunca bloqueia nem silencia o guarda (ver log_dispatch em lib/common.sh).
+log_dispatch "guard-data"
+
 PAYLOAD="$(cat)"
 CMD="$(payload_get '.tool_input.command')"
 case "$CMD" in *"git commit"*) ;; *) exit 0;; esac

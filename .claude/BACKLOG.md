@@ -7191,3 +7191,555 @@ deixou de ser verdade. As duas rotas aparentes:
 
 Ver [[EA-80]], que é da mesma família (o que a seção mostra quando a publicação
 esvazia), e a errata `E1` de `specs/023-leitura-unica-do-apoio/spec.md`.
+
+## EA-82 — `git commit -a` contorna o `guard-data` inteiro: o hook mede o índice num instante em que o índice ainda está vazio
+
+**Status**: `aberto`
+
+**Aberto em**: 2026-10-10, medido pelo orquestrador na leitura do HEAD
+(`232448f`) e reproduzido por execução do próprio hook nesta worktree.
+
+### Cadeia arquivo:linha → efeito
+
+- **`.claude/settings.json:54`, `:58`** — `guard-data.sh` está registrado como
+  `PreToolUse` com matcher `Bash`. `PreToolUse` roda **antes** do comando: no
+  instante em que o hook executa, nada que o comando fosse fazer aconteceu
+  ainda.
+- **`.claude/hooks/guard-data.sh:12`** —
+  `case "$CMD" in *"git commit"*) ;; *) exit 0;; esac`. O portão está certo: o
+  hook só segue adiante em `git commit`.
+- **`.claude/hooks/guard-data.sh:15`** —
+  `STAGED=$(git diff --cached --name-only 2>/dev/null) || exit 0`. A única
+  fonte do conjunto a inspecionar é o **índice**.
+- **`.claude/hooks/guard-data.sh:16`** — `[ -z "$STAGED" ] && exit 0`. Índice
+  vazio → **saída zero, sem inspecionar nada**.
+- **Efeito**: `git commit -a` e `git commit -am` **estagiam no momento do
+  commit** — depois do `PreToolUse`. Logo o índice está vazio quando o hook
+  mede, ele sai em `:16`, e as quatro checagens de `:30` (sessão real), `:33`
+  (PDF novo), `:37` (padrão de segredo) e `:40` (binário novo > 200 KB) **não
+  rodam sobre arquivo algum**. O conteúdo entra no commit do mesmo jeito, sem
+  nenhuma mensagem.
+
+**O `guard-add.sh` não cobre este vetor.** `.claude/hooks/guard-add.sh:38` —
+`case "$CMD" in *git*add*) ;; *) exit 0;; esac` — e `:90`, que exige o token
+`add` depois do token `git`. `git commit -am` não contém `add`: o guarda sai
+zero. Os dois hooks do matcher `Bash` deixam passar o mesmo comando.
+
+### Medição, com controle positivo
+
+Repositório descartável, um `cliente.session.json` **rastreado** e sujo na
+árvore, e o **próprio** `.claude/hooks/guard-data.sh` do HEAD alimentado por
+stdin:
+
+```
+estagiado     + {"command":"git commit -m x"}   → exit 2
+                guard-data: commit BLOQUEADO — · sessão real: cliente.session.json
+NÃO estagiado + {"command":"git commit -am x"}  → exit 0   (silêncio)
+                índice: []  ·  árvore suja: [cliente.session.json]
+NÃO estagiado + {"command":"git commit -am x"}  → exit 0   (guard-add.sh)
+```
+
+O **controle positivo** é o que torna a medição conclusiva: mesmo hook, mesmo
+arquivo, mesmo repositório — muda só se o conteúdo passou pelo índice antes do
+`PreToolUse`. E o atalho de fato carrega o arquivo: `git commit -am` seguido de
+`git show --stat` lista `cliente.session.json` no commit resultante.
+
+### O que isto não é
+
+Não é desenho mal feito do hook. As checagens de `:30`–`:41` estão corretas, e o
+controle positivo prova que funcionam. O problema é **quando** o hook vê, não o
+que ele faz com o que vê — e a ordem de execução de um `PreToolUse` não é
+observável de dentro do próprio script. Um hook que roda antes do comando não
+tem como ler um índice que o comando ainda vai escrever.
+
+### Por que esta é a de maior consequência
+
+A R11 (`.claude/rules/evidence-intake.md`) protege **dado de cliente real** —
+nome de parte, teor de documento, assessment — e sua metade mecânica é este
+hook. A metade normativa manda commitar por caminho nominal (R11 §3; o `EA-37`
+construiu o `guard-add` exatamente para isso). Hoje a metade mecânica é
+contornada pelo atalho mais comum do git.
+
+### Encaminhamento
+
+`fix-finding`, dono `build-engineer`. Duas rotas aparentes, nenhuma decidida
+aqui:
+
+- **medir o conjunto que o comando VAI estagiar**, não o que já está: em
+  `-a`/`-am`, a união do índice com os rastreados modificados
+  (`git diff --name-only`), lendo o conteúdo da **árvore** em vez de `:0:<f>`;
+- **recusar `-a`/`-am`** em `git commit`, pelo mesmo argumento do `EA-37` —
+  staging de escopo amplo já é proibido por regra, e o caminho nominal cobre
+  100% do caso legítimo.
+
+A segunda rota tem a forma do guarda que já existe e custo medido menor; a
+primeira preserva o atalho. Ver [[EA-83]], que pergunta se este hook **chega a
+ser despachado**, e o `EA-37`, que construiu o par deste guarda.
+
+### O que foi feito (2026-10-11) — status **inalterado**
+
+O veredito de fecho é do `qa-engineer` (R5); este registro só descreve o que
+existe no código, com os commits citáveis. Conserto em **`3521230`**
+(`fix(EA-82): guard-data recusa git commit que não passa pelo índice`) e repin
+do registry em **`8878d6a`**.
+
+Rota escolhida: **recusar**, a segunda das duas do encaminhamento acima.
+`.claude/hooks/guard-data.sh:21` alargou o pré-filtro barato;
+`:67-167` tokeniza o comando com `shlex`, remove corpo de heredoc e decide pela
+gramática do git quem é o subcomando; `:169-187` recusa com `exit 2` e mensagem
+que nomeia o motivo e o caminho nominal da R11 §3. Auto-exclusão nominal
+(R10 §10) em `:46-50`: prosa que **cita** a forma proibida não aciona o guarda —
+este bloco do backlog é um dos citadores.
+
+**Nota 1 — o conserto cobre escopo maior que a cadeia literal deste achado.**
+Além de `-a`/`--all`, recusa também pathspec após `--`
+(`guard-data.sh:148-149`): `git commit -m x -- <pathspec>` commita a árvore
+ignorando o índice — **vetor gêmeo**, mesma causa raiz, input diferente. Foi
+**medido pelo `build-engineer`**, não inferido. Registra-se aqui como escopo
+maior do conserto, e **não** como id novo: a proposição é a mesma.
+
+**Nota 2 — residual declarado, com o endereço da declaração.** Fica fora da
+cobertura: pathspec **posicional sem `--`** (`git commit arquivo -m x`; e
+`git commit -ma x`, que o git lê como `-m a` mais o pathspec `x`), além de
+`-i`/`-o` com caminho posicional. Distinguir pathspec de valor de opção exigiria
+a tabela completa de opções do git, e errar ali é **falso positivo em commit
+legítimo**. O residual está declarado em comentário no próprio guarda —
+**`.claude/hooks/guard-data.sh:52-56`** — e não só neste registro.
+
+**O que o conserto NÃO alcança**, e por isso tem id próprio: [[EA-84]] (o
+guarda mede o índice da pasta primária, mesmo em commit nominal) e [[EA-85]] (o
+guarda falha aberto sem python). Nenhum dos dois é efeito deste conserto, e
+nenhum dos dois é resolvido por ele.
+
+## EA-83 — ninguém mediu se o harness despacha hook com matcher `Bash`: os dois guardas da R11 ficam inertes juntos, e o fecho do `EA-37` faz a pergunta parecer respondida
+
+**Status**: `aberto`
+
+**Aberto em**: 2026-10-10, medido pelo orquestrador nas configurações do HEAD
+(`232448f`).
+
+### Cadeia arquivo:linha → efeito
+
+- **`.claude/settings.json:53-65`** — um **único** grupo `PreToolUse` com
+  `"matcher": "Bash"` (`:54`) carrega os dois guardas: `guard-data.sh` (`:58`)
+  e `guard-add.sh` (`:62`). O outro grupo (`:41`) é `"matcher": "Write|Edit"`,
+  com `guard-boundary.sh`/`guard-tdd.sh`.
+- **Efeito do agrupamento**: o despacho dos dois é **comum**. Se o matcher
+  dispara, os dois disparam; **se não dispara, os dois estão inertes juntos** —
+  e aí a R11 fica sem metade mecânica nenhuma e o `EA-37` volta a depender de
+  disciplina. Uma condição, dois guardas: a pergunta é **uma só para os dois**.
+- **`.claude/BACKLOG.md:3371`** — `grep -a 'matcher'` no backlog dá **uma**
+  ocorrência em 7193 linhas, e é a linha do fecho do próprio `EA-37`. O
+  despacho nunca foi objeto de achado nem de medição registrada.
+- **`.claude/BACKLOG.md:3374-3378`** — o que o fecho do `EA-37` provou, na
+  redação dele: o hook **existe**, está **registrado** em `settings.json:62`, e
+  "alimentado com `{"tool_name":"Bash","tool_input":{"command":"git add -A"}}`,
+  devolve exit 2". Isso é um **payload entregue por stdin ao script** — mede a
+  **lógica do script**, que era a metade em dúvida em 2026-09-13.
+- **O que o fecho não tocou**: se o harness, diante de uma chamada real da
+  ferramenta `Bash`, **invoca** o grupo de `:53-65`. Nenhum registro afirma
+  isso, em nenhuma data.
+
+### Por que o registro atual piora o problema
+
+O `EA-37` está **`resolvido`** (`.claude/BACKLOG.md:3318`) desde a varredura de
+2026-09-13, e o fecho encerra com "nenhum resíduo foi identificado na
+varredura". Para quem lê o registro, a defesa mecânica está provada — e a
+próxima pergunta não é feita. **Verde falso é pior que vermelho.**
+
+Esta é a forma exata da família `EA-31` (`aberto`, `.claude/BACKLOG.md:2492`),
+"o registro da prova não é comparado com a execução da prova", e do `EA-39`
+(`:3543`), onde "0 merges" não distinguia "não há" de "não consegui caminhar".
+O `EA-5` (`:764`) é a origem da forma do argumento — "o número não distingue
+não executei de executei e escapou" — e está **`refutado`**: o que sobrevive
+dele é a família, não o achado.
+
+**Isto não reabre o `EA-37`** (R2 §5: refutação e fecho registrados
+permanecem). O `EA-37` cobrava a existência do hook, e o hook existe — aquilo
+foi medido e está certo. Este achado tem id próprio porque cobra outra
+proposição, que nunca foi medida.
+
+### Encaminhamento
+
+`fix-finding`, dono `build-engineer`, e o produto é uma **medição** antes de
+qualquer correção: provar por execução que uma chamada real da ferramenta
+`Bash` dispara o grupo `:53-65`. O resultado decide o resto —
+
+- **despacha**: registrar a prova com a execução citável e fechar; a R11 tem
+  metade mecânica viva, e o `EA-82` passa a ser o único vão.
+- **não despacha**: os dois guardas são prosa executável que nunca executa — a
+  R11 e o `EA-37` ficam sem defesa mecânica. A reabertura do `EA-37`, nesse
+  caso, é decisão de quem pode tomá-la, não efeito colateral deste registro.
+
+Um **controle negativo** é indispensável no desenho dessa medição: um guarda
+que nunca sai zero, ou um comando que ele deve barrar e que o harness deixaria
+passar. Sem isso, "não houve bloqueio" não distingue "despachou e aprovou" de
+"não despachou" — que é precisamente o defeito que este achado descreve, e
+seria medi-lo com o instrumento que ele acusa. Ver [[EA-82]], o outro vão da
+mesma defesa, e [[EA-31]].
+
+### O que foi feito (2026-10-11) — status **inalterado**
+
+A medição que este achado pede **ainda não existe**: ela é do proprietário, em
+sessão nova. O que foi entregue é o **instrumento** — commit **`0fff362`**
+(`fix(EA-83): instrumento de despacho — os guardas da R11 registram a própria
+invocação`) e repin em **`13d6510`**.
+
+- **`.claude/hooks/lib/common.sh:70-89`** — `log_dispatch`: uma linha por
+  (guarda, sessão) em `.claude/hooks/dispatch.log`, com timestamp UTC, nome do
+  guarda, id de sessão, `$0` e `$PWD` (`:86`). Deduplicação por chave (`:81`),
+  teto duro de 400 linhas rotacionando para 200 (`:82-85`), tudo em subshell
+  com saídas em `/dev/null` e `|| true` (`:88`) — falha de registro **não**
+  silencia o guarda. Sem python e sem jq: só `date` e `grep`.
+- **`.claude/hooks/guard-data.sh:13`** e **`.claude/hooks/guard-add.sh:38`** —
+  a chamada é a **primeira** instrução de cada guarda, antes de qualquer saída
+  antecipada: o log existir é evidência **positiva** de invocação, que é o
+  controle que a cadeia acima exige (ausência de bloqueio não distingue
+  "despachou e aprovou" de "não despachou").
+- O arquivo é **ignorado pelo git** (`.gitignore:5`, `*.log`) — R7 §3:
+  verificação nunca escreve na árvore versionada.
+
+**O que o instrumento não prova** está declarado nele mesmo
+(`lib/common.sh:65-69`): que o `exit 2` chega ao usuário e aborta a chamada
+(despacho ≠ enforcement); que a decisão do guarda está correta; que o matcher
+cobre toda forma de chamada de `Bash` — só as que ocorreram.
+
+**Pendências que condicionam a medição**, ambas com id próprio:
+
+- [[EA-87]] — a cópia que o harness executa é a da pasta primária, e a branch em
+  que ela está hoje **não contém `log_dispatch`** (`grep -c` → `0` em
+  `guard-data.sh` e em `lib/common.sh`). Medir a partir dali hoje devolveria
+  "log ausente" por falta do instrumento, não por falta de despacho — a mesma
+  ambiguidade que este achado denuncia. Medir exige a primária numa branch que
+  carregue o instrumento.
+- [[EA-84]] — `log_dispatch` usa o mesmo `project_root()` e grava em
+  `"$raiz/.claude/hooks/dispatch.log"` (`lib/common.sh:73-75`): o log aparece no
+  clone **primário**, não na worktree de trabalho. Quem for conferir precisa
+  saber onde procurar.
+
+Hoje **não existe `dispatch.log` em nenhum dos dois clones** — conferido nesta
+sessão, e sem valor probatório pelo primeiro item acima. Status segue `aberto`
+até haver execução citável.
+
+## EA-84 — o `guard-data` resolve a raiz do repositório pelo cwd do próprio processo: num commit disparado de qualquer worktree, ele inspeciona o índice da pasta PRIMÁRIA
+
+**Status**: `aberto`
+
+**Aberto em**: 2026-10-11. Devolvido pelo `build-engineer` no encaminhamento do
+`EA-82`/`EA-83` e **conferido pelo orquestrador na leitura do código** antes de
+virar achado.
+
+### Cadeia arquivo:linha → efeito
+
+- **`.claude/settings.json:54`, `:58`** — o grupo `PreToolUse` de matcher
+  `Bash` invoca `bash "$CLAUDE_PROJECT_DIR"/.claude/hooks/guard-data.sh`. O
+  script executado é o da **pasta primária**, e o processo do hook nasce com o
+  cwd nela — nunca na worktree onde o comando do usuário vai rodar.
+- **`.claude/hooks/lib/common.sh:15`** —
+  `project_root() { git rev-parse --show-toplevel 2>/dev/null; }`. Não recebe
+  argumento e não consulta o payload: resolve **do cwd do processo**.
+- **`.claude/hooks/guard-data.sh:189`** —
+  `cd "$(project_root)" 2>/dev/null || exit 0`. O guarda se muda para a raiz
+  assim resolvida.
+- **`.claude/hooks/guard-data.sh:190`** —
+  `STAGED=$(git diff --cached --name-only 2>/dev/null) || exit 0`: o índice
+  medido é o da raiz onde o `cd` caiu.
+- **`.claude/hooks/guard-data.sh:191`** — `[ -z "$STAGED" ] && exit 0`.
+- **Efeito**: um `git commit` disparado de outra worktree é inspecionado
+  **contra o índice de um repositório que não é o dele** — índice alheio, em
+  geral vazio, logo saída zero silenciosa em `:191`. As quatro checagens de
+  `:205` (sessão real), `:208` (PDF novo), `:212` (padrão de segredo) e `:215`
+  (binário novo > 200 KB) não rodam sobre arquivo algum.
+
+**O erro é simétrico, e a outra ponta também é defeito**: se a primária tiver
+algo estagiado, o commit da worktree é julgado por conteúdo que **não está
+nele** — falso positivo possível, barrando commit legítimo por causa de um
+índice de terceiros. A direção do erro depende do estado de um repositório que
+quem commita não está olhando.
+
+### Por que é independente do `EA-82` e do `EA-83`
+
+- **Do `EA-82`**: ali o vão é a **forma do comando** (`-a`/`-am`, pathspec sem
+  passar pelo índice) e a causa é ordem de execução. Aqui o comando pode ser
+  perfeitamente nominal — `git add <caminho> && git commit -m "…"`, o que a
+  R11 §3 manda — e o guarda ainda mede o repositório errado.
+- **Do `EA-83`**: ali a pergunta é se o harness **despacha** o grupo. Aqui o
+  despacho pode ser perfeito: o hook roda, executa todas as checagens, e olha
+  para o lugar errado. Despachar e acertar o alvo são proposições diferentes.
+
+### O custo, que é concreto
+
+A R14 (`.claude/rules/git-flow.md`, §Worktrees) prescreve **uma worktree por
+demanda** para conversas simultâneas, e este repositório usa isso por desenho —
+`.claude/worktrees/` é ignorado pelo git exatamente para isso. Toda demanda que
+trabalhou em worktree commitou com a metade mecânica da R11 apontada para o
+repositório errado. Não é hipótese de uso raro: é o modo de trabalho descrito
+na própria regra.
+
+### O mesmo defeito contamina o instrumento do `EA-83`
+
+`.claude/hooks/lib/common.sh:73-75` — `log_dispatch` chama o mesmo
+`project_root()` e escreve em `"$raiz/.claude/hooks/dispatch.log"`. Logo o log
+de despacho de uma sessão enraizada na primária aparece **na primária**, não na
+worktree de trabalho — quem for conferir a prova do `EA-83` precisa saber em
+qual clone procurar. Ver [[EA-83]].
+
+### Gatilho de falsificação
+
+Esta cadeia tem uma premissa única e verificável: **o cwd do processo do hook é
+a pasta primária**. Se fosse a worktree, `git rev-parse --show-toplevel`
+devolveria a worktree e não haveria achado. O instrumento que decide isso já
+existe e já grava o dado: `.claude/hooks/lib/common.sh:86` registra `$PWD` na
+linha do `dispatch.log`. Primeira linha de log escrita por um copy que carregue
+o instrumento resolve a pergunta por execução — e refuta este achado se o
+`$PWD` registrado for a worktree.
+
+### Encaminhamento
+
+`fix-finding`, dono `build-engineer`. Rotas **aparentes, nenhuma decidida
+aqui**:
+
+- derivar a raiz do **comando**, não do processo: se o payload do `PreToolUse`
+  carregar um campo de cwd, `project_root` passa a aceitá-lo (hoje nenhum hook
+  lê campo de cwd — `grep -rn 'cwd' .claude/hooks/` não acha nada, e se o campo
+  existe no payload é **pendência de verificação**, não fato);
+- recusar o que não sabe julgar, pelo mesmo argumento do `EA-82`: se a raiz do
+  comando não for determinável, barrar em vez de aprovar — o que esbarra na
+  tensão de direção que o [[EA-85]] registra (guarda que falha aberto vs.
+  guarda que barra tudo no ambiente degradado).
+
+A escolha entre aprovar e barrar no caso indeterminado **não é do agente**: é a
+mesma decisão de proprietário que o [[EA-85]] isola. Ver [[EA-82]] e o `EA-37`,
+que construiu o guarda irmão.
+
+## EA-85 — o `guard-data` falha ABERTO quando o python não está disponível: no ambiente degradado em que mais se precisa dele, o guarda aprova tudo em silêncio
+
+**Status**: `aberto`
+
+**Aberto em**: 2026-10-11. Devolvido pelo `build-engineer` no encaminhamento do
+`EA-82`. **Pré-existente**: o conserto do `EA-82` não introduziu nem removeu
+este comportamento.
+
+### Cadeia arquivo:linha → efeito
+
+- **`.claude/hooks/lib/common.sh:13`** —
+  `PYBIN=python3; command -v python3 >/dev/null 2>&1 || PYBIN=python`. Se
+  nenhum dos dois existe no PATH, `PYBIN` fica valendo `python` e **toda**
+  invocação dele falha. Não há checagem posterior: o valor é usado como se
+  fosse válido.
+- **`.claude/hooks/lib/common.sh:18-32`** — `payload_get` é implementado **em
+  python**. Sem python, o hook não consegue nem ler o comando que deveria
+  julgar.
+- **`.claude/hooks/guard-data.sh:16`, `:21`** — `CMD` sai vazio e o pré-filtro
+  `case "$CMD" in *git*commit*) ;; *) exit 0;; esac` cai no `*`: **saída zero
+  aqui**, antes de qualquer checagem.
+- **`.claude/hooks/guard-data.sh:67-172`** — ainda que `CMD` chegasse, `ANALISE`
+  sairia vazia e `case "$(… head -1)" in commit) ;; *) exit 0;; esac` (`:169`)
+  dá a **segunda saída zero**.
+- **`.claude/hooks/guard-data.sh:193-221`** — e com `FALHAS` vazia, `:221`
+  `[ -z "$FALHAS" ] && exit 0` dá a **terceira**.
+- **Efeito**: três pontos de saída, todos no mesmo sentido. Sem python, o
+  guarda da R11 aprova qualquer commit sem emitir uma linha — e o silêncio é
+  indistinguível do silêncio de um commit limpo.
+
+**O que o conserto do `EA-82` mudou aqui (e o que não mudou)**: não mudou a
+direção — o guarda já falhava aberto antes. Mudou a **superfície**: a decisão
+"isto é mesmo um `git commit`?" passou a vir da análise em python
+(`:67-172`), que antes era usada só para listar achados sobre o índice. A
+dependência de python ficou carregando uma decisão a mais. É observação de
+escopo, não achado novo.
+
+### A tensão, que é real e não se resolve aqui
+
+Um guarda **fail-closed** barraria **todo** commit num ambiente sem python —
+inclusive commit de documentação, inclusive o commit que consertaria o
+ambiente. Um guarda **fail-open** é o que existe hoje: não guarda exatamente
+quando o ambiente está quebrado. Há rotas intermediárias aparentes
+(degradar para uma checagem em shell puro sobre os nomes dos arquivos
+estagiados; barrar só as classes detectáveis sem python; exigir ack nominal),
+e nenhuma delas é escolha do `doc-writer` nem do orquestrador.
+
+**Quem decide a direção é o proprietário.** Se a decisão for "fail-open é o
+desenho", o destino do registro não é fecho e sim `transferido` para
+[`design-decisions.md`](rules/design-decisions.md) (R13), com a fonte da
+confirmação — e aí a R11 passa a declarar, por escrito, que sua metade
+mecânica é condicional ao ambiente.
+
+### O que isto não é
+
+Não é a família do `E6` ("SKIP silencioso é FAIL", R10 §2): aquilo é sobre
+**gate** de pipeline, que tem stage 0 (`env-doctor`) para declarar ambiente
+antes de rodar. Um hook de sessão não tem stage 0 — roda no ambiente que a
+sessão tiver, sem ninguém ter validado nada. A semelhança é de forma; a
+mitigação do `E6` não alcança este caso. O que o `env-doctor` faz (FAIL em
+`python < 3.10`, `.claude/verify/env_doctor.py:9`) protege o **pipeline**, não
+o hook.
+
+### Encaminhamento
+
+`fix-finding`, dono `build-engineer`, **mas o portão é do proprietário**: a
+direção do erro (aberto vs. fechado) é decisão dele, e sem ela não há conserto
+a executar. Ver [[EA-82]], cujo conserto escolheu recusar no caso que não sabia
+julgar, e [[EA-84]], que tem exatamente a mesma pergunta pendente para o caso
+"raiz do comando indeterminável".
+
+## EA-86 — o `env-doctor` passa com `node_modules` ausente: o stage 0 declara node e Chromium, e não olha a dependência INSTALADA — 3 FAIL com sintomas que nomeiam a coisa errada
+
+**Status**: `aberto`
+
+**Aberto em**: 2026-10-11. Devolvido pelo `build-engineer`, que mediu a
+consequência ao vivo; a lacuna no verificador foi **conferida pelo
+orquestrador** e a tradução enganosa do sintoma foi conferida no fonte.
+
+### Cadeia arquivo:linha → efeito
+
+- **`.claude/verify/pipeline.yaml:17-19`** — `env-doctor` é o **stage 0**:
+  `python .claude/verify/env_doctor.py`. A R7 §4
+  (`.claude/rules/determinism.md`) lhe dá o papel: "dependência de ambiente é
+  declarada, nunca implícita — valida node/python/git/Chromium ANTES das
+  suítes".
+- **`.claude/verify/env_doctor.py:43-69`** — verifica o **binário** node:
+  presença no PATH (`:44-45`, FAIL) e versão contra `engines` do
+  `package.json` (`:69`, WARN).
+- **`.claude/verify/env_doctor.py:71-80`** — Chromium: `CHROME_PATH` ou cache
+  `ms-playwright`, ausência vira WARN nomeado (KI-3, R13).
+- **Lacuna**: em 99 linhas, **nenhuma** menciona `node_modules` ou as
+  dependências instaladas. `grep -rn 'node_modules' .claude/verify/` devolve
+  **duas** ocorrências, ambas em **prosa de registro** dentro de
+  `mutation-matrix.json:842` e `:864` — nenhuma em verificador. O binário é
+  validado; o que `npm ci` instala, não.
+- **Efeito**: worktree nova não traz `node_modules` (é ignorado pelo git, logo
+  `git worktree add` não o copia) e o pipeline roda inteiro nesse estado, sem
+  que o stage 0 diga uma palavra.
+
+### Medição (pelo `build-engineer`, ao vivo, em worktree nova)
+
+```
+sem node_modules   bash .claude/verify/run.sh  → 15 PASS · 3 FAIL
+                   22 suítes: "sem contagem na última linha: (sem saída)"
+                   regra-morta: "instrumento ausente"
+npm ci --no-audit  bash .claude/verify/run.sh  → 18 PASS · 0 FAIL
+```
+
+Entre as duas execuções **não se tocou uma linha de código** — a diferença é
+só a árvore de dependências instalada. Um pipeline inteiro vermelho por motivo
+que nenhum stage nomeia.
+
+### O sintoma engana por construção (conferido no fonte, nesta sessão)
+
+- **`.claude/verify/check_suites.py:28`, `:31`** — a suíte é julgada pela
+  última linha não vazia do stdout; sem stdout, o relatório imprime
+  `sem contagem na última linha: (sem saída)`. Vinte e duas vezes. A mensagem
+  descreve o **formato da saída**, nunca a causa: o processo nem subiu.
+- **`.claude/verify/regra_morta.js:46`** — `const { JSDOM } = require("jsdom")`.
+  Sem `node_modules`, esse `require` estoura `MODULE_NOT_FOUND` **dentro** do
+  instrumento.
+- **`tests_014_regra_morta.js:598-601`** — o `catch` traduz **qualquer**
+  `MODULE_NOT_FOUND` em
+  `"instrumento ausente: .claude/verify/regra_morta.js (T040, wave 4, owner build-engineer) — NÃO EXECUTADO, e isso é FAIL, não SKIP"`.
+  O instrumento está **presente no disco e em HEAD**: o que falta é a
+  dependência transitiva dele. A mensagem acusa o artefato errado e endereça o
+  dono errado, e quem a lê vai procurar um arquivo que está lá.
+
+O desenho de `tests_014_regra_morta.js:591-592` está certo e é exemplar
+("Ausência é FAIL NOMEADO, nunca SKIP silencioso (R10 §2)") — o defeito é que
+**nomeia errado**: `MODULE_NOT_FOUND` do próprio instrumento e
+`MODULE_NOT_FOUND` de uma dependência dele são causas distintas colapsadas numa
+frase.
+
+### Por que é achado, e de qual família
+
+É a família do `E6` citado pela R7 §4 e pela R10 §2 — ambiente ausente que não
+vira declaração nomeada. Aqui com um agravante: não há SKIP silencioso, há
+**FAIL alto e eloquente apontando para o lugar errado**, que custa investigação
+humana. O stage 0 existe precisamente para que isso não aconteça.
+
+### Encaminhamento
+
+Duas correções **separáveis, de donos diferentes** — e a segunda não é do
+`build-engineer`:
+
+- **`env_doctor.py`** (dono `build-engineer`): verificar a presença de
+  `node_modules` e das dependências que o pipeline realmente importa (`jsdom`,
+  `playwright`), com FAIL ou WARN **nomeado** no stage 0 — direção (FAIL ou
+  WARN) a definir com quem decide, já que `npm ci` é pré-condição documentada
+  no `CLAUDE.md` §Comandos.
+- **`tests_014_regra_morta.js`** (dono `qa-engineer`, R5): distinguir, no
+  `catch` de `:598-601`, "o instrumento não existe" de "uma dependência do
+  instrumento não resolveu" — são causas diferentes, com donos diferentes.
+  Alteração de suíte **não é do `build-engineer` nem do `doc-writer`**.
+
+## EA-87 — a configuração de hook é versionada, e a que vale é a da pasta PRIMÁRIA: na branch em que ela está hoje, o `guard-add` não está registrado — nem existe
+
+**Status**: `aberto`
+
+**Aberto em**: 2026-10-11. Devolvido pelo `build-engineer`; **medido pelo
+orquestrador** na pasta primária e conferido contra as branches pelo
+`doc-writer` ao registrar.
+
+### Cadeia arquivo:linha → efeito
+
+- **`.claude/settings.json:53-65`, nesta worktree** (`fix/r11-guard-data-inerte`)
+  — um grupo `PreToolUse` de `"matcher": "Bash"` (`:54`) com **dois** guardas:
+  `guard-data.sh` (`:58`) e `guard-add.sh` (`:62`).
+- **O mesmo arquivo na pasta primária** (`C:\Projetos\QuickScan-SOC-CMM\phase5-009`,
+  branch `chore/fecho-013-done`, HEAD `e38d4d5`) — o grupo `Bash` abre em
+  `:53-54` e fecha em `:61`, com **um só** guarda: `guard-data.sh` (`:58`).
+  Nenhuma linha cita `guard-add.sh`.
+- **Mais que não registrado: ausente.** Naquela branch,
+  `ls .claude/hooks/guard-add.sh` → `No such file or directory`, e
+  `git cat-file -e HEAD:.claude/hooks/guard-add.sh` →
+  `does not exist in 'HEAD'`. O guarda nasceu em **`58372d6`** (2026-09-04,
+  `fix(EA-37): guard-add — hook mecânico contra git add -A/./--all`) e esse
+  commit **não é ancestral** de `chore/fecho-013-done`
+  (`git merge-base --is-ancestor` → falso). Em `develop` e `origin/develop` o
+  script existe e o registro tem 1 ocorrência — conferido nas duas refs.
+- **Efeito**: o harness executa
+  `bash "$CLAUDE_PROJECT_DIR"/.claude/hooks/<guarda>.sh`, isto é, a
+  **configuração e o código da pasta primária**. Como ambos são versionados, a
+  metade mecânica da R11 vale o que a **branch da primária** tiver — não o que
+  a branch de trabalho tem. Numa sessão enraizada ali, o `guard-add` não está
+  inerte por matcher: está **não instalado**, e o `EA-37` volta a depender de
+  disciplina, **independentemente de despacho**.
+
+### Consequência para a leitura do `EA-83`
+
+A premissa do [[EA-83]] — "os dois guardas ficam inertes juntos, uma condição
+para dois" — vale **onde os dois estão registrados**. Onde um não está, a
+inferência quebra nos dois sentidos:
+
+- **ausência de linha do `guard-add` no `dispatch.log` não diz nada** numa
+  sessão enraizada na primária de hoje: o script não está lá para registrar
+  nada. A linha a procurar é a do **`guard-data`**;
+- e a recíproca: um `dispatch.log` com só a linha do `guard-data` é
+  **compatível com despacho perfeito** do grupo — não é sinal de matcher
+  parcial.
+
+Agravante conferido nesta sessão, que torna a medição do `EA-83` **impossível a
+partir da primária de hoje**: a cópia de `guard-data.sh` e de
+`lib/common.sh` daquela branch **não contém `log_dispatch`**
+(`grep -c log_dispatch` → `0` nos dois arquivos). O instrumento do `EA-83` está
+na branch de trabalho; quem executa é a cópia da primária. Hoje não há
+`dispatch.log` em nenhum dos dois clones — e esse "nenhum" é exatamente o
+silêncio ambíguo que o `EA-83` descreve, agora com causa nomeada: o
+instrumento ainda não está na branch que o harness carrega. Medir exige a
+primária **em uma branch que carregue o instrumento**.
+
+### O que isto não é
+
+Não é defeito do `settings.json` desta worktree, que está correto, nem
+reabertura do `EA-37`, cujo hook existe e foi medido (R2 §5). É uma proposição
+diferente: **qual cópia da configuração o harness obedece**, e o que isso faz
+com a garantia quando as branches divergem. Da mesma família do [[EA-84]] —
+ambos descendem do mesmo fato: o que executa vem da pasta primária, não da
+worktree.
+
+### Encaminhamento
+
+`fix-finding`, dono `build-engineer`, com uma pergunta de desenho que **não é
+do agente**: se a defesa mecânica da R11 deve depender da branch em que a pasta
+primária estiver parada. Rotas aparentes, nenhuma decidida aqui — manter a
+primária sempre em `develop` como rito operacional; um verificador que compare
+a configuração efetiva da primária contra a de `develop`; ou mover a
+configuração dos guardas para fora do versionamento por branch. A escolha é do
+proprietário/`tech-lead`.

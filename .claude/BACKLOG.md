@@ -7590,3 +7590,78 @@ Duas correções **separáveis, de donos diferentes** — e a segunda não é do
   `catch` de `:598-601`, "o instrumento não existe" de "uma dependência do
   instrumento não resolveu" — são causas diferentes, com donos diferentes.
   Alteração de suíte **não é do `build-engineer` nem do `doc-writer`**.
+
+## EA-87 — a configuração de hook é versionada, e a que vale é a da pasta PRIMÁRIA: na branch em que ela está hoje, o `guard-add` não está registrado — nem existe
+
+**Status**: `aberto`
+
+**Aberto em**: 2026-10-11. Devolvido pelo `build-engineer`; **medido pelo
+orquestrador** na pasta primária e conferido contra as branches pelo
+`doc-writer` ao registrar.
+
+### Cadeia arquivo:linha → efeito
+
+- **`.claude/settings.json:53-65`, nesta worktree** (`fix/r11-guard-data-inerte`)
+  — um grupo `PreToolUse` de `"matcher": "Bash"` (`:54`) com **dois** guardas:
+  `guard-data.sh` (`:58`) e `guard-add.sh` (`:62`).
+- **O mesmo arquivo na pasta primária** (`C:\Projetos\QuickScan-SOC-CMM\phase5-009`,
+  branch `chore/fecho-013-done`, HEAD `e38d4d5`) — o grupo `Bash` abre em
+  `:53-54` e fecha em `:61`, com **um só** guarda: `guard-data.sh` (`:58`).
+  Nenhuma linha cita `guard-add.sh`.
+- **Mais que não registrado: ausente.** Naquela branch,
+  `ls .claude/hooks/guard-add.sh` → `No such file or directory`, e
+  `git cat-file -e HEAD:.claude/hooks/guard-add.sh` →
+  `does not exist in 'HEAD'`. O guarda nasceu em **`58372d6`** (2026-09-04,
+  `fix(EA-37): guard-add — hook mecânico contra git add -A/./--all`) e esse
+  commit **não é ancestral** de `chore/fecho-013-done`
+  (`git merge-base --is-ancestor` → falso). Em `develop` e `origin/develop` o
+  script existe e o registro tem 1 ocorrência — conferido nas duas refs.
+- **Efeito**: o harness executa
+  `bash "$CLAUDE_PROJECT_DIR"/.claude/hooks/<guarda>.sh`, isto é, a
+  **configuração e o código da pasta primária**. Como ambos são versionados, a
+  metade mecânica da R11 vale o que a **branch da primária** tiver — não o que
+  a branch de trabalho tem. Numa sessão enraizada ali, o `guard-add` não está
+  inerte por matcher: está **não instalado**, e o `EA-37` volta a depender de
+  disciplina, **independentemente de despacho**.
+
+### Consequência para a leitura do `EA-83`
+
+A premissa do [[EA-83]] — "os dois guardas ficam inertes juntos, uma condição
+para dois" — vale **onde os dois estão registrados**. Onde um não está, a
+inferência quebra nos dois sentidos:
+
+- **ausência de linha do `guard-add` no `dispatch.log` não diz nada** numa
+  sessão enraizada na primária de hoje: o script não está lá para registrar
+  nada. A linha a procurar é a do **`guard-data`**;
+- e a recíproca: um `dispatch.log` com só a linha do `guard-data` é
+  **compatível com despacho perfeito** do grupo — não é sinal de matcher
+  parcial.
+
+Agravante conferido nesta sessão, que torna a medição do `EA-83` **impossível a
+partir da primária de hoje**: a cópia de `guard-data.sh` e de
+`lib/common.sh` daquela branch **não contém `log_dispatch`**
+(`grep -c log_dispatch` → `0` nos dois arquivos). O instrumento do `EA-83` está
+na branch de trabalho; quem executa é a cópia da primária. Hoje não há
+`dispatch.log` em nenhum dos dois clones — e esse "nenhum" é exatamente o
+silêncio ambíguo que o `EA-83` descreve, agora com causa nomeada: o
+instrumento ainda não está na branch que o harness carrega. Medir exige a
+primária **em uma branch que carregue o instrumento**.
+
+### O que isto não é
+
+Não é defeito do `settings.json` desta worktree, que está correto, nem
+reabertura do `EA-37`, cujo hook existe e foi medido (R2 §5). É uma proposição
+diferente: **qual cópia da configuração o harness obedece**, e o que isso faz
+com a garantia quando as branches divergem. Da mesma família do [[EA-84]] —
+ambos descendem do mesmo fato: o que executa vem da pasta primária, não da
+worktree.
+
+### Encaminhamento
+
+`fix-finding`, dono `build-engineer`, com uma pergunta de desenho que **não é
+do agente**: se a defesa mecânica da R11 deve depender da branch em que a pasta
+primária estiver parada. Rotas aparentes, nenhuma decidida aqui — manter a
+primária sempre em `develop` como rito operacional; um verificador que compare
+a configuração efetiva da primária contra a de `develop`; ou mover a
+configuração dos guardas para fora do versionamento por branch. A escolha é do
+proprietário/`tech-lead`.

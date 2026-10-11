@@ -7342,3 +7342,94 @@ passar. Sem isso, "não houve bloqueio" não distingue "despachou e aprovou" de
 "não despachou" — que é precisamente o defeito que este achado descreve, e
 seria medi-lo com o instrumento que ele acusa. Ver [[EA-82]], o outro vão da
 mesma defesa, e [[EA-31]].
+
+## EA-84 — o `guard-data` resolve a raiz do repositório pelo cwd do próprio processo: num commit disparado de qualquer worktree, ele inspeciona o índice da pasta PRIMÁRIA
+
+**Status**: `aberto`
+
+**Aberto em**: 2026-10-11. Devolvido pelo `build-engineer` no encaminhamento do
+`EA-82`/`EA-83` e **conferido pelo orquestrador na leitura do código** antes de
+virar achado.
+
+### Cadeia arquivo:linha → efeito
+
+- **`.claude/settings.json:54`, `:58`** — o grupo `PreToolUse` de matcher
+  `Bash` invoca `bash "$CLAUDE_PROJECT_DIR"/.claude/hooks/guard-data.sh`. O
+  script executado é o da **pasta primária**, e o processo do hook nasce com o
+  cwd nela — nunca na worktree onde o comando do usuário vai rodar.
+- **`.claude/hooks/lib/common.sh:15`** —
+  `project_root() { git rev-parse --show-toplevel 2>/dev/null; }`. Não recebe
+  argumento e não consulta o payload: resolve **do cwd do processo**.
+- **`.claude/hooks/guard-data.sh:189`** —
+  `cd "$(project_root)" 2>/dev/null || exit 0`. O guarda se muda para a raiz
+  assim resolvida.
+- **`.claude/hooks/guard-data.sh:190`** —
+  `STAGED=$(git diff --cached --name-only 2>/dev/null) || exit 0`: o índice
+  medido é o da raiz onde o `cd` caiu.
+- **`.claude/hooks/guard-data.sh:191`** — `[ -z "$STAGED" ] && exit 0`.
+- **Efeito**: um `git commit` disparado de outra worktree é inspecionado
+  **contra o índice de um repositório que não é o dele** — índice alheio, em
+  geral vazio, logo saída zero silenciosa em `:191`. As quatro checagens de
+  `:205` (sessão real), `:208` (PDF novo), `:212` (padrão de segredo) e `:215`
+  (binário novo > 200 KB) não rodam sobre arquivo algum.
+
+**O erro é simétrico, e a outra ponta também é defeito**: se a primária tiver
+algo estagiado, o commit da worktree é julgado por conteúdo que **não está
+nele** — falso positivo possível, barrando commit legítimo por causa de um
+índice de terceiros. A direção do erro depende do estado de um repositório que
+quem commita não está olhando.
+
+### Por que é independente do `EA-82` e do `EA-83`
+
+- **Do `EA-82`**: ali o vão é a **forma do comando** (`-a`/`-am`, pathspec sem
+  passar pelo índice) e a causa é ordem de execução. Aqui o comando pode ser
+  perfeitamente nominal — `git add <caminho> && git commit -m "…"`, o que a
+  R11 §3 manda — e o guarda ainda mede o repositório errado.
+- **Do `EA-83`**: ali a pergunta é se o harness **despacha** o grupo. Aqui o
+  despacho pode ser perfeito: o hook roda, executa todas as checagens, e olha
+  para o lugar errado. Despachar e acertar o alvo são proposições diferentes.
+
+### O custo, que é concreto
+
+A R14 (`.claude/rules/git-flow.md`, §Worktrees) prescreve **uma worktree por
+demanda** para conversas simultâneas, e este repositório usa isso por desenho —
+`.claude/worktrees/` é ignorado pelo git exatamente para isso. Toda demanda que
+trabalhou em worktree commitou com a metade mecânica da R11 apontada para o
+repositório errado. Não é hipótese de uso raro: é o modo de trabalho descrito
+na própria regra.
+
+### O mesmo defeito contamina o instrumento do `EA-83`
+
+`.claude/hooks/lib/common.sh:73-75` — `log_dispatch` chama o mesmo
+`project_root()` e escreve em `"$raiz/.claude/hooks/dispatch.log"`. Logo o log
+de despacho de uma sessão enraizada na primária aparece **na primária**, não na
+worktree de trabalho — quem for conferir a prova do `EA-83` precisa saber em
+qual clone procurar. Ver [[EA-83]].
+
+### Gatilho de falsificação
+
+Esta cadeia tem uma premissa única e verificável: **o cwd do processo do hook é
+a pasta primária**. Se fosse a worktree, `git rev-parse --show-toplevel`
+devolveria a worktree e não haveria achado. O instrumento que decide isso já
+existe e já grava o dado: `.claude/hooks/lib/common.sh:86` registra `$PWD` na
+linha do `dispatch.log`. Primeira linha de log escrita por um copy que carregue
+o instrumento resolve a pergunta por execução — e refuta este achado se o
+`$PWD` registrado for a worktree.
+
+### Encaminhamento
+
+`fix-finding`, dono `build-engineer`. Rotas **aparentes, nenhuma decidida
+aqui**:
+
+- derivar a raiz do **comando**, não do processo: se o payload do `PreToolUse`
+  carregar um campo de cwd, `project_root` passa a aceitá-lo (hoje nenhum hook
+  lê campo de cwd — `grep -rn 'cwd' .claude/hooks/` não acha nada, e se o campo
+  existe no payload é **pendência de verificação**, não fato);
+- recusar o que não sabe julgar, pelo mesmo argumento do `EA-82`: se a raiz do
+  comando não for determinável, barrar em vez de aprovar — o que esbarra na
+  tensão de direção que o [[EA-85]] registra (guarda que falha aberto vs.
+  guarda que barra tudo no ambiente degradado).
+
+A escolha entre aprovar e barrar no caso indeterminado **não é do agente**: é a
+mesma decisão de proprietário que o [[EA-85]] isola. Ver [[EA-82]] e o `EA-37`,
+que construiu o guarda irmão.

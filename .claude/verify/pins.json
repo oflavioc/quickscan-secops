@@ -1,7 +1,7 @@
 {
   "_meta": {
     "descricao": "Registry único de pins — fonte de identidade dos artefatos (R8). Hashes = SHA-256 dos blobs de HEAD. Alterar arquivo pinado exige regenerar este registry no MESMO PR, com motivo no commit.",
-    "gerado_de_head": "0fff362d98b35a22decc66be52df2ef20beead07",
+    "gerado_de_head": "35212307e7ff2f937d4466e3946f7d40df007bab",
     "gerado_em": "2026-10-11",
     "exclusoes": [
       "docs_phase5/**",
@@ -157,7 +157,7 @@
     ".claude/hooks/README-guard-add.md": "0a2b6bf0f51a943748563225790442e720713e7161797621722ff5f455eb23ec",
     ".claude/hooks/guard-add.sh": "1f4bd3d2d58cbbfb1896e58f0e7961f8100b2ce3293e25a020681ec9de2d2c9d",
     ".claude/hooks/guard-boundary.sh": "2ffbed8b15e2dfdf61a5e49dc90e49f4fb47765bda5a8081dafe4103f63afdf4",
-    ".claude/hooks/guard-data.sh": "320e5968a596f4b5c55b294031472e7d8e988a44a7b2d56dec7604cbe15ea312",
+    ".claude/hooks/guard-data.sh": "446e7aa4b9cf4a638bbc82adb3ccd3063b60981652bc9ca94b8197851d583ca3",
     ".claude/hooks/guard-tdd.sh": "44d726cf06fdb0ed99cec8ce6eb4160e1b59bfdc1ccb5ce4a625bec5d9821820",
     ".claude/hooks/lib/common.sh": "b000d753884e1887ec94947bec5f8dcb81a70e0b8d98b06b28a48956ea7cf608",
     ".claude/hooks/post-turn-verify.sh": "e46d2c17c4d7b0164154bd5220e2696011482da3dd49b28c41b90a844a89ea1a",

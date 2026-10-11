@@ -7191,3 +7191,87 @@ deixou de ser verdade. As duas rotas aparentes:
 
 Ver [[EA-80]], que é da mesma família (o que a seção mostra quando a publicação
 esvazia), e a errata `E1` de `specs/023-leitura-unica-do-apoio/spec.md`.
+
+## EA-82 — `git commit -a` contorna o `guard-data` inteiro: o hook mede o índice num instante em que o índice ainda está vazio
+
+**Status**: `aberto`
+
+**Aberto em**: 2026-10-10, medido pelo orquestrador na leitura do HEAD
+(`232448f`) e reproduzido por execução do próprio hook nesta worktree.
+
+### Cadeia arquivo:linha → efeito
+
+- **`.claude/settings.json:54`, `:58`** — `guard-data.sh` está registrado como
+  `PreToolUse` com matcher `Bash`. `PreToolUse` roda **antes** do comando: no
+  instante em que o hook executa, nada que o comando fosse fazer aconteceu
+  ainda.
+- **`.claude/hooks/guard-data.sh:12`** —
+  `case "$CMD" in *"git commit"*) ;; *) exit 0;; esac`. O portão está certo: o
+  hook só segue adiante em `git commit`.
+- **`.claude/hooks/guard-data.sh:15`** —
+  `STAGED=$(git diff --cached --name-only 2>/dev/null) || exit 0`. A única
+  fonte do conjunto a inspecionar é o **índice**.
+- **`.claude/hooks/guard-data.sh:16`** — `[ -z "$STAGED" ] && exit 0`. Índice
+  vazio → **saída zero, sem inspecionar nada**.
+- **Efeito**: `git commit -a` e `git commit -am` **estagiam no momento do
+  commit** — depois do `PreToolUse`. Logo o índice está vazio quando o hook
+  mede, ele sai em `:16`, e as quatro checagens de `:30` (sessão real), `:33`
+  (PDF novo), `:37` (padrão de segredo) e `:40` (binário novo > 200 KB) **não
+  rodam sobre arquivo algum**. O conteúdo entra no commit do mesmo jeito, sem
+  nenhuma mensagem.
+
+**O `guard-add.sh` não cobre este vetor.** `.claude/hooks/guard-add.sh:38` —
+`case "$CMD" in *git*add*) ;; *) exit 0;; esac` — e `:90`, que exige o token
+`add` depois do token `git`. `git commit -am` não contém `add`: o guarda sai
+zero. Os dois hooks do matcher `Bash` deixam passar o mesmo comando.
+
+### Medição, com controle positivo
+
+Repositório descartável, um `cliente.session.json` **rastreado** e sujo na
+árvore, e o **próprio** `.claude/hooks/guard-data.sh` do HEAD alimentado por
+stdin:
+
+```
+estagiado     + {"command":"git commit -m x"}   → exit 2
+                guard-data: commit BLOQUEADO — · sessão real: cliente.session.json
+NÃO estagiado + {"command":"git commit -am x"}  → exit 0   (silêncio)
+                índice: []  ·  árvore suja: [cliente.session.json]
+NÃO estagiado + {"command":"git commit -am x"}  → exit 0   (guard-add.sh)
+```
+
+O **controle positivo** é o que torna a medição conclusiva: mesmo hook, mesmo
+arquivo, mesmo repositório — muda só se o conteúdo passou pelo índice antes do
+`PreToolUse`. E o atalho de fato carrega o arquivo: `git commit -am` seguido de
+`git show --stat` lista `cliente.session.json` no commit resultante.
+
+### O que isto não é
+
+Não é desenho mal feito do hook. As checagens de `:30`–`:41` estão corretas, e o
+controle positivo prova que funcionam. O problema é **quando** o hook vê, não o
+que ele faz com o que vê — e a ordem de execução de um `PreToolUse` não é
+observável de dentro do próprio script. Um hook que roda antes do comando não
+tem como ler um índice que o comando ainda vai escrever.
+
+### Por que esta é a de maior consequência
+
+A R11 (`.claude/rules/evidence-intake.md`) protege **dado de cliente real** —
+nome de parte, teor de documento, assessment — e sua metade mecânica é este
+hook. A metade normativa manda commitar por caminho nominal (R11 §3; o `EA-37`
+construiu o `guard-add` exatamente para isso). Hoje a metade mecânica é
+contornada pelo atalho mais comum do git.
+
+### Encaminhamento
+
+`fix-finding`, dono `build-engineer`. Duas rotas aparentes, nenhuma decidida
+aqui:
+
+- **medir o conjunto que o comando VAI estagiar**, não o que já está: em
+  `-a`/`-am`, a união do índice com os rastreados modificados
+  (`git diff --name-only`), lendo o conteúdo da **árvore** em vez de `:0:<f>`;
+- **recusar `-a`/`-am`** em `git commit`, pelo mesmo argumento do `EA-37` —
+  staging de escopo amplo já é proibido por regra, e o caminho nominal cobre
+  100% do caso legítimo.
+
+A segunda rota tem a forma do guarda que já existe e custo medido menor; a
+primeira preserva o atalho. Ver [[EA-83]], que pergunta se este hook **chega a
+ser despachado**, e o `EA-37`, que construiu o par deste guarda.

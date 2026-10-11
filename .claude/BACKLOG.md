@@ -7504,3 +7504,89 @@ direção do erro (aberto vs. fechado) é decisão dele, e sem ela não há cons
 a executar. Ver [[EA-82]], cujo conserto escolheu recusar no caso que não sabia
 julgar, e [[EA-84]], que tem exatamente a mesma pergunta pendente para o caso
 "raiz do comando indeterminável".
+
+## EA-86 — o `env-doctor` passa com `node_modules` ausente: o stage 0 declara node e Chromium, e não olha a dependência INSTALADA — 3 FAIL com sintomas que nomeiam a coisa errada
+
+**Status**: `aberto`
+
+**Aberto em**: 2026-10-11. Devolvido pelo `build-engineer`, que mediu a
+consequência ao vivo; a lacuna no verificador foi **conferida pelo
+orquestrador** e a tradução enganosa do sintoma foi conferida no fonte.
+
+### Cadeia arquivo:linha → efeito
+
+- **`.claude/verify/pipeline.yaml:17-19`** — `env-doctor` é o **stage 0**:
+  `python .claude/verify/env_doctor.py`. A R7 §4
+  (`.claude/rules/determinism.md`) lhe dá o papel: "dependência de ambiente é
+  declarada, nunca implícita — valida node/python/git/Chromium ANTES das
+  suítes".
+- **`.claude/verify/env_doctor.py:43-69`** — verifica o **binário** node:
+  presença no PATH (`:44-45`, FAIL) e versão contra `engines` do
+  `package.json` (`:69`, WARN).
+- **`.claude/verify/env_doctor.py:71-80`** — Chromium: `CHROME_PATH` ou cache
+  `ms-playwright`, ausência vira WARN nomeado (KI-3, R13).
+- **Lacuna**: em 99 linhas, **nenhuma** menciona `node_modules` ou as
+  dependências instaladas. `grep -rn 'node_modules' .claude/verify/` devolve
+  **duas** ocorrências, ambas em **prosa de registro** dentro de
+  `mutation-matrix.json:842` e `:864` — nenhuma em verificador. O binário é
+  validado; o que `npm ci` instala, não.
+- **Efeito**: worktree nova não traz `node_modules` (é ignorado pelo git, logo
+  `git worktree add` não o copia) e o pipeline roda inteiro nesse estado, sem
+  que o stage 0 diga uma palavra.
+
+### Medição (pelo `build-engineer`, ao vivo, em worktree nova)
+
+```
+sem node_modules   bash .claude/verify/run.sh  → 15 PASS · 3 FAIL
+                   22 suítes: "sem contagem na última linha: (sem saída)"
+                   regra-morta: "instrumento ausente"
+npm ci --no-audit  bash .claude/verify/run.sh  → 18 PASS · 0 FAIL
+```
+
+Entre as duas execuções **não se tocou uma linha de código** — a diferença é
+só a árvore de dependências instalada. Um pipeline inteiro vermelho por motivo
+que nenhum stage nomeia.
+
+### O sintoma engana por construção (conferido no fonte, nesta sessão)
+
+- **`.claude/verify/check_suites.py:28`, `:31`** — a suíte é julgada pela
+  última linha não vazia do stdout; sem stdout, o relatório imprime
+  `sem contagem na última linha: (sem saída)`. Vinte e duas vezes. A mensagem
+  descreve o **formato da saída**, nunca a causa: o processo nem subiu.
+- **`.claude/verify/regra_morta.js:46`** — `const { JSDOM } = require("jsdom")`.
+  Sem `node_modules`, esse `require` estoura `MODULE_NOT_FOUND` **dentro** do
+  instrumento.
+- **`tests_014_regra_morta.js:598-601`** — o `catch` traduz **qualquer**
+  `MODULE_NOT_FOUND` em
+  `"instrumento ausente: .claude/verify/regra_morta.js (T040, wave 4, owner build-engineer) — NÃO EXECUTADO, e isso é FAIL, não SKIP"`.
+  O instrumento está **presente no disco e em HEAD**: o que falta é a
+  dependência transitiva dele. A mensagem acusa o artefato errado e endereça o
+  dono errado, e quem a lê vai procurar um arquivo que está lá.
+
+O desenho de `tests_014_regra_morta.js:591-592` está certo e é exemplar
+("Ausência é FAIL NOMEADO, nunca SKIP silencioso (R10 §2)") — o defeito é que
+**nomeia errado**: `MODULE_NOT_FOUND` do próprio instrumento e
+`MODULE_NOT_FOUND` de uma dependência dele são causas distintas colapsadas numa
+frase.
+
+### Por que é achado, e de qual família
+
+É a família do `E6` citado pela R7 §4 e pela R10 §2 — ambiente ausente que não
+vira declaração nomeada. Aqui com um agravante: não há SKIP silencioso, há
+**FAIL alto e eloquente apontando para o lugar errado**, que custa investigação
+humana. O stage 0 existe precisamente para que isso não aconteça.
+
+### Encaminhamento
+
+Duas correções **separáveis, de donos diferentes** — e a segunda não é do
+`build-engineer`:
+
+- **`env_doctor.py`** (dono `build-engineer`): verificar a presença de
+  `node_modules` e das dependências que o pipeline realmente importa (`jsdom`,
+  `playwright`), com FAIL ou WARN **nomeado** no stage 0 — direção (FAIL ou
+  WARN) a definir com quem decide, já que `npm ci` é pré-condição documentada
+  no `CLAUDE.md` §Comandos.
+- **`tests_014_regra_morta.js`** (dono `qa-engineer`, R5): distinguir, no
+  `catch` de `:598-601`, "o instrumento não existe" de "uma dependência do
+  instrumento não resolveu" — são causas diferentes, com donos diferentes.
+  Alteração de suíte **não é do `build-engineer` nem do `doc-writer`**.

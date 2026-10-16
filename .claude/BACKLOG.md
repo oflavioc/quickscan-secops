@@ -5714,6 +5714,37 @@ ponto. A **saída 1** — uma Porta B levando o lote inteiro — já era a respo
 denominador do mesmo custo fixo. A fila hoje: `EA-56`, os seis pedidos de
 conteúdo, `SCORES`, e agora `(SIEM)`/`(NDR)` do `EA-69`.
 
+### A fila, recontada em 2026-10-16 — um item a menos
+
+Correção de registro pedida no fecho da demanda 021 (condição (3) do aceite de
+intenção do `product-owner`): o parágrafo acima, de 2026-09-24, ainda lista o
+`EA-56` entre os represados. **O `EA-56` está `resolvido`** — fechado pela 021 em
+2026-09-26, com o fecho escrito no próprio bloco dele: cobertura de apoio medida
+**4 → 15**, *"nenhuma Porta B, nenhum repin da régua D2: **ler o `MAP` não o
+altera**"*. Ele saiu da fila pelo único jeito que não paga este achado: a trilha de
+capacitação **já estava** na Camada 1, e o produto passou a lê-la.
+
+**A fila hoje, recontada**:
+
+| item | estado |
+|---|---|
+| catálogo: `FortiNAC`, `FortiClient EMS`, `FortiSOC`, `FortiSOAR` | represados |
+| rótulos `(SIEM)`/`(NDR)` — [[EA-69]] | `aberto`, com a sonda que mediu 9 campos divergentes em 4 dos 9 cenários |
+| `SCORES = [0, 1.7, 3.3, 5]` | candidata em `design-decisions.md`, nem achado é |
+| ~~`EA-56`~~ | **saiu**: `resolvido` em 2026-09-26 (demanda 021) |
+
+**O que isto muda no encaminhamento: nada, e na direção boa.** A **saída 1** —
+uma Porta B levando o lote inteiro — continua sendo a resposta disponível, e o
+`EA-56` sair **sem** consumir Porta B nenhuma não reduz o custo fixo da auditoria
+independente: reduz o **denominador**, que é o argumento desta saída. Um item a
+menos no lote, e o lote continua esperando a mesma decisão do proprietário.
+
+As outras duas menções ao `EA-56` neste bloco — a da §Encaminhamento, saída 1
+(*"`EA-56` + os seis pedidos + `SCORES`"*) e a linha *"Ver [[EA-56]], que é a
+instância mais cara deste achado"* — **ficam como foram escritas**: são de
+2026-09-15 e descrevem a fila daquele dia, que é o que o registro histórico deve
+preservar (R2 §5). A fila corrente é esta subseção.
+
 ## EA-61 — a redação do selo do bundle está pinada por gate em suíte protegida
 
 **Status**: `aberto`

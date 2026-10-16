@@ -442,12 +442,13 @@ Estrutura, na ordem em que o documento realmente sai:
    **régua 0–5** com a posição do score entre os seis estágios e o marcador **“Você está aqui”**.
    A régua está dentro do resumo. A primeira página termina aqui;
 4. **Prioridades declaradas pelo negócio**, já na **página 2**;
-5. **Gaps de maturidade observados** — com evidência, capability e caminhos de apoio. **Todo gap
-   observado recebe caminho de apoio**, e não apenas alguns: até setembro de 2026 a tabela cobria
-   quatro das quinze perguntas e o relatório observava os outros onze gaps sem dizer por onde
-   começar. Os caminhos continuam sendo **possibilidades a validar**, nunca requisito nem compra
-   recomendada — e quando o contexto tecnológico não foi declarado, o documento diz explicitamente
-   que a aderência precisa ser validada antes de qualquer recomendação;
+5. **Gaps de maturidade observados** — com evidência, capability e o bloco
+   **Possíveis caminhos de apoio**. **Todo gap observado recebe habilitadores**, e não apenas
+   alguns: até setembro de 2026 a tabela cobria quatro das quinze perguntas e o relatório observava
+   os outros onze gaps sem dizer por onde começar. Os habilitadores continuam sendo
+   **possibilidades a validar**, nunca requisito nem compra recomendada — e quando o contexto
+   tecnológico não foi declarado, o documento diz explicitamente que a aderência precisa ser
+   validada antes de qualquer recomendação;
 6. **Por onde começar** — o escalonamento do investimento. O relatório deixa de tratar os gaps
    como uma lista de compras simultânea e passa a dizer **quantas frentes a organização sustenta
    ao mesmo tempo**, a partir do estágio de maturidade que ele já mediu: no estágio *Gerenciado*,

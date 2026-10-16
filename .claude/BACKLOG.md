@@ -7743,3 +7743,165 @@ primária sempre em `develop` como rito operacional; um verificador que compare
 a configuração efetiva da primária contra a de `develop`; ou mover a
 configuração dos guardas para fora do versionamento por branch. A escolha é do
 proprietário/`tech-lead`.
+
+## EA-88 — o portão da Fase 6 não tem observável: o campo que registra o aceite não é declarado em schema nenhum, e o veredito pode morar em cinco lugares diferentes
+
+**Status**: `aberto`
+
+**Aberto em**: 2026-10-16. Escrito pelo `product-owner` na Fase 6 **retroativa**
+da demanda 021 — condição (1) do aceite dele —, com o **censo das 18 demandas
+ampliado pelo orquestrador** e reconferido por execução pelo `doc-writer` ao
+registrar, na worktree `fix/aceite-021` (de `origin/develop`, HEAD `7d5aef2` + o
+commit do aceite). As origens são independentes: o PO escreveu **sem shell**, por
+leitura, e declarou esse limite no próprio campo; o orquestrador mediu o censo; eu
+remedi cada número antes de gravar.
+
+### Cadeia arquivo:linha → efeito
+
+- **`.claude/rules/sdd.md:18`** — a tabela da máquina de fases dá à Fase 6 um
+  único portão: *"aceite do PO"*. **`:38`** (D3) fecha a forma dele: *"Nenhum
+  agente escreve em registro de aceitação: agente **reprova ou declara 'não
+  encontrei objeção'**"*. **`:6-8`** diz onde o estado mora e quem o confere —
+  planning-state, *"escrito pela skill, validado pelo stage `state`"*.
+- **`.claude/templates/planning-state.schema.json`** — `grep -i aceite` →
+  **0 ocorrências** (medido). O bloco `properties.validate` declara **um** campo,
+  `conformance`; o `required` do topo tem quatro chaves (`demanda`, `phase`,
+  `spec_dir`, `branch`); não há `additionalProperties: false`. **O campo que
+  registra o único portão da Fase 6 não é declarado**, e qualquer nome passa.
+- **`.claude/verify/check_state.py:34-53`** (58 linhas no total) — o stage `state`
+  valida **à mão**: `required` literal (`:34`), enum de fase (`:37`), coerência
+  slug↔arquivo (`:39`), `spec_dir` existente (`:41`), enum de status (`:43-46`),
+  a R3 (`:48-51`) e `done` sem `pr_url` (`:52-53`). **Nenhuma cláusula olha o
+  aceite** — e o arquivo **nunca abre o schema**, o que o próprio docstring
+  declara (`:4-6`: *"Validação estrutural sem dependência externa (sem jsonschema
+  lib)"*).
+- **`grep -rln 'aceite_po\|aceite_de_intencao' .claude/verify/ .claude/hooks/
+  .claude/skills/` → saída vazia** (medido). Nenhum gate, nenhum hook, nenhuma
+  skill nomeia o campo. As quatro ocorrências da palavra "aceite" sob
+  `.claude/verify/` (`check_baseline.py:49`, `check_mutation.py:69` e `:464`,
+  `check_mutation_coverage.py:23`) são comentário em outro sentido — *"critérios
+  de aceite"*.
+- **`.claude/skills/new-demand/SKILL.md:64`** — *"`product-owner`: aceite de
+  intenção contra o `refinement.md`"*. A skill nomeia **o ato**; não nomeia o
+  campo, nem a forma, nem o vocabulário. Quem escreve o estado escolhe o nome.
+- **Efeito**: o stage `state` não pode reprovar o aceite **por ausência**, nem
+  **por forma**, nem **por sujeito errado**. O veredito da Fase 6 pode migrar para
+  `notes`, pode virar a fala do proprietário no campo do PO, pode virar uma
+  palavra que a D3 proíbe um agente de escrever, ou pode não existir — e **nada
+  fica vermelho**. Quem descobriu isto foi um pedido no chat, não um portão.
+
+### O renomeio que apagou o sujeito
+
+O campo mudou de nome entre as demandas e **o nome novo deixou de nomear quem
+fala**:
+
+- `aceite_po` — 010, 011, 015, 016, 017;
+- `aceite_de_intencao` — 019, 020, 021, 022, 023.
+
+`aceite_po` diz **quem** fala; `aceite_de_intencao` diz só **o objeto**. Como nada
+declara o campo, o renomeio não exigiu decisão, não deixou errata e não acendeu
+nenhum stage. Em 010, 011 e 015 o campo aparece ainda em **dois blocos irmãos** —
+`validate` **e** `validacao` (PT) —, o que multiplica os lugares onde o veredito
+pode estar: o `check_tdd.py` só lê `validate`.
+
+### Censo das 18 demandas — medido em 2026-10-16, nesta worktree
+
+Censo **completo** (18 de 18 planning-states, não amostra), por
+`grep -o '"aceite[a-z_]*"'` em cada arquivo mais leitura do valor:
+
+| estado do campo | demandas | n |
+|---|---|---|
+| **campo não existe** | 003, 007, 008, 009, 012, 013, 014, 018 | **8** |
+| `aceite_po` com veredito canônico e a medição que o sustenta | 010, 011, 015, 016, 017 | **5 de 5** |
+| `aceite_de_intencao` bem-formado (cita a D3) | 019 | 1 |
+| **a fala do proprietário** ocupando o campo do PO | 020 | 1 |
+| a palavra única **`aceito`** — a que a D3 proíbe um agente de escrever | 022 | 1 |
+| `sem objecao` no campo, com o aceite íntegro jogado em `notes` | 023 | 1 |
+| **sem veredito** por ~3 semanas, em demanda `done` e mesclada | 021 (corrigido em 2026-10-16) | 1 |
+
+Medições que sustentam as quatro últimas linhas, todas conferidas no fonte:
+
+- **020** — o campo contém a transcrição do chat: *"Proprietario no chat,
+  2026-09-24: 'Nao remover a lista, fecha a 020 como refutada'"*. É aceite **do
+  proprietário** ocupando o lugar onde a D3 põe a declaração do agente.
+- **022** — o valor é a string `aceito`, **6 caracteres**, sem data, sem autor,
+  sem medição. É exatamente a forma que a D3 proíbe (`sdd.md:38`).
+- **023** — o campo tem `sem objecao` (11 caracteres); o aceite íntegro —
+  *"ACEITE DE INTENCAO: nao encontrei objecao. A necessidade do refinamento
+  era…"*, com a medição e o *"O ACEITE DE FASE E DO PROPRIETARIO, no chat (R4)"* —
+  está dentro de `validate.notes`, campo que o schema também não declara.
+- **021** — **precisão do registro**: o campo não estava *vazio*; estava **ocupado
+  por um não-veredito**. Em `7d5aef2` lia-se *"Pendente do proprietario. O produto
+  entrega o que a Fase 0 pediu: 4 -> 15 gaps com caminho de apoio…"*, escrito no
+  fecho de **2026-09-26** (`45ecb33`, `phase: done`) e assim permanecido até
+  **2026-10-16** — 20 dias, com o PR #101 já mesclado. É o caso que mais interessa
+  ao achado: um não-veredito preenche o campo e passa em tudo.
+
+### Por que não é o `EA-33`, e a distinção é do `product-owner`
+
+O [[EA-33]] (`resolvido`) é **mesclar sem fecho** — `phase` parada antes de `done`
+com o commit de merge já no histórico da `develop`; o par descasado é
+`planning-state.phase` × git, e o remédio dele foi o stage `fecho`
+(`check_fecho.py`). Este achado é outro: **o portão não ter observável**. O fecho
+pode existir, a demanda pode estar `done` com `pr_url`, o stage `fecho` pode estar
+verde — e o veredito estar no lugar errado, na voz errada ou em palavra proibida.
+As 021, 022 e 023 provam a independência das duas proposições: todas fecharam, e
+três das quatro formas condenadas estão nelas.
+
+### De que família é
+
+Da do [[EA-50]] — *"a invariante é real, carrega peso e nenhum portão a afirma"* —
+e, antes dela, da forma que o `E2` deu origem à R6 e que o [[EA-1]] registra:
+**prosa de regra declara uma garantia que a máquina não sustenta**. Aqui a prosa é
+a `sdd.md:18`/`:38` e a máquina é o `check_state.py`. Ganha id próprio, e não
+alínea dentro do `EA-50`, porque o alvo é outro: lá é invariante de produto sem
+asserção, aqui é **portão de processo sem campo declarado** (R12 — números citados
+nunca renumeram).
+
+**Gatilho de falsificação**, escrito para que este achado possa ser riscado (R2
+§5): se alguém exibir **um gate hoje** que reprove `phase: done` por aceite
+ausente, mal-formado ou de sujeito errado, este registro é refutado com a razão.
+A medição que o sustenta é um `grep` de uma linha — refutar é tão barato quanto
+afirmar.
+
+**Viés de amostragem declarado**: todos os casos apareceram na **mesma janela** —
+a Fase 6 retroativa da 021, em 2026-10-16, olhando planning-states. O censo é
+completo (18/18), então a **distribuição** não é viés; o viés é de **superfície**:
+só o campo de aceite foi olhado. Os demais campos de fase não declarados no schema
+(`notes`, `achado_real`, `autorizacao`, `fecho_pendente` e os outros ad-hoc já
+medidos pelo `data-engineer` na 016) não foram censados aqui e podem ter o mesmo
+problema.
+
+### Nota de peso — 020 e 022 estão hoje na condição que este achado condena
+
+Registrado para que **quem for consertar não descubra depois**: o campo da **020**
+(fala do proprietário no lugar do PO) e o da **022** (a palavra `aceito`) estão na
+forma que o remédio abaixo proíbe. Isto **não reabre** nenhuma das duas — ambas
+estão fechadas e mescladas, o campo delas é do `product-owner` e reabrir é decisão
+do orquestrador (R2 §5: o registro permanece como foi feito). O que o achado diz é
+que **a correção do schema vai encontrar duas demandas fechadas fora do enum**, e
+que isso é parte do custo a decidir: corrigir os campos antigos, tolerá-los por
+piso de demanda, ou declarar exceção nominal.
+
+### Remédio proposto — não decidido, e não é meu
+
+Proposta do `product-owner`, registrada como **candidata**:
+
+1. declarar o campo no schema com nome que **nomeie o autor** (o que `aceite_po`
+   fazia e `aceite_de_intencao` perdeu);
+2. **enum de veredito restrito**, com `data` e `modelo` obrigatórios;
+3. **proibição literal** das palavras `aprovado` e `aceito` (D3, `sdd.md:38`);
+4. o stage `state` passa a **reprovar `phase: done`** com veredito ausente ou fora
+   do enum.
+
+Dono do gate é o `qa-engineer`; do campo, o `product-owner`; do schema, o
+`data-engineer` — e **autor do gate ≠ quem escreve o campo** (R3 §2).
+
+**Obstáculo já medido, que o remédio tem de atravessar**: declarar o campo no
+schema, só, **não cria portão nenhum**. O `check_state.py` nunca abre o schema
+(`:4-6`); mudança de schema nasce verde e sem dentes. Dentes exigem cláusula nova
+em `check_state.py` — e aí o piso de demanda importa, porque `done` retroativo com
+veredito fora do enum deixaria o stage **permanentemente vermelho** no histórico,
+que é o modo de falha do `EA-5` (o MANIFEST sempre vermelho, logo nunca rodado) e
+a razão pela qual a normalização de chaves da 016 foi adiada. A ordem e o piso são
+decisão do `tech-lead`/proprietário, não deste registro.

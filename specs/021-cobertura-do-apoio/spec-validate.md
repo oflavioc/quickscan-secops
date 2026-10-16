@@ -73,6 +73,60 @@ alínea (b) do `D015-NOSUB1` **afirmava mais do que o critério dela dizia**
 Os dois primeiros são a família `EA-20` **dentro do gate que esta demanda
 escreveu para caçá-la**. É desconfortável e é o registro honesto.
 
+#### Nota de 2026-10-16 — sobreviveram CINCO, não quatro: faltava o `M51-07`
+
+**Acréscimo, não reescrita** (R2 §5): a seção acima e a tabela ficam como foram
+validadas; esta nota corrige a contagem. Devolvida pelo `product-owner` como
+condição (1) do aceite de intenção retroativo da 021 (planning-state,
+`validate.aceite_de_intencao`, 2026-10-16) e conferida no fonte pelo `doc-writer`
+antes de gravar.
+
+| mutante | campanha · gate | por quê | correção |
+|---|---|---|---|
+| `M51-07` | `p51` (`tests_p51_mutants.js:183-203`) · `P51-REC1` | **a primeira redação da emenda da §UAT-07 enfraqueceu o gate** — o carrasco desapareceu junto com a lista literal | alínea reescrita por origem declarada **mais** alínea de disjunção contra o motor (`tests_p50_core.js:3659-3688`) |
+
+**O quinto é o mais grave, e não é da família dos outros quatro.** Os outros três
+acusaram o **gate que esta demanda escreveu**; o `M51-07` acusou a **emenda a um
+gate alheio**. Ele move a chave de `QS_GAP_SUPPORT` de `detection-lifecycle` para
+`training`; sobreviver significa que a emenda **afrouxou a asserção** (R10 §1) —
+o oposto do que a `spec.md:175-178` prometeu quando ofereceu justamente um mutante
+como prova: *"A prova de que não afrouxou é o `M9`: reintroduzir os quatro literais
+tem de deixar o gate **vermelho** na cobertura nova."*
+
+**O mecanismo, escrito no gate** (`tests_p50_core.js:3645-3658`): a redação era
+`!TAB[qid] && !candidatosDoMapa(...).length` e, **como todo qid tem candidato no
+`MAP`**, a segunda metade nunca dispara — a cláusula virou inalcançável. *"União de
+fontes sem origem declarada é o mesmo que fonte nenhuma."* O complemento está no
+harness (`tests_p51_mutants.js:185-198`): quem matava o mutante era o
+`QIDS_AUTORIZADOS` com quatro literais, em que `training` não estava; com a âncora
+derivada da fonte congelada, `training` passou a estar autorizado e **o carrasco
+sumiu**. O `reason` do mutante também teve de ser alargado para a mensagem nova
+(`tests_p51_mutants.js:199`).
+
+**A campanha denunciou, e a correção deixou o gate MAIS forte que antes da
+demanda** (`tests_p50_core.js:3659-3688`): a alínea passou a respeitar a **origem
+que o próprio bloco declara** — quem declara `capability` tem de estar na tabela
+(`:3662-3663`), quem declara `nivel` tem de ter candidato no `MAP` no nível
+respondido (`:3664-3665`) —, portanto discrimina nas **duas** origens em vez de
+uma; e ganhou a alínea de **disjunção contra o motor** (`:3680-3688`), oráculo de
+**fora** da tabela: a tabela curada pode ser mais larga que o `MAP`, não pode ser
+disjunta dele. Sob o mutante, `training` × `FortiGuard-Service-Bundle` dá
+interseção vazia — sem ela, o relatório ofereceria FortiSIEM, FortiAnalyzer e
+FortiSOAR para um gap de **capacitação**.
+
+**Por que registrar importa**: o episódio não estava em **nenhum** dos seis
+artefatos da 021 — vivia só em comentário de código — e já é citado como precedente
+pelas `tasks.md` da **022** (`:42`) e da **023** (`:40`) e por
+`tests_022_escalonamento.js:277`, sempre na forma *"foi tratar reancoragem como
+mexida inócua que produziu o `M51-07` sobrevivente na 021"*. O precedente estava
+sendo citado contra um registro inexistente.
+
+**Não executado, e nomeado**: dizer se o `M51-07` morre contra o texto atual do
+gate é execução, e é do `qa-engineer` — condição (2) do mesmo aceite, que registra
+`mutation-matrix.json:189-191` com `ultima_prova.data: 2026-09-13` e
+`resultado: KILL`, prova **anterior** à 021, que mudou o arquivo mutado **e** a
+alínea que decide. Esta nota registra o episódio; não declara PASS.
+
 ### Um erro meu que o produto desmentiu
 
 O `D021-FON1` reprovou o `mandate`: o `MAP` diz *"formalização de charter"*, o

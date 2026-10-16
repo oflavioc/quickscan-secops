@@ -26,6 +26,23 @@
 > esse diff como vazio (item 68). Nada no verbete era falso: era
 > verdadeiro-e-incompleto, por definir a extensão com exemplos. Trilha:
 > `specs/017-semantica-do-gatilho/spec.md` §Vocabulário fechado.
+>
+> **Emenda declarada — 2026-10-16.** *Ancoragem do apoio* entra fora de qualquer
+> Fase 0, por autorização do proprietário — é a condição (4) do aceite de intenção
+> da demanda 021, nomeada e diferida por mim para passe próprio. A `§Vocabulário`
+> do `refinement.md` da 021 (`:121`) afirmou que *Ancoragem*, *capability* e
+> *caminho de apoio* "já estão no `CONTEXT.md`"; medido, **capability** está,
+> **Ancoragem** nunca existiu, e **caminho de apoio** está como `_Evitar_` de
+> *Habilitador* — isto é, a demanda declarou cobertura de vocabulário que o
+> glossário não dava. A palavra "âncora" estava ocupada **quatro** vezes (`:178`,
+> `:183`, `:188`, `:375`), todas de INSTRUMENTO, e uma quinta vez em prosa
+> (`âncora normativa`, `:104`) — e a 021 reancorou mutantes no mesmo ciclo em que
+> introduziu a ancoragem de apoio. Nesta emenda: *Habilitador* e *Âncora de
+> mutante* recebem cláusula de delimitação, **sem** que nenhum termo saia do
+> `_Evitar_` e sem que nenhum sentido mude — por isso nada é riscado (R2 §5).
+> O nome do atributo no código permanece (INV-10): o que se decide aqui é o termo
+> de domínio. Trilha: `specs/021-cobertura-do-apoio/spec.md` §C6 e
+> `refinement.md` §Vocabulário.
 
 ## Metodologia (produto)
 
@@ -89,7 +106,14 @@ Item de catálogo (produto ou serviço) que PODE apoiar a evolução de uma prá
 apresentado como possibilidade condicionada e sempre derivado de evidência
 confirmada. Nunca é requisito, compra recomendada, nem origem do cenário-alvo.
 Termo canônico de doc, spec e prompt; as strings já congeladas na UI permanecem
-como estão (INV-10).
+como estão (INV-10). O `_Evitar_` é do registro do CONCEITO, nunca do registro da
+TELA: *formas de apoio* (Camada 1, classe `frozen`) e *caminhos de apoio*
+(superfície 5.x sob §29.4) são **nomes de seção que o leitor vê**, e doc que os
+nomeia os **cita** — citar o título de uma superfície não é usar o sinônimo. O que
+o `_Evitar_` proíbe é **predicar** com eles: *"todo gap recebe caminho de apoio"*
+fala do ITEM e deve dizer *habilitador* (ou *bloco de apoio*, se o sujeito é o
+bloco). *Apoio* sozinho nomeia a SUPERFÍCIE — seção de apoio, leitura de apoio,
+bloco de apoio, cobertura do apoio — e é livre, inclusive em slug de demanda.
 _Evitar_: recomendação, solução, caminho de apoio, forma de apoio
 
 **Bloco de ausência**:
@@ -143,6 +167,30 @@ prática-alvo, em vez de uma seção própria. É aditiva: não implica dissolve
 de apoio, que carrega também conteúdo não-comercial (capabilities a validar, tiers).
 _Evitar_: fusão de seções, unificação, merge de blocos
 
+**Ancoragem do apoio**:
+Dimensão do gap de que o CONTEÚDO de um bloco de apoio foi derivado, declarada
+pelo próprio bloco. Responde "de onde saiu esta lista" — nunca "qual é o produto"
+nem "esta lista serve". É **uma por bloco** e decide-se pela PROCEDÊNCIA do
+candidato, não pelo que o texto visível parece dizer: quem forneceu os candidatos
+fixa a ancoragem. Uma das dimensões é a **canônica da sessão** — a que parte da
+pergunta e do nível respondido —, e é essa assimetria que dá função à declaração:
+bloco que NÃO parte dela carrega o aviso de divergência (`EA-48`); o que parte
+dela não o repete, porque não diverge de si mesmo. Nomear a canônica não é
+enumerar os valores: é dizer quem avisa. Fonte de apoio nova herda o critério sem
+emenda — declara a sua dimensão e, se não for a canônica, avisa. O conjunto de
+valores é identificador (INV-10): lê-se em `qsGapSupportHTML()` e é cobrado pelo
+gate `D021-ANC1`; este verbete define o CRITÉRIO e remete à fonte, nunca a copia
+(R12 / `EA-47`).
+Distinta de toda a família de INSTRUMENTO — *Âncora de mutante*, *Âncora podre*,
+*Reancoragem*, *Commit-âncora* e a *âncora normativa* de uma diretriz de fase —,
+que LOCALIZA (onde mutar, de que commit ler o blob) ou AUTORIZA (que norma
+sustenta a mudança). Esta não localiza nem autoriza: informa procedência de
+conteúdo ao leitor do relatório. Neste repositório, *âncora* sem qualificador é
+do instrumento; a do produto vem sempre com "do apoio".
+_Evitar_: âncora, ancoragem (sozinhos — são do instrumento), origem do bloco,
+fonte (é o aviso, outra coisa), procedência da recomendação, nome do atributo
+(identificador, não termo de domínio)
+
 ## Estrutura (processo)
 
 **Demanda**:
@@ -177,7 +225,10 @@ _Evitar_: teste (genérico), checagem manual
 
 **Âncora de mutante**:
 Trecho de texto exato que localiza, no arquivo-alvo, onde a mutação é aplicada.
-Distinta do alvo (o arquivo) e da propriedade (o comportamento defendido).
+Distinta do alvo (o arquivo) e da propriedade (o comportamento defendido). Cabeça
+da família de INSTRUMENTO que ocupa a palavra "âncora" neste glossário (com
+*Âncora podre*, *Reancoragem* e *Commit-âncora*) — distinta da *Ancoragem do
+apoio*, que é de PRODUTO e não localiza nada.
 _Evitar_: alvo, trecho, patch, find
 
 **Âncora podre**:

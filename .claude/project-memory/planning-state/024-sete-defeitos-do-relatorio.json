@@ -1,6 +1,6 @@
 {
   "demanda": "024-sete-defeitos-do-relatorio",
-  "phase": "refinement",
+  "phase": "done",
   "spec_dir": "specs/024-sete-defeitos-do-relatorio",
   "branch": "feature/024-sete-defeitos-do-relatorio",
   "brief": "Corte decidido pelo proprietario em 2026-10-19: congelar o backlog de instrumento e limpar os defeitos que o CLIENTE VE no relatorio. Sete candidatos, todos da mesma superficie (secao de apoio e cards): EA-69 rotulos do MAP sem o acronimo que os outros trazem; EA-73 apoio Fortinet decora o card de PRIORIDADE e so quando calha de casar; EA-74 o contador de gaps promete a sessao e mede a secao; EA-75 produto que serve duas capabilities aparece duas vezes e a alavancagem some; EA-79 sem contexto declarado a secao mostra duas leituras sem dizer que sao a mesma; EA-80 a supressao da curadoria deixa a secao com titulo e nada embaixo; EA-81 em modo legado sob arbitragem o catalogo de icones duplica e fica oculto. RECONFIRMAR CADA UM ANTES DE QUALQUER DESENHO: ha suspeita medida de que o EA-79 ja foi executado e fechado pela demanda 023 e que so a linha de status nao acompanhou - corrigir o que ja esta corrigido seria o pior desperdicio possivel. Os 27 achados de instrumento ficam DECLARADOS, nao ignorados, e nenhuma frente nova de instrumento abre sem pedido do proprietario. DESFECHO: zero conserto de produto. A demanda entrega a constatacao MEDIDA de que nao ha defeito visivel a corrigir, dois achados convertidos em divida declarada com a razao, e cinco linhas de registro deixando de mentir.",
@@ -18,5 +18,6 @@
     "conformance": "NAO SE APLICA, e a razao e estrutural: conformance mede implementacao contra SPEC, e esta demanda nao teve spec — refutada no portao da Fase 0, nunca avancou para specify. O equivalente honesto do 100% aqui e: NENHUM commit de codigo, produto byte-identico, cinco achados deixando de mentir no registro, dois convertidos em divida declarada com a razao.",
     "aceite_po": "NAO ENCONTREI OBJECAO — product-owner, 2026-10-19, em Opus 5 (modelo fora do habitual; registrado). O veredito E a refutacao: a reconfirmacao fix-finding §1 derrubou a demanda antes do enquadramento, e o PO recomendou fecha-la sem codigo (D1) com as decisoes D2 a D7. Campo nomeado `aceite_po` e nao `aceite_de_intencao` DE PROPOSITO: o EA-88 mediu que a coorte com o nome que NOMEIA O AUTOR tem veredito canonico em 5 de 5, e a coorte com o nome que so nomeia o objeto tem 4 de 5 fora de forma. Esta demanda aplica a licao que ela mesma ajudou a registrar.",
     "aprovacao_de_fase": "PROPRIETARIO, no chat, 2026-10-19: 'Vamos de (a), release com a tag'. E outra coisa que o aceite do PO (D3) e esta em campo proprio por isso."
-  }
+  },
+  "pr_url": "https://github.com/oflavioc/quickscan-secops/pull/110"
 }

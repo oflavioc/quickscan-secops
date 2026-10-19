@@ -1,7 +1,7 @@
 {
   "_meta": {
     "descricao": "Registry único de pins — fonte de identidade dos artefatos (R8). Hashes = SHA-256 dos blobs de HEAD. Alterar arquivo pinado exige regenerar este registry no MESMO PR, com motivo no commit.",
-    "gerado_de_head": "ca9933cb0469ef122922074f5886396227c3a33f",
+    "gerado_de_head": "0c050078747d3656f2a69efdd9fb30d1711130f3",
     "gerado_em": "2026-10-19",
     "exclusoes": [
       "docs_phase5/**",
@@ -212,7 +212,7 @@
     ".claude/verify/env_doctor.py": "c3da72f6cbe6b1084dad68e97b23e0c7c7a4be3ec42623ac626b3e5b08a9369f",
     ".claude/verify/evidence_bridge.json": "8fbf8bca5e6710c709828f839e5f4c6ae552c5fb382429f25aae39b6ad0d291a",
     ".claude/verify/expected_suites.json": "7fe92a082c3d46006314dd461a679ae644ade8c6260475773a280e9d7beda177",
-    ".claude/verify/fecho.json": "e354f00debcf012d38d62c013269cb4ab41bd9efdd279a8ced7362e698e7e524",
+    ".claude/verify/fecho.json": "2a99d3a43d10cb36ec580295f9b8c4bef53411d2980f396d9f7649d2c8078702",
     ".claude/verify/fecho.py": "590b6a41af59512e82096fd8ad779d70cba9f6ec8b57970d57a6c5a1bb94ab41",
     ".claude/verify/fixtures_016/fecho/F1.json": "d688b5bdb9d972d021aa5d9991144b8879daf8e5061d88c5733017b03d1a3bc8",
     ".claude/verify/fixtures_016/fecho/F10.json": "2cf1894cb898ba608d9b44830c275ca45010df1173aad842306f6a6e98ebe8c2",

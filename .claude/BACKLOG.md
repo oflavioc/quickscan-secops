@@ -5745,6 +5745,36 @@ instância mais cara deste achado"* — **ficam como foram escritas**: são de
 2026-09-15 e descrevem a fila daquele dia, que é o que o registro histórico deve
 preservar (R2 §5). A fila corrente é esta subseção.
 
+### A fila, recontada em 2026-10-19 — o `EA-69` já tinha saído, e a recontagem anterior não viu
+
+Correção de registro da demanda 024 (`specs/024-sete-defeitos-do-relatorio/refinement.md`
+§0, item 4; decisão D2). A tabela de 2026-10-16, logo acima, conta os rótulos
+`(SIEM)`/`(NDR)` do [[EA-69]] como `aberto` e represados atrás de Porta B. **Estava
+errada no dia em que foi escrita**: os rótulos entraram no produto em 2026-09-27,
+pela tabela de apresentação `P52_COPY` (`ui_p52_workspace_v32.js:204-217`) —
+fix-finding `463808f`, PR #103, mesclado no mesmo dia (`7bee758`), dezenove dias
+antes daquela recontagem. Ela leu a **linha de status** do `EA-69`, que ninguém
+tinha virado, e não o fonte.
+
+**A fila hoje, recontada contra o fonte**:
+
+| item | estado |
+|---|---|
+| catálogo: `FortiNAC`, `FortiClient EMS`, `FortiSOC`, `FortiSOAR` | represados — nada medido nesta recontagem os move |
+| `SCORES = [0, 1.7, 3.3, 5]` | candidata em `design-decisions.md`, nem achado é |
+| ~~rótulos `(SIEM)`/`(NDR)` — `EA-69`~~ | **saiu**: no produto desde 2026-09-27, pela `P52_COPY`; `resolvido` no registro em 2026-10-19 |
+| ~~`EA-56`~~ | **saiu**: `resolvido` em 2026-09-26 (demanda 021) |
+
+**O que isto muda no encaminhamento.** O `EA-69` saiu **sem** Porta B e — segundo
+a mensagem do `463808f`, não remedido aqui — sem mover o payload M41, pela rota que
+a emenda de 2026-09-27 do próprio `EA-69` descreve: a fronteira é **decisão ×
+apresentação**, não `frozen` × não-`frozen`. São duas saídas da fila, e nenhuma
+pagou a saída 1. O que resta nela é o que muda o que o motor **decide** (catálogo) e
+a candidata `SCORES`; a pergunta deste achado continua do proprietário.
+
+A tabela de 2026-10-16 e a frase *"A fila corrente é esta subseção"* ficam como
+foram escritas (R2 §5); a fila corrente passa a ser esta.
+
 ## EA-61 — a redação do selo do bundle está pinada por gate em suíte protegida
 
 **Status**: `aberto`
@@ -6357,7 +6387,29 @@ outro ângulo, e a correção deste achado muda aquele número.
 
 ## EA-69 — dois rótulos técnicos do MAP não trazem o acrônimo que os outros trazem
 
-**Status**: `aberto`
+**Status**: `resolvido`
+
+> **Fecho — fix-finding `fix/sessao-v329-onda1`, PR #103, mesclado em 2026-09-27
+> (`7bee758`); registrado em 2026-10-19 pela reconfirmação da demanda 024.** A rota
+> foi a da emenda logo abaixo — **apresentação, não Camada 1**: sete entradas novas
+> na tabela fechada `P52_COPY` (`ui_p52_workspace_v32.js:204-217`), com `(SIEM)` em
+> `:204-205` e `(NDR)` em `:208-209`; razão e limite da regra no comentário de
+> `:177-203` — nome de mercado só onde a capability é categoria de tecnologia,
+> **ratificado pelo proprietário em 2026-09-27**. O papel passa pelo mesmo mapa
+> (`:3316-3318`, `beforeprint` → `p52Copy(#v32-print-report)`). Commits `463808f`
+> (a tabela), `4b61398` (a troca alcança o nome acessível e as superfícies que o
+> cliente recebe) e `d5caecb` (reancora o `P52-RB6`). Nenhum arquivo `frozen`
+> tocado; o payload M41 idêntico ao pinado é afirmação da mensagem do `463808f`,
+> não remedida aqui. Vivo no artefato construído:
+> `quickscan_secops_soccmm_v3_2_dev.html:12211`.
+>
+> **A linha de status ficou `aberto` 22 dias depois do merge**, e nesse intervalo a
+> recontagem de 2026-10-16 da fila do [[EA-58]] ainda o contou como represado atrás
+> de Porta B. Fonte da reconfirmação:
+> `specs/024-sete-defeitos-do-relatorio/refinement.md` §0. As seções abaixo —
+> inclusive *"não agir"* e *"aguarda decisão do proprietário"*, de 2026-09-24 —
+> ficam como foram escritas (R2 §5): descrevem a rota da Camada 1, que não foi a
+> usada.
 
 > **EMENDA DE ROTA, 2026-09-27 — a conclusão "Porta B" avaliou UMA rota só.**
 >
@@ -6805,7 +6857,23 @@ Ver [[EA-20]], de quem este é instância no **gatilho**, e não no gate.
 
 ## EA-73 — o apoio Fortinet decora o card de PRIORIDADE, e só quando calha de casar
 
-**Status**: `aberto`
+**Status**: `resolvido`
+
+> **Fecho — fix-finding `fix/sessao-v329-onda1`, PR #103, mesclado em 2026-09-27
+> (`7bee758`), commit `463808f`; registrado em 2026-10-19 pela reconfirmação da
+> demanda 024.** A rota foi a do encaminhamento abaixo, e mais larga do que ele
+> previa: `p52SupportHints` **saiu inteira** em vez de ser restringida à seção 4.
+> Medido no cenário do relato, os 3 ponteiros pousavam **todos** em `.prio-decl` e 0
+> no papel — o comentário do `EA-55` prometia as seções 2 e 4, mas o seletor só
+> alcançava prioridade, logo não havia o que preservar na seção de gaps.
+> `p52ValidationIndex` e o CSS `.p52-hint*` saíram junto, senão virariam código e
+> regra mortos. Registro da reversão: `ui_p52_workspace_v32.js:3029-3038`.
+> Varredura por `p52SupportHints` em `*.js` (recursiva, fora `node_modules`) em
+> 2026-10-19: **uma** ocorrência, o próprio comentário (`:3032`).
+>
+> **O registro em `design-decisions.md` que este encaminhamento exigia — e que o
+> comentário em `:3038` afirma existir — não existia.** Escrito em 2026-10-19, na
+> mesma demanda 024. A linha de status ficou `aberto` 22 dias depois do merge.
 
 **Aberto em**: 2026-09-27, por relato do proprietário após sessão real na v3.2.9.
 
@@ -6847,7 +6915,22 @@ promete regra e entrega coincidência.
 
 ## EA-74 — o contador de gaps promete a sessão e mede a seção
 
-**Status**: `aberto`
+**Status**: `resolvido`
+
+> **Fecho — fix-finding `fix/sessao-v329-onda1`, PR #103, mesclado em 2026-09-27
+> (`7bee758`); registrado em 2026-10-19 pela reconfirmação da demanda 024.** As
+> **duas** metades do encaminhamento. O rótulo do índice lê o censo da **sessão**
+> (`ui_p52_workspace_v32.js:2297-2300` → `p52CensoSessao`, `:274-283`), publicado
+> pelo domínio em `#v32panel` como `data-qs-censo-*` — quem calcula publica, quem
+> apresenta lê. E a seção de gaps **nomeia** quantos altos foram lidos como
+> prioridade, com ponteiro para a seção 2 (`p52GapsForaDaSecao`, `:3010-3027`).
+> Commits `463808f` (as duas metades) e `4b61398` (a publicação do censo em
+> `ui_v32.js`, depois de o `P52-GOV1` reprovar a primeira versão, que chamava
+> `computeFindings()` de dentro do workspace), com repin `§29.4` sob autorização
+> nominal do proprietário de 2026-09-27 (`bf85a65`). Sem motor, o rótulo é omitido
+> em vez de mostrar número errado. Vivo no artefato construído:
+> `quickscan_secops_soccmm_v3_2_dev.html:14303`. A linha de status ficou `aberto`
+> 22 dias depois do merge.
 
 **Aberto em**: 2026-09-27, por relato do proprietário após sessão real na v3.2.9.
 
@@ -6894,7 +6977,25 @@ Ver [[EA-20]], de quem este é instância: número que promete mais do que mede.
 
 ## EA-75 — produto que serve duas capabilities aparece duas vezes, e a alavancagem some
 
-**Status**: `aberto`
+**Status**: `resolvido`
+
+> **Fecho — demanda `022-escalonamento-do-investimento`, PR #104, mesclado em
+> 2026-10-01 (`aa74fbc`); registrado em 2026-10-19 pela reconfirmação da demanda
+> 024.** Resolvido em **forma emendada**, não na do encaminhamento abaixo. A errata
+> `E2` da 022 (`specs/022-escalonamento-do-investimento/spec.md:85-117`), ratificada
+> pelo proprietário no chat em 2026-09-28 (*"Vamos de B"*), **recusou a reindexação
+> da leitura por capability** — custo medido: 55 asserções em 5 suítes, uma `§29.4`
+> e outra selada por errata — e completou a visão **por produto**, que já existia e
+> não listava o produto habilitado por sinal declarado. Capabilities e sinais
+> **unidos**, chave pelo nome exibido (`ui_p52_support_v32.js:272-344`); gate
+> `D022-PROD1` (`tests_022_escalonamento.js:350-389`). A leitura por capability
+> continua mostrando o produto em cada capability que ele serve — por desenho: ela
+> responde *"por que este apareceu para esta necessidade"*.
+>
+> O refinamento da 024 cita o gate em `:369-387` e o bloco em `:272-330`; medido em
+> 2026-10-19, o gate inteiro é `:350-389` (as linhas citadas lá são as alíneas (b) e
+> (c)) e o bloco fecha em `:344`, no fim do `try/catch`. A linha de status ficou
+> `aberto` 18 dias depois do merge.
 
 **Aberto em**: 2026-09-27, por relato do proprietário após sessão real na v3.2.9.
 
@@ -7071,7 +7172,41 @@ Medido depois: `D011 NUMERAÇÃO: 6 PASS · 0 FAIL` · âncoras todas em
 
 ## EA-79 — sem contexto declarado, a seção de apoio mostra duas leituras sem dizer que são a mesma
 
-**Status**: `aberto`
+**Status**: `resolvido`
+
+> **Fecho — demanda `023-leitura-unica-do-apoio`, PR #106, mesclado em 2026-10-02
+> (`232448f`); registrado em 2026-10-19 pela reconfirmação da demanda 024.**
+>
+> **A demanda estrutural que o encaminhamento abaixo anuncia foi feita — e por uma
+> QUARTA rota, nenhuma das três que a tabela abaixo mede.** O *"Vamos de C"* de
+> 2026-10-01 escolheu a **estrutural** entre paliativa, remover e estrutural
+> (`specs/023-leitura-unica-do-apoio/refinement.md:122`); a linha explicativa era a
+> paliativa, e o encaminhamento já registra que ela foi implementada e retirada. A
+> spec da 023 propôs a quarta rota: o **produto publicado conta como substituto**
+> (`temProdutoPublicadoV32`, `ui_v32.js:729-745`, consultado por `hasSubstituteV32`,
+> `:746-758`). É uma forma de "alargar `hasSubstituteV32`" que **não paga** o custo
+> que a tabela mediu para essa rota: conta o **publicado**, não o ofertado, e "sem
+> substituto" continua alcançável pela supressão da curadoria — o `D010-ARB1` foi
+> reancorado, não esvaziado. A errata `E1` da 023 estendeu a arbitragem ao modo
+> legado (*"Vamos com a B"*, 2026-10-02), porque a sessão do relato não declarou
+> nada: o ramo legado de `renderBlocks` passa `hasSubstituteV32(null)`
+> (`ui_v32.js:264`) em vez da constante `false`. Commit da W1: `7e75cce`. Vivo no
+> artefato construído: `quickscan_secops_soccmm_v3_2_dev.html:6308`, `:6773-6789`,
+> `:6790-6802`.
+>
+> **A linha de status não era a única coisa errada.** A tabela abaixo mede três
+> rotas e a executada é uma quarta, que nela não está; e a entrada de
+> `design-decisions.md` sobre a demanda 020 dizia *"a demanda nova a executa"* sem
+> registrar quem executou nem como — fechada em 2026-10-19. O texto abaixo fica
+> como foi escrito (R2 §5); este fecho é o que vale. A linha de status ficou
+> `aberto` 17 dias depois do merge.
+>
+> **Resíduo declarado — borda B5 do refinamento da 024, decisão D3.** Com o **gate
+> de suficiência fechado** o produto publicado **não** substitui (cláusula `E4` da
+> 023, `ui_v32.js:732-741`): a leitura congelada fica, a visão por produto também
+> publica, e as duas leituras coexistem. É deliberado — a INV-3 pelo lado da
+> apresentação: *o que não é publicável não desloca o que é*. **Não reportar como
+> reincidência deste achado.**
 
 **Aberto em**: 2026-10-01, por relato do proprietário após sessão real na v3.2.10.
 
@@ -7121,7 +7256,30 @@ emenda em vez de contradizer em silêncio.
 
 ## EA-80 — a supressão da curadoria deixa a seção de apoio com o título e nada embaixo
 
-**Status**: `aberto`
+**Status**: `transferido`
+
+> **Fechado por declaração — portão da Fase 0 da demanda 024, 2026-10-19 (decisão
+> D4).** Nenhuma linha de produto mudou. A decisão migrou para
+> [`design-decisions.md`](rules/design-decisions.md) como **confirmada** (R13), com
+> a errata `E20` em `specs/010-recomendacao-sem-vao/spec.md`. No rito de status
+> deste arquivo, migração para `design-decisions.md` é `transferido`.
+>
+> **A rota mais barata do encaminhamento abaixo foi recusada, e a razão inverte o
+> que o achado supõe.** O `.apoio-block` congelado é **onde o produto excluído
+> mora** — é dele que `prodLegadoDe()` tira o `.prod` —, e o conjunto ofertado à
+> curadoria contém os produtos daqueles blocos. Repor os blocos quando
+> `cards.length === 0` **re-exibiria exatamente o que o operador acabou de
+> excluir**: não é desfecho conservador, é desfazer a curadoria. A `C1` da 010
+> protege o cliente contra **vão do software**; a **supressão pela curadoria** é
+> decisão declarada de quem conduz a sessão, não vão. A seção com o aviso de
+> supressão **é** a leitura correta daquele estado.
+>
+> A cadeia abaixo continua verdadeira como medição — a remoção é incondicional; o
+> achado a cita em `:744`, e em 2026-10-19 ela está em
+> `ui_p52_support_v32.js:738-739` — e deixou de ser defeito por decisão, não por
+> correção. Aprovação: proprietário, no chat, 2026-10-19 (*"Vamos de (a), release
+> com a tag"*), conforme registrada em
+> `.claude/project-memory/planning-state/024-sete-defeitos-do-relatorio.json`.
 
 **Aberto em**: 2026-10-02, medido na W1 da demanda 023.
 
@@ -7175,6 +7333,28 @@ Ver [[EA-76]] e a errata `E19` de `specs/010-recomendacao-sem-vao/spec.md`.
 ## EA-81 — em modo legado sob arbitragem, o catálogo de ícones fica duplicado e oculto
 
 **Status**: `aberto`
+
+> **Dívida de instrumento declarada — portão da Fase 0 da demanda 024, 2026-10-19
+> (decisão D5).** Fica `aberto` e fora de demanda, pelo corte do proprietário
+> (nenhuma frente nova de instrumento sem pedido dele): **o cliente não vê nó
+> oculto**, e o papel lê só os cards por produto — `papelHTML()`
+> (`ui_p52_support_v32.js:794-802`, exposto no bridge como `printHTML`) colhe
+> `:scope > .apoio-block[data-p53-sol-produto]` e o aviso de supressão, então a cópia
+> congelada oculta não imprime. Isso é leitura de fonte, **não medido por execução**
+> — quem confirma: `ui-engineer` com `qa-engineer`. O custo que este achado já cobrou
+> — `P52-ICON1`/`P52-ICON2` cegos — foi pago dentro da 023 (rota C, guarda de tile
+> não desenhado).
+>
+> **Risco residual nomeado, para o registro de selagem:** todo oráculo futuro que
+> deduplicar por ordem de documento nesta seção tem de olhar **visibilidade** —
+> senão pina a **cópia morta** (verbete em `CONTEXT.md`) e passa a medir o que
+> ninguém vê.
+>
+> **Este achado e o [[EA-80]] são uma causa lida de duas pontas** (refinamento da
+> 024, §Enquadramento): `hasSubstituteV32()` decide **ocultar** pelo que foi
+> publicado; `blocosLegados()` + `decorar()` decidem **consumir** pela visibilidade
+> do nó. Se um dia isso se pagar por código, os dois se desenham juntos — consertar
+> um sozinho piora o outro.
 
 **Aberto em**: 2026-10-02, medido na W4 da demanda 023.
 

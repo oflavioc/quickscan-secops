@@ -1,8 +1,8 @@
 {
   "_meta": {
     "descricao": "Registry único de pins — fonte de identidade dos artefatos (R8). Hashes = SHA-256 dos blobs de HEAD. Alterar arquivo pinado exige regenerar este registry no MESMO PR, com motivo no commit.",
-    "gerado_de_head": "9eb1f2bec66f3c28eb52950fea3985032e6b3969",
-    "gerado_em": "2026-10-16",
+    "gerado_de_head": "a3d6f07871ac51b483643e6edf0b18d1f8e99eaf",
+    "gerado_em": "2026-10-19",
     "exclusoes": [
       "docs_phase5/**",
       ".claude/project-memory/** (estado de processo — muda por fase; validado pelo stage state, não por pin)",
@@ -15,7 +15,7 @@
     "baseline_core_zip_sha256": "625079c462be7d44ffd69b1cd85f256382322bd0555ae4b548f21bf30ee5b89d"
   },
   "files": {
-    ".claude/BACKLOG.md": "ec2ea2180b709aefa6b83d7d657c4de9e564d5d6ab1501ef7f3aaf631f98f987",
+    ".claude/BACKLOG.md": "9bfd9734cf9d3f3b4c3a80e03f2907020728d8eb87534204a56154e9193c858d",
     ".claude/agent-memory/README.md": "2f868716c8785119c1d6a02a7715f7b5058ab968f55951410fc82fc45b960a93",
     ".claude/agent-memory/build-engineer/MEMORY.md": "5ed47a73226fea6613b44c2ce70b26e95415033bafbd69a3ada20fa7df0bf950",
     ".claude/agent-memory/build-engineer/feedback_escopo_de_scanner_nos_dois_sentidos.md": "a07b03eb0687bc4f08ff02375684b8441f8d434384c415a3e25b1fe233007527",
@@ -163,7 +163,7 @@
     ".claude/hooks/post-turn-verify.sh": "e46d2c17c4d7b0164154bd5220e2696011482da3dd49b28c41b90a844a89ea1a",
     ".claude/hooks/state-eval.sh": "f15c4df2e181f3f1b8db64bc6aedb46883d7600418f1c28a16446037b13d6b6e",
     ".claude/rules/boundary.md": "327888a7af5719d2bb264058457d1c6782f62a6dcaa506fdf844336a55da47f4",
-    ".claude/rules/design-decisions.md": "8ee8951be7cab46406fe12573956ee71e141cffbfab37850b299783e36215aeb",
+    ".claude/rules/design-decisions.md": "2e1e21637357e85755e5e4a1193e6443f399fa5ff824c688216e5f2519565f8f",
     ".claude/rules/determinism.md": "90bab1c89c7b9a54c400b7124d60693a431face37f422e847e6d2e566cb5f76d",
     ".claude/rules/documentation.md": "1bc3ee711769319d3bd7dbfe5d7ac376f764149865457fe9bb283fcf0daf10d4",
     ".claude/rules/evidence-intake.md": "a93f8d063602e2b075c2096d38e74f9cd1f8452c8943691aca82c3847c84cd8c",
@@ -278,7 +278,7 @@
     ".gitignore": "f12379e20604234d2c80ed8486cefa9c6fc22034e89c1fa79c239e6ae0665079",
     "AGENTS.md": "267c0b98ae9f6fa4289be88e95b72393be936951625be2917ae08fe0cb3e9671",
     "CLAUDE.md": "46bc87e937d6ac560e0445f30626257d2347b6001408300230d0955bdfee9b1d",
-    "CONTEXT.md": "7762cd913c0b0ac5defd8723f59f299ec5ba26132817b4484a0a5aa7fe511a73",
+    "CONTEXT.md": "192f5733b4aa7b62efc7ae84ab055c6cd4fa8b478f547360686080ea2d28aaf2",
     "ICON_ASSET_DECISIONS_V32.md": "f14494c78ae40af88f8a2adf49e30f314a6800736b11607d3382e0a31d5cce80",
     "LICENSE": "1ddd9deeecd23a1cece8a3aee60c77f4168295535ea4d7cc0102c55d8e777c49",
     "MANIFEST.sha256": "defd52d1cfc57e6ca5a9ebcce8b620a080772b6ea62753f987c5a58f8ccf38c6",
@@ -367,7 +367,7 @@
     "specs/010-recomendacao-sem-vao/plan.md": "47dd1630810e8852c2998d79a278ede7e2eaa2aabc9c1d550f3d1caf8048b620",
     "specs/010-recomendacao-sem-vao/refinement.md": "ef7f012fcb38a0902ba56366ff412fa198a15903b686abf5b344573f619fc6bf",
     "specs/010-recomendacao-sem-vao/relatorio-final.md": "3577e9fa12c0cb8e2de112b61e787631a9cec86892d05d1cf1f5d6dc107eecd4",
-    "specs/010-recomendacao-sem-vao/spec.md": "f8b79b31551d75c6b403ece3e3ac2d9deac39faad320ff4cbfbe502c124025ca",
+    "specs/010-recomendacao-sem-vao/spec.md": "548c694a010125a9d7950631e27a60bb57649822cd124d67239470a761807a1b",
     "specs/010-recomendacao-sem-vao/tasks.md": "39fa0a8de12e350e9462a68df715a8a646130b7fe89259d6c2d794879d26bcfa",
     "specs/011-numeracao-das-prioridades/plan.md": "4c889a6b196286e8a34f0160495200c103be332fd0c32e45eeacd559861294be",
     "specs/011-numeracao-das-prioridades/refinement.md": "10f268af9e2e8a2c35752365232a072934f5c6dec2f25d4ed4126bd74cdf0dba",
@@ -454,6 +454,8 @@
     "specs/023-leitura-unica-do-apoio/spec-validate.md": "437b3e70f7bba1727ac85888d2f2085be9f736b9253fa9aa3fea5240161b3631",
     "specs/023-leitura-unica-do-apoio/spec.md": "1c293d35f9e047a4a36def543c27511859bf1800ffc92793e96e96b96044d334",
     "specs/023-leitura-unica-do-apoio/tasks.md": "57c3ce0a0628b9e9a382eb5b077f190807ceeee235bd0e63c00436dc9cf588a1",
+    "specs/024-sete-defeitos-do-relatorio/refinement.md": "8384cbd6ebc1b3f620436a7e807c4e783cd8bbc2e84e81b7cd86c6743cca7fbf",
+    "specs/024-sete-defeitos-do-relatorio/relatorio-final.md": "71bccb6c4a12652b1d22d3621149969153f3ab08895af4e0c1644aa7d5b78f03",
     "specs/PHASE_5_0_REV_A.md": "22e729174c6a3c5dd620da5330b03eb96d9eb6fc6e64eba097c2bde55eb0a510",
     "specs/PHASE_5_0_REV_B.md": "4f1583c733df62a9452aa7b218d962e40d781bb8d30dfc3179ad6e1ef004619b",
     "synthetic_session_examples/exemplo-completo.json": "8970e68ca0ce6a6885b62a911532a0598c9c5bca1bb783089fb085ba858a314d",

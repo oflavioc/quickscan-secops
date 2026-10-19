@@ -7936,3 +7936,159 @@ veredito fora do enum deixaria o stage **permanentemente vermelho** no históric
 que é o modo de falha do `EA-5` (o MANIFEST sempre vermelho, logo nunca rodado) e
 a razão pela qual a normalização de chaves da 016 foi adiada. A ordem e o piso são
 decisão do `tech-lead`/proprietário, não deste registro.
+## EA-89 — `**Onda**` é cabeça de verbete DUAS vezes no `CONTEXT.md`: a acepção de processo desambigua contra *wave* e é cega para a própria gêmea de produto
+
+**Status**: `aberto`
+
+**Aberto em**: 2026-10-16. Duplicata **medida pelo orquestrador** no `CONTEXT.md`
+emendado; cadeia, causa provável, alcance e ausência de gate conferidos pelo
+`doc-writer` ao registrar. O conserto foi **recusado deliberadamente** pelo
+`product-owner` no passe do glossário, e a recusa é parte do achado — não
+pendência dele (ver §Alcance).
+
+### Cadeia arquivo:linha → efeito
+
+- **`CONTEXT.md:201-204`**, sob `## Estrutura (processo)` — `**Onda**`:
+  *"Etapa de implantação da Estrutura Agêntica (0–4), com critério de pronto
+  executável."* Acepção de **processo**. `_Evitar_` (`:204`): `fase`.
+- **`CONTEXT.md:467-471`**, no fim do mesmo arquivo — `**Onda**`:
+  *"Conjunto de frentes apresentado junto, com a primeira sendo o que se ataca
+  agora."* Acepção de **produto**. `_Evitar_` (`:471`): `fase, etapa, roadmap,
+  sprint`.
+- **Efeito**: a cabeça do verbete é a chave de busca do glossário — é por ela que
+  doc, spec e prompt novos "usam o termo daqui" (R12 §Glossário). Com duas cabeças
+  idênticas, a chave **não resolve**: quem procura `Onda` encontra duas definições
+  incompatíveis (processo × produto) e **nenhuma linha de distinção entre elas**.
+  Num repositório cuja disciplina inteira é vocabulário fechado, o termo canônico
+  deixa de ser canônico — e a R12 fica sem como ser cumprida para esta palavra,
+  porque não existe "o termo daqui".
+
+### A cegueira está declarada dentro do próprio verbete
+
+O `:201` **se preocupa em desambiguar** — e contra um termo estrangeiro:
+
+- a distinção contra *wave* está no **CORPO** (`:203`: "Distinta de *wave* (grupo
+  de tarefas paralelas dentro de uma demanda)"), **não** no `_Evitar_` — correção
+  de medição: o `_Evitar_` do `:204` lista só `fase`. A substância do achado é a
+  mesma; a localização, não;
+- as duas cabeças reservam `fase` no `_Evitar_` (`:204`, `:471`) — isto é, as duas
+  foram escritas com cuidado de fronteira, cada uma olhando para fora;
+- e o `:471` evita `roadmap` — exatamente a palavra que o **terceiro** sentido usa.
+
+Um verbete que desambigua contra *wave* e contra `roadmap`, e não vê o homônimo que
+está no mesmo arquivo, 266 linhas abaixo.
+
+### Terceiro sentido, e já medido antes
+
+- **`specs/PHASE_5_0_REV_B.md:1718`** (selada, imutável, classe `legacy`):
+  `# 33. ROADMAP — ONDAS E CONTRATOS SEPARADOS`. Único uso real no arquivo — a
+  segunda ocorrência de `onda` (`:1403`) é substring de "corresponda".
+- **`specs/022-escalonamento-do-investimento/spec.md:209-211`** registra isso
+  textualmente: *"nada sobre teto, onda de investimento ou escalonamento em
+  `PHASE_5_0_REV_B.md` — a `§33` usa "ondas" para o roadmap de microfases, sentido
+  não relacionado."*
+- **Agravante**: a demanda que criou a cabeça duplicada **já sabia** que a palavra
+  estava ocupada por um terceiro sentido, mediu isso na própria spec, declarou-o
+  "não relacionado" — e não olhou para a gêmea de **processo** no arquivo em que ia
+  escrever.
+
+### Causa provável, conferida: a fronteira de seção quebrada
+
+O `CONTEXT.md` tem **duas** seções (`## Metodologia (produto)`, `:47`;
+`## Estrutura (processo)`, `:194`) — medido, não há outras. Quatro cabeças de
+**produto** moram sob a de **processo**, e são as **quatro últimas do arquivo**,
+contíguas:
+
+- `:461` `**Frente de investimento**` · `:467` `**Onda**` (produto) ·
+  `:473` `**Teto de frentes**` · `:480` `**Substituto**`.
+- As quatro entraram no **mesmo commit**: `b339637` (2026-09-30,
+  `docs(022): Fase 6 — conformidade 14/14, aceite de intencao e dois achados`),
+  ancestral de `develop`. A de processo (`:201`) é do commit fundador do glossário,
+  `f7a787c` (2026-08-25) — medido por `git log -S` sobre o corpo de cada uma.
+- **Como a duplicata passou**: quem anexa termo de produto no fim do arquivo não
+  atravessa a seção de processo, e quem lê a seção de processo não espera termo de
+  produto ali. A fronteira quebrada removeu o único lugar em que as duas cabeças se
+  encontrariam na mesma leitura. Isto é causa **plausível e medida** — as quatro
+  estão fora de seção, e a duplicata está entre elas —, não demonstrada.
+
+### Ninguém mede: o glossário não tem gate
+
+- Medido: **nenhum** arquivo de `.claude/verify/` parseia o `CONTEXT.md` como
+  glossário. As duas únicas referências ao arquivo ali são `pins.json` (identidade
+  do blob, R8) e `regra_morta.js:229` (citação de um verbete em comentário). O
+  `compliance-audit.sh` não tem seção de glossário.
+- O pin prova que o arquivo **não mudou**; nunca que ele **continua coerente** — é a
+  mesma distinção que a R12 já escreveu para `§Não mudam` (`EA-47`).
+- E o `b339637` carrega `conformidade 14/14` na própria mensagem: o `spec-validate`
+  da 022 certificou conformidade **no commit que introduziu a cabeça duplicada**.
+  Mesma família do [[EA-47]] — instrumento que mede forma e conclui sentido —, aqui
+  com o agravante de que não havia nem a forma a medir.
+
+### Por que isto é o defeito que duas regras existem para impedir
+
+As duas regras mais recentes de vocabulário deste repositório são, as duas, sobre
+**a cabeça carregar a própria delimitação**:
+
+- R12 §Glossário, *"Verbete define por CRITÉRIO, nunca por lista"* (`EA-47`,
+  2026-09-14, `.claude/rules/documentation.md:32-38`);
+- `CONTEXT.md:188`, emenda de 2026-10-16 (`d0efc33`): *"Neste repositório, *âncora*
+  sem qualificador é do instrumento"* — e essa emenda resolveu a colisão de *âncora*
+  **sem duplicar cabeça**, qualificando as duas (`**Âncora de mutante**`, `:226`;
+  `**Ancoragem do apoio**`, `:170`).
+
+Cabeça duplicada é o caso degenerado das duas: dois verbetes, nenhum dos dois
+qualificado — e **já consumado** no arquivo, 16 dias antes da emenda que escreveu a
+regra.
+
+### Alcance — por que o conserto não é deste passe
+
+Censo de citações medido hoje, por acepção:
+
+- **processo**: 9 linhas com `Onda` em 6 arquivos de regra (`boundary.md` 1,
+  `design-decisions.md` 3, `determinism.md` 1, `evidence-intake.md` 1, `pins.md` 1,
+  `tdd.md` 2); as formas `Onda <N>` somam 10 ocorrências (2× `Onda 0`, 2× `Onda 3`,
+  6× `Onda 4`);
+- **produto**: 47 linhas com `onda` em 6 artefatos de
+  `specs/022-escalonamento-do-investimento/` (`spec.md` 18, `plan.md` 10,
+  `refinement.md` 8, `tasks.md` 6, `spec-validate.md` 3, `relatorio-final.md` 2) —
+  demanda **mesclada** em `develop`.
+
+**Remédio candidato, não decidido**: cabeça qualificada na acepção de **produto**,
+no padrão que a emenda de hoje usou para a âncora, com cláusula de delimitação
+recíproca nas duas e **sem** que nenhum termo saia do `_Evitar_` — nada a riscar
+(R2 §5), porque nenhum sentido muda.
+
+**O conserto exige passe próprio, com o censo de quem cita qual.** A recusa do
+`product-owner` em consertar sem esse censo está correta e fica registrada aqui:
+mexer em cabeça de verbete citada por demanda mesclada tem alcance, e decisão de
+cabeça é **conteúdo de glossário** — do `product-owner` (R12), nunca do
+`doc-writer`.
+
+### O que isto não é
+
+- **Não é achado sobre a emenda de 2026-10-16** (`d0efc33`), que está correta e não
+  tocou nenhuma das duas cabeças de `Onda`.
+- **Não é reabertura do [[EA-47]]**: ali o defeito era verbete definido por lista;
+  aqui o **corpo** dos dois está certo — o defeito é a **chave**.
+- **Não é "termo faltando no glossário"** (R12 §Glossário, *"termo que falta lá é
+  sinal"*): os dois sentidos **estão** definidos. O defeito é a chave não dizer
+  qual.
+- **Não é defeito da demanda 022 como registro**: registro mesclado não se
+  retro-ajusta (R13, precedente das fases seladas). O que se conserta é o
+  `CONTEXT.md` de hoje.
+
+### Encaminhamento
+
+`fix-finding`, dono **`product-owner`** (conteúdo de verbete), com `doc-writer` no
+censo de citações e na gravação. Três perguntas que **não são do agente**:
+
+1. qual das duas acepções recebe o qualificador na cabeça — a de **produto** é a
+   candidata aparente, por ser a mais nova e a de alcance menor em regra;
+2. se as quatro cabeças de produto (`:461`, `:467`, `:473`, `:480`) migram para
+   `## Metodologia (produto)` no mesmo passe — move linha em arquivo pinado, logo
+   `gen_pins.py` no mesmo PR (R8);
+3. se a máquina entra: checagem de **cabeça duplicada** no `CONTEXT.md` — hoje
+   inexistente — dentro do `compliance-audit.sh`, que é onde a R12 já é auditada.
+   Gate novo é da R10, dono `qa-engineer`.
+
+Nenhuma das três decidida aqui.

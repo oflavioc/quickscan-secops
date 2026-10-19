@@ -96,6 +96,42 @@ qid derivado**. O eixo existia no nome.
 É a família `EA-20` dentro do gate escrito para caçá-la. Registrado sem
 atenuante.
 
+#### Nota de 2026-10-16 — a contagem era CINCO, e o quinto é de outra natureza
+
+**Acréscimo, não reescrita** (R2 §5): o texto acima fica como foi registrado no
+fecho. Correção devolvida pelo `product-owner` como condição (1) do aceite de
+intenção retroativo da 021 (planning-state, `validate.aceite_de_intencao`,
+2026-10-16) e conferida no fonte pelo `doc-writer` antes de gravar.
+
+Sobreviveram **cinco** mutantes na primeira execução, não quatro. O quinto é o
+**`M51-07`** (campanha `p51`, `tests_p51_mutants.js:183-203`, gate `P51-REC1`), e
+ele não pertence à família dos outros: três acusaram **o gate que esta demanda
+escreveu**; o `M51-07` acusou **a emenda a um gate alheio**. A primeira redação da
+emenda da §UAT-07 **enfraqueceu o gate** (R10 §1) — o oposto do que a
+`spec.md:175-178` prometeu ao oferecer um mutante como prova de que não afrouxava.
+
+Em uma linha, com o mecanismo citável: a redação
+`!TAB[qid] && !candidatosDoMapa(...).length` virou **inalcançável**, porque todo
+qid tem candidato no `MAP` (`tests_p50_core.js:3645-3658`), e o carrasco antigo —
+`QIDS_AUTORIZADOS` com quatro literais, onde `training` não estava — desapareceu
+junto com a lista (`tests_p51_mutants.js:185-198`). **A campanha denunciou**, e a
+correção (`tests_p50_core.js:3659-3688`) deixou o gate **mais forte que antes da
+021**: discrimina nas duas origens declaradas e acrescenta a alínea de **disjunção
+contra o motor** (`:3680-3688`). A medição completa está na nota irmã de
+`spec-validate.md` (§Nota de 2026-10-16).
+
+O que isto muda na leitura do fecho: o título desta seção continua verdadeiro e
+ganha um quinto caso de natureza diferente — **não foi o gate novo que falhou, foi
+a emenda ao gate alheio**. É por isso que as `tasks.md` da **022** (`:42`) e da
+**023** (`:40`), e `tests_022_escalonamento.js:277`, citam este episódio como
+precedente de *"reancoragem não é mexida inócua"* — precedente que, até esta nota,
+não existia em artefato nenhum da 021.
+
+Não executado aqui, e nomeado: se o `M51-07` morre contra o texto atual do gate é
+medição do `qa-engineer` — condição (2) do mesmo aceite, que registra
+`mutation-matrix.json:189-191` com `ultima_prova.data: 2026-09-13` /
+`resultado: KILL`, prova anterior à 021.
+
 ### Três premissas minhas, falsas, achadas ao escrever o red
 
 - o `C3` descrevia um estado **inalcançável por construção**;

@@ -27,8 +27,8 @@ cliente recebe.
 | `EA-69` rótulos sem acrônimo | **NÃO reproduz** — corrigido | `ui_p52_workspace_v32.js:204-217`: sete entradas novas em `P52_COPY`, com `(SIEM)` em `:204-205` e `(NDR)` em `:208-209`; razão e limite da regra em `:177-203`, com ratificação nominal do proprietário de 2026-09-27. No artefato: `:12211`. Papel coberto pelo mesmo mapa (`:3316-3318`, `beforeprint` → `p52Copy(#v32-print-report)`) |
 | `EA-73` apoio decora card de prioridade | **NÃO reproduz** — corrigido | `p52SupportHints` e `p52ValidationIndex` **não existem mais**: a varredura por `p52SupportHints` em `*.js` devolve só comentário e backlog. Registro da reversão em `ui_p52_workspace_v32.js:3029-3038`. No artefato: `:15035` |
 | `EA-74` contador promete a sessão e mede a seção | **NÃO reproduz** — corrigido nas **duas** metades | o rótulo lê o censo da **sessão** (`:2297-2300` → `p52CensoSessao`, `:274-283`, que consome `data-qs-censo-*` publicado por `ui_v32.js` — quem calcula publica, quem apresenta lê); e a seção de gaps **nomeia o que não mostra** (`p52GapsForaDaSecao`, `:3010-3027`). No artefato: `:14303` |
-| `EA-75` produto duplicado, alavancagem some | **NÃO reproduz** — resolvido em **forma emendada** | demanda 022, errata `E2` (`specs/022-escalonamento-do-investimento/spec.md:85-117`), ratificada no chat (*"Vamos de B"*): a visão **por produto** passou a receber o habilitado por sinal declarado, com capabilities e sinais **unidos** e chave pelo nome exibido — `ui_p52_support_v32.js:272-330`; gate `D022-PROD1` em `tests_022_escalonamento.js:369-387`. A reindexação da leitura por capability foi **recusada com custo medido** (55 asserções em 5 suítes) |
-| `EA-79` duas leituras sem dizer que são a mesma | **NÃO reproduz** — resolvido pela 023 | a suspeita trazida ao refinamento está **confirmada**: `ui_v32.js:264` passa `hasSubstituteV32(null)` no ramo legado, e o predicado (`:746-758`) consulta `temProdutoPublicadoV32()` (`:729-745`). Vivo no artefato: `:6308`, `:6773`, `:6801`. A rota executada foi a **B/quarta** da 023, não a "linha explicativa" que o encaminhamento do achado anunciava |
+| `EA-75` produto duplicado, alavancagem some | **NÃO reproduz** — resolvido em **forma emendada** | demanda 022, errata `E2` (`specs/022-escalonamento-do-investimento/spec.md:85-117`), ratificada no chat (*"Vamos de B"*): a visão **por produto** passou a receber o habilitado por sinal declarado, com capabilities e sinais **unidos** e chave pelo nome exibido — `ui_p52_support_v32.js:272-330` *(ERR-2: o bloco fecha em `:344`)*; gate `D022-PROD1` em `tests_022_escalonamento.js:369-387` *(ERR-2: o gate é `:350-389`; `:369-387` são só as alíneas (b) e (c))*. A reindexação da leitura por capability foi **recusada com custo medido** (55 asserções em 5 suítes) |
+| `EA-79` duas leituras sem dizer que são a mesma | **NÃO reproduz** — resolvido pela 023 | a suspeita trazida ao refinamento está **confirmada**: `ui_v32.js:264` passa `hasSubstituteV32(null)` no ramo legado, e o predicado (`:746-758`) consulta `temProdutoPublicadoV32()` (`:729-745`). Vivo no artefato: `:6308`, `:6773`, `:6801`. A rota executada foi a **B/quarta** da 023, não a "linha explicativa" que o encaminhamento do achado anunciava *(ERR-5: errado no sentido — o encaminhamento anunciava a demanda **estrutural**, "C" é a estrutural e ela foi feita: é a 023; a linha explicativa era a paliativa; "B" é a escolha da errata `E1` da 023, não rota do `EA-79`. O que fica: a 023 a executou por uma quarta rota **técnica**. Ver §Erratas)* |
 | `EA-80` supressão deixa título sem conteúdo | **REPRODUZ** | `ui_p52_support_v32.js:738-739` remove **todos** os `legados` sem guarda; `cards` pode ser 0 (`:732-733`, `decisaoDe` → `exclude` para todos) e a remoção acontece igual. Declarado como não resolvido pela própria 023 (`specs/023-leitura-unica-do-apoio/relatorio-final.md:120-132`) |
 | `EA-81` catálogo duplicado e oculto | **REPRODUZ** | `blocosLegados()` (`:206-211`) recusa nó oculto — `!oculto(todos[i])`; com a errata `E1` da 023 a arbitragem passa a ocultar a região congelada em modo legado, logo nada é consumido e a cópia congelada permanece. Vivo no artefato: `:16196` |
 
@@ -47,7 +47,10 @@ E a reconfirmação achou mais do que linha de status desatualizada — achou
 2. **`design-decisions.md:15` descreve um mundo que a 023 substituiu.** A emenda
    de 2026-10-01 diz *"a demanda nova a executa"* e descreve a rota C (linha
    explicativa). Quem executou foi a 023, pela **quarta** rota, e a entrada não
-   registra o fecho.
+   registra o fecho. *(ERR-5: "C" não é a linha explicativa — a entrada listava
+   as três rotas técnicas medidas no `EA-79`, sem letras; C é a estrutural da
+   rodada 4 da 023, e a 023 a executou. O que estava certo: faltava o fecho —
+   gravado em 2026-10-19. Ver §Erratas)*
 3. **Comentário vivo contradizendo o código.** `ui_p52_workspace_v32.js:1072`
    ainda afirma *"O ponteiro FICA nos `.prio-decl`"* — o ponteiro saiu em
    2026-09-27 (`:3029`). É prosa, não comportamento; mas é a prosa que o próximo
@@ -163,7 +166,9 @@ que é exatamente o que o corte do proprietário congelou.
 ### Conflito com decisão registrada ou spec validada
 
 - **`design-decisions.md:15`** está **desatualizada em duas pontas** (ver §0,
-  itens 2 e 4). Não é conflito com esta demanda: é registro a fechar.
+  itens 2 e 4) *(ERR-5b: remissiva errada — as duas pontas são ambas do item 2;
+  o item 4 é `BACKLOG.md:5732`, outro arquivo)*. Não é conflito com esta
+  demanda: é registro a fechar.
 - **`C1` da demanda 010** (*"a Camada 1 não desaparece sem substituto"*): a rota
   A do `EA-80` parece servi-la e, medido, **a contraria** — ver D4. Qualquer
   mexida nela é **emenda a oráculo declarado de outra demanda**, que nesta casa
@@ -209,14 +214,18 @@ Verificado por leitura nesta worktree. Linha citada = linha lida.
    `ofertaDoMotor()`, aplica `decisaoDe()` (curadoria) para montar `cards`,
    **remove os `legados` incondicionalmente** (`:738-739`), coloca os cards e
    declara a supressão (`:741`).
-8. `ui_p52_support_v32.js:795-802` — o **papel** (`buildSupportHTML`) lê só
+8. `ui_p52_support_v32.js:795-802` — o **papel** (`buildSupportHTML`) *(ERR-1:
+   a função é `papelHTML()`, `:794-834`, exposta como `printHTML` em `:863`; a
+   seleção descrita está em `:797-798`. `buildSupportHTML` é outra função, em
+   `ui_v32.js:836`)* lê só
    `:scope > .apoio-block[data-p53-sol-produto]` e o aviso de supressão. A
    Camada 1 **não é impressa** — é desenho selado da 010 (C13) e foi remedido
    pela errata `E2` da 023.
 
 **Divergências doc×código encontradas** (as quatro da §0, resumidas): entrada
 prometida e inexistente em `design-decisions.md` (`EA-73`); `design-decisions.md:15`
-descrevendo rota que não foi a executada; comentário `ui_p52_workspace_v32.js:1072`
+descrevendo rota que não foi a executada *(ERR-5: listava três rotas técnicas e
+não registrava que a executada foi uma quarta)*; comentário `ui_p52_workspace_v32.js:1072`
 afirmando ponteiro que não existe; `BACKLOG.md:5732` contando o `EA-69` numa fila
 de Porta B que ele já deixou.
 
@@ -304,22 +313,22 @@ Uma recomendação por decisão. O proprietário aprova em bloco ou recusa item 
 | **D2** | Os cinco que não reproduzem | Status → `resolvido`, **cada um com a rota que o fechou e a data**, nunca "resolvido" seco. Junto, no mesmo passe: a entrada do `EA-73` em `design-decisions.md` (prometida pelo código e inexistente), o fecho da entrada `:15` (a 023 executou, pela quarta rota), a recontagem da fila do `EA-58` sem o `EA-69`, e o comentário `ui_p52_workspace_v32.js:1072`. Dono: `doc-writer`; o comentário de módulo é `ui-engineer` |
 | **D3** | O resíduo do `EA-79` (borda B5) | **Permanece declarado, sem mexer.** Com o gate de suficiência fechado as duas leituras coexistem, e isso é a INV-3 pela apresentação — mudar seria fazer leitura não-publicável deslocar leitura publicável. Registrar como **resíduo declarado** no bloco do `EA-79`, para que não volte como achado novo numa releitura futura (R2 §5) |
 | **D4** | `EA-80` — o que a seção mostra sob supressão total | **Fechar por declaração, sem código** (rota B do próprio achado), e **recusar a rota A**. A razão é de produto e inverte o que o achado supõe: o `.apoio-block` congelado é **onde o produto excluído mora** — é dele que `prodLegadoDe()` tira o `.prod` —, e o conjunto ofertado à curadoria contém os produtos daqueles blocos. Repor os blocos quando `cards.length === 0` **re-exibe exatamente o que o operador acabou de excluir**: não é desfecho conservador, é desfazer a curadoria. A `C1` da 010 protege o cliente contra **vão do software**; supressão pela curadoria é **decisão de quem conduz**, não vão. O aviso de supressão **é** a leitura daquele estado. Custo: uma errata na spec da 010 dizendo isso, com ratificação nominal do proprietário — zero linha de produto |
-| **D5** | `EA-81` — cópia morta em modo legado | **Fica declarado como dívida de instrumento e fora desta demanda**, pelo corte do proprietário: o cliente não vê nós ocultos, e o papel lê só os cards por produto (`:795-802`). O custo que ele já cobrou — dois gates cegos — **foi pago dentro da 023** (guarda de tile não desenhado, rota C). O que deve ir ao registro de selagem é o **risco residual nomeado**: todo oráculo futuro que deduplicar por ordem de documento nesta seção precisa olhar visibilidade, senão mede a cópia morta |
+| **D5** | `EA-81` — cópia morta em modo legado | **Fica declarado como dívida de instrumento e fora desta demanda**, pelo corte do proprietário: o cliente não vê nós ocultos, e o papel lê só os cards por produto (`:795-802`) *(ERR-1: `papelHTML()`, `:794-834`)*. O custo que ele já cobrou — dois gates cegos — **foi pago dentro da 023** (guarda de tile não desenhado, rota C). O que deve ir ao registro de selagem é o **risco residual nomeado**: todo oráculo futuro que deduplicar por ordem de documento nesta seção precisa olhar visibilidade, senão mede a cópia morta |
 | **D6** | Vocabulário | Gravar os três verbetes + a remissiva de *Arbitragem de camada* no `CONTEXT.md`, **com `gen_pins.py` no mesmo PR** (R8 §1), no PR que executar D2 |
-| **D7** | O que vai ao registro de selagem | Uma linha por dívida, com a razão e o estado: `EA-80` **declarado** (D4), `EA-81` **dívida de instrumento** (D5), resíduo B5 do `EA-79` **declarado** (D3), mais os 27 de instrumento que o corte congelou. Dívida declarada é selável; achado `aberto` de significado incerto não é |
+| **D7** | O que vai ao registro de selagem | Uma linha por dívida, com a razão e o estado: `EA-80` **declarado** (D4), `EA-81` **dívida de instrumento** (D5), resíduo B5 do `EA-79` **declarado** (D3), mais os 27 de instrumento que o corte congelou *(ERR-3: são **26**; 26 + `EA-81` = 27 abertos, medido após a D2)*. Dívida declarada é selável; achado `aberto` de significado incerto não é |
 
 ## Rodadas de entrevista
 
 | Rodada | Pergunta | Resposta do usuário |
 |---|---|---|
-| 1 | D1–D7 acima, em bloco: a 024 fecha como refutada no portão, com cinco correções de registro, o `EA-80` fechado por declaração e o `EA-81` declarado como dívida de instrumento? | *(pendente)* |
-| 2 | Se a resposta a D4 for "não, quero o código": a rota deixa de ser barata — exige emenda à `C1` da 010 (oráculo declarado de outra demanda) e reabre o `EA-81` junto, porque os dois têm de ser desenhados juntos. Confirma mesmo assim? | *(pendente)* |
+| 1 | D1–D7 acima, em bloco: a 024 fecha como refutada no portão, com cinco correções de registro, o `EA-80` fechado por declaração e o `EA-81` declarado como dívida de instrumento? | *(pendente)* → **ERR-4**: aprovado pelo proprietário no chat em 2026-10-19 — *"Vamos de (a), release com a tag"* — conforme `planning-state → validate.aprovacao_de_fase`; o "(a)" é também a escolha da §Sinalização (release com tag). O PO cita o planning-state, não o chat (R2 §4) |
+| 2 | Se a resposta a D4 for "não, quero o código": a rota deixa de ser barata — exige emenda à `C1` da 010 (oráculo declarado de outra demanda) e reabre o `EA-81` junto, porque os dois têm de ser desenhados juntos. Confirma mesmo assim? | *(pendente)* → **ERR-4**: não se aplicou — a pergunta era condicional à recusa da D4, e a D4 foi aprovada em bloco |
 
 ## Fora de escopo (explícito)
 
 - **Qualquer mudança de código de produto.** Esta demanda, como refinada, não
   propõe nenhuma.
-- **Os 27 achados de instrumento.** Congelados pelo corte do proprietário.
+- **Os 27 achados de instrumento.** *(ERR-3: **26**)* Congelados pelo corte do proprietário.
   Nenhuma frente nova abre sem pedido dele.
 - **`EA-58` e o lote de Porta B** (catálogo represado, `SCORES`). Continua sendo
   decisão do proprietário, e só encolheu: o `EA-56` saiu pela 021 e o `EA-69`
@@ -357,14 +366,75 @@ Fase 0 feita **sem Bash**, por leitura de fonte. Nenhum "verde" é afirmado aqui
    sobrevive à supressão total (o decorador só consome `.apoio-block`), e o
    registro do `EA-80` traz as duas medições de fixtures diferentes. Quem fecha:
    `qa-engineer`.
-4. **Não medi o papel sob supressão total.** Por leitura de `:795-802`, o
+4. **Não medi o papel sob supressão total.** Por leitura de `:795-802` *(ERR-1: `papelHTML()`, `:794-834`)*, o
    relatório impresso traz o título da seção e o aviso; a Camada 1 não é
    impressa (C13 da 010 + errata `E2` da 023). Quem confirma por execução:
    `ui-engineer` com `qa-engineer`.
-5. **Não medi o `EA-81` no papel.** Por leitura, `buildSupportHTML` colhe só os
+5. **Não medi o `EA-81` no papel.** Por leitura, `buildSupportHTML` *(ERR-1: `papelHTML()`)* colhe só os
    cards por produto, logo a cópia morta não imprime. Quem confirma:
    `ui-engineer`.
 6. **Não contei os achados abertos por ferramenta de auditoria.** Grep do padrão
    ``**Status**: `aberto` `` devolve **33** blocos (o 34º hit, `BACKLOG.md:56`,
    é o exemplo de formato, indentado). O número citado na delegação era 34.
    Diferença de 1 explicada por isso, não investigada além.
+
+## Erratas
+
+> **Aditivas (R2 §5)**: nenhuma redação original foi apagada; cada ponto tocado
+> traz nota inline `ERR-n` e o texto completo mora aqui. Ids `ERR-n`, e não
+> `E<n>`, porque este documento cita erratas de spec de outras demandas com esse
+> nome (`E1` da 023, `E2` da 022, `E4`, `E17`, `E19`, `E20` da 010) — reaproveitar
+> a série confundiria quem lê a célula isolada.
+>
+> **Origem**: a execução da D2 pelo `doc-writer`, contra o fonte e o git,
+> devolveu quatro imprecisões de citação e uma de **sentido** neste refinamento;
+> o `relatorio-final.md` (§O que a escrita do registro corrigiu) já as nomeava e
+> este artefato divergia dele — a família do `EA-31` dentro da demanda que existe
+> para o registro parar de mentir. Todas as linhas abaixo foram **remedidas pelo
+> `product-owner`** em 2026-10-19, por leitura, na worktree `phase5-024` (HEAD
+> informado pela delegação: `12e3b37` — não conferido por git, sem Bash), rodando
+> em Fable 5.1 (`claude-fable-5-1`). **Nenhuma errata muda veredito, decisão ou
+> borda.**
+
+### ERR-1 · `buildSupportHTML` não é o papel do apoio — é `papelHTML()`
+
+| | |
+|---|---|
+| **O que estava escrito** | §Sistema real item 8, D5 e §O que não pude medir itens 4–5: o papel do apoio seria `buildSupportHTML`, em `ui_p52_support_v32.js:795-802` |
+| **Medido** | A função do papel do apoio é **`papelHTML()`**, `ui_p52_support_v32.js:794-834`; a seleção que a frase descreve — `:scope > .apoio-block[data-p53-sol-produto]` e o aviso `[data-p53-suprimido]` — está em `:797-798`. É exposta no bridge único como `printHTML` (`:863-866`, `return papelHTML()`). **`buildSupportHTML(res, afirmaPreservacao)` existe em `ui_v32.js:836`** e é **outra** função, de outra camada: monta os cards de capability da V3.2 em ordem de prioridade (*priority-first*), não o papel da seção por produto |
+| **Passa a valer** | Ler `papelHTML()` onde o texto diz `buildSupportHTML`, e `:794-834` onde diz `:795-802`. O que a frase afirma — a Camada 1 não é impressa, só cards por produto e aviso — **continua verdadeiro**, conferido nas linhas certas |
+| **Nota de extensão** | O `doc-writer` citou `:794-802` (e o `relatorio-final.md:79` e o bloco do `EA-81` em `.claude/BACKLOG.md:7341` repetem). O início reproduz; a função fecha em `:834` — `:794-802` é a cabeça (seleção + aviso), não a função inteira. Sem efeito no sentido |
+
+### ERR-2 · Linhas do `D022-PROD1` e do bloco da errata `E2` da 022
+
+| | |
+|---|---|
+| **O que estava escrito** | §0, linha do `EA-75`: `ui_p52_support_v32.js:272-330`; gate `D022-PROD1` em `tests_022_escalonamento.js:369-387` |
+| **Medido** | `T("D022-PROD1", …)` abre em `tests_022_escalonamento.js:350` e fecha em `:389`; `:369-387` são só as alíneas **(b)** (o habilitado por sinal chegou) e **(c)** (capabilities unidas). O bloco `[022 · errata E2 — EA-75]` começa em `ui_p52_support_v32.js:272` e termina no fecho do `catch` em **`:344`** (`return out;` em `:345`) |
+| **Passa a valer** | `D022-PROD1` = `:350-389`; bloco `E2` = `:272-344`. O veredito do `EA-75` (não reproduz, resolvido em forma emendada) não muda |
+
+### ERR-3 · "mais os 27 de instrumento" somaria 28 — são 26
+
+| | |
+|---|---|
+| **O que estava escrito** | D7: *"`EA-81` dívida de instrumento (D5), resíduo B5 (D3), **mais os 27** de instrumento que o corte congelou"*; §Fora de escopo: *"Os 27 achados de instrumento"*. O 27 veio do brief (34 − 7); o próprio refinamento corrigira 34 → 33 (§O que não pude medir, item 6) sem propagar a correção à D7 |
+| **Medido** | Após a D2, em `.claude/BACKLOG.md`: o padrão ``**Status**: `aberto` `` devolve **28** hits; o de `:56` é o exemplo de formato (indentado); **27 blocos** `aberto`, e o `EA-81` (`:7333`, status em `:7335`) é um deles → **27 = 26 de instrumento + `EA-81`**. Bate com o `relatorio-final.md` (§Para o registro de selagem: *"demais achados `aberto` — 26"*; contagem 33 → 27) e com o `compliance-audit.sh --rule=backlog` que ele cita (27 abertos em `2753078`) — execução do `doc-writer`, não minha |
+| **Passa a valer** | D7: *"mais os **26** de instrumento"*; total `aberto` que vai à selagem: **27**. §Fora de escopo: **26** |
+
+### ERR-4 · A tabela de rodadas ainda dizia "(pendente)"
+
+| | |
+|---|---|
+| **O que estava escrito** | Rodadas 1 e 2: *(pendente)* |
+| **Medido** | `.claude/project-memory/planning-state/024-sete-defeitos-do-relatorio.json → validate.aprovacao_de_fase`: *"PROPRIETARIO, no chat, 2026-10-19: 'Vamos de (a), release com a tag'"*; `refinement.status: done`, `approved_at: 2026-10-19`; `refinement.notes` registra a frase como *"aprovacao do portao da Fase 0 com a refutacao, e escolha da rota de selagem"*. O PO **não viu o chat** — cita o planning-state (R2 §4) |
+| **Passa a valer** | Rodada 1: **aprovada em bloco** (D1–D7) em 2026-10-19; o "(a)" é também a resposta à §Sinalização para a selagem — release `develop → main` com tag anotada, não abertura retroativa de 5.3. Rodada 2: **não se aplicou** — era condicional à recusa da D4, e a D4 foi aprovada. Prova de execução das decisões: commits `2753078`, `fb8744d`, `8fac7bd`, `c04d939`, segundo o `relatorio-final.md` §Decisões — não conferidos por git aqui |
+
+### ERR-5 · "Rota C" não é a linha explicativa — C era a estrutural, e ela foi feita (é a 023)
+
+| | |
+|---|---|
+| **O que estava escrito** | §0 linha do `EA-79`: *"A rota executada foi a **B/quarta** da 023, não a 'linha explicativa' que o encaminhamento do achado anunciava"*. §0 item 2: *"descreve a rota C (linha explicativa). Quem executou foi a 023, pela quarta rota"*. §Sistema real: *"`design-decisions.md:15` descrevendo rota que não foi a executada"* |
+| **Medido** | Há **duas enumerações** que só compartilham "remover", e eu as fundi. **(i)** A tabela do `EA-79` (`.claude/BACKLOG.md:7234-7240`) mede **três rotas técnicas**, sem letras: remover a lista · alargar `hasSubstituteV32` · explicar com uma linha. **(ii)** A rodada 4 do refinamento da 023 (`specs/023-leitura-unica-do-apoio/refinement.md:122`) perguntou *"Linha paliativa, remover, ou estrutural"* e a resposta foi *"Vamos de C" — a estrutural*. Logo **C = demanda estrutural**, e o encaminhamento do achado (`:7244`) anuncia exatamente isso: *"Vira demanda própria"*. A linha explicativa era a **paliativa** — *"implementada e retirada no mesmo ciclo"* (`:7249-7251`). A estrutural **foi feita: é a própria 023** (PR #106, `232448f`, 2026-10-02 — datas e SHA do bloco do achado, `:7177-7178`). O que a 023 fez de novo foi executá-la por uma **quarta rota técnica** — produto **publicado** conta como substituto (`temProdutoPublicadoV32`, `ui_v32.js:729-745`, consultado por `hasSubstituteV32`, `:746-758`) — que não está entre as três de (i): é uma forma de "alargar `hasSubstituteV32`" que não paga o custo medido para essa rota, porque conta o publicado e não o ofertado (`D010-ARB1` reancorado, não esvaziado). E o **"B"** da frase original é o *"Vamos com a B"* da errata `E1` da 023 — extensão da arbitragem ao **modo legado** (`specs/010-recomendacao-sem-vao/spec.md:592`; `.claude/BACKLOG.md:7190-7193`) —, resposta a **outra** pergunta; não é nome de rota do `EA-79` |
+| **Passa a valer** | O encaminhamento do `EA-79` anunciava a estrutural e ela foi executada — **a 023 cumpriu o "Vamos de C"**; a precisão que faltava ao registro era **como**: por uma quarta rota técnica, fora da tabela do achado. `design-decisions.md:15` não "descrevia a rota C": **listava as três rotas técnicas** e dizia *"a demanda nova a executa"* sem registrar quem nem como — fecho gravado em 2026-10-19 (*"FECHO DE 2026-10-19"*, na própria entrada). A D2 (*"a 023 executou, pela quarta rota"*) permanece correta lida com este sentido: quarta rota **técnica** |
+| **ERR-5b · remissiva errada** | §Conflito: *"desatualizada em duas pontas (ver §0, itens 2 e 4)"*. O item 4 é a fila do `EA-58` em `BACKLOG.md:5732` — outro arquivo. As duas pontas são **ambas do item 2**: (a) *"a demanda nova a executa"* sem dizer quem nem como; (b) fecho não registrado. Ler "ver §0, item 2". Achada pelo PO nesta remedição, não pelo `doc-writer` |
+| **Classe** | Erro de **sentido**, não de número: afirmava que a 023 não executou a rota escolhida pelo proprietário, quando ela executou exatamente a escolhida. Não muda veredito (`EA-79` não reproduz, `resolvido`), nem a D3 (resíduo B5), nem a D2 |

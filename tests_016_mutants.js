@@ -391,14 +391,37 @@ const MUTANTS = [
        cargas provadas em vez de três. Contrapartida conferida: com o mutante, 4
        acusações; sem ele, 0. Não é afrouxamento de expectativa (R10 §1) — é a mesma
        propriedade medida sobre a população de hoje. */
-    desc: "árvore: as quatro exclusões R13 retiradas — a prova de carga das exclusões: 003 (2 artefatos), 009 (1), 010 (1), 020 (1)",
+    /* 2026-10-19 · QUATRO → CINCO (valor anterior: 4). A 024-sete-defeitos-do-relatorio
+       entrou em `excluidas_por_r13` (commit 0c05007, PR #110): REFUTADA no portão da
+       Fase 0, nunca teve spec, logo não pode ter `spec-validate.md` — o precedente da
+       020, que foi o que fez 3 virar 4. O stage `mutation` do CI (jobs verify e visual)
+       acusou este par SOBREVIVENTE — `esperado 4 · obtido 5 | acusação a MAIS (1): 024
+       EM VOO [artefato-ausente]` — e o gate estava CERTO: quem envelheceu foi esta
+       expectativa. Reproduzido localmente no mesmo estado ANTES de mover o pin.
+       Contrapartida: com o mutante, 5 acusações; sem ele, 0 (C0-fecho).
+       O número continua PINADO, não derivado de `excluidas_por_r13`: derivar a
+       expectativa do arquivo que o mutante edita faria o oráculo mover junto com o
+       mutante (a classe que D017-INS1 recusa em `insumos`), e não evitaria este
+       sobrevivente — o isolamento ("acusação a MAIS") acusa o sujeito novo não listado
+       de qualquer jeito (medido: só `problemas: 5`, sem o 5º sujeito ⇒ SOBREVIVENTE).
+       A lista de sujeitos É a asserção; a contagem é a metade de isolamento.
+       CICLO DE VIDA do sujeito 024 (precedente M21): com o PR #110 aberto a 024 sai
+       EM VOO · oráculo null; mesclada, sai MESCLADA SEM FECHO · mensagem #110. A
+       POSIÇÃO muda por evento legítimo, o código `artefato-ausente` não — o julgador
+       aceita SÓ essas duas combinações. Pinar o estado de hoje plantaria o próximo
+       sobrevivente no primeiro PR pós-merge que tocasse um alvo da d016. */
+    desc: "árvore: as cinco exclusões R13 retiradas — a prova de carga das exclusões: 003 (2 artefatos), 009 (1), 010 (1), 020 (1), 024 (1)",
     edicoes: [{ file: F.reg, find: EXCL_LINHA, repl: '  "excluidas_por_r13_retiradas_D016_M20": {' }],
-    espera: { problemas: 4, globais: [],
+    espera: { problemas: 5, globais: [],
               sujeitos: [
                 { id: "003-marcador-duplicado",   veredito: "MESCLADA SEM FECHO", codigo: "artefato-ausente", oraculo: "mensagem", oraculo_detalhe: "#13", detalhe_contem: ["done sem relatorio-final.md, spec-validate.md"] },
                 { id: "009-leitura-do-relatorio", veredito: "MESCLADA SEM FECHO", codigo: "artefato-ausente", oraculo: "mensagem", oraculo_detalhe: "#24", detalhe_contem: ["done sem spec-validate.md"] },
                 { id: "010-recomendacao-sem-vao", veredito: "MESCLADA SEM FECHO", codigo: "artefato-ausente", oraculo: "mensagem", oraculo_detalhe: "#31", detalhe_contem: ["done sem spec-validate.md"] },
-                { id: "020-lista-secundaria-redundante", veredito: "MESCLADA SEM FECHO", codigo: "artefato-ausente", oraculo: "mensagem", detalhe_contem: ["done sem spec-validate.md"] }] } },
+                { id: "020-lista-secundaria-redundante", veredito: "MESCLADA SEM FECHO", codigo: "artefato-ausente", oraculo: "mensagem", detalhe_contem: ["done sem spec-validate.md"] },
+                { id: "024-sete-defeitos-do-relatorio", codigo: "artefato-ausente", fase: "done", detalhe_contem: ["done sem spec-validate.md"],
+                  regra: s => ((s.veredito === "EM VOO" && s.oraculo === null && s.oraculo_detalhe === null) ||
+                               (s.veredito === "MESCLADA SEM FECHO" && s.oraculo === "mensagem" && s.oraculo_detalhe === "#110")),
+                  regra_texto: "PR #110 aberto ⇒ EM VOO · oráculo null · mesclado ⇒ MESCLADA SEM FECHO · mensagem #110 (código artefato-ausente nos dois)" }] } },
 
   { id: "D016-M21", gate: "D016-FEC4", modo: ARVORE,
     desc: "árvore: válvula VÁLIDA escrita na 016 (em voo) — válvula antes do vencimento (T5, C4 d); ver ciclo de vida no cabeçalho",

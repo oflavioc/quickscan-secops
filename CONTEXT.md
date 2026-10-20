@@ -43,6 +43,15 @@
 > O nome do atributo no código permanece (INV-10): o que se decide aqui é o termo
 > de domínio. Trilha: `specs/021-cobertura-do-apoio/spec.md` §C6 e
 > `refinement.md` §Vocabulário.
+> **Desvio declarado — 2026-10-19.** Os três termos da demanda 024 (*Consumo da
+> leitura congelada*, *Supressão pela curadoria*, *Cópia morta*) foram resolvidos
+> pelo `product-owner` na Fase 0 (`refinement.md` §Vocabulário, decisão D6) e
+> gravados aqui depois de a demanda ser refutada no portão (D1), por `fix-finding`
+> de registro do `doc-writer` — texto colado do refinamento, sem edição. No mesmo
+> passe, a remissiva no verbete *Arbitragem de camada*: "supressão" sozinho
+> continua evitado como sinônimo de arbitragem e passa a remeter à cabeça
+> qualificada. Trilha: `specs/024-sete-defeitos-do-relatorio/refinement.md`
+> §Vocabulário.
 
 ## Metodologia (produto)
 
@@ -159,7 +168,7 @@ _Evitar_: modo intermediário, contexto incompleto, sessão híbrida
 Regra que decide qual das leituras de apoio (a congelada da Camada 1 ou a do engine
 V3.2) é apresentada ao leitor. É de APRESENTAÇÃO, nunca de cálculo, e seu predicado
 é a existência de substituto — não a existência de contexto declarado.
-_Evitar_: modo legado, supressão, fallback
+_Evitar_: modo legado, supressão (sozinho — ver *Supressão pela curadoria*), fallback
 
 **Convergência no card**:
 Forma de apresentação em que o habilitador é uma linha discreta DENTRO do card da
@@ -190,6 +199,22 @@ do instrumento; a do produto vem sempre com "do apoio".
 _Evitar_: âncora, ancoragem (sozinhos — são do instrumento), origem do bloco,
 fonte (é o aviso, outra coisa), procedência da recomendação, nome do atributo
 (identificador, não termo de domínio)
+**Consumo da leitura congelada**:
+Ato do decorador V3.2 de RETIRAR do DOM um bloco congelado da Camada 1 cujo
+conteúdo foi migrado para a visão por produto. Distinto de ocultação, que marca
+o nó com `v32-hidden` sem removê-lo e é reversível: consumo é definitivo e
+alcança só `.apoio-block`; ocultação alcança títulos, `t-list` e `t-details`.
+Quem consome é a camada de apoio da 019; quem oculta é a arbitragem da 010/023.
+_Evitar_: remoção, limpeza, migração, dissolução
+
+**Supressão pela curadoria**:
+Decisão do operador, no editor de curadoria, de excluir produto ofertado da
+publicação — total quando nenhum card sobra, parcial quando alguns sobram. É ato
+declarado de quem conduz a sessão, não falha do produto: por isso retira o
+substituto (e a Camada 1 volta visível) sem que o relatório deva repor o que foi
+excluído. Nunca alcança o conjunto OFERTADO pelo motor, só o PUBLICADO.
+_Evitar_: supressão (sozinho — ver *Arbitragem de camada*), curadoria vazia,
+relatório vazio, filtro
 
 ## Estrutura (processo)
 
@@ -328,6 +353,14 @@ renderizada, porque outra declaração vence a cascata — importância, depois
 especificidade, depois ordem de inlining. Mutar regra morta troca texto sem mudar
 produto.
 _Evitar_: regra órfã, CSS não usado, seletor morto, código morto
+
+**Cópia morta**:
+Mesmo conteúdo existindo duas vezes no DOM, uma das cópias oculta e portanto
+nunca lida pelo cliente. Não é defeito do relatório — é risco de instrumento:
+oráculo que deduplica por ordem de documento pode pinar a cópia oculta e passar
+a medir o que ninguém vê. Distinta de *regra morta*, onde o morto é a declaração
+e não o nó.
+_Evitar_: duplicata, resíduo, nó órfão, sobra
 
 **Poder discriminante**:
 Propriedade de um gate: existe ao menos um estado alcançável do produto em que ele

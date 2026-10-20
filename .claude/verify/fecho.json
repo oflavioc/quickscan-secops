@@ -125,6 +125,12 @@
         "spec-validate.md"
       ],
       "fonte": "REFUTADA no portao da Fase 0 em 2026-09-24 (proprietario no chat: \"Nao remover a lista, fecha a 020 como refutada\"). Nao ha spec-validate.md porque NAO HOUVE SPEC a validar: a demanda parou na Fase 0 e nunca avancou para `specify`. O relatorio-final.md existe e carrega o veredito, a pergunta, o custo medido (cinco gates da 010 cujas fixtures D010-F3 DECLARAM o titulo congelado presente) e a razao de \"nao\" ser a resposta proporcional. Excluir spec-validate aqui nao dispensa validacao nenhuma — valida-se spec, e nao houve."
+    },
+    "024-sete-defeitos-do-relatorio": {
+      "artefatos_ausentes": [
+        "spec-validate.md"
+      ],
+      "fonte": "REFUTADA no portao da Fase 0 em 2026-10-19 (proprietario no chat: \"Vamos de (a), release com a tag\" — aprovacao do portao com a refutacao, registrada em validate.aprovacao_de_fase do planning-state). Nao ha spec-validate.md porque NAO HOUVE SPEC a validar: a reconfirmacao fix-finding §1 derrubou a demanda antes do enquadramento — cinco dos sete achados ja estavam corrigidos (EA-69/73/74 pelo PR #103 de 2026-09-27; EA-75 pela 022; EA-79 pela 023) e os dois restantes (EA-80, EA-81) nao sao defeito visivel ao cliente; a demanda parou na Fase 0 e nunca avancou para `specify`. O relatorio-final.md existe e carrega os sete vereditos, as decisoes D1-D7 e a licao: a primeira tarefa foi medir em vez de desenhar. tdd_waiver registrado; aceite_po (\"NAO ENCONTREI OBJECAO\") no planning-state. PR #110. Exclusao estrutural, nao dispensa: o artefato que o gate cobra nao pode existir por construcao. Precedente nominal: 020."
     }
   },
   "populacao": {

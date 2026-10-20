@@ -8444,8 +8444,8 @@ passe final da selagem da v3.2.11; as linhas abaixo foram lidas por mim em
 - **Efeito**: uma entrada cujo slug **não tem planning-state** (ou cuja demanda não
   está `done`) não vira sujeito, não é acusada por ninguém e não aparece no censo.
   Baseline verde; a exclusão está lá, inerte e invisível. É o que o
-  `qa-engineer` mediu: sujeito fora do censo, 5 acusações sob o mutante `D016-M20`
-  contra 6 artefatos excluídos.
+  `qa-engineer` mediu em commit efêmero: 6ª entrada `998-sem-planning-state`
+  (len=6) → gate nu exit 0, `998` fora dos sujeitos, `D016-M20` segue com 5.
 
 As cinco exclusões em si **não são o achado**: são decisão registrada (003, 009 e
 010 fechadas sem `spec-validate.md`/`relatorio-final.md` sob o processo antigo ou

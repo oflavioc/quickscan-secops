@@ -6008,6 +6008,18 @@ Ver [[EA-53]] — é a mesma raiz: `deploy/` fora do git faz o repositório não
 saber o que está no ar. Ali a consequência foi correção mesclada que não chegava
 ao cliente; aqui é documentação que mente para quem chega de fora.
 
+### Nota de 2026-10-20 — a tag `v3.2.11` registra um release; não fecha este achado
+
+A selagem da v3.2.11 (`docs_phase5/SELAGEM_V3_2_11.md`) cria a tag anotada
+`v3.2.11`, que dá ao repositório o registro do commit da v3.2.11 em produção
+(conteúdo `0bd677c`; a tag aponta para o merge do PR de selagem). **Isto não fecha
+o achado**: o remédio de raiz descrito acima — registro rastreado escrito por
+`preparar_release.py` — **não foi feito**. Uma tag é o registro de um release, não
+uma fonte que o `V322-DOC3` possa comparar com o README; o `README.md` voltou a
+declarar uma versão que não era a de produção (v3.2.9, quando a produção é a
+v3.2.11) e foi corrigido à mão no mesmo PR de selagem — a mesma classe de
+apodrecimento que abriu o achado. Status continua `aberto`.
+
 ## EA-65 — a visão por solução não existe quando há contexto tecnológico declarado
 
 **Status**: `resolvido`
@@ -6124,6 +6136,34 @@ registro está em `deploy/v3.2.8/`.
 
 Ver [[EA-57]], que esta demanda fechou, e [[EA-20]], de quem este achado é
 parente por amostragem.
+
+### Nota de 2026-10-20 — o fecho acima afirma, sobre o modo legado, o que o código não faz
+
+Registro com erro, mecanismo correto (auditoria adversarial de 2026-10-19). O
+fecho acima não é reescrito (R2 §5); esta nota o corrige por acréscimo.
+
+- **O que o fecho afirma** (`.claude/BACKLOG.md:6046-6049`): a fronteira "é
+  condicional" — em modo legado ela não entra. O comentário do módulo diz o mesmo
+  (`ui_p52_support_v32.js:633`, "E ele NÃO entra em modo legado, de propósito").
+- **O que o código de `0bd677c` faz**: a condição não é o modo legado.
+  `ui_p52_support_v32.js:702` — `var arbitrando = arbitragemEmCurso();` — e `:666`
+  — `if (arbitrando && cards.length) sec.appendChild(fronteira());`.
+  `arbitragemEmCurso()` (`:198-205`) devolve `true` quando **qualquer filho direto**
+  do escopo de apoio tem a classe `v32-hidden`; não consulta `isLegacyModeV32()`.
+  Quem aplica `v32-hidden` a títulos, `.apoio-block`, `.t-list` e `.t-details` é
+  `hideLegacyRecommendation` (`ui_v32.js:196-205`), e a 023 passou a ocultar a
+  lista "pode fazer sentido" (`.t-list` presente e oculta; `D023-DOM1` PASS, da
+  auditoria).
+- **Logo**: "há filho oculto na seção" e "não é modo legado" são proposições
+  diferentes. O fecho e o comentário nomeiam a segunda; o código executa a
+  primeira. O mecanismo funciona — a alínea (c) do `D010-ARB1` e o `D010-ARB3`
+  seguem verdes —, o que está errado é a descrição.
+- **Não reproduzido por mim**: li a cadeia estática acima; o estado concreto em que
+  as duas proposições divergem (modo legado com filho oculto pela 023) é a leitura
+  da auditoria. Corrigir o comentário do módulo exige tocar `ui_p52_support_v32.js`
+  e fica fora desta nota. Status continua `resolvido` (o defeito do achado, a visão
+  por solução ausente, segue corrigido).
+
 ## EA-66 — falha ao montar o relatório imprime a TELA como se fosse o relatório
 
 **Status**: `resolvido`
@@ -7094,6 +7134,68 @@ Ver [[EA-72]], que é a mesma classe (cópia literal de um valor com dono): esta
 **quinta instância medida na mesma semana**, ao lado do heap do `SESSION 4.8`, dos
 dois pré-filtros do caminhador da copy e da âncora do `P52-RB6`.
 
+### Instância medida em 2026-10-19 — a segunda fonte, e a direção inversa da descrita acima
+
+Medida pela auditoria adversarial de 2026-10-19 (refutador do claim R-EA-68, a
+resolução do `EA-68`: "a oferta vem do motor, a mesma do `offered()`"), sobre o
+HTML construído de `1c6a363` — SHA-256 `4c45ce20…5712`, igual ao blob de
+`0bd677c` (`git show 0bd677c:quickscan_secops_soccmm_v3_2_dev.html | sha256sum`,
+reconferido ao escrever esta nota). As linhas abaixo foram lidas por mim em
+`0bd677c`; a sonda jsdom é do refutador e **não foi reexecutada aqui**.
+
+**`ofertaDoMotor()` tem uma SEGUNDA fonte**, e ela não é a de `offered()`:
+
+- `ui_p52_support_v32.js:272-345` — o bloco `[022 · errata E2 — EA-75]` acrescenta
+  candidatos habilitados por sinal (`V32.buildRecommendationContext()`) e resolve
+  o produto no catálogo do motor **por nome** (`:308-310`: `V32.OFFERINGS` →
+  `OFFERINGS` → `PRODUCTS`).
+- `ui_curation_v32.js:121` — `ofertados()` exige chave na Camada 1:
+  `if (!chave) return;` ("fora do catalogo curavel: nao se inventa id"). Na
+  auditoria sobre `1c6a363` a mesma linha era `:116`.
+- `ui_p52_support_v32.js:136-141` — `decisaoDe()` devolve `"include"` quando
+  `idDoNome()` (`:114-121`, busca `PRODUCTS[id].n === nome`) não acha o produto.
+- `ui_curation_v32.js:133-138` — `valido()` recusa id fora de `catalogo()`
+  ("id fora do catálogo").
+- **Efeito**: o card entra na seção de apoio **sem passar pela curadoria**, e o
+  operador **não consegue excluí-lo** — não há id a excluir. É a direção inversa
+  da que o corpo deste achado e o `EA-75` descrevem ("o card morre no filtro").
+
+**Reproduzido com sinais normais da UI** (`ui_v32.js:53-55`, grupos "E-mail /
+Dados", "IA", "Identidade / Endpoint"), cards da tela contra `__CURATION.offered()`:
+
+| sinal declarado | `offered()` | cards | cards fora de `offered()` |
+|---|---|---|---|
+| nenhum | 11 | 11 | — |
+| `becConcern` | 11 | **14** | FortiMail, FortiMail Workspace Security, FortiMail Cloud SaaS |
+| `identityRiskConcern` | 11 | **12** | FortiAuthenticator |
+| `pamRequirement` | 11 | **12** | FortiPAM |
+| `organizationBuildsAIApps` | 11 | **12** | FortiAIGate |
+| todos os sinais | 12 | **18** | os seis nomes acima |
+
+A sonda do auditor usou só `insiderRiskConcern`/`dataLeakageConcern`/`shadowAIConcern`,
+cujo produto, FortiDLP, **está** em `PRODUCTS`
+(`quickscan_secops_soccmm_v3_1_3.html:275`) — onde a assimetria é invisível
+(12 = 12). Os outros seis nomes estão fora do catálogo congelado (13 entradas,
+`:262-275`; nenhum dos seis aparecia no backlog antes desta nota).
+
+**O gate de registro do `EA-68` é cego a isto**: o `D019-SOL3`
+(`tests_019_curadoria.js:475-534`, alínea (a): cards menos `offered()` deve ser
+vazio) rodado pelo refutador em cópia de scratch, **inalterado salvo um sinal a
+mais na fixture**, falhou em 5 de 5 variantes (por exemplo "produto na visão que o
+motor não ofereceu: FortiMail…"; com `dataLeakageConcern`, "FortiDLP: card diz
+'validacao', motor diz undefined" — o oráculo de tier da alínea (b) é só
+`computeFindings()` + `MAP`). O 14/14 verde depende de a fixture não declarar sinal:
+mesma classe de amostragem que o `EA-65` registra.
+
+O que **se sustenta** do fecho do `EA-68` (R2 §5, o fecho não é reescrito):
+`colher()` removida (0 ocorrências em `ui_p52_support_v32.js`) e a lista "pode
+fazer sentido" presente no DOM, hoje oculta pela 023. O que **cai** é "a oferta
+vem do motor, a mesma do `offered()`".
+
+**Decisão do proprietário, 2026-10-19: DECLARAR E SELAR** — fail-open nomeado; o
+conserto é demanda futura (dois módulos, R9 §5). Declarado em
+`docs_phase5/SELAGEM_V3_2_11.md`, pendência 1. Status continua `aberto`.
+
 ## EA-77 — o registro de bridges declara um dono que não é o dono
 
 **Status**: `aberto`
@@ -7723,6 +7825,20 @@ A escolha entre aprovar e barrar no caso indeterminado **não é do agente**: é
 mesma decisão de proprietário que o [[EA-85]] isola. Ver [[EA-82]] e o `EA-37`,
 que construiu o guarda irmão.
 
+### Nota de 2026-10-20 — a família cresceu: não é só o `guard-data`
+
+O defeito está em `project_root()` (`.claude/hooks/lib/common.sh:15`), que **todos**
+os hooks que resolvem a raiz usam, não só o `guard-data`. Medido em `0bd677c` por
+`grep -n 'project_root' .claude/hooks/*.sh`: `guard-boundary.sh:15`,
+`guard-data.sh:189`, `guard-tdd.sh:19`, `post-turn-verify.sh:21` e
+`state-eval.sh:10` fazem `cd "$(project_root)"` e passam a ler a árvore daquele
+diretório. Em 2026-10-19 o `guard-tdd` leu a worktree errada (relato do
+orquestrador, vindo da auditoria; **não reexecutado por mim**), o que confirma, por
+execução, a premissa única do gatilho de falsificação acima: o cwd do processo do
+hook não é a worktree. Consequência para a rota "derivar a raiz do comando": ela
+vale para os cinco hooks, não para um. Dono: `build-engineer`. Status continua
+`aberto`.
+
 ## EA-85 — o `guard-data` falha ABERTO quando o python não está disponível: no ambiente degradado em que mais se precisa dele, o guarda aprova tudo em silêncio
 
 **Status**: `aberto`
@@ -8116,6 +8232,36 @@ veredito fora do enum deixaria o stage **permanentemente vermelho** no históric
 que é o modo de falha do `EA-5` (o MANIFEST sempre vermelho, logo nunca rodado) e
 a razão pela qual a normalização de chaves da 016 foi adiada. A ordem e o piso são
 decisão do `tech-lead`/proprietário, não deste registro.
+
+### Nota de 2026-10-20 — contagem corrigida: 12 de 19 fora do critério, não 13
+
+A contagem que circulou na conversa de 2026-10-19 ("13 de 19") contou a 021 duas
+vezes. Medida em `0bd677c` — `grep -a -c '"aceite'` por arquivo e leitura do
+valor, nos 19 planning-states —, **12 de 19 estão fora do critério**:
+
+| estado do campo | demandas | n |
+|---|---|---|
+| campo não existe | 003, 007, 008, 009, 012, 013, 014, 018 | **8** |
+| forma condenada (fala do proprietário no campo do PO · `aceito` · `sem objecao`) | 020, 022, 023 | **3** |
+| veredito canônico no campo, mas a palavra `ACEITO` escrita por agente dentro do bloco | 011 | **1** |
+| `aceite_po` / `aceite_de_intencao` canônico | 010, 015, 016, 017, 019, 021, 024 | 7 |
+
+8 + 3 + 1 + 7 = 19. A 021 está canônica desde o PR #108 e a 024 nasceu com
+`aceite_po`.
+
+**A 011 sai da linha "5 de 5" do censo acima.** Em
+`011-numeracao-das-prioridades.json:63`,
+`validacao.aceite_po_segundo_passe.decisao_tasks_160` começa por "ACEITO COM
+DEFERIMENTO REGISTRADO, nao segurado" — palavra que a D3 (`sdd.md:38`) proíbe um
+agente de escrever, escrita por agente (commit `0eeaeb5`). O censo anterior não
+podia vê-la: `grep -o '"aceite[a-z_]*"'` devolve nomes de chave e a palavra mora num
+valor aninhado. Agravante registrado pelo refutador, não convertido em motivo: a
+data interna do aceite (2026-09-01) contradiz o commit que o escreveu (`0eeaeb5`,
+2026-09-04). O veredito canônico da 011 e o primeiro passe `REPROVADO` seguem
+intactos no registro.
+
+Status continua `aberto`.
+
 ## EA-89 — `**Onda**` é cabeça de verbete DUAS vezes no `CONTEXT.md`: a acepção de processo desambigua contra *wave* e é cega para a própria gêmea de produto
 
 **Status**: `aberto`
@@ -8272,3 +8418,58 @@ censo de citações e na gravação. Três perguntas que **não são do agente**
    Gate novo é da R10, dono `qa-engineer`.
 
 Nenhuma das três decidida aqui.
+
+## EA-90 — uma exclusão R13 inerte é invisível ao `check_fecho`: entrada em `fecho.json → excluidas_por_r13` cujo slug não tem planning-state, ou cuja demanda não está `done`, nunca é julgada
+
+**Status**: `aberto`
+
+**Aberto em**: 2026-10-20, com a medição feita pelo `qa-engineer` em 2026-10-19 ao
+consertar o `D016-M20` (commit `93c8561`, PR #110). Registrado pelo `doc-writer` no
+passe final da selagem da v3.2.11; as linhas abaixo foram lidas por mim em
+`0bd677c`.
+
+### Cadeia arquivo:linha → efeito
+
+- `.claude/verify/fecho.json:103` — `excluidas_por_r13`: hoje 5 entradas
+  (003, 009, 010, 020, 024), 6 artefatos ausentes nomeados.
+- `.claude/verify/fecho.py:206-223` — `_classifica_exclusoes()` valida só a
+  **forma** de cada entrada (`fonte`, `artefatos_ausentes`, sem curinga); o slug
+  não é confrontado com nada.
+- `.claude/verify/fecho.py:272-274` — o julgamento itera `for slug in
+  sorted(estados)`: **só slugs com planning-state são julgados**.
+- `.claude/verify/fecho.py:337` — `exclusao = validas.get(slug)`, dentro de
+  `_julga_demanda`: a entrada só é consultada para um slug que já é sujeito. A
+  checagem de exclusão obsoleta (`exclusao-obsoleta`) vive no ramo
+  `fase == "done"` do mesmo corpo.
+- **Efeito**: uma entrada cujo slug **não tem planning-state** (ou cuja demanda não
+  está `done`) não vira sujeito, não é acusada por ninguém e não aparece no censo.
+  Baseline verde; a exclusão está lá, inerte e invisível. É o que o
+  `qa-engineer` mediu: sujeito fora do censo, 5 acusações sob o mutante `D016-M20`
+  contra 6 artefatos excluídos.
+
+As cinco exclusões em si **não são o achado**: são decisão registrada (003, 009 e
+010 fechadas sem `spec-validate.md`/`relatorio-final.md` sob o processo antigo ou
+em fecho retroativo; 020 e 024 refutadas no portão da Fase 0, sem Fase 6). O achado
+é o instrumento não ver uma exclusão que perdeu o sujeito.
+
+### Duas defasagens de registro MEDIDO, no mesmo achado
+
+1. `.claude/verify/fecho.json:22` — `_meta.prova_de_carga.exclusoes` ainda diz "sem
+   as três entradas … 3 problema(s)", medido em 2026-09-04. A população mudou duas
+   vezes desde então (020 em `23f8fa7`, 024 em `0c05007`): hoje 5 demandas, 6
+   artefatos, 5 problemas.
+2. `.claude/verify/mutation-matrix.json:1963-1964` — `pares[D016-M20].invariante` e
+   `.descricao` ainda dizem "as três exclusões R13" / "as três entradas", desde
+   2026-09-24. Só a `ultima_prova` (`:1966`) foi renovada, em 2026-10-19; o `23f8fa7`
+   não renovou nem ela.
+
+Nenhum dos dois é tocado agora: `fecho.json` e `mutation-matrix.json` são pinados e
+a selagem é doc-only (`gen_pins.py` é do orquestrador).
+
+### Encaminhamento
+
+Fora do escopo de um passe de selagem; **nenhuma rota decidida aqui**. Aparente:
+um global não impeditivo para slug de `excluidas_por_r13` sem sujeito (família do
+`exclusao-malformada`, `fecho.py:261-266`) — o que muda o contrato do
+`check_fecho` e passa por demanda (`tech-lead`) e por gate novo (R10, dono
+`qa-engineer`). A defasagem de registro é `doc`, do dono do harness.

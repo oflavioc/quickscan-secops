@@ -57,7 +57,7 @@ stages:
     mutates: false
     heavy: false
   lint-arch:
-    desc: "Pureza do engine (zero DOM) · innerHTML= proibido e IIFE exigido em módulo novo (ui_p5* + ui_d0*) · bridges registrados"
+    desc: "Pureza do engine (zero DOM) · innerHTML= proibido e IIFE exigido em módulo novo (ui_*_v32.js menos LEGADOS_4X) · bridges registrados"
     run: python .claude/verify/check_lint_arch.py
     parallel: true
     mutates: false

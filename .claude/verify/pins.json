@@ -1,7 +1,7 @@
 {
   "_meta": {
     "descricao": "Registry único de pins — fonte de identidade dos artefatos (R8). Hashes = SHA-256 dos blobs de HEAD. Alterar arquivo pinado exige regenerar este registry no MESMO PR, com motivo no commit.",
-    "gerado_de_head": "92254bcfa706cd2d5a36be64b316da46dc922a05",
+    "gerado_de_head": "8c6b9132a16ca49d2899be0c274f453228392b6f",
     "gerado_em": "2026-10-25",
     "exclusoes": [
       "docs_phase5/**",
@@ -199,7 +199,7 @@
     ".claude/verify/check_eol_text.py": "d49f04390524a5ff5f5e0b0d3b2de48f16e9a14733049a566f122265914b1618",
     ".claude/verify/check_evidence_bridge.py": "f79bfb9021c1d4e2fa1adb3a25035d5e032b854ae8695af2d9b73311d271e62a",
     ".claude/verify/check_fecho.py": "20a1c78157e665cc1927beef96adac18481a669bc5c171a8b017a5e06ea87881",
-    ".claude/verify/check_lint_arch.py": "ef3b65187a895b7b9d4d970a5763974d3e72345eca98bf9625457397c0f0fe8a",
+    ".claude/verify/check_lint_arch.py": "5f28f85e39356e4f40a08fe1d667be47ae9ae7bdb48c875c95c167d5308a1b9e",
     ".claude/verify/check_m41.py": "f5f59097ab1510d6bbd0a3e63272e00da95bb65c818c23a7fff2141e8f5d9b4f",
     ".claude/verify/check_markers.py": "5623d9cb3203cf16a307014a4255bc3d8ecf08e469eaf2f110927802a9b2fe7c",
     ".claude/verify/check_mutation.py": "0b69f47035b650f189cdc67fcab60e889d03ec75ebf690d9159518b6fb0848b9",
@@ -268,7 +268,7 @@
     ".claude/verify/mutation-matrix.json": "768e9f596a24be54765ec7e3fef23ced653eb9a2e85ac0cdb5cf27319c96de21",
     ".claude/verify/mutation_map.json": "6815acfd492eab947c882d9f931ce59bd61d10a8559490a707684bdb5611f3e6",
     ".claude/verify/mutation_population.json": "7893a00adc8d087bfb0244e2b580d58772de567b35326af2d0c098e6d4025141",
-    ".claude/verify/pipeline.yaml": "e9733fb0b74014221dfeb37ca6332118d4c2b6f3e7ec7577a96b068f2a79f325",
+    ".claude/verify/pipeline.yaml": "e6c786c1fbc43e4fcb9eacdc639490b62ef11a1372fc02e86cd7d79fa285777a",
     ".claude/verify/regra_morta.js": "d04a0638a82dbf8a9f7f83d8b416653db5178619a61a87655213f699e3a31dab",
     ".claude/verify/regra_morta.json": "edb1af9df36847a2765c0892a39dc326dbc71de48ce3d6458c063152eb46a8d2",
     ".claude/verify/regra_morta_seletor.js": "67723c7515264a81ef375910ee357ba944af47ae0d9cc9de6338a8bda3e68a9b",

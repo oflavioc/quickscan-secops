@@ -381,3 +381,50 @@ hashes, o numstat, a contagem de abertos (29) e o SHA-256 do HTML citados acima
 valem para a candidata e **não valem** para a tag futura. Este registro será
 atualizado (ou substituído) na selagem efetiva; até lá, a v3.2.11 não tem tag e o
 `README.md` não a afirma.
+
+**Refutação adversarial dos `EA-91`…`EA-104` (2026-10-25, acrescentado depois do
+parágrafo acima; nada acima foi reescrito).** Um workflow de 31 agentes tentou refutar
+**por execução** cada um dos 14 achados; a síntese está em
+`docs_phase5/auditoria_codex_2026-10-20/refutacao_adversarial_2026-10-25.md`. Resultado:
+**14 confirmados, 0 refutados** — todos com correção de cadeia, que entrou em cada
+verbete do `.claude/BACKLOG.md` como subseção datada "Refutação adversarial de
+2026-10-25" (commit `eff1cc1`), sem apagar o corpo. Nada nesta refutação altera a
+suspensão da tag registrada acima.
+
+Ids nascidos, todos `aberto` (os quatro sufixados ficam junto do pai):
+
+- `EA-97a` — o bloco `visual` de `expected_suites.json` não tem comparador (metade do
+  `EA-97`; alta; demanda).
+- `EA-98a` — `tests_ui_m33.js:108` executa o gerador de ícones sem `--check` sobre a
+  árvore (média).
+- `EA-99a` — o parser do `guard-data` e do `guard-add` não vê operador colado, `bash -c`
+  nem expansão de shell (alta).
+- `EA-100a` — `compliance-audit.sh --rule=<inexistente>` termina verde, `0 PASS · 0 FAIL
+  · 0 WARN`, exit 0 (média).
+- `EA-105` — exportar também escreve no owner da curadoria (baixa).
+- `EA-106` — "sem curadoria" tem três representações e dois comportamentos (média).
+- `EA-107` — o `draft` do editor de contexto tecnológico sobrevive a importação / Nova
+  sessão / Reiniciar e bloqueia a impressão do cliente seguinte (média).
+- `EA-108` — `prioLimitHit` sobrevive à importação (baixa).
+- `EA-109` — `sessionHasContent()` e `sessionPreview()` são cegos à curadoria (média).
+- `EA-110` — desmarcar e remarcar grava `include` explícito: **pergunta de desenho, não
+  defeito confirmado** (baixa).
+- `EA-111` — `D019-INV8` é tautológico para a importação; três mutantes sobrevivem 14/14
+  (alta).
+- `EA-112` — suítes de sessão e de UX cegas ao sexto owner, em quatro alíneas (alta).
+- `EA-113` — S50 pina a ausência da curadoria no candidato (média).
+- `EA-114` — S69 confere uma lista fixa de 10 owners sem `__CURATION` (média).
+- `EA-115` — `D019-SUF1` mede só metade de C10 (baixa).
+- `EA-116` — as regras `Write(...)` do `permissions.deny` são inertes segundo o host
+  (baixa).
+
+**Contagem de abertos.** Medida pelo `compliance-audit.sh` **depois** do commit
+`eff1cc1`: **59** (eram 43 no registro do adendo; +16 = 4 sufixados + 12 novos), com
+`17 PASS · 0 FAIL · 0 WARN` na execução completa. A contagem "29 para 43" acima continua
+sendo a do instante em que foi escrita.
+
+**`EA-93` teve o título corrigido.** O exemplo original, `ENGINE_v32.js`, **não** passa
+por `Edit`/`Write`: o `permissions.deny` do host é avaliado antes do `PreToolUse` e ignora
+caixa (medido em projeto-sonda). O exemplo verdadeiro é `UI_P52_WORKSPACE_V32.JS` no
+`guard-tdd`; a regra ferida passa a ser a R3, e a severidade recomendada, de alta para
+média. O título anterior está preservado na subseção do verbete.

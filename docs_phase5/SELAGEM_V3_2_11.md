@@ -312,3 +312,72 @@ fast-forward. `e03b0f0` é a tag `v3.2.2-estrutura.1`, da selagem anterior.
     (acima) incluem os itens 1 a 11 e os achados de instrumento mais antigos
     (`EA-8` em diante, listados pelo próprio `compliance-audit.sh`); nenhum deles
     é tocado por esta selagem além das notas de 2026-10-20 já nomeadas.
+
+## Adendo de 2026-10-25 — auditoria externa e suspensão da tag
+
+Este adendo **só acrescenta**; o corpo acima não foi reescrito (R2 §5).
+
+**A auditoria.** Em 2026-10-20 o Codex auditou o HEAD `ba77134` em modo somente
+leitura e entregou dois relatórios independentes, promovidos em
+`docs_phase5/auditoria_codex_2026-10-20/` (`relatorio_gpt-6-astra.md`,
+`relatorio_gpt-5.6-terra.md`, `prompt.md`). Ambos recomendam **não selar** a
+candidata nesse estado. Conferiram, sem divergência, o numstat canônico
+(19 arquivos, +10.739/−422), o engine sem linha alterada e o HTML reproduzido
+(SHA-256 `4c45ce20…5712`, 1.242.046 bytes). A triagem do orquestrador, por
+cadeia `arquivo:linha` relida em `cee02e9`, está nos verbetes do
+`.claude/BACKLOG.md`; cada verbete separa o que o Codex **executou** do que só
+**leu**.
+
+**Achados registrados** (`aberto`, 2026-10-25; a contagem de abertos do
+`compliance-audit.sh` passa de 29 para 43, medida após o registro):
+
+- `EA-91` — importação de sessão não é transacional nem substitutiva para a
+  curadoria (validar já aplica; cancelar não desfaz; chave ausente herda a sessão
+  anterior). Produto, alta.
+- `EA-92` — "Nova sessão" não limpa a curadoria. Produto, alta.
+- `EA-93` — `guard-boundary`/`guard-tdd` comparam caminho sensível a caixa em
+  sistema de arquivos que ignora caixa. Instrumento, alta.
+- `EA-94` — escrita em caminho protegido por Bash não tem guarda (boundary e TDD
+  só no matcher `Write|Edit`). Instrumento, alta.
+- `EA-95` — o `guard-tdd` libera qualquer módulo se existir uma demanda ativa com
+  RED ou `tdd_waiver`; `check_state` não carrega o schema. Instrumento, média.
+- `EA-96` — `red.commit` aceita qualquer objeto git (`cat-file -e`), não só commit.
+  Instrumento, média.
+- `EA-97` — `check_suites.py` ignora o código de saída; o bloco `visual` nunca é
+  comparado. Instrumento, alta.
+- `EA-98` — o stage `build` (`mutates: false`) regrava `ui_icons_v32.js` na
+  árvore. Instrumento, média.
+- `EA-99` — o composto que o `guard-data` recomenda contorna a inspeção; o parser
+  não vê `&&` colado nem `$g commit` (família do `EA-82`). Instrumento, alta.
+- `EA-100` — `run.sh --stage=<inexistente>` termina verde com 0 stages.
+  Instrumento, média.
+- `EA-101` — o `lint-arch` só aplica IIFE/`innerHTML=` a `ui_p5*` e `ui_d0*`.
+  Instrumento, média.
+- `EA-102` — `EA-59`, `EA-60` e `EA-63` citados sem verbete. Documentação, baixa.
+- `EA-103` — Actions por tag móvel e sem `permissions:` em `verify.yml`.
+  Cadeia de suprimentos, baixa.
+- `EA-104` — o README instruía a baixar `releases/latest` com o nome da v3.2.7 e a
+  tratar "o artefato da release" como o em uso (incidência viva do `EA-64`,
+  que segue `aberto`). Tratado em commit próprio deste mesmo PR.
+
+**Não viraram achado novo.** A reprodução do `EA-76` (FortiMail ×3) pelo terra
+ganhou nota datada no próprio `EA-76`. As alegações do terra de que a tag não
+existe e de que o pipeline completo não rodou no commit final (CX-07/CX-08) são
+as declaradas neste registro — a tag é o passo seguinte por desenho (seção "Dois
+hashes") e, segundo o orquestrador, o `run.sh` 18/18 e o `compliance-audit.sh`
+17/17 foram medidos em `ba77134` depois do registro (medição do orquestrador,
+citada sem reexecução por quem escreveu este adendo). Os `EA-71`, `EA-72` e `EA-90` (CX-16) já estavam
+registrados e abertos.
+
+**Decisão do proprietário (2026-10-25, no chat): corrigir o produto antes de
+selar.** A tag `v3.2.11` fica **suspensa** até os defeitos de curadoria
+(`EA-91`/`EA-92`) serem corrigidos; os achados de instrumento e o README entram
+no mesmo ciclo. Este PR é o passo 1 e é doc-only: registra, não corrige.
+
+**Consequência para este registro.** O que está escrito acima descreve a
+**candidata `ba77134`/`cee02e9`**, cujo conteúdo `0bd677c` **não será o da tag**:
+o conteúdo final será o da `develop` depois da correção do `EA-91`/`EA-92`. Os
+hashes, o numstat, a contagem de abertos (29) e o SHA-256 do HTML citados acima
+valem para a candidata e **não valem** para a tag futura. Este registro será
+atualizado (ou substituído) na selagem efetiva; até lá, a v3.2.11 não tem tag e o
+`README.md` não a afirma.

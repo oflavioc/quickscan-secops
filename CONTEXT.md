@@ -207,6 +207,20 @@ alcança só `.apoio-block`; ocultação alcança títulos, `t-list` e `t-detail
 Quem consome é a camada de apoio da 019; quem oculta é a arbitragem da 010/023.
 _Evitar_: remoção, limpeza, migração, dissolução
 
+**Curadoria do relatório**:
+Seleção, feita por quem conduz a sessão como último passo antes do relatório, do
+subconjunto do que o motor INFERIU que vai à publicação — na tela e no papel, com
+proveniência rotulada quando a presença de um item é decisão humana. É ENTRADA
+canônica da sessão (a sexta chave), nunca edição de texto nem conteúdo novo, e
+alcança só o inferido (apoio, leitura arquitetural) — jamais o declarado ou o
+medido. Por item, o estado é tri-estado — ausente (o motor decide), `include`,
+`exclude` — e a forma canônica de "nada declarado" é a AUSÊNCIA da chave; o dono
+do estado é o bridge `__CURATION` (R9 §5), que este verbete referencia sem copiar.
+Nasceu na demanda 019; o ciclo de vida na sessão é da 025 (ver *Importação
+substitutiva*).
+_Evitar_: edição do relatório, personalização, filtro, ajuste do PDF; "seleção do
+engenheiro" é rótulo de TELA (citação livre) e não predica o conceito
+
 **Supressão pela curadoria**:
 Decisão do operador, no editor de curadoria, de excluir produto ofertado da
 publicação — total quando nenhum card sobra, parcial quando alguns sobram. É ato
@@ -215,6 +229,20 @@ substituto (e a Camada 1 volta visível) sem que o relatório deva repor o que f
 excluído. Nunca alcança o conjunto OFERTADO pelo motor, só o PUBLICADO.
 _Evitar_: supressão (sozinho — ver *Arbitragem de camada*), curadoria vazia,
 relatório vazio, filtro
+
+**Importação substitutiva**:
+Propriedade da importação de sessão pela qual, depois de um import bem-sucedido,
+TODO owner canônico — inclusive a curadoria do relatório — passa a ser o que o
+documento declara, e o que o documento NÃO declara vira "nada declarado", nunca
+herança da sessão que estava aberta: o documento basta para reconstruir o
+resultado (INV-8). É também atômica — olhar um arquivo (prévia), cancelar,
+recusar ou falhar no meio deixa a janela igual à anterior, inclusive no papel. Quem
+a mede é o gate de roundtrip "o mesmo documento, sobre dois estados prévios
+distintos, produz o mesmo estado". Distinta de *Substituto* (leitura V3.2 no lugar
+da congelada — outra família, mesma raiz): aqui o substituído é a SESSÃO ABERTA,
+pelo documento.
+_Evitar_: mesclagem, merge, importação aditiva, herança da sessão, "preservar o
+que o arquivo não traz"
 
 ## Estrutura (processo)
 
@@ -519,5 +547,7 @@ motor, ou produto publicado na visão por produto. Não pertence o que o própri
 relatório declara não-publicável, nem o que a curadoria retirou. A lista canônica
 de produtos publicados vive em `__CURATION.published()` e o predicado em
 `hasSubstituteV32()` — este verbete define o CRITÉRIO e referencia a fonte, nunca
-a copia (R12 / `EA-47`).
+a copia (R12 / `EA-47`). Distinto de *Importação substitutiva* (mesma raiz, outra
+família): lá o substituído é a sessão aberta, pelo documento importado; aqui é a
+leitura congelada, pela leitura V3.2.
 _Evitar_: alternativa, equivalente, troca, recomendação V3.2

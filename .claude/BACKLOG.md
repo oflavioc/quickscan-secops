@@ -8518,7 +8518,9 @@ são idênticos entre `ba77134` e `cee02e9`.
   owner. O snapshot de rollback fotografa o estado já alterado; o "atômico" do
   comentário (`:565-569`) não alcança a curadoria. Na confirmação a validação roda
   de novo (`:632`), então `fromSession` é aplicado duas vezes.
-- `ui_session_v32.js:525-563` e `:606-622` — **chave ausente**:
+- `ui_session_v32.js:525-564` e `:606-628` — **chave ausente** (intervalos
+  corrigidos in loco em 2026-10-25; eu havia escrito `:525-563` e `:606-622`, que eram
+  o corpo até o `return` / o `try`):
   `normalizeSessionDocument` não leva `reportCuration` ao candidato (a palavra não
   aparece no intervalo) e `commitCanonicalOwners` não escreve a curadoria. Com a
   chave ausente, `validateSessionDocument` também não chama `fromSession`
@@ -8577,6 +8579,82 @@ real (`qa-engineer`) com cancelamento, incompatibilidade de engine, falha tardia
 chave ausente sobre estados prévios diferentes, comparando tela **e** papel.
 Possivelmente absorve o `EA-92`.
 
+### Refutação adversarial de 2026-10-25
+
+Nota acrescentada por `doc-writer` (R2 §5: o corpo acima não foi reescrito; só os
+intervalos de linha de `normalizeSessionDocument` e `commitCanonicalOwners` foram
+corrigidos **in loco**, no corpo que eu mesmo escrevi em `d8dc7bd`). Fonte:
+`docs_phase5/auditoria_codex_2026-10-20/refutacao_adversarial_2026-10-25.md` §1 —
+workflow de 31 agentes, dois refutadores independentes por achado (reprodução e
+contra-leitura). Linhas abaixo reconferidas por mim em HEAD `2fcd552` (produto e
+instrumentos byte-idênticos a `cee02e9`), salvo as marcadas *(síntese)*.
+
+- **Veredito**: CONFIRMADO COM CORREÇÃO DE CADEIA.
+- **Executado por**: os dois refutadores (2/2), em jsdom — 10 cenários e sondas
+  A–E; `D019-INV8` fecha 1/1 verde sobre o artefato defeituoso.
+- **Severidade recomendada**: alta (2/2).
+- **Encaminhamento recomendado**: **demanda 025**. A correção mínima cabe em
+  `ui_session_v32.js` (validar com `state()`/`fromSession(prev)` via bridge;
+  curadoria no `cand`; `fromSession(cand.curadoria)` dentro do `try` do commit),
+  mas a demanda se justifica por §29.4 (`specs/PHASE_5_0_REV_B.md:1613-1617`,
+  precedente de autorização em `specs/019-curadoria-do-relatorio/tasks.md:31`),
+  por R9 §3 (bridge cujo "validar" muta) e por absorver o `EA-92` e as
+  reancoragens em suítes PROTECTED. "Demanda por ≥ 2 módulos" não é necessidade
+  técnica.
+
+**Correções de cadeia** (prevalecem sobre a cadeia acima onde divergirem):
+
+- **Linhas.** `validateSessionDocument` aplica a curadoria em
+  `ui_session_v32.js:237-242` (chamada em `:240`). `snapshotCanonicalOwners
+  :570-589` (comentário `:565-569`; curadoria em `:585-586`) é chamado em `:607`,
+  dentro de `commitCanonicalOwners :606-628`; `restoreCanonicalOwners :590-605`
+  reaplica a curadoria em `:602-603`, só por exceção. `normalizeSessionDocument
+  :525-564`: o candidato tem 10 chaves (`arq`, `ans`, `notes`, `priorities`,
+  `landscape`, `arch`, `platforms`, `signals`, `targetOverrides`, `refinement` —
+  `:533-541`) e nenhuma é a curadoria. `daSessao` zera o owner em
+  `ui_curation_v32.js:188` e reaplica item a item em `:194-202`. Os intervalos
+  `:525-563` e `:606-622` do corpo eram o corpo até o `return` / o `try` —
+  corrigidos in loco.
+- **Sub-caso (b) impreciso.** O estado pós-recusa é o que o ARQUIVO declarou, não
+  necessariamente `{}`: fica `include` se a curadoria do arquivo é válida e o erro
+  vem depois (`:244+`); fica `{}` se ela é `{}` ou inválida. Erros anteriores a
+  `:237` (`:209-231` *(síntese)*) nunca alcançam `fromSession`. Nos caminhos
+  Cancelar / engine incompatível / documento inválido o snapshot nem chega a ser
+  tirado (`:607` só existe dentro do commit); na confirmação ele já fotografa o
+  estado mutado.
+- **Sub-caso E (novo, executado).** Curadoria **inválida** no arquivo zera o owner
+  antes de recusar (`daSessao :188`): uma recusa por curadoria malformada também
+  apaga a seleção da sessão ativa.
+- **Sub-caso novo, executado — falha DURANTE o commit** (severidade do sub-caso:
+  alta). Com um setter sintético que lança na 1ª escrita de `declaredPlatforms`, o
+  commit devolve `{ok:false, rolledBack:true}` e `ans[0]` é restaurado, mas a
+  curadoria após o rollback é o `include` do **ARQUIVO**, não o `exclude` da
+  **sessão** — o snapshot (`:607`) é tirado depois da validação que já aplicou o
+  arquivo (`:240`). O corpo só tinha esse caminho por leitura
+  (`restoreCanonicalOwners` alcançado por exceção). É o que obriga a 025 a tirar o
+  snapshot **antes de qualquer escrita**, não apenas "levar a curadoria ao
+  candidato".
+- **Invariante.** INV-8 é a ferida literal ("o import recomputa; missing ≠ `{}`");
+  INV-7 só por consequência — `tests_ux_m41.js` e o M41 não alcançam a curadoria
+  (C5 da 019, `specs/019-curadoria-do-relatorio/spec.md:44`).
+- **Fuga de gates, mais larga que a do corpo.** Além de `D019-INV8`
+  (`tests_019_curadoria.js:219-247`, cujo corpo não contém nenhuma chamada a
+  `importSessionDocument`/`validateSessionDocument`/`fromSession` — `grep` = 0) e
+  de S29 (`tests_session_m48.js:282-289`; `richSession :86-100` não declara
+  curadoria), S6/S7 (`tests_session_m48.js:101-106`) importam em `boot()` novo e
+  sem curadoria. `specs/019-curadoria-do-relatorio/spec-validate.md:13` deu C3
+  "conforme" sem medir importação. Famílias de gates cegos: `EA-111` e `EA-112`.
+- **Intenção declarada contrária ao código.**
+  `specs/019-curadoria-do-relatorio/refinement.md:173` (caso 7, "Ausência ≠ vazio"),
+  `spec.md:42` (C3) e `tasks.md:31` (T010) pedem o que o código não faz; a trilha em
+  `tests_p50_core.js:544-545` diz que snapshot/restore carregam a curadoria "para
+  que uma importação que falhe no meio não deixe a seleção meio aplicada". O estado
+  nasceu em `90f14ea` (2026-09-18, T010/T011).
+- **Irmãos nascidos no mesmo passe**: `EA-105` (exportar também escreve no owner),
+  `EA-106` (três representações de "sem curadoria"), `EA-111` (`D019-INV8`
+  tautológico), `EA-112` (suítes cegas ao sexto owner), `EA-113` (S50), `EA-114`
+  (S69).
+
 ## EA-92 — "Nova sessão" não limpa a curadoria: a exclusão de um relatório sobrevive e é exportada na sessão seguinte
 
 **Status**: `aberto`
@@ -8598,7 +8676,8 @@ orquestrador. Cadeia relida por mim em `cee02e9`.
   architectureNote: undefined }; }` **existe** no bridge; `grep` por `__CURATION`
   em `ui_ux_v32.js` não acha ocorrência. O módulo de curadoria também não registra
   gancho de reset.
-- `ui_session_v32.js:76-77` — a exportação lê a curadoria do owner por
+- `ui_session_v32.js:75-77` (corrigido in loco em 2026-10-25; eu havia escrito
+  `:76-77`) — a exportação lê a curadoria do owner por
   `__CURATION.toSession()` e escreve `reportCuration` se houver algo declarado:
   o resíduo é serializado.
 - **Efeito**: depois de "Nova sessão", a tela volta à home com respostas `null`,
@@ -8632,7 +8711,72 @@ sessão" → ausência de `reportCuration` no próximo export). `uxResetAssessme
 produto, não do instrumento. Alternativa: absorvido pela demanda do `EA-91`
 (decisão do `tech-lead`).
 
-## EA-93 — `guard-boundary` e `guard-tdd` comparam caminho sensível a caixa em sistema de arquivos que ignora caixa: `ENGINE_v32.js` passa onde `engine_v32.js` é negado
+### Refutação adversarial de 2026-10-25
+
+Nota acrescentada por `doc-writer` (R2 §5; só o número de linha de
+`ui_session_v32.js` foi corrigido **in loco**, no corpo de `d8dc7bd`). Fonte:
+`docs_phase5/auditoria_codex_2026-10-20/refutacao_adversarial_2026-10-25.md` §1.
+Linhas reconferidas por mim em HEAD `2fcd552` (produto idêntico a `cee02e9`), salvo
+as marcadas *(síntese)*.
+
+- **Veredito**: CONFIRMADO COM CORREÇÃO DE CADEIA.
+- **Executado por**: os dois refutadores (2/2) — pelo bridge e pelo checkbox real;
+  quatro oráculos cegos medidos; controle com `clear()` manual removendo a chave.
+- **Severidade recomendada**: alta (2/2) — **não** bloqueante: o aviso é visível, o
+  editor desfaz e o recarregamento limpa (S33).
+- **Encaminhamento recomendado**: **absorver na demanda 025**, em wave própria, no
+  módulo `ui_ux_v32.js`, sob o rito §29.4 (autorização nominal do proprietário +
+  trilha "Identidade anterior" em `tests_p50_core.js:383` + `gen_pins`).
+  Alternativa, se o `tech-lead` preferir: `fix-finding` com o mesmo rito
+  (precedentes `EA-61`/`EA-66`/`EA-69`). Pegada real do PR: `ui_ux_v32.js` +
+  `tests_p50_core.js:383` + `pins.json` + HTML + gate novo em
+  `tests_019_curadoria.js` (`expected_suites.json`, 14 → 15) + mutante — e nenhum
+  harness de mutação observa `ui_ux_v32.js` hoje. O encaminhamento do corpo
+  ("`fix-finding` de **um módulo**") subestimava a pegada.
+
+**Correções de cadeia**:
+
+- `ui_session_v32.js:76-77` → **`:75-77`** (a atribuição de `cur` começa em `:75`;
+  corrigido in loco).
+- **O resíduo não é só `decisions`.** `architectureNote` e `include` fora da oferta
+  também sobrevivem; a correção é `clear()` inteiro.
+- **O efeito vai além de "é exportada".** A avaliação **seguinte** renderiza 8 cards
+  contra 9 num DOM virgem, com o aviso "Seleção do engenheiro aplicada. 1 item foi
+  retirado…" (`ui_p52_support_v32.js:598-614`, copiado ao papel em `:798-802`) —
+  **INV-7 literal** na tela e no papel; INV-8 no export. "Nenhuma INV literal" era
+  fraco.
+- **Por que os gates não pegaram.** UX21 (`tests_ux_m41.js:199-207`), T21/T28
+  (`tests_target_m431.js:155,213`), R21 (`tests_ref_m44.js:113`) e S31-S32
+  (`tests_session_m48.js:300-314`) medem por `legacySnapshot` (`ui_v32.js:127-135`),
+  `isLegacyModeV32` (`engine_v32.js:305-311`) e `sessionHasContent`
+  (`ui_session_v32.js:652-656`) — todos cegos à curadoria. Nenhum `D019-*` clica
+  `#ux-newsession` (`grep` = 0 em `tests_019_curadoria.js` e `tests_019_mutants.js`).
+  Cada outro owner tem o seu "Nova sessão limpa X" (T21, R21); a curadoria não.
+- **O fio não pode nascer em `ui_curation_v32.js`.** R9 §3/§4 proíbem o gancho de
+  reset registrado pelo módulo; o fio nasce em `ui_ux_v32.js`, que é §29.4
+  (`specs/PHASE_5_0_REV_B.md:1613-1620`), pinado em `tests_p50_core.js:383` e
+  `pins.json:534`, e **ausente de `boundary.json`** (`grep` = 0): o `guard-boundary`
+  não o bloqueia; quem acusa a edição é o `P50-GOV1` + `baseline`.
+- **`uxResetAssessment` (`ui_ux_v32.js:17-22`) também preserva a curadoria**
+  (medido). A analogia do corpo ("como o landscape") é errada: target e refinamento
+  são limpos por "Reiniciar" desde 4.3.1/4.4 (`docs/CHANGELOG_v32.md:232` e `:261`).
+  O diálogo (`ui_ux_v32.js:55`) diz "O contexto tecnológico declarado será
+  preservado" e **não nomeia a curadoria**; o resíduo é invisível com o gate fechado
+  (`ui_curation_edit_v32.js:62-65`, `:218`) até reaparecer como decisão "do
+  engenheiro" (`ui_curation_v32.js:141-144`). **Decisão de produto pendente
+  (PO/TL) para a 025** — não corrigir sem ela;
+  `specs/019-curadoria-do-relatorio/spec.md:161-166` trata de respostas que mudam,
+  não de avaliação reiniciada.
+- **Historicidade.** `ui_ux_v32.js` está intocado desde `e5ccd42` (2026-08-18); a
+  curadoria nasce em `aef6ff3` (2026-09-18). `plan.md:38-40` da 019 não lista
+  `ui_ux_v32.js`; `refinement.md:163-175` não contempla Nova sessão nem Reiniciar —
+  omissão, não decisão.
+- A rota direta `uxNewSession({silent:true})` reproduz o defeito.
+- **Irmãos nascidos no mesmo passe**: `EA-107` (`draft` do editor de contexto
+  sobrevive à nova sessão), `EA-108` (`prioLimitHit`), `EA-109`
+  (`sessionHasContent()`/`sessionPreview()` cegos à curadoria), `EA-112` (alínea c).
+
+## EA-93 — `guard-tdd` e `guard-boundary` comparam caminho sensível a caixa em sistema de arquivos que ignora caixa: `UI_P52_WORKSPACE_V32.JS` passa pelo `guard-tdd` onde `ui_p52_workspace_v32.js` é negado
 
 **Status**: `aberto`
 
@@ -8679,6 +8823,66 @@ caminho relativo à raiz e comparar sem caixa quando a plataforma exigir; casos
 de teste de hook (`qa-engineer`) com caixa, barras `\`/`/` e caminho absoluto.
 Mesma família do `EA-83`/`EA-87` (o que o hook efetivamente enxerga).
 
+### Refutação adversarial de 2026-10-25
+
+Nota acrescentada por `doc-writer` (R2 §5). Fonte:
+`docs_phase5/auditoria_codex_2026-10-20/refutacao_adversarial_2026-10-25.md` §1 e §2b.
+Linhas reconferidas por mim em HEAD `2fcd552` (hooks e `settings.json` idênticos a
+`cee02e9`), salvo as marcadas *(síntese)*.
+
+- **Veredito**: CONFIRMADO COM CORREÇÃO DE CADEIA — a metade R6/INV-9
+  (`guard-boundary`) é **neutralizada ponta a ponta pelo `deny` do host**; a metade
+  R3 (`guard-tdd`) é **sustentada ponta a ponta**.
+- **Executado por**: os dois refutadores (2/2). Hooks por stdin: `engine_v32.js` →
+  exit 2 e `ENGINE_v32.js` → exit 0; `ui_p52_workspace_v32.js` → 2 e
+  `UI_P52_WORKSPACE_V32.JS` → 0. Sonda do host 2.1.301 em projeto-sonda:
+  `Edit(FOO.txt)` contra `deny` `Edit(foo.txt)` recusado, arquivo intacto, hook nem
+  invocado (hooklog só com `BAR.txt`). O host entrega `tool_input.file_path` como
+  digitado (hooklog `...\BAR.txt`), logo a metade `guard-tdd` não é inferência. O
+  par exato (`Edit` sobre `engine_v32.js` na worktree) não foi medido — foi medido
+  o comportamento do host com `deny` equivalente.
+- **Severidade recomendada**: **média**. O reprodutor disse alta; o contra-leitor,
+  média. Recomendo média: a metade R6 é fechada pelo `deny` do host (medido); a
+  metade R3 é Windows-only, exige uma grafia que nenhuma convenção do repo produz e
+  aparece pós-fato sob o nome canônico (` M ui_*.js` → stage `build` do Stop).
+  **Sobe para alta** se o proprietário decidir que o repo não deve depender da
+  versão do host, que não é pinada.
+- **Encaminhamento recomendado**: `fix-finding`, `build-engineer`:
+  `guard-tdd.sh:22` (`BASE="${BASE,,}"` ou `shopt -s nocasematch`, sem condicional
+  de plataforma) + paridade opcional em `guard-boundary.sh:26` (`.casefold()`, mesmo
+  dono, mesma delegação) + `gen_pins` (hooks pinados).
+- **Título reescrito neste passe** (ids são permanentes, títulos não). Título
+  anterior: "`guard-boundary` e `guard-tdd` comparam caminho sensível a caixa em
+  sistema de arquivos que ignora caixa: `ENGINE_v32.js` passa onde `engine_v32.js`
+  é negado". O exemplo `ENGINE_v32.js` estava errado: ele **não** passa por
+  `Edit`/`Write`, porque o `permissions.deny` do host (`settings.json:4`) é
+  avaliado antes do `PreToolUse` e ignora caixa (medido em projeto-sonda).
+
+**Correções de cadeia**:
+
+- **Regra ferida: R3 apenas.** INV-9 fica intacta (`boundary.json` +
+  `guard-boundary` + `deny` seguem sustentando as superfícies congeladas). R6 §1 é
+  ferida **só na parte "com o rito nomeado"**.
+- **Pendência do corpo ("ninguém mediu se o motor de permissões ignora caixa")
+  fechada por medição**: ignora. Consequência lateral: para os 9 caminhos da
+  boundary, o agente **nunca vê o "rito nomeado"** que `boundary.md:18` promete —
+  vê a recusa genérica do host, também com caminho em minúsculas. Observação de
+  desenho de R6 §1, não id.
+- **O exemplo verdadeiro** é `UI_P52_WORKSPACE_V32.JS` / `BUILD_V32_HTML.PY` no
+  `guard-tdd` (`:22-24`: `BASE` comparado contra `ui_*.js|ui_*.css|build_v32_html.py|generate_icons_v32.py`).
+  O `guard-tdd` **nunca** cobre `engine_v32.js` (`:11`, `:24`: minúsculo → exit 0).
+- **Escopo maior que o descrito** *(síntese)*: para `legacy`/`registry` qualquer
+  componente do caminho contorna (`SPECS\PHASE_5_0_REV_A.md` → 0,
+  `.claude\verify\PINS.json` → 0); os builders e a caixa mista
+  (`Ui_p52_workspace_v32.js`) também. **Limite**: caixa em diretórios acima da raiz
+  NÃO contorna (`C:\PROJETOS\…\engine_v32.js` → 2; só o sufixo é comparado).
+- `project_root()` não lê `CLAUDE_PROJECT_DIR`: é `git rev-parse --show-toplevel`
+  (`.claude/hooks/lib/common.sh:15`, tema do `EA-84`).
+- **Precedente interno contrário**: `guard-data.sh:203` já faz `.lower()`; os hooks
+  de boundary/TDD estão intocados desde `e0dc231`/`47cf2e2` *(síntese)*.
+- **Lateral**: as regras `Write(...)` do `permissions.deny` são inertes segundo o
+  host — registrado como `EA-116`.
+
 ## EA-94 — escrita em caminho protegido por Bash não tem guarda: boundary e TDD estão só no matcher `Write|Edit`
 
 **Status**: `aberto`
@@ -8721,6 +8925,65 @@ barreira — ressalva do próprio terra.
 interpretador sobre caminho do boundary, ou (b) prova **ponta a ponta** de que
 `permissions.deny` alcança Bash. Relacionado ao `EA-83` (ninguém mediu o despacho
 do matcher `Bash`) e ao `EA-87`.
+
+### Refutação adversarial de 2026-10-25
+
+Nota acrescentada por `doc-writer` (R2 §5). Fonte:
+`docs_phase5/auditoria_codex_2026-10-20/refutacao_adversarial_2026-10-25.md` §1 e §4.
+Linhas reconferidas por mim em HEAD `2fcd552` (instrumentos idênticos a `cee02e9`),
+salvo as marcadas *(síntese)*.
+
+- **Veredito**: CONFIRMADO COM CORREÇÃO DE CADEIA.
+- **Executado por**: **parcial**. Os hooks foram executados por 1 dos 2
+  refutadores: 5 payloads Bash × 4 hooks = 20/20 exit 0, com controles positivos
+  exit 2. O alcance do `deny` do host sobre `Bash` **não foi executado por nenhum
+  dos dois** (ambos só leram a documentação do host,
+  `code.claude.com/docs/en/permissions`, §Redirections e §sandboxing): exigiria
+  escrever em caminho protegido dentro do cwd do repo. Corroboração indireta: no
+  `EA-93`, o reprodutor viu o host bloquear `> ENGINE_v32.js` em Bash por regra de
+  `deny`. Nenhuma camada **configurada** (projeto, local, usuário) barra `Bash` —
+  isso foi medido.
+- **Severidade recomendada**: alta (2/2) — pelo motivo certo: a metade R3 (alvos do
+  `guard-tdd`) fica sem camada alguma por Bash, e o vetor interpretador
+  (`python -c open(...)`) está aberto em Windows sem sandbox ("on native Windows …
+  unsandboxed", pela doc do host).
+- **Encaminhamento recomendado**: `fix-finding`, `build-engineer`: **hook novo no
+  matcher `Bash` que interprete o comando** (redirecionamento, `sed -i`,
+  `cp`/`tee`/`mv`, interpretador) + `settings.json` + `compliance-audit.sh:29` +
+  repin (perfil do precedente `58372d6` / `EA-37` *(síntese)*); medir na pasta
+  primária (`EA-87`); R10 §10 — auto-exclusão para leituras legítimas (por exemplo
+  `node harness_m41_v313.js <html>`).
+
+**Correções de cadeia**:
+
+- **Diagnóstico impreciso: ampliar o matcher para `Bash` NÃO resolve.**
+  `guard-boundary.sh:12-13` e `guard-tdd.sh:16-17` leem só
+  `.tool_input.file_path` e saem 0 se vazio (medido 10/10). O hook precisa
+  **interpretar** o comando.
+- **Metade R6 superdimensionada.** Pela documentação do host, regras `Edit(path)` de
+  `deny` alcançam `sed`/`tee`/`cat`/`head`/`tail` e alvos de `>`/`>>`/`2>`: `sed -i`
+  e `>` sobre `engine_v32.js` já seriam barrados. Só o **interpretador** fica fora,
+  por desenho do host. Redação certa: "o `deny` cobre `sed`/redirect/`tee` (prova
+  ponta a ponta **pendente**); interpretador e rito nomeado descobertos."
+- **A metade R3 é a mais exposta**: nenhum espelho em `deny` para
+  `ui_*.js|ui_*.css|build_v32_html.py|generate_icons_v32.py` (`guard-tdd.sh:24`).
+- **A rota (b) do corpo** ("provar que `deny` alcança Bash") não fecha o achado nem
+  se for positiva.
+- **A rede pós-fato tem um furo no mesmo PR.** `gen_pins.py` está coberto pelo
+  `allow` `Bash(python .claude/verify/*)` (`settings.json:24`): o repin no mesmo PR
+  neutraliza a rede de `check_boundary.py:10-11` / `:28,40`; resta `check_m41` e o
+  merge humano.
+- `compliance-audit.sh:29-39` (hooks) e `:44-62` (`deny`) são verdes por construção
+  — nunca conferem matcher *(síntese)*.
+- `post-turn-verify.sh:23` só dispara em `\.(js|py|css|html|json|yaml|sh)$`:
+  `MANIFEST.sha256` e `specs/PHASE_5_0_REV_A.md` passam até o commit.
+- **Camadas configuradas vazias**: sem `settings.local.json` em nenhuma worktree;
+  `~/.claude/settings.json` com `deny=[] ask=[] sandbox=null`; hook de usuário sem
+  matcher só faz `process.exit(0)` *(síntese)*.
+- **Agravante**: a instrução de modo automático orienta a editar por `sed`/heredoc
+  em Bash — a porta sem guarda.
+- **Limites do remédio por hook**: `shlex`, `bash -c`, variáveis (a mesma família
+  do `EA-99a`).
 
 ## EA-95 — o `guard-tdd` libera qualquer módulo de produto se existir UMA demanda ativa com RED provado ou `tdd_waiver`, mesmo `{}`; o `check_state` não carrega o schema que diz validar
 
@@ -8770,6 +9033,55 @@ qualquer-demanda-libera-tudo é o inverso.
 validar o schema de fato (exigir `motivo`/`data`), associar waiver/RED à demanda e
 à superfície autorizada. Gate novo: `qa-engineer`.
 
+### Refutação adversarial de 2026-10-25
+
+Nota acrescentada por `doc-writer` (R2 §5). Fonte:
+`docs_phase5/auditoria_codex_2026-10-20/refutacao_adversarial_2026-10-25.md` §1.
+Linhas reconferidas por mim em HEAD `2fcd552` (instrumentos idênticos a `cee02e9`),
+salvo as marcadas *(síntese)*.
+
+- **Veredito**: CONFIRMADO COM CORREÇÃO DE CADEIA.
+- **Executado por**: os dois refutadores (2/2) — repo git efêmero; `check_state.py` e
+  `check_tdd.py` reais; `jsonschema 4.26.0` contra o schema de HEAD; replay git.
+- **Severidade recomendada**: média (2/2).
+- **Encaminhamento recomendado**: **DIVIDIR**. (a) Dois `fix-finding` de 1 arquivo,
+  `build-engineer`: `check_state.py` passa a impor o `required` do schema
+  (incluindo `branch`) e a forma do waiver; `guard-tdd.sh:40` passa a exigir `dict`
+  com `motivo` e `data` não vazios. (b) O **vínculo arquivo ↔ demanda** é
+  **demanda**: schema (`data-engineer`), hook e `check_state` (`build-engineer`),
+  skills `new-demand`/`fix-finding` e `tdd.md`, gate para o hook (`qa-engineer`) —
+  ≥ 4 artefatos, ≥ 3 donos —, **com a rota do `fix-finding` no contrato** (hoje
+  inexistente).
+
+**Correções de cadeia**:
+
+- **Linhas decisivas de `guard-tdd.sh`** (conferidas): filtro de fase `:38`;
+  `ok = … or ("tdd_waiver" in d)` em `:40`; `any(ok)` em `:44-45`; `LIBERADO`
+  tratado em `:52`. Filtro de módulo `:22-26`, laço `:33-41` e veredito `:42-47`
+  *(síntese)*. O intervalo `:32-44` do corpo é só o miolo.
+- **"Inclusive `{}`" subestima.** `tdd_waiver: null` também libera o hook e passa
+  `state`; só o `tdd` o derruba, por **crash** (`check_tdd.py:40`, `AttributeError`,
+  exit 1). `{}` atravessa hook, `state` e `tdd` (`[WAIVER] …: ? (?)`).
+- **"RED provado" é mais fraco do que o corpo diz.** O hook não invoca git:
+  `red.commit=deadbeef…` libera (caso C). A existência só é conferida em
+  `check_tdd.py:32` — e esse é o `EA-96`.
+- **Divergência `check_state` ↔ schema inclui `branch`** (`required` desde
+  `d130a04`, 2026-09-04; `check_state.py` tem um único commit, `7340f51`,
+  2026-08-25). Medido: sem `branch` → 0 problemas. A promessa "válido contra o
+  schema" está em `check_state.py:2` e `pipeline.yaml:72`; o docstring `:4` admite
+  "sem jsonschema lib" (a lib existe localmente, mas não é declarada).
+- **Cabeçalho `guard-tdd.sh:6-7`** ("granularidade demanda nesta onda —
+  conservador: bloqueia mais, nunca menos") qualifica o eixo **tipo-de-tarefa**, não
+  o eixo arquivo ↔ demanda. Também **não é R13** (nenhuma spec, ADR ou
+  `design-decisions.md` o confirma como desenho).
+- **A janela "demanda alheia" EXISTIU** *(síntese)*: 2026-08-30/31 (009 e 013 em
+  `validate`, 010/011/015 em `red`/`implement`); em `b86bbac` a 010 estava com
+  `phase:"implementacao"` (enum inválido) — só 009/013 liberavam. Benigno.
+- **A rota de `fix-finding` que o hook prescreve (`:56-57`) nunca foi usada**
+  *(síntese)*: 25 commits `fix(EA-*)` em `ui_*`/builders têm árvore-pai
+  `SEM_DEMANDA` (`--diff-filter=D` vazio).
+- CX-11 `check_state.py:34` → a cláusula R3 é `:48-51` (o corpo já estava certo).
+
 ## EA-96 — a prova de RED aceita qualquer objeto git como "commit": `git cat-file -e HEAD:README.md` retorna 0
 
 **Status**: `aberto`
@@ -8786,8 +9098,9 @@ por mim em `cee02e9`.
   só confirma que **um objeto** com aquele nome existe.
 - `.claude/verify/check_state.py:48-51` — exige `red.status=proven` e `red.commit`
   **não vazio**; não resolve nada no git.
-- `.claude/verify/fecho.py:566` — o único `^{commit}` do instrumento está no
-  **leitor** `ler_ancestralidade` (`:555-…`); `julgar_pre_merge` (`:409`) não lê
+- `.claude/verify/fecho.py:563` (corrigido in loco em 2026-10-25; eu havia escrito
+  `:566`, que é o `continue` do `except`) — o único `^{commit}` do instrumento está
+  no **leitor** `ler_ancestralidade` (`:555-…`); `julgar_pre_merge` (`:409`) não lê
   `red.commit` (as únicas leituras de `red.commit` em `fecho.py` são `:318` e `:558`).
 - **Efeito**: um planning-state com `red.status=proven` e
   `red.commit: "HEAD:README.md"` (um blob) passa `state` e `tdd`; pathspec ou tag
@@ -8813,6 +9126,51 @@ executado).
 `check_tdd`, `check_state` e o fluxo pré-merge de `fecho` passam a exigir
 `git rev-parse --verify --quiet <red.commit>^{commit}`. Negativo explícito com blob,
 tag leve e pathspec (`qa-engineer`).
+
+### Refutação adversarial de 2026-10-25
+
+Nota acrescentada por `doc-writer` (R2 §5; o número de linha de `fecho.py` foi
+corrigido **in loco** no corpo de `d8dc7bd`). Fonte:
+`docs_phase5/auditoria_codex_2026-10-20/refutacao_adversarial_2026-10-25.md` §1.
+Linhas reconferidas por mim em HEAD `2fcd552` (instrumentos idênticos a `cee02e9`),
+salvo as marcadas *(síntese)*.
+
+- **Veredito**: CONFIRMADO COM CORREÇÃO DE CADEIA.
+- **Executado por**: os dois refutadores (2/2) — o `check_tdd.py` real contra
+  planning-states sintéticos (blob, tree, pathspec `HEAD:README.md`, `HEAD`, tag
+  leve, tag anotada, branch, `HEAD~1` → `[OK]`; só SHA inexistente ou vazio →
+  `[FAIL]`); censo: 17/17 `red.commit` reais são commit.
+- **Severidade recomendada**: média (2/2) — defeito latente de poder discriminante,
+  sem falso verde hoje.
+- **Encaminhamento recomendado**: `fix-finding`, `build-engineer`, em `check_tdd.py`:
+  **forma SHA hex** (≥ 7, idealmente 40) **+** `^{commit}`; decidir explicitamente
+  sobre os 7 `red.commit` abreviados (011, 014, 015, 018, 019, 022, 023). **Não**
+  levar git a `check_state.py` (contrato "sem dependência externa"; no máximo regex
+  de formato). `fecho --pr` **fora** (contrato C5 da 016, `julgar_pre_merge` puro —
+  errata ou demanda). Alinhar `verify.yml:29` ("valida por sha") e
+  `.claude/skills/new-demand/SKILL.md:50` ("ref do commit" → SHA).
+
+**Correções de cadeia**:
+
+- `fecho.py:566` → **`:563`** (corrigido in loco). `:563` é o
+  `["rev-parse", "--verify", "--quiet", f"{sha}^{{commit}}"]`; a mensagem está em
+  `:570`; `:566` é o `continue` do `except FileNotFoundError`.
+- **O remédio `^{commit}` sozinho NÃO rejeita** tag leve (`evidence-p50`), tag
+  anotada, `HEAD`, nome de branch nem `HEAD~1` (medido, rc=0). O "negativo com tag
+  leve" pedido no corpo é **inatingível sem checar a forma hex** (R10 §5; `SHA40` em
+  `fecho.py:75`).
+- **Código de saída**: `git rev-parse --verify 'HEAD:README.md^{commit}'` sem
+  `--quiet` devolve `fatal: Needed a single revision`, rc=128; com `--quiet`, rc=1
+  (conferido pelo sintetizador). O corpo escreveu o comando sem `--quiet` e rc 1 —
+  cada fonte mediu uma forma.
+- **O leitor pós-merge tampouco VALIDA**: se não resolve, devolve `resposta: None` +
+  causa (`fecho.py:569-571`) e nunca FAIL; o oráculo secundário (`:312-320`
+  *(síntese)*) e `vivo_pre` (`check_fecho.py:501-509`) não leem `red.commit`.
+- O terra cita `check_tdd.py:30` (é o `if`) onde a chamada é `:32` — o corpo já
+  estava certo.
+- **Regra**: R3 §4 + R10 §5 + classe `EA-20`; R2 §1 cabe mal.
+- `check_tdd.py` não tem harness nem teste (`mutation_population.json:71-74`, prazo
+  2026-12-31 *(síntese)*); único commit `300d1d2` ("red.commit existe") *(síntese)*.
 
 ## EA-97 — o agregador de suítes ignora o código de saída do processo, e o bloco `visual` do registro nunca é comparado
 
@@ -8861,6 +9219,115 @@ FAIL) e **R2 §1**.
 agregador, executado no job `visual`, comparando PASS/FAIL/SKIP com o registro.
 Contraprova específica (`qa-engineer`).
 
+### Refutação adversarial de 2026-10-25
+
+Nota acrescentada por `doc-writer` (R2 §5; o título e a severidade da triagem acima
+ficam como foram escritos — ver a divisão abaixo). Fonte:
+`docs_phase5/auditoria_codex_2026-10-20/refutacao_adversarial_2026-10-25.md` §1 e §2b.
+Linhas reconferidas por mim em HEAD `2fcd552` (instrumentos idênticos a `cee02e9`),
+salvo as marcadas *(síntese)*.
+
+- **Veredito**: CONFIRMADO COM CORREÇÃO DE CADEIA — a metade `returncode` é fato de
+  contrato **sem instância viva** nas 24 suítes registradas (23 em `suites` + 1 em
+  `heavy`); a metade `visual` é lacuna real de R10 §3/§2.
+- **Executado por**: **parcial**. O reprodutor executou — `runpy` sobre o
+  agregador real com `subprocess.run` falso (23 processos com rc=87 → 0 problemas);
+  sandbox com node REAL (morte/exceção depois da linha-resumo → `[OK]`);
+  `--visual` → a suíte visual nunca roda, exit 0. O contra-leitor **não executou**
+  (desenho e contexto). A metade `visual` ficou, assim, executada; o `returncode`
+  foi reproduzido com node real, sem mock (cenários S1/S2/S6), em 2026-10-25 sobre
+  o blob `78b400bc` de `check_suites.py` (conferido: é o de HEAD).
+- **Severidade recomendada — dividir com o id**: metade `visual` **alta**
+  (contagens pinadas de 151 gates + 37 `skip` sem comparador em lugar algum — o
+  padrão E6 que o stage nasceu para matar; o contra-leitor diz média, por
+  exposição limitada a redução/`skip` sem FAIL e mitigação parcial por
+  `check_mutation` sob trigger); metade `returncode` **média** (janela estreita,
+  correção de duas linhas). A severidade "alta" da triagem acima passa a valer só
+  para a metade `visual`.
+- **Encaminhamento recomendado**: **DIVIDIR**. Este id fica com a metade
+  `returncode` — `fix-finding`, `build-engineer`, 1 módulo (`check_suites.py:26-41`
+  passa a ler `returncode`; imprimir `stderr` na falha). A metade `visual` nasce
+  como **`EA-97a`** (demanda), logo abaixo. O título acima descreve as duas metades
+  e foi mantido.
+
+**Correções de cadeia**:
+
+- **"Confirmar ausência de `visual` no código" é impreciso.** O token existe em
+  `check_suites.py:49` (censo de cobertura) e `:52` (comentário); o que não existe
+  é a **seleção** de `reg['visual']`: `:21` só conhece `heavy`/`suites`, e
+  `--visual` é engolido em silêncio como `suites`.
+- **"Controle → 23 problemas" depende da perturbação**: +1 uniforme dá 22 (`unset`
+  aceita [12, 13]).
+- **`stderr` é descartado inteiro**, e a janela do defeito é a morte **depois** da
+  linha-resumo (antes dela o agregador pega em `:31`, "sem contagem"). As 3 suítes
+  com `process.exitCode = 1` — `tests_022_escalonamento.js:459`,
+  `tests_023_leitura.js:596`, `tests_p50_core.js:4421` — são a forma exata do
+  cenário S2, mas sem trabalho assíncrono pendente: **nenhuma instância viva**.
+- **Assimetria**: o CI (`verify.yml:77-80`, `bash -e`) cobra exit code e não
+  contagem; o local cobra contagem e não exit code.
+- `check_mutation.py` no job `visual` é por trigger de path (`EA-72`), não camada
+  incondicional.
+- `specs/016-registro-contra-execucao/refinement.md:300` cita `check_suites.py:25`;
+  a seleção está em `:21`. O `verify.yml` que o astra cita em `:39` é `:40`.
+- **KI-3 cobre a decisão de AMBIENTE** (Chromium só no CI e no rito do
+  proprietário), não a ausência de comparação.
+- O único "comparador" visual hoje é a leitura humana de log (`_trilha` de
+  `expected_suites.json`).
+
+## EA-97a — o bloco `visual` de `expected_suites.json` não tem comparador em lugar nenhum: 151 gates pinados e 37 `skip` do Playwright nunca são conferidos contra a execução
+
+**Status**: `aberto`
+
+**Severidade (refutação adversarial)**: alta — o padrão E6 (contagem pinada sem
+comparador) que o stage `suites` nasceu para matar. O contra-leitor do `EA-97` diz
+média, pela exposição limitada a redução ou `skip` sem FAIL e pela mitigação parcial
+de `check_mutation` sob trigger de path; a alta é a recomendação da síntese.
+
+**Aberto em**: 2026-10-25, por divisão do `EA-97` na refutação adversarial
+(`docs_phase5/auditoria_codex_2026-10-20/refutacao_adversarial_2026-10-25.md` §1, §2b).
+Execução por script (`--visual` no agregador real), não jsdom. Linhas relidas por
+mim em HEAD `2fcd552`.
+
+### Cadeia arquivo:linha → efeito
+
+- `.claude/verify/check_suites.py:21` — `block = "heavy" if "--heavy" in sys.argv
+  else "suites"`: o agregador só conhece esses dois blocos. `--visual` não é
+  reconhecido nem rejeitado — é engolido como `suites`. O token `visual` aparece em
+  `:49` (censo de cobertura) e `:52` (comentário).
+- `.claude/verify/expected_suites.json:144` — o bloco `visual` pina 4 entradas:
+  `playwright` (`pass 67`, `skip 37`), `p50chromium` (27), `p52chromium` (56) e
+  `d011chromium` (1) — **151** `pass` e **37** `skip`.
+- `.claude/verify/pipeline.yaml` — `grep -i visual` = 0: nenhum stage consome o
+  bloco (R10 §9).
+- `.github/workflows/verify.yml:75-80` — o job `visual` roda `npm run test:visual`,
+  `tests_p50_chromium.js`, `tests_p52_chromium.js` e `tests_011_chromium.js`
+  direto; `bash -e` cobra exit code, nunca contagem.
+- **Efeito**: suíte visual que perde casos, ou que passa a pular mais, passa se não
+  houver FAIL. O único comparador é a leitura humana do log.
+
+### Como foi medido (executado vs. lido)
+
+**Executado** pelo reprodutor do `EA-97`: `--visual` no agregador → a suíte visual
+nunca roda, exit 0. **Lido** por mim: o bloco `visual` e os quatro `cmd`. O Chromium
+não foi executado (KI-3: execução canônica no job `visual` e no rito do
+proprietário).
+
+### Regra ferida
+
+**R10 §3** (contagens pinadas comparadas contra execução real) e **§2** (`skip`
+silencioso — a semântica de `skip` do Playwright precisa de decisão); **R10 §9**
+(checagem nova entra no `pipeline.yaml`). `design-decisions.md` KI-3 cobre o
+ambiente, não esta lacuna.
+
+### Encaminhamento
+
+**Demanda** (2 a 4 arquivos e contrato novo — "`fix-finding`" contradiz
+`.claude/skills/fix-finding/SKILL.md:3`, "no máximo 1 módulo"): `tech-lead` desenha;
+`build-engineer` implementa. Escopo: parser para o `reporter: list` do Playwright,
+que não emite "N PASS · M FAIL"; semântica de `skip` por R10 §2; `requires`; passo
+novo em `verify.yml:75-80`; entrada em `pipeline.yaml`. Gate e mutante:
+`qa-engineer`. A metade `returncode` segue no `EA-97`.
+
 ## EA-98 — o stage `build` (`mutates: false`) regrava `ui_icons_v32.js` na árvore: a verificação escreve em arquivo versionado
 
 **Status**: `aberto`
@@ -8908,6 +9375,94 @@ classificação `mutates: false`.
 `fix-finding` (`build-engineer`): o builder chama o gerador com `--check` na
 verificação, ou gera em tmp; a geração efetiva continua operação explícita de
 build. `build_v32_html.py` é pinado: repin é do orquestrador (R8).
+
+### Refutação adversarial de 2026-10-25
+
+Nota acrescentada por `doc-writer` (R2 §5). Fonte:
+`docs_phase5/auditoria_codex_2026-10-20/refutacao_adversarial_2026-10-25.md` §1 e §2b.
+Linhas reconferidas por mim em HEAD `2fcd552` (instrumentos idênticos a `cee02e9`),
+salvo as marcadas *(síntese)*.
+
+- **Veredito**: CONFIRMADO COM CORREÇÃO DE CADEIA.
+- **Executado por**: os dois refutadores (2/2) — clone efêmero de `cee02e9` com
+  interceptor de `open` (duas aberturas em `w`: `rebuild.html` em tmp e
+  `<raiz>/ui_icons_v32.js`); `mtime_ns` avança a cada execução; a Exp3a reverte uma
+  edição local, a Exp3b grava conteúdo novo; corrida sintética: 1 em 60.
+- **Severidade recomendada**: média (2/2).
+- **Encaminhamento recomendado**: `fix-finding`, `build-engineer`, 1 módulo:
+  `build_v32_html.py:36` **sempre** com `--check` (e imprimir `r.stdout` na falha,
+  porque `check=True, capture_output=True` engole o "DIVERGE") + `gen_pins` + uma
+  linha em `CLAUDE.md:97-98` e no README (o build deixa de regenerar os ícones;
+  dependem disso `README.md:114` e `:224`, `package.json:7` e
+  `preparar_release.py:53-55`). **Id próprio `EA-98a`** para `tests_ui_m33.js:108`.
+
+**Correções de cadeia**:
+
+- `check_build.py:25` → **`:27`** e `pipeline.yaml:53` é o cabeçalho (`run:` em
+  `:55`, `mutates: false` em `:57`) — o corpo já estava certo.
+- **Regra**: R7 §3 **e** R10 §8; nenhuma INV (a identidade da classe `generated`
+  segue provada pelo stage).
+- **`mutates: false` não é rótulo**: `run.sh:100` o consome e o Stop roda
+  `--light --no-mutate` (`post-turn-verify.sh:26`). **Nenhum** stage do
+  `pipeline.yaml` é `mutates: true`; a flag é derrotada pelo único stage que
+  regenera. Isso acontece **a cada turno**, não só no CI.
+- **"Bytes idênticos" é condicional**: fonte alterada → conteúdo NOVO em arquivo
+  rastreado (Exp3b); edição local → revertida sem aviso (Exp3a).
+- **Mensagem invertida no caso 3a**: `check_build.py:48-50` imprime `[FAIL] a execução
+  sujou a árvore de trabalho:` com a lista vazia (o `before` tinha a edição, o
+  `after` não).
+- O CX-09 do terra citava `.last_green`; ele é gitignored (`.gitignore:8`) e fica
+  fora de R7 §3.
+- **"Gera em tmp" é caro**: obriga a tocar `generate_icons_v32.py`, pinado inline em
+  `tests_journey_m45.js:301` (N47) e `tests_p50_core.js:598` (P50-IC4) — 3 arquivos +
+  repin legado com trilha (R8 §2).
+- **Corrida com `icons-check` e `lint-arch`** (`check_lint_arch.py:50` varre
+  `ui_*.js`) no mesmo grupo paralelo (`run.sh:102-103`): 470 em 222.317 sondagens
+  viram arquivo parcial (mínimo 0 B); 0 em 40 FAIL com o par literal de comandos —
+  FAIL falso raro, nunca PASS falso *(síntese)*.
+- **Contradição de registro**: `docs/CHANGELOG_v32.md:61` documenta a regeneração
+  ("Build regenera `ui_icons_v32.js` antes da injeção") como contrato do builder;
+  `specs/009-leitura-do-relatorio/plan.md:144` e `specs/010-recomendacao-sem-vao/plan.md:305`
+  afirmam o oposto ("`ui_icons_v32.js` não é tocado"). O docstring de
+  `check_build.py:8-10` não é decisão R13.
+- `--check` nasceu em `2234eae` "para o stage icons-check"; a linha
+  `build_v32_html.py:36` vem de `e5ccd42` e nunca foi ajustada *(síntese)*.
+
+## EA-98a — a suíte congelada `tests_ui_m33.js` executa `generate_icons_v32.py` SEM `--check` sobre a árvore, como oráculo: o stage `suites` regrava `ui_icons_v32.js`
+
+**Status**: `aberto`
+
+**Severidade (refutação adversarial)**: média.
+
+**Aberto em**: 2026-10-25, a partir do contra-leitor do `EA-98` na refutação
+adversarial (`docs_phase5/auditoria_codex_2026-10-20/refutacao_adversarial_2026-10-25.md`
+§2b). **Lido** (a linha foi relida por mim em HEAD `2fcd552`); a execução do stage
+`suites` não foi feita por ninguém neste passe.
+
+### Cadeia arquivo:linha → efeito
+
+- `tests_ui_m33.js:108` — `execSync('python3 "'+path.join(__dirname,"generate_icons_v32.py")+'"')`:
+  o gerador roda **sem `--check`**, sobre a árvore.
+- `generate_icons_v32.py:28` e `:36` — sem `--check`, `open(out, "w", …)` sobre
+  `HERE/"ui_icons_v32.js"`; o `--check` existe (`:29-34`).
+- `tests_ui_m33.js` é suíte congelada 4.x, registrada em `expected_suites.json` (stage
+  `suites`) e pinada em `pins.json:503`.
+- **Efeito**: uma **segunda instância, independente do `EA-98`**, da verificação que
+  escreve em arquivo versionado — agora dentro de uma suíte, não do stage `build`.
+
+### Regra ferida
+
+**R7 §3** (verificação nunca escreve na árvore) e **R10 §8** (teste não escreve em
+arquivo versionado).
+
+### Encaminhamento
+
+Trocar a chamada por `--check` (ou gerar em tmp e comparar). É suíte **congelada**:
+edição de `tests_*.js` existente é §29.4 (ver `EA-1`) — **autorização nominal do
+proprietário** — e o arquivo é pinado: `gen_pins` no mesmo PR com **repin legado
+acompanhado de comentário-trilha** "Identidade anterior" (R8 §2). Dono da suíte:
+`qa-engineer`; repin: orquestrador. Pode ir junto do `EA-98`, mas é diff separado —
+outro módulo, outro rito.
 
 ## EA-99 — o comando que o próprio `guard-data` recomenda contorna a inspeção: o hook mede o índice antes do `git add` da mesma chamada, e o parser não vê `&&` colado nem `$g commit`
 
@@ -8966,6 +9521,108 @@ recusa deixa de recomendar o composto. Casos de teste (`qa-engineer`) com
 variável, `bash -c`, substituição de comando e operador colado. Ver `EA-82`,
 `EA-83`.
 
+### Refutação adversarial de 2026-10-25
+
+Nota acrescentada por `doc-writer` (R2 §5). Fonte:
+`docs_phase5/auditoria_codex_2026-10-20/refutacao_adversarial_2026-10-25.md` §1 e §2b.
+Linhas reconferidas por mim em HEAD `2fcd552` (hooks idênticos a `cee02e9`), salvo as
+marcadas *(síntese)*.
+
+- **Veredito**: CONFIRMADO COM CORREÇÃO DE CADEIA.
+- **Executado por**: os dois refutadores (2/2) — hooks reais por stdin a partir do
+  repo: composto nominal `git add <p> && git commit -m …` → exit 0/0 (hook de commit
+  e hook de add); `a&&git commit -am x` → `nao-commit`, exit 0; `$g commit -am x` →
+  exit 0; controles `git commit -am x` → exit 2 e `git add -A` → exit 2. `git add`
+  e `git commit` reais **não foram executados** (vedado): o efeito decorre da ordem
+  `PreToolUse` → comando, que o próprio hook concede em `guard-data.sh:25-30`.
+- **Severidade recomendada**: alta (2/2).
+- **Encaminhamento recomendado**: **DIVIDIR**. Este id fica com **(A)** — **tempo +
+  recomendação do composto**: extensão do `EA-82` (precedente: Nota 1 do próprio
+  `EA-82`), 1 módulo, `guard-data.sh` — recusar statement `git add/rm/mv` antes de
+  `git commit` na mesma chamada, **ou** inspecionar a árvore dos paths nomeados, e
+  reescrever as linhas `:43` e `:184` para recomendar **duas chamadas**; repin
+  (precedente `8878d6a`) e BACKLOG. **(B)** — parser com operador colado, `bash -c`
+  e expansão de shell — nasce como **`EA-99a`**, logo abaixo. O título acima
+  descreve as duas metades e foi mantido.
+
+**Correções de cadeia**:
+
+- `:153`/`:90` → **`:156`/`:93`** (`t == "git" or t.endswith("/git")`) e a
+  tokenização `shlex.split(posix=True)` em `guard-data.sh:91` e `guard-add.sh:71` —
+  o corpo já estava certo.
+- **"Índice vazio → exit 0" descreve só o composto nominal e não é precondição**:
+  com outros arquivos estagiados o hook inspeciona **esses**, nunca o do `add` da
+  mesma chamada.
+- **Operador colado (`&&`, `;`) sai em `guard-data.sh:171` como `nao-commit` ANTES
+  de `:189`** — contorna também a recusa `-a`/`-am` do `EA-82`.
+- **A recomendação do composto é desenho declarado**, não acidente:
+  `guard-data.sh:42-44` ("cobre 100% do caso legítimo", commit `3521230`,
+  2026-10-10) — e contradiz `:33-36` (um hook que roda antes do comando não inspeciona
+  conteúdo que o comando criará). Antes de `3521230` o hook não recomendava forma
+  nenhuma.
+- **A atribuição a R11 §3 é do hook**: `evidence-intake.md:41` diz só "bloqueia no
+  commit".
+- O astra CX-04 cita `guard-data.sh:90`; o bloco do parser é `:67-167` *(síntese)*.
+- **Sem segunda linha de defesa** *(síntese)*: `core.hooksPath` ausente,
+  `.git/hooks` só com samples, `deny` sem `Bash`, nenhum stage escaneia dado sensível
+  (só um comentário em `check_eol_text.py:33`) e o `baseline` só acusa arquivo sem pin
+  e ignora `docs_phase5/**` e `project-memory/**` (`gen_pins.py:29-30`).
+
+## EA-99a — o parser do `guard-data` e do `guard-add` não vê operador colado (`x&&git`, `;`), `bash -c` nem expansão de shell (`$g`): `git add .&&git commit` e `$g add -A` passam pelos dois guardas
+
+**Status**: `aberto`
+
+**Severidade (refutação adversarial)**: alta (R11) — compartilhada com o `EA-99`; fere
+também o `EA-37` (`guard-add`) e a recusa de `-a`/`-am` do `EA-82`.
+
+**Aberto em**: 2026-10-25, por divisão do `EA-99` na refutação adversarial
+(`docs_phase5/auditoria_codex_2026-10-20/refutacao_adversarial_2026-10-25.md` §1, §2b).
+Execução por stdin nos hooks reais (2/2 refutadores); `git add`/`git commit` reais não
+foram executados. Linhas relidas por mim em HEAD `2fcd552`.
+
+### Cadeia arquivo:linha → efeito
+
+- `.claude/hooks/guard-data.sh:91` e `.claude/hooks/guard-add.sh:71` —
+  `shlex.split(…, posix=True)`: o operador **colado** vira parte do argumento
+  (`shlex.split("git add x&&git commit -m y", posix=True)` →
+  `['git','add','x&&git','commit','-m','y']`); o operador só é reconhecido como token
+  isolado (`guard-data.sh:100`, `guard-add.sh:83`).
+- `.claude/hooks/guard-data.sh:156` e `.claude/hooks/guard-add.sh:93` — o parser só
+  reconhece Git quando o token é literal `git` ou `*/git`: `$g commit`, `g=git; $g …`
+  e `bash -c "git commit -am x"` escapam por construção.
+- `.claude/hooks/guard-data.sh:171` — o statement colado sai como `nao-commit` e o
+  hook retorna 0 **antes** de `:189`: a recusa `-a`/`-am` do `EA-82` também é
+  contornada.
+- `.claude/hooks/guard-add.sh:98` — `any(a in ("-A", "--all", ".") for a in args)`:
+  `-A&&git` ∉ (`-A`, `--all`, `.`), logo `git add -A&&git commit -m x` passa.
+- **Medido (exit 0)**: `git add a;git commit -am x`, `bash -c "git commit -am x"`,
+  `git add -A&&git commit -m x`, `git add .&&git commit -m x`, `$g add -A` e
+  `$g commit -am x`; controles `-am` → exit 2 e `-A` → exit 2.
+- **Efeito**: o vetor que a R11 §3 e o `EA-37` existem para fechar fica aberto por
+  uma questão de grafia do comando.
+
+### Como foi medido (executado vs. lido)
+
+**Executado** pelos dois refutadores do `EA-99`, nos hooks reais, por stdin. **Lido**
+por mim: as linhas acima. Nenhum comando git real foi executado.
+
+### Regra ferida
+
+**R11 §3** (o `guard-data` bloqueia no commit), **R10 §9**, e o `EA-37`. A mesma
+tensão do `EA-85` — "recusar forma não analisável" contra "residual declarado" — está
+**ausente** das declarações de limite de `guard-data.sh:52-56` e `guard-add.sh:28-31`.
+
+### Encaminhamento
+
+2 módulos (`guard-data.sh` e `guard-add.sh`; 3 se a correção for içada para
+`lib/common.sh`). Nenhum gate commitado cobre os hooks (a bateria do `EA-82` foi em
+repo descartável) — logo nasce com **gate + red + mutante** (`qa-engineer` escreve;
+`build-engineer` implementa): dois `fix-finding` (um por hook) ou uma demanda
+pequena. Correção técnica do colado: `shlex.shlex(s, posix=True,
+punctuation_chars=True)`. `$g` e `bash -c` são **classe distinta** (expansão de
+shell): exigem a decisão "recusar forma não analisável" **ou** "residual declarado"
+antes de qualquer código. Repin dos dois hooks no mesmo PR (R8).
+
 ## EA-100 — `run.sh --stage=<nome-inexistente>` termina `0 PASS · 0 FAIL` com exit 0: SKIP silencioso por erro de operador
 
 **Status**: `aberto`
@@ -8999,6 +9656,90 @@ por mim em `cee02e9`.
 
 `fix-finding` (`build-engineer`, um arquivo): stage desconhecido → exit ≠ 0
 nomeando o stage; exigir ≥ 1 stage selecionado. Negativo (`qa-engineer`).
+
+### Refutação adversarial de 2026-10-25
+
+Nota acrescentada por `doc-writer` (R2 §5). Fonte:
+`docs_phase5/auditoria_codex_2026-10-20/refutacao_adversarial_2026-10-25.md` §1 e §2b.
+Linhas reconferidas por mim em HEAD `2fcd552` (instrumentos idênticos a `cee02e9`),
+salvo as marcadas *(síntese)*.
+
+- **Veredito**: CONFIRMADO COM CORREÇÃO DE CADEIA.
+- **Executado por**: os dois refutadores (2/2) — cópia isolada: `--stage=naoexiste`,
+  `--stage=buidl` e `--stage=Baseline` → exit 0; controle com `env-doctor` ausente →
+  `[FAIL]`, exit 1. O contra-leitor não rodou o `run.sh`; executou a irmã
+  `compliance-audit.sh --rule=naoexiste` → `compliance: 0 PASS · 0 FAIL · 0 WARN`,
+  rc=0 (**reexecutada por mim em 2026-10-25**, mesmo resultado, árvore inalterada —
+  é o `EA-100a`).
+- **Severidade recomendada**: média (2/2).
+- **Encaminhamento recomendado**: `fix-finding`, `build-engineer`, 1 módulo
+  (`run.sh`: validar `FILTRO` contra os nomes do `pipeline.yaml`, exigir ≥ 1 stage
+  selecionado, tratar `--stage=` vazio, mensagem nomeada + exit ≠ 0 nos moldes de
+  `run.sh:50`) + `gen_pins` (`pins.json:275`; precedente `EA-15`, `485b66f` +
+  `8fbe33f`). O negativo é **prova executada registrada no verbete**, no estilo do
+  `EA-15` — não suíte nova (obrigaria `expected_suites.json`). A irmã
+  `compliance-audit.sh --rule=` é o **`EA-100a`**, nunca o mesmo diff.
+- **Ressalva de processo (uma linha)**: o reprodutor do `EA-100` executou
+  `run.sh --stage=naoexiste` na worktree apesar da restrição (caminho sem stage;
+  árvore e `.last_green` medidos inalterados).
+
+**Correções de cadeia**:
+
+- **O filtro é UMA linha**: `run.sh:99`; o exit vem de `:119` (`exit "$FAIL"`), não
+  de `:115` (que só imprime). O terra citava `:19/:97` → `:22/:99`.
+- **Silêncio total**: `continue` nu, ao contrário de `:100-101`
+  (`[SKIP] nome (mutates)` / `(heavy, --light)`, desde `f71eb8b`) — a única rota de
+  skip sem nome. É a forma precisa da violação de R10 §2 e a prova de que não é
+  decisão.
+- **Comparação exata e case-sensitive**: `--stage=Baseline` → 0/0.
+- **`.last_green` NÃO é gravado**: `run.sh:116` exige `-z "$FILTRO"`; o
+  `state-eval.sh:36-45` fica imune.
+- **Nenhum chamador automatizado filtra** (`verify.yml:40`, `post-turn-verify.sh:26`);
+  todos os `--stage=` do repo nomeiam stages existentes (`state-eval.sh:31`, skill
+  `baseline`, specs) — a exposição é só interativa, mas agentes citam
+  `run.sh --stage=X` como evidência (`mutation-matrix.json:1968`, e verbetes deste
+  backlog).
+- **Borda irmã** *(lida, não executada)*: `--stage=` com valor vazio → `FILTRO=""` →
+  run **completo** (que gravaria `.last_green`).
+- **Não é regressão**: o filtro é mudo desde a wave-0 (`f71eb8b`).
+- `run.sh` está fora da população de mutação por escolha; não há precedente de
+  harness sobre `.sh`; o `EA-15` registrou "não cria gate sobre a forma da saída do
+  run.sh".
+- O "Não medi por execução" do corpo está **superado**: medido.
+
+## EA-100a — `compliance-audit.sh --rule=<nome-inexistente>` termina `compliance: 0 PASS · 0 FAIL · 0 WARN` com exit 0: o mesmo filtro mudo do `run.sh`, na auditoria da própria configuração
+
+**Status**: `aberto`
+
+**Severidade (refutação adversarial)**: média — irmã do `EA-100`.
+
+**Aberto em**: 2026-10-25, a partir do contra-leitor do `EA-100` na refutação
+adversarial (`docs_phase5/auditoria_codex_2026-10-20/refutacao_adversarial_2026-10-25.md`
+§2b). **Executado** pelo contra-leitor e **reexecutado por mim** em HEAD `2fcd552`:
+`bash .claude/verify/compliance-audit.sh --rule=naoexiste` → `compliance: 0 PASS ·
+0 FAIL · 0 WARN`, rc=0, `git status --porcelain` vazio depois.
+
+### Cadeia arquivo:linha → efeito
+
+- `.claude/verify/compliance-audit.sh:19` — `for arg in "$@"; do case "$arg" in
+  --rule=*) FILTRO="${arg#--rule=}";; esac; done`.
+- `.claude/verify/compliance-audit.sh:22` — `secao() { [ -z "$FILTRO" ] || [
+  "$FILTRO" = "$1" ]; }`: um nome que não é de nenhuma seção nunca casa.
+- Nenhuma seção roda; o rodapé imprime `compliance: 0 PASS · 0 FAIL · 0 WARN` e sai
+  com `exit "$FAIL"` = 0.
+- **Efeito**: `--rule=backlgo` (erro de digitação) reporta verde, sem nomear nada.
+  Mesmo idioma de `run.sh:99` (`EA-100`).
+
+### Regra ferida
+
+**R10 §2** (SKIP silencioso é FAIL). Nenhuma decisão R13 o confirma como desenho.
+
+### Encaminhamento
+
+`fix-finding`, `build-engineer`, 1 módulo (`compliance-audit.sh`: validar `--rule=`
+contra os nomes das seções, exigir ≥ 1 seção selecionada, mensagem nomeada + exit
+≠ 0) + `gen_pins` (`pins.json:210`). **Diff separado do `EA-100`** (outro módulo).
+Negativo: prova executada no verbete, como no `EA-100`.
 
 ## EA-101 — o `lint-arch` anuncia "módulos novos" mas só aplica IIFE e `innerHTML=` a `ui_p5*` e `ui_d0*`: três módulos de demanda ficam fora
 
@@ -9036,6 +9777,53 @@ cobertura do sensor, não de violação presente.
 `fix-finding` (`build-engineer`, um arquivo): derivar o conjunto de módulos novos
 de dado (`bridges.json`/`current_phase.json`) ou usar allowlist explícita dos
 legados; os três módulos acima entram sem exceção, pois já cumprem.
+
+### Refutação adversarial de 2026-10-25
+
+Nota acrescentada por `doc-writer` (R2 §5). Fonte:
+`docs_phase5/auditoria_codex_2026-10-20/refutacao_adversarial_2026-10-25.md` §1.
+Linhas reconferidas por mim em HEAD `2fcd552` (`ui_curation_v32.js`,
+`ui_curation_edit_v32.js` e `ui_ondas_v32.js` idênticos a `cee02e9`), salvo as marcadas
+*(síntese)*.
+
+- **Veredito**: CONFIRMADO COM CORREÇÃO DE CADEIA.
+- **Executado por**: os dois refutadores (2/2) — glob reproduzido (6 casados); o
+  lint real → "6 módulos novos… 0 problema(s)"; cópias em scratch com `innerHTML=` e
+  sem `(function` nos 3 módulos → 0 problemas, exit 0; controles em `ui_p50_shell`
+  (1 FAIL) e `ui_d022_ondas` (2 FAIL); o conjunto ampliado reprova o mutante.
+- **Severidade recomendada**: média (2/2) — lacuna de sensor, zero violação presente.
+- **Encaminhamento recomendado**: `fix-finding`, `build-engineer`:
+  `check_lint_arch.py:37` → `ui_*_v32.js` **menos** uma allowlist nominal
+  {`ui_ux`, `ui_target`, `ui_session`, `ui_refinement`, `ui_journey`, `ui_icons`,
+  `ui_v32`} (medido: 9 módulos varridos, 0 FAIL em HEAD) + `gen_pins`
+  (`pins.json:202`) + **registrar a convenção de nomenclatura da 011** em R9, na skill
+  `new-demand` e nos templates (senão o 25º módulo repete). Fazer **antes ou dentro da
+  025**: `ui_curation_v32.js` é exatamente o arquivo que a 025 toca — um `innerHTML=`
+  ali passaria verde.
+
+**Correções de cadeia**:
+
+- **A regra 4 (bridges, `check_lint_arch.py:50`, glob `ui_*.js`) ALCANÇA os três**
+  (`__CURATION`, `__P53CUR`, `__QS22` registrados); o buraco é das regras 2 e 3 —
+  não "fora do lint-arch".
+- **"Regra ferida R9 §1 e §9" → nenhuma ferida hoje**: IIFE em `ui_curation_v32.js:57`,
+  `ui_curation_edit_v32.js:35` e `ui_ondas_v32.js:27` (todas com guarda
+  `__installed`, conferido); 0 `innerHTML =` nos três (conferido). O ferido é o
+  **cabeçalho** da R9 ("bloqueante para módulo NOVO (stage `lint-arch`)") —
+  enforcement sem alcance sobre 3 dos 5 módulos novos de `current_phase.json`
+  *(síntese)*.
+- **"Derivar de dado (`bridges.json`/`current_phase.json`)" é impraticável**:
+  `current_phase.json:40` é prosa; `bridges.json` tem owner para os legados também.
+- **Origem**: não é "o lint que ficou estreito" — a 019 e a 022 batizaram módulos
+  **fora** da convenção que a 011 criou para o lint alcançar (`plan 011:27-31`;
+  `84c92a1` recusou o glob largo por 11 FAILs em 6 módulos 4.x). A 019 cobriu
+  `ui_p52_support` por acaso do prefixo e descobriu dois na mesma demanda, com
+  bridges `__P53*` de uma fase 5.3 não aberta; os checklists R9 dos plans (019:100 e
+  :103; 022:81-82) não têm gate nem `spec-validate` *(síntese)*.
+- **Fraquezas preexistentes, não reportar (R13)**: o teste de IIFE é substring
+  (`( function` engana) e `ui_d0*` não casa `ui_d1NN`.
+- CX-13 `check_lint_arch.py:36` → **`:37`**. `ui_ondas_v32.js:29-36` refere-se à
+  regra 4 e não contradiz.
 
 ## EA-102 — três ids `EA-*` são citados sem verbete no backlog: `EA-59`, `EA-60`, `EA-63`
 
@@ -9088,6 +9876,55 @@ cadeia recuperável nos commits acima), preservando a numeração; conferir se o
 `EA-*` citados não têm destino. Um gate de referência (`EA-n` citado sem heading) é
 instrumento novo e fica para decisão do proprietário.
 
+### Refutação adversarial de 2026-10-25
+
+Nota acrescentada por `doc-writer` (R2 §5; o corpo acima, que diz "PR de entrada não
+identificado por mim", **não** foi reescrito — esta subsecção o supera). Fonte:
+`docs_phase5/auditoria_codex_2026-10-20/refutacao_adversarial_2026-10-25.md` §1. Fatos
+de git e de `gh` reconferidos por mim em 2026-10-25, salvo os marcados *(síntese)*.
+
+- **Veredito**: CONFIRMADO COM CORREÇÃO DE CADEIA.
+- **Executado por**: os dois refutadores (2/2) — censo por script (87 headings
+  tolerantes, máximo `EA-90`, lacunas [59, 60, 63]; em HEAD, 101 verbetes até
+  `EA-104`, mesmas lacunas); `git log --all -S/-G` vazio; `git grep` fora do backlog
+  = 48 ocorrências, só em produto; `gh pr view 85`.
+- **Severidade recomendada**: baixa (2/2).
+- **Encaminhamento recomendado**: `fix-finding` doc-only, `doc-writer`: três
+  verbetes retroativos `resolvido`, na **posição numérica** entre o `EA-58` (`:5619`)
+  e o `EA-61` (`:5778`), com a linha de status canônica, + `gen_pins` (o backlog é
+  pinado, R8 §1). Um gate de referência (`EA-n` / `[[EA-n]]` citado sem heading) é
+  instrumento novo (R10 §9) e fica como **demanda do proprietário**.
+
+**Correções de cadeia**:
+
+- **A metade "`EA-4`, `EA-5`, `EA-6` e `EA-19` ausentes" é FALSA**, e o corpo já a
+  desfazia: existem como `## ~~EA-n — …~~` em `:661`, `:764`, `:863` e `:1588`
+  (conferido), com a linha de status `refutado` e o corpo riscado (R2 §5). O parser
+  canônico (`compliance-audit.sh:407`, `^## (?:~~)?(EA-\d+[a-z]?)\b`, "tolera refutado
+  riscado") os conta. A inclusão nasceu na triagem, não no Codex.
+- **O "87 verbetes" do astra JÁ é a contagem tolerante** (83 pela estrita).
+- **Citações dos três ids, em HEAD** (conferidas por `grep`): `EA-59` em `:5880` e
+  `:5998`; `EA-60` em `:5782`, `:5880`, `:6640` (heading do `EA-70`), `:6657`,
+  `:6703`, `:6719`, `:6723` e `:6727` (`[[EA-60]]`, o único wikilink pendente de 50);
+  `EA-63` em `:5998`.
+- **PR de entrada do `EA-60` identificado: #85** (`fix/ea60-editor-e-linguagem`,
+  `MERGED` 2026-09-17T19:55:07Z — `gh pr view 85`). O `mergeCommit` `e0d70db` é
+  `chore(EA-62): gen_pins`, um commit simples (conferido). Os commits `172e1d1`,
+  `b5d34bf`, `08d78cc` e `b1a940b` entraram na `develop` pelo merge do **#86**
+  (`31ea762`, 2026-09-17, 2º pai `e6139bf`): `git merge-base --is-ancestor 172e1d1
+  31ea762^1` → **não**; `… 31ea762^2` → sim (conferido).
+- **`EA-59` inclui também** `366302e` (o principal) e `6f77ef9` (o repin) — o corpo
+  listava só `4279cbc` e `cb8beed`.
+- **Natureza dos três commits**: lotes dos "treze apontamentos do proprietário sobre
+  a v3.2.5" sob a delegação de 2026-08-29 — `366302e`: itens 1, 2, 3, 4, 5 e 10;
+  `172e1d1`: 9, 11, 12 e 13; `87fc01f`: 6 *(síntese)*. A rota `fix-finding`
+  ("achado registrado", `.claude/skills/fix-finding/SKILL.md:3`) correu três vezes
+  **sem achado**. Os verbetes retroativos devem registrar também o **não entregue**:
+  o item 12 → `EA-61`; o 13, parcialmente revertido em `08d78cc` → `EA-62`; o 7/8 →
+  `EA-56`/`EA-58`; e a dúvida "setas com ponta?" em `87fc01f`.
+- **Regra**: `documentation.md:48-50` + o namespace do preâmbulo deste arquivo
+  (`:42-43`). Nenhum instrumento resolve `[[EA-n]]` *(síntese)*.
+
 ## EA-103 — o workflow de CI referencia Actions por tag móvel e não declara `permissions:`
 
 **Status**: `aberto`
@@ -9107,8 +9944,9 @@ por mim em `cee02e9`.
   job ou global; vale o default do repositório.
 - `.github/workflows/verify.yml:50` — `GITHUB_TOKEN: ${{ github.token }}` é entregue
   **de propósito** ao passo de compliance (`:43` é o nome do passo; o comentário
-  `:44-49` cita "D016-PROT1"). Não é o defeito; é o que um `permissions:` mínimo
-  limitaria.
+  `:46-49` cita "D016-PROT1" — intervalo corrigido in loco em 2026-10-25; eu havia
+  escrito `:44-49`, e `:45` é o `env:`). Não é o defeito; é o que um `permissions:`
+  mínimo limitaria.
 
 ### Como foi medido (executado vs. lido)
 
@@ -9125,6 +9963,57 @@ Candidata a decisão do proprietário se vira regra.
 `build-engineer`: fixar as Actions em SHA revisado com a versão humana em
 comentário; `permissions: contents: read` por job (o que precisar de mais declara
 o mínimo próprio). Mudança em arquivo pinado: repin do orquestrador.
+
+### Refutação adversarial de 2026-10-25
+
+Nota acrescentada por `doc-writer` (R2 §5; a imprecisão `:44-49` → `:46-49` do corpo
+foi corrigida **in loco**). Fonte:
+`docs_phase5/auditoria_codex_2026-10-20/refutacao_adversarial_2026-10-25.md` §1.
+Linhas reconferidas por mim em HEAD `2fcd552`, salvo as marcadas *(síntese)*.
+
+- **Veredito**: CONFIRMADO COM CORREÇÃO DE CADEIA — a perna das tags é sustentada e
+  sem mitigação; a perna `permissions:` / token fica rebaixada a postura (o default
+  externo já é seguro).
+- **Executado por**: os dois refutadores (2/2) — `gh api …/actions/permissions` e
+  `…/permissions/workflow`, rulesets, `matching-refs/tags/v7` e o log do run
+  `39392713758`.
+- **Severidade recomendada**: baixa (2/2).
+- **Encaminhamento recomendado**: `fix-finding`, `build-engineer`, 1 módulo
+  (`verify.yml`: os 8 `uses:` → `@<sha> # vX.Y.Z` + `permissions: contents: read` no
+  topo) + `gen_pins` (`pins.json:277`); evidência = run do próprio PR
+  (`build-engineer.md:31` *(síntese)*). `dependabot.yml` (automação que abre PRs) e o
+  toggle `sha_pinning_required` são **decisão do proprietário**, fora do fix.
+
+**Correções de cadeia**:
+
+- `verify.yml:43` → **`:50`**: `:43` é o nome do passo, `:45` o `env:`, `:46-49` o
+  comentário D016-PROT1/G6 (`9a460f5`); o `GITHUB_TOKEN` está em `:50`.
+- **6 → 8 `uses:`**: `:27`, `:31`, `:34`, `:58`, `:62`, `:65` e **`:97`, `:98`** (job
+  `fecho`, `83a88e2`).
+- **A perna `permissions:` está rebaixada a postura.** "Sem permissões mínimas" é
+  literalmente verdadeiro, mas o token efetivo **já é read-only**
+  (`default_workflow_permissions: "read"`, `can_approve_pull_request_reviews: false`;
+  log do run: Contents/Metadata/Packages read). O defeito é **dependência de default
+  externo ao workflow**.
+- **"Token entregue ao passo de compliance" não é defeito**: decisão registrada
+  (`spec.md:545` G6/E016-6 *(síntese)*), consumidor único `check_branch_protection.py`
+  (GET-only; `compliance-audit.sh:72-73`, `metadata: read` por T6) — e o mesmo token
+  chega a todo passo de todo job via `checkout persist-credentials:true` e `token:`
+  default de `setup-node`/`setup-python`. Sair da cadeia.
+- **A tag móvel é fato medido**: `setup-python@v7` = `5fda3b95` (v7.0.0) nos runs da
+  selagem de 2026-10-20 → `6d4fd22b` (v7.1.0, commit de 2026-10-22); `checkout`
+  (v7.0.0 → v7.0.1) e `setup-node` (v7.0.0 → v7.1.0) também. A plataforma canônica
+  se moveu sob a selagem. Camada de plataforma desligada: `allowed_actions: "all"`,
+  `sha_pinning_required: false`; sem dependabot; `pins.json:277` pina os bytes do yml,
+  não o commit da tag.
+- **Regra**: nenhuma R1–R14 literal; espírito de R7 §4 / R10 §5 (a leitura literal
+  acusaria também `ubuntu-latest` e `node-version: "24"`).
+- `contents: read` não quebra nada medível (`check_fecho --pr` só lê env;
+  `evidence-bridge` sem token).
+- **Nota lateral (decisão do proprietário, NÃO registrada como achado)**: `main` não
+  tem ruleset — `gh api …/rules/branches/main` → `[]`; o ruleset 21381133 inclui só
+  `refs/heads/develop`. R14 diz que `main` só recebe código via release. Executado.
+  Com o token read-only, não amplifica o `EA-103`.
 
 ## EA-104 — o README manda obter "o artefato da release" e baixar `releases/latest` com nome da v3.2.7, contra a v3.2.11 que ele mesmo declara
 
@@ -9145,8 +10034,9 @@ orquestrador. Cadeia relida por mim em `cee02e9`. Escapou ao passe de selagem
   `docs_phase5/SELAGEM_V3_2_11.md`, pendência 11).
 - `README.md:73-74` — manda baixar `releases/latest` e dá o nome
   `quickscan_secops_soccmm_v3_2_7.html`: arquivo congelado de outra versão.
-- `tests_p52_layout.js:1756` (gate `V322-DOC3`) — compara declarações de versão
-  dentro do README; não confere a instrução de obtenção.
+- `tests_p52_layout.js:1707` (gate `V322-DOC3`; corrigido in loco em 2026-10-25 — eu
+  havia escrito `:1756`, que é o regex de versão dentro do corpo do gate) — compara
+  declarações de versão dentro do README; não confere a instrução de obtenção.
 - **Efeito**: quem segue o README obtém a v3.2.9 (a última Release) com um nome de
   arquivo que não é o dela, enquanto o README diz que a versão corrente é a v3.2.11.
 
@@ -9169,3 +10059,577 @@ proprietário, com SHA-256 e tamanho; nenhum nome de arquivo congelado de outra
 versão. O status só vira `resolvido` depois do merge, e por quem o escrever com a
 referência do PR (R2 §1). O `EA-64` não fecha: o remédio de raiz (registro
 rastreado escrito por `preparar_release.py`) continua não feito.
+
+### Refutação adversarial de 2026-10-25
+
+Nota acrescentada por `doc-writer` (R2 §5; o número de linha de `tests_p52_layout.js`
+foi corrigido **in loco**). Fonte:
+`docs_phase5/auditoria_codex_2026-10-20/refutacao_adversarial_2026-10-25.md` §1.
+Linhas de README relidas por mim em `cee02e9` (o corpo descreve esse estado; o
+`README.md` de HEAD já é o de `bb1b18d`), as de `tests_p52_layout.js` em HEAD
+`2fcd552`.
+
+- **Veredito**: CONFIRMADO COM CORREÇÃO DE CADEIA.
+- **Executado por**: os dois refutadores (2/2) — `gh release list`/`gh api
+  releases/latest`; sha256 dos blobs `cee02e9` × tag `v3.2.9`; `git blame`;
+  `gh run list` (`verify` em `success` em `0bd677c`/`ba77134`/`cee02e9`, com a
+  contradição presente). O download do asset **não foi executado** (digest via API).
+- **Severidade recomendada**: média (2/2).
+- **Encaminhamento recomendado**: fix-finding doc-only **já aplicado** em `bb1b18d`
+  (README). Resta: repin de `pins.json:285` se pendente; o status do verbete; e
+  **refazer a referência de identidade** — `bb1b18d` grava o SHA em prosa e o adendo
+  `8d35787` já diz que ele "não vale para a tag futura" ("dado que apodrece não mora
+  em prosa"): a referência final deve ser `pins.json` / o registro de selagem na
+  selagem efetiva. O remédio de raiz é o `EA-64` (demanda: registro rastreado escrito
+  por `preparar_release.py` + gate que confira a instrução de obtenção contra a versão
+  declarada, ou proíba nome de arquivo congelado no README).
+- **Situação do verbete**: segue `aberto` até o merge deste PR; só vira `resolvido`
+  por quem o escrever com a referência do PR (R2 §1).
+
+**Correções de cadeia**:
+
+- `README.md:36-37` → **`:37`** (bloco `:37-39`; `:36` é vazia no `cee02e9`).
+  **Acrescentar `:23`** ("A versão corrente do produto é a v3.2.11"), a linha que o
+  gate `V322-DOC3` exige e que torna `:37` contraditório.
+- **Medido**: `releases/latest` = **v3.2.9** (Latest, 2026-09-27), asset único
+  `quickscan_secops_soccmm_v3_2_9.html`, 1.204.636 B, digest `sha256:a82b8362…bcf` =
+  `git show v3.2.9:…dev.html`; em uso = `4c45ce20…5712`, 1.242.046 B
+  (`pins.json:337`; `SELAGEM_V3_2_11.md`) — `:37` é falso **por medida**.
+  `quickscan_secops_soccmm_v3_2_7.html` só existe na release v3.2.7 (1.186.088 B).
+- **`:74` está errado desde a release v3.2.8** (2026-09-22T20:04Z, ~16 h depois de
+  `afcabe8`) e sobreviveu a `194e61e` (README:66 na tag v3.2.8), `9f1346f` (`:68` na
+  v3.2.9) e `adc300f` — **terceira regressão da mesma forma do `EA-64`**. `:37` e
+  `:73` eram verdadeiros em `5fd9124` (fix do `EA-64`, v3.2.6) e viraram falsos em
+  `adc300f`, o próprio commit de selagem *(síntese)*.
+- `:19` e `:35` afirmam a tag v3.2.11, inexistente (`ls-remote` só até v3.2.9; a API
+  dá 404 para v3.2.10/11) — é o CX-07, tratado no adendo de `SELAGEM_V3_2_11.md`, não
+  o `EA-104`.
+- **O gate `V322-DOC3` começa em `tests_p52_layout.js:1707`** (não `:1756`, que é o
+  regex `V` de versão; corrigido in loco). Nenhuma asserção sobre `releases/latest`,
+  nome de arquivo ou "artefato da release" (a palavra "release" só aparece em
+  comentários `:1732`/`:1738` *(síntese)*).
+- A única decisão registrada (`SELAGEM_V3_2_11.md:29-32`: "sem Release") é a que torna
+  `:37` e `:73-74` falsos.
+- Nenhum outro consumidor de `v3_2_7.html` / `releases/latest` em `cee02e9` além do
+  README e de `SELAGEM_V3_2_11.md:303` (afirmação correta, não instrução).
+
+## EA-105 — exportar também escreve no owner da curadoria: `prepareSessionExport` chama `validateSessionDocument`, que chama `fromSession` — o botão de exportar zera e reescreve o estado a partir da própria serialização
+
+**Status**: `aberto`
+
+**Severidade (refutação adversarial)**: baixa — idempotente hoje; é o terceiro chamador
+do "validar que aplica".
+
+**Aberto em**: 2026-10-25 (refutação adversarial; medido em jsdom salvo onde dito
+"lido"), a partir do crítico de completude do produto
+(`docs_phase5/auditoria_codex_2026-10-20/refutacao_adversarial_2026-10-25.md` §2a, N1).
+Linhas relidas por mim em HEAD `2fcd552`.
+
+### Cadeia arquivo:linha → efeito
+
+- `ui_session_v32.js:116-118` — `prepareSessionExport(label)` monta o documento
+  (`:117`) e chama `validateSessionDocument(doc)` (`:118`).
+- `ui_session_v32.js:237-240` — a validação chama `window.__CURATION.fromSession(I.reportCuration)`
+  quando a chave existe.
+- `ui_curation_v32.js:188` — `daSessao` zera o owner e o reescreve a partir da
+  própria serialização.
+- **Efeito**: exportar **escreve** no owner. Os três chamadores do "validar que
+  aplica" são `ui_session_v32.js:693` (seletor de arquivo), `:632` (confirmação) e
+  `:118` (exportação); o `EA-91` trata só os dois primeiros.
+
+### Como foi medido (executado vs. lido)
+
+**Executado** (jsdom, crítico do produto): `fromSession` é chamado 1× durante
+`prepareSessionExport('conta')`, `ok = true`, conteúdo igual antes e depois. **Lido**
+por mim: a cadeia acima.
+
+### Invariante / regra ferida
+
+Nenhuma INV literal. Mesma raiz do `EA-91` (**R9 §3**: bridge cujo "validar" muta).
+
+### Encaminhamento
+
+Id próprio (a síntese admite também o sufixo `EA-91a`). Entra no **cenário 1 da 025**:
+se a validação pura for feita só no import, o export continua escrevendo no owner —
+o gate exige contador de chamadas a `fromSession` = 0 durante o seletor, a prévia
+aberta, Cancelar/Escape **e** `prepareSessionExport`, e `JSON.stringify(state())`
+idêntico antes e depois do export. Mutante: reintroduzir `fromSession` no validador.
+
+## EA-106 — "sem curadoria" tem três representações e dois comportamentos: a chave ausente PRESERVA a sessão anterior, `{}` e `{decisions:{}}` LIMPAM — e o validador aceita `{}` onde recusa `coverage:""` e `coveredCapabilities:[]`
+
+**Status**: `aberto`
+
+**Severidade (refutação adversarial)**: média.
+
+**Aberto em**: 2026-10-25 (refutação adversarial; medido em jsdom salvo onde dito
+"lido"), a partir do crítico de completude do produto
+(`docs_phase5/auditoria_codex_2026-10-20/refutacao_adversarial_2026-10-25.md` §2a, N2).
+Linhas relidas por mim em HEAD `2fcd552`.
+
+### Cadeia arquivo:linha → efeito
+
+- `ui_session_v32.js:237` — a curadoria só é aplicada se `I.reportCuration !== undefined`:
+  a chave **ausente** não chama `fromSession` e o estado anterior sobrevive (`EA-91`).
+- `ui_curation_v32.js:188-189` — `daSessao` zera o owner e só então avalia a entrada;
+  `{}` e `{decisions:{}}` chegam ao fim com o estado **vazio**.
+- Contraste, no mesmo validador: `ui_session_v32.js:327-329` e `:346-348` recusam
+  `coverage: ""` e `coveredCapabilities: []` mandando "representar pela ausência do campo".
+- `ui_curation_v32.js:178-183` — `paraSessao` nunca emite `{}`; a forma canônica é a
+  ausência (`D019-CUR2`, `tests_019_curadoria.js:174`: "missing ≠ null ≠ {}").
+- **Efeito**: três grafias de "sem curadoria", com dois comportamentos — a ausência
+  herda a sessão anterior; `{}` e `{decisions:{}}` substituem por vazio.
+
+### Como foi medido (executado vs. lido)
+
+**Executado** (jsdom): ausente → o estado herda; `{}` → `{}`; `{decisions:{}}` → `{}`;
+`coverage:""` → `ok=false`. **Lido** por mim: as linhas acima.
+
+### Invariante / regra ferida
+
+**INV-8** em sua parte de forma canônica (missing ≠ `{}`): o validador aceita uma
+grafia que o exportador nunca produz. Não é a questão de transacionalidade do `EA-91`.
+
+### Encaminhamento
+
+Id próprio. **Decisão a pinar na 025** (cenário 4), de `product-owner` / `tech-lead`:
+recusar `{}` / `{decisions:{}}` / `decisions` sem chaves como não-canônicos (coerente
+com `:327-329` / `:346-348` e `D019-CUR2`) **ou** declará-los equivalentes à ausência —
+com mutante para o lado escolhido (mutante (f) da lista consolidada: `{}`
+aceito/recusado invertido).
+
+## EA-107 — o `draft` do editor de contexto tecnológico sobrevive a importação, "Nova sessão" e "Reiniciar avaliação" e bloqueia a impressão do cliente seguinte por um editor que não está na tela
+
+**Status**: `aberto`
+
+**Severidade (refutação adversarial)**: média.
+
+**Aberto em**: 2026-10-25 (refutação adversarial; medido em jsdom salvo onde dito
+"lido"), a partir do crítico de completude do produto
+(`docs_phase5/auditoria_codex_2026-10-20/refutacao_adversarial_2026-10-25.md` §2a, N3).
+Linhas relidas por mim em HEAD `2fcd552`.
+
+### Cadeia arquivo:linha → efeito
+
+- `ui_v32.js:139` — `let draft = null;` (cópia de trabalho; "só vira estado no Salvar").
+  `:409-411` — `openEditor` faz `draft = newDraft()`.
+- `ui_v32.js:535` e `:572` — os **únicos** pontos que o zeram (cancelar e salvar).
+- `ui_ux_v32.js:23-30` (`uxNewSession`), `:17-22` (`uxResetAssessment`) e
+  `ui_session_v32.js:606-628` (`commitCanonicalOwners`) **nunca** o tocam.
+- `ui_v32.js:1585-1590` — `preparePrint`: `draft !== null` → `{ blocked:true }` com o
+  texto "Salve ou cancele as alterações do contexto tecnológico antes de gerar o
+  relatório." (`:1588`); `safePrint` repete o teste em `:1625-1626`.
+- **Efeito**: com o editor aberto, importar, "Nova sessão" ou "Reiniciar" deixa
+  `#v32editor` oculto e vazio, mas `beforeprint` bloqueado — a impressão do cliente
+  seguinte é barrada por um editor que não está na tela, e o operador só a destrava
+  abrindo `#v32cta` e `#v32cancel`. O `draft` carrega vendor / produto / notas do
+  cliente anterior em memória (não salvável: `#v32save` deixa de existir depois do
+  render).
+
+### Como foi medido (executado vs. lido)
+
+**Executado** (jsdom, cenários D1–D4): após importação, Nova sessão e Reiniciar com o
+editor aberto, `#v32editor` fica oculto/vazio e o `beforeprint` é bloqueado;
+recupera-se só pelo par `#v32cta` + `#v32cancel`. **Lido** por mim: as linhas acima.
+
+### Invariante / regra ferida
+
+Nenhuma INV literal; escopo de dado entre sessões (mesma família do `EA-92`).
+
+### Encaminhamento
+
+Id próprio; módulo distinto do `EA-91`/`EA-92` — `ui_v32.js` é §29.4 (9 `innerHTML=`
+legados: não tocar além do necessário). Na 025: **ponto de descarte do `draft` exposto
+em `__V32UI`, em wave própria**, chamado por reset e por commit (cenário 9). Alíneas:
+"após Nova sessão + nova avaliação, `preparePrint()` não bloqueia" e "após import com
+editor aberto, `preparePrint()` não bloqueia". Mutante (h): `draft` não descartado.
+
+## EA-108 — `prioLimitHit` (Camada 1) sobrevive à importação: o aviso "Limite de 3 prioridades atingido" aparece sobre uma sessão importada com 0 prioridades
+
+**Status**: `aberto`
+
+**Severidade (refutação adversarial)**: baixa.
+
+**Aberto em**: 2026-10-25 (refutação adversarial; medido em jsdom salvo onde dito
+"lido"), a partir do crítico de completude do produto
+(`docs_phase5/auditoria_codex_2026-10-20/refutacao_adversarial_2026-10-25.md` §2a, N4).
+Linhas relidas por mim em HEAD `2fcd552`.
+
+### Cadeia arquivo:linha → efeito
+
+- `quickscan_secops_soccmm_v3_2_dev.html:4838` — renderiza "N de 3 selecionadas" e, se
+  `prioLimitHit`, o trecho "Limite de 3 prioridades atingido — desmarque …".
+- `ui_ux_v32.js:20` e `:27` — "Reiniciar" e "Nova sessão" fazem `prioLimitHit=false`.
+- `ui_session_v32.js:606-628` — `commitCanonicalOwners` escreve `businessPriority` e
+  `tgtNotices = []` (`:620`), mas **não** `prioLimitHit`.
+- **Efeito**: a variável de Camada 1 sobrevive à importação (classe de `tgtNotices`, que
+  o commit já zera).
+
+### Como foi medido (executado vs. lido)
+
+**Executado** (jsdom): limite atingido → importação com `priorities: []` → "0 de 3
+selecionadas · Limite de 3 prioridades atingido…". **Lido** por mim: as linhas acima.
+
+### Invariante / regra ferida
+
+Nenhuma INV literal; transiente que o commit deveria substituir.
+
+### Encaminhamento
+
+Id próprio **ou** alínea do inventário de transientes da 025 (cenário 9). Zerar no
+commit (`ui_session_v32.js`) não toca arquivo congelado: a variável já é escrita por
+`ui_ux_v32.js`. Mutante (g): `prioLimitHit` não zerado.
+
+## EA-109 — `sessionHasContent()` e `sessionPreview()` são cegos à curadoria: o aviso "substituirá a sessão atual" e a prévia da importação ficam mudos sobre o que a 025 tornará substitutivo
+
+**Status**: `aberto`
+
+**Severidade (refutação adversarial)**: média.
+
+**Aberto em**: 2026-10-25 (refutação adversarial; medido em jsdom salvo onde dito
+"lido"), por fusão do crítico de produto (item 6) e do crítico de gates (item 7)
+(`docs_phase5/auditoria_codex_2026-10-20/refutacao_adversarial_2026-10-25.md` §2a, N5).
+Linhas relidas por mim em HEAD `2fcd552`.
+
+### Cadeia arquivo:linha → efeito
+
+- `ui_session_v32.js:652-656` — `sessionHasContent()` não olha a curadoria.
+- `ui_session_v32.js:642-651` — `sessionPreview(doc)` também não.
+- `ui_session_v32.js:721-734` — `showImportPreview` (`:718`) monta o aviso de
+  substituição a partir de `sessionHasContent()` (`:721`).
+- `tests_session_m48.js:290-299` — S30 ("sessão ativa exige confirmação de
+  substituição") mede **um só** estado, `answerAll`.
+- **Efeito**: o portão de confirmação não avisa que a curadoria será substituída.
+
+### Como foi medido (executado vs. lido)
+
+**Executado** (jsdom): depois de "Reiniciar" com um `exclude`, `sessionHasContent()` =
+`false` enquanto `captureCanonicalInputs().reportCuration` = `{…exclude}`; a prévia não
+tem campo de curadoria; as chaves de `sessionPreview` são `label`, `createdAt`,
+`toolVersion`, `answered`, `landscape`, `target`, `refinement`. **Lido** por mim: as
+linhas acima.
+
+### Invariante / regra ferida
+
+Nenhuma INV literal. O `EA-92` cita `sessionHasContent` só como a razão de S31-S32
+ficarem verdes; como **defeito de UX** (portão de confirmação sem aviso) é novo.
+
+### Encaminhamento
+
+Id próprio. **Cenário 10 da 025**: `sessionHasContent()` passa a contar a curadoria
+(S30 com resíduo **só** de curadoria exige "Importar e substituir" + aviso);
+`sessionPreview` ganha "Curadoria do relatório: sim/não" e a prévia o exibe — pinar a
+decisão de produto qualquer que seja.
+
+## EA-110 — pergunta de desenho (NÃO é defeito confirmado): desmarcar e remarcar um item ofertado grava `include` explícito, porque o bridge da curadoria não tem `unset`
+
+**Status**: `aberto`
+
+**Severidade (refutação adversarial)**: baixa — e **isto não é um defeito confirmado**.
+É uma pergunta de desenho para `product-owner` / `tech-lead`, registrada aqui para não
+se perder; a síntese a classifica assim e a decisão de a tratar como defeito ou como
+desenho é deles.
+
+**Aberto em**: 2026-10-25 (refutação adversarial; medido em jsdom salvo onde dito
+"lido"), a partir do crítico de completude do produto
+(`docs_phase5/auditoria_codex_2026-10-20/refutacao_adversarial_2026-10-25.md` §2a, N6).
+Linhas relidas por mim em HEAD `2fcd552`.
+
+### Cadeia arquivo:linha → efeito
+
+- `ui_curation_edit_v32.js:86-88` — o `change` do checkbox chama o bridge `set`.
+- `ui_curation_v32.js:217-222` — o bridge só tem `set` e `clear`: **não há `unset(id)`**.
+- `ui_curation_v32.js:178-183` — `paraSessao` serializa a decisão; na importação ela
+  volta sem gaps (`:162-164`, `escolhaDoOperador`; `:149-157`, `publicados`).
+- `ui_p52_support_v32.js:152` — `PROV_TXT`: "Incluído por decisão do engenheiro — não
+  derivado da avaliação."
+- **Efeito**: um no-op de UI (desmarcar e remarcar) vira decisão canônica que viaja na
+  sessão e reaparece como "Incluído por decisão do engenheiro".
+
+### Como foi medido (executado vs. lido)
+
+**Executado** (jsdom): desmarcar → `exclude`; remarcar → `include`; reimportar em DOM
+novo → `published = [item]`, `isOperatorChoice = true`, `unsupported = [item]`. **Lido**
+por mim: as linhas acima.
+
+### Por que não é defeito confirmado
+
+Os casos 4 e 5 do `refinement.md` da 019 partiram de decisões deliberadas *(síntese)*.
+Nada nas regras ou nas invariantes proíbe o comportamento.
+
+### Encaminhamento
+
+**Pergunta de desenho para PO/TL na 025** (cenário 11): voltar a `missing` — o que
+exige `unset(id)` no bridge — ou manter o `include` explícito. A forma decidida define a
+alínea de roundtrip. Se confirmado como desenho, vai para `design-decisions.md` (R12/R13,
+conteúdo do `product-owner`); **não** foi levado para lá neste passe.
+
+## EA-111 — `D019-INV8` é tautológico para a importação: o título promete "recomputada na importação" e o corpo não importa; três mutantes (mutB, mutC, mutD) sobrevivem com 14/14
+
+**Status**: `aberto`
+
+**Severidade (refutação adversarial)**: alta — classe `EA-20` (gate que promete
+asserção e entrega tautologia), ligado ao `EA-91`.
+
+**Aberto em**: 2026-10-25 (refutação adversarial; medido em jsdom salvo onde dito
+"lido"), a partir do crítico de gates
+(`docs_phase5/auditoria_codex_2026-10-20/refutacao_adversarial_2026-10-25.md` §2a, N7).
+Linhas relidas por mim em HEAD `2fcd552`.
+
+### Cadeia arquivo:linha → efeito
+
+- `tests_019_curadoria.js:219-247` — o título (`:219`) promete "exportada, recomputada na
+  importação"; o corpo **não contém nenhuma chamada** a `importSessionDocument`,
+  `validateSessionDocument` ou `fromSession` (`grep` = 0 em `:219-247`).
+- `tests_019_mutants.js:88-91` — o único mutante, `D019-M3`, ataca só o exportador.
+- `mutation_map.json` — o harness `d019` lista só esse arquivo como `insumos.oraculo`
+  *(síntese)*; `tests_core_mutants.js:53-60` (`CM1`) cobre só `hasReservedDerived`.
+- **Efeito**: mutantes que apagam a importação sobrevivem.
+
+### Como foi medido (executado vs. lido)
+
+**Executado** (crítico de gates): `node tests_019_curadoria.js` → 14/14; com
+`D019_HTML_OVERRIDE` sobre cópias mutadas, **14/14 nos três** — sobreviventes: **mutC**
+(`fromSession` → `[]`, a importação nunca restaura), **mutD** (`daSessao` sem reset:
+merge em vez de substituição) e **mutB** (snapshot com `curadoria: null` + restore sem
+`fromSession`). **Lido** por mim: as linhas acima.
+
+### Invariante / regra ferida
+
+**R3 §5** (mutante obrigatório) e o "Nascimento de um gate" da R10 (oracle que discrimina); `design-decisions.md` (R13) diz que gate
+que promete asserção e entrega tautologia **é** achado (`EA-20`). O `EA-91` já anota que
+o corpo nunca importa — mas como cadeia do defeito de produto; a sobrevivência de três
+mutantes executada é um achado de gate distinto.
+
+### Encaminhamento
+
+Id próprio, ligado ao `EA-91`. Na 025: ou se corrige o corpo do `D019-INV8` (importação
+real), ou nasce um `D025-INV8` e o `INV8` é reduzido ao que mede. Mutantes (i) mutC,
+(j) mutD e (k) mutB da lista consolidada, cada um vermelho no gate correspondente.
+`qa-engineer`.
+
+## EA-112 — guarda-chuva: as suítes de sessão e de UX são cegas ao sexto owner (a curadoria), em quatro famílias — reject-before-commit, roundtrip, Nova sessão e self-import / documentação
+
+**Status**: `aberto`
+
+**Severidade (refutação adversarial)**: alta — mesma raiz de cobertura do `EA-91` e do
+`EA-92`, que citam S29, S6/S7, UX21 e S31 só de passagem.
+
+**Aberto em**: 2026-10-25 (refutação adversarial; medido em jsdom salvo onde dito
+"lido"), a partir do crítico de gates
+(`docs_phase5/auditoria_codex_2026-10-20/refutacao_adversarial_2026-10-25.md` §2a, N8).
+Linhas da síntese; as de `documentação` medidas por mim em HEAD `2fcd552`.
+
+### Cadeia arquivo:linha → efeito
+
+Um id guarda-chuva com quatro alíneas (a síntese admitia também dois ids, sessão ×
+Nova sessão):
+
+- **(a) reject-before-commit** — S29, S49, S67, S77, S62+S68: fixtures sem curadoria; o
+  "pre" é lido por `captureCanonicalInputs` (chave ausente = owner invisível); o
+  documento ruim é derivado da própria janela.
+- **(b) roundtrip** — S6, S7, S37, S41, S112, P50-SESUX4, D019-CUR2: sempre `boot()`
+  limpo ou a mesma janela; nunca o **mesmo documento** sobre dois estados prévios
+  distintos.
+- **(c) Nova sessão** — S31-S32, UX21, UX22, UX24: oráculos `sessionHasContent`,
+  `legacySnapshot` e `fullStateJSON` (`ui_v32.js:906-910`, sem curadoria). Cada owner
+  tem o seu "Nova sessão limpa X" (T21, R21); a curadoria não. O `mutation_map` não tem
+  harness para `ui_ux_v32.js` / `tests_ux_m41.js`.
+- **(d) self-import / documentação** — S57, S73, S79, S82, S110, S112:
+  `SESSION_SCHEMA_V32.md`, `synthetic_session_examples/exemplo-completo.json`,
+  `synthetic_session_examples/exemplo-minimo.json`, `session_roundtrip_report.md` e
+  `USER_GUIDE.md` têm **0** ocorrências de `reportCuration` / "curadoria" (conferido
+  por mim, `grep -c`, nos cinco). S81 audita um escopo de atomicidade que a curadoria
+  rompe.
+- Linhas *(síntese)*: `tests_session_m48.js:86-99`, `:100-106`, `:155-165`,
+  `:282-289`, `:300-314`, `:343-367`, `:431`, `:520-530`, `:673-705`, `:777-787`,
+  `:874-883`, `:904-935`, `:1441-1490`; `tests_ux_m41.js:199-219`;
+  `tests_p50_core.js:2540-2556`; `tests_019_curadoria.js:174-183`.
+
+### Como foi medido (executado vs. lido)
+
+**Executado** (crítico de gates): `tests_session_m48.js` rodada de uma cópia — base **94
+PASS · 3 FAIL**, e os 3 são S64, S74+S75 e S113 por "blob do archive inacessível"
+(ambiente de scratch sem `.git`; na worktree passam); sob **mutC** e **mutB** os
+vereditos são **idênticos linha a linha** (`diff` vazio); `tests_ux_m41.js` 56/56.
+Sondas A3, A4, A5, A7, E (8/8 contra 9/9 em tela e papel; inputs canônicos ≠ depois
+do mesmo import), B1, B2 e C1–C4.
+
+### Invariante / regra ferida
+
+**R3 §5** (mutante obrigatório) e o "Nascimento de um gate" da R10 (poder discriminante); INV-8 e INV-7 ficam sem sensor.
+Classe `EA-20`.
+
+### Encaminhamento
+
+Insumo direto dos **cenários 2, 3, 5 e 6** da 025. `qa-engineer`: fixtures curadas
+(variantes de `richSession` / `richLandscape` no padrão S4-S5), "com e sem curadoria na
+mesma janela, a única diferença é a declaração"; harness com `ui_ux_v32.js` em
+`targets`; documentação (`SESSION_SCHEMA_V32.md` com a sexta chave, a ausência legítima
+e o escopo transacional; exemplo completo com `reportCuration`; `USER_GUIDE.md`) com S81
+cobrando que a doc diga que a curadoria entra no candidato e no commit. As suítes
+`tests_session_m48.js` e `tests_ux_m41.js` são PROTECTED: rito §29.4 com autorização do
+proprietário; para `tests_ux_m41.js`, preferir gates novos em `tests_019_*`.
+
+## EA-113 — S50 ("o candidato é completo antes do commit") pina a AUSÊNCIA da curadoria: a lista de 10 chaves é o contrato de 5 — a correção certa do `EA-91` vai reprovar S50
+
+**Status**: `aberto`
+
+**Severidade (refutação adversarial)**: média — e **acionável**: é o gate que vai
+bloquear a correção.
+
+**Aberto em**: 2026-10-25 (refutação adversarial; medido em jsdom salvo onde dito
+"lido"), a partir do crítico de gates
+(`docs_phase5/auditoria_codex_2026-10-20/refutacao_adversarial_2026-10-25.md` §2a, N9).
+Linhas relidas por mim em HEAD `2fcd552`.
+
+### Cadeia arquivo:linha → efeito
+
+- `tests_session_m48.js:531-539` — S50 pina a lista de chaves do candidato.
+- `ui_session_v32.js:533-541` — `normalizeSessionDocument` devolve um `cand` com 10
+  chaves, nenhuma é a curadoria; `captureCanonicalInputs` (`:42`) já emite a sexta em
+  `:69-77`.
+- **Efeito**: a correção do `EA-91` ("curadoria no candidato") **muda a lista** e S50
+  reprova. A tentação é a da proibição 1 da R10 ("nunca enfraquecer o gate para passar") ao contrário: o gate não pode ser afrouxado, mas
+  a premissa dele — "5 chaves" — ficou velha.
+- Precedente de reancoragem em suíte §29.4: T012 / S4-S5, com `D019-M11`
+  (`tests_019_mutants.js:264-268`).
+
+### Como foi medido (executado vs. lido)
+
+**Executado** (crítico de gates, sonda A6): `Object.keys(normalizeSessionDocument(doc))`
+= a lista de 10; S50 passa na base, em mutC e em mutB. **Lido** por mim: as linhas acima.
+
+### Invariante / regra ferida
+
+**R10, proibição 1** (a direção da mudança tem de ser decidida — a spec mudou? o
+artefato foi editado? —, nunca afrouxar a asserção). Classe `EA-20`.
+
+### Encaminhamento
+
+Id próprio. **Reancoragem obrigatória na 025** sob o rito §29.4 (autorização nominal do
+proprietário; a suíte é PROTECTED), com um mutante que **ressuscite a lista de 10**.
+`qa-engineer`.
+
+## EA-114 — S69 ("snapshot/restore cobre todos os owners escritos pelo commit") confere uma lista fixa de 10 owners sem `__CURATION`, por regex sobre o fonte: remover a curadoria do snapshot/restore sobrevive a ele, à suíte e à d019
+
+**Status**: `aberto`
+
+**Severidade (refutação adversarial)**: média — instância do `EA-20` no gatilho da
+atomicidade.
+
+**Aberto em**: 2026-10-25 (refutação adversarial; medido em jsdom salvo onde dito
+"lido"), a partir do crítico de gates
+(`docs_phase5/auditoria_codex_2026-10-20/refutacao_adversarial_2026-10-25.md` §2a, N10).
+Linhas relidas por mim em HEAD `2fcd552`.
+
+### Cadeia arquivo:linha → efeito
+
+- `tests_session_m48.js:788-798` — S69: lista fixa de 10 owners, sem `__CURATION`;
+  oráculo por regex sobre o **fonte**.
+- `ui_session_v32.js:585-586` e `:602-603` (curadoria no snapshot e no restore) são
+  invisíveis para o S69; o snapshot é tirado em `:607`, **depois** da mutação de
+  `:240` — "cobre" ≠ "protege".
+- **Efeito**: o gate nomeia a atomicidade e não a mede para o owner novo.
+
+### Como foi medido (executado vs. lido)
+
+**Executado** (crítico de gates): sob **mutB** → `snapshot.curadoria = null` e o estado
+depois do restore é `{}` contra o `exclude` da base; a expressão do S69 dá `true` nos
+dois fontes; S69 passa nos três runs (base, mutC, mutB); a d019 mutB fecha 14/14.
+**Lido** por mim: as linhas acima.
+
+### Invariante / regra ferida
+
+**R3 §5** (mutante obrigatório); classe `EA-20`.
+
+### Encaminhamento
+
+Id próprio. Na 025, S69 vira **comportamental**: zerar cada owner depois do snapshot e
+provar o restore, incluindo a curadoria (cenário 2). Suíte PROTECTED: rito §29.4.
+`qa-engineer`.
+
+## EA-115 — `D019-SUF1` mede só metade de C10: "não se oferece E o estado não é lido" — o corpo confere apenas a ausência do controle; o estado É lido sob gate fechado
+
+**Status**: `aberto`
+
+**Severidade (refutação adversarial)**: baixa — classe `EA-20`.
+
+**Aberto em**: 2026-10-25 (refutação adversarial; medido em jsdom salvo onde dito
+"lido"), a partir do crítico de gates
+(`docs_phase5/auditoria_codex_2026-10-20/refutacao_adversarial_2026-10-25.md` §2a, N11).
+Linhas relidas por mim em HEAD `2fcd552`.
+
+### Cadeia arquivo:linha → efeito
+
+- `tests_019_curadoria.js:789-797` — `D019-SUF1`: título "com o gate de suficiência
+  FECHADO a curadoria não se oferece e o estado não é lido"; o corpo só confere a
+  ausência do controle.
+- `specs/019-curadoria-do-relatorio/spec.md:49` — C10: "gate de suficiência fechado ⇒
+  curadoria indisponível". `spec-validate.md:20` deu C10 "conforme".
+- `ui_curation_edit_v32.js:216-219` — só o **editor** se abstém (o `return` de
+  `gateFechado` vem antes de ler o bridge).
+- `tests_019_mutants.js:185-188` — `D019-M10` ataca só a oferta.
+- **Efeito**: o bridge é lido durante `showResults` com o gate fechado, e nenhum gate o
+  vê.
+
+### Como foi medido (executado vs. lido)
+
+**Executado** (crítico de gates): boot com o gate `blocked` e bridge instrumentado em
+`showResults` → leituras `{decide:1, isOperatorChoice:1, state:1}`. **Lido, não
+executado**: um mutante que leia `state()` antes do `return` de `gateFechado`.
+
+### Invariante / regra ferida
+
+**R3 §5**; classe `EA-20` (o `spec-validate` deu C10 "conforme" sem medir a metade da
+leitura).
+
+### Encaminhamento
+
+Id próprio **ou** alínea da 025 (cenário 14, adjacente): instrumentar o bridge sob gate
+fechado e exigir zero leituras, **ou** reescrever C10 para "o editor não lê"; mutante
+que leia `state()` antes do `return` de `gateFechado`. `qa-engineer` + decisão de
+`product-owner` sobre a redação de C10.
+
+## EA-116 — as regras `Write(...)` do `permissions.deny` são inertes segundo o host, e a seção `deny` do `compliance-audit.sh` exige essa forma por espelho
+
+**Status**: `aberto`
+
+**Severidade (refutação adversarial)**: baixa.
+
+**Aberto em**: 2026-10-25 (refutação adversarial; medido em jsdom salvo onde dito
+"lido" — aqui tudo é **lido**: a evidência é a mensagem do host e a documentação, não
+uma execução), a partir dos contra-leitores do `EA-93` e do `EA-94`
+(`docs_phase5/auditoria_codex_2026-10-20/refutacao_adversarial_2026-10-25.md` §2b).
+Linhas relidas por mim em HEAD `2fcd552`.
+
+### Cadeia arquivo:linha → efeito
+
+- `.claude/settings.json:5-21` — nove regras `Write(<caminho>)` ao lado das nove
+  `Edit(<caminho>)` no `permissions.deny`.
+- `.claude/verify/compliance-audit.sh:52-54` — `for tool in ("Edit", "Write"): if
+  f"{tool}({p})" not in deny:` — a seção `deny` falha se faltar o `Write(...)`.
+- **Segundo o host** (mensagem no boot, citada pelo contra-leitor do `EA-93`: "Permission
+  deny rule: Write(foo.txt) is not matched…"; e a documentação, citada pelo do `EA-94`:
+  "Write(path) rules never match — only Edit(path) rules are evaluated"), as regras
+  `Write(...)` nunca casam.
+- **Efeito**: o espelho `Edit` + `Write` que o `compliance-audit` exige mantém nove
+  regras mortas, e a auditoria dá verde por uma forma que o host ignora.
+
+### Como foi medido (executado vs. lido)
+
+**Lido**: a mensagem do host e a documentação, como citadas pela síntese; as linhas do
+repositório foram relidas por mim. **Não medi** a mensagem do host por execução.
+
+### Invariante / regra ferida
+
+**R6 §2** ("`permissions.deny` espelha o boundary (Edit+Write) — o `compliance-audit`
+falha se divergirem"): a regra codifica uma crença que o host desmente. Nenhuma INV
+ferida; o `Edit(...)` basta para o efeito.
+
+### Encaminhamento
+
+Id próprio, baixa. `tech-lead` decide a rota: manter o `Write(...)` por defensividade
+(outro host ou versão) com nota explícita, **ou** removê-lo e ajustar R6 §2 +
+`compliance-audit.sh:52-54` — o que altera texto de regra (decisão do proprietário) e
+arquivos pinados (repin no mesmo PR). Confirmar antes contra a documentação do host na
+versão corrente.

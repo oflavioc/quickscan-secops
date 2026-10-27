@@ -9743,7 +9743,7 @@ Negativo: prova executada no verbete, como no `EA-100`.
 
 ## EA-101 — o `lint-arch` anuncia "módulos novos" mas só aplica IIFE e `innerHTML=` a `ui_p5*` e `ui_d0*`: três módulos de demanda ficam fora
 
-**Status**: `aberto`
+**Status**: `resolvido`
 
 **Severidade (triagem do orquestrador)**: média.
 
@@ -9824,6 +9824,131 @@ Linhas reconferidas por mim em HEAD `2fcd552` (`ui_curation_v32.js`,
   (`( function` engana) e `ui_d0*` não casa `ui_d1NN`.
 - CX-13 `check_lint_arch.py:36` → **`:37`**. `ui_ondas_v32.js:29-36` refere-se à
   regra 4 e não contradiz.
+
+### Fecho (2026-10-25) — o conjunto varrido passou a ser "tudo menos a lista nominal dos legados"
+
+Nota acrescentada por `doc-writer` (R2 §5), por acréscimo: nada acima foi reescrito;
+a única linha alterada neste bloco é a de status, `aberto` → `resolvido`.
+
+**Qual linha do cabeçalho mandou o status**: "Rito de escrita da linha de status",
+`BACKLOG.md:62-63` — *"fix-finding §4 ("o que foi feito", com PR/commit registrado
+na prosa) → `resolvido`"*. A letra pede commit/PR **citado na prosa**, não PR
+mesclado; e o fix-finding está no §4 (fechar), não "em curso" (`BACKLOG.md:66-67`).
+Na data deste registro o PR #113 está **aberto** (`gh pr view 113`: `state: OPEN`,
+`mergedAt: null`, base `develop`, head `ecbd23b`); a merge é do usuário (R14) e esta
+nota não a antecipa. O bloco do `EA-101` nasce no PR #112 (registro da auditoria
+externa); a branch do fix parte de `eec8370`, HEAD dele.
+
+1. **O que mudou** (descrito a partir do diff de `1def6a9` e `8c6b913`):
+   - **`.claude/verify/check_lint_arch.py`, regras 2 (`.innerHTML =` proibido) e 3
+     (IIFE obrigatório)**. Saiu o `PREFIXOS_NOVOS = ("ui_p5*_v32.js",
+     "ui_d0*_v32.js")` da cadeia acima (`:37-38`). Entrou `LEGADOS_4X`, um
+     `frozenset` **nominal e fechado** (`:56-63`) com seis nomes: `ui_ux_v32.js`,
+     `ui_target_v32.js`, `ui_session_v32.js`, `ui_refinement_v32.js`,
+     `ui_journey_v32.js` e `ui_icons_v32.js`. O conjunto varrido é agora
+     `Path(".").glob("ui_*_v32.js")` **menos** `LEGADOS_4X` (`:64`). O sentido da lista
+     inverteu: o **excluído** é nominal (legado) e o **incluído** é o resto — módulo
+     novo entra por construção, qualquer que seja o prefixo do nome. O
+     comentário-trilha no código (`:38-55`) registra que os seis são exatamente os
+     que a 011 (`84c92a1`) recusou varrer por 11 FAILs, e que entrada nova na lista
+     é ato de governança (`:48-50`). Docstring do arquivo atualizada junto.
+   - **Alcance medido**: de 6 módulos varridos (os 5 `ui_p5*` mais
+     `ui_d011_prioridade_v32.js`) para **9**. Os três que entram são os do achado:
+     `ui_curation_v32.js`, `ui_curation_edit_v32.js` e `ui_ondas_v32.js`. A
+     fraqueza "`ui_d0*` não casa `ui_d1NN`", anotada na refutação, deixa de existir:
+     não há mais prefixo a casar.
+   - **Intocado**: a regra 1 (pureza do engine, `:30-36`) e a regra 4 (bridges, glob
+     `ui_*.js`, `:73-82`). As mensagens de FAIL das regras 2 e 3 são as mesmas; a
+     única linha de saída que mudou é a `[OK]` (`:71`): "9 módulos novos
+     (ui_*_v32.js menos 6 legados 4.x)".
+   - **`.claude/verify/pipeline.yaml:60`**, só o texto de `desc` do stage
+     `lint-arch`: "(ui_p5* + ui_d0*)" → "(ui_*_v32.js menos LEGADOS_4X)". `run:`,
+     `parallel:`, `mutates:`, `heavy:` e a ordem dos stages ficaram como estavam.
+   - **Rota do Encaminhamento**: a *allowlist explícita dos legados* (a segunda
+     alternativa). A derivação "de dado" (`bridges.json`/`current_phase.json`) ficou
+     descartada pela correção de cadeia da refutação (impraticável:
+     `current_phase.json:40` é prosa). **A regra não foi afrouxada** (R10 §1): as
+     mesmas duas verificações alcançam mais arquivos, nunca menos.
+
+2. **A prova** (executada pelo `build-engineer`, Sonnet 5.5; números dos corpos dos
+   commits `1def6a9` e `8c6b913`):
+   - Árvore: `[OK] 9 módulos novos (ui_*_v32.js menos 6 legados 4.x): zero
+     innerHTML= e IIFE presente`; `lint-arch: 0 problema(s)`, exit 0.
+   - Negativos em árvore efêmera (cópia com mutante; nada escrito na árvore):
+     `ui_curation_v32.js` com `.innerHTML =` → 1 FAIL; `ui_curation_edit_v32.js` sem
+     IIFE → 1 FAIL; `ui_ondas_v32.js` sem `(function` → 1 FAIL; módulo sintético
+     `ui_zz_novo`, fora de qualquer prefixo → 2 FAIL; os três mutantes juntos → 3
+     FAIL, exit 1. **O lint anterior deu `0 problema(s)`, exit 0, sobre essa mesma
+     árvore** — é a medida de que o sensor era cego a eles. Controle sem mutante: 9
+     varridos, 0 FAIL (os legados 4.x, com `innerHTML =`, seguem fora).
+   - `run.sh --stage=lint-arch`: `[PASS] lint-arch`, `1 PASS · 0 FAIL` (nos dois
+     commits; no segundo prova também que o `run.sh` parseia o `pipeline.yaml`
+     editado). `compliance-audit.sh`: `17 PASS · 0 FAIL · 0 WARN` (nos dois).
+     `git status --porcelain` só com o arquivo tocado (nos dois).
+   - Baseline `520/520` depois do repin `ecbd23b` (`gen_pins.py`, orquestrador).
+   - **Reconferência minha**, em `ecbd23b` e antes de escrever esta nota:
+     `python .claude/verify/check_lint_arch.py` → três `[OK]` (engine puro; 9
+     módulos novos; 20 bridges registrados) e `lint-arch: 0 problema(s)`, exit 0;
+     `python .claude/verify/check_baseline.py` → `520/520 pins conferem · 0
+     divergentes · 0 ausentes · 0 sem pin`. Os negativos não foram refeitos por mim.
+   - **O que esta prova é**: negativos manuais em árvore efêmera. Nenhum gate
+     commitado trava a nova varredura: `check_lint_arch.py` segue na população de
+     mutação como dívida declarada (`mutation_population.json:42-45`, "Sem harness
+     desde que nasceu", prazo `2026-12-31`). Este fix não a criou nem a paga.
+
+3. **Desvio declarado — `ui_v32.js` fora da lista**: a allowlist recomendada pela
+   refutação tinha sete nomes (os seis acima e `ui_v32`); a implementada tem seis.
+   `ui_v32.js` **não casa** o glob `ui_*_v32.js` (falta o `_` antes de `v32`):
+   conferido por `ls ui_*_v32.js` na worktree — 15 arquivos, `ui_v32.js` ausente,
+   15 = 9 varridos + 6 legados. Uma entrada para ele seria inerte; o comentário do
+   código diz isso (`:54-55`).
+
+4. **Fraquezas preexistentes, anotadas e NÃO corrigidas** (fix-finding §3: diff
+   mínimo, nada de "limpar de passagem"; o diff não toca estas linhas). Sem id: a
+   refutação as classificou "não reportar (R13)"; a tabela de
+   `design-decisions.md` não as lista, e a confirmação formal, se desejada, é do
+   `product-owner`.
+   - **IIFE por substring** (`:69`, `"(function" not in src`): `( function` com
+     espaço não casa; e, pela leitura da expressão, qualquer `(function` no arquivo
+     (um callback, um comentário) satisfaz o teste sem o módulo ser IIFE. A segunda
+     metade é leitura do código, não medida por execução.
+   - **O `[OK]` das regras 2/3 depende do contador global** (`:71`, `... if fails
+     == 0 else ""`; `fails` é compartilhado, `:24-28`): um FAIL da regra 1 (engine
+     impuro) faz a linha `[OK]` das regras 2/3 sair vazia mesmo com as duas limpas.
+     A saída deixa de distinguir "2/3 limpas" de "2/3 não reportadas".
+
+5. **Pendência que nasce e fica fora deste PR — registrar a convenção**: "módulo
+   novo = qualquer `ui_*_v32.js` fora de `LEGADOS_4X`" hoje só vive no
+   comentário de `check_lint_arch.py:38-55`. Não consta de R9
+   (`.claude/rules/modularity.md`), de `.claude/templates/plan.md:24` (o checklist
+   R9 ali é IIFE + `__installed`, bridge, CSS por prefixo) nem da skill
+   `new-demand` — conferido por `grep` de `ui_*`, `ui_p5`, `prefixo` e `nomenclatura`
+   nos três; o item vem da refutação ("senão o
+   25º módulo repete"). Dono: `tech-lead` (R9, skill, templates) com `doc-writer`
+   (registro). É **encaminhamento, não defeito**: sem id novo. O que a convenção
+   precisa dizer, porque é o residual do desenho: o alcance das regras 2/3 passa a
+   depender do **nome** casar `ui_*_v32.js`; um arquivo de UI nomeado fora desse
+   glob (por exemplo `ui_foo.js`) continua fora das regras 2 e 3 — a regra 4 o
+   alcança, pelo glob `ui_*.js` (`:76`).
+
+6. **Não executado, declarado**: a campanha `d011` (`node tests_011_mutants.js`) não
+   foi reexecutada nesta demanda. Ela importa porque o mutante `D011-M7`
+   (`tests_011_mutants.js:338-345`) usa **este lint** como carrasco (`LINT_PY`, `:70`;
+   oráculo `lint`, `:343`), casando por regex a mensagem de FAIL sobre
+   `ui_d011_prioridade_v32.js`. Pela leitura do diff, a mensagem não mudou e esse
+   módulo segue no conjunto varrido — é leitura, não execução. `check_lint_arch.py`
+   também **não** está em `targets` da `d011` (`mutation_map.json`, harness `d011`),
+   de modo que, pelo desenho do stage `mutation` (gatilho por path, `pipeline.yaml`),
+   mexer nele não a dispara. Quem decide se reexecuta é o `qa-engineer`.
+
+7. **Commits, PR e trilha de modelos**: `1def6a9` (fix em `check_lint_arch.py`) e
+   `8c6b913` (`desc` em `pipeline.yaml`), ambos do `build-engineer`, Sonnet 5.5
+   (trailer dos commits; `model: sonnet` em `.claude/agents/build-engineer.md:5`);
+   `ecbd23b` (repin de `check_lint_arch.py` e `pipeline.yaml`), do orquestrador,
+   trailer Claude Fable 5.1; PR #113 (`fix/EA-101-lint-arch-modulos-novos` →
+   `develop`, aberto). Este registro: `doc-writer`, Sonnet 5.5 (`claude-sonnet-5-5`,
+   lido do ambiente; `model: sonnet` em `.claude/agents/doc-writer.md:5`) — sem
+   desvio do modelo declarado nos agentes.
 
 ## EA-102 — três ids `EA-*` são citados sem verbete no backlog: `EA-59`, `EA-60`, `EA-63`
 

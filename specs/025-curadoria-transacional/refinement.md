@@ -418,7 +418,8 @@ palavra do papel** para não pinar uma das três antes da decisão.
 | Rodada | Pergunta | Resposta do usuário |
 |---|---|---|
 | 1 | Decisão de corrigir antes de selar a v3.2.11 (orquestrador → proprietário, 2026-10-25) | *"corrigir o produto antes de selar"* — origem desta demanda |
-| 2 | **Portão da Fase 0** — enquadramento acima + **P1 a P6**, cada uma com recomendação | **pendente** |
+| 2 | **Portão da Fase 0** — enquadramento acima + **P1 a P6**, cada uma com recomendação (orquestrador → proprietário, 2026-10-27, no chat) | *"Aprovado em bloco (Recomendada)"* — **P1 a P6 adotadas como recomendadas**: P1 recusar `{}`/`{decisions:{}}`/`null`; P2 Reiniciar limpa a curadoria e o diálogo a nomeia; P3 toggle-back volta a ausente (`unset` no bridge); P4 prévia/aviso mostram "Curadoria do relatório: sim/não" e `sessionHasContent()` conta curadoria; P5 `prioLimitHit` e `draft` entram (`draft` em wave própria, severável); P6 `D025-INV8` novo + errata de título do `D019-INV8` + errata na spec 019 (C3, C10) |
+| 3 | **Autorização nominal §29.4** (R6 §5) para `ui_session_v32.js`, `ui_ux_v32.js`, `tests_session_m48.js` e `ui_v32.js` (orquestrador → proprietário, 2026-10-27, no chat) | *"Autorizo os quatro (Recomendada)"* — vale só para a 025; repin e trilha "Identidade anterior" nos pins inline legados |
 
 > A R4 é literal: aprovação é do usuário, no chat. P1–P6 são decisões de
 > **produto** (o que a ferramenta passa a fazer), não de ritmo. Depois da

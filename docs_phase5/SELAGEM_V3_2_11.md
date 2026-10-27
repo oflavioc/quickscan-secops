@@ -312,3 +312,119 @@ fast-forward. `e03b0f0` é a tag `v3.2.2-estrutura.1`, da selagem anterior.
     (acima) incluem os itens 1 a 11 e os achados de instrumento mais antigos
     (`EA-8` em diante, listados pelo próprio `compliance-audit.sh`); nenhum deles
     é tocado por esta selagem além das notas de 2026-10-20 já nomeadas.
+
+## Adendo de 2026-10-25 — auditoria externa e suspensão da tag
+
+Este adendo **só acrescenta**; o corpo acima não foi reescrito (R2 §5).
+
+**A auditoria.** Em 2026-10-20 o Codex auditou o HEAD `ba77134` em modo somente
+leitura e entregou dois relatórios independentes, promovidos em
+`docs_phase5/auditoria_codex_2026-10-20/` (`relatorio_gpt-6-astra.md`,
+`relatorio_gpt-5.6-terra.md`, `prompt.md`). Ambos recomendam **não selar** a
+candidata nesse estado. Conferiram, sem divergência, o numstat canônico
+(19 arquivos, +10.739/−422), o engine sem linha alterada e o HTML reproduzido
+(SHA-256 `4c45ce20…5712`, 1.242.046 bytes). A triagem do orquestrador, por
+cadeia `arquivo:linha` relida em `cee02e9`, está nos verbetes do
+`.claude/BACKLOG.md`; cada verbete separa o que o Codex **executou** do que só
+**leu**.
+
+**Achados registrados** (`aberto`, 2026-10-25; a contagem de abertos do
+`compliance-audit.sh` passa de 29 para 43, medida após o registro):
+
+- `EA-91` — importação de sessão não é transacional nem substitutiva para a
+  curadoria (validar já aplica; cancelar não desfaz; chave ausente herda a sessão
+  anterior). Produto, alta.
+- `EA-92` — "Nova sessão" não limpa a curadoria. Produto, alta.
+- `EA-93` — `guard-boundary`/`guard-tdd` comparam caminho sensível a caixa em
+  sistema de arquivos que ignora caixa. Instrumento, alta.
+- `EA-94` — escrita em caminho protegido por Bash não tem guarda (boundary e TDD
+  só no matcher `Write|Edit`). Instrumento, alta.
+- `EA-95` — o `guard-tdd` libera qualquer módulo se existir uma demanda ativa com
+  RED ou `tdd_waiver`; `check_state` não carrega o schema. Instrumento, média.
+- `EA-96` — `red.commit` aceita qualquer objeto git (`cat-file -e`), não só commit.
+  Instrumento, média.
+- `EA-97` — `check_suites.py` ignora o código de saída; o bloco `visual` nunca é
+  comparado. Instrumento, alta.
+- `EA-98` — o stage `build` (`mutates: false`) regrava `ui_icons_v32.js` na
+  árvore. Instrumento, média.
+- `EA-99` — o composto que o `guard-data` recomenda contorna a inspeção; o parser
+  não vê `&&` colado nem `$g commit` (família do `EA-82`). Instrumento, alta.
+- `EA-100` — `run.sh --stage=<inexistente>` termina verde com 0 stages.
+  Instrumento, média.
+- `EA-101` — o `lint-arch` só aplica IIFE/`innerHTML=` a `ui_p5*` e `ui_d0*`.
+  Instrumento, média.
+- `EA-102` — `EA-59`, `EA-60` e `EA-63` citados sem verbete. Documentação, baixa.
+- `EA-103` — Actions por tag móvel e sem `permissions:` em `verify.yml`.
+  Cadeia de suprimentos, baixa.
+- `EA-104` — o README instruía a baixar `releases/latest` com o nome da v3.2.7 e a
+  tratar "o artefato da release" como o em uso (incidência viva do `EA-64`,
+  que segue `aberto`). Tratado em commit próprio deste mesmo PR.
+
+**Não viraram achado novo.** A reprodução do `EA-76` (FortiMail ×3) pelo terra
+ganhou nota datada no próprio `EA-76`. As alegações do terra de que a tag não
+existe e de que o pipeline completo não rodou no commit final (CX-07/CX-08) são
+as declaradas neste registro — a tag é o passo seguinte por desenho (seção "Dois
+hashes") e, segundo o orquestrador, o `run.sh` 18/18 e o `compliance-audit.sh`
+17/17 foram medidos em `ba77134` depois do registro (medição do orquestrador,
+citada sem reexecução por quem escreveu este adendo). Os `EA-71`, `EA-72` e `EA-90` (CX-16) já estavam
+registrados e abertos.
+
+**Decisão do proprietário (2026-10-25, no chat): corrigir o produto antes de
+selar.** A tag `v3.2.11` fica **suspensa** até os defeitos de curadoria
+(`EA-91`/`EA-92`) serem corrigidos; os achados de instrumento e o README entram
+no mesmo ciclo. Este PR é o passo 1 e é doc-only: registra, não corrige.
+
+**Consequência para este registro.** O que está escrito acima descreve a
+**candidata `ba77134`/`cee02e9`**, cujo conteúdo `0bd677c` **não será o da tag**:
+o conteúdo final será o da `develop` depois da correção do `EA-91`/`EA-92`. Os
+hashes, o numstat, a contagem de abertos (29) e o SHA-256 do HTML citados acima
+valem para a candidata e **não valem** para a tag futura. Este registro será
+atualizado (ou substituído) na selagem efetiva; até lá, a v3.2.11 não tem tag e o
+`README.md` não a afirma.
+
+**Refutação adversarial dos `EA-91`…`EA-104` (2026-10-25, acrescentado depois do
+parágrafo acima; nada acima foi reescrito).** Um workflow de 31 agentes tentou refutar
+**por execução** cada um dos 14 achados; a síntese está em
+`docs_phase5/auditoria_codex_2026-10-20/refutacao_adversarial_2026-10-25.md`. Resultado:
+**14 confirmados, 0 refutados** — todos com correção de cadeia, que entrou em cada
+verbete do `.claude/BACKLOG.md` como subseção datada "Refutação adversarial de
+2026-10-25" (commit `eff1cc1`), sem apagar o corpo. Nada nesta refutação altera a
+suspensão da tag registrada acima.
+
+Ids nascidos, todos `aberto` (os quatro sufixados ficam junto do pai):
+
+- `EA-97a` — o bloco `visual` de `expected_suites.json` não tem comparador (metade do
+  `EA-97`; alta; demanda).
+- `EA-98a` — `tests_ui_m33.js:108` executa o gerador de ícones sem `--check` sobre a
+  árvore (média).
+- `EA-99a` — o parser do `guard-data` e do `guard-add` não vê operador colado, `bash -c`
+  nem expansão de shell (alta).
+- `EA-100a` — `compliance-audit.sh --rule=<inexistente>` termina verde, `0 PASS · 0 FAIL
+  · 0 WARN`, exit 0 (média).
+- `EA-105` — exportar também escreve no owner da curadoria (baixa).
+- `EA-106` — "sem curadoria" tem três representações e dois comportamentos (média).
+- `EA-107` — o `draft` do editor de contexto tecnológico sobrevive a importação / Nova
+  sessão / Reiniciar e bloqueia a impressão do cliente seguinte (média).
+- `EA-108` — `prioLimitHit` sobrevive à importação (baixa).
+- `EA-109` — `sessionHasContent()` e `sessionPreview()` são cegos à curadoria (média).
+- `EA-110` — desmarcar e remarcar grava `include` explícito: **pergunta de desenho, não
+  defeito confirmado** (baixa).
+- `EA-111` — `D019-INV8` é tautológico para a importação; três mutantes sobrevivem 14/14
+  (alta).
+- `EA-112` — suítes de sessão e de UX cegas ao sexto owner, em quatro alíneas (alta).
+- `EA-113` — S50 pina a ausência da curadoria no candidato (média).
+- `EA-114` — S69 confere uma lista fixa de 10 owners sem `__CURATION` (média).
+- `EA-115` — `D019-SUF1` mede só metade de C10 (baixa).
+- `EA-116` — as regras `Write(...)` do `permissions.deny` são inertes segundo o host
+  (baixa).
+
+**Contagem de abertos.** Medida pelo `compliance-audit.sh` **depois** do commit
+`eff1cc1`: **59** (eram 43 no registro do adendo; +16 = 4 sufixados + 12 novos), com
+`17 PASS · 0 FAIL · 0 WARN` na execução completa. A contagem "29 para 43" acima continua
+sendo a do instante em que foi escrita.
+
+**`EA-93` teve o título corrigido.** O exemplo original, `ENGINE_v32.js`, **não** passa
+por `Edit`/`Write`: o `permissions.deny` do host é avaliado antes do `PreToolUse` e ignora
+caixa (medido em projeto-sonda). O exemplo verdadeiro é `UI_P52_WORKSPACE_V32.JS` no
+`guard-tdd`; a regra ferida passa a ser a R3, e a severidade recomendada, de alta para
+média. O título anterior está preservado na subseção do verbete.

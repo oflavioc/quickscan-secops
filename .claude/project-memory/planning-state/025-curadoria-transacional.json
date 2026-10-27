@@ -1,6 +1,6 @@
 {
   "demanda": "025-curadoria-transacional",
-  "phase": "specify",
+  "phase": "plan",
   "spec_dir": "specs/025-curadoria-transacional",
   "branch": "feature/025-curadoria-transacional",
   "brief": "A curadoria do relatorio (sexta chave canonica da sessao, demanda 019) entra de fato no ciclo de vida da sessao: validar sem aplicar; candidato, commit atomico e snapshot ANTES de qualquer escrita, inclusive a AUSENCIA da chave (INV-8: o documento basta para reconstruir o resultado); Nova sessao limpa o owner; gates de roundtrip real que importam. Origem: EA-91/EA-92 (auditoria externa Codex 2026-10-20, refutacao adversarial 2026-10-25 em docs_phase5/auditoria_codex_2026-10-20/refutacao_adversarial_2026-10-25.md §3), com os adjacentes EA-105..EA-114. Decisao do proprietario 2026-10-25: corrigir o produto antes de selar a v3.2.11.",
@@ -10,7 +10,12 @@
     "notes": "Fase 0 aberta em 2026-10-25 pelo orquestrador; product-owner refina sobre a sintese da refutacao (secao 3) e os verbetes EA-91/92/105..114 do BACKLOG (branch de registro eec8370, PR #112 em aberto). Branch nasce de eec8370, nao da develop, para o BACKLOG nao conflitar; rebase sobre a develop apos o merge do #112. PORTAO APROVADO PELO USUARIO no chat em 2026-10-27 (AskUserQuestion): 'Aprovado em bloco (Recomendada)' — as seis recomendacoes do PO (P1 recusar {}/{decisions:{}}/null; P2 Reiniciar limpa a curadoria e o dialogo a nomeia; P3 toggle-back volta a ausente, unset no bridge; P4 previa/aviso mostram curadoria e sessionHasContent conta curadoria; P5 prioLimitHit e draft entram, draft em wave propria severavel; P6 D025-INV8 novo + errata de titulo do D019-INV8 + errata na spec 019 C3/C10) viram decisao. AUTORIZACAO NOMINAL §29.4 (R6 §5) dada pelo usuario na mesma rodada: 'Autorizo os quatro (Recomendada)' — ui_session_v32.js, ui_ux_v32.js, tests_session_m48.js e ui_v32.js, so para a 025, com repin e trilha 'Identidade anterior' nos pins inline legados."
   },
   "specify": {
-    "status": "awaiting_approval",
-    "notes": "spec.md do tech-lead (2c47545; Fable 5.1) + revisao de intencao do product-owner (Fable 5.1, 2026-10-27): 'nao encontrei objecao'; 12 edicoes marcadas [PO 2026-10-27] — vao de poder fechado (TRX2(b') + M22: rollback com sessao 'nada declarado'), sub-caso de C3 para chave desconhecida dentro de reportCuration (M23; extensao de P1 — ERR-2, decidida pelo PO na Fase 1, levada ao usuario junto com a spec), textos de P2/P4/recusas aprovados, queda da guarda && snap.curadoria confirmada (ERR-1), EA-110 corrigido pela 025 (E8). Portao: aprovacao literal do usuario pendente."
+    "status": "approved",
+    "notes": "spec.md do tech-lead (2c47545; Fable 5.1) + revisao de intencao do product-owner (Fable 5.1, 2026-10-27): 'nao encontrei objecao'; 12 edicoes marcadas [PO 2026-10-27] — vao de poder fechado (TRX2(b') + M22: rollback com sessao 'nada declarado'), sub-caso de C3 para chave desconhecida dentro de reportCuration (M23; extensao de P1 — ERR-2, decidida pelo PO na Fase 1, levada ao usuario junto com a spec), textos de P2/P4/recusas aprovados, queda da guarda && snap.curadoria confirmada (ERR-1), EA-110 corrigido pela 025 (E8). Portao: aprovacao literal do usuario pendente. PORTAO APROVADO PELO USUARIO no chat em 2026-10-27 (AskUserQuestion): 'Aprovado, com a extensao (Recomendada)' — spec integral, inclusive ERR-2/M23.",
+    "approved_at": "2026-10-27"
+  },
+  "plan": {
+    "status": "in_progress",
+    "notes": "Fase 2 aberta em 2026-10-27: tech-lead redige plan.md (camadas, contratos de bridge, patch-points, waves por dependencia real, tabela de gatilho de campanha, boundary §29.4). Portao = aprovacao literal do usuario."
   }
 }

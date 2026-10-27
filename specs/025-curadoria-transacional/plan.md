@@ -510,3 +510,61 @@ reintroduz, registrada como número, não como raciocínio.
 Ambos: clone/worktree efêmero com `refs/remotes/origin/develop` pinado no HEAD do
 clone (nenhuma campanha dispara), sem escrita na árvore rastreada, `git status`
 limpo ao fim.
+
+## Nota aditiva (Fase 3 · 2026-10-27)
+
+> Escrita pelo `tech-lead` (Fable 5.1, `claude-fable-5-1`) a pedido do orquestrador,
+> na Fase 3, depois de medir a árvore em **`395942a`**. **Nada acima é reescrito**:
+> waves, donos, tipos, contratos, patch-points (nenhum), autorizações §29.4 e a ordem
+> **W5 editor / W6 `draft`** permanecem como aprovados pelo usuário em 2026-10-27.
+> Esta nota corrige o que a medição desmentiu e registra o que a execução da W0 já
+> consumiu; o detalhe tarefa a tarefa, com comando → linha, está em
+> [`tasks.md`](tasks.md).
+
+**(a) Janela vermelha — coluna `suites`, errada de W1.2 a W8.1.** `check_suites.py:50-56`
+reprova **qualquer `tests_*.js` fora** de `expected_suites.json`, de `mutation_map.json`
+e das exceções nominais ⇒ o stage `suites` fica **vermelho nomeado** —
+`[FAIL] suíte fora do registro e das exceções nominais: tests_025_curadoria_sessao.js` —
+do commit do red (**T013**) até o registro (**T084**). O stage é `heavy`: o hook Stop
+(`--light`) não o vê; o `run.sh` completo e o CI veem — o PR abre em **T095**, sobre o
+green. Precedente: d019 da W1 à W7 (`expected_suites.json → d019._trilha`); a spec 019
+E2 recusou a exceção nominal de propósito. `known_issues.json` **não** se usa — a
+janela do TDD é visível de propósito. "d025 não registrada → não roda" era falso.
+
+**(b) W3.1 lista `INV8` entre os greens da W3 — fecha na W7.** `D025-INV8(d)` lê
+`synthetic_session_examples/exemplo-completo.json`, que só ganha `reportCuration` em E5
+(W7.1, **T070**). Após a W3 a suíte `d025` fica em **10/16** (FAIL: INV8 só por (d),
+NEW1, RST1, TRN2, UNS1, DOC1). Contagem **por gate** esperada ao longo das waves:
+1 (red) → 3 (W2) → 10 (W3) → 12 (W4) → 13 (W5) → 14 (W6) → 15 (E4+E5) → 16 (E6).
+
+**(c) Não previsto: `core`/`CM1` falso SOBREVIVENTE entre T030 e T040.**
+`tests_core_mutants.js:59` mata `CM1` por `/1 FAIL/` sobre a m48 inteira
+(`npm run test:session`, heap 6144). Entre a W3 (dispara `core` por `ui_session_v32.js`)
+e a W4 (fecha a m48 em 97/97), a m48 tem 1 FAIL próprio (S31-S32) ⇒ sob `CM1` a saída
+é `2 FAIL` ⇒ **SOBREVIVENTE falso**. A campanha `core` **não se mede** entre T030 e T040
+— ou mede-se e declara-se; o harness `core` **não se toca**. Consequência para o harness
+`d025` (W8.3): `reason` **nominal por gate** (`/FAIL {2}<gate>/`), nunca `/N FAIL/`.
+
+**(d) Série de repins: R0b e R0′ não existem.** O R0 do portão da Fase 2 não foi
+executado (medido em `395942a`: `519/520 pins conferem · 1 divergente (CONTEXT.md) ·
+3 sem pin`) e o rebase da W0.3 **não conflitou `pins.json`** (nenhum repin da 025
+existia na branch). Um único **R0**, após o commit do `tasks.md`, fecha CONTEXT.md +
+refinement + spec + plan + tasks (520 → 524 pins). Série efetiva: **R0–R16 = 17**, mais
+R0a só se E0 (corte de P5, que não ocorreu).
+
+**(e) SHAs do cabeçalho são históricos — W0.2 e W0.3 já executadas.** O usuário mesclou
+**#112** (`6933179`) e **#113** (`da71759`) em `develop` como *merge commits* (R14) e a
+branch foi rebaseada (reflog: `rebase (start): checkout origin/develop`, 2026-10-27
+18:29:17 -0300, oito *picks* limpos). Mapa antigo → novo: HEAD do plano **`520f20d`**
+(portão F1) → `dbf0059`; HEAD corrente **`395942a`** (= `e734810`, portão F2,
+rebaseado); base **`cee02e9` → `da71759`**; *"14 à frente, 0 atrás"* → **8 à frente,
+0 atrás**; `d695dbb` → `989b2b9` (portão F0, por posição na série), `2c47545` →
+`31e60b9` (spec), `b0c5703` → `79d0c26` (revisão do PO), `2a06ef3` → `29be723`
+(plan) — conteúdo byte-idêntico; os antigos vivem só no reflog. As linhas de fonte
+citadas neste plano continuam válidas: `ui_session_v32.js`, `ui_ux_v32.js`,
+`ui_v32.js`, `ui_curation*_v32.js`, `tests_session_m48.js`, `tests_p50_core.js`,
+`tests_019_curadoria.js`, `SESSION_SCHEMA_V32.md` e `USER_GUIDE.md` são byte-idênticos
+de `cee02e9` a `395942a` (`git diff --stat` vazio). `check_lint_arch.py` já imprime a
+linha do #113 — `[OK]   9 módulos novos (ui_*_v32.js menos 6 legados 4.x): zero
+innerHTML= e IIFE presente` — logo o *fallback* da tabela de riscos (lint do #113 em
+cópia na W2.1) deixou de ser necessário.

@@ -20,7 +20,7 @@
     "approved_at": "2026-10-27"
   },
   "tasks": {
-    "status": "in_progress",
-    "notes": "Fase 3 aberta em 2026-10-27: tech-lead redige tasks.md ([TNNN], wave, dono, tipo feature/fix/refactor/doc/chore, [P]), herdando do plano as tabelas estado-do-mundo, o mediavel por tarefa e 'onde o spec-validate olha'. Portao = aprovacao literal do usuario."
+    "status": "awaiting_approval",
+    "notes": "tasks.md do tech-lead (Fable 5.1, 2026-10-27; de068cb): 51 tarefas T001-T096 em W0-W9, tipagem auditavel (6 feature, 1 fix, 8 doc, resto chore), [P] so em medicoes/prototipos em clone efemero, estado do mundo M1..M23, serie de 17 repins, 11 pontos de PARADA, provas mecanicas das erratas aditivas testadas. Plano recebeu nota aditiva da Fase 3 (coluna suites vermelha de T013 a T084; INV8(d) fecha na W7; CM1 falso sobrevivente T030-T040; R0 unico; SHAs pos-rebase). W0.2/W0.3 ja executadas (rebase sobre da71759). Portao: aprovacao literal do usuario pendente."
   }
 }

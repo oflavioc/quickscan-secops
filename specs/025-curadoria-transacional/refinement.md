@@ -451,3 +451,16 @@ palavra do papel** para não pinar uma das três antes da decisão.
 - **Mudar o texto de "Nova sessão"** (`:61`): pinado por UX21 e já verdadeiro.
 - **O conflito de nomes do papel** (facilitador/operador/engenheiro): passe próprio.
 - **Decidir o nome da suíte, as waves e os donos**: `tech-lead`, Fase 2/3.
+
+## Erratas do refinamento
+
+> Registradas pelo `product-owner` (Fable 5.1, `claude-fable-5-1`) em 2026-10-27,
+> na revisão de intenção da spec (Fase 1). O refinamento foi aprovado na rodada 2;
+> o que está acima **não é reescrito** — a errata diz o que mudou e por quê, para
+> que a Fase 6 meça a demanda contra a régua corrigida, não contra a frase que a
+> spec provou larga demais.
+
+| # | Onde | O que estava escrito | O que passa a valer | Razão |
+|---|---|---|---|---|
+| ERR-1 | §Conflito com decisão registrada, `:101-104` | a entrada *"cláusula defensiva inalcançável"* da R13 *"alcança duas linhas desta superfície — a guarda `&& snap.curadoria` (`:602`) e o `err(...)` (`:238-239`) — que não se reportam nem se removem"* | **`:238-239` permanece** na classe e não se toca. **`:602` cai por mudança de contrato** (snapshot passa a guardar `toSession()`, que é `undefined` para "nada declarado"; com a guarda, o rollback pularia a restauração desse estado — alcançável e errada). Não é remoção de código morto nem "correção de passagem": é a spec (C5, `D025-TRX2(b′)`, mutante `D025-M22`) | Lidas as duas: a entrada da R13 enumera **três** instâncias com prova própria de inalcançabilidade e manda não as *reportar*; não diz que cláusula defensiva não possa mudar por spec quando o contrato muda. Depois da demanda, reintroduzir a guarda **não é mutante equivalente** — a cláusula sai da classe pelo critério da própria entrada. O "não se removem" foi extrapolação minha, apontada pelo `tech-lead` na Fase 1 |
+| ERR-2 | P1 (`:300-311`) e caso 14 (`:276`) | P1 enumera `{}`, `{decisions:{}}`, `decisions` sem chaves e `null` | P1 ganha um **sub-caso**: chave **desconhecida dentro** de `reportCuration` é recusada nomeando-a (`F-extra`, `D025-CAN1`, mutante `D025-M23`) — a mesma regra que o schema v1 aplica a toda outra estrutura do documento (`extraKeys`), de que `reportCuration` era a única exceção silenciosa | Omissão da Fase 0: a tabela da INV-8 (`:65-70`) tratou as grafias do *estado* e não as chaves do *bloco*. Mesma razão (i) de P1 (doutrina do próprio validador), custo marginal nulo (uma comparação no `validate` que nasce nesta demanda), self-import intacto. Escalado pelo `tech-lead`; decidido pelo PO; **vai ao usuário junto com a spec** no portão da Fase 1 — se recusado, volta a "declarado, candidato a achado" |

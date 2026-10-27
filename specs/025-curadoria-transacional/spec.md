@@ -27,7 +27,14 @@ prévia), com gates que **importam de verdade**. Link: [refinement.md](refinemen
 Vocabulário desta spec: *Curadoria do relatório* (`CONTEXT.md:210-221`),
 *Importação substitutiva* (`CONTEXT.md:233-244`), *Supressão pela curadoria*
 (`CONTEXT.md:224-231`). Os textos novos de produto **evitam a palavra do papel**
-(facilitador/operador/engenheiro — `refinement.md:409-414`).
+(facilitador/operador/engenheiro — `refinement.md:409-414`). [PO 2026-10-27]
+*Validação pura* / *aplicador*, *candidato*, *snapshot*/*rollback* e *transiente*
+são **vocabulário interno** desta spec e do plano (contrato de bridge, R9 §3/§5),
+classificados assim no `refinement.md:403-407` e **não registrados** no
+`CONTEXT.md` (grep `pura|puro` = 0): são propriedade de função, não conceito que o
+facilitador ou o leitor do relatório encontre; a propriedade visível ao usuário já
+está absorvida pelo verbete *Importação substitutiva* ("olhar um arquivo … deixa a
+janela igual à anterior").
 
 ## Critérios de aceite → gates
 
@@ -74,7 +81,9 @@ sessão de referência = `boot()` nível 0 com `PRIOS` (`tests_019_curadoria.js:
 documentos: `F-A`, `F-B` (exportados de janelas com A e B), `F-0` (mesmo conteúdo,
 **sem** `reportCuration`), `F-null`/`F-vazio`/`F-dec-vazio`/`F-dec-vazio-arch`
 (formas não canônicas de P1), `F-arch` (`{architectureNote:"exclude"}` só),
-`F-inv-id`/`F-inv-enum`/`F-inv-tipo` (curadoria inválida), `F-tardio` (`F-A` com
+`F-inv-id`/`F-inv-enum`/`F-inv-tipo` (curadoria inválida), `F-extra` (`F-A` com
+`reportCuration.observacao = "x"` — chave desconhecida **dentro** do bloco, nem
+proibida nem derivada [PO 2026-10-27]), `F-tardio` (`F-A` com
 `operationalRefinement.answers["ref-hunting"]=99`, erro no último bloco validado —
 `tests_session_m48.js:286`), `F-engine` (`F-A` com `engineSha256` trocado),
 `F-insuf` (≤ 9 respostas + curadoria A).
@@ -83,9 +92,9 @@ documentos: `F-A`, `F-B` (exportados de janelas com A e B), `F-0` (mesmo conteú
 |---|---|---|---|
 | C1 | **Validar não aplica — nos três chamadores.** Selecionar arquivo, abrir a prévia, cancelar, apertar Escape e **exportar** deixam o owner intocado | `D025-VAL1` · `tests_025_curadoria_sessao.js` · janela com curadoria B; (a) `validateSessionDocument(F-A)` → `ok:true`, **0** escritas no bridge, `state()` idêntico; (b) caminho real do seletor: `openImportPicker(origin)`, `input[type=file][aria-label="Selecionar arquivo de sessão"]` recebe `File` sintético com `F-A` e o `onchange` real é aguardado → prévia aberta em `#ux-modal`, **0** escritas; `#ux-modal-cancel` → 0 escritas; de novo com Escape (`keydown` na `document`, `ui_ux_v32.js:41`) → 0 escritas; assinatura byte-igual à inicial em todos os pontos; (c) `prepareSessionExport("x")` com curadoria A declarada → `ok:true`, **0** escritas, `JSON.stringify(state())` idêntico antes/depois (`EA-105`); (d) negativo: `importSessionDocument(F-A)` confirmado escreve **≥ 1** vez — prova que o contador enxerga escrita | **M1** · `ui_session_v32.js` · reintroduzir `fromSession` no validador (o produto de hoje, `:240`) ⇒ VAL1 vermelho em (a)/(b)/(c) |
 | C2 | **O bridge valida sem tocar o estado**, e `fromSession` inválido não apaga a seleção (sub-caso E do `EA-91`) | `D025-VAL2` · idem · (a) `validate(F-inv-id.reportCuration)` devolve lista não vazia cuja mensagem **nomeia o campo** (`decisions: id fora do catálogo: …`); `state()` byte-igual; idem para `F-inv-enum` (`valor fora do enum fechado`) e `F-inv-tipo` (`decisions não é objeto`); (b) `fromSession(inválido)` devolve **as mesmas** mensagens e `state()` byte-igual — o aplicador recusa **antes** de zerar; (c) `importSessionDocument(F-inv-*)` → `ok:false`, `error` começa por `Curadoria inválida: `, assinatura byte-igual; (d) positivo: `validate(F-A.reportCuration)` → `[]` e `state()` ainda byte-igual (validar válido também não aplica) | **M2** · `ui_curation_v32.js` · `daSessao` zera o estado **antes** de validar (o produto de hoje, `:188`) ⇒ VAL2(b)/(c) vermelhos |
-| C3 | **Forma canônica de "sem curadoria" é a ausência da chave** (P1). `null`, `{}`, `{decisions:{}}` e `decisions` sem chaves são recusados com mensagem; `{architectureNote:"exclude"}` é válido | `D025-CAN1` · idem · janela com curadoria A; para cada um de `F-null`, `F-vazio`, `F-dec-vazio`, `F-dec-vazio-arch`: `validate(...)` não vazio **e** `importSessionDocument(...)` → `ok:false`, `error` contém `ausência da chave` ou `ausência do campo`, assinatura byte-igual (curadoria A **permanece**); `F-arch` → `ok:true`, `state().architectureNote==="exclude"`, `decisions` vazio, `published()==offered()`; controle: `F-0` → `ok:true` (ausência continua legítima) | **M3** · `ui_curation_v32.js` · `validate` aceita `{}`/`{decisions:{}}`/`null` como "vazio" (direção inversa de P1) ⇒ CAN1 vermelho |
+| C3 | **Forma canônica de "sem curadoria" é a ausência da chave** (P1). `null`, `{}`, `{decisions:{}}` e `decisions` sem chaves são recusados com mensagem; `{architectureNote:"exclude"}` é válido. [PO 2026-10-27] **Sub-caso: chave desconhecida dentro de `reportCuration` é recusada nomeando-a** — a mesma estritez que o schema v1 aplica à raiz (`:224-225`), a `inputs` (`:229-230`), ao assessment (`:246-247`), ao contexto (`:283`), à capability (`:300`) e à solution (`:310-311`); `reportCuration` era a única estrutura do documento que tolerava chave desconhecida em silêncio (`hasForbiddenKeys`/`hasReservedDerived` já recusam, por recursão, as proibidas e as derivadas — o vão era só o resto) | `D025-CAN1` · idem · janela com curadoria A; para cada um de `F-null`, `F-vazio`, `F-dec-vazio`, `F-dec-vazio-arch`: `validate(...)` não vazio **e** `importSessionDocument(...)` → `ok:false`, `error` contém `ausência da chave` ou `ausência do campo`, assinatura byte-igual (curadoria A **permanece**); [PO 2026-10-27] `F-extra`: `validate(...)` não vazio com mensagem que contém `não reconhecid` **e** o nome da chave (`observacao`), `importSessionDocument(F-extra)` → `ok:false`, assinatura byte-igual; `F-arch` → `ok:true`, `state().architectureNote==="exclude"`, `decisions` vazio, `published()==offered()`; controle: `F-0` → `ok:true` (ausência continua legítima) | **M3** · `ui_curation_v32.js` · `validate` aceita `{}`/`{decisions:{}}`/`null` como "vazio" (direção inversa de P1) ⇒ CAN1 vermelho; [PO 2026-10-27] **M23** · `ui_curation_v32.js` · `validate` ignora chave desconhecida (o produto de hoje, `daSessao` lê só `decisions`/`architectureNote`) ⇒ CAN1 (`F-extra`) vermelho |
 | C4 | **A curadoria entra no candidato e no commit — inclusive a ausência.** | `D025-TRX1` · idem · (a) `normalizeSessionDocument(F-A)` devolve `cand` com a chave **`curadoria`** presente (`hasOwnProperty`) e **deep-igual** a `F-A.inputs.reportCuration`, sem tocar o estado (assinatura byte-igual, padrão S50); (b) `normalizeSessionDocument(F-0)` devolve `cand` com `curadoria` **presente e `undefined`**; (c) `commitCanonicalOwners(cand de F-A)` em janela com B → `{ok:true}` e `state()` deep-igual a A; (d) `commitCanonicalOwners(cand de F-0)` em janela com A → `state()` vazio, `toSession()===undefined` | **M4** · `ui_session_v32.js` · `curadoria` fora do candidato (lista de 10 de hoje, `:533-541`) ⇒ TRX1(a)/(b) vermelhos; e o commit sem a escrita ⇒ (c)/(d) vermelhos |
-| C5 | **Snapshot antes de qualquer escrita; falha no commit devolve a SESSÃO, não o arquivo.** | `D025-TRX2` · idem · janela com curadoria B e assinatura `pre`; (a) **ordem**: com o bridge instrumentado, em `importSessionDocument(F-A)` a primeira escrita (`fromSession`/`set`/`clear`) ocorre **depois** de ao menos uma leitura `toSession` (a do snapshot) — e nenhuma escrita ocorre durante `validateSessionDocument` + `normalizeSessionDocument` (caso 13); (b) **falha após a escrita da curadoria**: `fromSession` embrulhado aplica e **lança uma vez** (restaurando-se antes de lançar, padrão `tests_session_m48.js:688-691`) → `commitCanonicalOwners(cand de F-A)` devolve `{ok:false, rolledBack:true}`, `state()` deep-igual a **B** (não a A), assinatura byte-igual a `pre`; (c) **falha antes da curadoria**: `Set.prototype.clear` lança (S62+S68) → mesmo veredito; (d) o mesmo documento, sem patch, importa com `ok:true` e `state()` igual a A — o patch não contaminou a janela | **M6** · `ui_session_v32.js` · mutB: snapshot com `curadoria: null` e restore sem `fromSession` ⇒ TRX2(b) vermelho; **M7** · idem · `snapshotCanonicalOwners()` movido para **depois** da primeira escrita ⇒ TRX2(a) e (b) vermelhos; **M8** · idem · `fromSession(cand.curadoria)` **fora** do `try` (antes do snapshot) ⇒ TRX2(a)/(b) vermelhos |
+| C5 | **Snapshot antes de qualquer escrita; falha no commit devolve a SESSÃO, não o arquivo.** | `D025-TRX2` · idem · janela com curadoria B e assinatura `pre`; (a) **ordem**: com o bridge instrumentado, em `importSessionDocument(F-A)` a primeira escrita (`fromSession`/`set`/`clear`) ocorre **depois** de ao menos uma leitura `toSession` (a do snapshot) — e nenhuma escrita ocorre durante `validateSessionDocument` + `normalizeSessionDocument` (caso 13); (b) **falha após a escrita da curadoria**: `fromSession` embrulhado aplica e **lança uma vez** (restaurando-se antes de lançar, padrão `tests_session_m48.js:688-691`) → `commitCanonicalOwners(cand de F-A)` devolve `{ok:false, rolledBack:true}`, `state()` deep-igual a **B** (não a A), assinatura byte-igual a `pre`; [PO 2026-10-27] **(b′) a mesma falha em janela com "nada declarado"** (`toSession()===undefined` antes): rollback ⇒ `toSession()===undefined` e `state().decisions` vazio — é o único caso em que `snap.curadoria` é `undefined`, e é o que a guarda `&& snap.curadoria` de hoje (`:602`) faria **falhar**: sem (b′), um mutante que a reintroduza sobrevive a (b) e a S69(b), onde o snapshot é sempre truthy; (c) **falha antes da curadoria**: `Set.prototype.clear` lança (S62+S68) → mesmo veredito; (d) o mesmo documento, sem patch, importa com `ok:true` e `state()` igual a A — o patch não contaminou a janela | **M6** · `ui_session_v32.js` · mutB: snapshot com `curadoria: null` e restore sem `fromSession` ⇒ TRX2(b) vermelho; **M7** · idem · `snapshotCanonicalOwners()` movido para **depois** da primeira escrita ⇒ TRX2(a) e (b) vermelhos; **M8** · idem · `fromSession(cand.curadoria)` **fora** do `try` (antes do snapshot) ⇒ TRX2(a)/(b) vermelhos; [PO 2026-10-27] **M22** · idem · reintroduzir a guarda `&& snap.curadoria` em `restoreCanonicalOwners` ⇒ TRX2(b′) vermelho (TRX2(b) e S69(b) **sobrevivem** a M22 — por isso (b′) existe) |
 | C6 | **Ausência substitui.** O mesmo arquivo sem a chave produz, sobre três estados prévios distintos, o estado de um DOM virgem — tela, papel e export | `D025-AUS1` · idem · quatro janelas: virgem, com `exclude` em ofertado, com `include` explícito sem lastro, com `architectureNote:"exclude"`; em cada uma `importSessionDocument(F-0)` → `ok:true`; (a) `state()` vazio e `toSession()===undefined` nas quatro; (b) `published()` deep-igual a `offered()` e **ausência** de `[data-p53-suprimido]`; (c) contagem e ids dos cards da tela iguais nas quatro (≥ 9 — vacuidade nomeada); (d) corpo do papel após `beforeprint` **idêntico** nas quatro; (e) `captureCanonicalInputs()` **sem** `reportCuration` nas quatro e idêntico entre elas | **M5** · `ui_curation_v32.js` · mutC: `daSessao` devolve `[]` sem aplicar (a importação nunca restaura nem limpa) ⇒ AUS1(a) vermelho nas janelas sujas |
 | C7 | **Roundtrip de identidade: substituição, nunca merge.** | `D025-INV8` · idem · (a) **DOM novo**: `F-A` importado em `boot()` → `captureCanonicalInputs()` JSON-idêntico ao da janela de origem, `contract()` e `published()` deep-iguais, papel idêntico; inclui `architectureNote:"exclude"` e a inclusão sem lastro, que aparece **sinalizada** no editor (`[data-p53-cur-sem-lastro]`) e **rotulada** no papel (`[data-p53-prov="operador"]`) — caso 17, inalterado; (b) **janela suja**: `F-A` importado sobre curadoria B → `state()` deep-igual a A e `state().decisions` **sem** nenhuma chave de B; (c) **idempotência**: `F-A` importado duas vezes seguidas → assinaturas idênticas após a 1ª e a 2ª; (d) o exemplo publicado `synthetic_session_examples/exemplo-completo.json` declara `reportCuration`, importa com `ok:true` e `state()` deep-igual ao declarado (liga a tarefa `doc` a uma máquina) | **M9** · `ui_curation_v32.js` · mutD: `daSessao` sem o reset do estado (merge em vez de substituição) ⇒ INV8(b) vermelho |
 | C8 | **Sem efeito**: cancelar, Escape, erro posterior ao bloco da curadoria, engine incompatível e curadoria inválida deixam a janela byte-igual | `D025-NOP1` · idem · janela com curadoria B e painel aberto; assinatura `pre`; para cada um de `F-tardio` (`ok:false`, erro de hoje, `Resposta inválida`/aprofundamento), `F-engine` (`importSessionDocument` → `ok:false` com `compat`; seletor → modal `Importação bloqueada`), `F-inv-id`, e para Cancelar/Escape sobre `F-A` pela prévia real: assinatura **byte-igual** a `pre` — `state()`, checkboxes, aviso, papel, inputs; (b) S29-like: o `bad` vem de **outra** janela (curadoria A) e também na versão sem a chave | **M10** · `ui_session_v32.js` · `importSessionDocument` aplica a curadoria **antes** de `sessionCompatibility` ⇒ NOP1 (`F-engine`) vermelho |
@@ -158,9 +167,9 @@ Nenhum caso sem gate; nenhum gate sem caso.
 | 9 substituição | INV8(b) |
 | 10 DOM novo | INV8(a) |
 | 11 idempotência | INV8(c) |
-| 12 falha no commit | TRX2(b)(c) |
+| 12 falha no commit | TRX2(b)(b′)(c) — (b′) [PO 2026-10-27]: "estado da sessão" inclui "nada declarado" |
 | 13 ordem interna | TRX2(a) |
-| 14 forma canônica | CAN1 |
+| 14 forma canônica | CAN1 (+ `F-extra`, sub-caso [PO 2026-10-27] — `refinement.md` ERR-2) |
 | 15 `{architectureNote}` só | CAN1 (`F-arch`) |
 | 16 gate fechado | GAT1 |
 | 17 include sem lastro | INV8(a) + regressão `D019-CUR2(e)`/`D019-PROV1` (não muda) |
@@ -194,8 +203,9 @@ Nenhum caso sem gate; nenhum gate sem caso.
 
 Mutantes mínimos da síntese: (a)=M4 · (b)=M6 · (c)=M7 · (d)=M1 · (e)=M11 ·
 (f)=M3 · (g)=M14 · (h)=M15 · (i)=M5 · (j)=M9 · (k)=M6. Adicionais desta spec:
-M2, M8, M10, M12, M13, M16, M17, M18, M19, M20, M21. Ids `D025-M1`…`D025-M21`,
-permanentes (R12). Se a wave do `draft` for cortada, **M15 é aposentado** e
+M2, M8, M10, M12, M13, M16, M17, M18, M19, M20, M21, e [PO 2026-10-27] M22 (guarda
+`&& snap.curadoria` ressuscitada) e M23 (chave desconhecida dentro de
+`reportCuration` ignorada). Ids `D025-M1`…`D025-M23`, permanentes (R12). Se a wave do `draft` for cortada, **M15 é aposentado** e
 `D025-TRN2` sai por errata de W0, antes do red (`EA-107` fica `aberto`).
 
 ## Comportamento especificado
@@ -236,6 +246,18 @@ foi declarado.
   continuam preservados. Diálogo (`:55`) passa a:
   **`Respostas, observações, prioridades e a curadoria do relatório serão limpas. O contexto tecnológico declarado será preservado.`**
   (não pinado em nenhum `tests_*.js` nem em `tests_visual/` — grep meu = 0).
+  [PO 2026-10-27] **Texto aprovado pelo PO** tal como está: é o exemplo literal
+  de P2 (`refinement.md:315-316`), usa a cabeça do verbete (*curadoria do
+  relatório*), concorda em gênero/número ("serão limpas" — quatro sujeitos
+  femininos), não nomeia o papel e preserva intacta a segunda frase (a promessa
+  da 4.2 sobre o contexto). Reconferi que `Respostas, observações` só ocorre em
+  `ui_ux_v32.js:55`, no HTML gerado e nos artefatos desta demanda — nenhuma suíte
+  o pina. O texto de "Nova sessão" (`:61`, UX21 `tests_ux_m41.js:203`) **não muda**
+  e continua verdadeiro: "remove também" já abrange a curadoria. A linha da
+  prévia **`Curadoria do relatório: sim`/`não`** também está aprovada — é o
+  literal de P4 (`refinement.md:345`), paralela a `Cenário-alvo: sim/não` e
+  `Aprofundamento: sim/não` (`ui_session_v32.js:732-733`), sem predicar
+  "informada/declarada" porque a ausência da chave **é** a forma de "não".
 - Cancelar/Escape nos dois diálogos: nada muda (UX22, com oráculo que vê o owner
   em NEW1(c)/RST1(c)).
 
@@ -273,12 +295,17 @@ sessão compõe `"Curadoria inválida: " + erros.join("; ")` (como hoje, `:241`)
 | `{}` ou sem `decisions` e sem `architectureNote` | `reportCuration sem decisão declarada — represente 'sem curadoria' pela ausência da chave` |
 | `decisions` não objeto | `decisions não é objeto` (hoje) |
 | `decisions` com **zero** chaves | `decisions sem chaves — represente 'nenhuma decisão por produto' pela ausência do campo` |
+| chave desconhecida dentro de `reportCuration` [PO 2026-10-27] | `reportCuration: campos não reconhecidos: <k1>, <k2>` (padrão de `:225`/`:229-230`; ordem de `Object.keys`) |
 | id fora do catálogo | `decisions: id fora do catálogo: <id>` (hoje) |
 | valor fora do enum | `decisions: valor fora do enum fechado: <valor>` (hoje) |
 | `architectureNote` fora do enum | `architectureNote fora do enum: <valor>` (hoje) |
 
 Padrão das mensagens novas: `ui_session_v32.js:327-329` e `:346-348`
-(*"represente … pela ausência do campo"*).
+(*"represente … pela ausência do campo"*). [PO 2026-10-27] Redação das oito
+linhas **aprovada** pelo PO como está: PT-BR, voz do validador de sessão
+(identificador de código + explicação + remédio), nenhuma usa a palavra do papel;
+o prefixo `Curadoria inválida: ` (`:241`) continua sendo o que o usuário lê no
+modal `Não foi possível importar`.
 
 ### UNSET · NA · suficiência
 
@@ -328,6 +355,18 @@ snapshot, commit, restore, `sessionHasContent`), `ui_curation_edit_v32.js` (`uns
   extrapolação), mas porque com `toSession()` no snapshot ela passaria a ser
   **alcançável e errada**: pularia a restauração de "nada declarado". Registrado
   aqui para que a mudança não volte como achado.
+  [PO 2026-10-27] **Confirmado pelo PO**, lidas as duas (`refinement.md:99-104`;
+  `design-decisions.md` §Candidatas, *cláusula defensiva*): a entrada da R13
+  enumera **três** instâncias com prova de inalcançabilidade própria
+  (`engine_v32.js:696` + `validateConfigV32`); `:602` não está entre elas e a sua
+  inalcançabilidade de hoje tem outra prova (bridge IIFE instalado antes de
+  qualquer snapshot). O que a R13 proíbe é *reportar como defeito* e *corrigir de
+  passagem* — não mudar por spec quando o contrato muda. E o teste da própria
+  entrada decide: depois desta demanda, um mutante que **reintroduza** a guarda
+  **não é equivalente** (M22 o mata em TRX2(b′)) — logo a cláusula deixa de
+  pertencer à classe. A frase *"não se removem"* do refinamento era mais larga do
+  que a R13 sustenta: errata **ERR-1** no `refinement.md`. O `err("…modulo de
+  curadoria nao esta disponivel")` (`:238-239`) continua na classe e **permanece**.
 - `commitCanonicalOwners`: `fromSession(cand.curadoria)` dentro do `try`, após as
   escritas de owner (`:609-619`) e antes dos transientes (`:620-621`);
   `prioLimitHit = false`; `discardDraft()` guardado. Falha após a escrita da
@@ -388,9 +427,19 @@ oferta por sinal da 022) · `hasSubstituteV32()` (023/024) · a proveniência
 byte-idêntico** (C5 da 019 continua critério: `D019-MED1` + stage `m41`) · engine e
 Camada 1 (zero linha) · `tests_ux_m41.js` (congelada; UX21 `:203`) · o texto de
 "Nova sessão" (`ui_ux_v32.js:61`) · os literais de S30 · o `err("…modulo de
-curadoria nao esta disponivel")` (`:238-239`, defensivo) · chaves **desconhecidas
-dentro** de `reportCuration` continuam ignoradas como hoje (sem gate; candidata a
-achado no backlog — não é desta demanda).
+curadoria nao esta disponivel")` (`:238-239`, defensivo). [PO 2026-10-27] A linha
+anterior desta lista — *"chaves desconhecidas dentro de `reportCuration` continuam
+ignoradas"* — **saiu**: decisão do PO na revisão da Fase 1, entra como sub-caso de
+C3 (`F-extra`, M23). Razões: (i) é a doutrina do próprio schema v1 — toda outra
+estrutura do documento recusa chave desconhecida nomeando-a; recusar fora e
+ignorar dentro é incoerente pela mesma razão que fez P1 recusar `{}`; (ii) custo
+marginal nulo — uma comparação a mais em `validate`, que **nasce** nesta demanda
+no único módulo não protegido que ela edita; deixá-lo para achado futuro é reabrir
+`ui_curation_v32.js` depois; (iii) self-import (4.8.0.7-A) intacto — `paraSessao`
+nunca emite chave além de `decisions`/`architectureNote`; `SESSION_SCHEMA_VERSION`
+continua `1`. Não é reabertura de P1: P1 fixou *"uma grafia por estado"*; isto é a
+mesma regra para *"nenhuma grafia que o produto não lê"*. Vai ao usuário junto com
+a spec (portão da Fase 1).
 
 ## Cross-check (obrigatório)
 
@@ -506,13 +555,21 @@ do critério**; seções de ratificação anteriores ficam intactas.
 | E3 | `tests_019_curadoria.js:219` (+ comentário) | título do `D019-INV8` reduzido ao corpo (texto acima); contagem 14; `D019-M3` intacto | `node tests_019_curadoria.js` 14/14; `--preflight` d019 `ocorrencias == 1` |
 | E4 | `SESSION_SCHEMA_V32.md` | §4 (`:221`): *"cinco blocos"* + `reportCuration` opcional; §5 (`:226-241`): linha da sexta chave (`__CURATION` · `inputs.reportCuration` · não); §8.4 (`:416`, `:428-430`): snapshot antes de qualquer escrita **vale para a curadoria**; cobertura de rollback inclui `__CURATION`; §9 (`:436-442`): validação da curadoria (puro; formas recusadas; ausência legítima **e substitutiva**). Restrições: regexes de S80/S81 (`:904-915`) e S82 (`:916-931`) satisfeitas; o bloco JSON inline de §3 continua **igual** a `exemplo-minimo.json` (S110, `:1377-1395`) — a curadoria entra como **fragmento** JSON ou prosa, nunca como segundo documento completo antes dele (S79 ignora fragmentos; S110 usa o primeiro completo) | `D025-DOC1`; m48 S79–S82, S109, S110 verdes |
 | E5 | `synthetic_session_examples/exemplo-completo.json` | ganha `reportCuration` válido (uma exclusão de ofertado + `architectureNote`); `toolVersion`/`engineSha256` inalterados (S109, `:1358-1376`) | `D025-INV8(d)` |
-| E6 | `USER_GUIDE.md:404-432` (§11) | *"Importar substitui a sessão ativa por inteiro"* (`:417`) ganha *"— inclusive a curadoria do relatório; o que o arquivo não declara volta a 'nada declarado'"*; nota de que **Nova sessão** e **Reiniciar avaliação** limpam a curadoria; checklist A→B→A (`:419-426`) inalterado | `D025-DOC1(e)`; `P51-DOC*` verdes |
+| E6 | `USER_GUIDE.md:404-432` (§11) | *"Importar substitui a sessão ativa por inteiro"* (`:417`) ganha *"— inclusive a curadoria do relatório; o que o arquivo não declara volta a 'nada declarado'"*; nota de que **Nova sessão** e **Reiniciar avaliação** limpam a curadoria; checklist A→B→A (`:419-426`) inalterado. [PO 2026-10-27] Fato medido: o guia tem **0** ocorrências de `curadoria`, `Reiniciar avaliação` e `Nova sessão` (grep meu, `USER_GUIDE.md` inteiro) — a 019 nunca o documentou. A nota de E6 não pode citar *"a curadoria do relatório"* como coisa já apresentada: ou remete a uma seção que a descreva (não existe) ou abre com uma frase que a defina pelo verbete (`CONTEXT.md:210`), sem a palavra do papel. É a alínea (d) do `EA-112`, já no escopo; o `doc-writer` executa, DOC1(e) mede | `D025-DOC1(e)`; `P51-DOC*` verdes |
 | E7 | `.claude/verify/bridges.json:7-10`, `:71-74` | notas de `__V32UI` (`discardDraft`/`hasDraft`) e `__CURATION` (`validate` puro, `unset`, `fromSession` recusa sem tocar) | stage `lint-arch` |
-| E8 | `.claude/BACKLOG.md` | status de `EA-91`, `EA-92`, `EA-105`…`EA-114` ao fecho (`doc-writer`, Fase 6); `EA-110` sobe a decisão P3 (não vai a `design-decisions.md` — virou comportamento, não decisão de "não é defeito"); `EA-115` permanece `aberto`, baixa | relatório final |
+| E8 | `.claude/BACKLOG.md` | status de `EA-91`, `EA-92`, `EA-105`…`EA-114` ao fecho (`doc-writer`, Fase 6); `EA-110` sobe a decisão P3 (não vai a `design-decisions.md` — virou comportamento, não decisão de "não é defeito"); `EA-115` permanece `aberto`, baixa. [PO 2026-10-27] Confirmado: o `BACKLOG.md:10323-10330` registra o `EA-110` como *pergunta de desenho* a decidir por PO/TL; P3 a respondeu na direção **"corrigir"** (toggle-back volta a ausente), logo o fecho é `corrigido pela 025 (P3, D025-UNS1)` com a decisão citada — **não** riscado (não foi refutado) e **não** em `design-decisions.md` (que guarda o que se decidiu *não* ser defeito; a alternativa "manter e registrar" do `refinement.md:340-342` foi a **não adotada**) | relatório final |
 
 Se a wave do `draft` cair: **E0** (W0, antes do red) retira `D025-TRN2`/`M15` e
 `discardDraft`/`hasDraft` desta spec; `EA-107` fica `aberto` com a alínea
-declarada "não executada". Nada mais depende dela.
+declarada "não executada". Nada mais depende dela. [PO 2026-10-27] Conferido o
+isolamento: nenhum outro gate assere `hasDraft`/`discardDraft`; as menções em
+*Comportamento → commit* e *Nova sessão · Reiniciar* são chamadas **guardadas por
+`typeof`**, que E0 remove junto. E0 tem de retirar **também**: `ui_v32.js` dos
+`targets` de `mutation_map.json → harnesses.d025`, da lista de repin e da nota E7
+(`bridges.json:7-10`); a autorização §29.4 para `ui_v32.js` fica **sem uso, não
+revogada** (foi dada para a 025 e permanece citável). O corte em si é decisão do
+usuário — P5 foi aprovada *com* o `draft`; "severável" é a forma do corte, não a
+licença para cortar.
 
 ## Fora de escopo
 
@@ -532,8 +589,9 @@ A spec exclui ainda:
 - **Fixtures curadas na suíte congelada** para S29/S49/S67/S77/S6/S7/S37/S41/S112
   (cenário 12, segunda metade): a propriedade é medida em `D025-NOP1`/`D025-INV8`;
   a m48 recebe só as quatro reancoragens autorizadas.
-- **Chaves desconhecidas dentro de `reportCuration`**: comportamento de hoje
-  (ignoradas), declarado; candidata a achado.
+- ~~**Chaves desconhecidas dentro de `reportCuration`**: comportamento de hoje
+  (ignoradas), declarado; candidata a achado.~~ [PO 2026-10-27] **Entrou** — C3,
+  `F-extra`, M23 (ver *O que NÃO muda*).
 - **Mutante do papel separado** (cenário 13): o papel é derivado dos cards
   (`D019-PAR1`); as alíneas de papel vivem nos gates de estado; Chromium é o job
   `visual` (KI-3).

@@ -1,6 +1,6 @@
 {
   "demanda": "025-curadoria-transacional",
-  "phase": "plan",
+  "phase": "tasks",
   "spec_dir": "specs/025-curadoria-transacional",
   "branch": "feature/025-curadoria-transacional",
   "brief": "A curadoria do relatorio (sexta chave canonica da sessao, demanda 019) entra de fato no ciclo de vida da sessao: validar sem aplicar; candidato, commit atomico e snapshot ANTES de qualquer escrita, inclusive a AUSENCIA da chave (INV-8: o documento basta para reconstruir o resultado); Nova sessao limpa o owner; gates de roundtrip real que importam. Origem: EA-91/EA-92 (auditoria externa Codex 2026-10-20, refutacao adversarial 2026-10-25 em docs_phase5/auditoria_codex_2026-10-20/refutacao_adversarial_2026-10-25.md §3), com os adjacentes EA-105..EA-114. Decisao do proprietario 2026-10-25: corrigir o produto antes de selar a v3.2.11.",
@@ -15,7 +15,12 @@
     "approved_at": "2026-10-27"
   },
   "plan": {
-    "status": "awaiting_approval",
-    "notes": "plan.md do tech-lead (Fable 5.1, 2026-10-27): 10 waves (W0 pre-condicoes: merge #112/#113 pelo usuario + rebase ANTES do red; W1 red; W2 bridge; W3 ui_session; W4 ui_ux; W5 ui_v32 severavel; W6 editor; W7 docs/erratas; W8 registros + harness de mutantes; W9 validacao); um dono por modulo (core-engineer nos quatro modulos de estado, ui-engineer no editor, qa nas suites, doc-writer docs, build-engineer bridges/pins inline/pins/rebase); harness de mutantes em W8.3 com a tabela estado-do-mundo viajando no red (precedente 019/021-023, D4 da 013); 17 repins previstos; p51/p52 so fecham no job visual (KI-3); red esperado d025 1/16 PASS, m48 94/97. Portao: aprovacao literal do usuario pendente."
+    "status": "approved",
+    "notes": "plan.md do tech-lead (Fable 5.1, 2026-10-27): 10 waves (W0 pre-condicoes: merge #112/#113 pelo usuario + rebase ANTES do red; W1 red; W2 bridge; W3 ui_session; W4 ui_ux; W5 ui_v32 severavel; W6 editor; W7 docs/erratas; W8 registros + harness de mutantes; W9 validacao); um dono por modulo (core-engineer nos quatro modulos de estado, ui-engineer no editor, qa nas suites, doc-writer docs, build-engineer bridges/pins inline/pins/rebase); harness de mutantes em W8.3 com a tabela estado-do-mundo viajando no red (precedente 019/021-023, D4 da 013); 17 repins previstos; p51/p52 so fecham no job visual (KI-3); red esperado d025 1/16 PASS, m48 94/97. Portao: aprovacao literal do usuario pendente. PORTAO APROVADO PELO USUARIO no chat em 2026-10-27 (AskUserQuestion): 'Aprovado (Recomendada)'.",
+    "approved_at": "2026-10-27"
+  },
+  "tasks": {
+    "status": "in_progress",
+    "notes": "Fase 3 aberta em 2026-10-27: tech-lead redige tasks.md ([TNNN], wave, dono, tipo feature/fix/refactor/doc/chore, [P]), herdando do plano as tabelas estado-do-mundo, o mediavel por tarefa e 'onde o spec-validate olha'. Portao = aprovacao literal do usuario."
   }
 }

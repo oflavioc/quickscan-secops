@@ -15,7 +15,7 @@
     "approved_at": "2026-10-27"
   },
   "plan": {
-    "status": "in_progress",
-    "notes": "Fase 2 aberta em 2026-10-27: tech-lead redige plan.md (camadas, contratos de bridge, patch-points, waves por dependencia real, tabela de gatilho de campanha, boundary §29.4). Portao = aprovacao literal do usuario."
+    "status": "awaiting_approval",
+    "notes": "plan.md do tech-lead (Fable 5.1, 2026-10-27): 10 waves (W0 pre-condicoes: merge #112/#113 pelo usuario + rebase ANTES do red; W1 red; W2 bridge; W3 ui_session; W4 ui_ux; W5 ui_v32 severavel; W6 editor; W7 docs/erratas; W8 registros + harness de mutantes; W9 validacao); um dono por modulo (core-engineer nos quatro modulos de estado, ui-engineer no editor, qa nas suites, doc-writer docs, build-engineer bridges/pins inline/pins/rebase); harness de mutantes em W8.3 com a tabela estado-do-mundo viajando no red (precedente 019/021-023, D4 da 013); 17 repins previstos; p51/p52 so fecham no job visual (KI-3); red esperado d025 1/16 PASS, m48 94/97. Portao: aprovacao literal do usuario pendente."
   }
 }

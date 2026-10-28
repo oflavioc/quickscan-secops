@@ -422,6 +422,7 @@ palavra do papel** para não pinar uma das três antes da decisão.
 | 3 | **Autorização nominal §29.4** (R6 §5) para `ui_session_v32.js`, `ui_ux_v32.js`, `tests_session_m48.js` e `ui_v32.js` (orquestrador → proprietário, 2026-10-27, no chat) | *"Autorizo os quatro (Recomendada)"* — vale só para a 025; repin e trilha "Identidade anterior" nos pins inline legados |
 | 4 | **Portão da Fase 1** — spec.md (16 gates `D025-*`, 4 reancoragens, 23 mutantes, erratas da 019) com a revisão de intenção do PO, incluindo a extensão de P1 (chave desconhecida dentro de `reportCuration` recusada — ERR-2, M23) (orquestrador → proprietário, 2026-10-27, no chat) | *"Aprovado, com a extensão (Recomendada)"* — spec aprovada integralmente; ERR-2 passa de decisão do PO a decisão do usuário |
 | 5 | **Portão da Fase 2** — plan.md (10 waves, um dono por módulo, harness de mutantes em W8 com a tabela M1…M23 no red, W0 = mescla de #112/#113 + rebase antes do red, 17 repins, p51/p52 só no CI visual) (orquestrador → proprietário, 2026-10-27, no chat) | *"Aprovado (Recomendada)"* |
+| 6 | **Portão da Fase 3** — tasks.md (T001–T096, 10 waves, tipagem auditável, red esperado 1/16 e 94/97 nunca ajustado, harness em W8, 17 repins, 11 PARADAs) e nota aditiva da Fase 3 no plano (orquestrador → proprietário, 2026-10-27, no chat) | *"Aprovado — abrir o red (Recomendada)"* — P5-draft mantido (T005 inerte) |
 
 > A R4 é literal: aprovação é do usuário, no chat. P1–P6 são decisões de
 > **produto** (o que a ferramenta passa a fazer), não de ritmo. Depois da

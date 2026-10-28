@@ -1,6 +1,6 @@
 {
   "demanda": "025-curadoria-transacional",
-  "phase": "tasks",
+  "phase": "red",
   "spec_dir": "specs/025-curadoria-transacional",
   "branch": "feature/025-curadoria-transacional",
   "brief": "A curadoria do relatorio (sexta chave canonica da sessao, demanda 019) entra de fato no ciclo de vida da sessao: validar sem aplicar; candidato, commit atomico e snapshot ANTES de qualquer escrita, inclusive a AUSENCIA da chave (INV-8: o documento basta para reconstruir o resultado); Nova sessao limpa o owner; gates de roundtrip real que importam. Origem: EA-91/EA-92 (auditoria externa Codex 2026-10-20, refutacao adversarial 2026-10-25 em docs_phase5/auditoria_codex_2026-10-20/refutacao_adversarial_2026-10-25.md §3), com os adjacentes EA-105..EA-114. Decisao do proprietario 2026-10-25: corrigir o produto antes de selar a v3.2.11.",
@@ -20,7 +20,12 @@
     "approved_at": "2026-10-27"
   },
   "tasks": {
-    "status": "awaiting_approval",
-    "notes": "tasks.md do tech-lead (Fable 5.1, 2026-10-27; de068cb): 51 tarefas T001-T096 em W0-W9, tipagem auditavel (6 feature, 1 fix, 8 doc, resto chore), [P] so em medicoes/prototipos em clone efemero, estado do mundo M1..M23, serie de 17 repins, 11 pontos de PARADA, provas mecanicas das erratas aditivas testadas. Plano recebeu nota aditiva da Fase 3 (coluna suites vermelha de T013 a T084; INV8(d) fecha na W7; CM1 falso sobrevivente T030-T040; R0 unico; SHAs pos-rebase). W0.2/W0.3 ja executadas (rebase sobre da71759). Portao: aprovacao literal do usuario pendente."
+    "status": "approved",
+    "notes": "tasks.md do tech-lead (Fable 5.1, 2026-10-27; de068cb): 51 tarefas T001-T096 em W0-W9, tipagem auditavel (6 feature, 1 fix, 8 doc, resto chore), [P] so em medicoes/prototipos em clone efemero, estado do mundo M1..M23, serie de 17 repins, 11 pontos de PARADA, provas mecanicas das erratas aditivas testadas. Plano recebeu nota aditiva da Fase 3 (coluna suites vermelha de T013 a T084; INV8(d) fecha na W7; CM1 falso sobrevivente T030-T040; R0 unico; SHAs pos-rebase). W0.2/W0.3 ja executadas (rebase sobre da71759). Portao: aprovacao literal do usuario pendente. PORTAO APROVADO PELO USUARIO no chat em 2026-10-27 (AskUserQuestion): 'Aprovado — abrir o red (Recomendada)'; P5-draft mantido.",
+    "approved_at": "2026-10-27"
+  },
+  "red": {
+    "status": "in_progress",
+    "notes": "W1 aberta em 2026-10-27 apos R0 (repin de CONTEXT/refinement/spec/plan/tasks). qa-engineer: T010-T012 prototipos P1/P2 e medicoes em clone efemero; T013 suite tests_025_curadoria_sessao.js (16 gates) + red-025.md; T014-T015 reancoragens em tests_session_m48.js (§29.4 autorizado 2026-10-27) com M48_HTML_OVERRIDE; red.commit = SHA de T015. Contagens esperadas 1 PASS · 15 FAIL de 16 e 94 · 3 de 97 — divergencia e declarada, nunca ajustada."
   }
 }

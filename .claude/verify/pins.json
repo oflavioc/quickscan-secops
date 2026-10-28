@@ -1,8 +1,8 @@
 {
   "_meta": {
     "descricao": "Registry único de pins — fonte de identidade dos artefatos (R8). Hashes = SHA-256 dos blobs de HEAD. Alterar arquivo pinado exige regenerar este registry no MESMO PR, com motivo no commit.",
-    "gerado_de_head": "552f995ee236852c70b80f2254712edc14fd39bb",
-    "gerado_em": "2026-10-25",
+    "gerado_de_head": "d903126e6caeb2e6b7c3935b9c2ff83d4fe75005",
+    "gerado_em": "2026-10-27",
     "exclusoes": [
       "docs_phase5/**",
       ".claude/project-memory/** (estado de processo — muda por fase; validado pelo stage state, não por pin)",
@@ -278,7 +278,7 @@
     ".gitignore": "f12379e20604234d2c80ed8486cefa9c6fc22034e89c1fa79c239e6ae0665079",
     "AGENTS.md": "267c0b98ae9f6fa4289be88e95b72393be936951625be2917ae08fe0cb3e9671",
     "CLAUDE.md": "46bc87e937d6ac560e0445f30626257d2347b6001408300230d0955bdfee9b1d",
-    "CONTEXT.md": "2e4c24fb550798ef36e2da5faace9dc8351a341ca05ce1ae7ae9cc4ed801b7ef",
+    "CONTEXT.md": "b67038446dfd3f63d626a9926d388f1379fe5ae9b576529d36a704b11b57ce6e",
     "ICON_ASSET_DECISIONS_V32.md": "f14494c78ae40af88f8a2adf49e30f314a6800736b11607d3382e0a31d5cce80",
     "LICENSE": "1ddd9deeecd23a1cece8a3aee60c77f4168295535ea4d7cc0102c55d8e777c49",
     "MANIFEST.sha256": "defd52d1cfc57e6ca5a9ebcce8b620a080772b6ea62753f987c5a58f8ccf38c6",
@@ -456,6 +456,10 @@
     "specs/023-leitura-unica-do-apoio/tasks.md": "57c3ce0a0628b9e9a382eb5b077f190807ceeee235bd0e63c00436dc9cf588a1",
     "specs/024-sete-defeitos-do-relatorio/refinement.md": "255474b3a11cb9fc94e92a24a3bda62042a32e6faa0a4aa9423e1d59bab745da",
     "specs/024-sete-defeitos-do-relatorio/relatorio-final.md": "71bccb6c4a12652b1d22d3621149969153f3ab08895af4e0c1644aa7d5b78f03",
+    "specs/025-curadoria-transacional/plan.md": "04130e9a2440e9e1e15aee3c1b092abdac0cad588803ac13b2a3d125d86cdde0",
+    "specs/025-curadoria-transacional/refinement.md": "cf863d9497fc087521a76dc30ec638450d647fa8d86d65124d246c8fe35ee9d8",
+    "specs/025-curadoria-transacional/spec.md": "0cad54fc7a2171e40894490655acaa5d999949325fbfe20c3cc038867dabb723",
+    "specs/025-curadoria-transacional/tasks.md": "40bc4572c8605bf0d71920cb47ef1b8c3dfe0d44fb02fef5ab5386d16c0ef19c",
     "specs/PHASE_5_0_REV_A.md": "22e729174c6a3c5dd620da5330b03eb96d9eb6fc6e64eba097c2bde55eb0a510",
     "specs/PHASE_5_0_REV_B.md": "4f1583c733df62a9452aa7b218d962e40d781bb8d30dfc3179ad6e1ef004619b",
     "synthetic_session_examples/exemplo-completo.json": "8970e68ca0ce6a6885b62a911532a0598c9c5bca1bb783089fb085ba858a314d",

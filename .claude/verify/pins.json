@@ -1,7 +1,7 @@
 {
   "_meta": {
     "descricao": "Registry único de pins — fonte de identidade dos artefatos (R8). Hashes = SHA-256 dos blobs de HEAD. Alterar arquivo pinado exige regenerar este registry no MESMO PR, com motivo no commit.",
-    "gerado_de_head": "f965100249ca3b9f877cf8e3853081223b8a74b7",
+    "gerado_de_head": "42daddc49e1ae8f80d46f0aa7eb056cb2d7d8724",
     "gerado_em": "2026-10-30",
     "exclusoes": [
       "docs_phase5/**",
@@ -458,9 +458,9 @@
     "specs/024-sete-defeitos-do-relatorio/relatorio-final.md": "71bccb6c4a12652b1d22d3621149969153f3ab08895af4e0c1644aa7d5b78f03",
     "specs/025-curadoria-transacional/plan.md": "04130e9a2440e9e1e15aee3c1b092abdac0cad588803ac13b2a3d125d86cdde0",
     "specs/025-curadoria-transacional/red-025.md": "a73929b9a8bc2c964cb3df8e0da528a1962441f53a58d9c4f38ff1371fb69bd3",
-    "specs/025-curadoria-transacional/refinement.md": "2fe1cc5650de08dc8cf573efd6290192287c116e1ddcd9b70adfc56e9cf8fb59",
+    "specs/025-curadoria-transacional/refinement.md": "ee73656a6a4f0f834ffecd45418f25e121677fb651228dc582388f96cf1839bb",
     "specs/025-curadoria-transacional/spec-validate.md": "53a5b745fb3edb7ecf8da7cfdd6f7b943454b2fc92caee0e6cb9846880525e29",
-    "specs/025-curadoria-transacional/spec.md": "103a1be1cadf1734343318d68d342b63b1912e5f484ccfeb2d18270813d9afb8",
+    "specs/025-curadoria-transacional/spec.md": "42be6c58f3baec9ce535901206aac341f03e83e8c136f05e9070fb51ab22609f",
     "specs/025-curadoria-transacional/tasks.md": "40bc4572c8605bf0d71920cb47ef1b8c3dfe0d44fb02fef5ab5386d16c0ef19c",
     "specs/PHASE_5_0_REV_A.md": "22e729174c6a3c5dd620da5330b03eb96d9eb6fc6e64eba097c2bde55eb0a510",
     "specs/PHASE_5_0_REV_B.md": "4f1583c733df62a9452aa7b218d962e40d781bb8d30dfc3179ad6e1ef004619b",

@@ -39,14 +39,14 @@ Namespace `D019-*`. Suíte nova `tests_019_curadoria.js`; mutantes em
 |---|---|---|---|
 | C1 | **Curadoria é seleção, nunca redação.** Nenhum texto do relatório tem origem no estado de curadoria | `D019-CUR1` · o estado só contém **ids** e valores de **enum fechado**; nenhuma chave de texto livre; e nenhum texto impresso casa com valor vindo do estado | **M1**: acrescentar campo de texto livre ao estado e imprimi-lo ⇒ CUR1 vermelho |
 | C2 | **Ausência ≠ supressão.** Sessão sem curadoria declarada não tem nada suprimido | `D019-CUR2` · o conjunto **publicado** é exatamente o **ofertado** pelo motor, e a chave de curadoria está **ausente** — nunca `null` nem `{}` | **M2**: ausência passa a significar "excluir tudo" ⇒ CUR2 vermelho |
-| C3 | **Entrada canônica (INV-8).** Export só inputs; import recomputa | `D019-INV8` · a sexta chave entra em `captureCanonicalInputs()`; roundtrip preserva; injeção de campo derivado é recusada | **M3**: serializar a lista de recomendações resultante junto ⇒ INV8 vermelho |
+| C3 | **Entrada canônica (INV-8).** Export só inputs; import recomputa *(Errata E1 · demanda 025: C3 medido pela metade — `spec-validate.md:13` apontou o restauro em `validateSessionDocument`, que é validador; a metade "import recomputa" passa a ser medida por `D025-INV8`/`D025-AUS1`; `D019-INV8` reduzido ao que mede)* | `D019-INV8` · a sexta chave entra em `captureCanonicalInputs()`; roundtrip preserva; injeção de campo derivado é recusada | **M3**: serializar a lista de recomendações resultante junto ⇒ INV8 vermelho |
 | C4 | **Proveniência, nas DUAS superfícies.** Todo item cuja presença é decisão do operador leva rótulo, na tela **e** no papel | `D019-PROV1` · para cada item curado, existe marcador de proveniência no DOM da tela **e** em `#v32-print-report` | **M4**: remover o rótulo **só no papel** ⇒ PROV1 vermelho (é assim que isso quebra de verdade) |
 | C5 | **A curadoria não alcança medição nem declaração.** | `D019-MED1` · score, estágio, suficiência, gaps, prioridades e cenário-alvo **idênticos** com e sem curadoria; **payload M41 byte-idêntico** ao pinado | **M5**: deixar a curadoria filtrar a lista de `findings` ⇒ MED1 vermelho |
 | C6 | **Apoio por solução: nada some, nada nasce.** | `D019-SOL1` · o **conjunto** de produtos da visão por solução é **igual** ao da visão por gap — incluídas as menções curtas (`.prod-mini`) | **M6**: descartar produto que só aparece como menção curta ⇒ SOL1 vermelho |
 | C7 | **Agrupamento declarado, e o desconhecido é nomeado.** | `D019-SOL2` · todo produto cai em um grupo do portfólio; o que não tiver categoria conhecida vai para um grupo **explícito** e é **listado**, nunca descartado | **M7**: descartar em silêncio produto sem categoria ⇒ SOL2 vermelho |
 | C8 | **Tela e papel exibem a MESMA seleção.** | `D019-PAR1` · o conjunto publicado na tela é igual ao de `#v32-print-report`, medido **após `beforeprint`** | **M8**: aplicar a curadoria só na tela ⇒ PAR1 vermelho |
 | C9 | **Supressão total não produz vazio mudo.** | `D019-VAZ1` · curadoria que exclui tudo produz seção **com declaração da supressão**, nunca seção vazia nem seção ausente | **M9**: renderizar seção vazia ⇒ VAZ1 vermelho |
-| C10 | **Gate de suficiência fechado ⇒ curadoria indisponível.** | `D019-SUF1` · com o gate `blocked`, o controle de curadoria não existe e o estado não é lido | **M10**: oferecer curadoria com resultado bloqueado ⇒ SUF1 vermelho |
+| C10 | **Gate de suficiência fechado ⇒ curadoria indisponível.** *(Errata E2 · demanda 025: "o controle não existe e **o editor** não lê o estado" — `ui_curation_edit_v32.js:216-217`, `D019-SUF1`; `showResults` lê sob gate fechado — `EA-115`, fora)* | `D019-SUF1` · com o gate `blocked`, o controle de curadoria não existe e o estado não é lido | **M10**: oferecer curadoria com resultado bloqueado ⇒ SUF1 vermelho |
 | C11 | **A leitura arquitetural é curável, e a decisão vale nas duas superfícies.** | `D019-PAR1 (c)` · excluir a leitura arquitetural a retira da tela **e** do papel, e reincluir a devolve às duas — com fixture própria, porque a sessão de referência não declara contexto e sem contexto a leitura não existe | **M17**: honrar a exclusão só numa das superfícies ⇒ PAR1 (c) vermelho |
 
 > **C5 é o critério de aceite mais duro da demanda.** Se o payload M41 divergir,
@@ -218,3 +218,43 @@ Herdado do refinamento, mais:
   aparecem no dia seguinte à Porta B, sem código novo.
 - **Mudar a política de severidade.** Ela decide o que é **oferecido**; a
   curadoria decide o que é **publicado**.
+
+## Erratas da demanda 025 (2026-10-30)
+
+**Trilha de auditoria.** A demanda `025-curadoria-transacional` mediu a 019 e
+encontrou dois pontos em que o **registro** descreve algo diferente do que os
+gates provados afirmam. **Nenhuma linha de código da 019 muda por causa destas
+erratas** e nenhum gate da 019 é reescrito: o que muda é o texto, que passa a
+descrever o que já era verdade. Como na errata de fidelidade da 009, a redação
+original **não é apagada** — cada nota inline é uma inserção na célula do critério
+(C3, C10) e o registro completo vive aqui. O `spec-validate.md` da 019 **não** é
+reescrito: é registro retrospectivo e permanece como foi emitido (R2 §5).
+
+| Campo | Registro |
+|---|---|
+| **Quem decidiu** | O usuário |
+| **Quando** | 2026-10-27 |
+| **Onde** | No chat, no portão da Fase 1 da demanda 025, com a frase literal *"Aprovado, com a extensão (Recomendada)"* (`specs/025-curadoria-transacional/refinement.md:423`); a decisão de fazer a errata nasceu em P6, aprovada em bloco na rodada 2 do refinamento (`refinement.md:421`) |
+| **Alcance** | A redação dos critérios **C3** e **C10** desta spec. Nenhuma mudança de comportamento, nenhum gate da 019 reescrito, nenhuma contagem alterada (`d019` segue 14), nenhum mutante afetado |
+| **O que NÃO é reaberto** | **C1–C2**, **C4–C9** e **C11**; as autorizações §29.4 da 019; todos os `D019-*`, que continuam sendo exatamente os gates que eram (o título do `D019-INV8` é errata de **registro** de teste, tarefa própria da 025, corpo intacto). As erratas E1–E4 da própria 019 (ratificadas em 2026-09-24) e a autorização nominal §29.4 permanecem como estão; o **E1** e o **E2** desta seção são numerados pela 025 e **não** substituem nem renumeram os de mesmo número daquelas |
+| **Nenhuma redação original apagada** | Verificável por máquina: cada linha do base sobrevive byte a byte, com no máximo **uma** nota inserida na forma `*(Errata E<n> · demanda 025: …)*` |
+
+### E1 · C3 foi medido pela metade — a metade "import recomputa" passa a ter gate próprio
+
+| Campo | Registro |
+|---|---|
+| **O que estava escrito** | C3: "**Entrada canônica (INV-8).** Export só inputs; import recomputa", com `D019-INV8` como gate e `spec-validate.md:13` dando o item como **conforme** |
+| **Fato medido** | O `spec-validate.md:13` apontou o restauro em `validateSessionDocument` — que é **validador**, não lugar de restauro: na 019 o validador aplicava a curadoria como efeito colateral, e foi isso que se leu como "import recomputa". O corpo do `D019-INV8` mede o que o título diz só até a metade: a sexta chave é exportada, id desconhecido é recusado e nenhum derivado viaja; **não** mede que a importação substitui o estado, nem que a recusa deixa a sessão intacta, nem que o que o arquivo não declara volta a "nada declarado" |
+| **O que passa a valer** | C3 vale **pelas duas metades, cada uma com o seu gate**: exportar só inputs e recusar derivado/id desconhecido continuam sendo `D019-INV8`; importar recomputando — substituição, nunca mescla, ausência substitutiva, atomicidade — é medido por `D025-INV8` (roundtrip em DOM novo, janela suja vira A sem resto de B, idempotência, exemplo publicado) e `D025-AUS1` (o mesmo arquivo sem a chave produz o estado de um DOM virgem sobre quatro estados prévios). `D019-INV8` é **reduzido ao que mede** |
+| **Onde o gate afirma** | `D025-INV8` e `D025-AUS1` em `tests_025_curadoria_sessao.js`; `D019-INV8` (`tests_019_curadoria.js`) segue com `D019-M3` como carrasco |
+| **Classe** | Critério medido pela metade — a metade ausente ganhou gate; nada afrouxado |
+
+### E2 · C10 dizia "o estado não é lido" — o que o gate mede é que o editor não o lê
+
+| Campo | Registro |
+|---|---|
+| **O que estava escrito** | C10: "com o gate `blocked`, o controle de curadoria não existe e o estado não é lido" |
+| **Fato medido** | O que o produto faz é o `return` do editor **antes** de qualquer chamada ao bridge quando o gate está fechado (`ui_curation_edit_v32.js:216-217` na base `395942a`), e é isso que o `D019-SUF1` mede, junto com a ausência do controle. Quem lê o bridge sob gate fechado é `showResults` — achado `EA-115`, severidade baixa, aberto. "O estado não é lido", sem sujeito, prometia mais do que o produto faz e do que o gate mede |
+| **O que passa a valer** | "O controle não existe e **o editor** não lê o estado." A leitura de `showResults` sob gate fechado fica registrada como `EA-115` e está **fora** da 019 e da 025 |
+| **Onde o gate afirma** | `D019-SUF1` (`tests_019_curadoria.js`); o mutante `D019-M10` segue sendo o carrasco |
+| **Classe** | Redação mais forte que a prova — a prova permanece e o texto passa a descrevê-la |

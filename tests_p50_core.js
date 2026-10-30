@@ -379,8 +379,26 @@ const PROTECTED = {
      fonte canonica da R2 §2 e nao se move enquanto uma campanha muta a arvore.
      Identidade anterior:
      35139e68dc7f338a708f52681323586d6904101ca5d99e106311377437c0d72f */
-  "ui_v32.js": "d9215fd65e9433b6174cf27fc94215e60da1014d0b660360cc1eb724306c4339",
-  "ui_ux_v32.js": "a050401145a5ed7af597eae01a9a23826418119769c096db168b3b177a9d3938",
+  /* [025 · T080 · 2026-10-30] REPIN. Autorização nominal do proprietário, no chat, em 2026-10-27, rodada 3 do
+     refinamento da demanda 025 ("Autorizo os quatro"), por arquivo e válida só
+     para esta demanda; pedida no portão, antes de qualquer edição (R6 §5).
+     O QUE MUDOU: `window.__V32UI` ganha `discardDraft()`/`hasDraft()`, acessores do `draft` (cópia de
+     trabalho do editor): o draft morre com o commit da importação, Nova sessão e
+     Reiniciar (D025-TRN2). Só estado; nenhuma regra de score, suficiência ou gate muda.
+     Nenhuma asserção deste gate muda; os demais pinos permanecem.
+     Identidade medida sobre o blob de HEAD (`git show HEAD:ui_v32.js`), R2 §2.
+     Identidade anterior: d9215fd65e9433b6174cf27fc94215e60da1014d0b660360cc1eb724306c4339 */
+  "ui_v32.js": "1c3556a2b2af95143bd0dc0ec4d5f2ad097d3cf777cdcc6d50d5fa5aa93e6e3d",
+  /* [025 · T080 · 2026-10-30] REPIN. Autorização nominal do proprietário, no chat, em 2026-10-27, rodada 3 do
+     refinamento da demanda 025 ("Autorizo os quatro"), por arquivo e válida só
+     para esta demanda; pedida no portão, antes de qualquer edição (R6 §5).
+     O QUE MUDOU: `uxResetAssessment()` e `uxNewSession()` passam a limpar a curadoria
+     (`__CURATION.clear()`) e a descartar o draft (`discardDraft()`), e o corpo do
+     diálogo de Reiniciar nomeia a curadoria entre o que é limpo (D025-RST1/NEW1).
+     Nenhuma asserção deste gate muda; os demais pinos permanecem.
+     Identidade medida sobre o blob de HEAD (`git show HEAD:ui_ux_v32.js`), R2 §2.
+     Identidade anterior: a050401145a5ed7af597eae01a9a23826418119769c096db168b3b177a9d3938 */
+  "ui_ux_v32.js": "9c9170dd6011efb316982244988019a22cab011b91dbe255c5ceb4367c762703",
   /* ERRATA DA AUDITORIA EXTERNA · §4.1.1 ("qualquer texto derivado consome a
      mesma decisão canônica de publicabilidade"). A comparação Atual × Alvo
      publica SCORE POR DOMÍNIO — em tela e no papel — e o fazia sem consultar o
@@ -546,7 +564,18 @@ const PROTECTED = {
      Nada além disso mudou: as cinco chaves anteriores, a ordem delas e as
      validações existentes permanecem byte-idênticas.
      Identidade anterior: 6fd849cdbdbb6838921a1519613e8a5194777c6eeb9e3e102c681a0ddc27164b */
-  "ui_session_v32.js": "e1463eb769cdd00262b911307a114671d61a5c3bc1a61f039886473b8ef96787",
+  /* [025 · T080 · 2026-10-30] REPIN. Autorização nominal do proprietário, no chat, em 2026-10-27, rodada 3 do
+     refinamento da demanda 025 ("Autorizo os quatro"), por arquivo e válida só
+     para esta demanda; pedida no portão, antes de qualquer edição (R6 §5).
+     O QUE MUDOU: a curadoria vira o 11º owner do commit atômico da importação:
+     validada por `__CURATION.validate` (puro), copiada para o candidato, fotografada
+     por `toSession()` no snapshot e escrita DENTRO da transação (ausência substitui);
+     o rollback a devolve; o resumo de importação ganha "Curadoria do relatório"
+     (D025-VAL1/INV8/TRX2).
+     Nenhuma asserção deste gate muda; os demais pinos permanecem.
+     Identidade medida sobre o blob de HEAD (`git show HEAD:ui_session_v32.js`), R2 §2.
+     Identidade anterior: e1463eb769cdd00262b911307a114671d61a5c3bc1a61f039886473b8ef96787 */
+  "ui_session_v32.js": "ca4b6a157c003a388acafea9b333167401e863708364843711628fc9e2af8059",
   "ui_icons_v32.js": "32aabc3445571d447189edf4b486239c9256aa9bd0bc6bdab00635a65aa42151",
   "ui_v32.css": "acb0eba165ef25e6b97475430e9b042a9b39038be2b9882ec5b3c67a730faa6f",
   /* DEMANDA 009 (`009-leitura-do-relatorio`) · AUTORIZAÇÃO NOMINAL §29.4.

@@ -1,7 +1,7 @@
 {
   "_meta": {
     "descricao": "Registry único de pins — fonte de identidade dos artefatos (R8). Hashes = SHA-256 dos blobs de HEAD. Alterar arquivo pinado exige regenerar este registry no MESMO PR, com motivo no commit.",
-    "gerado_de_head": "4ef94bab475a3ad0248bf6f7228c7d154693fb5a",
+    "gerado_de_head": "19f4d45f90d541c45045e4383933837aaa7661f9",
     "gerado_em": "2026-10-30",
     "exclusoes": [
       "docs_phase5/**",
@@ -283,8 +283,8 @@
     "LICENSE": "1ddd9deeecd23a1cece8a3aee60c77f4168295535ea4d7cc0102c55d8e777c49",
     "MANIFEST.sha256": "defd52d1cfc57e6ca5a9ebcce8b620a080772b6ea62753f987c5a58f8ccf38c6",
     "README.md": "88b81497189d67b1ce1d8bc565f0a4caa7dbd9acc3399fad2503e84d6b7bf1ea",
-    "SESSION_SCHEMA_V32.md": "9f74a849c3181c62f3d36d05a312987d8939e98bad8a0715f836da179e54a6f0",
-    "USER_GUIDE.md": "d4efef3de2e9b24852fa237eb5574d2c2a12ecde7006bfed555be98653f95063",
+    "SESSION_SCHEMA_V32.md": "ccf75e076f088b91e3bcdaaa4aef0eac40d4e764721d744f144ef49c8ee833ea",
+    "USER_GUIDE.md": "952a7e9945de1a833d5104cf7503946ef50617ca9c6feec4d62adc59f2e192fc",
     "build_v32_html.py": "dd346cbeb83832c0ad3b0d13370ae4d9fc476dbf0bcb1439b5840c22df25981a",
     "docs/CHANGELOG_v32.md": "07179356cc66f5ae53a5058da0988590074e84be882f53cf523d8936ea4eef5f",
     "docs/PHASE_5_KICKOFF.md": "c1a8d44b8e4a463465b12bf24cb8926be55fefbaa819b6db8cc22ee599ef3dda",
@@ -432,7 +432,7 @@
     "specs/019-curadoria-do-relatorio/refinement.md": "38a7a6c303431e16ec7a218d62dc342711c57196a83e0004ba2fd6759a18986b",
     "specs/019-curadoria-do-relatorio/relatorio-final.md": "6995e5346e8d91d83991b8a5839b535dd2fbb485e97b59137ecfc589c9c0c03f",
     "specs/019-curadoria-do-relatorio/spec-validate.md": "e007cdeb4248576213e80db1af4a03a8e4d6ef107915a1c4e8fdffc8b626f312",
-    "specs/019-curadoria-do-relatorio/spec.md": "5c3a606a3902eba402313c83915ff187e127b6fad00be6d559afe300a95dcba2",
+    "specs/019-curadoria-do-relatorio/spec.md": "4a0cf927ff22295c414a40d313c41d0956bb95496b0f5440f30e15614a0a9cb9",
     "specs/019-curadoria-do-relatorio/tasks.md": "aeccccd9a6d133b168a6e2168143c6350b8c9e4357e46d5d1e02b87c3f680880",
     "specs/020-lista-secundaria-redundante/refinement.md": "99748de50d6a2672fad235335e67a7ce336cdca931329ea7baff8385a537c0d1",
     "specs/020-lista-secundaria-redundante/relatorio-final.md": "72a9d672ba6c0ff9ddc010ff7917f87dc5b2245eb0abb3210842de28001429c0",
@@ -463,7 +463,7 @@
     "specs/025-curadoria-transacional/tasks.md": "40bc4572c8605bf0d71920cb47ef1b8c3dfe0d44fb02fef5ab5386d16c0ef19c",
     "specs/PHASE_5_0_REV_A.md": "22e729174c6a3c5dd620da5330b03eb96d9eb6fc6e64eba097c2bde55eb0a510",
     "specs/PHASE_5_0_REV_B.md": "4f1583c733df62a9452aa7b218d962e40d781bb8d30dfc3179ad6e1ef004619b",
-    "synthetic_session_examples/exemplo-completo.json": "8970e68ca0ce6a6885b62a911532a0598c9c5bca1bb783089fb085ba858a314d",
+    "synthetic_session_examples/exemplo-completo.json": "3fc6e39bd7be411912bdd591bc79e3ef73b27c5b8cf5d158f52038f5de20d751",
     "synthetic_session_examples/exemplo-minimo.json": "314e4a7ba4e90aca5a0660370a97b31f82a5cc87b044e937f1a8066020c57ede",
     "tests_009_leitura.js": "4322961372c4505dd7abb2202c5a0e895f1ba6ac0c43575a8956c68ab5e28cdd",
     "tests_009_mutants.js": "6a5223149058eaca31056e528805c3847df7f7ae16c87c545412890d628135d4",

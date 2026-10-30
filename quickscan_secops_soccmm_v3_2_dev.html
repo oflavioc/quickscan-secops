@@ -8936,7 +8936,7 @@ if (window.__DEV) Object.assign(window.__DEV, {
 /* V32_SESSION_BEGIN */
 /* ============ PHASE 4.8 · SESSION PORTABILITY & EVIDENCE ARCHIVE ============
    O arquivo preserva EVIDÊNCIA DE ENTRADA, nunca resultados calculados.
-   Import: parse → validate → normalize → compat → confirm → commit atômico → recompute. */
+   Import: parse → validate (puro, nada escreve) → compat → normalize → confirm → commit atômico dos 11 owners, curadoria inclusive [025] → recompute. */
 const SESSION_FORMAT = "quickscan-secops-session";
 const SESSION_SCHEMA_VERSION = 1;
 const SESSION_MAX_BYTES = 1024 * 1024;              /* [Q] 1 MiB */
@@ -9165,15 +9165,17 @@ function validateSessionDocument(doc){
   const extraIn = Object.keys(I).filter(k=>!["assessment","priorities","technologyLandscape","targetProfile","operationalRefinement","reportCuration"].includes(k));
   if (extraIn.length) return err("Entradas não reconhecidas: " + extraIn.join(", "));
   if (hasReservedDerived(I,0)) return err("O arquivo contém resultados derivados; sessões transportam apenas entradas.");
-  /* [019 · T011] curadoria: id desconhecido e valor fora do enum sao
-     RECUSADOS com mensagem, nunca ignorados em silencio. Quem valida e o
-     OWNER do estado — duplicar a regra aqui criaria duas verdades sobre o
-     que e um id valido, e uma delas envelheceria. Ausencia da chave e
-     legitima e nao produz erro: `missing != {}` (INV-8). */
+  /* [019 · T011 · 025 · T030] curadoria: forma nao canonica, chave
+     desconhecida, id fora do catalogo e valor fora do enum sao RECUSADOS com
+     mensagem, nunca ignorados em silencio. Quem valida e o OWNER do estado,
+     por `validate` PURO — duplicar a regra aqui criaria duas verdades sobre o
+     que e curadoria valida (R9 §8). Validar NAO aplica: a escrita e do commit
+     (`D025-VAL1`). Ausencia da chave e legitima e nao produz erro:
+     `missing != {}` (INV-8). */
   if (I.reportCuration !== undefined){
     if (typeof window === "undefined" || !window.__CURATION)
       return err("Curadoria declarada no arquivo, mas o modulo de curadoria nao esta disponivel.");
-    const errosCur = window.__CURATION.fromSession(I.reportCuration);
+    const errosCur = window.__CURATION.validate(I.reportCuration);
     if (errosCur && errosCur.length) return err("Curadoria inválida: " + errosCur.join("; "));
   }
   /* assessment */
@@ -9473,8 +9475,13 @@ function normalizeSessionDocument(doc){
     notes: QS.map(q => (A.notes && typeof A.notes[q.id] === "string") ? A.notes[q.id] : ""),
     priorities: (I.priorities || []).slice(),
     landscape: {}, arch: {}, platforms: [], signals: {},
-    targetOverrides: {}, refinement: {}
+    targetOverrides: {}, refinement: {},
+    curadoria: undefined
   };
+  /* [025 · T030] a sexta chave: SEMPRE propria do candidato — `undefined`
+     quando o documento nao a traz (a ausencia substitui: o commit limpa) ou
+     copia profunda (o candidato nao aponta para o documento). */
+  cand.curadoria = (I.reportCuration === undefined) ? undefined : JSON.parse(JSON.stringify(I.reportCuration));
   Object.keys(L.capabilities).forEach(id => {
     const c = L.capabilities[id];
     cand.landscape[id] = {
@@ -9502,7 +9509,12 @@ function normalizeSessionDocument(doc){
    - não usa uxNewSession (que resetava e renderizava ANTES do commit terminar);
    - snapshot dos owners é tirado antes de qualquer escrita;
    - nenhum render/modal/helper com efeito colateral dentro da janela de commit;
-   - qualquer exceção durante as escritas dispara rollback completo do snapshot. */
+   - qualquer exceção durante as escritas dispara rollback completo do snapshot;
+   - [025 · T030] a curadoria é o 11º owner: fotografada por `toSession()` no snapshot,
+     escrita por `fromSession(cand.curadoria)` DENTRO do `try`, depois dos outros owners e
+     antes dos transientes (`undefined` limpa — a ausência substitui), e devolvida pelo
+     rollback. Transientes zerados só depois de TODAS as escritas: `tgtNotices`,
+     `refStage`/`refReturn`, `prioLimitHit` e o rascunho de `__V32UI` (`discardDraft`). */
 function snapshotCanonicalOwners(){
   return {
     arq: arq,
@@ -9515,11 +9527,13 @@ function snapshotCanonicalOwners(){
     signals: JSON.parse(JSON.stringify(V32.SESSION_SIGNALS)),
     target: JSON.parse(JSON.stringify(TARGET_PROFILE.overrides)),
     refinement: JSON.parse(JSON.stringify(OPERATIONAL_REFINEMENT.answers)),
-    /* [019 · T010] a curadoria entra no SNAPSHOT para que uma importacao
-       que falhe no meio nao deixe a selecao do operador meio aplicada —
-       o commit e atomico ou nao e commit. */
+    /* [019 · T010 · 025 · T030] a curadoria entra no SNAPSHOT para que uma
+       importacao que falhe no meio nao deixe a selecao do operador meio
+       aplicada — o commit e atomico ou nao e commit. A foto e a FORMA
+       CANONICA (`toSession()`): `undefined` quando nada foi declarado, que o
+       restore devolve como ausencia (limpa). */
     curadoria: (typeof window !== "undefined" && window.__CURATION)
-      ? window.__CURATION.state() : null,
+      ? window.__CURATION.toSession() : undefined,
     step: step
   };
 }
@@ -9535,7 +9549,10 @@ function restoreCanonicalOwners(snap){
   Object.keys(TARGET_PROFILE.overrides).forEach(k => { delete TARGET_PROFILE.overrides[k]; });
   Object.keys(snap.target).forEach(k => { TARGET_PROFILE.overrides[k] = snap.target[k]; });
   Object.keys(snap.refinement).forEach(k => { OPERATIONAL_REFINEMENT.answers[k] = snap.refinement[k]; });
-  if (typeof window !== "undefined" && window.__CURATION && snap.curadoria)
+  /* [025 · T030] sem a guarda `&& snap.curadoria` (ERR-1): a foto `undefined`
+     e "nada declarado" e tem de ser restaurada como tal — com a guarda, a
+     curadoria do arquivo sobrevivia ao rollback (`D025-TRX2` (b′)). */
+  if (typeof window !== "undefined" && window.__CURATION)
     window.__CURATION.fromSession(snap.curadoria);
   step = snap.step;
 }
@@ -9553,8 +9570,11 @@ function commitCanonicalOwners(cand){
     Object.keys(TARGET_PROFILE.overrides).forEach(k => { delete TARGET_PROFILE.overrides[k]; });
     Object.keys(cand.targetOverrides).forEach(k => { TARGET_PROFILE.overrides[k] = cand.targetOverrides[k]; });
     Object.keys(cand.refinement).forEach(k => { OPERATIONAL_REFINEMENT.answers[k] = cand.refinement[k]; });
+    if (window.__CURATION) window.__CURATION.fromSession(cand.curadoria);   /* [025 · T030] 11º owner, dentro da transação */
     tgtNotices = [];                                  /* metadata transitória não atravessa a importação */
     refStage = "done"; refReturn = null;
+    prioLimitHit = false;                             /* [025 · T030] EA-108 */
+    if (window.__V32UI && typeof window.__V32UI.discardDraft === "function") window.__V32UI.discardDraft();
     return { ok:true };
   } catch(e){
     restoreCanonicalOwners(snap);                     /* [4.8.0.2-10] rollback completo */
@@ -9583,12 +9603,14 @@ function sessionPreview(doc){
   return { label: doc.label || null, createdAt: doc.createdAt || null, toolVersion: doc.toolVersion,
     answered, landscape: hasLand,
     target: Object.keys(doc.inputs.targetProfile.overrides).length > 0,
-    refinement: Object.values(doc.inputs.operationalRefinement.answers).some(v=>v!==null) };
+    refinement: Object.values(doc.inputs.operationalRefinement.answers).some(v=>v!==null),
+    curation: doc.inputs.reportCuration !== undefined };
 }
 function sessionHasContent(){
   return ans.some(v=>v!==null) || businessPriority.size>0 || !V32.isLegacyModeV32() ||
     Object.keys(TARGET_PROFILE.overrides).length>0 ||
-    Object.values(OPERATIONAL_REFINEMENT.answers).some(v=>v!==null);
+    Object.values(OPERATIONAL_REFINEMENT.answers).some(v=>v!==null) ||
+    (typeof window !== "undefined" && window.__CURATION && window.__CURATION.toSession() !== undefined);
 }
 if (window.__DEV) Object.assign(window.__DEV, {
   captureCanonicalInputs, buildSessionDocument, sessionFilename, validateSessionDocument, normalizeSessionDocument,
@@ -9666,7 +9688,8 @@ function showImportPreview(doc, compat, origin){
       <li>Respostas core: ${p.answered} de ${QS.length}</li>
       <li>Contexto tecnológico informado: ${yn(p.landscape)}</li>
       <li>Cenário-alvo: ${yn(p.target)}</li>
-      <li>Aprofundamento: ${yn(p.refinement)}</li></ul>
+      <li>Aprofundamento: ${yn(p.refinement)}</li>
+      <li>Curadoria do relatório: ${yn(p.curation)}</li></ul>
       ${compat.notice?`<p class="ux-micro">${esc32(compat.notice)}</p>`:""}${replace}`,
     onConfirm:()=>{ const r = importSessionDocument(doc); if (!r.ok) sesError(r.error, origin); } });
 }

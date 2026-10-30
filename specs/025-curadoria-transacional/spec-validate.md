@@ -10,6 +10,8 @@
 
 ## Score
 
+> **Iteração 2 (2026-10-30, após a errata E12 `42daddc` + R15b `6a6899d`): 42 de 42 · 100 % — ver §Iteração 2 ao fim.** O texto abaixo é o da iteração 1, mantido como foi medido.
+
 **41 de 42 itens conformes · 97,6 %** — **um gap**, classe **`spec-errada`**, que exige
 errata com aprovação do usuário e por isso PARA esta validação aqui (skill: < 100 % ⇒
 uma iteração, nunca ajuste de gate nem de registro):
@@ -244,3 +246,35 @@ mutante previsto atacava; todas estão na `descricao` dos pares da matriz.
   `d011chromium`): a execução local existe mas não é canônica (KI-3; poppler ausente) — a
   canônica é o job `visual` do PR (T095); a demanda não se declara pronta sem ele.
 - E8 (`BACKLOG.md`): T093, por ordem do plano.
+
+## Iteração 2 (2026-10-30) — única; só o G1 contra a E12
+
+> Executor: `qa-engineer` (Fable 5.1). Partida `6a6899d` (R15b), árvore limpa, `check_baseline`
+> **528/528**. Nada do que a iteração 1 conferiu foi reaberto: só o gap G1 contra a E12 e a lista
+> de 9 do registro.
+
+**Score final: 42 de 42 itens conformes · 100 %.** Denominador **mantido em 42**, declarado:
+a E12 é a correção do G1 — não é exigência nova — e foi conferida dentro do item que a iteração 1
+reprovou (`registros → mutation_map.json`), que passa a conforme. Classes de gap: 0.
+
+| item | conforme | evidência (executada em 2026-10-30) |
+|---|---|---|
+| **G1** · `mutation_map.json → harnesses.d025.targets` × spec §Registro | **sim** | E12 (`42daddc`, autorizada pelo usuário: *"Autorizo a E12 (Recomendada)"*; registro em §Erratas tardias, HEAD do PO `017ed5d`): a célula §Registro recebe nota inline — *"a lista real tem **9** — o nono é `SESSION_SCHEMA_V32.md`, mutado em cópia por M21 e exigido no gatilho por `D017-REL1`"*. Conferência mecânica: os nove nomes citados na célula (`tests_025_curadoria_sessao.js`, `tests_025_mutants.js`, `tests_session_m48.js`, `ui_curation_v32.js`, `ui_curation_edit_v32.js`, `ui_session_v32.js`, `ui_ux_v32.js`, `ui_v32.js`, `SESSION_SCHEMA_V32.md`) são, como conjunto, **iguais** aos `targets` do registro (9 = 9; 0 faltando, 0 sobrando). `cmd`, `preflight: true`, `insumos.oraculo`, `requires` já conformes na iteração 1 |
+| E12 como errata (aditiva, nada apagado) | sim | `git show --stat 42daddc`: `spec.md` +22/−… só por nota inline + seção `### E12`; `refinement.md` +1 (rodada 8); nenhuma linha anterior reescrita (molde E9–E11); repin R15b `6a6899d` |
+
+**Nada de produto ou de registro executável mudou desde o pipeline de `91a57e7`:**
+`git diff --stat 91a57e7 HEAD` = `.claude/verify/mutation-matrix.json` (+1 dívida, texto),
+`.claude/verify/pins.json` (R15, R15b), `specs/025-curadoria-transacional/refinement.md` (+1),
+`spec.md` (E12), `spec-validate.md` (este arquivo) — nenhum `ui_*.js`, suíte, harness,
+`expected_suites.json` ou `mutation_map.json`. Por isso o `run.sh` completo **não foi reexecutado**:
+valem o run de `91a57e7` (`verify: 17 PASS · 1 FAIL` — só `mutation`, pelas campanhas Chromium
+locais, explicado acima) e as reexecuções isoladas do stage (`11 campanha(s) · 1 problema(s)`,
+p52 local por poppler/ER5 — nada da 025). Reexecutados nesta iteração, por serem baratos e
+lerem o que mudou: `check_baseline.py` ⇒ **`528/528 pins conferem · 0 divergentes · 0 ausentes
+· 0 sem pin`**; `check_tdd.py` ⇒ `[OK] 025-curadoria-transacional.json: red provado e commitado
+(b20b20b1e2e3…)` · `[OK] matriz gate↔mutante: 201 pares completos` (a dívida `D025-INV8(c)`
+aparece listada).
+
+Fora do denominador, como na iteração 1: **E8** (`BACKLOG.md`, T093 — ordem do plano). Segue para
+o aceite de intenção do `product-owner` (T092) e para o relatório final (T093); "pronto" continua
+sendo o job `visual` verde no PR (T095, KI-3).

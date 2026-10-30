@@ -414,7 +414,7 @@ snapshot, commit, restore, `sessionHasContent`), `ui_curation_edit_v32.js` (`uns
   `preflight: true`, `targets`: `tests_025_curadoria_sessao.js`,
   `tests_025_mutants.js`, `tests_session_m48.js` (mutado por M20 — logo **não**
   insumo), `ui_curation_v32.js`, `ui_curation_edit_v32.js`, `ui_session_v32.js`,
-  **`ui_ux_v32.js`**, **`ui_v32.js`**; `insumos.oraculo`: `tests_025_curadoria_sessao.js`;
+  **`ui_ux_v32.js`**, **`ui_v32.js`** *(Errata E12 · [PO 2026-10-30]: a lista real tem **9** — o nono é `SESSION_SCHEMA_V32.md`, mutado em cópia por M21 e exigido no gatilho por `D017-REL1`; ver §Erratas tardias)*; `insumos.oraculo`: `tests_025_curadoria_sessao.js`;
   `requires: node, python`. Hoje nenhum harness tem `ui_ux_v32.js` como alvo de
   mutação com oráculo de curadoria (d019 lista `ui_v32.js` e `ui_session_v32.js`,
   não `ui_ux_v32.js`).
@@ -634,8 +634,8 @@ A spec exclui ainda:
 |---|---|
 | **Quem decidiu** | O usuário |
 | **Quando** | 2026-10-30 |
-| **Onde** | No chat (AskUserQuestion), sobre o relatório do aceite de intenção (T092): **E9/E10** — *"Autorizo a errata (Recomendada)"* (errata tardia classe (c) na spec da 025); **E11** — *"Ratifico (Recomendada)"* (`validate(undefined) → []`) |
-| **Alcance** | A célula "Nascem vermelhos" de C7 (E9), a célula de C8 sobre o erro de `F-tardio` (E10) e o contrato do bridge `__CURATION` em §Contratos (E11). Três notas inline, uma por célula, mais este registro |
+| **Onde** | No chat (AskUserQuestion), sobre o relatório do aceite de intenção (T092): **E9/E10** — *"Autorizo a errata (Recomendada)"* (errata tardia classe (c) na spec da 025); **E11** — *"Ratifico (Recomendada)"* (`validate(undefined) → []`); **E12** — *"Autorizo a E12 (Recomendada)"* (2026-10-30, sobre o gap **G1** do `spec-validate.md`, `f965100`: lista de `targets` de `harnesses.d025`) |
+| **Alcance** | A célula "Nascem vermelhos" de C7 (E9), a célula de C8 sobre o erro de `F-tardio` (E10) e o contrato do bridge `__CURATION` em §Contratos (E11). Três notas inline, uma por célula, mais este registro. *[PO 2026-10-30, E12: + a célula de §Registro sobre `harnesses.d025.targets` — quarta nota inline]* |
 | **O que NÃO é reaberto** | P1–P6 e as rodadas 2–6 do refinement; ERR-1/ERR-2; as 12 emendas `[PO 2026-10-27]`; os 16 gates `D025-*`, as 4 reancoragens e os 23 mutantes (ids permanentes); as contagens (`d025` 16, `heavy.session` 97, `d019` 14); **o red** (R3 §4: `D025-INV8` nasceu vermelho — por (d) — e o commit do red `b20b20b` permanece a prova); as erratas-tarefa E1–E8; a autorização §29.4 de 2026-10-27. Nenhuma linha anterior desta spec é reescrita |
 | **Nenhuma redação original apagada** | Verificável por máquina: cada linha do base sobrevive byte a byte; as três notas são inserções |
 
@@ -668,3 +668,19 @@ A spec exclui ainda:
 | **O que passa a valer** | O contrato do bridge ganha a linha **`validate(undefined) → []`** (ausência válida). Ratificado pelo usuário em 2026-10-30: *"Ratifico (Recomendada)"* |
 | **Onde o gate afirma** | Nenhum gate assere `validate(undefined)` diretamente (VAL2(b) cobre os `F-inv-*`); nenhum chamador do produto passa `undefined` — **sem mutante, declarado**: ramo de contrato inalcançável pelos chamadores, não comportamento observável pelo usuário |
 | **Classe** | (c) — interpretação registrada só em comentário de código passa a registro de spec com decisão do usuário |
+
+### E12 · §Registro listava 8 `targets` para `harnesses.d025`; o registro executável tem 9 — `SESSION_SCHEMA_V32.md`
+
+> [PO 2026-10-30] Decidido pelo usuário, no chat, em **2026-10-30**: *"Autorizo a E12
+> (Recomendada)"*. Origem: gap **G1** do `spec-validate.md` (`f965100`, 41/42),
+> classe `spec-errada`. Escrita pelo `product-owner` (Fable 5.1, `claude-fable-5-1`)
+> em HEAD `017ed5d`. Nada apagado: a célula de §Registro recebe uma nota inline e o
+> registro vive aqui. Não reabre nada de E9–E11, de P1–P6 nem dos 23 mutantes.
+
+| Campo | Registro |
+|---|---|
+| **O que estava escrito** | §Registro e identidade: "`mutation_map.json → harnesses.d025`: … `targets`: `tests_025_curadoria_sessao.js`, `tests_025_mutants.js`, `tests_session_m48.js`, `ui_curation_v32.js`, `ui_curation_edit_v32.js`, `ui_session_v32.js`, `ui_ux_v32.js`, `ui_v32.js`" — **8** nomes |
+| **Fato medido** | `.claude/verify/mutation_map.json → harnesses.d025.targets` (HEAD `017ed5d`, `:500-510`, lido por mim) tem **9** nomes: os 8 acima **+ `SESSION_SCHEMA_V32.md`**. O nono entra porque `D025-M21` o **muta** (em cópia sob `os.tmpdir`, apontada por `D025_DOC_OVERRIDE` — R7 §3) e o contrato C1 da demanda 017 — **`D017-REL1`**, `check_mutation.py` §"semântica do gatilho (017)": `targets ⊇ arquivos_mutados ∪ {harness}` — exige que todo sujeito mutado esteja no gatilho. Medido pelo QA no stage `mutation` (`d025 · gatilho ⊇ conjunto mutado ∪ {harness}`): com 8 nomes o stage reprovaria o harness recém-nascido por "conjunto mutado fora do gatilho". A spec definiu M21 (muta o schema) e, ao mesmo tempo, um `targets` que M21 viola — a prosa estava errada, não o registro. Direção única: tirar o nono afrouxaria o gatilho (editar o schema deixaria de re-provar M21) e omitiria um sujeito mutado do C1 — nunca (R10 §1) |
+| **O que passa a valer** | A lista de **9**: `tests_025_curadoria_sessao.js`, `tests_025_mutants.js`, `tests_session_m48.js`, `ui_curation_v32.js`, `ui_curation_edit_v32.js`, `ui_session_v32.js`, `ui_ux_v32.js`, `ui_v32.js`, **`SESSION_SCHEMA_V32.md`**. Regra que fica para as próximas specs: o `targets` de um harness **deriva do conjunto mutado** (todo arquivo que algum `M*` toca, inclusive documento mutado em cópia) ∪ {harness} — nunca é enumerado à mão só pelos módulos de código |
+| **Onde o gate afirma** | `check_mutation.py` **D017-REL1** (stage `mutation`, relação gatilho × conjunto mutado); `mutation_map.json → harnesses.d025.targets` |
+| **Classe** | **spec-errada** (classe do `spec-validate`; nesta seção, (c): registro executável certo, prosa da spec incompleta) — nenhum gate, mutante, contagem ou comportamento muda |

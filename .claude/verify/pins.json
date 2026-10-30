@@ -1,7 +1,7 @@
 {
   "_meta": {
     "descricao": "Registry único de pins — fonte de identidade dos artefatos (R8). Hashes = SHA-256 dos blobs de HEAD. Alterar arquivo pinado exige regenerar este registry no MESMO PR, com motivo no commit.",
-    "gerado_de_head": "8ce520a79397f0886b0ce0b615eb84786b70c050",
+    "gerado_de_head": "5f2b99a7e580a8a08417d68890646ab246a0a911",
     "gerado_em": "2026-10-30",
     "exclusoes": [
       "docs_phase5/**",
@@ -191,7 +191,7 @@
     ".claude/verify/boundary.json": "559b2bd35a38e00d66cad7b447c38c423c42b0a5ae92a24a8643bedb391affe4",
     ".claude/verify/branch_protection.json": "fa167fcc6be2d69565a39ca49927f37bfef753ca20caaac50e9282cb7e4b7f26",
     ".claude/verify/branch_protection.py": "d54c1d05a77f4cc2e7ad20383d9ca4dd4f051c1df56b13017896f792ac8ba78f",
-    ".claude/verify/bridges.json": "ccbeb037fbab6c9dc393be4d1619b5f80ffa27f280e7f8445d3212c38cb3e6c8",
+    ".claude/verify/bridges.json": "b2c3aea6a7365b9041e825cd57d42672006c8f0c58814d6620926f35a74257e3",
     ".claude/verify/check_baseline.py": "66e0c2c6f678a84ace076e38a474fb6c1a0d92f504c03da3145c2bf5d487c2f7",
     ".claude/verify/check_boundary.py": "2441e32e6bd5477d4a9bec027345d74be26b7e260de245e49dfe5d6b0d853633",
     ".claude/verify/check_branch_protection.py": "154d04818252c921aea2b54b6d08ae00c66c94950a8f825a2ee58e0cfb480c7a",
@@ -495,7 +495,7 @@
     "tests_journey_m45.js": "84d99be32e122f867dc1620cd1f49e4f3ae9795a32185cc75aa246d8682941f5",
     "tests_m42_m86.js": "d263ee641d699e3c99d71e7c23c4923b3444ca3fdce86a6d5eebdd71e14273ee",
     "tests_p50_chromium.js": "32058b4e980ade446d29dd205cdc98485ae3d2e9fbb66d6ee93be5e8224c8a00",
-    "tests_p50_core.js": "d5e154ffb32a2dce333221bb3c1db88ef3e550ee85a13fccab65e27c4ba5ea01",
+    "tests_p50_core.js": "07c50ec5760d926a96729ade7c6a7c4f200ead4822dd96f1a75364bd4c8d4061",
     "tests_p50_mutants.js": "a78306918c7f27ab08c34cd557ece041e55cc7271169c7f4749b0ebcea058b8b",
     "tests_p51_mutants.js": "fd99780dfb39dfb62c2ee18ef842706d461feaba11589b69677fa59daee2acb4",
     "tests_p52_chromium.js": "ab097f378fb1f06be9159a8469e0d2638a8b24a16be8635ad55d01bb50128e40",

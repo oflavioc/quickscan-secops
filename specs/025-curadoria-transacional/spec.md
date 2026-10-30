@@ -96,8 +96,8 @@ proibida nem derivada [PO 2026-10-27]), `F-tardio` (`F-A` com
 | C4 | **A curadoria entra no candidato e no commit — inclusive a ausência.** | `D025-TRX1` · idem · (a) `normalizeSessionDocument(F-A)` devolve `cand` com a chave **`curadoria`** presente (`hasOwnProperty`) e **deep-igual** a `F-A.inputs.reportCuration`, sem tocar o estado (assinatura byte-igual, padrão S50); (b) `normalizeSessionDocument(F-0)` devolve `cand` com `curadoria` **presente e `undefined`**; (c) `commitCanonicalOwners(cand de F-A)` em janela com B → `{ok:true}` e `state()` deep-igual a A; (d) `commitCanonicalOwners(cand de F-0)` em janela com A → `state()` vazio, `toSession()===undefined` | **M4** · `ui_session_v32.js` · `curadoria` fora do candidato (lista de 10 de hoje, `:533-541`) ⇒ TRX1(a)/(b) vermelhos; e o commit sem a escrita ⇒ (c)/(d) vermelhos |
 | C5 | **Snapshot antes de qualquer escrita; falha no commit devolve a SESSÃO, não o arquivo.** | `D025-TRX2` · idem · janela com curadoria B e assinatura `pre`; (a) **ordem**: com o bridge instrumentado, em `importSessionDocument(F-A)` a primeira escrita (`fromSession`/`set`/`clear`) ocorre **depois** de ao menos uma leitura `toSession` (a do snapshot) — e nenhuma escrita ocorre durante `validateSessionDocument` + `normalizeSessionDocument` (caso 13); (b) **falha após a escrita da curadoria**: `fromSession` embrulhado aplica e **lança uma vez** (restaurando-se antes de lançar, padrão `tests_session_m48.js:688-691`) → `commitCanonicalOwners(cand de F-A)` devolve `{ok:false, rolledBack:true}`, `state()` deep-igual a **B** (não a A), assinatura byte-igual a `pre`; [PO 2026-10-27] **(b′) a mesma falha em janela com "nada declarado"** (`toSession()===undefined` antes): rollback ⇒ `toSession()===undefined` e `state().decisions` vazio — é o único caso em que `snap.curadoria` é `undefined`, e é o que a guarda `&& snap.curadoria` de hoje (`:602`) faria **falhar**: sem (b′), um mutante que a reintroduza sobrevive a (b) e a S69(b), onde o snapshot é sempre truthy; (c) **falha antes da curadoria**: `Set.prototype.clear` lança (S62+S68) → mesmo veredito; (d) o mesmo documento, sem patch, importa com `ok:true` e `state()` igual a A — o patch não contaminou a janela | **M6** · `ui_session_v32.js` · mutB: snapshot com `curadoria: null` e restore sem `fromSession` ⇒ TRX2(b) vermelho; **M7** · idem · `snapshotCanonicalOwners()` movido para **depois** da primeira escrita ⇒ TRX2(a) e (b) vermelhos; **M8** · idem · `fromSession(cand.curadoria)` **fora** do `try` (antes do snapshot) ⇒ TRX2(a)/(b) vermelhos; [PO 2026-10-27] **M22** · idem · reintroduzir a guarda `&& snap.curadoria` em `restoreCanonicalOwners` ⇒ TRX2(b′) vermelho (TRX2(b) e S69(b) **sobrevivem** a M22 — por isso (b′) existe) |
 | C6 | **Ausência substitui.** O mesmo arquivo sem a chave produz, sobre três estados prévios distintos, o estado de um DOM virgem — tela, papel e export | `D025-AUS1` · idem · quatro janelas: virgem, com `exclude` em ofertado, com `include` explícito sem lastro, com `architectureNote:"exclude"`; em cada uma `importSessionDocument(F-0)` → `ok:true`; (a) `state()` vazio e `toSession()===undefined` nas quatro; (b) `published()` deep-igual a `offered()` e **ausência** de `[data-p53-suprimido]`; (c) contagem e ids dos cards da tela iguais nas quatro (≥ 9 — vacuidade nomeada); (d) corpo do papel após `beforeprint` **idêntico** nas quatro; (e) `captureCanonicalInputs()` **sem** `reportCuration` nas quatro e idêntico entre elas | **M5** · `ui_curation_v32.js` · mutC: `daSessao` devolve `[]` sem aplicar (a importação nunca restaura nem limpa) ⇒ AUS1(a) vermelho nas janelas sujas |
-| C7 | **Roundtrip de identidade: substituição, nunca merge.** | `D025-INV8` · idem · (a) **DOM novo**: `F-A` importado em `boot()` → `captureCanonicalInputs()` JSON-idêntico ao da janela de origem, `contract()` e `published()` deep-iguais, papel idêntico; inclui `architectureNote:"exclude"` e a inclusão sem lastro, que aparece **sinalizada** no editor (`[data-p53-cur-sem-lastro]`) e **rotulada** no papel (`[data-p53-prov="operador"]`) — caso 17, inalterado; (b) **janela suja**: `F-A` importado sobre curadoria B → `state()` deep-igual a A e `state().decisions` **sem** nenhuma chave de B; (c) **idempotência**: `F-A` importado duas vezes seguidas → assinaturas idênticas após a 1ª e a 2ª; (d) o exemplo publicado `synthetic_session_examples/exemplo-completo.json` declara `reportCuration`, importa com `ok:true` e `state()` deep-igual ao declarado (liga a tarefa `doc` a uma máquina) | **M9** · `ui_curation_v32.js` · mutD: `daSessao` sem o reset do estado (merge em vez de substituição) ⇒ INV8(b) vermelho |
-| C8 | **Sem efeito**: cancelar, Escape, erro posterior ao bloco da curadoria, engine incompatível e curadoria inválida deixam a janela byte-igual | `D025-NOP1` · idem · janela com curadoria B e painel aberto; assinatura `pre`; para cada um de `F-tardio` (`ok:false`, erro de hoje, `Resposta inválida`/aprofundamento), `F-engine` (`importSessionDocument` → `ok:false` com `compat`; seletor → modal `Importação bloqueada`), `F-inv-id`, e para Cancelar/Escape sobre `F-A` pela prévia real: assinatura **byte-igual** a `pre` — `state()`, checkboxes, aviso, papel, inputs; (b) S29-like: o `bad` vem de **outra** janela (curadoria A) e também na versão sem a chave | **M10** · `ui_session_v32.js` · `importSessionDocument` aplica a curadoria **antes** de `sessionCompatibility` ⇒ NOP1 (`F-engine`) vermelho |
+| C7 | **Roundtrip de identidade: substituição, nunca merge.** *(Errata E9 · [PO 2026-10-30]: a célula "Nascem vermelhos" abaixo listava INV8(b)(c)(d); o red mediu INV8 vermelho **só por (d)** — (a)(b)(c) nascem verdes, declarados; poder: (a) M4, (b) M9, (c) idempotência **sem carrasco** — ver §Erratas tardias)* | `D025-INV8` · idem · (a) **DOM novo**: `F-A` importado em `boot()` → `captureCanonicalInputs()` JSON-idêntico ao da janela de origem, `contract()` e `published()` deep-iguais, papel idêntico; inclui `architectureNote:"exclude"` e a inclusão sem lastro, que aparece **sinalizada** no editor (`[data-p53-cur-sem-lastro]`) e **rotulada** no papel (`[data-p53-prov="operador"]`) — caso 17, inalterado; (b) **janela suja**: `F-A` importado sobre curadoria B → `state()` deep-igual a A e `state().decisions` **sem** nenhuma chave de B; (c) **idempotência**: `F-A` importado duas vezes seguidas → assinaturas idênticas após a 1ª e a 2ª; (d) o exemplo publicado `synthetic_session_examples/exemplo-completo.json` declara `reportCuration`, importa com `ok:true` e `state()` deep-igual ao declarado (liga a tarefa `doc` a uma máquina) | **M9** · `ui_curation_v32.js` · mutD: `daSessao` sem o reset do estado (merge em vez de substituição) ⇒ INV8(b) vermelho |
+| C8 | **Sem efeito**: cancelar, Escape, erro posterior ao bloco da curadoria, engine incompatível e curadoria inválida deixam a janela byte-igual | `D025-NOP1` · idem · janela com curadoria B e painel aberto; assinatura `pre`; para cada um de `F-tardio` (`ok:false`, erro de hoje, `Resposta inválida`/aprofundamento *(Errata E10 · [PO 2026-10-30]: o literal do produto é `Valor de aprofundamento inválido: ref-hunting`, `ui_session_v32.js:493`; o gate assere só `/aprofundamento/` — ver §Erratas tardias)*), `F-engine` (`importSessionDocument` → `ok:false` com `compat`; seletor → modal `Importação bloqueada`), `F-inv-id`, e para Cancelar/Escape sobre `F-A` pela prévia real: assinatura **byte-igual** a `pre` — `state()`, checkboxes, aviso, papel, inputs; (b) S29-like: o `bad` vem de **outra** janela (curadoria A) e também na versão sem a chave | **M10** · `ui_session_v32.js` · `importSessionDocument` aplica a curadoria **antes** de `sessionCompatibility` ⇒ NOP1 (`F-engine`) vermelho |
 | C9 | **Nova sessão limpa a curadoria** (`EA-92`); cancelar preserva | `D025-NEW1` · idem · curadoria A declarada; (a) `#ux-newsession` → `#ux-modal-ok` → `state()` vazio, `toSession()===undefined`, `captureCanonicalInputs()` sem a chave; nova avaliação (`boot`-like na mesma janela: respostas + `showResults`) → `published()==offered()`, sem `[data-p53-suprimido]`; (b) rota direta `uxNewSession({silent:true})` → idem; (c) `#ux-newsession` → `#ux-modal-cancel` e → Escape → `state()` deep-igual a A (UX22 com oráculo que vê o owner); (d) o texto `Nova sessão remove também todo o contexto tecnológico declarado.` continua no modal (pinado em `tests_ux_m41.js:203`; não muda) | **M11** · `ui_ux_v32.js` · `clear()` removido de `uxNewSession` (o produto de hoje) ⇒ NEW1(a)/(b) vermelhos |
 | C10 | **Reiniciar avaliação limpa a curadoria e o diálogo a nomeia** (P2); landscape preservado | `D025-RST1` · idem · curadoria A + contexto declarado; (a) `#restart` → `#ux-modal-ok` → `state()` vazio, `toSession()===undefined`, `V32.isLegacyModeV32()===false` (contexto **preservado**), `TARGET`/refinamento limpos como hoje; (b) o modal contém **exatamente** `Respostas, observações, prioridades e a curadoria do relatório serão limpas. O contexto tecnológico declarado será preservado.`; (c) Cancelar/Escape preservam A | **M12** · `ui_ux_v32.js` · `clear()` removido de `uxResetAssessment` ⇒ RST1(a) vermelho; **M13** · idem · texto antigo do diálogo (`:55`) ⇒ RST1(b) vermelho |
 | C11 | **`prioLimitHit` é transiente e o commit o zera** (`EA-108`) | `D025-TRN1` · idem · `prioLimitHit=true` produzido pela UI (três prioridades + tentativa da quarta, `quickscan_secops_soccmm_v3_1_3.html:709-711`) → `importSessionDocument(F-0 com priorities: [])` → `w.eval("prioLimitHit")===false` e a tela de prioridades **não** contém `Limite de 3 prioridades atingido` | **M14** · `ui_session_v32.js` · atribuição removida do commit ⇒ TRN1 vermelho |
@@ -111,6 +111,14 @@ proibida nem derivada [PO 2026-10-27]), `F-tardio` (`F-A` com
 > NOP1, NEW1, RST1, TRN1, TRN2, PRV1, UNS1, DOC1, mais S50(b), S30(b) e
 > S31-S32(b) abaixo. **Nascem verdes, declarados**: GAT1 e S69(b) — nada os viola
 > hoje; o poder vem de M19 e M6 (precedente `D015-NOSUB1`; 019 T004).
+>
+> [PO 2026-10-30] **Errata E9** (§Erratas tardias — classe (c)): a lista acima diz
+> "INV8(b)(c)(d)"; o red (`red-025.md` D3, medido 2026-10-27 e reexecutado
+> 2026-10-30) mostrou INV8 vermelho **só por (d)**. **(a)(b)(c) nascem verdes e
+> ficam declarados aqui ao lado de GAT1 e S69(b)**: poder em M4 (a) e M9 (b);
+> **(c) idempotência não tem carrasco** entre M1–M23 — alínea de regressão, dívida
+> declarada na matriz. A frase original não é reescrita (R2 §5): a errata diz o
+> que mudou e por quê.
 
 ### Reancoragens em `tests_session_m48.js` (§29.4 — autorizadas em 2026-10-27)
 
@@ -328,6 +336,14 @@ validate(obj)            → string[]   puro: nunca toca `estado`; [] = válido
 unset(id)                → true       remove decisions[id]; lança "curadoria: id fora do catálogo: <id>"
 unsetArchitectureNote()  → true       architectureNote = undefined
 ```
+
+[PO 2026-10-30] **Errata E11** (§Erratas tardias): o contrato acima não fixava
+`validate(undefined)`. Passa a valer **`validate(undefined) → []`** — a ausência é a
+forma canônica de "sem curadoria" (P1) e, validada, é válida; é o que o código faz
+(`ui_curation_v32.js:214-219`, interpretação declarada na T020) e o que VAL2(b)
+exige (`fromSession(x)` e `validate(x)` devolvem as mesmas mensagens para todo `x`).
+Inalcançável pelo validador de sessão (`ui_session_v32.js:239` só chama `validate`
+quando a chave existe). **Ratificado pelo usuário em 2026-10-30.**
 
 Semântica revista de **`fromSession(obj)`** (aplicador): `obj === undefined` ⇒
 limpa e devolve `[]`; senão `erros = validate(obj)`; se não vazio, devolve `erros`
@@ -599,3 +615,56 @@ A spec exclui ainda:
   vive em `D025-NEW1`, nunca na suíte congelada.
 - **Persistência, autosave, histórico de curadoria, proveniência temporal** no
   estado (recusada pela 019 — só ids e enum fechado).
+
+## Erratas tardias — classe (c) (2026-10-30)
+
+> Escritas pelo `product-owner`, executado pelo modelo **Fable 5.1**
+> (`claude-fable-5-1`), em 2026-10-30, na worktree `phase5-009` (HEAD `3741ebd`),
+> depois do aceite de intenção (T092) e com o harness T084 fechado (23 DETECTADO ·
+> 0 SOBREVIVENTE — contagem reportada pelo orquestrador, **não executada por mim**).
+> Molde: §"Errata de fidelidade" da 009 e §"Erratas da demanda 025" da spec da 019
+> — a redação original **não é apagada**; cada célula emendada recebe **uma** nota
+> inline `*(Errata E<n> · [PO 2026-10-30]: …)*` e o registro completo vive aqui
+> (R2 §5). "Classe (c)" é a classe de **medição/registro** da própria demanda
+> (`tasks.md` §PARADAs, item 3: *"errata tardia de W0 (classe (c))"*): o que muda é
+> o texto, para que ele descreva o que foi medido — nenhum gate, mutante, contagem
+> ou comportamento muda. [PO 2026-10-30]
+
+| Campo | Registro |
+|---|---|
+| **Quem decidiu** | O usuário |
+| **Quando** | 2026-10-30 |
+| **Onde** | No chat (AskUserQuestion), sobre o relatório do aceite de intenção (T092): **E9/E10** — *"Autorizo a errata (Recomendada)"* (errata tardia classe (c) na spec da 025); **E11** — *"Ratifico (Recomendada)"* (`validate(undefined) → []`) |
+| **Alcance** | A célula "Nascem vermelhos" de C7 (E9), a célula de C8 sobre o erro de `F-tardio` (E10) e o contrato do bridge `__CURATION` em §Contratos (E11). Três notas inline, uma por célula, mais este registro |
+| **O que NÃO é reaberto** | P1–P6 e as rodadas 2–6 do refinement; ERR-1/ERR-2; as 12 emendas `[PO 2026-10-27]`; os 16 gates `D025-*`, as 4 reancoragens e os 23 mutantes (ids permanentes); as contagens (`d025` 16, `heavy.session` 97, `d019` 14); **o red** (R3 §4: `D025-INV8` nasceu vermelho — por (d) — e o commit do red `b20b20b` permanece a prova); as erratas-tarefa E1–E8; a autorização §29.4 de 2026-10-27. Nenhuma linha anterior desta spec é reescrita |
+| **Nenhuma redação original apagada** | Verificável por máquina: cada linha do base sobrevive byte a byte; as três notas são inserções |
+
+### E9 · A célula "Nascem vermelhos" prometia INV8(b)(c)(d); o red mediu só (d)
+
+| Campo | Registro |
+|---|---|
+| **O que estava escrito** | `spec.md` §Critérios, blockquote *Nascem vermelhos*: "… AUS1, **INV8(b)(c)(d)**, NOP1 …"; e C7 sem nota sobre o que nasce verde |
+| **Fato medido** | `red-025.md` D3 (QA, 2026-10-27; reexecutado 2026-10-30 com veredito byte-idêntico): `FAIL D025-INV8 — … [(d) exemplo-completo.json não declara reportCuration]` — **(a), (b) e (c) verdes**. Causa: o produto do dia aplicava a curadoria do arquivo pelo validador (`daSessao` zerava antes de aplicar), logo substituição (b) e idempotência (c) já valiam; (a) DOM novo também. O gate INV8 reprovou **só por (d)** — a contagem `1 PASS · 15 FAIL de 16` conferiu com o esperado. Ao cruzar as alíneas com os 23 mutantes (aceite T092, O1/O3): (a) morre por **M4** (curadoria fora do candidato ⇒ DOM novo sem curadoria ⇒ inputs ≠ origem); (b) por **M9** (merge); **(c) não morre por nenhum** — M9 e M4 sobrevivem a "importar o mesmo documento duas vezes" (A∪A = A; sem curadoria nas duas) |
+| **O que passa a valer** | **INV8: nasce vermelho só por (d); (a)(b)(c) nascem verdes, declarados; poder: (a) M4, (b) M9, (c) idempotência sem carrasco — alínea de regressão, dívida declarada na matriz (O3).** A alínea (c) permanece no gate: mede propriedade real (importação com efeito colateral acumulativo a quebraria) e é regressão, não tautologia (`EA-20`); o que não pode é ficar implícita sob o verde do gate |
+| **Onde o gate afirma** | `D025-INV8` em `tests_025_curadoria_sessao.js` (alíneas a–d); `red-025.md` §Leitura por alínea; `mutation-matrix.json → dividas_declaradas` (registro do `qa-engineer`, T084) |
+| **Classe** | (c) — registro de red mais largo que a medição; corpo do gate intacto; nada afrouxado (R10 §1) |
+
+### E10 · O erro de `F-tardio` não é "Resposta inválida"
+
+| Campo | Registro |
+|---|---|
+| **O que estava escrito** | C8: "`F-tardio` (`ok:false`, erro de hoje, `Resposta inválida`/aprofundamento)" |
+| **Fato medido** | `red-025.md` §P0 e D4: o literal do produto é **`Valor de aprofundamento inválido: ref-hunting`** (`ui_session_v32.js:493`); `Resposta inválida em:` é a mensagem das **respostas** (`:259`), outro bloco. O gate `D025-NOP1` assere `ok:false` e `/aprofundamento/i` (`tests_025_curadoria_sessao.js:567`) — **não pina o texto** |
+| **O que passa a valer** | C8 lê: "erro de hoje — `Valor de aprofundamento inválido: ref-hunting`; o gate assere só `/aprofundamento/`". Nenhuma mensagem do produto muda; nenhuma asserção muda |
+| **Onde o gate afirma** | `D025-NOP1` (`F-tardio`, `F-tardio-0`) |
+| **Classe** | (c) — redação da spec mais imprecisa que a medição; sem efeito em gate |
+
+### E11 · `validate(undefined) → []` — interpretação declarada no código, ratificada pelo usuário
+
+| Campo | Registro |
+|---|---|
+| **O que estava escrito** | §Contratos: `validate(obj) → string[] puro: nunca toca estado; [] = válido`; `fromSession(undefined)` ⇒ limpa e devolve `[]`. A spec **não fixava** `validate(undefined)` |
+| **Fato medido** | `ui_curation_v32.js:214-219`: `validar(undefined)` devolve `[]`, com o comentário *"Decisão de interpretação (aceita pelo orquestrador na T020)"* — decisão de agente, não do usuário, até 2026-10-30 (apontada no aceite T092, O2). Propriedades verificadas por leitura: **coerente com P1** (a ausência É a forma canônica de "sem curadoria"; validá-la como válida é a mesma regra, não uma segunda grafia); **inalcançável pelo validador de sessão** (`ui_session_v32.js:239` só chama `validate` quando `I.reportCuration !== undefined`; JSON não representa `undefined`); **necessária a VAL2(b)** (`fromSession(x)` e `validate(x)` devolvem as mesmas mensagens para todo `x` — com `fromSession(undefined) → []`, só `validate(undefined) → []` mantém a igualdade) |
+| **O que passa a valer** | O contrato do bridge ganha a linha **`validate(undefined) → []`** (ausência válida). Ratificado pelo usuário em 2026-10-30: *"Ratifico (Recomendada)"* |
+| **Onde o gate afirma** | Nenhum gate assere `validate(undefined)` diretamente (VAL2(b) cobre os `F-inv-*`); nenhum chamador do produto passa `undefined` — **sem mutante, declarado**: ramo de contrato inalcançável pelos chamadores, não comportamento observável pelo usuário |
+| **Classe** | (c) — interpretação registrada só em comentário de código passa a registro de spec com decisão do usuário |

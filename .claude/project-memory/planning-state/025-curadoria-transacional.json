@@ -1,6 +1,6 @@
 {
   "demanda": "025-curadoria-transacional",
-  "phase": "red",
+  "phase": "implement",
   "spec_dir": "specs/025-curadoria-transacional",
   "branch": "feature/025-curadoria-transacional",
   "brief": "A curadoria do relatorio (sexta chave canonica da sessao, demanda 019) entra de fato no ciclo de vida da sessao: validar sem aplicar; candidato, commit atomico e snapshot ANTES de qualquer escrita, inclusive a AUSENCIA da chave (INV-8: o documento basta para reconstruir o resultado); Nova sessao limpa o owner; gates de roundtrip real que importam. Origem: EA-91/EA-92 (auditoria externa Codex 2026-10-20, refutacao adversarial 2026-10-25 em docs_phase5/auditoria_codex_2026-10-20/refutacao_adversarial_2026-10-25.md §3), com os adjacentes EA-105..EA-114. Decisao do proprietario 2026-10-25: corrigir o produto antes de selar a v3.2.11.",
@@ -25,7 +25,47 @@
     "approved_at": "2026-10-27"
   },
   "red": {
+    "status": "proven",
+    "commit": "b20b20b1e2e3e0eb8208d1dc0dcbcd637494c5fb",
+    "gates": [
+      "D025-VAL1",
+      "D025-VAL2",
+      "D025-CAN1",
+      "D025-TRX1",
+      "D025-TRX2",
+      "D025-AUS1",
+      "D025-INV8",
+      "D025-NOP1",
+      "D025-NEW1",
+      "D025-RST1",
+      "D025-TRN1",
+      "D025-TRN2",
+      "D025-PRV1",
+      "D025-UNS1",
+      "D025-GAT1",
+      "D025-DOC1",
+      "S50",
+      "S30",
+      "S31-S32"
+    ],
+    "notes": "RED PROVADO pelo qa-engineer (Fable 5.1): T013 755b8e2f23d72dc90dbfd872285bbb7fe22603cb (tests_025_curadoria_sessao.js + red-025.md) e T015 b20b20b1e2e3e0eb8208d1dc0dcbcd637494c5fb (reancoragens em tests_session_m48.js sob §29.4 de 2026-10-27; red.commit). Medido em 2026-10-27 e reexecutado em 2026-10-30 com vereditos byte-identicos: 'D025 CURADORIA SESSAO: 1 PASS · 15 FAIL de 16' e 'SESSION 4.8: 94 PASS · 3 FAIL de 97' (S50, S30, S31-S32). VERMELHO NA ARVORE: 15 gates D025-* + S50/S30/S31-S32. VERDE DECLARADO (regressao; poder so no harness de W8): D025-GAT1, S69(b). Divergencias declaradas em red-025.md D1-D7, nenhuma ajustada; D3: INV8(a)(b)(c) nascem verdes hoje (celula 'nascem vermelhos' da spec larga em (b)(c); INV8 reprova por (d)) — errata tardia classe (c) a decidir pelo orquestrador no fecho. Prototipos P1 (seletor real via #ses-import + File sintetico: SIM) e P2 (falha sintetica: SIM) em worktree efemera, removida. Nenhuma PARADA."
+  },
+  "implement": {
     "status": "in_progress",
-    "notes": "W1 aberta em 2026-10-27 apos R0 (repin de CONTEXT/refinement/spec/plan/tasks). qa-engineer: T010-T012 prototipos P1/P2 e medicoes em clone efemero; T013 suite tests_025_curadoria_sessao.js (16 gates) + red-025.md; T014-T015 reancoragens em tests_session_m48.js (§29.4 autorizado 2026-10-27) com M48_HTML_OVERRIDE; red.commit = SHA de T015. Contagens esperadas 1 PASS · 15 FAIL de 16 e 94 · 3 de 97 — divergencia e declarada, nunca ajustada."
+    "waves_done": [
+      0,
+      1
+    ],
+    "pending": [
+      "W2 bridge ui_curation (core-engineer)",
+      "W3 ui_session (core-engineer)",
+      "W4 ui_ux (core-engineer)",
+      "W5 editor ui_curation_edit (ui-engineer)",
+      "W6 draft ui_v32 (core-engineer, severavel)",
+      "W7 docs/erratas (doc-writer)",
+      "W8 registros + harness (qa-engineer, build-engineer)",
+      "W9 validacao"
+    ],
+    "notes": "W1 fechada em 2026-10-30. R1/R2 absorvidos num repin unico apos T017 (os dois commits do red ja estao em sequencia; reordenar exigiria rebase, PARADA 9) — divergencia de granularidade declarada."
   }
 }

@@ -11812,6 +11812,27 @@ if (window.__DEV) Object.assign(window.__DEV, { openExportModal, openImportPicke
 
    `missing` nunca é convertido em `"exclude"` na leitura. O mutante
    `D019-M2` ataca justamente essa conversão.
+
+   ==========================================================================
+   [025 · T020] VALIDAR NÃO É APLICAR
+   ==========================================================================
+   `validate(obj)` é PURO: não lê nem escreve `estado`. É a única verdade
+   sobre o que é curadoria válida (R9 §8) — `fromSession` passou a ser só a
+   aplicação sobre entrada que `validate` aceitou; `set`/`unset` continuam
+   em `valido()`.
+
+   `fromSession` inválido devolve os erros SEM tocar o estado (sub-caso E do
+   EA-91: antes zerava e só depois recusava — a seleção do operador morria
+   pela simples tentativa de importar um arquivo ruim). Gate `D025-VAL2`,
+   mutante `D025-M2`.
+
+   Forma canônica de "sem curadoria" é a AUSÊNCIA da chave (P1): `null`,
+   `{}`, `{decisions:{}}` e chave desconhecida são recusados com mensagem —
+   uma grafia por estado, nenhuma grafia que o produto não lê. Gate
+   `D025-CAN1`, mutantes `D025-M3`/`D025-M23`.
+
+   `unset(id)`/`unsetArchitectureNote()` devolvem a declaração a AUSENTE
+   (P3): o editor escreve só a divergência. Gate `D025-UNS1` (e).
    ========================================================================== */
 (function () {
   "use strict";
@@ -11941,25 +11962,63 @@ if (window.__DEV) Object.assign(window.__DEV, { openExportModal, openImportPicke
     return Object.keys(out).length ? out : undefined;
   }
 
-  /* restauro na importação: valida item a item e RECUSA com mensagem, nunca
-     ignora em silêncio (gate `D019-INV8`, alínea de recusa) */
-  function daSessao(obj) {
-    estado = { decisions: {}, architectureNote: undefined };
-    if (obj === undefined || obj === null) return [];
+  var CHAVES = ["decisions", "architectureNote"];
+
+  /* [025 · T020] validação PURA do bloco `reportCuration` — não lê nem
+     escreve `estado`; [] = válido. Recusa com mensagem, nunca ignora em
+     silêncio (gate `D019-INV8`, alínea de recusa; `D025-VAL2`/`D025-CAN1`).
+     Precedência (plan.md §Contratos, 1→6): estrutural termina cedo; de campo
+     acumula, como `daSessao` já fazia para ids e enum.
+
+     Decisão de interpretação (aceita pelo orquestrador na T020): `undefined`
+     devolve []. A spec não fixa este caso; a ausência da chave é a forma
+     canônica de "sem curadoria" (P1), e assim `fromSession(x)` e `validate(x)`
+     devolvem as mesmas mensagens para todo `x` (`D025-VAL2` (b)). */
+  function validar(obj) {
+    if (obj === undefined) return [];
+    /* 1 */
+    if (obj === null) return ["reportCuration é null — represente 'sem curadoria' pela ausência da chave"];
+    /* 2 */
     if (typeof obj !== "object" || Array.isArray(obj)) return ["reportCuration não é objeto"];
-    var erros = [], off = obj.decisions;
+    var erros = [];
+    /* 3 — a mesma estritez que o schema v1 aplica à raiz e a `inputs` */
+    var extra = Object.keys(obj).filter(function (k) { return CHAVES.indexOf(k) < 0; });
+    if (extra.length) erros.push("reportCuration: campos não reconhecidos: " + extra.join(", "));
+    /* 4 */
+    if (obj.decisions === undefined && obj.architectureNote === undefined) {
+      erros.push("reportCuration sem decisão declarada — represente 'sem curadoria' pela ausência da chave");
+      return erros;
+    }
+    /* 5 */
+    var off = obj.decisions;
     if (off !== undefined) {
       if (typeof off !== "object" || off === null || Array.isArray(off)) erros.push("decisions não é objeto");
+      else if (!Object.keys(off).length) erros.push("decisions sem chaves — represente 'nenhuma decisão por produto' pela ausência do campo");
       else Object.keys(off).forEach(function (id) {
         var e = valido(id, off[id]);
-        if (e) erros.push("decisions: " + e); else estado.decisions[id] = off[id];
+        if (e) erros.push("decisions: " + e);
       });
     }
-    if (obj.architectureNote !== undefined) {
-      if (ENUM.indexOf(obj.architectureNote) < 0) erros.push("architectureNote fora do enum: " + String(obj.architectureNote));
-      else estado.architectureNote = obj.architectureNote;
-    }
+    /* 6 */
+    if (obj.architectureNote !== undefined && ENUM.indexOf(obj.architectureNote) < 0)
+      erros.push("architectureNote fora do enum: " + String(obj.architectureNote));
     return erros;
+  }
+
+  /* restauro na importação — APLICAÇÃO sobre entrada que `validar` aceitou.
+     `undefined` limpa (a ausência substitui). Inválido devolve os erros SEM
+     tocar o estado (sub-caso E do EA-91; `D025-M2`). Válido substitui o estado
+     inteiro, nunca merge (`D025-M9`). */
+  function daSessao(obj) {
+    if (obj === undefined) { estado = { decisions: {}, architectureNote: undefined }; return []; }
+    var erros = validar(obj);
+    if (erros.length) return erros;
+    var novo = { decisions: {}, architectureNote: undefined };
+    if (obj.decisions !== undefined)
+      Object.keys(obj.decisions).forEach(function (id) { novo.decisions[id] = obj.decisions[id]; });
+    if (obj.architectureNote !== undefined) novo.architectureNote = obj.architectureNote;
+    estado = novo;
+    return [];
   }
 
   window.__CURATION = {
@@ -11984,8 +12043,22 @@ if (window.__DEV) Object.assign(window.__DEV, { openExportModal, openImportPicke
       estado.architectureNote = valor;
       return true;
     },
+    /* [025 · T020] volta a AUSENTE (P3). O id passa pela mesma checagem de
+       `set` — `valido()` com um valor do enum, para que só o id possa
+       reprovar: uma verdade só sobre o catálogo (R9 §8). */
+    unset: function (id) {
+      var e = valido(id, ENUM[0]);
+      if (e) throw new Error("curadoria: " + e);
+      delete estado.decisions[id];
+      return true;
+    },
+    unsetArchitectureNote: function () {
+      estado.architectureNote = undefined;
+      return true;
+    },
     clear: function () { estado = { decisions: {}, architectureNote: undefined }; },
     /* sessão (consumido por ui_session_v32.js) */
+    validate: validar,
     toSession: paraSessao,
     fromSession: daSessao,
     /* contrato de leitura para os módulos de apresentação */

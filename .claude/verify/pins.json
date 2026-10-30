@@ -1,7 +1,7 @@
 {
   "_meta": {
     "descricao": "Registry único de pins — fonte de identidade dos artefatos (R8). Hashes = SHA-256 dos blobs de HEAD. Alterar arquivo pinado exige regenerar este registry no MESMO PR, com motivo no commit.",
-    "gerado_de_head": "17683b6c11679ad08737ad94cc3c9422e706ad86",
+    "gerado_de_head": "a0a879aa6794b8d2034e955698b65747bf27032c",
     "gerado_em": "2026-10-30",
     "exclusoes": [
       "docs_phase5/**",
@@ -334,7 +334,7 @@
     "preparar_release.py": "44b0a74dac345cfb5b27742d5fee51d9941646ec33f1cbb18aa81f98bf31a0cd",
     "prototypes/.gitkeep": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
     "quickscan_secops_soccmm_v3_1_3.html": "d329049147950a5b2a40b2735c3d4bd9a89177fed439efbcb58df01bdeb7ae82",
-    "quickscan_secops_soccmm_v3_2_dev.html": "0a7f932ee87b5f949907c502e339701918e5ed743b1014eb2d1502b83df77335",
+    "quickscan_secops_soccmm_v3_2_dev.html": "8f943b54414e01dd16d80f8dd68113808c616816ebadaabfb13e4d9e4968dac7",
     "session_roundtrip_report.md": "ffe0d30411cc086681a44fa8d69e1066a0bf26173f15dd8580286787056cf4f8",
     "specs/.gitkeep": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
     "specs/003-marcador-duplicado/fix-finding-registry.md": "dce0be8376f543678b9b214fd2e03e0efbda9f45cd978b909d0cc5208fa456a2",
@@ -517,7 +517,7 @@
     "tests_visual/session.spec.js": "99956abdd43b0c946d2d9035c75fdeaae7a8bcba9e9d4051f31bb9647b0df499",
     "tools_p52_pdf_census.js": "556293f4951f4fa6300a74f3464550940511b3de15c2ba24296f39c1de409e40",
     "tools_p52_shots.js": "e287a7abd4f50085a47f8aeac485e9706a6de3f1e909bacefdf320d8d71741a9",
-    "ui_curation_edit_v32.js": "e94af2f53755ef94b37d513bfde70333a5369ff69878b6f28d65da1855087443",
+    "ui_curation_edit_v32.js": "4a65a014239dd8ba72476f47d0192bf5180e6aa2ee11b8e43282ddd227cc7170",
     "ui_curation_v32.js": "320b58425439c97f6b93a24ccca1b41dc509a00251c56f131db58a380b6f2b50",
     "ui_d011_prioridade_v32.css": "fa09e6bd4a7be2c7faa9262812119c4eabba2440c6da528bb071312fb4c1e152",
     "ui_d011_prioridade_v32.js": "418a7bc5337d6bd13eb121654cee53972861a268f19d6dc1b851f0878dd24399",

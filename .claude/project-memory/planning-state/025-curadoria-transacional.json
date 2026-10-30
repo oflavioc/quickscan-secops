@@ -54,18 +54,18 @@
     "status": "in_progress",
     "waves_done": [
       0,
-      1
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8
     ],
     "pending": [
-      "W2 bridge ui_curation (core-engineer)",
-      "W3 ui_session (core-engineer)",
-      "W4 ui_ux (core-engineer)",
-      "W5 editor ui_curation_edit (ui-engineer)",
-      "W6 draft ui_v32 (core-engineer, severavel)",
-      "W7 docs/erratas (doc-writer)",
-      "W8 registros + harness (qa-engineer, build-engineer)",
-      "W9 validacao"
+      "W9 validacao: errata classe (c) autorizada pelo usuario em 2026-10-30 (C7 'nascem vermelhos'; texto F-tardio; validate(undefined)->[] ratificado), spec-validate, relatorio final + E8 no BACKLOG, pipeline completo, push, PR"
     ],
-    "notes": "W1 fechada em 2026-10-30. R1/R2 absorvidos num repin unico apos T017 (os dois commits do red ja estao em sequencia; reordenar exigiria rebase, PARADA 9) — divergencia de granularidade declarada."
+    "notes": "W1 fechada em 2026-10-30. R1/R2 absorvidos num repin unico apos T017 (os dois commits do red ja estao em sequencia; reordenar exigiria rebase, PARADA 9) — divergencia de granularidade declarada. W2-W8 fechadas em 2026-10-30: e11fd05 (bridge) d8518e0 (sessao) 17683b6 (ux) a0a879a (editor) 4ef94ba (draft) 01e7067/6cace4c/19f4d45 (docs E4-E6, E1-E2) 8ce520a (E3) 97f08d8 (pins inline §29.4) 5f2b99a (E7) f892db1 (harness d025 23/23 DETECTADO + registros). d025 16/16, m48 97/97, p50core 65/65. Repins R3-R14 (R8-R10 e R12-R13 fundidos, declarados). Aceite de intencao do PO (Fable 5.1, 2026-10-30): 'nao encontrei objecao', condicionado a prova verde — O1-O10 para o relatorio final."
   }
 }

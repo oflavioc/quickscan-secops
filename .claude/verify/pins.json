@@ -1,8 +1,8 @@
 {
   "_meta": {
     "descricao": "Registry único de pins — fonte de identidade dos artefatos (R8). Hashes = SHA-256 dos blobs de HEAD. Alterar arquivo pinado exige regenerar este registry no MESMO PR, com motivo no commit.",
-    "gerado_de_head": "d903126e6caeb2e6b7c3935b9c2ff83d4fe75005",
-    "gerado_em": "2026-10-27",
+    "gerado_de_head": "21e4241391545a3d584d5924f5ccfb3c4cd089c4",
+    "gerado_em": "2026-10-30",
     "exclusoes": [
       "docs_phase5/**",
       ".claude/project-memory/** (estado de processo — muda por fase; validado pelo stage state, não por pin)",
@@ -457,6 +457,7 @@
     "specs/024-sete-defeitos-do-relatorio/refinement.md": "255474b3a11cb9fc94e92a24a3bda62042a32e6faa0a4aa9423e1d59bab745da",
     "specs/024-sete-defeitos-do-relatorio/relatorio-final.md": "71bccb6c4a12652b1d22d3621149969153f3ab08895af4e0c1644aa7d5b78f03",
     "specs/025-curadoria-transacional/plan.md": "04130e9a2440e9e1e15aee3c1b092abdac0cad588803ac13b2a3d125d86cdde0",
+    "specs/025-curadoria-transacional/red-025.md": "a73929b9a8bc2c964cb3df8e0da528a1962441f53a58d9c4f38ff1371fb69bd3",
     "specs/025-curadoria-transacional/refinement.md": "cf863d9497fc087521a76dc30ec638450d647fa8d86d65124d246c8fe35ee9d8",
     "specs/025-curadoria-transacional/spec.md": "0cad54fc7a2171e40894490655acaa5d999949325fbfe20c3cc038867dabb723",
     "specs/025-curadoria-transacional/tasks.md": "40bc4572c8605bf0d71920cb47ef1b8c3dfe0d44fb02fef5ab5386d16c0ef19c",
@@ -486,6 +487,7 @@
     "tests_022_mutants.js": "3ca75754aabb08375520874d6a2e7d7dd0a462fdd0b28afbf97b501db1c9058b",
     "tests_023_leitura.js": "c9f1c4c6ba78bb9bb59748df3a5393b844b2487819f5e3c8cdda08a3bd7940c9",
     "tests_023_mutants.js": "445a572727b6a22c72694add6a738cd34c54b871e29b39edcd779c44a10b79dd",
+    "tests_025_curadoria_sessao.js": "86fabac8707bb2a103198f0962d33b9b106740489d231619945fbd95b7c79faa",
     "tests_core_mutants.js": "40f5bc0f3d0e4850496b5a9f85ef3a1512bcb035304e1f669d6ba79fa7a50d92",
     "tests_ea41_instrumento.js": "dc93b175b1be807fe7989645c6a61df73a1909d3a5b56510753059d6f93dfcbc",
     "tests_ea41_mutants.js": "1ce0c3c7444cf4eae710e9ad714fd7fb0b58cb3c0136afce7842e1af6be07301",
@@ -500,7 +502,7 @@
     "tests_p52_layout.js": "c44fef4a8db7ba14de9a4f59bbd58c4fb72c63854bf94b326236f9191f96d6f8",
     "tests_p52_mutants.js": "65a83ce0303bae3b2e672d200c396447bbc6ba8f15959ac3984d43c7543d7925",
     "tests_ref_m44.js": "5fe2e3336b20a018a5981371523306b771907ce7f5688002076066ab9ad1325c",
-    "tests_session_m48.js": "e7e167f5babbd1feb61a12953861a796d05e1f8e3e9ef1c347d4dccc4c0830fd",
+    "tests_session_m48.js": "67300b04f28e1408d8ea9c0c21fd7d91aedf65c3bce49c3e61302054fab067e8",
     "tests_target_m431.js": "b167f704eeaa2fbf5bcd6b4c260c6ab7b2e2443a5b03c84f74e7f0411753a1d2",
     "tests_ui_m31.js": "0e695eccc0ecfcdf4d5f417ac479deca6600f8a68297cd3241e4588a1aec6b5e",
     "tests_ui_m32.js": "32d9246232045d99a9811403ca72d31cb9d52951f62c2728cfedf214630e0f34",

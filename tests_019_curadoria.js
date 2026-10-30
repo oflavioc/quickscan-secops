@@ -215,8 +215,9 @@ T("D019-CUR2", "ausência de curadoria produz o MESMO relatório de hoje — mis
   return true;
 });
 
-/* ===================== C3 · entrada canônica (INV-8) ==================== */
-T("D019-INV8", "a sexta chave é ENTRADA canônica: exportada, recomputada na importação, e id desconhecido é recusado", () => {
+/* ===================== C3 · entrada canônica (INV-8) ====================
+   [025 · E3] título reduzido ao que o corpo mede; a metade "o import recomputa" vive em D025-INV8/D025-AUS1. */
+T("D019-INV8", "a sexta chave é ENTRADA canônica: exportada; id desconhecido recusado; nenhum derivado viaja", () => {
   const { w } = boot();
   const b = cur(w);
   /* AUSÊNCIA primeiro: sem nada declarado, a chave NÃO existe. É o que mantém

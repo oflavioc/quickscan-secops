@@ -1,7 +1,7 @@
 {
   "_meta": {
     "descricao": "Registry único de pins — fonte de identidade dos artefatos (R8). Hashes = SHA-256 dos blobs de HEAD. Alterar arquivo pinado exige regenerar este registry no MESMO PR, com motivo no commit.",
-    "gerado_de_head": "21e4241391545a3d584d5924f5ccfb3c4cd089c4",
+    "gerado_de_head": "e11fd05f83f28db3c3b935ae0c1e899ad14e716b",
     "gerado_em": "2026-10-30",
     "exclusoes": [
       "docs_phase5/**",
@@ -334,7 +334,7 @@
     "preparar_release.py": "44b0a74dac345cfb5b27742d5fee51d9941646ec33f1cbb18aa81f98bf31a0cd",
     "prototypes/.gitkeep": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
     "quickscan_secops_soccmm_v3_1_3.html": "d329049147950a5b2a40b2735c3d4bd9a89177fed439efbcb58df01bdeb7ae82",
-    "quickscan_secops_soccmm_v3_2_dev.html": "4c45ce20fece3bf024dd4a85b99a9766185f48039805ead45d0fe71700bf5712",
+    "quickscan_secops_soccmm_v3_2_dev.html": "c057903e0706ffe2a6ee84edf4067b1d89ac06a5bc577beb6883cffe52937088",
     "session_roundtrip_report.md": "ffe0d30411cc086681a44fa8d69e1066a0bf26173f15dd8580286787056cf4f8",
     "specs/.gitkeep": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
     "specs/003-marcador-duplicado/fix-finding-registry.md": "dce0be8376f543678b9b214fd2e03e0efbda9f45cd978b909d0cc5208fa456a2",
@@ -518,7 +518,7 @@
     "tools_p52_pdf_census.js": "556293f4951f4fa6300a74f3464550940511b3de15c2ba24296f39c1de409e40",
     "tools_p52_shots.js": "e287a7abd4f50085a47f8aeac485e9706a6de3f1e909bacefdf320d8d71741a9",
     "ui_curation_edit_v32.js": "e94af2f53755ef94b37d513bfde70333a5369ff69878b6f28d65da1855087443",
-    "ui_curation_v32.js": "e4919920baa6d27a77e641f02b88611a896fcd9eaa5ef72fdff0ecd6c8f4043e",
+    "ui_curation_v32.js": "320b58425439c97f6b93a24ccca1b41dc509a00251c56f131db58a380b6f2b50",
     "ui_d011_prioridade_v32.css": "fa09e6bd4a7be2c7faa9262812119c4eabba2440c6da528bb071312fb4c1e152",
     "ui_d011_prioridade_v32.js": "418a7bc5337d6bd13eb121654cee53972861a268f19d6dc1b851f0878dd24399",
     "ui_icons_v32.js": "32aabc3445571d447189edf4b486239c9256aa9bd0bc6bdab00635a65aa42151",

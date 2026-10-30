@@ -7729,7 +7729,12 @@ renderResults = function(app){
 };
 
 /* ---------------- API de teste (build DEV) ---------------- */
-window.__V32UI = { openEditor, esc32, iconFor, ARCH_FIELDS, publishableStats };   /* ERRATA EXTERNA · B-01: a decisão canônica de publicabilidade é servida por ESTA ponte; nenhuma camada declara a sua. */   /* [4.8.0.2-3] contrato real de arquitetura */   /* [4.5.0.2-B] mesma função exposta; zero resolver paralelo */
+/* [025 · T060] acessores do `draft` (cópia de trabalho do editor): o draft morre
+   com o commit da importação, Nova sessão e Reiniciar — só estado; o DOM do
+   editor é refeito pelo render() que sempre segue. `D025-TRN2`. */
+function discardDraft(){ const had = draft !== null; draft = null; return had; }
+function hasDraft(){ return draft !== null; }
+window.__V32UI = { openEditor, esc32, iconFor, ARCH_FIELDS, publishableStats, discardDraft, hasDraft };   /* ERRATA EXTERNA · B-01: a decisão canônica de publicabilidade é servida por ESTA ponte; nenhuma camada declara a sua. */   /* [4.8.0.2-3] contrato real de arquitetura */   /* [4.5.0.2-B] mesma função exposta; zero resolver paralelo */
 window.__DEV = {
   V32,
   PR_DOM_HEX, QS_GAP_SUPPORT,                   /* [5.1] superfícies de leitura para os gates */

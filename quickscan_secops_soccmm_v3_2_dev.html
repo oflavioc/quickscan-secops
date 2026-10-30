@@ -7779,6 +7779,7 @@ function uxResetAssessment(){
   if (typeof clearTargetProfile==="function") clearTargetProfile();
   if (typeof clearOperationalRefinement==="function") clearOperationalRefinement();   /* [4.4-L] */   /* [4.3.1-O] sem baseline não há cenário */
   ans.fill(null); notes.fill(""); businessPriority.clear(); prioLimitHit=false; arq=null;
+  if (window.__CURATION) window.__CURATION.clear(); if (window.__V32UI && typeof window.__V32UI.discardDraft === "function") window.__V32UI.discardDraft();   /* [025 · T040] */
   step=-1; render();                                   /* Landscape/arch/platform/sinais PRESERVADOS */
 }
 function uxNewSession(opts){
@@ -7787,6 +7788,7 @@ function uxNewSession(opts){
   if (typeof clearOperationalRefinement==="function") clearOperationalRefinement();
   ans.fill(null); notes.fill(""); businessPriority.clear(); prioLimitHit=false; arq=null;
   V32.resetLandscapeToUnset();                          /* limpa TODO o contexto V3.2 */
+  if (window.__CURATION) window.__CURATION.clear(); if (window.__V32UI && typeof window.__V32UI.discardDraft === "function") window.__V32UI.discardDraft();   /* [025 · T040] */
   step=-1; render();
 }
 function uxModal(o){
@@ -7813,7 +7815,7 @@ function uxSessionControls(){
   if(!rs || rs.dataset.ux) return;
   rs.dataset.ux="1"; rs.textContent="Reiniciar avaliação";
   rs.onclick=()=>uxModal({ title:"Reiniciar avaliação?",
-    body:"Respostas, observações e prioridades serão limpas. O contexto tecnológico declarado será preservado.",
+    body:"Respostas, observações, prioridades e a curadoria do relatório serão limpas. O contexto tecnológico declarado será preservado.",
     confirmLabel:"Reiniciar avaliação", origin:rs, onConfirm:uxResetAssessment });
   const ns=document.createElement("button");
   ns.className="btn2"; ns.id="ux-newsession"; ns.type="button"; ns.textContent="Nova sessão";

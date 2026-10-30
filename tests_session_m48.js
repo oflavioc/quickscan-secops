@@ -1,6 +1,6 @@
 /* TESTES · PHASE 4.8 — Session Portability & Evidence Archive (jsdom) */
 const path=require("path"),fs=require("fs"),crypto=require("crypto");const {JSDOM}=require("jsdom");
-const HTML=fs.readFileSync(path.join(__dirname,"quickscan_secops_soccmm_v3_2_dev.html"),"utf8");
+const HTML=fs.readFileSync(process.env.M48_HTML_OVERRIDE||path.join(__dirname,"quickscan_secops_soccmm_v3_2_dev.html"),"utf8");
 const PKG=JSON.parse(fs.readFileSync(path.join(__dirname,"package.json"),"utf8"));
 const ENG_SHA=crypto.createHash("sha256").update(fs.readFileSync(path.join(__dirname,"engine_v32.js"))).digest("hex");
 const IDS=["mandate","governance","policies","team-capacity","training","knowledge","incident-response","detection-lifecycle","automation","logs","endpoint","network-visibility","monitoring-coverage","external-surface","vulnerability-management"];
@@ -287,29 +287,72 @@ T("S29","import atômico: falha tardia não altera estado algum",()=>{
   const r = w.__DEV.importSessionDocument(bad);
   return r.ok===false && JSON.stringify(w.__DEV.captureCanonicalInputs()) + derivedModel(w) === pre;
 });
-T("S30","sessão ativa exige confirmação de substituição",()=>{
+/* [025 · T015 · 2026-10-27] REANCORAGEM AUTORIZADA (§29.4; proprietário no chat em 2026-10-27, rodada 3 do
+   refinamento da 025: "Autorizo os quatro (Recomendada)" — ui_session_v32.js, ui_ux_v32.js, tests_session_m48.js,
+   ui_v32.js, só para a 025). Quatro gates ganham a alínea que não existia, e o carregador (linha 3) ganha
+   `M48_HTML_OVERRIDE` para que a campanha `d025` execute esta suíte CONTRA O HTML MUTADO (família EA-28):
+     · S30 (b)     — janela virgem com SÓ curadoria declarada por bridge já exige "Importar e substituir"  → carrasco D025-M16
+     · S31-S32     — o documento importado passa a ser a variante CURADA; Reiniciar e Nova sessão limpam    → D025-M11/M12
+     · S50 (b)     — o candidato tem a 11ª chave `curadoria`, presente e `undefined` quando o doc não a traz → D025-M20
+     · S69 (b)     — comportamental: snapshot → zerar cada owner (inclusive __CURATION e step) → restore ≡ pré → D025-M6
+   Regra da T012 da 019: onde havia UMA asserção passa a haver DUAS; nenhuma alínea antiga afrouxada; os literais
+   pinados ("substituirá a sessão atual", "Importar e substituir") não mudam. Nenhum commit toca este arquivo depois
+   do red (R3 §2): os greens vêm de ui_session/ui_ux, por outro agente. */
+T("S30","sessão ativa exige confirmação de substituição — também quando só a curadoria foi declarada",()=>{
   const {w,d}=boot(); answerAll(w,1); w.__DEV.showResults();
   const active=w.__DEV.sessionHasContent();
   const doc=w.__DEV.buildSessionDocument("Outra");
   w.__DEV.showImportPreview(doc, {compatible:true,notice:null}, null);
   const modal=txt(q(d,"#ux-modal"));
   const B=boot();
-  return active && modal.includes("substituirá a sessão atual") &&
+  const a = active && modal.includes("substituirá a sessão atual") &&
     txt(q(d,"#ux-modal-ok"))==="Importar e substituir" && B.w.__DEV.sessionHasContent()===false;
+  /* (b) [025 · T015] janela VIRGEM (sem respostas, sem contexto) em que a ÚNICA coisa declarada é a curadoria:
+     sessionHasContent() tem de contá-la, e a prévia tem de avisar a substituição com os MESMOS literais de (a). */
+  const C=boot(); const cur=C.w.__CURATION;
+  if(!cur) throw new Error("(b) bridge de curadoria ausente — a alínea não teria sujeito");
+  const alvo=cur.catalog()[0]; if(!alvo) throw new Error("(b) catálogo vazio — a alínea seria vácua");
+  if(C.w.__DEV.sessionHasContent()!==false) throw new Error("(b) a janela virgem já tinha conteúdo antes da declaração");
+  cur.set(alvo,"exclude");
+  const temConteudo=C.w.__DEV.sessionHasContent();
+  C.w.__DEV.showImportPreview(doc, {compatible:true,notice:null}, null);
+  const modalC=txt(q(C.d,"#ux-modal")), okC=txt(q(C.d,"#ux-modal-ok"));
+  C.w.close();
+  if(temConteudo!==true) throw new Error("(b) sessionHasContent() ignora curadoria declarada (EA-109)");
+  if(!modalC.includes("substituirá a sessão atual")) throw new Error("(b) aviso de substituição ausente com só curadoria declarada");
+  if(okC!=="Importar e substituir") throw new Error("(b) botão com só curadoria declarada: "+JSON.stringify(okC));
+  return a;
 });
-T("S31-S32","reset e nova sessão após import preservam semântica congelada",()=>{
+T("S31-S32","reset e nova sessão após import preservam semântica congelada — e limpam a curadoria importada",()=>{
   const {w,d}=boot(); richSession(w,d);
+  /* [025 · T015] o documento importado é a variante CURADA de richSession: `__CURATION.set` na MESMA janela,
+     antes do buildSessionDocument (padrão S4-S5 (b)). Sem isto as duas rotas de reset nunca viam curadoria. */
+  const cur=w.__CURATION;
+  if(!cur) throw new Error("bridge de curadoria ausente — a variante curada não teria sujeito");
+  const alvo=cur.offered()[0]||cur.catalog()[0];
+  if(!alvo) throw new Error("nada ofertado nem catalogado — a variante curada seria vácua");
+  cur.set(alvo,"exclude");
   const doc=w.__DEV.buildSessionDocument("Conta");
-  const B=boot(); B.w.__DEV.importSessionDocument(doc);
+  if(!doc.inputs.reportCuration) throw new Error("curadoria declarada não viajou no documento — sem sujeito");
+  const B=boot(); const rB=B.w.__DEV.importSessionDocument(doc);
+  if(!rB.ok) throw new Error("import do documento curado recusado (B): "+rB.error);
   q(B.d,"#restart").click(); q(B.d,"#ux-modal-ok").click();
   const afterRestart = B.w.__DEV.legacySnapshot().includes("null") &&
     B.w.__DEV.V32.TECH_LANDSCAPE["security-analytics"].presence==="NONE" &&
     Object.keys(B.w.__DEV.TARGET.overrides).length===0 &&
     B.w.__DEV.getOperationalRefinementSnapshot().every(r=>r.answer===null);
-  const C=boot(); C.w.__DEV.importSessionDocument(doc);
+  const curB=B.w.__CURATION;
+  const afterRestartCur = curB.toSession()===undefined && Object.keys(curB.state().decisions).length===0;
+  const C=boot(); const rC=C.w.__DEV.importSessionDocument(doc);
+  if(!rC.ok) throw new Error("import do documento curado recusado (C): "+rC.error);
   C.d.querySelector("#ux-newsession").click(); C.d.querySelector("#ux-modal-ok").click();
   const afterNew = C.w.__DEV.V32.isLegacyModeV32()===true &&
     Object.keys(C.w.__DEV.TARGET.overrides).length===0 && C.w.__DEV.sessionHasContent()===false;
+  const curC=C.w.__CURATION;
+  const afterNewCur = curC.toSession()===undefined && Object.keys(curC.state().decisions).length===0 &&
+    JSON.stringify(curC.state())===JSON.stringify({decisions:{}});
+  if(!afterRestartCur) throw new Error("após Reiniciar a curadoria importada sobreviveu: "+JSON.stringify(curB.state()));
+  if(!afterNewCur) throw new Error("após Nova sessão a curadoria importada sobreviveu: "+JSON.stringify(curC.state()));
   return afterRestart && afterNew;
 });
 T("S33","nenhuma API de persistência é usada",()=>{
@@ -528,13 +571,18 @@ T("S49","atomicidade real: declaredPlatforms:[null] morre na validação, sessã
     JSON.stringify(w.__DEV.captureCanonicalInputs())+derivedModel(w)===pre &&
     d.body.dataset.uxscreen===screenBefore;
 });
-T("S50","normalização isolada não toca estado; candidato é completo antes do commit",()=>{
+T("S50","normalização isolada não toca estado; candidato é completo antes do commit — com a sexta chave, mesmo ausente no documento",()=>{
   const {w,d}=boot(); richLandscape(w,d);
   const pre=JSON.stringify(w.__DEV.captureCanonicalInputs())+derivedModel(w);
   const doc=w.__DEV.buildSessionDocument();
+  if("reportCuration" in doc.inputs) throw new Error("fixture declarou curadoria — a alínea (b) exige documento SEM a chave");
   const cand=w.__DEV.normalizeSessionDocument(doc);
   const keys=Object.keys(cand).sort().join(",");
-  return keys==="ans,arch,arq,landscape,notes,platforms,priorities,refinement,signals,targetOverrides" &&
+  /* (b) [025 · T015] a sexta chave está no candidato TAMBÉM quando o documento não a traz: presente e `undefined`
+     (a ausência é candidato — é ela que faz o commit LIMPAR a curadoria da sessão anterior, INV-8) */
+  if(!(("curadoria" in cand) && cand.curadoria===undefined))
+    throw new Error("candidato sem `curadoria` (presente e undefined) para documento sem a chave: "+keys);
+  return keys==="ans,arch,arq,curadoria,landscape,notes,platforms,priorities,refinement,signals,targetOverrides" &&
     JSON.stringify(w.__DEV.captureCanonicalInputs())+derivedModel(w)===pre;
 });
 T("S51","capability inventada não influencia Recommendation Context (recusada antes do recompute)",()=>{
@@ -785,16 +833,41 @@ T("S67","architectureContext parcial ou ausente é recusado antes do commit",()=
   return !r1.ok && !r2.ok && !r3.ok && r1.error.includes("incompleto") &&
     JSON.stringify(w.__DEV.captureCanonicalInputs())+derivedModel(w)===pre;
 });
-T("S69","snapshot/restore cobre todos os owners escritos pelo commit",()=>{
+T("S69","snapshot/restore cobre todos os owners escritos pelo commit — e, comportamentalmente, devolve também a curadoria",()=>{
   const src=fs.readFileSync(path.join(__dirname,"ui_session_v32.js"),"utf8");
   const seg=(name)=>{ const i=src.indexOf("function "+name); const j=src.indexOf("\nfunction ", i+10); return src.slice(i,j); };
   const commit=seg("commitCanonicalOwners"), snap=seg("snapshotCanonicalOwners"), rest=seg("restoreCanonicalOwners");
   const owners=["arq","ans","notes","businessPriority","TECH_LANDSCAPE","ARCHITECTURE_CONTEXT",
     "declaredPlatforms","SESSION_SIGNALS","TARGET_PROFILE","OPERATIONAL_REFINEMENT"];
   const written=owners.filter(o=>commit.includes(o));
-  return written.length===owners.length &&
+  const estrutural = written.length===owners.length &&
     written.every(o=>snap.includes(o) && rest.includes(o)) &&
     /step/.test(snap) && /step/.test(rest);
+  /* (b) [025 · T015] COMPORTAMENTAL — a regex de (a) lê nomes no fonte e não vê se o restore devolve o VALOR.
+     richLandscape + curadoria A (exclude em ofertado, include sem lastro, architectureNote exclude); snapshot;
+     zerar CADA owner (inclusive __CURATION.clear() e step); restore; inputs + derivados + state() + step ≡ pré.
+     Carrasco: D025-M6 (snapshot `curadoria: null` + restore sem fromSession) sob M48_HTML_OVERRIDE. */
+  const {w,d}=boot(); richLandscape(w,d);
+  const cur=w.__CURATION; if(!cur) throw new Error("(b) bridge de curadoria ausente — a alínea não teria sujeito");
+  const off=cur.offered(); const alvo=off[0]; const semL=cur.catalog().filter(id=>off.indexOf(id)<0)[0];
+  if(!alvo||!semL) throw new Error("(b) sem oferta ou sem item fora da oferta — fixture sem sujeito");
+  cur.set(alvo,"exclude"); cur.set(semL,"include"); cur.setArchitectureNote("exclude");
+  w.__DEV.showResults();
+  const foto=()=>JSON.stringify(w.__DEV.captureCanonicalInputs())+derivedModel(w)+JSON.stringify(cur.state())+"|"+w.eval("step");
+  const preInputs=JSON.stringify(w.__DEV.captureCanonicalInputs());
+  const preB=foto();
+  const snapB=w.__DEV.snapshotCanonicalOwners();
+  w.eval("arq=null; ans.fill(null); notes.fill(''); businessPriority.clear(); step=-1;");
+  w.__DEV.V32.resetLandscapeToUnset();
+  w.eval("clearTargetProfile(); clearOperationalRefinement();");
+  cur.clear();
+  if(JSON.stringify(w.__DEV.captureCanonicalInputs())===preInputs) throw new Error("(b) zerar os owners não mudou os inputs — a restauração seria vácua");
+  if(cur.toSession()!==undefined||w.eval("step")!==-1) throw new Error("(b) curadoria/step não foram zerados — a restauração deles seria vácua");
+  w.__DEV.restoreCanonicalOwners(snapB);
+  const posB=foto();
+  w.close();
+  if(posB!==preB) throw new Error("(b) restore não devolveu o estado pré (inputs+derivados+curadoria+step)");
+  return estrutural;
 });
 T("S70","declaredPlatforms[].notes: tipo estrito e fidelidade opcional",()=>{
   const {w,d}=boot(); answerAll(w,1,{logs:0}); w.__DEV.showResults();

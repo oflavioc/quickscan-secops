@@ -9,7 +9,8 @@
     "execucao_fix_finding_ea32": "2026-09-04, qa-engineer, branch fix/ea32-particao-do-p52-ra8 (base 09f4342 = merge do PR #36). P52-RA8 PARTIDO por asset em tests_p52_mutants.js: P52-RA8 (metade MDR, altera ui_p52_workspace_v32.css:1350 — regra vencedora, como já era) + P52-RA8B (metade SOCaaS, altera :1357 — a regra vencedora; a forma antiga INSERIA uma regra que perdia por ordem para ela). Cada `reason` nomeia o alt que P52-ICON2 imprime; a `reason` antiga casava a linha de qualquer asset. Pares registrados aqui NÃO EXECUTADO · ambiente sem chromium — o kill canônico de CADA metade é do job `visual` (condição 3 do reparo; lição da E13). É ESTE registro que cumpre o evento_de_remocao da exclusão `achado-aberto` de P52-RA8 em regra_morta.json (condição literal: par com mutante == P52-RA8 e harness p52 passa a existir em `pares`): a exclusão saiu no MESMO commit, com PARES_DECLARADOS do instrumento de volta a dois pares e indecidiveis.arvore.contagem fixada por execução (21 em 15). MEDIDO NESTE CICLO, sem Chromium gerenciado: preflight p52 108/108 (era 107); varrerArvore() com as duas exclusões restantes — harness inteiro: mortas 1 (p52/P52-RA8, seletor SOCaaS, perde por ordem para :1357) = o RED da correção e a prova de que a exceção era carga; harness partido: mortas 0, cada metade 1 declaração viva; tests_014_regra_morta.js 7/7 antes e depois. Reprodução NÃO-canônica (Chrome estável 152.0.7977.77 via CHROME_PATH, Playwright 1.62.1, worktree efêmera em 09f4342, removida): controle 'PASS P52-ICON2'; P52_MUT_ONLY=P52-RA8,P52-RA8B → DETECTADO 2/2, cada FAIL nomeando só o próprio alt (MDR 34.9% · SOCaaS 36.5% do tile). A matriz segue com a linha agregada de p52 (T13 da 013); estes dois pares nominais entram ao lado de P52-M3, no mesmo precedente. Fecho pendente: ler o run do job visual e trocar os dois blocos NÃO EXECUTADO pelo resultado do log.",
     "execucao_fase6_iteracao_016": "2026-09-04, qa-engineer, worktree phase5-014, branch feature/016-registro-contra-execucao — iteração de correção do spec-validate da 016 (G3, J1, J3, J4). Commit de código 9fe57f0: F24 e P11 na sonda (33 → 35), guarda de censo da leitura em check_fecho.py com fecho.json → piso.merges_ate_piso = 39, D016-M31/M32/M33 no harness (30 → 33), mutantes que movem o piso movem o censo, targets 51 → 54. REDS de HEAD (clone efêmero de d130a04; fecho.py, check_fecho.py, fecho.json, harness e esta matriz byte-idênticos aos de 76fd9dc, HEAD do spec-validate): M31 à mão ⇒ sonda 33 · 0, exit 0 (sobreviveria — G3); leitor mudo à mão ⇒ gate nu exit 0, 0 problema(s), merges_ate_piso 0, done CONFORME por ancestralidade (J1); M9 à mão ⇒ só P2 diverge, por artefato-ausente (J3); planning-state 999 com válvula à mão ⇒ o gate já acusa (EM VOO · prematura · 1 problema) — faltava o carrasco permanente na campanha (J4). GREENS: sonda 35 · 0; gate nu 0 problema(s) com censo 39 = 39; preflight 33/33 âncoras únicas; campanha 33/33 · 3 controles ok (árvore de trabalho e reexecutada sobre 9fe57f0, porcelain limpo); stage mutation 'IC-4: d016: 33 âncora(s)' · 'não-KILL: nenhum' · 'mutation: 1 campanha(s) executada(s) · 0 problema(s)'; bateria negativa dos julgadores novos 0 detectados · 4 sobreviventes · 1 não executado de 5. run.sh --light: 11 PASS · 1 FAIL — o FAIL é o baseline (pins divergentes/ausentes até o repin, R8 §1); a lista do baseline inclui também design-decisions.md, planning-state.schema.json, plan.md, refinement.md, spec.md, o ADR 0001 e spec-validate.md, alterados por d130a04 ('errata E4'), não por esta iteração. check_tdd: 0 problema(s), pares completos. NÃO medido: nada disto no CI — a branch segue sem push e sem PR (T041)",
     "execucao_fix_finding_ea39": "2026-09-05, qa-engineer, worktree phase5-014, branch fix/ea39-leitor-mudo (base ec74d6f = merge do PR #41). Fix-finding EA-39 (errata E016-8): o leitor de histórico nomeia o clone raso (origin_develop.cadeia_integra/fim_da_cadeia/posicao_do_piso) e o julgador emite o 17º código historico-raso na precedência forma → ausente → raso → piso fora da cadeia; a guarda de censo cede a vez sob cadeia_integra false. RED (T091, c535431): sonda 37 · 2 divergências (F25 EM VOO, F26 piso-invalido) + CODIGOS a menos ['historico-raso']. GREEN (T094, a8bdfe4): sonda 37 · 0; gate nu 39 (ok) · 0 problema(s) · exit 0. T096 (este registro): pares D016-M34 (julgador ignora cadeia_integra ⇒ F25 EM VOO · 0, F26 piso-invalido) e D016-M35 (precedência trocada ⇒ só F26 piso-invalido; F25 não vê — bateria negativa) — medidos à mão em cópia efêmera, campanha parcial M33/M34/M35 3/3 com M33 inalterado, campanha integral 35/35 · 3 controles ok · 24 s, preflight 35 âncoras únicas, bateria negativa 0/4/1. SEM mutante de árvore para a metade do leitor (razão medida na dívida 'LEITOR SOB CLONE RASO'); carrasco = bateria §12 em clones efêmeros com origin = GitHub — §12.1 pré-fix e §12.2 pós-fix (A, B, C, D, E e o caso novo G, raso abaixo do piso). pipeline.yaml: desc do stage fecho 'sonda de 35 casos' → 37. Stage mutation sobre o commit de T096: run.sh completo (relatório de T096; T098 registra). Repin (R3) é commit separado do build-engineer/orquestrador, depois deste conteúdo (R8 §1)",
-    "execucao_fix_finding_ea41": "2026-09-05, qa-engineer, worktree phase5-014, branch fix/ea41-bytes-nul (base ba6b7e3 = merge do PR #45). Fix-finding EA-41: dois bytes NUL em .claude/BACKLOG.md desligavam a normalização de texto do próprio registro (i/-text sob attr/text=auto eol=lf). RED 2a1fb7f (gate check_eol_text.py + stage eol-text; EA41-EOL1(a) acusou .claude/BACKLOG.md i/-text w/lf · causa (índice): nul — NUL=2, linha 2041); fix c994fc0 (doc-writer: bytes → escape do fonte); repin 589a0fd (457 pinados). ESTE REGISTRO: a prova do poder discriminante do eol-text deixa a bateria efêmera e passa a viver no instrumento versionado — harness `ea41` (tests_ea41_mutants.js) + fixture .claude/verify/fixtures_ea41/sujeito.md (único sujeito, mutado no worktree e no blob do índice, restaurado com prova) + entrada `ea41` em mutation_map.json (targets um a um: gate, fixture, .gitattributes, harness), tudo no MESMO commit (D4 da 013). Pares: EA41-M1 (NUL no worktree ⇒ EOL1(a) origem worktree), EA41-M2 (CRLF no blob do índice ⇒ EOL1(b)) e EA41-M3 (NUL no blob do índice ⇒ EOL1(a) origem índice — o estado do RED; além do pedido, fecha o disjunto que a sonda não distingue). Medido: plumbing em repositório efêmero com o gate real em --repo (4 estados + restauração do índice por cacheinfo + o caso i/none do sha inexistente); preflight 3/3; campanha direta 3/3 · 2 controles ok · 5,4 s; parcial 1/1; stage `mutation` em commit efêmero d4163d3 de conteúdo idêntico: 'IC-4: ea41: 3 âncora(s)' · 'não-KILL: nenhum' · 'mutation: 1 campanha(s) executada(s) · 0 problema(s)' · 6,9 s (controle pré-mudança na árvore limpa de HEAD: 0 campanha(s) · 0 problema(s)); bateria negativa do julgador 0/7/1 de 8 + fase B (sujeito inexistente) 0/0/3 com C0 FALHOU nomeado; eol-text sobre a árvore com harness e fixture no índice: 581 rastreado(s) · 528 com normalização declarada · 0 problema(s); compliance-audit 17 PASS · 0 FAIL · 0 WARN. NÃO executado: o stage sobre o commit REAL (roda no run.sh do fecho e no CI — a branch ainda não foi enviada ao remoto, logo nenhum job rodou o RED/GREEN do EA-41); os 8 mutantes DO GATE ficam em dividas_declaradas, sem par executado. Repin (harness, fixture, mutation_map.json, mutation-matrix.json) é commit separado do orquestrador (R8 §1). Achado colateral, fora deste commit: no Windows o shutil.rmtree(ignore_errors=True) da sonda do gate não remove os objetos git somente-leitura do repositório efêmero — 38 diretórios eol-text-sonda-* órfãos em %TEMP% medidos e removidos à mão; correção candidata = onerror que limpa o bit somente-leitura (dono qa-engineer; o CI Linux não sofre)."
+    "execucao_fix_finding_ea41": "2026-09-05, qa-engineer, worktree phase5-014, branch fix/ea41-bytes-nul (base ba6b7e3 = merge do PR #45). Fix-finding EA-41: dois bytes NUL em .claude/BACKLOG.md desligavam a normalização de texto do próprio registro (i/-text sob attr/text=auto eol=lf). RED 2a1fb7f (gate check_eol_text.py + stage eol-text; EA41-EOL1(a) acusou .claude/BACKLOG.md i/-text w/lf · causa (índice): nul — NUL=2, linha 2041); fix c994fc0 (doc-writer: bytes → escape do fonte); repin 589a0fd (457 pinados). ESTE REGISTRO: a prova do poder discriminante do eol-text deixa a bateria efêmera e passa a viver no instrumento versionado — harness `ea41` (tests_ea41_mutants.js) + fixture .claude/verify/fixtures_ea41/sujeito.md (único sujeito, mutado no worktree e no blob do índice, restaurado com prova) + entrada `ea41` em mutation_map.json (targets um a um: gate, fixture, .gitattributes, harness), tudo no MESMO commit (D4 da 013). Pares: EA41-M1 (NUL no worktree ⇒ EOL1(a) origem worktree), EA41-M2 (CRLF no blob do índice ⇒ EOL1(b)) e EA41-M3 (NUL no blob do índice ⇒ EOL1(a) origem índice — o estado do RED; além do pedido, fecha o disjunto que a sonda não distingue). Medido: plumbing em repositório efêmero com o gate real em --repo (4 estados + restauração do índice por cacheinfo + o caso i/none do sha inexistente); preflight 3/3; campanha direta 3/3 · 2 controles ok · 5,4 s; parcial 1/1; stage `mutation` em commit efêmero d4163d3 de conteúdo idêntico: 'IC-4: ea41: 3 âncora(s)' · 'não-KILL: nenhum' · 'mutation: 1 campanha(s) executada(s) · 0 problema(s)' · 6,9 s (controle pré-mudança na árvore limpa de HEAD: 0 campanha(s) · 0 problema(s)); bateria negativa do julgador 0/7/1 de 8 + fase B (sujeito inexistente) 0/0/3 com C0 FALHOU nomeado; eol-text sobre a árvore com harness e fixture no índice: 581 rastreado(s) · 528 com normalização declarada · 0 problema(s); compliance-audit 17 PASS · 0 FAIL · 0 WARN. NÃO executado: o stage sobre o commit REAL (roda no run.sh do fecho e no CI — a branch ainda não foi enviada ao remoto, logo nenhum job rodou o RED/GREEN do EA-41); os 8 mutantes DO GATE ficam em dividas_declaradas, sem par executado. Repin (harness, fixture, mutation_map.json, mutation-matrix.json) é commit separado do orquestrador (R8 §1). Achado colateral, fora deste commit: no Windows o shutil.rmtree(ignore_errors=True) da sonda do gate não remove os objetos git somente-leitura do repositório efêmero — 38 diretórios eol-text-sonda-* órfãos em %TEMP% medidos e removidos à mão; correção candidata = onerror que limpa o bit somente-leitura (dono qa-engineer; o CI Linux não sofre).",
+    "execucao_demanda_025": "T084, 2026-10-30, qa-engineer, pasta primária phase5-009 (branch feature/025-curadoria-transacional), HEAD f8f753a (árvore limpa; a árvore com os quatro registros desta tarefa foi fixada num commit de trabalho para o stage aceitar o porcelain vazio, e consolidada no commit único da T084 — `git reset --soft` — com estes números). `MUTATION_DEFER_MISSING=1 python .claude/verify/check_mutation.py`, 3411 s: mutation: 11 campanha(s) executada(s) · 1 problema(s) · ---- integridade: 0 problema(s) nomeado(s) ---- · campanhas EXECUTADAS (base do diff = merge-base com origin/develop, da71759): core → CORE MUTATION: 3 DETECTADO · 0 SOBREVIVENTE · 0 NÃO EXECUTADO de 3 · não-KILL: nenhum — os 3 mutante(s) lidos estão DETECTADO || d009 → D009 MUTATION: 19 DETECTADO · 0 SOBREVIVENTE · 0 NÃO EXECUTADO de 19 · não-KILL: nenhum — os 19 mutante(s) lidos estão DETECTADO || d010 → prazo: Correção do EA-71 — a alínea que afirma a OCORRÊNCIA da arbitragem (conjunto oculto não vazio com substituto presente) e o censo de âncoras promovido de nota a asserção. É gate da demanda 010 e não se altera de dentro da 021 (R10 §1). No dia em que a ultima_prova voltar a KILL, IC-9.3 REPROVA esta entrada e força a remoção. · não-KILL: 1 de 24 mutante(s) lido(s) · 23 KILL ficam na contagem || d015 → D015 MUTATION [tests_015_mutants.js]: 15/15 mutantes detectados pelo gate e motivo esperados · M16 fora do harness (muta arquivo PROTEGIDO; worktree efêmera, T022) · M11/M12/M13 APOSENTADOS com o critério C4 (errata E1), ids não reutilizados · não-KILL: nenhum — os 15 mutante(s) lidos estão DETECTADO || d019 → D019 MUTATION [tests_019_mutants.js]: 17 DETECTADO · 0 SOBREVIVENTE · 0 NÃO EXECUTADO de 17 · não-KILL: nenhum — os 17 mutante(s) lidos estão DETECTADO || d021 → D021 MUTATION: 8 DETECTADO · 0 SOBREVIVENTE · 0 NÃO EXECUTADO de 8 · não-KILL: NÃO NOMEADOS em `d021` — nenhuma linha `<ESTADO>  <id> · <desc>` na saída (exit 0); o veredito vale e a identidade, se existir, está no fecho do harness acima || d022 → D022 MUTATION: 13 DETECTADO · 0 SOBREVIVENTE · 0 NÃO EXECUTADO de 13 · não-KILL: NÃO NOMEADOS em `d022` — nenhuma linha `<ESTADO>  <id> · <desc>` na saída (exit 0); o veredito vale e a identidade, se existir, está no fecho do harness acima || d023 → D023 MUTATION: 12 DETECTADO · 0 SOBREVIVENTE · 0 NÃO EXECUTADO de 12 · não-KILL: NÃO NOMEADOS em `d023` — nenhuma linha `<ESTADO>  <id> · <desc>` na saída (exit 0); o veredito vale e a identidade, se existir, está no fecho do harness acima || d025 → D025 MUTATION [tests_025_mutants.js]: 23 DETECTADO · 0 SOBREVIVENTE · 0 NÃO EXECUTADO de 23 · não-KILL: nenhum — os 23 mutante(s) lidos estão DETECTADO || p51 → MUTATION TESTING (Phase 5.1): 19/19 mutantes detectados pelo gate e motivo esperados · não-KILL: nenhum — os 19 mutante(s) lidos estão DETECTADO || p52 → SOBREVIVENTE   P52-FT7 · gate P52-TGT4 · reprovou por motivo diferente do esperado · não-KILL: 13 de 108 mutante(s) lido(s) · 95 KILL ficam na contagem · DEFERIDAS ao job visual (requires chromium, KI-3): nenhuma · NÃO EXIGIDAS (nenhum alvo mudou): d011, d014, d014vis, d016, d018, ea41, ea41i, p50. Os pares de core/d009/d010/d015 abaixo tiveram `ultima_prova.data` movida para hoje com nota de reexecução (molde da 015); d019/d021/d022/d023 não têm pares na matriz (registraram só em `_trilha`/relatório) — a reexecução deles fica registrada AQUI, nas palavras do stage. DIAGNÓSTICO DO ÚNICO PROBLEMA DO STAGE (causa antes de culpa, R2 §3): p51 e p52 NÃO foram deferidas porque `have(\"chromium\")` passou a ser verdadeiro nesta máquina (cache `ms-playwright/chromium-1234` existe; CHROME_PATH vazio) — ambiente NÃO canônico para campanhas Chromium (KI-3; canônico é o job `visual` do CI Linux). p51 fechou 19/19. p52 fechou 95/108 com 13 sobreviventes: ER7/ER8/ER9/EX5/EX6 (gates P52-PDF4/5/6) e FT1…FT7 (gate P52-TGT4) saíram 'reprovou por motivo diferente do esperado'; ER5 (gate P52-POP2) saiu 'o gate esperado NÃO reprovou'. CONTROLE SEM MUTAÇÃO (P52_ONLY=P52-POP2,P52-PDF4,P52-PDF5,P52-PDF6,P52-TGT4 P52_NO_EVIDENCE=1 node tests_p52_chromium.js), em HEAD f8f753a E na base da71759 (worktree efêmera), mesmo resultado nas duas: PDF4, PDF5, PDF6 e TGT4 FAIL por `poppler-utils (pdftotext/pdftoppm) ausente: a prova de papel NÃO foi executada`; POP2 PASS — logo os 12 'motivo diferente' são VERMELHO DE CONTROLE por dependência de ambiente declarada e ausente (falsos sobreviventes), idênticos sem a 025. P52-ER5 reexecutado ISOLADO na base da71759 (P52_MUT_ONLY=P52-ER5): SOBREVIVENTE também lá — pré-existente neste ambiente, não introduzido pela 025 (a branch só tocou ui_v32.js entre os alvos da p52: +6/−1, discardDraft/hasDraft; ER5 muta ui_p52_workspace_v32.css). Última prova canônica da p52 na matriz: job visual do CI, run 34772594772 (2026-09-13), 108/108 — a canônica desta demanda é o job `visual` do PR (T095). ACHADO CANDIDATO (não corrigido aqui, dono: build-engineer/qa — registrar no BACKLOG): `harnesses.p52.requires` declara só `chromium`, mas quatro gates da p52 exigem poppler-utils; com Chromium presente e poppler ausente o stage local produz 12 falsos sobreviventes em vez de [DEFER]/FAIL nomeado — a mesma classe do EA-72 (gatilho cego à dependência real). "
   },
   "pares": [
     {
@@ -29,10 +30,10 @@
       "gate": "SESSION 4.8 (tests_session_m48.js)",
       "invariante": "INV-8 — derivado nunca é fonte",
       "ultima_prova": {
-        "data": "2026-09-26",
+        "data": "2026-10-30",
         "resultado": "KILL (oracle SESSION 4.8, exit 1)",
         "registro": "tests_core_mutants.js",
-        "nota": "EPISÓDIO DE SOBREVIVENTE FALSO, corrigido no mesmo dia. Entre 2026-09-22 e 2026-09-26 este par apareceu SOBREVIVENTE no CI (PR #101) sem que o gate tivesse perdido poder algum: o harness fixava `node --max-old-space-size=4608 tests_session_m48.js`, cópia literal do script test:session do package.json, que subira para 6144 quando a 019 fez a suíte de sessão crescer. Com heap insuficiente o gate não conclui e o mutante escapa. Medido na worktree de controle trocando SÓ esse número: 3 DETECTADO · 0 SOBREVIVENTE. Corrigido na demanda 021 — o comando passou a ser LIDO de scripts[\"test:session\"] (fonte única, ausência é FAIL alto), e a campanha fecha 3/3 na branch, exit 0. Um sobrevivente falso é pior que gate ausente: acusa o gate errado. Causa de classe registrada em EA-72. PROVENIÊNCIA: worktree de CONTROLE sobre origin/develop (e9e1e6b), árvore INTEIRA, medida localmente por este agente em 2026-09-26 — não é resultado de CI reportado por terceiro. Restauração byte a byte OK do fonte E do HTML. Data anterior deste par: 2026-09-01."
+        "nota": "Campanha `core` REEXECUTADA em 2026-10-30 pelo qa-engineer da demanda 025 (T084; alvo declarado tocado pela 025 — ui_v32.js/ui_session_v32.js): CORE MUTATION: 3 DETECTADO · 0 SOBREVIVENTE · 0 NÃO EXECUTADO de 3 · não-KILL: nenhum — os 3 mutante(s) lidos estão DETECTADO. Data anterior deste par: 2026-09-26. EPISÓDIO DE SOBREVIVENTE FALSO, corrigido no mesmo dia. Entre 2026-09-22 e 2026-09-26 este par apareceu SOBREVIVENTE no CI (PR #101) sem que o gate tivesse perdido poder algum: o harness fixava `node --max-old-space-size=4608 tests_session_m48.js`, cópia literal do script test:session do package.json, que subira para 6144 quando a 019 fez a suíte de sessão crescer. Com heap insuficiente o gate não conclui e o mutante escapa. Medido na worktree de controle trocando SÓ esse número: 3 DETECTADO · 0 SOBREVIVENTE. Corrigido na demanda 021 — o comando passou a ser LIDO de scripts[\"test:session\"] (fonte única, ausência é FAIL alto), e a campanha fecha 3/3 na branch, exit 0. Um sobrevivente falso é pior que gate ausente: acusa o gate errado. Causa de classe registrada em EA-72. PROVENIÊNCIA: worktree de CONTROLE sobre origin/develop (e9e1e6b), árvore INTEIRA, medida localmente por este agente em 2026-09-26 — não é resultado de CI reportado por terceiro. Restauração byte a byte OK do fonte E do HTML. Data anterior deste par: 2026-09-01."
       }
     },
     {
@@ -41,10 +42,10 @@
       "gate": "UNSET GEOMETRY (tests_unset_ug.js)",
       "invariante": "INV-2/INV-3 — publicação sob suficiência",
       "ultima_prova": {
-        "data": "2026-09-01",
+        "data": "2026-10-30",
         "resultado": "KILL (oracle UNSET GEOMETRY, exit 1)",
         "registro": "re-executada em T019 (wave 6) da demanda 009: 3/3 KILL. Campanha inicial: Onda 3, 2026-08-25",
-        "nota": "Campanha `core` REEXECUTADA em 2026-09-01 pelo qa-engineer da demanda 015, porque ui_v32.js e alvo declarado dela: 3 KILL - 0 escaparam de 3, restauracao byte a byte OK, com baseline ui_v32.js 9d31fef96e95 (a identidade POS-implementacao da 015). Data anterior deste par: 2026-08-28. "
+        "nota": "Campanha `core` REEXECUTADA em 2026-10-30 pelo qa-engineer da demanda 025 (T084; alvo declarado tocado pela 025 — ui_v32.js/ui_session_v32.js): CORE MUTATION: 3 DETECTADO · 0 SOBREVIVENTE · 0 NÃO EXECUTADO de 3 · não-KILL: nenhum — os 3 mutante(s) lidos estão DETECTADO. Data anterior deste par: 2026-09-01. Campanha `core` REEXECUTADA em 2026-09-01 pelo qa-engineer da demanda 015, porque ui_v32.js e alvo declarado dela: 3 KILL - 0 escaparam de 3, restauracao byte a byte OK, com baseline ui_v32.js 9d31fef96e95 (a identidade POS-implementacao da 015). Data anterior deste par: 2026-08-28. "
       }
     },
     {
@@ -53,10 +54,10 @@
       "gate": "REF 4.4 (tests_ref_m44.js)",
       "invariante": "INV-6 — refinamento nunca afeta scoring",
       "ultima_prova": {
-        "data": "2026-09-01",
+        "data": "2026-10-30",
         "resultado": "KILL (oracle REF 4.4, exit 1)",
         "registro": "re-executada em T019 (wave 6) da demanda 009: 3/3 KILL. Campanha inicial: Onda 3, 2026-08-25",
-        "nota": "Campanha `core` REEXECUTADA em 2026-09-01 pelo qa-engineer da demanda 015, porque ui_v32.js e alvo declarado dela: 3 KILL - 0 escaparam de 3, restauracao byte a byte OK, com baseline ui_v32.js 9d31fef96e95 (a identidade POS-implementacao da 015). Data anterior deste par: 2026-08-28. "
+        "nota": "Campanha `core` REEXECUTADA em 2026-10-30 pelo qa-engineer da demanda 025 (T084; alvo declarado tocado pela 025 — ui_v32.js/ui_session_v32.js): CORE MUTATION: 3 DETECTADO · 0 SOBREVIVENTE · 0 NÃO EXECUTADO de 3 · não-KILL: nenhum — os 3 mutante(s) lidos estão DETECTADO. Data anterior deste par: 2026-09-01. Campanha `core` REEXECUTADA em 2026-09-01 pelo qa-engineer da demanda 015, porque ui_v32.js e alvo declarado dela: 3 KILL - 0 escaparam de 3, restauracao byte a byte OK, com baseline ui_v32.js 9d31fef96e95 (a identidade POS-implementacao da 015). Data anterior deste par: 2026-08-28. "
       }
     },
     {
@@ -532,10 +533,10 @@
       "gate": "D009-ORD1 (tests_009_leitura.js)",
       "invariante": "C1 — a ordem completa das 8 seções presentes com gate ABERTO é a da âncora da spec 009",
       "ultima_prova": {
-        "data": "2026-09-01",
+        "data": "2026-10-30",
         "resultado": "KILL — 'fluxo observado [exec > target > context > priorities > detail > gaps > support > actions] != ordem aberta da spec'. PROVA DE DESENHO no mesmo passe: SOBREVIVEU a P52-TGT1 (PASS), como a spec §C1/C3 exige — adjacência não deduz sequência",
         "registro": "campanha d009 REEXECUTADA na passagem final (2026-08-28, rodada 2, worktree exclusiva e árvore limpa): 19 KILL / 19, restauração byte a byte OK do source e do HTML gerado · campanha d009, T019 (wave 6): 18/18 KILL",
-        "nota": "Campanha `d009` REEXECUTADA em 2026-09-01 pelo qa-engineer da demanda 015, porque ui_v32.js e alvo declarado dela: 19 KILL - 0 escaparam de 19, restauracao byte a byte OK. Data anterior deste par: 2026-08-28. "
+        "nota": "Campanha `d009` REEXECUTADA em 2026-10-30 pelo qa-engineer da demanda 025 (T084; alvo declarado tocado pela 025 — ui_v32.js/ui_session_v32.js): D009 MUTATION: 19 DETECTADO · 0 SOBREVIVENTE · 0 NÃO EXECUTADO de 19 · não-KILL: nenhum — os 19 mutante(s) lidos estão DETECTADO. Data anterior deste par: 2026-09-01. Campanha `d009` REEXECUTADA em 2026-09-01 pelo qa-engineer da demanda 015, porque ui_v32.js e alvo declarado dela: 19 KILL - 0 escaparam de 19, restauracao byte a byte OK. Data anterior deste par: 2026-08-28. "
       }
     },
     {
@@ -544,10 +545,10 @@
       "gate": "D009-ORD2 (tests_009_leitura.js)",
       "invariante": "C2 — a exceção declarada do gate FECHADO (suficiência na 2ª seção) é preservada",
       "ultima_prova": {
-        "data": "2026-09-01",
+        "data": "2026-10-30",
         "resultado": "KILL — 'fluxo observado [... support > evidence > actions] != ordem fechada da spec' (a suficiência cai para a 8ª posição sem a exceção)",
         "registro": "campanha d009 REEXECUTADA na passagem final (2026-08-28, rodada 2, worktree exclusiva e árvore limpa): 19 KILL / 19, restauração byte a byte OK do source e do HTML gerado · campanha d009, T019 (wave 6): 18/18 KILL",
-        "nota": "Campanha `d009` REEXECUTADA em 2026-09-01 pelo qa-engineer da demanda 015, porque ui_v32.js e alvo declarado dela: 19 KILL - 0 escaparam de 19, restauracao byte a byte OK. Data anterior deste par: 2026-08-28. "
+        "nota": "Campanha `d009` REEXECUTADA em 2026-10-30 pelo qa-engineer da demanda 025 (T084; alvo declarado tocado pela 025 — ui_v32.js/ui_session_v32.js): D009 MUTATION: 19 DETECTADO · 0 SOBREVIVENTE · 0 NÃO EXECUTADO de 19 · não-KILL: nenhum — os 19 mutante(s) lidos estão DETECTADO. Data anterior deste par: 2026-09-01. Campanha `d009` REEXECUTADA em 2026-09-01 pelo qa-engineer da demanda 015, porque ui_v32.js e alvo declarado dela: 19 KILL - 0 escaparam de 19, restauracao byte a byte OK. Data anterior deste par: 2026-08-28. "
       }
     },
     {
@@ -556,10 +557,10 @@
       "gate": "D009-DOM1 (tests_009_leitura.js)",
       "invariante": "C4 — a marca de domínio identifica o domínio que marca (índice conferido contra DOMS do runtime congelado)",
       "ultima_prova": {
-        "data": "2026-09-01",
+        "data": "2026-10-30",
         "resultado": "KILL — \"tela: 'Negócio' ocorre 1x na narrativa e tem 0 marca(s) .jn-dom[data-dom=\\\"0\\\"]\"",
         "registro": "campanha d009 REEXECUTADA na passagem final (2026-08-28, rodada 2, worktree exclusiva e árvore limpa): 19 KILL / 19, restauração byte a byte OK do source e do HTML gerado · campanha d009, T019 (wave 6): 18/18 KILL",
-        "nota": "Campanha `d009` REEXECUTADA em 2026-09-01 pelo qa-engineer da demanda 015, porque ui_v32.js e alvo declarado dela: 19 KILL - 0 escaparam de 19, restauracao byte a byte OK. Data anterior deste par: 2026-08-28. "
+        "nota": "Campanha `d009` REEXECUTADA em 2026-10-30 pelo qa-engineer da demanda 025 (T084; alvo declarado tocado pela 025 — ui_v32.js/ui_session_v32.js): D009 MUTATION: 19 DETECTADO · 0 SOBREVIVENTE · 0 NÃO EXECUTADO de 19 · não-KILL: nenhum — os 19 mutante(s) lidos estão DETECTADO. Data anterior deste par: 2026-09-01. Campanha `d009` REEXECUTADA em 2026-09-01 pelo qa-engineer da demanda 015, porque ui_v32.js e alvo declarado dela: 19 KILL - 0 escaparam de 19, restauracao byte a byte OK. Data anterior deste par: 2026-08-28. "
       }
     },
     {
@@ -568,10 +569,10 @@
       "gate": "D009-DOM1 (tests_009_leitura.js)",
       "invariante": "C4 — a cor nunca é o único portador do significado (canal não-cromático obrigatório)",
       "ultima_prova": {
-        "data": "2026-09-01",
+        "data": "2026-10-30",
         "resultado": "KILL — 'canal não-cromático ausente: nenhuma regra de .jn-dom declara font-weight'. SEGUNDA ROT DE ÂNCORA desta demanda (a primeira foi D009-M16): a auditoria de acessibilidade do CI reprovou P52-ACC1/V322-NI1 com color-contrast|serious — os accents de [data-dom] foram desenhados para borda e chip, não para texto (4.21:1 no roxo, contra 4.5:1 de AA) — e a correção trocou o token por --dom-accent-text derivado por color-mix, apagando o literal em que o mutante ancorava. Reancorado no literal atual; o discriminante NÃO mudou, porque o repl continua removendo font-weight e as regras novas .jn-dom[data-dom=\"N\"] só declaram a variável de cor.",
         "registro": "campanha d009 REEXECUTADA após a correção de contraste (2026-08-28): 19 KILL / 19, restauração byte a byte OK do source e do HTML gerado · campanha d009 REEXECUTADA na passagem final (2026-08-28, rodada 2, worktree exclusiva e árvore limpa): 19 KILL / 19, restauração byte a byte OK do source e do HTML gerado · campanha d009, T019 (wave 6). Âncora byte a byte de ui_ux_v32.css ('.jn-dom{ color:var(--dom-accent); font-weight:700; }') — o harness trata âncora que não casa 1x como FALHA DO HARNESS, nunca como 'não aplicável' (a armadilha do literal P52_SECTIONS)",
-        "nota": "Campanha `d009` REEXECUTADA em 2026-09-01 pelo qa-engineer da demanda 015, porque ui_v32.js e alvo declarado dela: 19 KILL - 0 escaparam de 19, restauracao byte a byte OK. Data anterior deste par: 2026-08-28. "
+        "nota": "Campanha `d009` REEXECUTADA em 2026-10-30 pelo qa-engineer da demanda 025 (T084; alvo declarado tocado pela 025 — ui_v32.js/ui_session_v32.js): D009 MUTATION: 19 DETECTADO · 0 SOBREVIVENTE · 0 NÃO EXECUTADO de 19 · não-KILL: nenhum — os 19 mutante(s) lidos estão DETECTADO. Data anterior deste par: 2026-09-01. Campanha `d009` REEXECUTADA em 2026-09-01 pelo qa-engineer da demanda 015, porque ui_v32.js e alvo declarado dela: 19 KILL - 0 escaparam de 19, restauracao byte a byte OK. Data anterior deste par: 2026-08-28. "
       }
     },
     {
@@ -580,10 +581,10 @@
       "gate": "D009-DOM2 (tests_009_leitura.js)",
       "invariante": "INV-7 / C5 — a narrativa continua string pura; colorir é pós-processamento de renderização",
       "ultima_prova": {
-        "data": "2026-09-01",
+        "data": "2026-10-30",
         "resultado": "KILL — 'P52-F1: markup em paragraphs[0]'. Discrimina um gate que NASCEU VERDE (critério de preservação)",
         "registro": "campanha d009 REEXECUTADA na passagem final (2026-08-28, rodada 2, worktree exclusiva e árvore limpa): 19 KILL / 19, restauração byte a byte OK do source e do HTML gerado · campanha d009, T019 (wave 6): 18/18 KILL",
-        "nota": "Campanha `d009` REEXECUTADA em 2026-09-01 pelo qa-engineer da demanda 015, porque ui_v32.js e alvo declarado dela: 19 KILL - 0 escaparam de 19, restauracao byte a byte OK. Data anterior deste par: 2026-08-28. "
+        "nota": "Campanha `d009` REEXECUTADA em 2026-10-30 pelo qa-engineer da demanda 025 (T084; alvo declarado tocado pela 025 — ui_v32.js/ui_session_v32.js): D009 MUTATION: 19 DETECTADO · 0 SOBREVIVENTE · 0 NÃO EXECUTADO de 19 · não-KILL: nenhum — os 19 mutante(s) lidos estão DETECTADO. Data anterior deste par: 2026-09-01. Campanha `d009` REEXECUTADA em 2026-09-01 pelo qa-engineer da demanda 015, porque ui_v32.js e alvo declarado dela: 19 KILL - 0 escaparam de 19, restauracao byte a byte OK. Data anterior deste par: 2026-08-28. "
       }
     },
     {
@@ -592,10 +593,10 @@
       "gate": "D009-NXT1 (tests_009_leitura.js)",
       "invariante": "C6 — a lista 'Para avançar' é a ÚNICA enumeração; o P3 aponta e não reenumera",
       "ultima_prova": {
-        "data": "2026-09-01",
+        "data": "2026-10-30",
         "resultado": "KILL — 'tema enumerado em prosa no P3 (forma minúscula)' (a forma exata que o P3 usava antes da demanda)",
         "registro": "campanha d009 REEXECUTADA na passagem final (2026-08-28, rodada 2, worktree exclusiva e árvore limpa): 19 KILL / 19, restauração byte a byte OK do source e do HTML gerado · campanha d009, T019 (wave 6): 18/18 KILL",
-        "nota": "Campanha `d009` REEXECUTADA em 2026-09-01 pelo qa-engineer da demanda 015, porque ui_v32.js e alvo declarado dela: 19 KILL - 0 escaparam de 19, restauracao byte a byte OK. Data anterior deste par: 2026-08-28. "
+        "nota": "Campanha `d009` REEXECUTADA em 2026-10-30 pelo qa-engineer da demanda 025 (T084; alvo declarado tocado pela 025 — ui_v32.js/ui_session_v32.js): D009 MUTATION: 19 DETECTADO · 0 SOBREVIVENTE · 0 NÃO EXECUTADO de 19 · não-KILL: nenhum — os 19 mutante(s) lidos estão DETECTADO. Data anterior deste par: 2026-09-01. Campanha `d009` REEXECUTADA em 2026-09-01 pelo qa-engineer da demanda 015, porque ui_v32.js e alvo declarado dela: 19 KILL - 0 escaparam de 19, restauracao byte a byte OK. Data anterior deste par: 2026-08-28. "
       }
     },
     {
@@ -604,10 +605,10 @@
       "gate": "D009-NXT2 (tests_009_leitura.js)",
       "invariante": "C7 — a narrativa nunca aponta para uma lista que não existe",
       "ultima_prova": {
-        "data": "2026-09-01",
+        "data": "2026-10-30",
         "resultado": "KILL — 'P3 aponta para uma lista que não existe'. Discrimina um gate que NASCEU VERDE (critério de preservação)",
         "registro": "campanha d009 REEXECUTADA na passagem final (2026-08-28, rodada 2, worktree exclusiva e árvore limpa): 19 KILL / 19, restauração byte a byte OK do source e do HTML gerado · campanha d009, T019 (wave 6): 18/18 KILL",
-        "nota": "Campanha `d009` REEXECUTADA em 2026-09-01 pelo qa-engineer da demanda 015, porque ui_v32.js e alvo declarado dela: 19 KILL - 0 escaparam de 19, restauracao byte a byte OK. Data anterior deste par: 2026-08-28. "
+        "nota": "Campanha `d009` REEXECUTADA em 2026-10-30 pelo qa-engineer da demanda 025 (T084; alvo declarado tocado pela 025 — ui_v32.js/ui_session_v32.js): D009 MUTATION: 19 DETECTADO · 0 SOBREVIVENTE · 0 NÃO EXECUTADO de 19 · não-KILL: nenhum — os 19 mutante(s) lidos estão DETECTADO. Data anterior deste par: 2026-09-01. Campanha `d009` REEXECUTADA em 2026-09-01 pelo qa-engineer da demanda 015, porque ui_v32.js e alvo declarado dela: 19 KILL - 0 escaparam de 19, restauracao byte a byte OK. Data anterior deste par: 2026-08-28. "
       }
     },
     {
@@ -616,10 +617,10 @@
       "gate": "D009-GLO1 (tests_009_leitura.js)",
       "invariante": "C8 — a explicação na tela é o PRIMEIRO PERÍODO do verbete canônico (transformação declarada e pública, precedente do copyMap())",
       "ultima_prova": {
-        "data": "2026-09-01",
+        "data": "2026-10-30",
         "resultado": "KILL — 'security-analytics: frase = \"Onde eventos e logs são centralizados…\" != primeiro período'. O oráculo reimplementa o recorte em vez de chamar __P52.capHelpLine()",
         "registro": "campanha d009 REEXECUTADA na passagem final (2026-08-28, rodada 2, worktree exclusiva e árvore limpa): 19 KILL / 19, restauração byte a byte OK do source e do HTML gerado · campanha d009, T019 (wave 6). Mutação vive em ui_p52_workspace_v32.js (p52CapHelpLine), não no consumidor",
-        "nota": "Campanha `d009` REEXECUTADA em 2026-09-01 pelo qa-engineer da demanda 015, porque ui_v32.js e alvo declarado dela: 19 KILL - 0 escaparam de 19, restauracao byte a byte OK. Data anterior deste par: 2026-08-28. "
+        "nota": "Campanha `d009` REEXECUTADA em 2026-10-30 pelo qa-engineer da demanda 025 (T084; alvo declarado tocado pela 025 — ui_v32.js/ui_session_v32.js): D009 MUTATION: 19 DETECTADO · 0 SOBREVIVENTE · 0 NÃO EXECUTADO de 19 · não-KILL: nenhum — os 19 mutante(s) lidos estão DETECTADO. Data anterior deste par: 2026-09-01. Campanha `d009` REEXECUTADA em 2026-09-01 pelo qa-engineer da demanda 015, porque ui_v32.js e alvo declarado dela: 19 KILL - 0 escaparam de 19, restauracao byte a byte OK. Data anterior deste par: 2026-08-28. "
       }
     },
     {
@@ -628,10 +629,10 @@
       "gate": "D009-GLO1 (tests_009_leitura.js)",
       "invariante": "C8 — capability UNSET não ganha linha nem explicação; a contagem de .v32-decl-row consumida por p52ContextSummary não muda",
       "ultima_prova": {
-        "data": "2026-09-01",
+        "data": "2026-10-30",
         "resultado": "KILL — '22 .v32-decl-row para 3 capabilities declaradas'. TRANSPARÊNCIA: morreu pela cláusula de CONTAGEM DE LINHAS de C8, não pela de .v32-caphelp — a frase só existe DENTRO da linha declarada, logo nenhum defeito plausível a emite sob UNSET sem criar a linha (ver dívida declarada)",
         "registro": "campanha d009 REEXECUTADA na passagem final (2026-08-28, rodada 2, worktree exclusiva e árvore limpa): 19 KILL / 19, restauração byte a byte OK do source e do HTML gerado · campanha d009, T019 (wave 6): 18/18 KILL",
-        "nota": "Campanha `d009` REEXECUTADA em 2026-09-01 pelo qa-engineer da demanda 015, porque ui_v32.js e alvo declarado dela: 19 KILL - 0 escaparam de 19, restauracao byte a byte OK. Data anterior deste par: 2026-08-28. "
+        "nota": "Campanha `d009` REEXECUTADA em 2026-10-30 pelo qa-engineer da demanda 025 (T084; alvo declarado tocado pela 025 — ui_v32.js/ui_session_v32.js): D009 MUTATION: 19 DETECTADO · 0 SOBREVIVENTE · 0 NÃO EXECUTADO de 19 · não-KILL: nenhum — os 19 mutante(s) lidos estão DETECTADO. Data anterior deste par: 2026-09-01. Campanha `d009` REEXECUTADA em 2026-09-01 pelo qa-engineer da demanda 015, porque ui_v32.js e alvo declarado dela: 19 KILL - 0 escaparam de 19, restauracao byte a byte OK. Data anterior deste par: 2026-08-28. "
       }
     },
     {
@@ -640,10 +641,10 @@
       "gate": "D009-GLO2 (tests_009_leitura.js)",
       "invariante": "C9 — a mesma explicação acompanha o relatório impresso (P14: o glossário acompanha o papel; a ordem do papel, não)",
       "ultima_prova": {
-        "data": "2026-09-01",
+        "data": "2026-10-30",
         "resultado": "KILL — 'security-analytics: 0 nós .v32-caphelp no papel (esperado 1)'",
         "registro": "campanha d009 REEXECUTADA na passagem final (2026-08-28, rodada 2, worktree exclusiva e árvore limpa): 19 KILL / 19, restauração byte a byte OK do source e do HTML gerado · campanha d009, T019 (wave 6): 18/18 KILL",
-        "nota": "Campanha `d009` REEXECUTADA em 2026-09-01 pelo qa-engineer da demanda 015, porque ui_v32.js e alvo declarado dela: 19 KILL - 0 escaparam de 19, restauracao byte a byte OK. Data anterior deste par: 2026-08-28. "
+        "nota": "Campanha `d009` REEXECUTADA em 2026-10-30 pelo qa-engineer da demanda 025 (T084; alvo declarado tocado pela 025 — ui_v32.js/ui_session_v32.js): D009 MUTATION: 19 DETECTADO · 0 SOBREVIVENTE · 0 NÃO EXECUTADO de 19 · não-KILL: nenhum — os 19 mutante(s) lidos estão DETECTADO. Data anterior deste par: 2026-09-01. Campanha `d009` REEXECUTADA em 2026-09-01 pelo qa-engineer da demanda 015, porque ui_v32.js e alvo declarado dela: 19 KILL - 0 escaparam de 19, restauracao byte a byte OK. Data anterior deste par: 2026-08-28. "
       }
     },
     {
@@ -652,10 +653,10 @@
       "gate": "D009-UNS1 (tests_009_leitura.js)",
       "invariante": "C10 — contexto não informado (S2) não fala como NONE: o relatório se cala e delega ao aviso único",
       "ultima_prova": {
-        "data": "2026-09-01",
+        "data": "2026-10-30",
         "resultado": "KILL — 'logs (S2): linha .ux-tgt-en renderizada — \"Nenhum habilitador tecnológico específico foi identificado…\"'",
         "registro": "campanha d009 REEXECUTADA na passagem final (2026-08-28, rodada 2, worktree exclusiva e árvore limpa): 19 KILL / 19, restauração byte a byte OK do source e do HTML gerado · campanha d009, T019 (wave 6): 18/18 KILL",
-        "nota": "Campanha `d009` REEXECUTADA em 2026-09-01 pelo qa-engineer da demanda 015, porque ui_v32.js e alvo declarado dela: 19 KILL - 0 escaparam de 19, restauracao byte a byte OK. Data anterior deste par: 2026-08-28. "
+        "nota": "Campanha `d009` REEXECUTADA em 2026-10-30 pelo qa-engineer da demanda 025 (T084; alvo declarado tocado pela 025 — ui_v32.js/ui_session_v32.js): D009 MUTATION: 19 DETECTADO · 0 SOBREVIVENTE · 0 NÃO EXECUTADO de 19 · não-KILL: nenhum — os 19 mutante(s) lidos estão DETECTADO. Data anterior deste par: 2026-09-01. Campanha `d009` REEXECUTADA em 2026-09-01 pelo qa-engineer da demanda 015, porque ui_v32.js e alvo declarado dela: 19 KILL - 0 escaparam de 19, restauracao byte a byte OK. Data anterior deste par: 2026-08-28. "
       }
     },
     {
@@ -664,10 +665,10 @@
       "gate": "D009-UNS2 (tests_009_leitura.js)",
       "invariante": "C11 — contexto INFORMADO e nada se aplica mantém a frase substantiva, sem aviso de ausência",
       "ultima_prova": {
-        "data": "2026-09-01",
+        "data": "2026-10-30",
         "resultado": "KILL — 'logs (S3): 0 linhas .ux-tgt-en (esperado 1)'. Discrimina um gate que NASCEU VERDE (critério de preservação); o estado S3 é recalculado pela fixture a partir do modelo, nunca por tgtEnablerState()",
         "registro": "campanha d009 REEXECUTADA na passagem final (2026-08-28, rodada 2, worktree exclusiva e árvore limpa): 19 KILL / 19, restauração byte a byte OK do source e do HTML gerado · campanha d009, T019 (wave 6): 18/18 KILL",
-        "nota": "Campanha `d009` REEXECUTADA em 2026-09-01 pelo qa-engineer da demanda 015, porque ui_v32.js e alvo declarado dela: 19 KILL - 0 escaparam de 19, restauracao byte a byte OK. Data anterior deste par: 2026-08-28. "
+        "nota": "Campanha `d009` REEXECUTADA em 2026-10-30 pelo qa-engineer da demanda 025 (T084; alvo declarado tocado pela 025 — ui_v32.js/ui_session_v32.js): D009 MUTATION: 19 DETECTADO · 0 SOBREVIVENTE · 0 NÃO EXECUTADO de 19 · não-KILL: nenhum — os 19 mutante(s) lidos estão DETECTADO. Data anterior deste par: 2026-09-01. Campanha `d009` REEXECUTADA em 2026-09-01 pelo qa-engineer da demanda 015, porque ui_v32.js e alvo declarado dela: 19 KILL - 0 escaparam de 19, restauracao byte a byte OK. Data anterior deste par: 2026-08-28. "
       }
     },
     {
@@ -676,10 +677,10 @@
       "gate": "D009-UNS3 (tests_009_leitura.js)",
       "invariante": "C12 — no contexto parcial (B9) o aviso nomeia EXATAMENTE quem ficou de fora",
       "ultima_prova": {
-        "data": "2026-09-01",
+        "data": "2026-10-30",
         "resultado": "KILL — 'o aviso nomeia logs, cuja capability foi informada'",
         "registro": "campanha d009 REEXECUTADA na passagem final (2026-08-28, rodada 2, worktree exclusiva e árvore limpa): 19 KILL / 19, restauração byte a byte OK do source e do HTML gerado · campanha d009, T019 (wave 6): 18/18 KILL",
-        "nota": "Campanha `d009` REEXECUTADA em 2026-09-01 pelo qa-engineer da demanda 015, porque ui_v32.js e alvo declarado dela: 19 KILL - 0 escaparam de 19, restauracao byte a byte OK. Data anterior deste par: 2026-08-28. "
+        "nota": "Campanha `d009` REEXECUTADA em 2026-10-30 pelo qa-engineer da demanda 025 (T084; alvo declarado tocado pela 025 — ui_v32.js/ui_session_v32.js): D009 MUTATION: 19 DETECTADO · 0 SOBREVIVENTE · 0 NÃO EXECUTADO de 19 · não-KILL: nenhum — os 19 mutante(s) lidos estão DETECTADO. Data anterior deste par: 2026-09-01. Campanha `d009` REEXECUTADA em 2026-09-01 pelo qa-engineer da demanda 015, porque ui_v32.js e alvo declarado dela: 19 KILL - 0 escaparam de 19, restauracao byte a byte OK. Data anterior deste par: 2026-08-28. "
       }
     },
     {
@@ -688,10 +689,10 @@
       "gate": "D009-UNS4 (tests_009_leitura.js)",
       "invariante": "C13 (ampliação ratificada) — landscape não aplicável (landscapeEnabled:false) nunca vira 'não informado'",
       "ultima_prova": {
-        "data": "2026-09-01",
+        "data": "2026-10-30",
         "resultado": "KILL — 'landscape 100% UNSET: o aviso nomeia governance, cuja capability não tem landscape a informar'",
         "registro": "campanha d009 REEXECUTADA na passagem final (2026-08-28, rodada 2, worktree exclusiva e árvore limpa): 19 KILL / 19, restauração byte a byte OK do source e do HTML gerado · campanha d009, T019 (wave 6). A fixture P52-F2 tem mandate/governance/team-capacity entre os alvos, logo a cláusula de S4 é exercitada de fato, não vacuamente",
-        "nota": "Campanha `d009` REEXECUTADA em 2026-09-01 pelo qa-engineer da demanda 015, porque ui_v32.js e alvo declarado dela: 19 KILL - 0 escaparam de 19, restauracao byte a byte OK. Data anterior deste par: 2026-08-28. "
+        "nota": "Campanha `d009` REEXECUTADA em 2026-10-30 pelo qa-engineer da demanda 025 (T084; alvo declarado tocado pela 025 — ui_v32.js/ui_session_v32.js): D009 MUTATION: 19 DETECTADO · 0 SOBREVIVENTE · 0 NÃO EXECUTADO de 19 · não-KILL: nenhum — os 19 mutante(s) lidos estão DETECTADO. Data anterior deste par: 2026-09-01. Campanha `d009` REEXECUTADA em 2026-09-01 pelo qa-engineer da demanda 015, porque ui_v32.js e alvo declarado dela: 19 KILL - 0 escaparam de 19, restauracao byte a byte OK. Data anterior deste par: 2026-08-28. "
       }
     },
     {
@@ -700,10 +701,10 @@
       "gate": "D009-ABS1 (tests_009_leitura.js)",
       "invariante": "C14 — o aviso é único, acionável, e nomeia a contagem E a lista",
       "ultima_prova": {
-        "data": "2026-09-01",
+        "data": "2026-10-30",
         "resultado": "KILL — 'o aviso não nomeia a prática logs (Centralização de logs)'. ESCAPOU antes, na primeira execução desta passagem, por ÂNCORA: a correção e77b7b5 transformou a frase única em ternário de dois ramos e o find deixou de casar. O harness reportou FALHA DO HARNESS, não 'mutante não aplicável' — a distinção existe exatamente para isto. D009-ABS1 esteve verde o tempo todo; o que se perdeu, entre e77b7b5 e 6670dc3, foi a PROVA do par. Reancorado no ternário inteiro, removendo a lista dos DOIS ramos.",
         "registro": "campanha d009 REEXECUTADA na passagem final (2026-08-28, rodada 2, worktree exclusiva e árvore limpa): 19 KILL / 19, restauração byte a byte OK do source e do HTML gerado · campanha d009, T019 (wave 6): 18/18 KILL",
-        "nota": "Campanha `d009` REEXECUTADA em 2026-09-01 pelo qa-engineer da demanda 015, porque ui_v32.js e alvo declarado dela: 19 KILL - 0 escaparam de 19, restauracao byte a byte OK. Data anterior deste par: 2026-08-28. "
+        "nota": "Campanha `d009` REEXECUTADA em 2026-10-30 pelo qa-engineer da demanda 025 (T084; alvo declarado tocado pela 025 — ui_v32.js/ui_session_v32.js): D009 MUTATION: 19 DETECTADO · 0 SOBREVIVENTE · 0 NÃO EXECUTADO de 19 · não-KILL: nenhum — os 19 mutante(s) lidos estão DETECTADO. Data anterior deste par: 2026-09-01. Campanha `d009` REEXECUTADA em 2026-09-01 pelo qa-engineer da demanda 015, porque ui_v32.js e alvo declarado dela: 19 KILL - 0 escaparam de 19, restauracao byte a byte OK. Data anterior deste par: 2026-08-28. "
       }
     },
     {
@@ -712,10 +713,10 @@
       "gate": "D009-LEG1 (tests_009_leitura.js)",
       "invariante": "C15 — a nota da jornada sai da régua de 78ch, e SÓ ela (o restante de .ux-micro continua sob o teto)",
       "ultima_prova": {
-        "data": "2026-09-01",
+        "data": "2026-10-30",
         "resultado": "KILL — 'a nota da jornada continua na régua de leitura por: .p52-sec .ux-micro'. O oráculo decide por Element.matches sobre o nó REAL; seletor não suportado vira FAIL nomeado, nunca 'não casou'",
         "registro": "campanha d009 REEXECUTADA na passagem final (2026-08-28, rodada 2, worktree exclusiva e árvore limpa): 19 KILL / 19, restauração byte a byte OK do source e do HTML gerado · campanha d009, T019 (wave 6): 18/18 KILL",
-        "nota": "Campanha `d009` REEXECUTADA em 2026-09-01 pelo qa-engineer da demanda 015, porque ui_v32.js e alvo declarado dela: 19 KILL - 0 escaparam de 19, restauracao byte a byte OK. Data anterior deste par: 2026-08-28. "
+        "nota": "Campanha `d009` REEXECUTADA em 2026-10-30 pelo qa-engineer da demanda 025 (T084; alvo declarado tocado pela 025 — ui_v32.js/ui_session_v32.js): D009 MUTATION: 19 DETECTADO · 0 SOBREVIVENTE · 0 NÃO EXECUTADO de 19 · não-KILL: nenhum — os 19 mutante(s) lidos estão DETECTADO. Data anterior deste par: 2026-09-01. Campanha `d009` REEXECUTADA em 2026-09-01 pelo qa-engineer da demanda 015, porque ui_v32.js e alvo declarado dela: 19 KILL - 0 escaparam de 19, restauracao byte a byte OK. Data anterior deste par: 2026-08-28. "
       }
     },
     {
@@ -724,10 +725,10 @@
       "gate": "D009-EVB1 (tests_009_leitura.js)",
       "invariante": "C16 — a base de evidência muda de POSIÇÃO, não de comportamento: nasce fechada",
       "ultima_prova": {
-        "data": "2026-09-01",
+        "data": "2026-10-30",
         "resultado": "KILL — '#p52-evbase nasce com o atributo open'. Discrimina um gate que NASCEU VERDE (critério de preservação)",
         "registro": "campanha d009 REEXECUTADA na passagem final (2026-08-28, rodada 2, worktree exclusiva e árvore limpa): 19 KILL / 19, restauração byte a byte OK do source e do HTML gerado · campanha d009, T019 (wave 6): 18/18 KILL",
-        "nota": "Campanha `d009` REEXECUTADA em 2026-09-01 pelo qa-engineer da demanda 015, porque ui_v32.js e alvo declarado dela: 19 KILL - 0 escaparam de 19, restauracao byte a byte OK. Data anterior deste par: 2026-08-28. "
+        "nota": "Campanha `d009` REEXECUTADA em 2026-10-30 pelo qa-engineer da demanda 025 (T084; alvo declarado tocado pela 025 — ui_v32.js/ui_session_v32.js): D009 MUTATION: 19 DETECTADO · 0 SOBREVIVENTE · 0 NÃO EXECUTADO de 19 · não-KILL: nenhum — os 19 mutante(s) lidos estão DETECTADO. Data anterior deste par: 2026-09-01. Campanha `d009` REEXECUTADA em 2026-09-01 pelo qa-engineer da demanda 015, porque ui_v32.js e alvo declarado dela: 19 KILL - 0 escaparam de 19, restauracao byte a byte OK. Data anterior deste par: 2026-08-28. "
       }
     },
     {
@@ -736,10 +737,10 @@
       "gate": "D009-EVB1 (tests_009_leitura.js)",
       "invariante": "C16 — a base de evidência vive na última seção (actions), não na visão executiva",
       "ultima_prova": {
-        "data": "2026-09-01",
+        "data": "2026-10-30",
         "resultado": "KILL — '#p52-evbase pendurado em p52-sec-exec (esperado p52-sec-actions)'",
         "registro": "campanha d009 REEXECUTADA na passagem final (2026-08-28, rodada 2, worktree exclusiva e árvore limpa): 19 KILL / 19, restauração byte a byte OK do source e do HTML gerado · campanha d009, T019 (wave 6): 18/18 KILL",
-        "nota": "Campanha `d009` REEXECUTADA em 2026-09-01 pelo qa-engineer da demanda 015, porque ui_v32.js e alvo declarado dela: 19 KILL - 0 escaparam de 19, restauracao byte a byte OK. Data anterior deste par: 2026-08-28. "
+        "nota": "Campanha `d009` REEXECUTADA em 2026-10-30 pelo qa-engineer da demanda 025 (T084; alvo declarado tocado pela 025 — ui_v32.js/ui_session_v32.js): D009 MUTATION: 19 DETECTADO · 0 SOBREVIVENTE · 0 NÃO EXECUTADO de 19 · não-KILL: nenhum — os 19 mutante(s) lidos estão DETECTADO. Data anterior deste par: 2026-09-01. Campanha `d009` REEXECUTADA em 2026-09-01 pelo qa-engineer da demanda 015, porque ui_v32.js e alvo declarado dela: 19 KILL - 0 escaparam de 19, restauracao byte a byte OK. Data anterior deste par: 2026-08-28. "
       }
     },
     {
@@ -748,10 +749,10 @@
       "gate": "D009-UNS3 (tests_009_leitura.js, cláusula da frase de abertura)",
       "invariante": "C12 · rodada 2 — no caso PARCIAL o aviso não pode declarar ausência de contexto em escopo de SESSÃO: o contexto FOI informado, e #v32decl o lista duas seções abaixo",
       "ultima_prova": {
-        "data": "2026-09-01",
+        "data": "2026-10-30",
         "resultado": "KILL — 'no caso PARCIAL o aviso declara ausência de contexto em ESCOPO DE SESSÃO'. PROVA DE DESENHO no mesmo passe: SOBREVIVEU a D009-UNS1 (PASS), como exigido — sob landscape 100% UNSET a frase global é VERDADEIRA e é esse o caso que UNS1 mede; se morresse nos dois, a cláusula estaria no gate errado",
         "registro": "campanha d009 REEXECUTADA na passagem final (2026-08-28, rodada 2, worktree exclusiva e árvore limpa): 19 KILL / 19, restauração byte a byte OK do source e do HTML gerado · o par nasceu do red commitado em d48b906 ANTES da correção; o mutante só pôde ser ancorado depois de e77b7b5 criar o ramo tgtCtxDeclaradoNaSessao(), e até lá esteve declarado como especificado-e-não-executável, nunca como cobertura existente",
-        "nota": "Campanha `d009` REEXECUTADA em 2026-09-01 pelo qa-engineer da demanda 015, porque ui_v32.js e alvo declarado dela: 19 KILL - 0 escaparam de 19, restauracao byte a byte OK. Data anterior deste par: 2026-08-28. "
+        "nota": "Campanha `d009` REEXECUTADA em 2026-10-30 pelo qa-engineer da demanda 025 (T084; alvo declarado tocado pela 025 — ui_v32.js/ui_session_v32.js): D009 MUTATION: 19 DETECTADO · 0 SOBREVIVENTE · 0 NÃO EXECUTADO de 19 · não-KILL: nenhum — os 19 mutante(s) lidos estão DETECTADO. Data anterior deste par: 2026-09-01. Campanha `d009` REEXECUTADA em 2026-09-01 pelo qa-engineer da demanda 015, porque ui_v32.js e alvo declarado dela: 19 KILL - 0 escaparam de 19, restauracao byte a byte OK. Data anterior deste par: 2026-08-28. "
       }
     },
     {
@@ -1523,10 +1524,10 @@
       "gate": "D015-TIT1 (a)",
       "invariante": "o eyebrow nao promete apoio",
       "ultima_prova": {
-        "data": "2026-09-01",
+        "data": "2026-10-30",
         "resultado": "KILL",
         "registro": "specs/015-superficies-de-apoio/ (campanha d015 · tests_015_mutants.js)",
-        "nota": "Reexecutado em 2026-09-01 na campanha de 15 mutantes (15/15 DETECTADOS). Demanda 015 · restaurar o literal antigo do eyebrow. Campanha d015 executada em 2026-08-31 com arvore limpa: 13/13 DETECTADOS pelo gate E pelo motivo esperados, restauracao byte a byte provada por SHA-256 do fonte E do HTML."
+        "nota": "Campanha `d015` REEXECUTADA em 2026-10-30 pelo qa-engineer da demanda 025 (T084; alvo declarado tocado pela 025 — ui_v32.js/ui_session_v32.js): D015 MUTATION [tests_015_mutants.js]: 15/15 mutantes detectados pelo gate e motivo esperados · M16 fora do harness (muta arquivo PROTEGIDO; worktree efêmera, T022) · M11/M12/M13 APOSENTADOS com o critério C4 (errata E1), ids não reutilizados · não-KILL: nenhum — os 15 mutante(s) lidos estão DETECTADO. Data anterior deste par: 2026-09-01. Reexecutado em 2026-09-01 na campanha de 15 mutantes (15/15 DETECTADOS). Demanda 015 · restaurar o literal antigo do eyebrow. Campanha d015 executada em 2026-08-31 com arvore limpa: 13/13 DETECTADOS pelo gate E pelo motivo esperados, restauracao byte a byte provada por SHA-256 do fonte E do HTML."
       }
     },
     {
@@ -1535,10 +1536,10 @@
       "gate": "D015-TIT1 (b)",
       "invariante": "o sufixo ratificado permanece na tela",
       "ultima_prova": {
-        "data": "2026-09-01",
+        "data": "2026-10-30",
         "resultado": "KILL",
         "registro": "specs/015-superficies-de-apoio/ (campanha d015 · tests_015_mutants.js)",
-        "nota": "Reexecutado em 2026-09-01 na campanha de 15 mutantes (15/15 DETECTADOS). Demanda 015 · apagar o sufixo `· contexto V3.2`. Campanha d015 executada em 2026-08-31 com arvore limpa: 13/13 DETECTADOS pelo gate E pelo motivo esperados, restauracao byte a byte provada por SHA-256 do fonte E do HTML."
+        "nota": "Campanha `d015` REEXECUTADA em 2026-10-30 pelo qa-engineer da demanda 025 (T084; alvo declarado tocado pela 025 — ui_v32.js/ui_session_v32.js): D015 MUTATION [tests_015_mutants.js]: 15/15 mutantes detectados pelo gate e motivo esperados · M16 fora do harness (muta arquivo PROTEGIDO; worktree efêmera, T022) · M11/M12/M13 APOSENTADOS com o critério C4 (errata E1), ids não reutilizados · não-KILL: nenhum — os 15 mutante(s) lidos estão DETECTADO. Data anterior deste par: 2026-09-01. Reexecutado em 2026-09-01 na campanha de 15 mutantes (15/15 DETECTADOS). Demanda 015 · apagar o sufixo `· contexto V3.2`. Campanha d015 executada em 2026-08-31 com arvore limpa: 13/13 DETECTADOS pelo gate E pelo motivo esperados, restauracao byte a byte provada por SHA-256 do fonte E do HTML."
       }
     },
     {
@@ -1547,10 +1548,10 @@
       "gate": "D015-TIT1 (c)",
       "invariante": "tela e papel dizem a mesma oracao principal",
       "ultima_prova": {
-        "data": "2026-09-01",
+        "data": "2026-10-30",
         "resultado": "KILL",
         "registro": "specs/015-superficies-de-apoio/ (campanha d015 · tests_015_mutants.js)",
-        "nota": "Reexecutado em 2026-09-01 na campanha de 15 mutantes (15/15 DETECTADOS). Demanda 015 · editar so a tela, deixando o papel para tras. Campanha d015 executada em 2026-08-31 com arvore limpa: 13/13 DETECTADOS pelo gate E pelo motivo esperados, restauracao byte a byte provada por SHA-256 do fonte E do HTML."
+        "nota": "Campanha `d015` REEXECUTADA em 2026-10-30 pelo qa-engineer da demanda 025 (T084; alvo declarado tocado pela 025 — ui_v32.js/ui_session_v32.js): D015 MUTATION [tests_015_mutants.js]: 15/15 mutantes detectados pelo gate e motivo esperados · M16 fora do harness (muta arquivo PROTEGIDO; worktree efêmera, T022) · M11/M12/M13 APOSENTADOS com o critério C4 (errata E1), ids não reutilizados · não-KILL: nenhum — os 15 mutante(s) lidos estão DETECTADO. Data anterior deste par: 2026-09-01. Reexecutado em 2026-09-01 na campanha de 15 mutantes (15/15 DETECTADOS). Demanda 015 · editar so a tela, deixando o papel para tras. Campanha d015 executada em 2026-08-31 com arvore limpa: 13/13 DETECTADOS pelo gate E pelo motivo esperados, restauracao byte a byte provada por SHA-256 do fonte E do HTML."
       }
     },
     {
@@ -1559,10 +1560,10 @@
       "gate": "D015-TIT1 (d)",
       "invariante": "a assimetria do sufixo e declarada, nao acidental",
       "ultima_prova": {
-        "data": "2026-09-01",
+        "data": "2026-10-30",
         "resultado": "KILL",
         "registro": "specs/015-superficies-de-apoio/ (campanha d015 · tests_015_mutants.js)",
-        "nota": "Reexecutado em 2026-09-01 na campanha de 15 mutantes (15/15 DETECTADOS). Demanda 015 · copiar o sufixo de tela para o <h3> do papel. Campanha d015 executada em 2026-08-31 com arvore limpa: 13/13 DETECTADOS pelo gate E pelo motivo esperados, restauracao byte a byte provada por SHA-256 do fonte E do HTML."
+        "nota": "Campanha `d015` REEXECUTADA em 2026-10-30 pelo qa-engineer da demanda 025 (T084; alvo declarado tocado pela 025 — ui_v32.js/ui_session_v32.js): D015 MUTATION [tests_015_mutants.js]: 15/15 mutantes detectados pelo gate e motivo esperados · M16 fora do harness (muta arquivo PROTEGIDO; worktree efêmera, T022) · M11/M12/M13 APOSENTADOS com o critério C4 (errata E1), ids não reutilizados · não-KILL: nenhum — os 15 mutante(s) lidos estão DETECTADO. Data anterior deste par: 2026-09-01. Reexecutado em 2026-09-01 na campanha de 15 mutantes (15/15 DETECTADOS). Demanda 015 · copiar o sufixo de tela para o <h3> do papel. Campanha d015 executada em 2026-08-31 com arvore limpa: 13/13 DETECTADOS pelo gate E pelo motivo esperados, restauracao byte a byte provada por SHA-256 do fonte E do HTML."
       }
     },
     {
@@ -1571,10 +1572,10 @@
       "gate": "D015-ANC1 (c)",
       "invariante": "a ancoragem e declarada nos DOIS ramos",
       "ultima_prova": {
-        "data": "2026-09-01",
+        "data": "2026-10-30",
         "resultado": "KILL",
         "registro": "specs/015-superficies-de-apoio/ (campanha d015 · tests_015_mutants.js)",
-        "nota": "Reexecutado em 2026-09-01 na campanha de 15 mutantes (15/15 DETECTADOS). Demanda 015 · emitir a ancoragem so no ramo nao declarado. Campanha d015 executada em 2026-08-31 com arvore limpa: 13/13 DETECTADOS pelo gate E pelo motivo esperados, restauracao byte a byte provada por SHA-256 do fonte E do HTML."
+        "nota": "Campanha `d015` REEXECUTADA em 2026-10-30 pelo qa-engineer da demanda 025 (T084; alvo declarado tocado pela 025 — ui_v32.js/ui_session_v32.js): D015 MUTATION [tests_015_mutants.js]: 15/15 mutantes detectados pelo gate e motivo esperados · M16 fora do harness (muta arquivo PROTEGIDO; worktree efêmera, T022) · M11/M12/M13 APOSENTADOS com o critério C4 (errata E1), ids não reutilizados · não-KILL: nenhum — os 15 mutante(s) lidos estão DETECTADO. Data anterior deste par: 2026-09-01. Reexecutado em 2026-09-01 na campanha de 15 mutantes (15/15 DETECTADOS). Demanda 015 · emitir a ancoragem so no ramo nao declarado. Campanha d015 executada em 2026-08-31 com arvore limpa: 13/13 DETECTADOS pelo gate E pelo motivo esperados, restauracao byte a byte provada por SHA-256 do fonte E do HTML."
       }
     },
     {
@@ -1583,10 +1584,10 @@
       "gate": "D015-ANC1 (b)",
       "invariante": "ancoragem por capability, com negacao de nivel",
       "ultima_prova": {
-        "data": "2026-09-01",
+        "data": "2026-10-30",
         "resultado": "KILL",
         "registro": "specs/015-superficies-de-apoio/ (campanha d015 · tests_015_mutants.js)",
-        "nota": "Reexecutado em 2026-09-01 na campanha de 15 mutantes (15/15 DETECTADOS). Demanda 015 · trocar o texto por afirmacao de ancoragem POR NIVEL. Campanha d015 executada em 2026-08-31 com arvore limpa: 13/13 DETECTADOS pelo gate E pelo motivo esperados, restauracao byte a byte provada por SHA-256 do fonte E do HTML."
+        "nota": "Campanha `d015` REEXECUTADA em 2026-10-30 pelo qa-engineer da demanda 025 (T084; alvo declarado tocado pela 025 — ui_v32.js/ui_session_v32.js): D015 MUTATION [tests_015_mutants.js]: 15/15 mutantes detectados pelo gate e motivo esperados · M16 fora do harness (muta arquivo PROTEGIDO; worktree efêmera, T022) · M11/M12/M13 APOSENTADOS com o critério C4 (errata E1), ids não reutilizados · não-KILL: nenhum — os 15 mutante(s) lidos estão DETECTADO. Data anterior deste par: 2026-09-01. Reexecutado em 2026-09-01 na campanha de 15 mutantes (15/15 DETECTADOS). Demanda 015 · trocar o texto por afirmacao de ancoragem POR NIVEL. Campanha d015 executada em 2026-08-31 com arvore limpa: 13/13 DETECTADOS pelo gate E pelo motivo esperados, restauracao byte a byte provada por SHA-256 do fonte E do HTML."
       }
     },
     {
@@ -1595,10 +1596,10 @@
       "gate": "D015-ANC1 (a)",
       "invariante": "atributo proprio, nunca o alheio que P51-REC1 mede",
       "ultima_prova": {
-        "data": "2026-09-01",
+        "data": "2026-10-30",
         "resultado": "KILL",
         "registro": "specs/015-superficies-de-apoio/ (campanha d015 · tests_015_mutants.js)",
-        "nota": "Reexecutado em 2026-09-01 na campanha de 15 mutantes (15/15 DETECTADOS). Demanda 015 · reusar `data-pr-gap-why` em vez do atributo proprio. Campanha d015 executada em 2026-08-31 com arvore limpa: 13/13 DETECTADOS pelo gate E pelo motivo esperados, restauracao byte a byte provada por SHA-256 do fonte E do HTML. Isolamento conferido: reprova SO D015-ANC1; os outros quatro gates seguem verdes."
+        "nota": "Campanha `d015` REEXECUTADA em 2026-10-30 pelo qa-engineer da demanda 025 (T084; alvo declarado tocado pela 025 — ui_v32.js/ui_session_v32.js): D015 MUTATION [tests_015_mutants.js]: 15/15 mutantes detectados pelo gate e motivo esperados · M16 fora do harness (muta arquivo PROTEGIDO; worktree efêmera, T022) · M11/M12/M13 APOSENTADOS com o critério C4 (errata E1), ids não reutilizados · não-KILL: nenhum — os 15 mutante(s) lidos estão DETECTADO. Data anterior deste par: 2026-09-01. Reexecutado em 2026-09-01 na campanha de 15 mutantes (15/15 DETECTADOS). Demanda 015 · reusar `data-pr-gap-why` em vez do atributo proprio. Campanha d015 executada em 2026-08-31 com arvore limpa: 13/13 DETECTADOS pelo gate E pelo motivo esperados, restauracao byte a byte provada por SHA-256 do fonte E do HTML. Isolamento conferido: reprova SO D015-ANC1; os outros quatro gates seguem verdes."
       }
     },
     {
@@ -1607,10 +1608,10 @@
       "gate": "D015-HOWTO1 (d)",
       "invariante": "a caixa Como interpretar e ESTATICA",
       "ultima_prova": {
-        "data": "2026-09-01",
+        "data": "2026-10-30",
         "resultado": "KILL",
         "registro": "specs/015-superficies-de-apoio/ (campanha d015 · tests_015_mutants.js)",
-        "nota": "Reexecutado em 2026-09-01 na campanha de 15 mutantes (15/15 DETECTADOS). Demanda 015 · tornar o 7o item funcao da sessao. Campanha d015 executada em 2026-08-31 com arvore limpa: 13/13 DETECTADOS pelo gate E pelo motivo esperados, restauracao byte a byte provada por SHA-256 do fonte E do HTML."
+        "nota": "Campanha `d015` REEXECUTADA em 2026-10-30 pelo qa-engineer da demanda 025 (T084; alvo declarado tocado pela 025 — ui_v32.js/ui_session_v32.js): D015 MUTATION [tests_015_mutants.js]: 15/15 mutantes detectados pelo gate e motivo esperados · M16 fora do harness (muta arquivo PROTEGIDO; worktree efêmera, T022) · M11/M12/M13 APOSENTADOS com o critério C4 (errata E1), ids não reutilizados · não-KILL: nenhum — os 15 mutante(s) lidos estão DETECTADO. Data anterior deste par: 2026-09-01. Reexecutado em 2026-09-01 na campanha de 15 mutantes (15/15 DETECTADOS). Demanda 015 · tornar o 7o item funcao da sessao. Campanha d015 executada em 2026-08-31 com arvore limpa: 13/13 DETECTADOS pelo gate E pelo motivo esperados, restauracao byte a byte provada por SHA-256 do fonte E do HTML."
       }
     },
     {
@@ -1619,10 +1620,10 @@
       "gate": "D015-HOWTO1 (a)(c)",
       "invariante": "a regra das listas concorrentes esta publicada",
       "ultima_prova": {
-        "data": "2026-09-01",
+        "data": "2026-10-30",
         "resultado": "KILL",
         "registro": "specs/015-superficies-de-apoio/ (campanha d015 · tests_015_mutants.js)",
-        "nota": "Reexecutado em 2026-09-01 na campanha de 15 mutantes (15/15 DETECTADOS). Demanda 015 · remover o 7o item. Campanha d015 executada em 2026-08-31 com arvore limpa: 13/13 DETECTADOS pelo gate E pelo motivo esperados, restauracao byte a byte provada por SHA-256 do fonte E do HTML."
+        "nota": "Campanha `d015` REEXECUTADA em 2026-10-30 pelo qa-engineer da demanda 025 (T084; alvo declarado tocado pela 025 — ui_v32.js/ui_session_v32.js): D015 MUTATION [tests_015_mutants.js]: 15/15 mutantes detectados pelo gate e motivo esperados · M16 fora do harness (muta arquivo PROTEGIDO; worktree efêmera, T022) · M11/M12/M13 APOSENTADOS com o critério C4 (errata E1), ids não reutilizados · não-KILL: nenhum — os 15 mutante(s) lidos estão DETECTADO. Data anterior deste par: 2026-09-01. Reexecutado em 2026-09-01 na campanha de 15 mutantes (15/15 DETECTADOS). Demanda 015 · remover o 7o item. Campanha d015 executada em 2026-08-31 com arvore limpa: 13/13 DETECTADOS pelo gate E pelo motivo esperados, restauracao byte a byte provada por SHA-256 do fonte E do HTML."
       }
     },
     {
@@ -1631,10 +1632,10 @@
       "gate": "D015-HOWTO1 (b)",
       "invariante": "orcamento da caixa na metrica CRUA (teto 900)",
       "ultima_prova": {
-        "data": "2026-09-01",
+        "data": "2026-10-30",
         "resultado": "KILL",
         "registro": "specs/015-superficies-de-apoio/ (campanha d015 · tests_015_mutants.js)",
-        "nota": "Reexecutado em 2026-09-01 na campanha de 15 mutantes (15/15 DETECTADOS). Demanda 015 · escrever o 7o item longo o bastante para estourar 900. Campanha d015 executada em 2026-08-31 com arvore limpa: 13/13 DETECTADOS pelo gate E pelo motivo esperados, restauracao byte a byte provada por SHA-256 do fonte E do HTML."
+        "nota": "Campanha `d015` REEXECUTADA em 2026-10-30 pelo qa-engineer da demanda 025 (T084; alvo declarado tocado pela 025 — ui_v32.js/ui_session_v32.js): D015 MUTATION [tests_015_mutants.js]: 15/15 mutantes detectados pelo gate e motivo esperados · M16 fora do harness (muta arquivo PROTEGIDO; worktree efêmera, T022) · M11/M12/M13 APOSENTADOS com o critério C4 (errata E1), ids não reutilizados · não-KILL: nenhum — os 15 mutante(s) lidos estão DETECTADO. Data anterior deste par: 2026-09-01. Reexecutado em 2026-09-01 na campanha de 15 mutantes (15/15 DETECTADOS). Demanda 015 · escrever o 7o item longo o bastante para estourar 900. Campanha d015 executada em 2026-08-31 com arvore limpa: 13/13 DETECTADOS pelo gate E pelo motivo esperados, restauracao byte a byte provada por SHA-256 do fonte E do HTML."
       }
     },
     {
@@ -1643,10 +1644,10 @@
       "gate": "D015-NOSUB1 (a)",
       "invariante": "nada e removido: os quatro estados do bloco #v32prio",
       "ultima_prova": {
-        "data": "2026-09-01",
+        "data": "2026-10-30",
         "resultado": "KILL",
         "registro": "specs/015-superficies-de-apoio/ (campanha d015 · tests_015_mutants.js)",
-        "nota": "Reexecutado em 2026-09-01 na campanha de 15 mutantes (15/15 DETECTADOS). Demanda 015 · colapsar o card de prioridade sem payload (rota S4, recusada). Campanha d015 executada em 2026-08-31 com arvore limpa: 13/13 DETECTADOS pelo gate E pelo motivo esperados, restauracao byte a byte provada por SHA-256 do fonte E do HTML. EXIGE O ESTADO E8 (prioridade declarada SEM gap, presentationOf === null). Sem ele nascia SOBREVIVENTE: nenhum dos sete estados originais exercitava a clausula businessPriority.flag do filtro de prioCaps. E o E8 precisa de um SOBREVIVENTE (`automation`): com a capability neutra sozinha, o mutante esvazia #v32prio, o assert da fixture reprova antes dos gates e os CINCO caem juntos — deteccao incidental, nao kill."
+        "nota": "Campanha `d015` REEXECUTADA em 2026-10-30 pelo qa-engineer da demanda 025 (T084; alvo declarado tocado pela 025 — ui_v32.js/ui_session_v32.js): D015 MUTATION [tests_015_mutants.js]: 15/15 mutantes detectados pelo gate e motivo esperados · M16 fora do harness (muta arquivo PROTEGIDO; worktree efêmera, T022) · M11/M12/M13 APOSENTADOS com o critério C4 (errata E1), ids não reutilizados · não-KILL: nenhum — os 15 mutante(s) lidos estão DETECTADO. Data anterior deste par: 2026-09-01. Reexecutado em 2026-09-01 na campanha de 15 mutantes (15/15 DETECTADOS). Demanda 015 · colapsar o card de prioridade sem payload (rota S4, recusada). Campanha d015 executada em 2026-08-31 com arvore limpa: 13/13 DETECTADOS pelo gate E pelo motivo esperados, restauracao byte a byte provada por SHA-256 do fonte E do HTML. EXIGE O ESTADO E8 (prioridade declarada SEM gap, presentationOf === null). Sem ele nascia SOBREVIVENTE: nenhum dos sete estados originais exercitava a clausula businessPriority.flag do filtro de prioCaps. E o E8 precisa de um SOBREVIVENTE (`automation`): com a capability neutra sozinha, o mutante esvazia #v32prio, o assert da fixture reprova antes dos gates e os CINCO caem juntos — deteccao incidental, nao kill."
       }
     },
     {
@@ -1655,10 +1656,10 @@
       "gate": "D015-NOSUB1 (b)(d)",
       "invariante": "nada e removido: as opcoes listadas de cada gap",
       "ultima_prova": {
-        "data": "2026-09-01",
+        "data": "2026-10-30",
         "resultado": "KILL",
         "registro": "specs/015-superficies-de-apoio/ (campanha d015 · tests_015_mutants.js)",
-        "nota": "Reexecutado em 2026-09-01 na campanha de 15 mutantes (15/15 DETECTADOS). Demanda 015 · suprimir as opcoes dos qids de QS_GAP_SUPPORT, forma AMPLA (rota T5, recusada). Campanha d015 executada em 2026-08-31 com arvore limpa: 13/13 DETECTADOS pelo gate E pelo motivo esperados, restauracao byte a byte provada por SHA-256 do fonte E do HTML. FORMA AMPLA por decisao da errata E2 §E2.2. Na forma estreita (um qid so) a alinea (d) NAO disparava: em entrega aditiva o no novo compensa o texto suprimido. Na ampla a queda medida em #pr-findings e de 1.139 chars no estado E2, e (b) e (d) morrem juntas."
+        "nota": "Campanha `d015` REEXECUTADA em 2026-10-30 pelo qa-engineer da demanda 025 (T084; alvo declarado tocado pela 025 — ui_v32.js/ui_session_v32.js): D015 MUTATION [tests_015_mutants.js]: 15/15 mutantes detectados pelo gate e motivo esperados · M16 fora do harness (muta arquivo PROTEGIDO; worktree efêmera, T022) · M11/M12/M13 APOSENTADOS com o critério C4 (errata E1), ids não reutilizados · não-KILL: nenhum — os 15 mutante(s) lidos estão DETECTADO. Data anterior deste par: 2026-09-01. Reexecutado em 2026-09-01 na campanha de 15 mutantes (15/15 DETECTADOS). Demanda 015 · suprimir as opcoes dos qids de QS_GAP_SUPPORT, forma AMPLA (rota T5, recusada). Campanha d015 executada em 2026-08-31 com arvore limpa: 13/13 DETECTADOS pelo gate E pelo motivo esperados, restauracao byte a byte provada por SHA-256 do fonte E do HTML. FORMA AMPLA por decisao da errata E2 §E2.2. Na forma estreita (um qid so) a alinea (d) NAO disparava: em entrega aditiva o no novo compensa o texto suprimido. Na ampla a queda medida em #pr-findings e de 1.139 chars no estado E2, e (b) e (d) morrem juntas."
       }
     },
     {
@@ -1667,10 +1668,10 @@
       "gate": "D015-TIT1 (g) metade PAPEL",
       "invariante": "unicidade de titulo no relatorio impresso",
       "ultima_prova": {
-        "data": "2026-09-01",
+        "data": "2026-10-30",
         "resultado": "KILL",
         "registro": "specs/015-superficies-de-apoio/ (campanha d015 · tests_015_mutants.js)",
-        "nota": "Reexecutado em 2026-09-01 na campanha de 15 mutantes (15/15 DETECTADOS). Demanda 015 · duplicar NO PAPEL o titulo de outra secao. Campanha d015 executada em 2026-08-31 com arvore limpa: 13/13 DETECTADOS pelo gate E pelo motivo esperados, restauracao byte a byte provada por SHA-256 do fonte E do HTML. NASCEU NA ERRATA E2 §E2.4, e e o UNICO carrasco desta metade. MEDIDO que nenhum gate congelado alcanca o <h3> novo: N41 tem escopo #pr-journey — irmao de #pr-support, com ZERO <h3> dentro — e casa <h2> por regex sobre pj.innerHTML; N40 varre #app, e o relatorio impresso e filho de body. ~~A metade de TELA, atacada por M17, e PROVA FRACA e esta declarada como tal: N40 mataria M17 tambem, e mutante que morre em dois lugares nao demonstra poder do gate NOVO.~~ REFUTADO PELA ERRATA E3 (2026-09-01), riscado e nao apagado (R2 §5). A frase foi MEDIDA e e falsa: o cenario de N40 (tests_journey_m45.js:220-224) e MODO LEGADO — `isLegacyModeV32()` verdadeiro e `#v32prio` NAO nasce —, entao N40 nao alcanca aquele no em forma nenhuma; sob as DUAS formas de M17 a suite journey fechou 31/0. O erro de metodo foi deduzir cobertura pelo ESCOPO DO SELETOR (`#app .eyebrow, #app h3` contem o no) esquecendo a FIXTURE: cobertura e escopo INTERSECAO estado. O QUE PASSA A VALER: as DUAS metades de C1(g) sao obrigacao EXCLUSIVA deste gate, sem cobertura congelada — a de PAPEL por M19 (este par) e a de TELA por M17 (par vizinho). M17 e o carrasco da metade-tela NAO 'apesar de N40', mas porque NADA MAIS alcanca aquele no: N40 nao renderiza `#v32prio`, e p52layout varre `:scope > .section-title` (filhos DIRETOS da secao de apoio) enquanto o no e neto, dentro de `#v32panel > #v32support`. Isso REFORCA a conclusao de E2.4 que motivou M19, em vez de enfraquece-la. Coerencia conferida NESTE arquivo: a nota do par D015-M17 diz o mesmo, e a spec emendada tambem. FORMA: DUPLICA o titulo, nao renomeia — renomear encurtava #pr-support em 14 chars e derrubava D015-NOSUB1(d) junto, kill incidental num gate alheio."
+        "nota": "Campanha `d015` REEXECUTADA em 2026-10-30 pelo qa-engineer da demanda 025 (T084; alvo declarado tocado pela 025 — ui_v32.js/ui_session_v32.js): D015 MUTATION [tests_015_mutants.js]: 15/15 mutantes detectados pelo gate e motivo esperados · M16 fora do harness (muta arquivo PROTEGIDO; worktree efêmera, T022) · M11/M12/M13 APOSENTADOS com o critério C4 (errata E1), ids não reutilizados · não-KILL: nenhum — os 15 mutante(s) lidos estão DETECTADO. Data anterior deste par: 2026-09-01. Reexecutado em 2026-09-01 na campanha de 15 mutantes (15/15 DETECTADOS). Demanda 015 · duplicar NO PAPEL o titulo de outra secao. Campanha d015 executada em 2026-08-31 com arvore limpa: 13/13 DETECTADOS pelo gate E pelo motivo esperados, restauracao byte a byte provada por SHA-256 do fonte E do HTML. NASCEU NA ERRATA E2 §E2.4, e e o UNICO carrasco desta metade. MEDIDO que nenhum gate congelado alcanca o <h3> novo: N41 tem escopo #pr-journey — irmao de #pr-support, com ZERO <h3> dentro — e casa <h2> por regex sobre pj.innerHTML; N40 varre #app, e o relatorio impresso e filho de body. ~~A metade de TELA, atacada por M17, e PROVA FRACA e esta declarada como tal: N40 mataria M17 tambem, e mutante que morre em dois lugares nao demonstra poder do gate NOVO.~~ REFUTADO PELA ERRATA E3 (2026-09-01), riscado e nao apagado (R2 §5). A frase foi MEDIDA e e falsa: o cenario de N40 (tests_journey_m45.js:220-224) e MODO LEGADO — `isLegacyModeV32()` verdadeiro e `#v32prio` NAO nasce —, entao N40 nao alcanca aquele no em forma nenhuma; sob as DUAS formas de M17 a suite journey fechou 31/0. O erro de metodo foi deduzir cobertura pelo ESCOPO DO SELETOR (`#app .eyebrow, #app h3` contem o no) esquecendo a FIXTURE: cobertura e escopo INTERSECAO estado. O QUE PASSA A VALER: as DUAS metades de C1(g) sao obrigacao EXCLUSIVA deste gate, sem cobertura congelada — a de PAPEL por M19 (este par) e a de TELA por M17 (par vizinho). M17 e o carrasco da metade-tela NAO 'apesar de N40', mas porque NADA MAIS alcanca aquele no: N40 nao renderiza `#v32prio`, e p52layout varre `:scope > .section-title` (filhos DIRETOS da secao de apoio) enquanto o no e neto, dentro de `#v32panel > #v32support`. Isso REFORCA a conclusao de E2.4 que motivou M19, em vez de enfraquece-la. Coerencia conferida NESTE arquivo: a nota do par D015-M17 diz o mesmo, e a spec emendada tambem. FORMA: DUPLICA o titulo, nao renomeia — renomear encurtava #pr-support em 14 chars e derrubava D015-NOSUB1(d) junto, kill incidental num gate alheio."
       }
     },
     {
@@ -1679,10 +1680,10 @@
       "gate": "D015-TIT1 (g) metade TELA",
       "invariante": "unicidade do titulo do bloco V3.2 na tela",
       "ultima_prova": {
-        "data": "2026-09-01",
+        "data": "2026-10-30",
         "resultado": "KILL",
         "registro": "specs/015-superficies-de-apoio/ (campanha d015 · tests_015_mutants.js)",
-        "nota": "Campanha d015 REEXECUTADA em 2026-09-01 com 15 mutantes (era 13): 15/15 DETECTADOS pelo gate E pelo motivo esperados, restauracao byte a byte provada por SHA-256 do fonte E do HTML. LACUNA QUE ESTE PAR FECHA: M17 era declarado carrasco pela spec e NAO existia em harness nem em matriz — fora provado so na bateria negativa da Fase 4, cujo registro foi substituido em 351de95, de modo que a prova vivia apenas no historico do git. Spec afirmando carrasco que a campanha nunca executa e a forma de mentira que esta jornada ja catalogou. FORMA MEDIDA, e a medicao CONTRADIZ a spec em dois pontos. (i) A forma literal da errata E1 ('dar ao eyebrow o texto exato de um titulo ja existente') NAO isola: com o eyebrow em 'Leitura executiva' o gate reprova primeiro por (b), porque o sufixo ratificado some junto — deteccao incidental nao e kill. A forma adotada ataca a MESMA propriedade (o texto trimado do eyebrow e unico entre `#app .eyebrow, #app h3`) emitindo o section-title DUAS vezes, e isola: so (g) dispara. (ii) A errata chama M17 de PROVA FRACA porque 'N40 tambem mataria'. FALSO, medido em 2026-09-01: o cenario de N40 (tests_journey_m45.js:220-224) e LEGADO — `isLegacyModeV32()` true e `#v32prio` NAO nasce —, entao N40 nao enxerga este eyebrow em forma nenhuma. Sob as duas formas de M17, journey fechou 31/0. CONSEQUENCIA: as DUAS metades de (g) sao obrigacao deste gate, sem cobertura congelada — o que REFORCA a conclusao de E2.4 em vez de contraria-la. Isolamento conferido: p52layout 45/0, journey 31/0 e ui31 19/0 sob a mutacao. p52layout nao a enxerga porque varre `:scope > .section-title` (filhos DIRETOS da secao de apoio) e este no e neto, dentro de `#v32panel > #v32support` — a mesma inalcancabilidade estrutural que sustenta a sentinela (h2)."
+        "nota": "Campanha `d015` REEXECUTADA em 2026-10-30 pelo qa-engineer da demanda 025 (T084; alvo declarado tocado pela 025 — ui_v32.js/ui_session_v32.js): D015 MUTATION [tests_015_mutants.js]: 15/15 mutantes detectados pelo gate e motivo esperados · M16 fora do harness (muta arquivo PROTEGIDO; worktree efêmera, T022) · M11/M12/M13 APOSENTADOS com o critério C4 (errata E1), ids não reutilizados · não-KILL: nenhum — os 15 mutante(s) lidos estão DETECTADO. Data anterior deste par: 2026-09-01. Campanha d015 REEXECUTADA em 2026-09-01 com 15 mutantes (era 13): 15/15 DETECTADOS pelo gate E pelo motivo esperados, restauracao byte a byte provada por SHA-256 do fonte E do HTML. LACUNA QUE ESTE PAR FECHA: M17 era declarado carrasco pela spec e NAO existia em harness nem em matriz — fora provado so na bateria negativa da Fase 4, cujo registro foi substituido em 351de95, de modo que a prova vivia apenas no historico do git. Spec afirmando carrasco que a campanha nunca executa e a forma de mentira que esta jornada ja catalogou. FORMA MEDIDA, e a medicao CONTRADIZ a spec em dois pontos. (i) A forma literal da errata E1 ('dar ao eyebrow o texto exato de um titulo ja existente') NAO isola: com o eyebrow em 'Leitura executiva' o gate reprova primeiro por (b), porque o sufixo ratificado some junto — deteccao incidental nao e kill. A forma adotada ataca a MESMA propriedade (o texto trimado do eyebrow e unico entre `#app .eyebrow, #app h3`) emitindo o section-title DUAS vezes, e isola: so (g) dispara. (ii) A errata chama M17 de PROVA FRACA porque 'N40 tambem mataria'. FALSO, medido em 2026-09-01: o cenario de N40 (tests_journey_m45.js:220-224) e LEGADO — `isLegacyModeV32()` true e `#v32prio` NAO nasce —, entao N40 nao enxerga este eyebrow em forma nenhuma. Sob as duas formas de M17, journey fechou 31/0. CONSEQUENCIA: as DUAS metades de (g) sao obrigacao deste gate, sem cobertura congelada — o que REFORCA a conclusao de E2.4 em vez de contraria-la. Isolamento conferido: p52layout 45/0, journey 31/0 e ui31 19/0 sob a mutacao. p52layout nao a enxerga porque varre `:scope > .section-title` (filhos DIRETOS da secao de apoio) e este no e neto, dentro de `#v32panel > #v32support` — a mesma inalcancabilidade estrutural que sustenta a sentinela (h2)."
       }
     },
     {
@@ -1691,10 +1692,10 @@
       "gate": "D015-TIT1 (h1)",
       "invariante": "o titulo do bloco V3.2 fica FORA das listas de ocultacao",
       "ultima_prova": {
-        "data": "2026-09-01",
+        "data": "2026-10-30",
         "resultado": "KILL",
         "registro": "specs/015-superficies-de-apoio/ (campanha d015 · tests_015_mutants.js)",
-        "nota": "Campanha d015 REEXECUTADA em 2026-09-01 com 15 mutantes (era 13): 15/15 DETECTADOS pelo gate E pelo motivo esperados, restauracao byte a byte provada por SHA-256 do fonte E do HTML. E O UNICO CARRASCO DE (h1), e por isso a ausencia dele era a mais cara: a clausula SENTINELA (h2) so se sustenta porque (h1) tem carrasco — sem este par, a particao que a errata E2 fez perdia o pe, e a divida declarada de (h2) nesta mesma matriz AFIRMAVA um carrasco que a campanha nunca executava. Mutacao de fonte trivial: o eyebrow novo entra em HIDE_EYEBROWS (ui_v32.js:109-110). Reprova com 'o eyebrow \"Leitura das prioridades declaradas · contexto V3.2\" ENTROU na lista de ocultacao em: produto (HTML construido · ui_v32.js:109-110)'. NAO produz observavel de RUNTIME — medido: `hideLegacyRecommendation` varre filhos DIRETOS e retorna em `#v32panel`, e `U15` le uma copia HARDCODED da lista (tests_ui_m31.js:279-280). E exatamente por isso que (h1) assere sobre o FONTE, no precedente do /Forti[A-Z]/ de P52-REC1. Isolamento conferido: so (h1) dispara; p52layout 45/0, journey 31/0 e ui31 19/0 seguem verdes sob a mutacao."
+        "nota": "Campanha `d015` REEXECUTADA em 2026-10-30 pelo qa-engineer da demanda 025 (T084; alvo declarado tocado pela 025 — ui_v32.js/ui_session_v32.js): D015 MUTATION [tests_015_mutants.js]: 15/15 mutantes detectados pelo gate e motivo esperados · M16 fora do harness (muta arquivo PROTEGIDO; worktree efêmera, T022) · M11/M12/M13 APOSENTADOS com o critério C4 (errata E1), ids não reutilizados · não-KILL: nenhum — os 15 mutante(s) lidos estão DETECTADO. Data anterior deste par: 2026-09-01. Campanha d015 REEXECUTADA em 2026-09-01 com 15 mutantes (era 13): 15/15 DETECTADOS pelo gate E pelo motivo esperados, restauracao byte a byte provada por SHA-256 do fonte E do HTML. E O UNICO CARRASCO DE (h1), e por isso a ausencia dele era a mais cara: a clausula SENTINELA (h2) so se sustenta porque (h1) tem carrasco — sem este par, a particao que a errata E2 fez perdia o pe, e a divida declarada de (h2) nesta mesma matriz AFIRMAVA um carrasco que a campanha nunca executava. Mutacao de fonte trivial: o eyebrow novo entra em HIDE_EYEBROWS (ui_v32.js:109-110). Reprova com 'o eyebrow \"Leitura das prioridades declaradas · contexto V3.2\" ENTROU na lista de ocultacao em: produto (HTML construido · ui_v32.js:109-110)'. NAO produz observavel de RUNTIME — medido: `hideLegacyRecommendation` varre filhos DIRETOS e retorna em `#v32panel`, e `U15` le uma copia HARDCODED da lista (tests_ui_m31.js:279-280). E exatamente por isso que (h1) assere sobre o FONTE, no precedente do /Forti[A-Z]/ de P52-REC1. Isolamento conferido: so (h1) dispara; p52layout 45/0, journey 31/0 e ui31 19/0 seguem verdes sob a mutacao."
       }
     },
     {
@@ -2381,6 +2382,328 @@
         "data": "2026-09-11",
         "resultado": "KILL",
         "registro": "campanha d018 (tests_018_mutants.js) · demanda 018, 2026-09-11, qa-engineer, worktree phase5, py 3.14.7 · 7 DETECTADO · 0 SOBREVIVENTE · 0 NAO EXECUTADO · gate rastreado intacto (sha 0ee0ff0190d6 antes e depois, conferido pelo proprio harness). Preflight 7/7 ancoras casando 1x. Cada mutante roda contra uma POPULACAO SINTETICA em tmp (costura MUTCOV_POPULACAO), com CONTROLE previo: o gate INTEGRO tem de produzir o sinal no mesmo cenario, senao o mutante conta NAO EXECUTADO em vez de kill barato."
+      }
+    },
+    {
+      "mutante": "D025-M1",
+      "harness": "d025 (tests_025_mutants.js)",
+      "gate": "D025-VAL1 (tests_025_curadoria_sessao.js)",
+      "invariante": "C1 — validar não aplica, nos três chamadores (INV-8: o import recomputa só do documento)",
+      "ancora": "ui_session_v32.js · `window.__CURATION.validate(I.reportCuration)` no validador",
+      "descricao": "reintroduzir fromSession no validador — validar volta a APLICAR (o produto antes da 025, `:240`)",
+      "ultima_prova": {
+        "data": "2026-10-30",
+        "resultado": "KILL — 'FAIL  D025-VAL1 — validar não aplica: selecionar, prévia, cancelar, Escape e exportar deixam o owner intocado (0 escritas) [(a) validar escreveu no bridge: [\"fromSession\"] · (b) selecionar o arquivo escreveu no bridge: [\"fromSession\"] · (c) exportar escreveu no bridge (EA-105): [\"fromSession\"]]'",
+        "registro": "campanha d025 (tests_025_mutants.js) · 2026-10-30 · qa-engineer · pasta primária phase5-009, HEAD f8f753a, árvore limpa · 23 DETECTADO · 0 SOBREVIVENTE · 0 NÃO EXECUTADO de 23 · source byte a byte OK · tempo total 534 s · execuções da m48: 5 · suíte(s): tests_025_curadoria_sessao.js exit 1 em 3.4 s · log por mutante guardado no scratchpad da sessão e transcrito em mutation_map.json → harnesses.d025._trilha",
+        "nota": "Par nascido na W8 (T084) depois do green — as âncoras são texto do código criado pela 025 (plan §Quando o harness nasce); o red (755b8e2/b20b20b) provou o gate pelo estado do mundo da árvore real, a campanha prova o poder contra a cópia mutada."
+      }
+    },
+    {
+      "mutante": "D025-M2",
+      "harness": "d025 (tests_025_mutants.js)",
+      "gate": "D025-VAL2 (tests_025_curadoria_sessao.js)",
+      "invariante": "C2 — o bridge valida sem tocar o estado; fromSession inválido não apaga a seleção (sub-caso E do EA-91)",
+      "ancora": "ui_curation_v32.js · `var erros = validar(obj); if (erros.length) return erros;` em daSessao",
+      "descricao": "fromSession zera o estado ANTES de validar — curadoria inválida apaga a seleção (sub-caso E do EA-91)",
+      "ultima_prova": {
+        "data": "2026-10-30",
+        "resultado": "KILL — 'FAIL  D025-VAL2 — o bridge valida sem tocar o estado; fromSession inválido não apaga a seleção; import inválido é byte-neutro [(b) F-inv-id: fromSession inválido APAGOU a seleção (state: {\"decisions\":{}}); F-inv-enum: fromSession inválido APAGOU a seleção (state: {\"decisions\":{}}); F-inv-tipo: fromSession inválido APAGOU a seleção (state: {\"decisions\":{}})]'",
+        "registro": "campanha d025 (tests_025_mutants.js) · 2026-10-30 · qa-engineer · pasta primária phase5-009, HEAD f8f753a, árvore limpa · 23 DETECTADO · 0 SOBREVIVENTE · 0 NÃO EXECUTADO de 23 · source byte a byte OK · tempo total 534 s · execuções da m48: 5 · suíte(s): tests_025_curadoria_sessao.js exit 1 em 3.9 s · log por mutante guardado no scratchpad da sessão e transcrito em mutation_map.json → harnesses.d025._trilha",
+        "nota": "Par nascido na W8 (T084) depois do green — as âncoras são texto do código criado pela 025 (plan §Quando o harness nasce); o red (755b8e2/b20b20b) provou o gate pelo estado do mundo da árvore real, a campanha prova o poder contra a cópia mutada."
+      }
+    },
+    {
+      "mutante": "D025-M3",
+      "harness": "d025 (tests_025_mutants.js)",
+      "gate": "D025-CAN1 (tests_025_curadoria_sessao.js)",
+      "invariante": "C3 — a forma canônica de 'sem curadoria' é a ausência da chave (P1): null/{}/{decisions:{}} recusados",
+      "ancora": "ui_curation_v32.js · `if (obj === undefined) return [];` (1ª linha de validar)",
+      "descricao": "validate aceita null / {} / {decisions:{}} como 'vazio' — a direção inversa de P1",
+      "ultima_prova": {
+        "data": "2026-10-30",
+        "resultado": "KILL — 'FAIL  D025-CAN1 — null/{}/{decisions:{}}/decisions vazio recusados com mensagem; chave desconhecida recusada nomeando-a; {architectureNote} só é válido; ausência segue legítima [(F-null) validate aceitou a forma não canônica; a recusa não diz como representar a ausência: Falha durante a aplicação da sessão; a sessão anterior foi restaurada. · (F-vazio) validate aceitou a forma não canônica; import'",
+        "registro": "campanha d025 (tests_025_mutants.js) · 2026-10-30 · qa-engineer · pasta primária phase5-009, HEAD f8f753a, árvore limpa · 23 DETECTADO · 0 SOBREVIVENTE · 0 NÃO EXECUTADO de 23 · source byte a byte OK · tempo total 534 s · execuções da m48: 5 · suíte(s): tests_025_curadoria_sessao.js exit 1 em 4.8 s · log por mutante guardado no scratchpad da sessão e transcrito em mutation_map.json → harnesses.d025._trilha",
+        "nota": "Par nascido na W8 (T084) depois do green — as âncoras são texto do código criado pela 025 (plan §Quando o harness nasce); o red (755b8e2/b20b20b) provou o gate pelo estado do mundo da árvore real, a campanha prova o poder contra a cópia mutada."
+      }
+    },
+    {
+      "mutante": "D025-M23",
+      "harness": "d025 (tests_025_mutants.js)",
+      "gate": "D025-CAN1 (tests_025_curadoria_sessao.js)",
+      "invariante": "C3 (ERR-2) — chave desconhecida dentro de reportCuration é recusada nomeando-a",
+      "ancora": "ui_curation_v32.js · `erros.push(\"reportCuration: campos não reconhecidos: …\")`",
+      "descricao": "validate ignora chave desconhecida dentro de reportCuration (o produto antes da 025: daSessao lia só duas chaves)",
+      "ultima_prova": {
+        "data": "2026-10-30",
+        "resultado": "KILL — 'FAIL  D025-CAN1 — null/{}/{decisions:{}}/decisions vazio recusados com mensagem; chave desconhecida recusada nomeando-a; {architectureNote} só é válido; ausência segue legítima [(F-extra) validate ignorou a chave desconhecida `observacao`; import aceitou a forma (ok:true)]'",
+        "registro": "campanha d025 (tests_025_mutants.js) · 2026-10-30 · qa-engineer · pasta primária phase5-009, HEAD f8f753a, árvore limpa · 23 DETECTADO · 0 SOBREVIVENTE · 0 NÃO EXECUTADO de 23 · source byte a byte OK · tempo total 534 s · execuções da m48: 5 · suíte(s): tests_025_curadoria_sessao.js exit 1 em 5.2 s · log por mutante guardado no scratchpad da sessão e transcrito em mutation_map.json → harnesses.d025._trilha",
+        "nota": "Par nascido na W8 (T084) depois do green — as âncoras são texto do código criado pela 025 (plan §Quando o harness nasce); o red (755b8e2/b20b20b) provou o gate pelo estado do mundo da árvore real, a campanha prova o poder contra a cópia mutada."
+      }
+    },
+    {
+      "mutante": "D025-M4",
+      "harness": "d025 (tests_025_mutants.js)",
+      "gate": "D025-TRX1 (tests_025_curadoria_sessao.js)",
+      "invariante": "C4 — a curadoria entra no candidato (chave sempre presente, undefined quando ausente) e no commit",
+      "ancora": "ui_session_v32.js · `cand.curadoria = (I.reportCuration === undefined) ? undefined : …`",
+      "descricao": "a curadoria fora do candidato — a lista volta a ter 10 chaves e o commit recebe `undefined` sempre",
+      "ultima_prova": {
+        "data": "2026-10-30",
+        "resultado": "KILL — 'FAIL  D025-TRX1 — normalização leva `curadoria` ao candidato (presente mesmo quando undefined) sem tocar o estado; o commit a escreve [(a) candidato sem a chave `curadoria`: ans,arch,arq,landscape,notes,platforms,priorities,refinement,signals,targetOverrides · (b) candidato de F-0 sem a chave `curadoria` (a ausência também é candidato) · (c) após o commit o estado não é A: {\"decisions\":{}}]'",
+        "registro": "campanha d025 (tests_025_mutants.js) · 2026-10-30 · qa-engineer · pasta primária phase5-009, HEAD f8f753a, árvore limpa · 23 DETECTADO · 0 SOBREVIVENTE · 0 NÃO EXECUTADO de 23 · source byte a byte OK · tempo total 534 s · execuções da m48: 5 · suíte(s): tests_025_curadoria_sessao.js exit 1 em 2.6 s · log por mutante guardado no scratchpad da sessão e transcrito em mutation_map.json → harnesses.d025._trilha",
+        "nota": "Par nascido na W8 (T084) depois do green — as âncoras são texto do código criado pela 025 (plan §Quando o harness nasce); o red (755b8e2/b20b20b) provou o gate pelo estado do mundo da árvore real, a campanha prova o poder contra a cópia mutada."
+      }
+    },
+    {
+      "mutante": "D025-M5",
+      "harness": "d025 (tests_025_mutants.js)",
+      "gate": "D025-AUS1 (tests_025_curadoria_sessao.js)",
+      "invariante": "C6 — ausência substitui: fromSession(undefined) limpa (tela, papel e export iguais a um DOM virgem)",
+      "ancora": "ui_curation_v32.js · `if (obj === undefined) { estado = {…}; return []; }` em daSessao",
+      "descricao": "mutC: fromSession(undefined) devolve",
+      "ultima_prova": {
+        "data": "2026-10-30",
+        "resultado": "KILL — 'FAIL  D025-AUS1 — o mesmo arquivo sem a chave produz, sobre quatro estados prévios, o estado de um DOM virgem — tela, papel e export [(a) curadoria herdada após F-0 em: exclude em ofertado={\"decisions\":{\"FortiGuard-Service-Bundle\":\"exclude\"}}; include sem lastro={\"decisions\":{\"FortiAI-Assist\":\"include\"}}; architectureNote exclude={\"decisions\":{},\"architectureNote\":\"exclude\"} · (b) published≠offere'",
+        "registro": "campanha d025 (tests_025_mutants.js) · 2026-10-30 · qa-engineer · pasta primária phase5-009, HEAD f8f753a, árvore limpa · 23 DETECTADO · 0 SOBREVIVENTE · 0 NÃO EXECUTADO de 23 · source byte a byte OK · tempo total 534 s · execuções da m48: 5 · suíte(s): tests_025_curadoria_sessao.js exit 1 em 5.2 s · log por mutante guardado no scratchpad da sessão e transcrito em mutation_map.json → harnesses.d025._trilha",
+        "nota": "Par nascido na W8 (T084) depois do green — as âncoras são texto do código criado pela 025 (plan §Quando o harness nasce); o red (755b8e2/b20b20b) provou o gate pelo estado do mundo da árvore real, a campanha prova o poder contra a cópia mutada."
+      }
+    },
+    {
+      "mutante": "D025-M6",
+      "harness": "d025 (tests_025_mutants.js)",
+      "gate": "D025-TRX2 (b) (tests_025_curadoria_sessao.js) · S69 (b) (tests_session_m48.js)",
+      "invariante": "C5 — falha no commit devolve a SESSÃO, inclusive a curadoria (restore reaplica fromSession(snap.curadoria))",
+      "ancora": "ui_session_v32.js · `window.__CURATION.fromSession(snap.curadoria);` em restoreCanonicalOwners",
+      "descricao": "mutB: o restore deixa de devolver a curadoria — rollback restaura dez owners e esquece o 11º",
+      "ultima_prova": {
+        "data": "2026-10-30",
+        "resultado": "KILL — 'FAIL  D025-TRX2 — snapshot antes da primeira escrita; falha após a curadoria (B e 'nada declarado') e antes dela devolvem a sessão; sem patch o mesmo documento importa [(b) rollback não devolveu a SESSÃO (B): {\"decisions\":{\"FortiGuard-Service-Bundle\":\"exclude\",\"FortiAI-Assist\":\"include\"},\"architectureNote\":\"exclude\"} · (b′) rollback em 'nada declarado' deixou a curadoria do ARQUIVO: {\"decisions\":{' || 'FAIL  S69 — snapshot/restore cobre todos os owners escritos pelo commit — e, comportamentalmente, devolve também a curadoria [(b) restore não devolveu o estado pré (inputs+derivados+curadoria+step)]'",
+        "registro": "campanha d025 (tests_025_mutants.js) · 2026-10-30 · qa-engineer · pasta primária phase5-009, HEAD f8f753a, árvore limpa · 23 DETECTADO · 0 SOBREVIVENTE · 0 NÃO EXECUTADO de 23 · source byte a byte OK · tempo total 534 s · execuções da m48: 5 · suíte(s): tests_025_curadoria_sessao.js exit 1 em 3.6 s, tests_session_m48.js exit 1 em 93.5 s · log por mutante guardado no scratchpad da sessão e transcrito em mutation_map.json → harnesses.d025._trilha",
+        "nota": "Par nascido na W8 (T084) depois do green — as âncoras são texto do código criado pela 025 (plan §Quando o harness nasce); o red (755b8e2/b20b20b) provou o gate pelo estado do mundo da árvore real, a campanha prova o poder contra a cópia mutada."
+      }
+    },
+    {
+      "mutante": "D025-M7",
+      "harness": "d025 (tests_025_mutants.js)",
+      "gate": "D025-TRX2 (a)(b) (tests_025_curadoria_sessao.js)",
+      "invariante": "C5 — snapshot antes de QUALQUER escrita (a primeira escrita no bridge vem depois da leitura toSession do snapshot)",
+      "ancora": "ui_session_v32.js · bloco do commit `const snap = snapshotCanonicalOwners(); try { … fromSession(cand.curadoria); …`",
+      "descricao": "snapshot tirado DEPOIS da escrita da curadoria — a primeira escrita precede a leitura toSession e o rollback não tem foto",
+      "ultima_prova": {
+        "data": "2026-10-30",
+        "resultado": "KILL — 'FAIL  D025-TRX2 — snapshot antes da primeira escrita; falha após a curadoria (B e 'nada declarado') e antes dela devolvem a sessão; sem patch o mesmo documento importa [(a) a primeira escrita (fromSession) ocorreu sem leitura `toSession` (snapshot) antes dela: [\"fromSession\"] · (b) Cannot read properties of null (reading 'arq') · (b′) Cannot read properties of null (reading 'arq') · (c) Cannot rea'",
+        "registro": "campanha d025 (tests_025_mutants.js) · 2026-10-30 · qa-engineer · pasta primária phase5-009, HEAD f8f753a, árvore limpa · 23 DETECTADO · 0 SOBREVIVENTE · 0 NÃO EXECUTADO de 23 · source byte a byte OK · tempo total 534 s · execuções da m48: 5 · suíte(s): tests_025_curadoria_sessao.js exit 1 em 3.8 s · log por mutante guardado no scratchpad da sessão e transcrito em mutation_map.json → harnesses.d025._trilha",
+        "nota": "Par nascido na W8 (T084) depois do green — as âncoras são texto do código criado pela 025 (plan §Quando o harness nasce); o red (755b8e2/b20b20b) provou o gate pelo estado do mundo da árvore real, a campanha prova o poder contra a cópia mutada."
+      }
+    },
+    {
+      "mutante": "D025-M8",
+      "harness": "d025 (tests_025_mutants.js)",
+      "gate": "D025-TRX2 (a)(b) (tests_025_curadoria_sessao.js)",
+      "invariante": "C5 — a curadoria é escrita DENTRO da transação (falha dela desfaz os dez owners)",
+      "ancora": "ui_session_v32.js · o mesmo bloco do commit (fromSession movido para antes do snapshot, fora do try)",
+      "descricao": "fromSession(cand.curadoria) FORA do try, antes do snapshot — a curadoria é aplicada fora da transação",
+      "ultima_prova": {
+        "data": "2026-10-30",
+        "resultado": "KILL — 'FAIL  D025-TRX2 — snapshot antes da primeira escrita; falha após a curadoria (B e 'nada declarado') e antes dela devolvem a sessão; sem patch o mesmo documento importa [(a) a primeira escrita (fromSession) ocorreu sem leitura `toSession` (snapshot) antes dela: [\"fromSession\"] · (b) falha sintética D025-TRX2 · (b′) falha sintética D025-TRX2 · (c) estado ≠ B após falha anterior à curadoria: {\"decisi'",
+        "registro": "campanha d025 (tests_025_mutants.js) · 2026-10-30 · qa-engineer · pasta primária phase5-009, HEAD f8f753a, árvore limpa · 23 DETECTADO · 0 SOBREVIVENTE · 0 NÃO EXECUTADO de 23 · source byte a byte OK · tempo total 534 s · execuções da m48: 5 · suíte(s): tests_025_curadoria_sessao.js exit 1 em 3.8 s · log por mutante guardado no scratchpad da sessão e transcrito em mutation_map.json → harnesses.d025._trilha",
+        "nota": "Par nascido na W8 (T084) depois do green — as âncoras são texto do código criado pela 025 (plan §Quando o harness nasce); o red (755b8e2/b20b20b) provou o gate pelo estado do mundo da árvore real, a campanha prova o poder contra a cópia mutada."
+      }
+    },
+    {
+      "mutante": "D025-M22",
+      "harness": "d025 (tests_025_mutants.js)",
+      "gate": "D025-TRX2 (b′) (tests_025_curadoria_sessao.js)",
+      "invariante": "C5 (ERR-1) — a foto 'nada declarado' (undefined) é restaurada como tal; a guarda `&& snap.curadoria` não volta",
+      "ancora": "ui_session_v32.js · `if (typeof window !== \"undefined\" && window.__CURATION)` + fromSession(snap.curadoria)",
+      "descricao": "reintroduzir a guarda `&& snap.curadoria` no restore — a foto 'nada declarado' deixa de ser restaurada (ERR-1)",
+      "ultima_prova": {
+        "data": "2026-10-30",
+        "resultado": "KILL — 'FAIL  D025-TRX2 — snapshot antes da primeira escrita; falha após a curadoria (B e 'nada declarado') e antes dela devolvem a sessão; sem patch o mesmo documento importa [(b′) rollback em 'nada declarado' deixou a curadoria do ARQUIVO: {\"decisions\":{\"FortiGuard-Service-Bundle\":\"exclude\",\"FortiAI-Assist\":\"include\"},\"architectureNote\":\"exclude\"}]'",
+        "registro": "campanha d025 (tests_025_mutants.js) · 2026-10-30 · qa-engineer · pasta primária phase5-009, HEAD f8f753a, árvore limpa · 23 DETECTADO · 0 SOBREVIVENTE · 0 NÃO EXECUTADO de 23 · source byte a byte OK · tempo total 534 s · execuções da m48: 5 · suíte(s): tests_025_curadoria_sessao.js exit 1 em 3.9 s · log por mutante guardado no scratchpad da sessão e transcrito em mutation_map.json → harnesses.d025._trilha",
+        "nota": "Par nascido na W8 (T084) depois do green — as âncoras são texto do código criado pela 025 (plan §Quando o harness nasce); o red (755b8e2/b20b20b) provou o gate pelo estado do mundo da árvore real, a campanha prova o poder contra a cópia mutada."
+      }
+    },
+    {
+      "mutante": "D025-M9",
+      "harness": "d025 (tests_025_mutants.js)",
+      "gate": "D025-INV8 (b) (tests_025_curadoria_sessao.js)",
+      "invariante": "C7 — roundtrip de identidade: substituição, nunca merge",
+      "ancora": "ui_curation_v32.js · `var novo = { decisions: {}, architectureNote: undefined };` em daSessao",
+      "descricao": "mutD: fromSession sem o reset — merge com a sessão anterior em vez de substituição",
+      "ultima_prova": {
+        "data": "2026-10-30",
+        "resultado": "KILL — 'FAIL  D025-INV8 — roundtrip em DOM novo é idêntico (inclusive include sem lastro sinalizado e rotulado); janela suja vira A sem resto de B; idempotente; exemplo publicado declara reportCuration [(b) estado ≠ A após importar sobre B: {\"decisions\":{\"SOCaaS\":\"exclude\",\"FortiGuard-Service-Bundle\":\"exclude\",\"FortiAI-Assist\":\"include\"},\"architectureNote\":\"exclude\"}]'",
+        "registro": "campanha d025 (tests_025_mutants.js) · 2026-10-30 · qa-engineer · pasta primária phase5-009, HEAD f8f753a, árvore limpa · 23 DETECTADO · 0 SOBREVIVENTE · 0 NÃO EXECUTADO de 23 · source byte a byte OK · tempo total 534 s · execuções da m48: 5 · suíte(s): tests_025_curadoria_sessao.js exit 1 em 4.5 s · log por mutante guardado no scratchpad da sessão e transcrito em mutation_map.json → harnesses.d025._trilha",
+        "nota": "Par nascido na W8 (T084) depois do green — as âncoras são texto do código criado pela 025 (plan §Quando o harness nasce); o red (755b8e2/b20b20b) provou o gate pelo estado do mundo da árvore real, a campanha prova o poder contra a cópia mutada."
+      }
+    },
+    {
+      "mutante": "D025-M10",
+      "harness": "d025 (tests_025_mutants.js)",
+      "gate": "D025-NOP1 (tests_025_curadoria_sessao.js)",
+      "invariante": "C8 — engine incompatível (e todo import recusado) deixa a janela byte-igual",
+      "ancora": "ui_session_v32.js · `const c = sessionCompatibility(doc); if (!c.compatible) return …` em importSessionDocument",
+      "descricao": "importSessionDocument aplica a curadoria ANTES de sessionCompatibility — engine incompatível deixa rastro",
+      "ultima_prova": {
+        "data": "2026-10-30",
+        "resultado": "KILL — 'FAIL  D025-NOP1 — cancelar, Escape, erro posterior ao bloco, engine incompatível e curadoria inválida deixam a janela byte-igual (também com o `bad` de outra janela e sem a chave) [(F-engine) janela mudou após engine incompatível (import direto; state: {\"decisions\":{\"FortiGuard-Service-Bundle\":\"exclude\",\"FortiAI-Assist\":\"include\"},\"architectureNote\":\"exclude\"})]'",
+        "registro": "campanha d025 (tests_025_mutants.js) · 2026-10-30 · qa-engineer · pasta primária phase5-009, HEAD f8f753a, árvore limpa · 23 DETECTADO · 0 SOBREVIVENTE · 0 NÃO EXECUTADO de 23 · source byte a byte OK · tempo total 534 s · execuções da m48: 5 · suíte(s): tests_025_curadoria_sessao.js exit 1 em 3.9 s · log por mutante guardado no scratchpad da sessão e transcrito em mutation_map.json → harnesses.d025._trilha",
+        "nota": "Par nascido na W8 (T084) depois do green — as âncoras são texto do código criado pela 025 (plan §Quando o harness nasce); o red (755b8e2/b20b20b) provou o gate pelo estado do mundo da árvore real, a campanha prova o poder contra a cópia mutada."
+      }
+    },
+    {
+      "mutante": "D025-M11",
+      "harness": "d025 (tests_025_mutants.js)",
+      "gate": "D025-NEW1 (tests_025_curadoria_sessao.js) · S31-S32 (tests_session_m48.js)",
+      "invariante": "C9 — Nova sessão limpa a curadoria (EA-92)",
+      "ancora": "ui_ux_v32.js · `V32.resetLandscapeToUnset();` + linha `__CURATION.clear()` de uxNewSession",
+      "descricao": "clear() removido de uxNewSession — Nova sessão preserva a curadoria (EA-92)",
+      "ultima_prova": {
+        "data": "2026-10-30",
+        "resultado": "KILL — 'FAIL  D025-NEW1 — Nova sessão (diálogo e rota direta) limpa a curadoria e a avaliação seguinte publica a oferta; Cancelar/Escape preservam; o texto do diálogo não muda [(a) diálogo: curadoria sobreviveu: {\"decisions\":{\"FortiGuard-Service-Bundle\":\"exclude\",\"FortiAI-Assist\":\"include\"},\"architectureNote\":\"exclude\"} toSession={\"decisions\":{\"FortiGuard-Service-Bundle\":\"exclude\",\"FortiAI-Assist\":\"includ' || 'FAIL  S31-S32 — reset e nova sessão após import preservam semântica congelada — e limpam a curadoria importada [após Nova sessão a curadoria importada sobreviveu: {\"decisions\":{\"FortiSOAR\":\"exclude\"}}]'",
+        "registro": "campanha d025 (tests_025_mutants.js) · 2026-10-30 · qa-engineer · pasta primária phase5-009, HEAD f8f753a, árvore limpa · 23 DETECTADO · 0 SOBREVIVENTE · 0 NÃO EXECUTADO de 23 · source byte a byte OK · tempo total 534 s · execuções da m48: 5 · suíte(s): tests_025_curadoria_sessao.js exit 1 em 2.8 s, tests_session_m48.js exit 1 em 100.6 s · log por mutante guardado no scratchpad da sessão e transcrito em mutation_map.json → harnesses.d025._trilha",
+        "nota": "Par nascido na W8 (T084) depois do green — as âncoras são texto do código criado pela 025 (plan §Quando o harness nasce); o red (755b8e2/b20b20b) provou o gate pelo estado do mundo da árvore real, a campanha prova o poder contra a cópia mutada."
+      }
+    },
+    {
+      "mutante": "D025-M12",
+      "harness": "d025 (tests_025_mutants.js)",
+      "gate": "D025-RST1 (tests_025_curadoria_sessao.js) · S31-S32 (tests_session_m48.js)",
+      "invariante": "C10 — Reiniciar avaliação limpa a curadoria; landscape preservado",
+      "ancora": "ui_ux_v32.js · linha `__CURATION.clear()` + `step=-1; render(); /* Landscape … PRESERVADOS */` de uxResetAssessment",
+      "descricao": "clear() removido de uxResetAssessment — Reiniciar preserva a curadoria",
+      "ultima_prova": {
+        "data": "2026-10-30",
+        "resultado": "KILL — 'FAIL  D025-RST1 — Reiniciar limpa a curadoria e preserva o contexto; o diálogo diz exatamente o texto novo; Cancelar/Escape preservam [(a) Reiniciar não limpou a curadoria: {\"decisions\":{\"FortiGuard-Service-Bundle\":\"exclude\",\"FortiAI-Assist\":\"include\"},\"architectureNote\":\"exclude\"}]' || 'FAIL  S31-S32 — reset e nova sessão após import preservam semântica congelada — e limpam a curadoria importada [após Reiniciar a curadoria importada sobreviveu: {\"decisions\":{\"FortiSOAR\":\"exclude\"}}]'",
+        "registro": "campanha d025 (tests_025_mutants.js) · 2026-10-30 · qa-engineer · pasta primária phase5-009, HEAD f8f753a, árvore limpa · 23 DETECTADO · 0 SOBREVIVENTE · 0 NÃO EXECUTADO de 23 · source byte a byte OK · tempo total 534 s · execuções da m48: 5 · suíte(s): tests_025_curadoria_sessao.js exit 1 em 3 s, tests_session_m48.js exit 1 em 92.2 s · log por mutante guardado no scratchpad da sessão e transcrito em mutation_map.json → harnesses.d025._trilha",
+        "nota": "Par nascido na W8 (T084) depois do green — as âncoras são texto do código criado pela 025 (plan §Quando o harness nasce); o red (755b8e2/b20b20b) provou o gate pelo estado do mundo da árvore real, a campanha prova o poder contra a cópia mutada."
+      }
+    },
+    {
+      "mutante": "D025-M13",
+      "harness": "d025 (tests_025_mutants.js)",
+      "gate": "D025-RST1 (b) (tests_025_curadoria_sessao.js)",
+      "invariante": "C10 (P2) — o diálogo de Reiniciar nomeia a curadoria (texto exato aprovado pelo PO)",
+      "ancora": "ui_ux_v32.js · literal `Respostas, observações, prioridades e a curadoria do relatório serão limpas. …`",
+      "descricao": "texto antigo do diálogo de Reiniciar — o diálogo deixa de nomear a curadoria",
+      "ultima_prova": {
+        "data": "2026-10-30",
+        "resultado": "KILL — 'FAIL  D025-RST1 — Reiniciar limpa a curadoria e preserva o contexto; o diálogo diz exatamente o texto novo; Cancelar/Escape preservam [(b) texto do diálogo de Reiniciar: \"Respostas, observações e prioridades serão limpas. O contexto tecnológico declarado será preservado.\"]'",
+        "registro": "campanha d025 (tests_025_mutants.js) · 2026-10-30 · qa-engineer · pasta primária phase5-009, HEAD f8f753a, árvore limpa · 23 DETECTADO · 0 SOBREVIVENTE · 0 NÃO EXECUTADO de 23 · source byte a byte OK · tempo total 534 s · execuções da m48: 5 · suíte(s): tests_025_curadoria_sessao.js exit 1 em 3 s · log por mutante guardado no scratchpad da sessão e transcrito em mutation_map.json → harnesses.d025._trilha",
+        "nota": "Par nascido na W8 (T084) depois do green — as âncoras são texto do código criado pela 025 (plan §Quando o harness nasce); o red (755b8e2/b20b20b) provou o gate pelo estado do mundo da árvore real, a campanha prova o poder contra a cópia mutada."
+      }
+    },
+    {
+      "mutante": "D025-M14",
+      "harness": "d025 (tests_025_mutants.js)",
+      "gate": "D025-TRN1 (tests_025_curadoria_sessao.js)",
+      "invariante": "C11 — prioLimitHit é transiente e o commit o zera (EA-108)",
+      "ancora": "ui_session_v32.js · `prioLimitHit = false; /* [025 · T030] EA-108 */`",
+      "descricao": "prioLimitHit deixa de ser zerado pelo commit — o aviso de limite sobrevive à importação (EA-108)",
+      "ultima_prova": {
+        "data": "2026-10-30",
+        "resultado": "KILL — 'FAIL  D025-TRN1 — prioLimitHit produzido pela UI é zerado pelo commit da importação; a tela de prioridades não exibe o aviso de limite [(a) prioLimitHit continua true após o commit (EA-108) · (b) a tela de prioridades exibe `Limite de 3 prioridades atingido` sobre 0 selecionadas]'",
+        "registro": "campanha d025 (tests_025_mutants.js) · 2026-10-30 · qa-engineer · pasta primária phase5-009, HEAD f8f753a, árvore limpa · 23 DETECTADO · 0 SOBREVIVENTE · 0 NÃO EXECUTADO de 23 · source byte a byte OK · tempo total 534 s · execuções da m48: 5 · suíte(s): tests_025_curadoria_sessao.js exit 1 em 2.5 s · log por mutante guardado no scratchpad da sessão e transcrito em mutation_map.json → harnesses.d025._trilha",
+        "nota": "Par nascido na W8 (T084) depois do green — as âncoras são texto do código criado pela 025 (plan §Quando o harness nasce); o red (755b8e2/b20b20b) provou o gate pelo estado do mundo da árvore real, a campanha prova o poder contra a cópia mutada."
+      }
+    },
+    {
+      "mutante": "D025-M15",
+      "harness": "d025 (tests_025_mutants.js)",
+      "gate": "D025-TRN2 (a) (tests_025_curadoria_sessao.js)",
+      "invariante": "C12 (P5) — o draft do editor de contexto é descartado por commit, Nova sessão e Reiniciar (EA-107)",
+      "ancora": "ui_v32.js · `function discardDraft(){ const had = draft !== null; draft = null; return had; }`",
+      "descricao": "discardDraft vira no-op — o draft do cliente anterior sobrevive ao commit, a Nova sessão e a Reiniciar (EA-107)",
+      "ultima_prova": {
+        "data": "2026-10-30",
+        "resultado": "KILL — 'FAIL  D025-TRN2 — draft descartado por import confirmado, Nova sessão e Reiniciar; mantido em recusa e em prévia cancelada; discardDraft existe [(a) import confirmado: hasDraft() ainda true]'",
+        "registro": "campanha d025 (tests_025_mutants.js) · 2026-10-30 · qa-engineer · pasta primária phase5-009, HEAD f8f753a, árvore limpa · 23 DETECTADO · 0 SOBREVIVENTE · 0 NÃO EXECUTADO de 23 · source byte a byte OK · tempo total 534 s · execuções da m48: 5 · suíte(s): tests_025_curadoria_sessao.js exit 1 em 2.7 s · log por mutante guardado no scratchpad da sessão e transcrito em mutation_map.json → harnesses.d025._trilha",
+        "nota": "Par nascido na W8 (T084) depois do green — as âncoras são texto do código criado pela 025 (plan §Quando o harness nasce); o red (755b8e2/b20b20b) provou o gate pelo estado do mundo da árvore real, a campanha prova o poder contra a cópia mutada."
+      }
+    },
+    {
+      "mutante": "D025-M16",
+      "harness": "d025 (tests_025_mutants.js)",
+      "gate": "D025-PRV1 (c) (tests_025_curadoria_sessao.js) · S30 (b) (tests_session_m48.js)",
+      "invariante": "C13 (P4) — curadoria declarada conta como conteúdo: só ela já exige 'Importar e substituir' (EA-109)",
+      "ancora": "ui_session_v32.js · `(typeof window !== \"undefined\" && window.__CURATION && window.__CURATION.toSession() !== undefined)` em sessionHasContent",
+      "descricao": "sessionHasContent sem a curadoria — só curadoria declarada não exige 'Importar e substituir' (EA-109)",
+      "ultima_prova": {
+        "data": "2026-10-30",
+        "resultado": "KILL — 'FAIL  D025-PRV1 — sessionPreview.curation; a prévia diz `Curadoria do relatório: sim/não`; só curadoria declarada já exige `Importar e substituir` [(c) sessionHasContent() ignora curadoria declarada (EA-109)]' || 'FAIL  S30 — sessão ativa exige confirmação de substituição — também quando só a curadoria foi declarada [(b) sessionHasContent() ignora curadoria declarada (EA-109)]'",
+        "registro": "campanha d025 (tests_025_mutants.js) · 2026-10-30 · qa-engineer · pasta primária phase5-009, HEAD f8f753a, árvore limpa · 23 DETECTADO · 0 SOBREVIVENTE · 0 NÃO EXECUTADO de 23 · source byte a byte OK · tempo total 534 s · execuções da m48: 5 · suíte(s): tests_025_curadoria_sessao.js exit 1 em 2.4 s, tests_session_m48.js exit 1 em 88.1 s · log por mutante guardado no scratchpad da sessão e transcrito em mutation_map.json → harnesses.d025._trilha",
+        "nota": "Par nascido na W8 (T084) depois do green — as âncoras são texto do código criado pela 025 (plan §Quando o harness nasce); o red (755b8e2/b20b20b) provou o gate pelo estado do mundo da árvore real, a campanha prova o poder contra a cópia mutada."
+      }
+    },
+    {
+      "mutante": "D025-M17",
+      "harness": "d025 (tests_025_mutants.js)",
+      "gate": "D025-PRV1 (a)(b) (tests_025_curadoria_sessao.js)",
+      "invariante": "C13 (P4) — a prévia diz `Curadoria do relatório: sim/não`",
+      "ancora": "ui_session_v32.js · `curation: doc.inputs.reportCuration !== undefined` em sessionPreview",
+      "descricao": "sessionPreview sem o campo curation — a prévia diz 'não' para um arquivo com curadoria",
+      "ultima_prova": {
+        "data": "2026-10-30",
+        "resultado": "KILL — 'FAIL  D025-PRV1 — sessionPreview.curation; a prévia diz `Curadoria do relatório: sim/não`; só curadoria declarada já exige `Importar e substituir` [(a) sessionPreview(F-A).curation ≠ true: undefined · (b) prévia de F-A sem `Curadoria do relatório: sim`]'",
+        "registro": "campanha d025 (tests_025_mutants.js) · 2026-10-30 · qa-engineer · pasta primária phase5-009, HEAD f8f753a, árvore limpa · 23 DETECTADO · 0 SOBREVIVENTE · 0 NÃO EXECUTADO de 23 · source byte a byte OK · tempo total 534 s · execuções da m48: 5 · suíte(s): tests_025_curadoria_sessao.js exit 1 em 2.5 s · log por mutante guardado no scratchpad da sessão e transcrito em mutation_map.json → harnesses.d025._trilha",
+        "nota": "Par nascido na W8 (T084) depois do green — as âncoras são texto do código criado pela 025 (plan §Quando o harness nasce); o red (755b8e2/b20b20b) provou o gate pelo estado do mundo da árvore real, a campanha prova o poder contra a cópia mutada."
+      }
+    },
+    {
+      "mutante": "D025-M18",
+      "harness": "d025 (tests_025_mutants.js)",
+      "gate": "D025-UNS1 (a) (tests_025_curadoria_sessao.js)",
+      "invariante": "C14 (P3) — toggle-back volta a ausente: o editor escreve só a divergência (EA-110)",
+      "ancora": "ui_curation_edit_v32.js · `if (ofertado) { if (cx.checked) b.unset(id); else b.set(id, \"exclude\"); }`",
+      "descricao": "remarcar ofertado grava `include` explícito em vez de voltar a ausente (o editor antes da 025, EA-110)",
+      "ultima_prova": {
+        "data": "2026-10-30",
+        "resultado": "KILL — 'FAIL  D025-UNS1 — o editor escreve só a divergência: remarcar ofertado, desmarcar não ofertado e remarcar a leitura arquitetural voltam a AUSENTE; unset no bridge [(a) remarcar ofertado gravou `include` em vez de voltar a ausente (EA-110) · (d) após os três toggle-back toSession() ≠ undefined: {\"decisions\":{\"FortiGuard-Service-Bundle\":\"include\"}}]'",
+        "registro": "campanha d025 (tests_025_mutants.js) · 2026-10-30 · qa-engineer · pasta primária phase5-009, HEAD f8f753a, árvore limpa · 23 DETECTADO · 0 SOBREVIVENTE · 0 NÃO EXECUTADO de 23 · source byte a byte OK · tempo total 534 s · execuções da m48: 5 · suíte(s): tests_025_curadoria_sessao.js exit 1 em 2.8 s · log por mutante guardado no scratchpad da sessão e transcrito em mutation_map.json → harnesses.d025._trilha",
+        "nota": "Par nascido na W8 (T084) depois do green — as âncoras são texto do código criado pela 025 (plan §Quando o harness nasce); o red (755b8e2/b20b20b) provou o gate pelo estado do mundo da árvore real, a campanha prova o poder contra a cópia mutada."
+      }
+    },
+    {
+      "mutante": "D025-M19",
+      "harness": "d025 (tests_025_mutants.js)",
+      "gate": "D025-GAT1 (tests_025_curadoria_sessao.js)",
+      "invariante": "C15 — gate de suficiência fechado: a curadoria do arquivo é importada e RETIDA (gate que nasceu VERDE; o poder está só aqui)",
+      "ancora": "ui_session_v32.js · `if (window.__CURATION) window.__CURATION.fromSession(cand.curadoria); /* [025 · T030] 11º owner … */`",
+      "descricao": "o commit só aplica a curadoria com o gate de suficiência `released` — sob gate fechado a curadoria do arquivo se perde",
+      "ultima_prova": {
+        "data": "2026-10-30",
+        "resultado": "KILL — 'FAIL  D025-GAT1 — gate de suficiência fechado: a curadoria do arquivo é importada e retida, o editor não se oferece, o export seguinte a carrega [(a) curadoria do arquivo não foi retida sob gate fechado: {\"decisions\":{}}]'",
+        "registro": "campanha d025 (tests_025_mutants.js) · 2026-10-30 · qa-engineer · pasta primária phase5-009, HEAD f8f753a, árvore limpa · 23 DETECTADO · 0 SOBREVIVENTE · 0 NÃO EXECUTADO de 23 · source byte a byte OK · tempo total 534 s · execuções da m48: 5 · suíte(s): tests_025_curadoria_sessao.js exit 1 em 2.5 s · log por mutante guardado no scratchpad da sessão e transcrito em mutation_map.json → harnesses.d025._trilha",
+        "nota": "Par nascido na W8 (T084) depois do green — as âncoras são texto do código criado pela 025 (plan §Quando o harness nasce); o red (755b8e2/b20b20b) provou o gate pelo estado do mundo da árvore real, a campanha prova o poder contra a cópia mutada."
+      }
+    },
+    {
+      "mutante": "D025-M20",
+      "harness": "d025 (tests_025_mutants.js)",
+      "gate": "S50 (tests_session_m48.js)",
+      "invariante": "Reancoragem S50 — o candidato tem 11 chaves (`curadoria` presente, undefined sem a chave); o mutante ataca o PRÓPRIO julgador",
+      "ancora": "tests_session_m48.js · literal `\"ans,arch,arq,curadoria,landscape,…,targetOverrides\"`",
+      "descricao": "ressuscitar a lista de 10 chaves em S50 — provar que a reancoragem ainda discrimina",
+      "ultima_prova": {
+        "data": "2026-10-30",
+        "resultado": "KILL — 'FAIL  S50 — normalização isolada não toca estado; candidato é completo antes do commit — com a sexta chave, mesmo ausente no documento'",
+        "registro": "campanha d025 (tests_025_mutants.js) · 2026-10-30 · qa-engineer · pasta primária phase5-009, HEAD f8f753a, árvore limpa · 23 DETECTADO · 0 SOBREVIVENTE · 0 NÃO EXECUTADO de 23 · source byte a byte OK · tempo total 534 s · execuções da m48: 5 · suíte(s): tests_session_m48.js exit 1 em 80.6 s · log por mutante guardado no scratchpad da sessão e transcrito em mutation_map.json → harnesses.d025._trilha",
+        "nota": "Par nascido na W8 (T084) depois do green — as âncoras são texto do código criado pela 025 (plan §Quando o harness nasce); o red (755b8e2/b20b20b) provou o gate pelo estado do mundo da árvore real, a campanha prova o poder contra a cópia mutada."
+      }
+    },
+    {
+      "mutante": "D025-M21",
+      "harness": "d025 (tests_025_mutants.js)",
+      "gate": "D025-DOC1 (a) (tests_025_curadoria_sessao.js)",
+      "invariante": "C16 — a documentação diz o que o produto faz: a tabela de owners tem a linha da sexta chave (EA-112 d); mutação em CÓPIA via D025_DOC_OVERRIDE",
+      "ancora": "SESSION_SCHEMA_V32.md (cópia em tmp) · linha `| curadoria do relatório | \\`__CURATION\\` … | inputs.reportCuration | não |`",
+      "descricao": "remover a linha da sexta chave da tabela de owners do schema (cópia em tmp) — a documentação deixa de dizer o que o produto faz",
+      "ultima_prova": {
+        "data": "2026-10-30",
+        "resultado": "KILL — 'FAIL  D025-DOC1 — SESSION_SCHEMA_V32.md: linha da sexta chave, ausência legítima E substitutiva, rollback nomeia __CURATION, S81 intacto; USER_GUIDE §11: importar substitui também a curadoria, Nova sessão e Reiniciar a limpam [(a) a tabela de owners não tem linha com `reportCuration` e `__CURATION` (EA-112 d)]'",
+        "registro": "campanha d025 (tests_025_mutants.js) · 2026-10-30 · qa-engineer · pasta primária phase5-009, HEAD f8f753a, árvore limpa · 23 DETECTADO · 0 SOBREVIVENTE · 0 NÃO EXECUTADO de 23 · source byte a byte OK · tempo total 534 s · execuções da m48: 5 · suíte(s): tests_025_curadoria_sessao.js exit 1 em 1.9 s · log por mutante guardado no scratchpad da sessão e transcrito em mutation_map.json → harnesses.d025._trilha",
+        "nota": "Par nascido na W8 (T084) depois do green — as âncoras são texto do código criado pela 025 (plan §Quando o harness nasce); o red (755b8e2/b20b20b) provou o gate pelo estado do mundo da árvore real, a campanha prova o poder contra a cópia mutada."
       }
     }
   ],

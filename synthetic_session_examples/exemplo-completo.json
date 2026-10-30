@@ -225,6 +225,12 @@
         "ref-lessons": null,
         "ref-hunting": null
       }
+    },
+    "reportCuration": {
+      "decisions": {
+        "FortiAnalyzer": "exclude"
+      },
+      "architectureNote": "exclude"
     }
   }
 }

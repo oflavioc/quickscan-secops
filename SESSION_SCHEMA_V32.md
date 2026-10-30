@@ -218,8 +218,8 @@ Um segundo exemplo, com landscape rico (NONE/PARTIAL, soluções third-party e F
 arquitetura não-default, target e refinement), está em `synthetic_session_examples/exemplo-completo.json`.
 
 ## 4 · Campos
-**Obrigatórios:** `format`, `schemaVersion`, `toolVersion`, `engineSha256`, `inputs` (com os cinco blocos).
-**Opcionais:** `createdAt`, `label`. Chaves desconhecidas em raiz ou em `inputs` são **recusadas** na v1.
+**Obrigatórios:** `format`, `schemaVersion`, `toolVersion`, `engineSha256`, `inputs` (com os cinco blocos obrigatórios e a sexta chave, `reportCuration`, **opcional**).
+**Opcionais:** `createdAt`, `label` e `inputs.reportCuration` (a curadoria do relatório — §5 e §9). Chaves desconhecidas em raiz ou em `inputs` são **recusadas** na v1.
 
 ## 5 · Canonical × derived — owners de estado
 
@@ -235,6 +235,7 @@ arquitetura não-default, target e refinement), está em `synthetic_session_exam
 | sinais de sessão | `V32.SESSION_SIGNALS` | …signals | não |
 | cenário-alvo (sparse) | `TARGET_PROFILE.overrides` | inputs.targetProfile.overrides | não |
 | aprofundamento | `OPERATIONAL_REFINEMENT.answers` | inputs.operationalRefinement.answers | não |
+| curadoria do relatório | `__CURATION` (`ui_curation_v32.js`) | inputs.reportCuration | não |
 | score/domínios/estágio/suficiência | `domStat`/`stageOf`/`dataSufficiency` | **ausente** | **sim** |
 | findings, gaps, severidade | `computeFindings` | **ausente** | **sim** |
 | classification, supportMode, offerings, services | `buildRecommendationContext` | **ausente** | **sim** |
@@ -413,7 +414,7 @@ commit:
 commit → recompute/render`.
 
 O commit real (`commitCanonicalOwners`) funciona assim:
-1. **snapshot** completo dos owners canônicos (`snapshotCanonicalOwners`) antes de qualquer escrita;
+1. **snapshot** completo dos owners canônicos (`snapshotCanonicalOwners`) antes de qualquer escrita — o que vale também para a curadoria do relatório (`__CURATION.toSession()`, inclusive quando devolve `undefined`: foto de "nada declarado" também é foto);
 2. escritas dentro de `try`; **nenhum** `render()`, `uxNewSession()`, modal ou helper de UI é chamado na janela
    de commit (gate estrutural S63 inspeciona o corpo da função e verifica que a tela não muda);
 3. qualquer exceção dispara **rollback completo** via `restoreCanonicalOwners`, retornando `{ok:false,
@@ -427,7 +428,7 @@ O commit real (`commitCanonicalOwners`) funciona assim:
    da transação.
 5. Cobertura de rollback (S69, gate estrutural): todo owner escrito pelo commit — `arq`, `ans`, `notes`,
    `businessPriority`, `TECH_LANDSCAPE` (com `declaredDriver`), `ARCHITECTURE_CONTEXT`, `declaredPlatforms`,
-   `SESSION_SIGNALS`, `TARGET_PROFILE`, `OPERATIONAL_REFINEMENT` e `step` — existe no snapshot e na restauração.
+   `SESSION_SIGNALS`, `TARGET_PROFILE`, `OPERATIONAL_REFINEMENT`, `__CURATION` (a sexta chave: `toSession()` no snapshot, `fromSession` na restauração e no commit) e `step` — existe no snapshot e na restauração.
 
 Correção declarada na 4.8.0.2: a versão anterior chamava `uxNewSession({silent:true})` dentro do commit, que
 resetava e renderizava **antes** da aplicação terminar — não era atômico. Gates: S29, S49, S50, S51, S62, S63.
@@ -439,6 +440,16 @@ canônicos · respostas 0–3/"NA"/null · notas ≤ 10.000 chars · até 3 prio
 `constructor` recusados · **owners completos** (`answers`, `capabilities`, `architectureContext`, `declaredPlatforms`, `signals`, `operationalRefinement.answers`) exigidos na íntegra, com ausência recusada em vez de preenchida por default (§8.2.1) · **paridade textual** com `readDraftFromDom()` (§8.2.3) · limite de **10.000 escalares Unicode** em toda string, incluindo metadata de raiz (§8.2.4) · **preflight de exportação** que impede a emissão de arquivo não reimportável (§8.2.5) · unicidade de plataformas/subscriptions (§8.2.6) · `coveredCapabilities` validado no **contexto canônico** (§8.2.2). **Escopo da transação:** validação, normalização e commit estão dentro da boundary
 protegida — falha em qualquer uma dessas etapas deixa a sessão anterior intacta (rollback provado em S62+S68).
 O **recompute/render é pós-commit e fica fora da transação**: nesse ponto o estado importado já está aplicado.
+
+**Curadoria do relatório (`inputs.reportCuration`, opcional).** A validação é **pura** (`__CURATION.validate`): lê o
+objeto e devolve a lista de recusas, sem escrever no estado — quem escreve é o commit, dentro da transação (§8.4), e só
+depois que todas as outras validações passaram. São recusados, cada um com mensagem nomeada: `null`; valor que não é
+objeto; objeto sem `decisions` e sem `architectureNote`; chave desconhecida dentro de `reportCuration`; `decisions` que
+não é objeto ou que não tem chaves; id de produto fora do catálogo; valor de decisão fora do enum fechado
+(`include`/`exclude`); `architectureNote` fora do enum. A **ausência** da chave é legítima e **substitutiva**: o arquivo
+que não declara `reportCuration` apaga a curadoria da sessão ativa e a devolve a "nada declarado" — importar
+substitui, nunca mescla. É por isso que o runtime omite a chave quando nada foi declarado: ausente ≠ `null` ≠ `{}`
+(os dois últimos são recusados).
 
 ## 10 · Limitações conhecidas
 - somente snapshots concluídos (a partir de Results);

@@ -1,6 +1,6 @@
 {
   "demanda": "026-decisao-unica-do-apoio",
-  "phase": "validate",
+  "phase": "done",
   "spec_dir": "specs/026-decisao-unica-do-apoio",
   "branch": "feature/026-decisao-unica-do-apoio",
   "brief": "Contrato unico de decisao de apoio: a oferta por produto nasce uma vez em ui_curation_v32.js (dono do estado, __CURATION) reconciliando a Camada 1 (MAP) com o motor contextual; tela (ui_p52_support_v32.js), editor e papel consomem. O papel preserva qualificador, acao, variante, escopo e origem. Origem: auditoria externa de 2026-10-31 (QS-01 cards contradizem o motor; QS-02 PDF perde qualificadores) e EA-76 (segunda fonte do ofertaDoMotor, 'conserto e demanda futura'). Microfase 01 do plano de correcao de 2026-10-31.",
@@ -53,6 +53,7 @@
     "conformance": "125/125 (100%) — iteracao 2 (0768076) apos erratas E13/E14; iteracao 1 = 123/125 (0bdfcfe; G1 trilha de temVoz unilateral, G2 literais de motivo no owner — ambos spec-errada)",
     "aceite_po": "NAO ENCONTREI OBJECAO — product-owner (lente), Fable 5.1, 2026-10-31, segundo passe sobre 5d9bdff. Primeiro passe reprovou nomeando O-1 (C3 do plano nao resolvido com D-3=false): acolhida pelo orquestrador — iteracao unica da Fase 6: red 6122bb7 (LEG1 (c) reancorada, 2/3), green 860735a (CONTEXTO_SUPRIMIDO_POR_PLATAFORMA = true, 3/3), campanha d026 6/0, errata E15. Observacoes (a)(b)(c) com rota registradas no relatorio.",
     "aprovacao_de_fase": "Portoes das Fases 0-3 e as decisoes D-1..D-9 (D-3 revertida para true na Fase 6): decidido pelo orquestrador sob a instrucao do proprietario de 2026-10-31 (prompt da microfase 01); ratificacao literal pendente no PR. A Fase 6 encerra com QA + PO (R4).",
-    "notes": "Pipeline completo e compliance-audit em arvore limpa apos o repin de fecho: ver relatorio-final.md (marcador pipeline-final preenchido no commit de fecho). CI verde e condicao do merge, nao do done."
-  }
+    "notes": "Pipeline completo em arvore limpa (fca0e1c, 2026-10-31): run.sh 18 PASS · 0 FAIL (stage mutation incluso) e compliance-audit 17 PASS · 0 FAIL · 0 WARN. PR #117 aberto em rascunho em 2026-10-31 (fecho C8: Fase 6 completa + PR aberto; CI verde e condicao do merge, nao do done; \"pronto\" = job visual verde, KI-3). Merge e ratificacao literal de D-1..D-9 sao do proprietario (T069)."
+  },
+  "pr_url": "https://github.com/oflavioc/quickscan-secops/pull/117"
 }

@@ -7096,7 +7096,7 @@ a mesma direção.
 **Status**: `resolvido`
 
 > **Fecho — demanda `026-decisao-unica-do-apoio` (branch
-> `feature/026-decisao-unica-do-apoio`, PR <<PR>>), registrado em 2026-10-31 —
+> `feature/026-decisao-unica-do-apoio`, PR PR #117 (https://github.com/oflavioc/quickscan-secops/pull/117)), registrado em 2026-10-31 —
 > T060, `doc-writer`.** Corrigido **na branch**; a mesclagem e o job `visual` do CI
 > estão pendentes. `resolvido` aqui significa «corrigido e medido pela suíte
 > `D026` e pelas campanhas da 026», não «mesclado» nem «entregue» (merge e deploy
@@ -7178,7 +7178,7 @@ a mesma direção.
 > asserção alguma. Ainda: `d014 regra_morta` 7/7 após o censo do CSS remedido
 > (33/205/3 → 52/298/5); stage `suites` 0 problemas; `compliance-audit` 17 PASS ·
 > 0 FAIL · 0 WARN (execução da W4); matriz de mutação com 207 pares. **Pendentes**:
-> o pipeline final (<<pipeline-final>>); `playwright P8` e `P52-PDF5/6`, que rodam
+> o pipeline final (`run.sh` **18 PASS · 0 FAIL** (stage `mutation` incluso: campanhas d019/d022/d023/d025/d026 pela relação do diff) e `compliance-audit` **17 PASS · 0 FAIL · 0 WARN**, sobre `fca0e1c` em árvore limpa, 2026-10-31 (log `026-pipeline-final.log`)); `playwright P8` e `P52-PDF5/6`, que rodam
 > no job `visual` do CI e dependem do PR. Carrascos: `D026-M1`…`D026-M6`
 > (`tests_026_mutants.js`).
 >

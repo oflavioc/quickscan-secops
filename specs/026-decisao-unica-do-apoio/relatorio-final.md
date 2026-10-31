@@ -4,14 +4,14 @@
 > **atualizado na iteração única da Fase 6 sobre HEAD `860735a`**.
 > Branch `feature/026-decisao-unica-do-apoio` (base `develop @ 9509e4b`) · 22
 > commits à frente (18 até `fc5874f`; depois `8ad6621` W6 docs, `0bdfcfe`
-> spec-validate iteração 1, `6122bb7` red F6, `860735a` green F6) · PR <<PR>>.
+> spec-validate iteração 1, `6122bb7` red F6, `860735a` green F6) · PR PR #117 (https://github.com/oflavioc/quickscan-secops/pull/117).
 > **Aceite de intenção do `product-owner`: reprovação nomeada O-1, acolhida (D-3
 > passa a `true`); segundo passe sobre `5d9bdff`: «não encontrei objeção»**; ele não emite PASS/FAIL.
 > **Ratificação de D-1..D-9: pendente do proprietário, no PR** — as decisões foram
 > *decididas pelo orquestrador sob a instrução do proprietário de 2026-10-31
 > (prompt da microfase 01); ratificação literal pendente no PR*.
 > Marcadores deixados de propósito, a preencher quando o número existir:
-> `<<pipeline-final>>`, `<<PR>>` (os de `spec-validate` e do aceite já preenchidos). Todo número
+> ``run.sh` **18 PASS · 0 FAIL** (stage `mutation` incluso: campanhas d019/d022/d023/d025/d026 pela relação do diff) e `compliance-audit` **17 PASS · 0 FAIL · 0 WARN**, sobre `fca0e1c` em árvore limpa, 2026-10-31 (log `026-pipeline-final.log`)`, `PR #117 (https://github.com/oflavioc/quickscan-secops/pull/117)` (os de `spec-validate` e do aceite já preenchidos). Todo número
 > vem de execução citável ou de registro canônico, com a fonte ao lado: «medido por
 > mim» é leitura desta escrita; «citado de <fonte>» é número que li e não reexecutei.
 
@@ -54,7 +54,7 @@ arquivos, +9765 −341 (eram 44 arquivos, +8661 −340 em `fc5874f`). Produto: `
 `refinement.md`, `spec.md`, `plan.md`, `tasks.md`, `red-026.md`, 11 anexos mais 11
 cenários, `CONTEXT.md` (+60). Os 22 commits: 4 `feat`, 4 `test`, 5 `docs`, 9 `chore`
 (medido por `git log --format=%s 9509e4b..HEAD`). Falta: o pipeline final, o repin
-de fecho, o CI e o PR (<<pipeline-final>>).
+de fecho, o CI e o PR (`run.sh` **18 PASS · 0 FAIL** (stage `mutation` incluso: campanhas d019/d022/d023/d025/d026 pela relação do diff) e `compliance-audit` **17 PASS · 0 FAIL · 0 WARN**, sobre `fca0e1c` em árvore limpa, 2026-10-31 (log `026-pipeline-final.log`)).
 
 ## Contrato adotado, e por quê
 
@@ -116,7 +116,7 @@ o HTML de `816d605` (`anexos/sonda-leitura.js`, log da T030) para os casos que a
 sonda cobre — **exceto C3, revisto na F6** (alínea `LEG1 (c)` reancorada, `860735a`; o
 texto em tela e papel é a medição do aceite do PO, citada); **C7-UNSET, F2 e GF são medidos pelas alíneas do gate**, não pela
 sonda. A sonda sobre o HTML **final** (T064) fica para o pipeline final
-(<<pipeline-final>>).
+(`run.sh` **18 PASS · 0 FAIL** (stage `mutation` incluso: campanhas d019/d022/d023/d025/d026 pela relação do diff) e `compliance-audit` **17 PASS · 0 FAIL · 0 WARN**, sobre `fca0e1c` em árvore limpa, 2026-10-31 (log `026-pipeline-final.log`)).
 
 | caso | antes | depois | prova |
 |---|---|---|---|
@@ -177,7 +177,7 @@ reexecutou suíte**.
 | Fase 6 `0bdfcfe` | `spec-validate` iteração 1 (conferência por leitura + execuções do validador) | **123/125 = 98,4 %**; 2 gaps `spec-errada` (G1, G2) → erratas E13/E14; no mesmo HEAD `D026 CONTRATO` 3/3 · `d019` 14/14 · `d022` 14/14 · `d023` 9/9 · `d025` 16/16; preflights dos 5 harnesses com `ocorrencias == 1` | `spec-validate.md` (citado) |
 | F6 red `6122bb7` | `node tests_026_contrato.js` com `LEG1 (c)` reancorada | **2 PASS · 1 FAIL de 3** (`LEG1 (c)` C3: condição `capability-nao-informada` ≠ `plataforma-declarada-cobre`) | corpo do commit (citado) |
 | F6 green `860735a` | `D026 CONTRATO` após `CONTEXTO_SUPRIMIDO_POR_PLATAFORMA = true` e HTML regenerado | **3 PASS · 0 FAIL de 3** | corpo do commit (citado) |
-| Pós-F6 | campanha de mutação (alvos `d026` incluem `ui_curation_v32.js`), `run.sh` e `compliance-audit.sh` sobre a árvore limpa depois do repin de fecho; CI `verify` · `visual` · `fecho` | pendente: pipeline final (<<pipeline-final>>) | — |
+| Pós-F6 | campanha de mutação (alvos `d026` incluem `ui_curation_v32.js`), `run.sh` e `compliance-audit.sh` sobre a árvore limpa depois do repin de fecho; CI `verify` · `visual` · `fecho` | pendente: pipeline final (`run.sh` **18 PASS · 0 FAIL** (stage `mutation` incluso: campanhas d019/d022/d023/d025/d026 pela relação do diff) e `compliance-audit` **17 PASS · 0 FAIL · 0 WARN**, sobre `fca0e1c` em árvore limpa, 2026-10-31 (log `026-pipeline-final.log`)) | — |
 | Fase 6 | `spec-validate` iteração 2 (itens 24 e 64 contra E13/E14; itens 4 e 52 contra E15) | 125/125 (100 %), `0768076` | — |
 
 Placar do red por alínea (`red-026.md`): nasceram verdes, declarados, `REC1 (h)`,
@@ -197,7 +197,7 @@ previstos» — errata E11 da spec; R8 pede o mesmo PR, não um commit por wave.
 | R1 | R1 | `a02d411` | `tests_026_contrato.js`, `red-026.md`, `pareamento.md` |
 | R2 · R3 | **R2** (fusão) | `102decc` | `ui_curation`, `ui_p52_support` `.js`/`.css`, editor e HTML, depois de W2–W3 |
 | R4a · R4b · R4c · R5 | **R3** | `3f13100` | harness `d026`, registros, censo do CSS, trilhas (T040/T042/T044) |
-| R6 · R7 · R8 | pendente | — | `993e371` (W4b), `fc5874f` (nota `__CURATION`) e os documentos desta entrega esperam o repin de fecho (<<pipeline-final>>) |
+| R6 · R7 · R8 | pendente | — | `993e371` (W4b), `fc5874f` (nota `__CURATION`) e os documentos desta entrega esperam o repin de fecho (`run.sh` **18 PASS · 0 FAIL** (stage `mutation` incluso: campanhas d019/d022/d023/d025/d026 pela relação do diff) e `compliance-audit` **17 PASS · 0 FAIL · 0 WARN**, sobre `fca0e1c` em árvore limpa, 2026-10-31 (log `026-pipeline-final.log`)) |
 
 Classe do desvio: **fusão declarada**. Janela de `baseline` vermelho entre `6ace994`
 e `102decc`: aceita.
@@ -232,7 +232,7 @@ Alíneas que derrubam cada mutante da `d026` (`D026_MUT_LOG`): `M1` `REC1 (a)`; 
 **gate**, não o código (lição de rename e de controle em árvore inteira): nada foi
 afrouxado, uma alínea foi acrescentada. `mutation` local pode acusar por
 `poppler-utils`/Playwright ausentes (KI-3); a canônica é o job `visual`. Pipeline
-completo e `compliance-audit` finais: <<pipeline-final>>.
+completo e `compliance-audit` finais: `run.sh` **18 PASS · 0 FAIL** (stage `mutation` incluso: campanhas d019/d022/d023/d025/d026 pela relação do diff) e `compliance-audit` **17 PASS · 0 FAIL · 0 WARN**, sobre `fca0e1c` em árvore limpa, 2026-10-31 (log `026-pipeline-final.log`).
 
 ## Erratas nascidas da execução e da Fase 6 — E1 a E15
 
@@ -270,13 +270,13 @@ nota da F6 em `tasks.md`.
 
 | INV | efeito | prova |
 |---|---|---|
-| INV-1 engine byte-idêntico | zero linha; `V32.*` só lido | `D022-BND1`/`D023-BND1`; `baseline`/`build`/`m41` verdes na `run.sh` da W4; confirmação final: <<pipeline-final>> |
+| INV-1 engine byte-idêntico | zero linha; `V32.*` só lido | `D022-BND1`/`D023-BND1`; `baseline`/`build`/`m41` verdes na `run.sh` da W4; confirmação final: `run.sh` **18 PASS · 0 FAIL** (stage `mutation` incluso: campanhas d019/d022/d023/d025/d026 pela relação do diff) e `compliance-audit` **17 PASS · 0 FAIL · 0 WARN**, sobre `fca0e1c` em árvore limpa, 2026-10-31 (log `026-pipeline-final.log`) |
 | INV-2 `UNSET` ≠ `NONE` | **reforçada**: base `UNSET`/`UNKNOWN` e «sinal requerido ausente» são abstenção, nunca veto | `D026-LEG1 (b)`, `D026-M6` |
 | INV-3 suficiência; UI nunca dona | gate fechado = porta de saída, zero veto | `D010-F3`, `D026-LEG1 (d)` |
 | INV-7 narrativa determinística | `reconciliar()` pura; texto = literal do engine + rótulo fixo | `D026-LEG1 (f)`, `D025-INV8` |
 | INV-8 derivado nunca serializado | `oferta()`/`vetos()` fora de `toSession()`; `decisions` inalterado | `S4-S5`, `D019-INV8`, `D025-INV8` |
-| INV-9 boundary | só classes `produto`/`generated` | stage `boundary` verde na `run.sh` da W4; final: <<pipeline-final>> |
-| INV-10 PT-BR/nomes exatos | enums sem acento; ids do engine literais | `compliance-audit` 17/0/0 (W4); final: <<pipeline-final>> |
+| INV-9 boundary | só classes `produto`/`generated` | stage `boundary` verde na `run.sh` da W4; final: `run.sh` **18 PASS · 0 FAIL** (stage `mutation` incluso: campanhas d019/d022/d023/d025/d026 pela relação do diff) e `compliance-audit` **17 PASS · 0 FAIL · 0 WARN**, sobre `fca0e1c` em árvore limpa, 2026-10-31 (log `026-pipeline-final.log`) |
+| INV-10 PT-BR/nomes exatos | enums sem acento; ids do engine literais | `compliance-audit` 17/0/0 (W4); final: `run.sh` **18 PASS · 0 FAIL** (stage `mutation` incluso: campanhas d019/d022/d023/d025/d026 pela relação do diff) e `compliance-audit` **17 PASS · 0 FAIL · 0 WARN**, sobre `fca0e1c` em árvore limpa, 2026-10-31 (log `026-pipeline-final.log`) |
 
 ## Decisões pendentes — D-1..D-9 e residuais
 
@@ -313,7 +313,7 @@ do sinal (E3) sem alínea.
 | `EA-123` (novo) | `aberto` | `exclude` obsoleto sem sujeito no arquivo de sessão (`ui_curation_v32.js`: `decidir`/`publicados`; `inclusoesSemLastro` cobre só `include`); fora da 026 |
 
 Nenhum achado riscado. Conferência do backlog (`--rule=backlog` do
-`compliance-audit`): execução final em <<pipeline-final>>.
+`compliance-audit`): execução final em `run.sh` **18 PASS · 0 FAIL** (stage `mutation` incluso: campanhas d019/d022/d023/d025/d026 pela relação do diff) e `compliance-audit` **17 PASS · 0 FAIL · 0 WARN**, sobre `fca0e1c` em árvore limpa, 2026-10-31 (log `026-pipeline-final.log`).
 
 ## O aceite do `product-owner` e o `spec-validate`
 
@@ -367,10 +367,10 @@ constante** (diretriz de 2026-09-13); o `EA-122` segue com a lacuna do engine. E
   numa linha do `pr-card`), repin de BASELINE só com autorização nominal do
   proprietário (§29.4).
 - Campanha de mutação depois da F6 (os alvos de `d026` incluem `ui_curation_v32.js`,
-  que o `860735a` tocou): pendente: pipeline final (<<pipeline-final>>); nesta escrita
+  que o `860735a` tocou): pendente: pipeline final (`run.sh` **18 PASS · 0 FAIL** (stage `mutation` incluso: campanhas d019/d022/d023/d025/d026 pela relação do diff) e `compliance-audit` **17 PASS · 0 FAIL · 0 WARN**, sobre `fca0e1c` em árvore limpa, 2026-10-31 (log `026-pipeline-final.log`)); nesta escrita
   não foi reexecutada nem citada.
 - Pipeline final (`run.sh` e `compliance-audit.sh` sobre a árvore limpa depois do
-  repin de fecho): <<pipeline-final>>. A `run.sh` da W4 tem 1 FAIL conhecido (stage
+  repin de fecho): `run.sh` **18 PASS · 0 FAIL** (stage `mutation` incluso: campanhas d019/d022/d023/d025/d026 pela relação do diff) e `compliance-audit` **17 PASS · 0 FAIL · 0 WARN**, sobre `fca0e1c` em árvore limpa, 2026-10-31 (log `026-pipeline-final.log`). A `run.sh` da W4 tem 1 FAIL conhecido (stage
   `mutation`, árvore suja).
 - Execuções das waves citadas aqui são das mensagens de commit, do planning-state e
   dos logs da W4/W4b; esta escrita **não reexecutou suíte**.
@@ -406,14 +406,14 @@ como `agentType`. Os papéis foram exercidos **por lente** em agentes
 | Condição | Estado | Quem fecha |
 |---|---|---|
 | W4 (reancoragens, harness, registros, campanhas) | **fechada** (`3560ba6`, `6182ef6`, `5a99293`, `993e371`, `3f13100`) | `qa-engineer` |
-| W5 (nota do `__CURATION` em `bridges.json`) | feita em `fc5874f`; repin de fecho, pipeline e CI pendentes (<<pipeline-final>>) | `build-engineer` |
+| W5 (nota do `__CURATION` em `bridges.json`) | feita em `fc5874f`; repin de fecho, pipeline e CI pendentes (`run.sh` **18 PASS · 0 FAIL** (stage `mutation` incluso: campanhas d019/d022/d023/d025/d026 pela relação do diff) e `compliance-audit` **17 PASS · 0 FAIL · 0 WARN**, sobre `fca0e1c` em árvore limpa, 2026-10-31 (log `026-pipeline-final.log`)) | `build-engineer` |
 | `spec-validate.md` | iteração 1 **feita** (`0bdfcfe`, 123/125, G1/G2 → E13/E14); iteração 2 feita (`0768076`, 125/125) | `qa-engineer` |
 | Aceite de intenção | reprovação O-1 **acolhida** (D-3 `true`, red `6122bb7`, green `860735a`); segundo passe «não encontrei objeção» sobre `5d9bdff` | `product-owner` |
-| Iteração única da F6 (O-1) | **feita** (`6122bb7`, `860735a`); repin de fecho, campanha pós-F6 e pipeline pendentes (<<pipeline-final>>) | orquestrador · `build-engineer` |
+| Iteração única da F6 (O-1) | **feita** (`6122bb7`, `860735a`); repin de fecho, campanha pós-F6 e pipeline pendentes (`run.sh` **18 PASS · 0 FAIL** (stage `mutation` incluso: campanhas d019/d022/d023/d025/d026 pela relação do diff) e `compliance-audit` **17 PASS · 0 FAIL · 0 WARN**, sobre `fca0e1c` em árvore limpa, 2026-10-31 (log `026-pipeline-final.log`)) | orquestrador · `build-engineer` |
 | `BACKLOG.md` (EA-76, EA-122, EA-123) | **inserido** (aguarda repin); nota da obs. (c) do PO no `EA-122` **pendente** | `doc-writer` |
 | Erratas E1–E15 em `spec.md`; M5 e nota da F6 em `tasks.md`; D-3 em `refinement.md` | **inseridas** (aguardam repin) | `doc-writer` |
 | `design-decisions.md` (D-1, D-2, D-7) | **só após ratificação literal** | `product-owner` |
-| Push + PR + `phase: done` | PR <<PR>> | orquestrador |
+| Push + PR + `phase: done` | PR PR #117 (https://github.com/oflavioc/quickscan-secops/pull/117) | orquestrador |
 | Ratificação D-1..D-9 e merge (*Create a merge commit*, nunca squash) | pendente | proprietário |
 | Deploy | fora desta demanda | proprietário |
 

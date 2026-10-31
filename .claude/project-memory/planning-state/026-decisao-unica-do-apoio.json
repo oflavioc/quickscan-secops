@@ -1,6 +1,6 @@
 {
   "demanda": "026-decisao-unica-do-apoio",
-  "phase": "red",
+  "phase": "implement",
   "spec_dir": "specs/026-decisao-unica-do-apoio",
   "branch": "feature/026-decisao-unica-do-apoio",
   "brief": "Contrato unico de decisao de apoio: a oferta por produto nasce uma vez em ui_curation_v32.js (dono do estado, __CURATION) reconciliando a Camada 1 (MAP) com o motor contextual; tela (ui_p52_support_v32.js), editor e papel consomem. O papel preserva qualificador, acao, variante, escopo e origem. Origem: auditoria externa de 2026-10-31 (QS-01 cards contradizem o motor; QS-02 PDF perde qualificadores) e EA-76 (segunda fonte do ofertaDoMotor, 'conserto e demanda futura'). Microfase 01 do plano de correcao de 2026-10-31.",
@@ -33,5 +33,21 @@
       "D026-LEG1"
     ],
     "notes": "RED PROVADO pelo qa-engineer (Fable 5.1) em 2026-10-31 e reexecutado pelo orquestrador: D026 CONTRATO: 0 PASS · 3 FAIL de 3 (REC1 cai em (a) por __CURATION.oferta ausente; PAP1 cai em (a) C5 0/9 pr-card com tier; LEG1 cai em (a) por contrato ausente). Nascem verdes sem os atributos novos (declarado em red-026.md): REC1 (h), LEG1 (b), LEG1 (d) e metades puras de REC1 (g), LEG1 (a), LEG1 (c)-C3, LEG1 (f). SHA-256 do tests_026_contrato.js: 14d0dcf9e7d3fa1f3f45288f220a9cf519bdfbcdddc0f03e6d296974f27d9047. Regressao: d019 14/14, d022 14/14, d023 9/9, d025 16/16. T011 pareamento.md em 4041ec7 (forticlient -> FortiEndpoint pela regra 3; PAR-4 cadeia esgotada cai para a 3; PAR-5 family null nao aplica a 3 — decididas pelo orquestrador para o core)."
+  },
+  "implement": {
+    "status": "in_progress",
+    "waves_done": [
+      0,
+      1,
+      2
+    ],
+    "pending": [
+      "W3a ui_p52_support",
+      "W3b editor",
+      "W4 reancoragens+harness",
+      "W5 pins/bridges/CI",
+      "W6 docs/aceite"
+    ],
+    "notes": "W2 fechada em 2026-10-31 (core-engineer, Fable 5.1): ui_curation_v32.js 316->597 linhas (acima dos ~495 do plano, abaixo do teto R9; contagem medida a registrar no relatorio). Desvios declarados e ACEITOS pelo orquestrador como erratas da spec (registrar em W6): (a) entradaViva() traz solucoes{capId->[{product,status,deployment}]} para existente[]; (b) veto ganha notas[]; (c) \"sinal requerido ausente\" e abstencao (hipotese), nao veto; (d) laco por sinal roda tambem sob suficiencia fechada (status quo 022); (e) veto.itemId = primeira oferta relacionada nao-family; (f) __P50SUFF ausente => suficiente=false; (g) entrada nula => coletar(true) com console.error. tasks.md T020 diz preflight d023 11/11; o harness tem 12 mutantes (12/12)."
   }
 }

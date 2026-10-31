@@ -154,6 +154,23 @@ tem gate. Os dois "só cópia" (M4, M6) dependem **exclusivamente** da campanha
 T044 — por isso T044 é indivisível. Nenhum mutante novo além dos seis sem
 pedido do proprietário (diretriz de 2026-09-13).
 
+**Nota de execução — iteração única da Fase 6 (F6): D-3 passa a `true` (errata E15 da
+spec).** O aceite de intenção do `product-owner` reprovou nomeando a objeção O-1 (com
+a constante em `false`, o C3 declarado da forma natural seguia «FortiSOAR · indicação
+prioritária» em tela e PDF); o orquestrador a acolheu — *decidido pelo orquestrador sob
+a instrução do proprietário de 2026-10-31 (prompt da microfase 01); ratificação literal
+pendente no PR*. Executada em dois commits, no padrão red → green: **red `6122bb7`**
+(`test(026)`: `D026-LEG1 (c)` reancorada — `D026 CONTRATO` **2 PASS · 1 FAIL de 3**,
+condição `capability-nao-informada` ≠ `plataforma-declarada-cobre`) e **green
+`860735a`** (`feat(026)`: `ui_curation_v32.js` `CONTEXTO_SUPRIMIDO_POR_PLATAFORMA =
+true`, comentário reescrito, HTML regenerado — `D026 CONTRATO` **3 PASS · 0 FAIL de 3**;
+números citados dos corpos dos commits). **A constante continua sem mutante próprio**
+(diretriz de 2026-09-13: produto antes de instrumento; nenhum gate ou mutante novo sem
+pedido): a alínea `LEG1 (c)` reancorada a pina, agora em `true`, e a matriz mantém a
+dívida «`D026 · CONSTANTE C3`». Onde esta tabela e o T033/T044 dizem que a alínea pina
+`false`, lê-se `true` (redação original preservada, R2 §5). O `EA-122` segue com a lacuna
+do engine.
+
 ## O que cada tarefa deixa medível — comando → linha
 
 Ao fim da tarefa, o comando imprime a linha **gravada em arquivo**; divergência
@@ -207,7 +224,7 @@ Ao fim da tarefa, o comando imprime a linha **gravada em arquivo**; divergência
 | C1 veto visível | T020, T030 | `ui_curation_v32.js` (`reconciliar`), `ui_p52_support_v32.js` (`declararVetos`, papel) | `D026-REC1 (b)` verde; M1/M4 DETECTADO; sonda C2/C4 |
 | C2 variante/identidade | T011, T020, T030 | `chaveDe`, `anexos/pareamento.md`, `cardDoProduto` | `REC1 (a)(c)(e)(g)`; M3 DETECTADO |
 | C3 serviço/precedência | T020 | `veredictoDeServico`, fusão | `REC1 (d)(f)`; M5 DETECTADO |
-| C4 hipótese condicionada | T020, T030 | exceção D-6, `CONTEXTO_SUPRIMIDO_POR_PLATAFORMA = false`, `.p53-sol-condicao` | `LEG1 (a)(b)(c)`; M6 DETECTADO; constante lida no fonte |
+| C4 hipótese condicionada | T020, T030 | exceção D-6, ~~`CONTEXTO_SUPRIMIDO_POR_PLATAFORMA = false`~~ `= true` desde a F6 (E15), `.p53-sol-condicao` | `LEG1 (a)(b)(c)`; M6 DETECTADO; constante lida no fonte |
 | C5 gate fechado / congelada | T020, T030 | portas de saída, `temVoz`, `declararVetos` | `LEG1 (d)(e)`; M4; dívida (d) na matriz |
 | C6 papel | T030 | `papelHTML` | `PAP1`; M2 DETECTADO; sonda C5 9/9 |
 | C7 três superfícies | T020, T030, T031 | `ofertados()` leitor, `decisaoDe`, editor D-9 | `REC1 (h)`, `LEG1 (g)`; M3; `.p53-cur-item-var` por leitura |

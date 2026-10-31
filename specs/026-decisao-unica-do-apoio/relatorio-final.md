@@ -1,14 +1,17 @@
 # Relatório final — 026-decisao-unica-do-apoio
 
-> Fase 6 · T066 · dono: `doc-writer` · escrito em 2026-10-31 sobre HEAD `fc5874f`.
-> Branch `feature/026-decisao-unica-do-apoio` (base `develop @ 9509e4b`) · 18
-> commits à frente · PR <<PR>>.
-> **Aceite de intenção do `product-owner`: <<aceite-PO>>**; ele não emite PASS/FAIL.
+> Fase 6 · T066 · dono: `doc-writer` · escrito em 2026-10-31 sobre HEAD `fc5874f` e
+> **atualizado na iteração única da Fase 6 sobre HEAD `860735a`**.
+> Branch `feature/026-decisao-unica-do-apoio` (base `develop @ 9509e4b`) · 22
+> commits à frente (18 até `fc5874f`; depois `8ad6621` W6 docs, `0bdfcfe`
+> spec-validate iteração 1, `6122bb7` red F6, `860735a` green F6) · PR <<PR>>.
+> **Aceite de intenção do `product-owner`: reprovação nomeada O-1, acolhida (D-3
+> passa a `true`); segundo passe pendente — <<aceite-PO-2>>**; ele não emite PASS/FAIL.
 > **Ratificação de D-1..D-9: pendente do proprietário, no PR** — as decisões foram
 > *decididas pelo orquestrador sob a instrução do proprietário de 2026-10-31
 > (prompt da microfase 01); ratificação literal pendente no PR*.
 > Marcadores deixados de propósito, a preencher quando o número existir:
-> `<<spec-validate>>`, `<<aceite-PO>>`, `<<pipeline-final>>`, `<<PR>>`. Todo número
+> `<<spec-validate-2>>`, `<<aceite-PO-2>>`, `<<pipeline-final>>`, `<<PR>>`. Todo número
 > vem de execução citável ou de registro canônico, com a fonte ao lado: «medido por
 > mim» é leitura desta escrita; «citado de <fonte>» é número que li e não reexecutei.
 
@@ -44,12 +47,12 @@ declarada. Onde o motor se abstém, a oferta da Camada 1 passa inteira como
 copia do card tier, ação, condição, variante, escopo e vetos. Zero linha em engine,
 Camada 1, `ui_v32.js`, `ui_session_v32.js` e schema.
 
-**Pegada** (medida por mim, `git diff --stat 9509e4b..HEAD`, HEAD `fc5874f`): 44
-arquivos, +8661 −340. Produto: `ui_curation_v32.js`, `ui_p52_support_v32.js`,
+**Pegada** (medida por mim, `git diff --stat 9509e4b..HEAD`, HEAD `860735a`): 47
+arquivos, +9765 −341 (eram 44 arquivos, +8661 −340 em `fc5874f`). Produto: `ui_curation_v32.js`, `ui_p52_support_v32.js`,
 `ui_p52_support_v32.css`, `ui_curation_edit_v32.js` e o HTML dev regenerado. Gates:
-`tests_026_contrato.js` (1055 linhas) e `tests_026_mutants.js` (324). Doc:
+`tests_026_contrato.js` (1091 linhas no `HEAD`; eram 1055) e `tests_026_mutants.js` (324). Doc:
 `refinement.md`, `spec.md`, `plan.md`, `tasks.md`, `red-026.md`, 11 anexos mais 11
-cenários, `CONTEXT.md` (+60). Os 18 commits: 3 `feat`, 3 `test`, 3 `docs`, 9 `chore`
+cenários, `CONTEXT.md` (+60). Os 22 commits: 4 `feat`, 4 `test`, 5 `docs`, 9 `chore`
 (medido por `git log --format=%s 9509e4b..HEAD`). Falta: o pipeline final, o repin
 de fecho, o CI e o PR (<<pipeline-final>>).
 
@@ -67,11 +70,14 @@ impôs** ao B:
    do lado produto (C4-DL), hoje coberto por `D026-REC1 (j)`.*
 2. **D-4 do B retirada** (enxerto E2): levar id do motor a `decisions` mudava o
    contrato do schema v1 sem bump. `decisions` continua `{ chave → include|exclude }`.
-3. **C3 nasce desligada** (`CONTEXTO_SUPRIMIDO_POR_PLATAFORMA = false`, enxerto E6):
-   retirar o `FortiSOAR` esvazia `published()` e, como `presentationOf` nunca promove
+3. **C3 nasceu desligada** (`CONTEXTO_SUPRIMIDO_POR_PLATAFORMA = false`, enxerto E6) —
+   **ligada na Fase 6** (D-3 revertida pela objeção O-1 do PO; errata E15): retirar o
+   `FortiSOAR` por **veto** esvazia `published()` e, como `presentationOf` nunca promove
    `CONTEXT_NOT_INFORMED` a `card` (`ui_v32.js:693-696`) e `hasSubstituteV32` exige
    classificação ≠ `CONTEXT_NOT_INFORMED` (`:751`), a Camada 1 voltaria à tela com o
-   produto que o veto negou.
+   produto que o veto negou — isso continua verdadeiro e é por isso que a constante
+   `true` **nunca veta**: rebaixa a linha a hipótese `plataforma-declarada-cobre`
+   (tier 2, após validação), o card fica e `published()` não esvazia.
 
 Por que não A: deixa as duas cópias discordando por desenho (o editor lista o
 vetado) e falha o aceite literal do `QS-01` («mesma decisão na tela, no editor e no
@@ -82,14 +88,14 @@ harness de mutantes nasce na W4 e não no red (IC-4); `D022-M10` muda de arquivo
 
 ## Arquivos alterados e limites
 
-| arquivo | classe | linhas (HEAD `fc5874f`) | mudança |
+| arquivo | classe | linhas (HEAD `860735a`) | mudança |
 |---|---|---|---|
-| `ui_curation_v32.js` | produto | 316 → **597** (+333 −52) | `coletar`/`entradaViva`, `reconciliar` pura, `pareamento` por critério, `temVoz`, `CONTEXTO_SUPRIMIDO_POR_PLATAFORMA`; `ofertados()` leitor; bridge `oferta`/`vetos`/`reconcile`; `contract()` +2 campos |
+| `ui_curation_v32.js` | produto | 316 → **601** (+337 −52; era 597 em `fc5874f`, +4 do comentário da constante reescrito na F6) | `coletar`/`entradaViva`, `reconciliar` pura, `pareamento` por critério, `temVoz`, `CONTEXTO_SUPRIMIDO_POR_PLATAFORMA` (`true` desde a F6); `ofertados()` leitor; bridge `oferta`/`vetos`/`reconcile`; `contract()` +2 campos |
 | `ui_p52_support_v32.js` | produto | 872 → **1105** (+339 −106) | `ofertaDoMotor()` leitor; card com atributos novos e linhas `variante`/`acao`/`condicao`/`elig`/`escopo`; `declararVetos`; `papelHTML` copia tier, ação, condição, variante, escopo e vetos; `ACAO_TXT`/`CONDICAO_TXT`/`VETO_TXT` |
 | `ui_p52_support_v32.css` | produto | 220 → **291** (+71) | só prefixo `p53-*`, sem hex |
 | `ui_curation_edit_v32.js` | produto | +8 (286) | `span.p53-cur-item-var` «apresentado como <variante>» (D-9) |
-| `quickscan_secops_soccmm_v3_2_dev.html` | gerado | +751 −158 | só via `build_v32_html.py` |
-| `tests_026_contrato.js` | gate novo | 1055 | `D026-REC1` (a)…(j), `D026-PAP1`, `D026-LEG1` |
+| `quickscan_secops_soccmm_v3_2_dev.html` | gerado | +755 −158 | só via `build_v32_html.py` |
+| `tests_026_contrato.js` | gate novo | 1091 | `D026-REC1` (a)…(j), `D026-PAP1`, `D026-LEG1` (`LEG1 (c)` reancorada na F6) |
 | `tests_026_mutants.js` | gate novo | 324 | `D026-M1`…`M6`, padrão d025 (mutação em cópia, rebuild efêmero, `--preflight`, `reason` nominal por gate) |
 | `tests_022_mutants.js`, `tests_019_curadoria.js` | gate (trilha) | +16 −3 · +11 | `D022-M10` reancorado em `ui_curation_v32.js` (`F.estado`, `precisaBuild`); comentários-trilha E13 em `D019-SOL1`, `D019-SOL3 (b)`, `D019-MED1` (corpo byte-idêntico) |
 | `expected_suites.json`, `mutation_map.json`, `mutation-matrix.json`, `regra_morta.json`, `bridges.json`, `pins.json` | registro | +6 · +28 −2 · +90 −1 · +5 −5 · +1 −1 · +41 −12 | `d026` 3/0; harness `d026` e população do `d022`; 6 pares + 5 dívidas na matriz (207 pares); censo do CSS 52/298/5; nota `__CURATION`; repins R0–R3 |
@@ -97,7 +103,7 @@ harness de mutantes nasce na W4 e não no red (IC-4); `D022-M10` muda de arquivo
 | `.claude/rules/design-decisions.md` | doc | **não tocado** | D-1/D-2/D-7 **só após ratificação** |
 
 **Limites.** O orçamento de R9 §7 (~600 linhas) foi estourado pelos dois módulos
-(`ui_curation` 597 contra ≈495 previstos; `ui_p52_support` 1105 contra ≈940; o de
+(`ui_curation` 597 em `fc5874f`, 601 no `HEAD`, contra ≈495 previstos; `ui_p52_support` 1105 contra ≈940; o de
 apoio já estava acima, 872) — errata E9 da spec; justificativa do `plan.md`: a
 demanda retira derivação do módulo; o split é rota futura. `lint-arch`: 0
 problema(s). Zero `innerHTML=` novo. Nenhum bridge novo.
@@ -107,7 +113,8 @@ problema(s). Zero `innerHTML=` novo. Nenhum bridge novo.
 «Antes» = HEAD `9509e4b`, medido pelo refutador e pela sonda
 (`anexos/refutacao-reproducoes.json`, `red-026.md`). «Depois» = sonda da W3a sobre
 o HTML de `816d605` (`anexos/sonda-leitura.js`, log da T030) para os casos que a
-sonda cobre; **C7-UNSET, F2 e GF são medidos pelas alíneas do gate**, não pela
+sonda cobre — **exceto C3, revisto na F6** (alínea `LEG1 (c)` reancorada, `860735a`; o
+texto em tela e papel é a medição do aceite do PO, citada); **C7-UNSET, F2 e GF são medidos pelas alíneas do gate**, não pela
 sonda. A sonda sobre o HTML **final** (T064) fica para o pipeline final
 (<<pipeline-final>>).
 
@@ -115,7 +122,7 @@ sonda. A sonda sobre o HTML **final** (T064) fica para o pipeline final
 |---|---|---|---|
 | **C1** endpoint `NONE`, `saasAllowed:"no"` | card `FortiEndpoint` prioritário; papel sem tier | card linha `FortiEndpoint`, `h4` **FortiEDR**, `item-id=fortiedr`, `acao=avaliar-aquisicao`, prioritária, «Variante resolvida pelo contexto declarado — linha de produto: FortiEndpoint»; zero veto; papel igual, com tier | `REC1 (a)`, `PAP1`, `LEG1 (g)` |
 | **C2** EDR de terceiro em produção | card `FortiEndpoint` prioritário | **zero card**; 1 veto `operacional` «tecnologia operacional — apoio em operacionalização (nunca substituição)» · «Tecnologia declarada: CrowdStrike Falcon (production, saas)»; papel imprime a seção só com o bloco | `REC1 (b)`, `LEG1 (e)`, `PAP1` |
-| **C3** FortiSOC só em `soc-platform` | card `FortiSOAR` prioritário | card `FortiSOAR` prioritário + `condicao=capability-nao-informada` visível; zero veto (hipótese condicionada; lacuna do engine → `EA-122`) | `LEG1 (c)` |
+| **C3** FortiSOC só em `soc-platform` | card `FortiSOAR` · indicação prioritária | ~~card `FortiSOAR` prioritário + `condicao=capability-nao-informada` (forma da W2, D-3 `false`)~~ — **F6 (O-1 do PO)**: **FortiSOAR · após validação · `plataforma-declarada-cobre`** — «Hipótese do mapa: a plataforma declarada cobre esta capability; validar no aprofundamento.» em tela e papel (texto medido pelo PO, citado); tier 2, `published()` não vazio, Camada 1 oculta, zero veto (lacuna do engine → `EA-122`) | `LEG1 (c)` reancorada: red `6122bb7` (2/3), green `860735a` (3/3) |
 | **C3b** FortiSOC na própria `security-automation` | card `FortiSOAR` (defeito classe C2) | zero card; veto `operacional` com «(M75)» · «Tecnologia declarada: FortiSOC (production, saas)» | `LEG1 (c)(e)` |
 | **C4** Sentinel em produção | `FortiAnalyzer` + `FortiSIEM` prioritários | zero card; `data-p53-vetos="2"` (FortiAnalyzer, FortiSIEM) · «Tecnologia declarada: Microsoft Sentinel (production, saas)» | `REC1 (b)`, `LEG1 (e)` |
 | **C4-DL** C4 + `detection-lifecycle: 0` | `FortiSIEM` prioritário ao lado do veto (estado alcançável só por fusão) | zero card `FortiSIEM`, `li[data-p53-veto-item="FortiSIEM"]` presente, `published()` sem `FortiSIEM` | `REC1 (j)` (nasce verde; poder só em `D026-M5`) |
@@ -167,8 +174,11 @@ reexecutou suíte**.
 | W4b `993e371` | `D026 CONTRATO` (com `REC1 (j)`) | **3 PASS · 0 FAIL de 3** | corpo do commit; log `026-W4b-d026.log` |
 | W4b | preflight `d026` · campanha `d026` | 6/6 âncoras · **6 DETECTADO · 0 SOBREVIVENTE · 0 NÃO EXECUTADO** (27 s, 9 execuções da suíte; M5 cai em `REC1 (j)`) | `mutation_map.json → harnesses.d026._trilha`; logs `026-W4b-*` |
 | W4b | stage `suites` · `check_tdd` · matriz | 0 problemas · 21 demandas, 2 waivers, 0 problema(s) · **207 pares** completos | logs `026-W4b-suites-stage.log`, `026-W4b-tdd.log`; commit |
-| Fecho | `bash .claude/verify/run.sh` **e** `compliance-audit.sh` na árvore limpa, CI `verify` · `visual` · `fecho` | <<pipeline-final>> | — |
-| Fase 6 | `spec-validate` | <<spec-validate>> | — |
+| Fase 6 `0bdfcfe` | `spec-validate` iteração 1 (conferência por leitura + execuções do validador) | **123/125 = 98,4 %**; 2 gaps `spec-errada` (G1, G2) → erratas E13/E14; no mesmo HEAD `D026 CONTRATO` 3/3 · `d019` 14/14 · `d022` 14/14 · `d023` 9/9 · `d025` 16/16; preflights dos 5 harnesses com `ocorrencias == 1` | `spec-validate.md` (citado) |
+| F6 red `6122bb7` | `node tests_026_contrato.js` com `LEG1 (c)` reancorada | **2 PASS · 1 FAIL de 3** (`LEG1 (c)` C3: condição `capability-nao-informada` ≠ `plataforma-declarada-cobre`) | corpo do commit (citado) |
+| F6 green `860735a` | `D026 CONTRATO` após `CONTEXTO_SUPRIMIDO_POR_PLATAFORMA = true` e HTML regenerado | **3 PASS · 0 FAIL de 3** | corpo do commit (citado) |
+| Pós-F6 | campanha de mutação (alvos `d026` incluem `ui_curation_v32.js`), `run.sh` e `compliance-audit.sh` sobre a árvore limpa depois do repin de fecho; CI `verify` · `visual` · `fecho` | pendente: pipeline final (<<pipeline-final>>) | — |
+| Fase 6 | `spec-validate` iteração 2 (itens 24 e 64 contra E13/E14; itens 4 e 52 contra E15) | <<spec-validate-2>> | — |
 
 Placar do red por alínea (`red-026.md`): nasceram verdes, declarados, `REC1 (h)`,
 `LEG1 (b)`, `LEG1 (d)` e as metades puras de `REC1 (g)`, `LEG1 (a)`, `LEG1 (c)`-C3
@@ -200,6 +210,7 @@ e `102decc`: aceita.
 | W2 | 0/3 (alíneas de DOM caem) | **0/3** (citado do corpo de `6ace994`) | vermelho nomeado | d019/d022/d023/d025 DETECTADO esperado |
 | W3 | 3/3 | **3/3** (`816d605`, `dc5b633`) | vermelho nomeado | `D022-M10` com `ocorrencias: 0` até a W4 (prevista) |
 | W4 | 3/3 | **3/3** (`993e371`, com `REC1 (j)`) | verde (stage `suites`: 0 problemas) | **verde**: d019 17 · d022 13 · d023 12 · d025 23 · d026 6, todos DETECTADO |
+| F6 (O-1) | red 2/3 (só `LEG1 (c)` cai) → green 3/3 | **2 PASS · 1 FAIL** (`6122bb7`) → **3/3** (`860735a`), citado dos corpos | verde (contagem do registro inalterada) | pendente: pipeline final |
 
 ## Campanha e pipeline — custo medido
 
@@ -223,10 +234,13 @@ afrouxado, uma alínea foi acrescentada. `mutation` local pode acusar por
 `poppler-utils`/Playwright ausentes (KI-3); a canônica é o job `visual`. Pipeline
 completo e `compliance-audit` finais: <<pipeline-final>>.
 
-## Erratas nascidas da execução — E1 a E12
+## Erratas nascidas da execução e da Fase 6 — E1 a E15
 
 Registradas no fim de `spec.md` §Erratas. Nenhuma afrouxa gate, alínea ou mutante; a
-E12 acrescenta uma alínea e nenhuma contagem de gate muda:
+E12 acrescenta uma alínea, a **E15 reancora uma** (red/green, sem afrouxar) e nenhuma
+contagem de gate muda. As E13 e E14 vêm do `spec-validate` (iteração 1) e a E15 do aceite
+do PO; **nesta tabela «E13» e «E14» são erratas** — as menções a «E13»/«E14» em
+§Reancoragens, `plan.md` e `tasks.md` são enxertos do desenho (§0.1) e seguem assim:
 
 | # | tema | classe |
 |---|---|---|
@@ -242,10 +256,15 @@ E12 acrescenta uma alínea e nenhuma contagem de gate muda:
 | E10 | preflight d023 = 12 mutantes | registro |
 | E11 | repins consolidados (R0 a R3), não nove | registro |
 | E12 | `D026-M5`: mecanismo de C7 e alínea `REC1 (j)` (fixture C4-DL) | divergência declarada — o gate ganhou uma alínea, nenhuma foi afrouxada |
+| E13 | trilha de `temVoz` só no lado do owner; `ui_v32.js` intocado por §29.4 (G1) | aditiva |
+| E14 | três literais de motivo no owner (`SEM_NOTA_VALIDAR`, `SEM_CANDIDATO`, `ARQ_VIOLADA`); a Regra de ouro os admite quando o engine não fornece nota (G2) | aditiva |
+| E15 | D-3 nasce `true`: C3 é hipótese `plataforma-declarada-cobre`, após validação (O-1 do PO); `LEG1 (c)` reancorada | divergência declarada — alínea reancorada por red/green, nenhuma afrouxada |
 
 A E10 também corrige a prosa de `tasks.md` (nota sob a matriz de mutantes) e do
 `plan.md` §Janela vermelha («d023 11»): lê-se 12. A E12 corrige a linha C3 da
-spec e a linha M5 de `tasks.md`.
+spec e a linha M5 de `tasks.md`. A E15 corrige a alínea `LEG1 (c)` (linha C4 de §Critérios),
+o §2.6 e a linha C3 de §Cobertura da spec, o caso 3 e a linha D-3 do `refinement.md` e a
+nota da F6 em `tasks.md`.
 
 ## Invariantes — impacto
 
@@ -261,13 +280,13 @@ spec e a linha M5 de `tasks.md`.
 
 ## Decisões pendentes — D-1..D-9 e residuais
 
-Ratificação literal do proprietário, **por item**, no PR (T069):
+Ratificação literal do proprietário, **por item**, no PR (T069). A D-3 foi revertida na Fase 6 — *decidido pelo orquestrador sob a instrução do proprietário de 2026-10-31 (prompt da microfase 01); ratificação literal pendente no PR*:
 
 | id | decisão | se invertida |
 |---|---|---|
 | D-1 | C2/C4 sem card de aquisição; veto visível com a nota literal | card da linha sem tier — **escalar** |
 | D-2 | `CONTEXT_NOT_INFORMED` = hipótese condicionada, tier por `sev` | **parar e escalar** (35 gates da 010 por vácuo) |
-| D-3 | `CONTEXTO_SUPRIMIDO_POR_PLATAFORMA = false`; lacuna do engine ao backlog | `true` pela forma segura (`plataforma-declarada-cobre`, tier 2, nunca veto) |
+| D-3 | `CONTEXTO_SUPRIMIDO_POR_PLATAFORMA = true` — forma segura: hipótese `plataforma-declarada-cobre`, após validação, **nunca veto**. Nasceu `false` na W2; virada na Fase 6 pela objeção O-1 do aceite do PO, medida. Recomendação: sim | `false` (1 linha + alínea `LEG1 (c)` de volta); o C3 do plano fica em aberto no `EA-122` |
 | D-4 | vetos visíveis em tela e papel, por linha, razão literal | só no `diag()` |
 | D-5 | serviços do motor e `fortixdr` não viram card sem linha no mapa | demanda própria |
 | D-6 | condição da hipótese visível nos dois modos (inclusive legado) | só fora do legado |
@@ -298,10 +317,48 @@ Nenhum achado riscado. Conferência do backlog (`--rule=backlog` do
 
 ## O aceite do `product-owner` e o `spec-validate`
 
-`spec-validate`: <<spec-validate>>. Aceite de intenção: <<aceite-PO>>, contra o
-`refinement.md`, a matriz acima (sonda re-executada sobre o HTML final) e os
-aceites do plano do proprietário. Observações do PO e destino de cada uma:
-<<aceite-PO>>.
+**`spec-validate`, iteração 1** (`0bdfcfe`, `spec-validate.md`, citado): **123/125 = 98,4 %**.
+Os dois gaps são de classe `spec-errada` e se resolvem por errata, sem tocar gate,
+registro ou código:
+
+- **G1** (item 24) — a spec promete o comentário-trilha de `temVoz` «nos dois lados»
+  enquanto declara `ui_v32.js` intocado (§29.4); o código respeitou a boundary (trilha só
+  em `ui_curation_v32.js`) ⇒ **errata E13** (trilha unilateral).
+- **G2** (item 64) — a Regra de ouro diz que os únicos literais novos são
+  `ACAO_TXT`/`CONDICAO_TXT`/`VETO_TXT`, mas o owner carrega `SEM_NOTA_VALIDAR`,
+  `SEM_CANDIDATO` e `ARQ_VIOLADA` (motivo dos vetos que o engine descarta sem nota) ⇒
+  **errata E14**.
+
+**Iteração 2: pendente** — <<spec-validate-2>>. Confere só os itens 24 e 64 contra o texto
+das E13/E14 **e** os itens que a E15 altera (4 — `LEG1 (c)` — e 52 — a constante); o
+resto da conferência de 125 itens não se repete.
+
+**Aceite de intenção do `product-owner`** (lente PO, Fable 5.1, 2026-10-31; citado):
+**reprovou nomeando UMA objeção, O-1** — com D-3 = `false`, o C3 declarado da forma
+natural (FortiSOC em `soc-platform`, que é o que `suppressedByPlatform()` lê) continuava
+«FortiSOAR · indicação prioritária» em tela e PDF, e o plano do proprietário exige
+«explicar uso/expansão da capacidade já existente». O PO mediu a forma segura (constante
+`true` numa cópia): «FortiSOAR · após validação · Hipótese do mapa: a plataforma declarada
+cobre esta capability; validar no aprofundamento.» em tela e papel, `published()` não
+vazio, Camada 1 oculta, zero veto.
+
+**Decisão do orquestrador — O-1 acolhida, iteração única da Fase 6**: *decidido pelo
+orquestrador sob a instrução do proprietário de 2026-10-31 (prompt da microfase 01);
+ratificação literal pendente no PR*. Red `6122bb7` (`D026 CONTRATO` 2 PASS · 1 FAIL de 3,
+`LEG1 (c)` reancorada), green `860735a` (`CONTEXTO_SUPRIMIDO_POR_PLATAFORMA = true`,
+comentário reescrito, HTML regenerado, 3 PASS · 0 FAIL de 3). **Sem mutante novo para a
+constante** (diretriz de 2026-09-13); o `EA-122` segue com a lacuna do engine. Errata E15.
+
+**Três observações não bloqueantes do PO, e a rota de cada uma:**
+
+| obs. | o quê | rota |
+|---|---|---|
+| (a) | «Hipótese do mapa» / «Linhas do mapa» é vocabulário interno (`MAP`) no texto do cliente | passe de copy em `fix-finding` futuro, **com `grep` do literal em `tests_*.js` antes** (a string pode ser o observável de uma invariante) — não aberto nesta demanda |
+| (b) | o *lead* do bloco de vetos não é copiado ao papel | escolha registrada; sem ação |
+| (c) | códigos internos do engine («(M75)», «(M50)», «OG oficial») chegam ao texto do cliente nos vetos — mas já chegavam via `#pr-support` | nota no `EA-122` — **pendente**: `.claude/BACKLOG.md` não foi tocado nesta escrita |
+
+**Segundo passe do PO: pendente** — <<aceite-PO-2>>. Contra o `refinement.md` revisto
+(caso 3, D-3), a matriz acima e os aceites do plano do proprietário.
 
 ## O que não foi executado, e por quê
 
@@ -309,6 +366,9 @@ aceites do plano do proprietário. Observações do PO e destino de cada uma:
   Chromium canônico. Se divergirem, é **PARADA**: primeiro layout (tier + condição
   numa linha do `pr-card`), repin de BASELINE só com autorização nominal do
   proprietário (§29.4).
+- Campanha de mutação depois da F6 (os alvos de `d026` incluem `ui_curation_v32.js`,
+  que o `860735a` tocou): pendente: pipeline final (<<pipeline-final>>); nesta escrita
+  não foi reexecutada nem citada.
 - Pipeline final (`run.sh` e `compliance-audit.sh` sobre a árvore limpa depois do
   repin de fecho): <<pipeline-final>>. A `run.sh` da W4 tem 1 FAIL conhecido (stage
   `mutation`, árvore suja).
@@ -318,20 +378,22 @@ aceites do plano do proprietário. Observações do PO e destino de cada uma:
 
 ## Lição
 
-1. A conferência no código antes da spec valeu três correções ao desenho vencedor
-   (precedência, D-4, C3 desligada) — nenhuma apareceu em juízo, todas em leitura de
-   `ui_v32.js` e do `engine_v32.js`.
-2. O mesmo método falhou uma vez, e a campanha de mutação o pegou: a spec e o
-   `tasks.md` narraram, sem medir, que C7 exercia a precedência da fusão. Mutante
-   que sobrevive acusa o gate; o mecanismo certo estava no lado produto (C4-DL) e
-   foi achado por diagnóstico, não por raciocínio. Registrado pelo `doc-writer` como
-   proposta; a escolha da lição que fica é do `product-owner`.
+*Contexto*: a conferência no código antes da spec valeu três correções ao desenho
+vencedor (precedência, D-4, C3 desligada) — nenhuma apareceu em juízo, todas em leitura de
+`ui_v32.js` e do `engine_v32.js`; o mesmo método falhou uma vez, e a campanha de mutação o
+pegou.
+
+**Lição escolhida pelo `product-owner`** (aceite de 2026-10-31): **mecanismo narrado não é
+mecanismo medido** — quando a spec afirma que um cenário exercita uma regra, o par
+cenário × mutante tem de provar que só aquela regra o derruba; o sobrevivente `D026-M5`
+acusou o gate, não o código, e o estado certo (C4-DL) apareceu por diagnóstico, não por
+raciocínio.
 
 ## Trilha de modelos
 
 O orquestrador e os agentes `general-purpose` rodaram em Fable 5.1
-(`claude-fable-5-1`); a W3b rodou em Sonnet. Os 18 commits trazem
-`Co-Authored-By: Claude Fable 5.1` (trailer do orquestrador, medido por mim; **não**
+(`claude-fable-5-1`); a W3b rodou em Sonnet. Os 22 commits trazem
+`Co-Authored-By: Claude Fable 5.1` (trailer do orquestrador, medido por mim: 22 de 22; **não**
 identifica o agente que escreveu cada alteração).
 
 **Desvio declarado, não achado**: os papéis declarados em `.claude/agents/*.md`
@@ -345,10 +407,11 @@ como `agentType`. Os papéis foram exercidos **por lente** em agentes
 |---|---|---|
 | W4 (reancoragens, harness, registros, campanhas) | **fechada** (`3560ba6`, `6182ef6`, `5a99293`, `993e371`, `3f13100`) | `qa-engineer` |
 | W5 (nota do `__CURATION` em `bridges.json`) | feita em `fc5874f`; repin de fecho, pipeline e CI pendentes (<<pipeline-final>>) | `build-engineer` |
-| `spec-validate.md` | <<spec-validate>> | `qa-engineer` |
-| Aceite de intenção | <<aceite-PO>> | `product-owner` |
-| `BACKLOG.md` (EA-76, EA-122, EA-123) | **inserido** (aguarda repin) | `doc-writer` |
-| Erratas E1–E12 em `spec.md`; M5 em `tasks.md` | **inseridas** (aguardam repin) | `doc-writer` |
+| `spec-validate.md` | iteração 1 **feita** (`0bdfcfe`, 123/125, G1/G2 → E13/E14); iteração 2 pendente (<<spec-validate-2>>) | `qa-engineer` |
+| Aceite de intenção | reprovação O-1 **acolhida** (D-3 `true`, red `6122bb7`, green `860735a`); segundo passe pendente (<<aceite-PO-2>>) | `product-owner` |
+| Iteração única da F6 (O-1) | **feita** (`6122bb7`, `860735a`); repin de fecho, campanha pós-F6 e pipeline pendentes (<<pipeline-final>>) | orquestrador · `build-engineer` |
+| `BACKLOG.md` (EA-76, EA-122, EA-123) | **inserido** (aguarda repin); nota da obs. (c) do PO no `EA-122` **pendente** | `doc-writer` |
+| Erratas E1–E15 em `spec.md`; M5 e nota da F6 em `tasks.md`; D-3 em `refinement.md` | **inseridas** (aguardam repin) | `doc-writer` |
 | `design-decisions.md` (D-1, D-2, D-7) | **só após ratificação literal** | `product-owner` |
 | Push + PR + `phase: done` | PR <<PR>> | orquestrador |
 | Ratificação D-1..D-9 e merge (*Create a merge commit*, nunca squash) | pendente | proprietário |
@@ -357,13 +420,13 @@ como `agentType`. Os papéis foram exercidos **por lente** em agentes
 ## Fontes citadas
 
 `.claude/project-memory/planning-state/026-decisao-unica-do-apoio.json`;
-`specs/026-decisao-unica-do-apoio/{refinement,spec,plan,tasks,red-026}.md`;
+`specs/026-decisao-unica-do-apoio/{refinement,spec,plan,tasks,red-026,spec-validate}.md`;
 `anexos/{desenho-sintese,refutacao-reproducoes,pareamento}`; `.claude/BACKLOG.md`
 (`EA-76`, `EA-121`, `EA-122`, `EA-123`); `.claude/verify/mutation_map.json →
 harnesses.d026._trilha` e `harnesses.d022._trilha`; `expected_suites.json → suites.d026`;
 commits `2cc513a` `96369af` `4041ec7` `7678222` `a02d411` `193ee84` `6ace994`
 `7c95f31` `816d605` `dc5b633` `102decc` `ab666e2` `3560ba6` `6182ef6` `5a99293`
-`3f13100` `993e371` `fc5874f`; logs da W4/W4b no scratchpad do orquestrador
+`3f13100` `993e371` `fc5874f` `8ad6621` `0bdfcfe` `6122bb7` `860735a`; logs da W4/W4b no scratchpad do orquestrador
 (`026-W4-campanha-*.log`, `026-W4-d014.log`, `026-W4-run.log`,
 `026-W4-compliance.log`, `026-W4b-*`); medições diretas desta escrita: `git log
 --oneline 9509e4b..HEAD`, `git diff --stat`/`--numstat 9509e4b..HEAD`, `git show

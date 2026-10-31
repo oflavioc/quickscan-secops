@@ -414,7 +414,12 @@ promessa de cobertura. Isso é trabalho de validação técnica e comercial post
   **"Data original não informada"** em vez de inventar uma.
 - **Compatibilidade por engine:** a importação confere a identidade do engine. Documento de engine
   diferente é recusado, não adaptado em silêncio.
-- **Importar substitui a sessão ativa por inteiro.** Exporte antes.
+- **Curadoria do relatório** é a seleção, feita antes de gerar o relatório, de quais itens que a
+  ferramenta inferiu (apoio e leitura arquitetural) vão à publicação, na tela e no papel. Ela não edita
+  texto, não cria conteúdo e nunca alcança o que foi declarado ou medido. Faz parte da sessão: quando há algo declarado,
+  vai no JSON exportado e volta na importação.
+- **Nova sessão** e **Reiniciar avaliação** limpam a curadoria do relatório junto com as respostas — o item volta a ser decidido pela ferramenta.
+- **Importar substitui a sessão ativa por inteiro — inclusive a curadoria do relatório; o que o arquivo não declara volta a "nada declarado".** Exporte antes.
 
 **Checklist de isolamento A → B → A:**
 

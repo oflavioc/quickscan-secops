@@ -6,7 +6,7 @@
   "bridges": {
     "__V32UI": {
       "owner": "ui_v32.js",
-      "nota": "ponte da Camada 3 (publishableStats, iconFor, ARCH_FIELDS)"
+      "nota": "ponte da Camada 3 (publishableStats, iconFor, ARCH_FIELDS). [025] discardDraft()/hasDraft(): acessores do `draft` do editor de contexto — o draft e descartado por commit de importacao, Nova sessao e Reiniciar (D025-TRN2); nenhum outro modulo escreve `draft`."
     },
     "__uxDecor": {
       "owner": "ui_ux_v32.js",
@@ -70,7 +70,7 @@
     },
     "__CURATION": {
       "owner": "ui_curation_v32.js",
-      "nota": "estado de curadoria do relatorio (demanda 019): selecao por offering, enum fechado include/exclude; getters/setters e contract() de leitura. Renderizacao consome, nunca escreve (R9 §5)."
+      "nota": "estado de curadoria do relatorio (demanda 019): selecao por offering, enum fechado include/exclude; getters/setters e contract() de leitura. Renderizacao consome, nunca escreve (R9 §5). [025] validate(obj) e PURO e e a unica verdade sobre curadoria valida (R9 §8); fromSession recusa SEM tocar o estado e trata `undefined` como 'nada declarado'; unset()/unsetArchitectureNote() devolvem ao ausente (toggle-back, D025-UNS1)."
     },
     "__P53SOL": {
       "owner": "ui_p52_support_v32.js",

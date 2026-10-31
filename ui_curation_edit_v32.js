@@ -84,7 +84,13 @@
     if (incluido) cx.setAttribute("checked", "checked");
     cx.checked = incluido;
     cx.addEventListener("change", function () {
-      try { b.set(id, cx.checked ? "include" : "exclude"); }
+      /* Tabela fechada (025 · plan): o editor escreve SÓ a divergência em relação
+         ao motor. Voltar ao que o motor decidiria devolve ao ausente (`unset`),
+         nunca grava a decisão do motor como se fosse do engenheiro. */
+      try {
+        if (ofertado) { if (cx.checked) b.unset(id); else b.set(id, "exclude"); }
+        else { if (cx.checked) b.set(id, "include"); else b.unset(id); }
+      }
       catch (e) { erros.push(String((e && e.message) || e)); cx.checked = !cx.checked; return; }
       redesenhar();
     });
@@ -178,7 +184,7 @@
       if (incluida) cxA.setAttribute("checked", "checked");
       cxA.checked = incluida;
       cxA.addEventListener("change", function () {
-        try { b.setArchitectureNote(cxA.checked ? "include" : "exclude"); }
+        try { if (cxA.checked) b.unsetArchitectureNote(); else b.setArchitectureNote("exclude"); }
         catch (e) { erros.push(String((e && e.message) || e)); cxA.checked = !cxA.checked; return; }
         redesenhar();
       });

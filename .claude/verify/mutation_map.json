@@ -493,6 +493,31 @@
         "python"
       ],
       "_trilha": "Demanda 023-leitura-unica-do-apoio, W2 - 2026-10-02. Doze mutantes; MEDIDO: 12 DETECTADO - 0 SOBREVIVENTE - 0 NAO EXECUTADO. POR QUE ESTA CAMPANHA CARREGA MAIS PESO: oito dos nove gates da demanda nasceram VERDES, porque a demanda muda duas expressoes booleanas e o unico vermelho de nascenca foi o D023-OCU1. Guarda que nasce verde tem o poder no mutante; campanha fraca aqui deixaria oito gates sendo decoracao sem ninguem perceber. Dai os pares M1/M1b, M2/M2b, M5/M5b e M8/M8b: quatro propriedades tem mais de uma forma plausivel de serem desfeitas. DOIS CARRASCOS MORAM EM SUITE ALHEIA, declarados: o M5b desfaz a clausula da errata E4 (gate de suficiencia fechado nao substitui) e nenhuma das oito fixtures da 023 tem suff false, entao quem o mata e o D010-ARB1, ancorado na D010-F3 exatamente por isso; o M2 remove a fronteira() e quem o mata e o D019-CTX1. O CARRASCO DO M2 FOI DESCOBERTO PELA CAMPANHA, e e o achado desta wave: ele saiu SOBREVIVENTE contra o D023-REG1, que era o gate que eu lhe havia dado. A sobrevivencia acusou a minha HIPOTESE, nao o codigo — eu havia escrito na errata E3 da spec e no cabecalho da suite que sem a fronteira os cards por produto seriam ocultados junto com a lista congelada. Medido com o artefato reconstruido e sondado em tres renders nas duas fixtures: cards=11 ocultos=0 nas seis medicoes. O decorador da 5.2 REPOE os cards depois da varredura e colocar() nao devolve no com v32-hidden. O que a fronteira protege e o CENSO, que e oraculo e pertence a demanda 019. A errata e a nota foram corrigidas; o ataque nao mudou uma virgula, e o M2b nasceu para devolver carrasco proprio ao D023-REG1 (a segunda fonte substituir a primeira em vez de somar), junto com a fixture F8 e a alinea (d). INSUMOS: ui_curation_v32.js e `populacao` porque published() define o conjunto que o predicado le — mudanca nele muda o veredito da arbitragem sem tocar ui_v32.js. fixtures_010_vao.js e `fixture` porque d010HasSubstitute e a reimplementacao da spec §1 que o D023-SUJ1 consome. tests_010_vao.js e tests_019_curadoria.js sao `oraculo` porque sao eles que matam M5b e M2."
+    },
+    "d025": {
+      "cmd": "node tests_025_mutants.js",
+      "preflight": true,
+      "targets": [
+        "tests_025_curadoria_sessao.js",
+        "tests_025_mutants.js",
+        "tests_session_m48.js",
+        "ui_curation_v32.js",
+        "ui_curation_edit_v32.js",
+        "ui_session_v32.js",
+        "ui_ux_v32.js",
+        "ui_v32.js",
+        "SESSION_SCHEMA_V32.md"
+      ],
+      "insumos": {
+        "oraculo": [
+          "tests_025_curadoria_sessao.js"
+        ]
+      },
+      "requires": [
+        "node",
+        "python"
+      ],
+      "_trilha": "Demanda 025-curadoria-transacional, W8 (T084) · 2026-10-30 · qa-engineer. 23 mutantes D025-M1…M23 (spec §Critérios coluna *Mutante previsto* + §Reancoragens coluna *Carrasco*; tasks.md §Estado do mundo), um commit com os quatro registros (D4 da 013: a chave `preflight` nasce no mesmo commit em que o harness lê `--preflight`). MEDIDO (primeira execução, árvore limpa, HEAD f8f753a): 23 DETECTADO · 0 SOBREVIVENTE · 0 NÃO EXECUTADO de 23 · source byte a byte OK · tempo total 534 s · execuções da m48: 5 · campanha 534s · d025 por mutante: 22 execução(ões) filtradas por D025_ONLY, 3.4 s em média; m48: 5 execução(ões) a 6144 MB (D025-M6 93.5 s, D025-M11 100.6 s, D025-M12 92.2 s, D025-M16 88.1 s, D025-M20 80.6 s). POR QUE OITO ALVOS E NÃO SETE: `SESSION_SCHEMA_V32.md` entra em `targets` porque D025-M21 o MUTA (em cópia sob os.tmpdir, apontada por D025_DOC_OVERRIDE — o doc rastreado nunca é escrito, R7 §3) e o contrato C1 o declara em `arquivos_mutados`; sem ele D017-REL1 reprovaria `conjunto mutado fora do gatilho` — e a semântica é a certa: editar o schema pode apodrecer a âncora de M21, logo tem de re-disparar esta campanha. O tasks.md listava sete; divergência declarada aqui e no relatório. `tests_session_m48.js` está em `targets` porque é MUTADO por D025-M20 (ressuscita a lista de 10 chaves em S50) e por isso NÃO pode ser insumo; o único insumo é o oráculo `tests_025_curadoria_sessao.js`. QUATRO MUTANTES SÃO JULGADOS POR DUAS SUÍTES (M6 → TRX2(b) + S69(b); M11 → NEW1 + S31-S32; M12 → RST1 + S31-S32; M16 → PRV1(c) + S30(b)): a m48 lê o HTML mutado por M48_HTML_OVERRIDE (carregador reancorado em b20b20b) e só conta DETECTADO quando as duas reprovam pelo motivo NOMINAL — provar a reancoragem uma vez num relatório e nunca mais é a família EA-28. `reason` é nominal por gate (`/FAIL {2}D025-…/`, `/FAIL {2}S50/`…), nunca `/N FAIL/` — a regex de contagem do `core` produziu o falso SOBREVIVENTE de CM1 entre a W3 e a W4 (plan, nota aditiva (c)). Interpretador: D025_PYTHON, senão MUTATION_PY, senão `python` do PATH — declarado no preflight; ausente é NÃO EXECUTADO nomeado. Restauração do fonte conferida byte a byte em finally. STAGE `mutation` (2026-10-30, árvore limpa, HEAD f8f753a, MUTATION_DEFER_MISSING=1, 3411 s): mutation: 11 campanha(s) executada(s) · 1 problema(s); d025 → D025 MUTATION [tests_025_mutants.js]: 23 DETECTADO · 0 SOBREVIVENTE · 0 NÃO EXECUTADO de 23 · não-KILL: nenhum — os 23 mutante(s) lidos estão DETECTADO; deferidas: nenhuma. O único problema do stage foi a p52 local (13 falsos sobreviventes por poppler ausente + ER5 pré-existente, diagnosticados com controle A/B em HEAD e da71759 — ver mutation-matrix.json → _meta.execucao_demanda_025); nenhum é da d025 nem da 025."
     }
   }
 }

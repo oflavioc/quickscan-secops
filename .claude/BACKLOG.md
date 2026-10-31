@@ -6024,6 +6024,21 @@ apodrecimento que abriu o achado. Status continua `aberto`.
 
 Incidência confirmada pela auditoria externa do Codex (2026-10-20) — `README.md:73-74` (ver `EA-104`). Status continua `aberto`.
 
+### Nota de 2026-10-31 — a tag `v3.2.11` prevista na nota de 2026-10-20 não nasce
+
+A nota de 2026-10-20 acima diz que a selagem cria a tag anotada `v3.2.11`. **Não
+cria**: a tag foi suspensa em 2026-10-25 (*"Corrigir produto antes de selar"*) e a
+v3.2.11 foi superada pela correção da demanda 025 (PR #114, `9ca1fde`). A selagem
+efetiva **propõe `v3.2.12`** — nome pendente de ratificação do proprietário na
+mescla —, com registro em `docs_phase5/SELAGEM_V3_2_12.md`; a v3.2.11 fica como
+artefato publicado **sem tag** (SHA-256 `4c45ce20…5712`, ainda servido em
+`127.0.0.1:1337` até o cutover). O nome v3.2.11 já estava ligado àquele SHA em
+`README.md`, em `deploy/v3.2.11/` e no pacote entregue em reunião; reusá-lo para
+outro artefato quebraria a trilha de identidade — a classe deste achado.
+O remédio de raiz (registro rastreado escrito por `preparar_release.py`) **segue
+não feito**. Status continua `aberto`. Achado irmão do caminho de entrega:
+`EA-121`.
+
 ## EA-65 — a visão por solução não existe quando há contexto tecnológico declarado
 
 **Status**: `resolvido`
@@ -11210,3 +11225,57 @@ Dono: `build-engineer` (registro) com o `qa-engineer`. Declarar `check_lint_arch
 no `d011` — `targets` e `insumos.oraculo` (classe `oraculo`, vocabulário da 017) —
 é a rota mínima; a rota que fecha a classe é a do `EA-72` (derivar o gatilho da
 dependência real). Ver `EA-101`, item 6.
+
+## EA-121 — `preparar_release.py` escolhe o "release anterior" por `sorted()` de strings `vN.N.N`, isto é, lexicograficamente: a partir da v3.2.11 a base errada alimenta o cabeçalho do `compose.yaml` e o `docker stop` impresso
+
+**Status**: `aberto`
+
+**Severidade (triagem do `doc-writer`; a confirmar pelo `build-engineer`)**: média —
+instrumento do caminho de entrega (classes `EA-53`/`EA-64`); hoje sem efeito no
+artefato, com efeito no texto e no cutover sugerido.
+
+**Aberto em**: 2026-10-31. Medido em 2026-10-30 pelo orquestrador e pelo
+`build-engineer` (registro `deploy/v3.2.12/V3_2_12_PRODUCTION_DEPLOYMENT_RECORD.md`,
+seção "Observação", fora do repositório — `EA-53`); linhas do script relidas por
+mim em `66b0c5a`.
+
+### Cadeia arquivo:linha → efeito
+
+- `preparar_release.py:64-66` — `anterior = sorted(d for d in os.listdir(DEPLOY) if
+  re.match(r"^v\d+\.\d+\.\d+$", d))` e `base = os.path.join(DEPLOY,
+  anterior[-1])`. `sorted()` de strings é lexicográfico: `'v3.2.9'` > `'v3.2.12'` >
+  `'v3.2.11'` > `'v3.2.10'`, porque `'9'` > `'1'`. Com os diretórios de
+  `deploy/` de hoje, `sorted()` devolve `['v3.2.10', 'v3.2.11', 'v3.2.12', 'v3.2.2',
+  …, 'v3.2.9']` e o "último" é `v3.2.9` (reproduzi a ordenação com o mesmo regex
+  sobre `os.listdir`; **não executei o script**, que escreve em `deploy/`).
+- `:73-74` — o `default.conf` da release nova é copiado de `base`; `:77-78` — a
+  imagem é lida do `compose.yaml` de `base`; `:84` e `:113` — `anterior=` alimenta o
+  cabeçalho gerado *"postura de seguranca herdada de {anterior}"*; `:106` — o
+  cutover impresso é `docker stop quickscan-` + `base` sem os pontos.
+- **Efeito medido** (`sed -n 2p deploy/vX/compose.yaml`): `v3.2.11` e `v3.2.12`
+  declaram *"herdada de v3.2.9"* quando a base certa era `v3.2.10` e `v3.2.11`; o
+  `v3.2.10` também diz `v3.2.9`, que ali era a base certa. O script, para a
+  v3.2.12, imprime `docker stop quickscan-v329` (**por leitura de `:106` e da
+  derivação acima, não por execução**) — container que não existe: o que está no ar
+  é `quickscan-v3211` (`docker ps`, registro de deploy da v3.2.12).
+- **Não afetou o artefato**: o `default.conf` (`sha256sum`
+  `7c9ecad4abf28cd6d8fa6a88dab22a84f74d66c4538df18dfc1ea8e74e16dbbe`) e o digest da
+  imagem (`nginxinc/nginx-unprivileged@sha256:44e36330f74d4f3a1d4e222acca9e23b401fb87811a7597024502bb759c4dd49`)
+  são idênticos de `v3.2.9` a `v3.2.12`. Afetaria no dia em que divergirem entre
+  releases: a release nova herdaria postura de uma base antiga sem aviso.
+
+### Como foi medido (executado vs. lido)
+
+**Executado por mim**: `sorted()` e a ordenação por tupla numérica sobre
+`os.listdir` de `deploy/`; `sed -n 2p` e `sha256sum default.conf` nos quatro
+diretórios `v3.2.9`…`v3.2.12`. **Citado, não reexecutado**: o digest da imagem e
+`docker ps` (registro de deploy do `build-engineer`). **Não executado**:
+`preparar_release.py` (escreve fora do repositório).
+
+### Encaminhamento
+
+Dono: `build-engineer`. Ordenar por tupla numérica —
+`key=lambda d: tuple(int(x) for x in d[1:].split("."))` — nas duas ocorrências do
+critério de "anterior"; com o gate que o `EA-64` pede (registro escrito pelo
+script, não à mão), a base passaria a ser dado e não inferência por nome. Ver
+`EA-53`, `EA-64`.

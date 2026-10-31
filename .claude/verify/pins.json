@@ -1,7 +1,7 @@
 {
   "_meta": {
     "descricao": "Registry único de pins — fonte de identidade dos artefatos (R8). Hashes = SHA-256 dos blobs de HEAD. Alterar arquivo pinado exige regenerar este registry no MESMO PR, com motivo no commit.",
-    "gerado_de_head": "d75bc8f78e4d0a9c98c7a8e07fb7b32d662e42b1",
+    "gerado_de_head": "3b32b44e03b7699eead5e246fa67264e8a0315e4",
     "gerado_em": "2026-10-30",
     "exclusoes": [
       "docs_phase5/**",
@@ -15,7 +15,7 @@
     "baseline_core_zip_sha256": "625079c462be7d44ffd69b1cd85f256382322bd0555ae4b548f21bf30ee5b89d"
   },
   "files": {
-    ".claude/BACKLOG.md": "190e4df878e0432578d7c4c104333665bb415c2d33f8c7cf97c2b4eccb75d8af",
+    ".claude/BACKLOG.md": "1759a83f5d6c555e01190cda8aaebb37e88175ca9f08589331a8d7556226081e",
     ".claude/agent-memory/README.md": "2f868716c8785119c1d6a02a7715f7b5058ab968f55951410fc82fc45b960a93",
     ".claude/agent-memory/build-engineer/MEMORY.md": "5ed47a73226fea6613b44c2ce70b26e95415033bafbd69a3ada20fa7df0bf950",
     ".claude/agent-memory/build-engineer/feedback_escopo_de_scanner_nos_dois_sentidos.md": "a07b03eb0687bc4f08ff02375684b8441f8d434384c415a3e25b1fe233007527",
@@ -208,7 +208,7 @@
     ".claude/verify/check_suites.py": "457516eae3a5f98ac894a13fb6283f30a2f5e5dce158d24fced5295fd1978dfe",
     ".claude/verify/check_tdd.py": "1077e9025a9559f34e23658bba12a98ac6fb65c718d057a62687251671de2ce9",
     ".claude/verify/compliance-audit.sh": "34a1480c21688f7f010e165fa479becc742b52183f6269f08ebcc983bafbcb15",
-    ".claude/verify/current_phase.json": "a7a7d00dece3ae636d947c3076a484e131819e1f0dfddd2ee3f5f23293bef322",
+    ".claude/verify/current_phase.json": "dfe0ea0c01bae034ce053bc470a4a224652a1d5cf13a8a2d69ce78784a1a1a24",
     ".claude/verify/env_doctor.py": "c3da72f6cbe6b1084dad68e97b23e0c7c7a4be3ec42623ac626b3e5b08a9369f",
     ".claude/verify/evidence_bridge.json": "8fbf8bca5e6710c709828f839e5f4c6ae552c5fb382429f25aae39b6ad0d291a",
     ".claude/verify/expected_suites.json": "b7c4b9ff5d235fff145c52d2f995c0f96a7985644a6a591b57a631989fde29eb",
@@ -282,7 +282,7 @@
     "ICON_ASSET_DECISIONS_V32.md": "f14494c78ae40af88f8a2adf49e30f314a6800736b11607d3382e0a31d5cce80",
     "LICENSE": "1ddd9deeecd23a1cece8a3aee60c77f4168295535ea4d7cc0102c55d8e777c49",
     "MANIFEST.sha256": "defd52d1cfc57e6ca5a9ebcce8b620a080772b6ea62753f987c5a58f8ccf38c6",
-    "README.md": "88b81497189d67b1ce1d8bc565f0a4caa7dbd9acc3399fad2503e84d6b7bf1ea",
+    "README.md": "3f3cb7dd4a8123be1289d1244e40a7c8bb403f255d92cca19d5a363ef1f0387f",
     "SESSION_SCHEMA_V32.md": "ccf75e076f088b91e3bcdaaa4aef0eac40d4e764721d744f144ef49c8ee833ea",
     "USER_GUIDE.md": "952a7e9945de1a833d5104cf7503946ef50617ca9c6feec4d62adc59f2e192fc",
     "build_v32_html.py": "dd346cbeb83832c0ad3b0d13370ae4d9fc476dbf0bcb1439b5840c22df25981a",

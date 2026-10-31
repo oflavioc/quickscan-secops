@@ -16,11 +16,12 @@ contextuais e um relatório em PDF pronto para leitura executiva.
 
 | versão | o que é | onde está |
 |---|---|---|
-| **v3.2.11** | **produção publicada.** É a versão liberada e atualmente em uso. Ainda não tem tag nem release do GitHub: a tag anotada `v3.2.11` será criada na selagem; até lá, a identidade é o SHA-256 `4c45ce20fece3bf024dd4a85b99a9766185f48039805ead45d0fe71700bf5712` (1.242.046 bytes). | [registro de selagem](docs_phase5/SELAGEM_V3_2_11.md) |
-| **v3.2.9** | **versão anterior**, a última com release publicada, preservada e verificada como caminho de rollback. | [release `v3.2.9`](https://github.com/oflavioc/quickscan-secops/releases/tag/v3.2.9) |
+| **v3.2.12** | **versão corrente — candidata de selagem, ainda não em produção publicada.** O serviço do proprietário segue na v3.2.11 até o cutover, ato dele. Corrige a **curadoria do relatório** na importação de sessão e em *Nova sessão* (`EA-91`/`EA-92`). Identidade: SHA-256 `024abf113f30098617cf9f0617d51295903634839fb6e1b07b625f13baa03885` (1.248.772 bytes). A tag anotada `v3.2.12` é criada na selagem, sob o nome **proposto** — pendente de ratificação do proprietário. | [registro de selagem](docs_phase5/SELAGEM_V3_2_12.md) |
+| v3.2.11 | publicada no ambiente do proprietário em 2026-10-02, **sem tag nem Release do GitHub**, e **superada** pela v3.2.12 antes de ganhar tag: a correção da curadoria mudou o conteúdo, e o nome v3.2.11 já estava ligado a este artefato. Continua servida até o cutover. SHA-256 `4c45ce20fece3bf024dd4a85b99a9766185f48039805ead45d0fe71700bf5712` (1.242.046 bytes). | [registro superado](docs_phase5/SELAGEM_V3_2_11.md) |
+| **v3.2.9** | **versão anterior com Release do GitHub**, a última publicada, preservada e verificada como caminho de rollback. | [release `v3.2.9`](https://github.com/oflavioc/quickscan-secops/releases/tag/v3.2.9) |
 | v3.2.8 · v3.2.7 · v3.2.6 · v3.2.2 · v3.2.1 | marcos anteriores, com release própria e auditoria externa registrada | [`v3.2.8`](https://github.com/oflavioc/quickscan-secops/releases/tag/v3.2.8) · [`v3.2.7`](https://github.com/oflavioc/quickscan-secops/releases/tag/v3.2.7) · [`v3.2.6`](https://github.com/oflavioc/quickscan-secops/releases/tag/v3.2.6) · [`v3.2.2`](https://github.com/oflavioc/quickscan-secops/releases/tag/v3.2.2) · [`v3.2.1`](https://github.com/oflavioc/quickscan-secops/releases/tag/v3.2.1) |
 
-**A versão corrente do produto é a v3.2.11.** A v3.2.9 permanece preservada e verificada, disponível
+**A versão corrente do produto é a v3.2.12.** A v3.2.9 permanece preservada e verificada, disponível
 para rollback imediato. As versões v3.2.3 a v3.2.5 foram publicadas no ambiente do proprietário sem
 release própria; a v3.2.6 consolidou todas, a v3.2.7 acrescentou a **curadoria do relatório** — o
 engenheiro escolhe o que de fato será apresentado, e a seção de apoio agrupa por produto em vez de
@@ -32,14 +33,19 @@ capacidade do time, capacitação e resposta a incidentes, passam a trazer camin
 escrito, foi lido da camada congelada da avaliação — o motor é byte a byte o mesmo da v3.2.8.
 As **v3.2.10 e v3.2.11** foram publicadas depois no ambiente do proprietário, também sem release do
 GitHub; o motor segue o mesmo — `engine_v32.js` tem 0 linhas alteradas desde a selagem da 5.2. A
-v3.2.11 tem registro de selagem (`docs_phase5/SELAGEM_V3_2_11.md`); a tag anotada `v3.2.11` será criada na
-selagem — até lá, a identidade é o SHA-256 da tabela acima, que muda se o produto for corrigido antes da tag
-(o registro de selagem é atualizado junto).
+**v3.2.12 corrige a curadoria do relatório na sessão**: importar uma sessão passa a substituir a curadoria
+(e a recusar por inteiro, sem aplicar nada, uma importação inválida), e *Nova sessão* e *Reiniciar avaliação*
+passam a limpá-la — antes, a exclusão feita para um cliente podia sobreviver para o seguinte. A v3.2.11 foi
+superada antes de ganhar tag; o registro vigente é `docs_phase5/SELAGEM_V3_2_12.md` (o de
+`docs_phase5/SELAGEM_V3_2_11.md` fica como trilha). O nome v3.2.12 é proposta pendente de ratificação do
+proprietário; a tag anotada é criada na selagem — até lá, a identidade é o SHA-256 da tabela acima.
 
-**Para avaliar ou distribuir a v3.2.11, use o artefato que o proprietário publicou** (`deploy/`, fora deste
-repositório) e confira o SHA-256 `4c45ce20fece3bf024dd4a85b99a9766185f48039805ead45d0fe71700bf5712` (1.242.046 bytes) — é o mesmo byte a byte que está em uso. A
-v3.2.11 não tem release do GitHub: a última release é a v3.2.9, que é o caminho de rollback, não a versão
-corrente. Quando a tag `v3.2.11` existir, ela passa a ser a referência.
+**Para avaliar ou distribuir a v3.2.12, use o artefato preparado pelo proprietário** (`deploy/`, fora deste
+repositório) e confira o SHA-256 `024abf113f30098617cf9f0617d51295903634839fb6e1b07b625f13baa03885` (1.248.772 bytes). Até o
+cutover dele, o que está em uso é a v3.2.11 (SHA-256 `4c45ce20fece3bf024dd4a85b99a9766185f48039805ead45d0fe71700bf5712`,
+1.242.046 bytes) — não confunda os dois. A v3.2.12 não tem release do GitHub: a última release é a v3.2.9,
+que é o caminho de rollback, não a versão corrente. Quando a tag `v3.2.12` existir, ela passa a ser a
+referência de código.
 Um arquivo `*_dev.html` na árvore de trabalho é candidata, nunca release: antes de avaliar ou
 distribuir qualquer HTML, confira a identidade declarada no manifesto da rodada.
 
@@ -75,8 +81,8 @@ distinção do começo ao fim.
 A aplicação é um **único arquivo HTML autocontido**: sem servidor obrigatório, sem instalação, sem
 dependência de runtime.
 
-Obtenha o HTML da v3.2.11 pelo artefato que o proprietário publicou (SHA-256 `4c45ce20fece3bf024dd4a85b99a9766185f48039805ead45d0fe71700bf5712`,
-1.242.046 bytes) — ou, quando for criada na selagem, pela tag `v3.2.11` — e abra no navegador (duplo clique, ou
+Obtenha o HTML da v3.2.12 pelo artefato que o proprietário preparou (SHA-256 `024abf113f30098617cf9f0617d51295903634839fb6e1b07b625f13baa03885`,
+1.248.772 bytes) — ou, quando for criada na selagem, pela tag `v3.2.12` — e abra no navegador (duplo clique, ou
 `Arquivo → Abrir`). A [última release do GitHub](https://github.com/oflavioc/quickscan-secops/releases/latest)
 é a v3.2.9, o rollback; não é a versão corrente.
 Não há instalação nem servidor.

@@ -428,3 +428,37 @@ por `Edit`/`Write`: o `permissions.deny` do host é avaliado antes do `PreToolUs
 caixa (medido em projeto-sonda). O exemplo verdadeiro é `UI_P52_WORKSPACE_V32.JS` no
 `guard-tdd`; a regra ferida passa a ser a R3, e a severidade recomendada, de alta para
 média. O título anterior está preservado na subseção do verbete.
+
+## Adendo de 2026-10-31 — candidata superada pela v3.2.12
+
+Este adendo **só acrescenta**; o corpo e os adendos de 2026-10-25 acima não foram
+reescritos (R2 §5).
+
+**A tag `v3.2.11` não será criada.** A suspensão de 2026-10-25 (*"Corrigir produto
+antes de selar"*) cumpriu-se pela outra via: os defeitos de curadoria `EA-91` e
+`EA-92` foram corrigidos pela demanda 025 (PR #114, merge `9ca1fde`, 2026-10-31), e o
+conteúdo da selagem efetiva passa a ser `9ca1fde`, não `0bd677c`. O registro vigente
+é `docs_phase5/SELAGEM_V3_2_12.md`; ele recomputa o desvio, os hashes, a contagem de
+abertos e o estado de verificação.
+
+**A v3.2.11 permanece artefato publicado, sem tag.** Está em
+`deploy/v3.2.11/` (fora do repositório, `EA-53`), com SHA-256
+`4c45ce20fece3bf024dd4a85b99a9766185f48039805ead45d0fe71700bf5712` (1.242.046 bytes)
+— a identidade que o corpo acima atribui à candidata `0bd677c` — e segue no ar em
+`127.0.0.1:1337` (container `quickscan-v3211`) até o cutover do proprietário, que é
+ato dele e está pendente. Fica na mesma situação da v3.2.3, v3.2.4, v3.2.5 e v3.2.10:
+publicada no ambiente do proprietário, sem tag nem Release do GitHub.
+
+**O nome `v3.2.12` é proposta do orquestrador, pendente de ratificação do
+proprietário na mescla do PR de selagem.** A razão da proposta: o nome `v3.2.11` já
+está ligado ao SHA-256 acima no `README.md`, em `deploy/v3.2.11/` e no pacote
+entregue em reunião (2026-10-27); reusá-lo para outro artefato quebraria a trilha de
+identidade (classe `EA-64`).
+
+**Consequência para este registro.** O que está escrito acima descreve a candidata
+`0008576` / conteúdo `0bd677c` e **continua verdadeiro como história**: o numstat
+(19 arquivos, +10.739/−422), a contagem de abertos (29, depois 43 e 59) e o SHA-256
+`4c45ce20…5712` valem para a candidata v3.2.11 e **não valem** para a v3.2.12
+(20 arquivos, +10.973/−438; SHA-256 `024abf11…3885`; 51 abertos com o `EA-121`). A
+tag prevista `v3.2.11`, mencionada no cabeçalho, em "Dois hashes" e na pendência 11,
+não nasce.

@@ -434,3 +434,46 @@ anterior) está `resolvido`; dos ids do adendo de 2026-10-25, `EA-91`, `EA-92` e
     (`EA-8` em diante, listados pelo próprio `compliance-audit.sh`); nenhum deles é
     tocado por esta selagem além das notas de 2026-10-31 já nomeadas (`EA-64`,
     `EA-121`).
+
+## Adendo de 2026-10-31 — ratificação do nome, tag, Release e cutover
+
+Este adendo **só acrescenta**; o corpo acima descreve o estado no momento da abertura
+do PR de selagem e não foi reescrito (R2 §5). O que ali está como proposta ou pendência
+fechou assim:
+
+- **Nome ratificado.** O proprietário mesclou o PR #115 em 2026-10-31T02:19:29Z
+  (merge `f2ff25d8d50614ab44f4bdc529d8adbd8963cf57`) e autorizou no chat, de forma
+  literal, o release: *"Pode — ff + tag + push"* e, para a Release do GitHub, *"Sim,
+  com o artefato HTML como asset"*. A pendência 15 está fechada; o nome é `v3.2.12`.
+- **`main` por fast-forward**: `e03b0f0 → f2ff25d` (`git push origin f2ff25d:refs/heads/main`;
+  `git merge-base --is-ancestor` verdadeiro; 1.081 commits, sem squash). Medido pelo
+  orquestrador após o push: `git ls-remote origin refs/heads/main` = `f2ff25d…`.
+- **Tag anotada `v3.2.12`**: objeto `2428777cefb4f3c197bf57b80981cc655cffedf6`, aponta
+  para `f2ff25d` (`git ls-remote origin 'refs/tags/v3.2.12^{}'`); tagger Flavio Costa,
+  2026-10-30 23:52:55 −03:00; mensagem com conteúdo `9ca1fde`, SHA-256 do HTML, engine,
+  payload M41, numstat canônico e verificação. `git describe --tags --exact-match
+  origin/main` devolve `v3.2.12`. É o hash que a seção "Dois hashes" dizia que não
+  seria escrito antes de existir.
+- **Release do GitHub** (decisão tomada, pendência 13 fechada):
+  https://github.com/oflavioc/quickscan-secops/releases/tag/v3.2.12, criada com
+  `--verify-tag`, assets `quickscan_secops_soccmm_v3_2_12.html` (1.248.772 bytes) e
+  `quickscan_secops_soccmm_v3_2_12.html.sha256`. Digest reportado pela API do GitHub
+  para o asset: `sha256:024abf113f30098617cf9f0617d51295903634839fb6e1b07b625f13baa03885`;
+  re-download pelo `gh release download` e `sha256sum` deram o mesmo valor. A última
+  Release deixa de ser a v3.2.9 — ela permanece como caminho de rollback.
+- **Cutover feito pelo proprietário** (pendência 12 fechada), do WSL:
+  `docker stop quickscan-v3211` e, de `/mnt/c/Projetos/QuickScan-SOC-CMM`,
+  `docker compose -f deploy/v3.2.12/compose.yaml up -d`; `curl -s http://127.0.0.1:1337/ |
+  sha256sum` devolveu `024abf11…3885`, relatado por ele no chat e conferido pelo
+  orquestrador (`docker ps`: `quickscan-v3212` healthy em `127.0.0.1:1337`;
+  `quickscan-v3211` `Exited (0)`, rollback por `docker start`). A primeira tentativa
+  falhou por caminho (`/mnt/d/ai-workspace` não tem `deploy/`), com o container antigo
+  já parado — o serviço ficou fora do ar por cerca de dois minutos. O registro de deploy
+  em `deploy/v3.2.12/` (fora do git) ainda diz "cutover pendente"; não foi reescrito.
+- **CI do merge de selagem**: run `41159473808` em `f2ff25d` — `verify`, `visual` e
+  `fecho` success.
+- **Memórias de agentes** (pendência 14): restauradas no PR que traz este adendo, em
+  commit próprio, a partir do commit WIP `0ade099` e do acervo parqueado no scratchpad.
+
+Nenhum número do corpo muda com isto: conteúdo `9ca1fde`, SHA `024abf11…3885`,
+numstat 20 · +10.973/−438, 529 pins.

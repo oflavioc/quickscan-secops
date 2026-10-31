@@ -11,7 +11,22 @@
 - [Pergunta sempre com recomendação](feedback_pergunta_sempre_com_recomendacao.md) — o usuário aprova refinamento em bloco; pergunta nua vira rodada de chat desnecessária
 - ["Não há demanda" é entrega](feedback_nao_demanda_e_entrega.md) — resultado aceito no refinamento; e refutar recomendação própria anterior é esperado, com a razão
 - [Medir com o instrumento da suíte](feedback_medir_com_o_instrumento_da_suite.md) — nunca estimar número que um gate cobra; duas suítes, duas métricas: nomear a que reprova primeiro
-- [Fecho retroativo da 013](project_013_fecho_retroativo.md) — mesclada com wave 9 incompleta; fase ficou em validate; tripwire KI-4 desarmada pela 014 sem disparar
+- [Fecho retroativo da 013](project_013_fecho_retroativo.md) — mesclada com wave 9 incompleta; validate até os artefatos, done em 2026-09-04; deferimento fechou 65 s antes do merge
+- [Demanda 016 (EA-33 + borda 8)](project_016_registro_contra_execucao.md) — proteção de branch auditada, não retirar o DEFER; aceite condicionado a P2 antes do merge; squash é `EM VOO`, não "não determinável"
+- [Checklist de Fase 6 do PO](project_checklist_fase6_do_po.md) — spec-validate acompanhou a iteração? regra nova saiu da trilha? onde o vermelho vive de verdade? flips com agente que verifica
 - [Fecho da 014 e pendências](project_014_fecho_e_pendencias.md) — aceite condicionado ao run visual; glossário do refinamento só entrou na Fase 6: conferir em todo aceite
 - [Aceite segundo passe da 011](project_011_aceite_segundo_passe.md) — mesclada sem aceite (EA-33); "d011 19/19" nunca cobre D011-M9; relatório congelado num SHA anterior ao merge
 - [Errata de spec sob delegação](project_errata_de_spec_sob_delegacao.md) — fórmula literal + subsunção escrita; id pelo gap (nunca E<n>); inline + seção única; regra de composição
+- [Vocabulário fechado não é congelado](project_vocabulario_fechado_nao_e_congelado.md) — EA-39: código novo, nunca esticar código de remédio distinto; o código é o que a sonda pina; guarda de censo não se remove
+- [017: gatilho ⊇ conjunto mutado](project_017_relacao_gatilho_conjunto_mutado.md) — inclusão com razão de classe, não identidade; IC-6 generalizado 7/11 vermelho; basename × repo-relativo dá faltante falso; grep `file:` não vê `em(F.x)`
+- [Verbete define critério, não lista](project_verbete_define_criterio_nao_lista.md) — definir por exemplos envelhece contra o enum da Fase 1; "cedo demais" está refutado; a §Não mudam vira prova no spec-validate
+- [Homônimo no glossário](project_homonimo_no_glossario.md) — cabeça qualificada + remissiva nos dois lados; grep lava afirmação falsa; `_Evitar_` tem registro de tela e de conceito; `Onda` já colidiu
+- [Reconfirmação derruba demanda](project_reconfirmacao_derruba_demanda.md) — 5 de 7 caíram na 024; o §Encaminhamento anuncia a demanda, não a rota TÉCNICA executada; remédio que REPÕE pode desfazer a curadoria; não há fase aberta para selar
+- [CONTEXT.md é pinado](project_context_md_e_pinado.md) — gravar verbete na Fase 0 exige `gen_pins.py` no mesmo PR; resolvido ≠ gravado, com precedente nominal da 016
+- [Errata do refinement da 024](project_024_errata_do_refinement.md) — letra de opção tem o escopo da pergunta que a gerou (li "C" errado); refinement selado pede errata `ERR-n`; remedir até o fecho da função
+- [Refinamento e Fase 1 da 025 (curadoria transacional)](project_025_refinamento_curadoria_transacional.md) — 019 falhou por omissão; P1–P6; Fase 1: guarda cai por contrato (ERR-1), mutante da guarda não tinha gate (TRX2 b′), chave desconhecida entrou (ERR-2)
+- [Checklist Fase 0: owner de estado novo](project_checklist_fase0_owner_novo.md) — oito perguntas: seis de ciclo de vida + chaves desconhecidas no bloco + "quem mata a volta da guarda que caiu"
+- [Owner canônico: seis perguntas](feedback_owner_canonico_seis_perguntas.md) — exportar · importar presente · importar AUSENTE · cancelar/falhar · Nova sessão · Reiniciar, na Fase 0; a 019 omitiu, a 025 pagou
+- [Cobertura de mutante por alínea](feedback_cobertura_de_mutante_por_alinea.md) — gate com carrasco ≠ cada alínea com carrasco; INV8(c) da 025 ficou órfã; declarar, não esconder
+- [Aceite da 025](project_025_aceite_intencao.md) — "não encontrei objeção" condicionado; E9–E11 escritas por mim em 2026-10-30; O4–O10 a conferir; memória sumiu com árvore limpa — reler no início
+- [Targets derivam do conjunto mutado](feedback_targets_derivam_do_conjunto_mutado.md) — spec que enumera targets à mão esquece o documento que M* muta em cópia; D017-REL1 é a régua (E12 da 025)

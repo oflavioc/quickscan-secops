@@ -23,10 +23,13 @@ de `M51-01` com substituição nominal `D014-M10 × P52-LAY2` (ver
    mutante em dois** (uma por asset, precedente D011-M12/M13) ganha força.
 
 **Pendências que atravessam o merge:** T084 relatorio-final (doc-writer) + T085
-repin; atomicidade do commit T050 só conferível por `git log`; termo **"mutante
-parcialmente inerte"** (classe nomeada pela E7, definida em `regra_morta.json →
-classes_de_achado`) ainda fora do `CONTEXT.md`; waves 7–8 sem registro no bloco
-`implement` do planning-state (família EA-33 — estado atrás do git).
+repin; atomicidade do commit T050 só conferível por `git log`; waves 7–8 sem
+registro no bloco `implement` do planning-state (família EA-33 — estado atrás do
+git). O termo **"mutante parcialmente inerte"** (classe nomeada pela E7, definida
+em `regra_morta.json → classes_de_achado`) **entrou no `CONTEXT.md` em
+2026-09-04, no PR da 016**, depois de dois relatórios o nomearem como pendência
+— com a classe estabilizada pelo fecho do `EA-32` (partição `P52-RA8`/`P52-RA8B`).
+Pendência encerrada.
 
 **Why:** a lição nova é minha: os **4 termos aprovados no refinamento** (regra
 morta, poder discriminante, prova de discriminância vencida, varredura de regra

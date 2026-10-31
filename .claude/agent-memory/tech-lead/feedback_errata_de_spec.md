@@ -35,6 +35,38 @@ reutilizados, R12) e diga o que volta a ser resíduo aberto. Se a própria spec 
 previa a queda por escrito, diga isso: aí a errata é **execução de uma cláusula da
 spec**, não emenda contra ela — e não precisa de ratificação.
 
+**Variante "o gate mede mais do que a spec descreve" (Fase 4, depois do red).**
+Na 017 o red emitiu uma sexta causa de `INS1` e um caso a mais de `FORM1(a)` que
+a spec não listava; o QA ofereceu "errata ou retirar do gate" e o orquestrador
+escolheu a errata — a spec alcança o gate commitado, o gate não é tocado. Três
+hábitos que fizeram a errata valer: (1) **medir a contrafactual em cópia** — a
+rota de remoção executada mostra `insumos: []` virando `[OK]` num harness em
+identidade (silêncio, R10 §2) e causa errada nos outros; é isso que torna a razão
+cobrável, não a citação da regra; (2) a alínea nova ganha **mutante com id** (`M20`/
+`M21`) executado na tarefa de medição da W2 que já roda mutantes sobre o mesmo
+arquivo (T022), com saída para o relatório final — `red-017.md` fechado e
+repinado **não se reabre**; a sonda não recebe cenário (moveria o pin = segunda
+edição do julgador); (3) o `tasks.md` é **consolidado no mesmo commit** (estado
+do mundo, medível, matriz, spec-validate), não "por consolidar". Seção própria
+`## Erratas da Fase N` por fase; identificação pelo objeto (`INS1(f)`).
+
+**Variante "a prosa de decisão promete mais do que o contrato honrado" (Fase 6,
+gap `spec-errada` do `spec-validate`).** Na 017 o D3(i) dizia que o julgador
+"devolve" posições que o contrato C5 nunca definiu; C5 foi cumprido byte a byte.
+Rota escolhida (orquestrador + QA, sob delegação): **alinhar a prosa ao contrato,
+nunca o inverso** — devolver as posições seria segunda edição executável (red,
+mutante, repin) sem consumidor. O que fez a errata valer: (1) **provar que não há
+consumidor** por grep sobre código (só o laço lê o retorno, e o próprio gate já
+deriva a posição dos argumentos); (2) **medir a derivabilidade** executando o
+julgador real (`exec` do bloco, nunca `import` do script) sobre os N harnesses
+reais e imprimindo a identidade por harness; (3) **controle negativo** que separa
+"identidade" de "pré-condição" (N1 mantém a identidade e reprova; N2 quebra-a) —
+é o que transforma "promessa grande demais" em afirmação cobrável, distinta de
+"promessa falsa"; (4) as uniões que a spec diz não calcular são calculadas **só
+no protótipo**, e a errata o diz. Atenção: T044-padrão diz "`spec-errada` ⇒
+errata com aprovação do usuário" — sob delegação, o cabeçalho declara isso
+nominalmente em vez de fingir aprovação pessoal.
+
 **Why:** erratas aqui são frequentes porque a medição chega depois do texto (Fase
 4/Wave 1), e a auditoria futura precisa reconstruir *o que valia quando*. O
 cabeçalho com "quem decidiu/quando/onde" é o que separa decisão delegada de

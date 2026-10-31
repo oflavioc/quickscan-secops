@@ -64,3 +64,42 @@
 - [Acervo migrado vive no histórico](acervo-migrado-vive-no-historico.md) — `git show <último-commit>^:<path>` lê evidence_p52 sem download; o aspecto do asset decide o ramo do `reason` antes de escrevê-lo
 - [Conforme por deferimento tem prazo](conforme-por-deferimento-tem-prazo.md) — o verde deferido expira quando o run chega; no retroativo, separe "então" de "hoje" e nomeie o item que mudou de prova
 - [Prova de carga da exceção](prova-de-carga-da-excecao.md) — três sondas sem Chromium da 014: tirar a exclusão derruba C2(zero) E C3(*); kill de M4 à mão (log trunca); KI-4 de volta em commit efêmero
+- [Posição do conteúdo mínimo](posicao-do-conteudo-minimo.md) — elementos na seção, não na inline; ✓° com os dois números
+- [Mutante de índice e disjuntos saturados](mutante-de-indice-e-disjuntos-saturados.md) — sonda que dispara os dois lados de um OR não mede nenhum; índice via hash-object + cacheinfo
+- [`reason` que pina contagem codifica estado](reason-que-pina-contagem-codifica-estado.md) — "N alínea(s)" fotografa o registro; mover o pin reexecuta a campanha
+- [Red por instrumento ausente](red-por-instrumento-ausente.md) — red "INSTRUMENTO AUSENTE" não discrimina; stubs constantes em cópia provam o gate
+- [Vocabulário fechado não distingue FAILs](vocabulario-fechado-nao-distingue-fails.md) — pine um 2º enum de códigos e o TOTAL de problemas
+- [Scanner: auto-exclusão por não nomear](scanner-auto-exclusao-por-nao-nomear.md) — "só linhas de import" é afrouxamento medido; `-w` fecha o cego
+- [Mutante de árvore amarrado ao ciclo de vida](mutante-de-arvore-amarrado-ao-ciclo-de-vida.md) — acople a expectativa à fase; carrasco permanente (M21 × M28)
+- [Bateria negativa do julgador do harness](bateria-negativa-do-julgador-do-harness.md) — N/N só vale com 0/k/1 nos seis adversariais; splice em cópia
+- [Clone efêmero para refs remotas](clone-efemero-para-refs-remotas.md) — worktrees compartilham refs: `update-ref -d` apaga para todas; clone + `update-ref`
+- [Targets por ls-files e remoção por renome](targets-por-ls-files-e-remocao-por-renome.md) — o número do tasks.md apodrece; assira a contagem medida
+- [Simulação de merge em clone efêmero](simulacao-de-merge-em-clone-efemero.md) — `merge --no-ff -m "Merge pull request #99…"` + `update-ref` dá o EA-33 real
+- [Leitor mudo sobrevive ao gate nu](leitor-mudo-sobrevive-ao-gate-nu.md) — pin + guarda (M33); a guarda prova o leitor errado sem corrigir sujeitos
+- [Mutante de precedência e a fixture que o justifica](mutante-de-precedencia-e-a-fixture-que-o-justifica.md) — âncora = concatenação dos blocos; pine as divergências do red
+- [Red ao vivo exige remoto](red-ao-vivo-exige-remoto.md) — "job X vermelho" se confere por `ls-remote`/`gh pr list`/`gh run list`
+- [Agentes paralelos na mesma worktree](agentes-paralelos-na-mesma-worktree.md) — HEAD de partida ≠ HEAD do documento; untracked pode ter sido varrido
+- [Valor malformado que mata pela alínea certa](valor-malformado-que-mata-pela-alinea-certa.md) — simule o mutante à mão com o valor da fixture
+- [Vermelho de controle sem nota no stage](vermelho-de-controle-sem-nota-no-stage.md) — `NÃO EXECUTADO · baseline VERMELHO` = C0 caiu; CI roda em `refs/pull/N/merge`
+- [Nota constante esconde o controle](nota-constante-esconde-o-controle.md) — check_mutation ecoa só a nota do NÃO EXECUTADO; ponha o controle nela
+- [GITHUB_TOKEN não é env automático](github-token-nao-e-env-automatico.md) — sem `env:` o gate lê anônimo (60/h); só `token: GITHUB_TOKEN` impresso prova
+- [Fortalecimento ratificado exige errata](fortalecimento-ratificado-exige-errata.md) — guarda além da spec torna falso o "sse": errata aditiva, nunca remover
+- [Dedução não é leitura no log do CI](deducao-nao-e-leitura-no-log-do-ci.md) — `[PASS]` de stage não carrega contagem; kills de sonda não localizam C0
+- [Playwright torna o clone raso sob PR](playwright-torna-o-clone-raso-sob-pr.md) — `fetch <base.sha> --depth=1` grava `.git/shallow`; controle = job irmão
+- [Repin inline: três confirmações](repin-inline-tres-confirmacoes.md) — só identidade? boundary é dado; `--light` pula `suites`; `grep -c $'\r'` em `$(…)` mente
+- [Clone raso do GitHub em segundos](clone-raso-do-github-em-segundos.md) — origin = GitHub em clone efêmero; branch não enviada entra por `git fetch <worktree>`
+- [Errata e red antes do mutante de instrumento](errata-e-red-antes-do-mutante-de-instrumento.md) — âncora em código inexistente é podre; declare o kill esperado
+- [Guarda que cede a vez espelha a precedência](guarda-que-cede-a-vez-espelha-a-precedencia.md) — um ramo por global na ordem do julgador; bateria com od incoerente e falsy
+- [Doc-only em suíte pinada](doc-only-em-suite-pinada.md) — censo de leitores do texto, byte-prova fora do bloco, contagem antes E depois
+- [Crash de laço não é kill nomeado](crash-de-laco-nao-e-kill-nomeado.md) — sob mutante de instrumento a fiação IMPRIME a mentira, não morre em TypeError
+- [Família one-shot: registro no estado verde](familia-one-shot-registro-no-estado-verde.md) — o tasks.md aprovado governa; re-medir em clone com origin/develop no HEAD
+- [Errata aditiva com conteúdo invertido](errata-aditiva-com-conteudo-invertido.md) — aditiva 0 removidas e dizia o contrário; conteúdo mínimo INTEIRO nas duas iterações
+- [Limpeza silenciosa: WARN ou FAIL](limpeza-silenciosa-warn-ou-fail.md) — `ignore_errors=True` é o silêncio canônico; WARN precisa de gatilho demonstrado
+- [Peça sem consumidor não tem mutante](peca-sem-consumidor-nao-tem-mutante.md) — conserto inverificável = dívida com gatilho; cópia INSTRUMENTADA contando chamadas
+- [População pinada que cresce por evento legítimo](populacao-pinada-que-cresce-por-evento-legitimo.md) — falha dupla (contagem E isolamento); repin renova a matriz no mesmo commit
+- [Régua de grep não reproduz âncora do harness](regua-de-grep-nao-reproduz-ancora-do-harness.md) — tasks.md dizia 1, medido 2: a âncora do p52 é `find` de DUAS linhas; o `--preflight` prova
+- [Sonda de viabilidade antes do red](sonda-de-viabilidade-antes-do-red.md) — P0 no HTML real: botão que ALTERNA o painel, erro real de hoje; alíneas que ACUMULAM sintomas
+- [Retomada após interrupção](retomada-apos-interrupcao.md) — hash-object × registro, CR/NUL, `ls-remote` da base, REEXECUTAR e registrar as contagens do dia antes de commitar
+- [Cópia mutada é alvo do gatilho](copia-mutada-e-alvo-do-gatilho.md) — doc mutado em tmp entra em `arquivos_mutados` e em `targets` (REL1); reancoragem se prova por DUAS suítes; registros byte-estáveis aceitam load→dump; stage que recusa árvore suja mede-se em WIP + `reset --soft`; p52 local sem poppler dá 12 falsos sobreviventes
+- [Log do stage morre no EXIT](log-do-stage-morre-no-exit.md) — `run.sh` apaga o log do stage reprovado; reexecutar o `run:` do stage com saída inteira antes de escrever (EA-119)
+- [Errata que afirma registro confere-se por grep](errata-que-afirma-registro-confere-por-grep.md) — registro contradito por contrato de outra demanda é spec-errada (errata e parar); "registrado em X" só pontua depois de localizado

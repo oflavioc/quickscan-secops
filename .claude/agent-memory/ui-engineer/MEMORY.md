@@ -11,3 +11,4 @@
 - [Âncora de mutante apodrece](feedback_ancora_de_mutante_apodrece.md) — reescrever a linha ancorada zera o `find` da campanha; nomear o mutante em DEPENDÊNCIAS
 - [Accent de domínio não é cor de texto](feedback_accent_dominio_nao_e_cor_de_texto.md) — token cru reprova AA; variante derivada com tom próprio p/ tela e papel
 - [Ocultacao se escreve pela negativa](feedback_ocultacao_pela_negativa.md) — seletor tem de implicar a justificativa; forma se decide por custo de ancora de mutante
+- [guard-tdd fora da worktree](feedback_guard_tdd_outra_worktree.md) — hook lê a pasta primária e só libera red/implement/validate; bloqueou, parar, nunca editar por Bash

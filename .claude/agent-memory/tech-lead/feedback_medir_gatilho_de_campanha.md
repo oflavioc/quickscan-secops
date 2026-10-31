@@ -22,8 +22,13 @@ ambiente **reprova localmente com nome**; `MUTATION_DEFER_MISSING=1` a converte 
 executa as campanhas com Chromium. Confira os números **por execução**
 (`node <harness> --preflight` responde população e âncoras sem mutar nada), nunca
 pelo `_trilha` do mapa, que já foi medido divergente (o d011 dizia 18 mutantes e
-eram 19). Verifique os caminhos e as linhas antes de citar: esta nota descreve o
-mecanismo, não promete que os arquivos seguem onde estavam.
+eram 19). Vale também para número **entregue pelo orquestrador**: na Fase 1 da
+017 ele pediu "não herde meus números sem conferir" e a conferência (preflight
+11/11 + expressão literal do IC-6 reproduzida em Python) mostrou que o "faltante
+falso" atribuído à `ea41` vivia na `d014`/`d016` — a tese estava certa, o exemplo
+errado; reportar a divergência foi o esperado, não uma afronta. Verifique os
+caminhos e as linhas antes de citar: esta nota descreve o mecanismo, não promete
+que os arquivos seguem onde estavam.
 
 Duas armadilhas medidas na 014, que valem como padrão:
 

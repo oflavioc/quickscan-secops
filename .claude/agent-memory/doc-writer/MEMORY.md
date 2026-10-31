@@ -1,10 +1,22 @@
 # MEMORY
 
-- [Trilha roda em Opus, não no `fable` pinado](project_trilha-modelo-opus.md) — desvio de modelo que precisa constar em DEPENDÊNCIAS de todo relatório
+- [Trilha roda em Opus, não no `fable` pinado](project_trilha-modelo-opus.md) — declarar o modelo REAL; doc-writer/build-engineer pinam `sonnet` (conferir `model:` do agente antes de dizer desvio)
 - [Delegação do proprietário desde 2026-08-29](project_delegacao-proprietario-2026-08-29.md) — decisões e merges são do orquestrador; release e selagem, não
 - [Deriva num doc → varrer os docs irmãos](feedback_deriva-em-doc-irma.md) — corrigir README e guia no mesmo passe e listar o que foi corrigido, sem ampliar escopo
 - [Alocar `EA-*`: conferir develop e branches não mescladas](feedback_alocacao-ids-ea.md) — ids nascem em branch e colidem em silêncio; alocação é proposta até o orquestrador decidir
-- [Status de achado se confere no fonte, não no relatório](feedback_status-do-achado-contra-o-fonte.md) — demanda pode corrigir antes de fechar e o relatório ficar velho
+- [Status e linha de achado se conferem no fonte, não no relatório](feedback_status-do-achado-contra-o-fonte.md) — demanda pode corrigir antes de fechar; linha citada pode estar errada
 - [“Deferido ao CI” exige conferir o runner](feedback_deferido-ao-ci-conferir-o-runner.md) — registro em expected_suites não executa; nomear o passo do workflow e o run, ou é gap
 - [Mutante nascido em errata some da campanha](feedback_mutante-nascido-em-errata.md) — cruzar spec × harness × matriz; tasks.md anterior à errata deixa alínea sem carrasco
 - [Nomear padrão exige gatilho de falsificação](feedback_nomear-padrao-com-gatilho-de-falsificacao.md) — família de achados só com origens independentes, mecanismo verificável e viés declarado
+- [Controle positivo escreve estado sintético](feedback_controle-positivo-escreve-estado-sintetico.md) — log de campanha ARVORE pode citar artefato real com valor fabricado; conferir harness antes de tratar como pendência
+- [Escape de byte em prosa, nunca o byte](feedback_escape-de-byte-em-prosa-nao-o-byte.md) — citar `\x00` do source como texto; o byte literal vira arquivo binário e desliga `eol=lf` num pinado (EA-41)
+- [Precedente de `refutado`: corpo inteiro riscado linha a linha](feedback_precedente-de-refutado-corpo-inteiro-riscado.md) — heading e corpo em `~~`, status limpo, epílogo novo com a medição; conferir blank line antes do próximo heading após transformação em lote
+- [Commitar sem desligar hook de git](feedback_commit-sem-desligar-hook-de-git.md) — `core.hooksPath=/dev/null` não alcança guarda de Claude Code e é negado como adulteração; `add` separado do `commit`
+- [Prova aditiva mede forma, não sentido](feedback_prova-aditiva-mede-forma-nao-sentido.md) — `0 removida(s)` não prova que a nota diz a verdade; reler contra a decisão-fonte; nota já inserida pode ser reescrita por dentro livremente
+- [Evidência de hook se lê na pasta primária](feedback_evidencia-de-hook-le-se-na-pasta-primaria.md) — config e código vêm de $CLAUDE_PROJECT_DIR; a branch dela pode nem ter o guarda
+- [Campanha concorrente envenena gate de árvore](feedback_suite-concorrente-envenena-gate-de-arvore.md) — p50_core/p52 sozinhos: P50-GOV1 hasheia o disco que o p51_mutants muta; comparar com o blob antes de crer no FAIL
+- [Letra de opção tem o escopo da pergunta](feedback_letra-de-opcao-tem-escopo-da-pergunta.md) — "Vamos de C" se lê na rodada em que foi dito; escrever a rota pelo nome
+- [Verificar em clone limpo: alinhar origin/develop e remote antes](feedback_verificacao-em-clone-alinhar-refs.md) — base velha dispara campanha p51 (FAIL falso); remote local dá WARN; gotchas `$'\r'` e heredoc
+- [Linha citada por auditoria: reler no SHA-alvo](feedback_linha-citada-pela-auditoria-reler-no-sha-alvo.md) — linhas deslizam entre SHAs e com notas inseridas; claim ausente da evidência = só o que a leitura sustenta
+- [Splice por marcador: conferir o mapa bloco→heading](feedback_splice-por-marcador-conferir-o-mapa.md) — "BEFORE N+1" leva o conteúdo do N; errei 2×; checar por frase-assinatura, nota sem lugar vai no achado dono
+- [Fecho de fix em arquivo de gate: achar o mutante que o usa](feedback_fecho-de-fix-checar-campanha-do-oraculo.md) — oráculo pode estar fora de `targets`; declarar campanha não executada

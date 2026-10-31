@@ -47,3 +47,57 @@ demanda e contraria o rito vivo. O `git log` decide, não o plano anterior: na
 própria branch da 010 já existiam `chore(010): gen_pins — repin da fase 0` e
 `… da fase 1`, um por commit de conteúdo. **Ao reusar o 009 como molde, troque a
 seção de repin antes de qualquer outra coisa.**
+
+**O R0 pode ser consumido antes do `tasks.md` (Fase 3 da 016, 2026-09-04).** O
+plano previu "R0 = errata + plan.md + tasks.md", mas o orquestrador rodou o repin
+logo após o commit do plano (`9e3fb0c`), e ao abrir a Fase 3 o `check_baseline`
+já respondia `0 sem pin`. **How to apply:** o `tasks.md` começa medindo
+(`python .claude/verify/check_baseline.py`) e, se o R0 já foi, a primeira tarefa
+é um **R0b** que fecha só o commit do próprio `tasks.md` — refinamento de
+granularidade, declarado na linha, não desvio para o relatório.
+
+**Segunda medição (Fase 2 da 017, 2026-09-06): a dívida dos portões inclui
+arquivo de OUTRO agente.** `check_baseline.py` no HEAD `36073dd` respondia
+`458/459 · 1 divergentes · 2 sem pin` — os dois `sem pin` eram `refinement.md` e
+`spec.md`, e o **divergente era `CONTEXT.md`**, editado pelo `product-owner` na
+Fase 0 sem repin. **How to apply:** o R0 do plano lista os arquivos por nome a
+partir da saída do `check_baseline`, não só os `specs/NNN-*/`; e quando a
+worktree está suja (planning-state do orquestrador), meça num clone efêmero
+([[prototipo-clone-efemero-origin-local]]). Contagem honesta de repins = número
+de commits de conteúdo que as waves produzem (017: dez, R0–R9), mais os desvios
+**por classe** (merge de `develop`; iteração do `spec-validate`) — 008 previu 1
+e gastou 3, 015 previu R2–R12 e executou 13 deslizados, 016 previu 15–16 e
+executou 9 fundidos: o conferível é o par (commit, arquivos pinados).
+
+**`gen_pins.py` recusa QUALQUER pendência fora do próprio `pins.json`
+(`:72-79`, medido em 2026-09-06) — inclusive planning-state e arquivo não
+rastreado (`??`).** Consequências de desenho no `tasks.md`: (i) a tarefa de
+repin do portão e a do planning-state **nunca** são `[P]` — a edição de estado
+suja a árvore que o repin exige limpa, e o planning-state pendente entra
+commitado antes (a 016 marcou esse par como `[P]` e só funcionou porque a ordem
+real foi serial); (ii) "um repin por commit de conteúdo" com escritores
+paralelos na mesma worktree é mecanicamente impossível — o repin de A falha
+enquanto B tem arquivo pendente —, logo toda wave que carregue repins é
+**serial**, e `[P]` só sobra entre tarefas em que ninguém escreve arquivo (na 017:
+aceite do PO ∥ relatório do doc-writer). Fundir os repins para "liberar" o `[P]`
+é o desvio que 015 e 016 pagaram. Nunca `--force`. Ver
+[[tasks-estado-do-mundo-e-ato-humano]].
+
+**Série executada da 017 (medida em `bc12e28`, 2026-09-06) — duas classes de
+desvio que o plano não previa.** Previstos dez (R0–R9) e as classes (a) merge de
+`develop` e (b) iteração do `spec-validate`; executados onze até a W3 (R0, R1,
+R2, **R2a**, R3–R8, **R8a**) e nenhum de (a)/(b). Os extras: **errata de spec
+depois do red** (R2a `2c79eb2`: o gate escrito emitiu uma causa que C3 não
+listava; errata em vez de afrouxar) e **segunda edição comentário-only do
+julgador** (R8a `bc12e28`: docstring, PP-12). Também R1 fechou **dois** commits
+de conteúdo (`tasks.md` + erratas de W0 na spec) com um repin. E a frase do
+plano "`[P]` na W3: o build-engineer roda os três repins em sequência depois de
+os três conteúdos estarem na árvore" é **mecanicamente errada** — com os três em
+HEAD, o primeiro repin cobre os três e os outros dois saem vazios: é a fusão que
+a frase promete evitar. **How to apply:** liste as quatro classes (a)–(d) na
+seção de repins; escreva a W3 serial já no plano (conteúdo → repin, por
+arquivo); e quando duas tarefas de conteúdo forem delegadas juntas, diga na
+delegação "commit, volte, repin, próxima" — na 017 o `build-engineer` commitou
+`d014` e `d016` seguidos e o orquestrador teve de refazer a branch local (reset,
+R4, cherry-pick, R5) para não fundir. Ver [[amendar-plano-pos-execucao]].
+

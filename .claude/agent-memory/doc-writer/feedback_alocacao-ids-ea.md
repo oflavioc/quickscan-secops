@@ -57,6 +57,35 @@ Ref por **nome de branch** (`origin/feature/x:.claude/BACKLOG.md`) pode falhar
 ainda antes disso, silenciosamente, pelo motivo já documentado abaixo —
 por isso o censo desta demanda usou o hash do commit, não o nome da branch.
 
+**Quinta confirmação (2026-10-10, `EA-82`/`EA-83`)**: censo de **187 refs**
+(`refs/remotes` + `refs/heads`) deu heading máximo **81 em todas** as que têm o
+arquivo, e a varredura de prosa `EA-(8[2-9]|9[0-9])` em todos os refs devolveu
+**uma só** forma de ocorrência: `EA-99` em
+`specs/012-status-backlog/matriz-gate-mutante.md:39`. **Não é reserva** — é o
+heading-exemplo da sonda `SONDA-T6iii`, que existe para provar que um heading em
+coluna 0 abre bloco fantasma e reprova o audit. Numa varredura futura isso vai
+reaparecer parecendo id tomado: é fixture de gate, não achado. (Tratar `EA-99`
+como reservado seria subalocar 17 ids.)
+
+**Sexta confirmação (2026-10-16, `EA-89`)**: censo em todos os `refs/heads` +
+`refs/remotes` deu heading máximo **88**, e ele vive **só** em
+`fix/aceite-021` (local e `origin`), **não** ancestral de `develop` — a
+`develop` para em **87**. A varredura de prosa `EA-(8[0-9]|9[0-9]|\d{3})`
+devolveu de novo **exatamente** o `EA-99` fixture da `SONDA-T6iii`, como esta
+memória previu. Série livre começou em `EA-89`. As duas gotchas de Git Bash
+(`MSYS_NO_PATHCONV=1`, `grep -a`) voltaram a ser necessárias: sem a primeira, o
+loop sobre 180+ refs saiu **silenciosamente vazio** e pareceu "nenhum id".
+E a ressalva "proposta até o orquestrador decidir" tem a forma inversa também:
+quando ele **manda** escrever (aqui, "escreva apenas `.claude/BACKLOG.md`"), a
+escrita é dele, e o que fica comigo é o censo, o id e o repin **não** rodado.
+
+**Sétima confirmação (2026-10-25, refutação adversarial)**: censo em 103 SHAs únicos
+(`refs/heads` + `refs/remotes`): heading máximo 104; prosa `EA-(97a|98a|99a|100a|10[5-9]|1[1-9]\d)`
+só no documento de síntese do próprio HEAD (nomeia sufixados, não reserva numéricos).
+Série livre começou em `EA-105`; alocados `EA-97a/98a/99a/100a` (sufixados junto do pai) e
+`EA-105`…`EA-116`; **próximo livre: `EA-117`** (recensar antes de usar). O regex do
+parser (`compliance-audit.sh:407`, `EA-\d+[a-z]?`) aceita sufixo de letra.
+
 **Why:** id de achado nunca renumera (R12); id alocado em duas branches ao mesmo
 tempo só aparece no merge, quando já foi citado em relatório. O risco está
 registrado também na memória do `product-owner` da demanda 013.

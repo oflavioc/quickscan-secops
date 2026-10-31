@@ -11376,6 +11376,16 @@ critério de "anterior"; com o gate que o `EA-64` pede (registro escrito pelo
 script, não à mão), a base passaria a ser dado e não inferência por nome. Ver
 `EA-53`, `EA-64`.
 
+### Nota de 2026-10-31 — reincidência na preparação da v3.2.13
+
+`python preparar_release.py v3.2.13` escolheu `v3.2.9` como «release anterior» (ordenação
+lexicográfica de `v3.2.10`…`v3.2.9`) e imprimiu `docker stop quickscan-v329`, enquanto o container no
+ar é `quickscan-v3212`. Efeito inócuo nos artefatos — `default.conf` e o digest de imagem são
+byte-idênticos em v3.2.9, v3.2.12 e v3.2.13 (`cmp`, orquestrador, 2026-10-31) —; o cabeçalho do
+`compose.yaml` gerado foi corrigido à mão com nota e o manifesto `.sha256` regenerado. O comando de
+cutover correto está em `docs_phase5/SELAGEM_V3_2_13.md`. Status continua `aberto`: o remédio é
+ordenar por tupla numérica no script, fix-finding de uma linha, ainda não feito.
+
 ## EA-122 — `buildRecommendationContext()` aplica `suppressedByPlatform()` em três ramos e não no `CONTEXT_NOT_INFORMED`; e descarta em silêncio o que o desenho precisaria mostrar (`violated`, serviço inelegível)
 
 **Status**: `aberto`

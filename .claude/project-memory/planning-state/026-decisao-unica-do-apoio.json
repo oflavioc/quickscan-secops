@@ -39,15 +39,14 @@
     "waves_done": [
       0,
       1,
-      2
+      2,
+      3
     ],
     "pending": [
-      "W3a ui_p52_support",
-      "W3b editor",
-      "W4 reancoragens+harness",
+      "W4 reancoragens+harness+registros",
       "W5 pins/bridges/CI",
       "W6 docs/aceite"
     ],
-    "notes": "W2 fechada em 2026-10-31 (core-engineer, Fable 5.1): ui_curation_v32.js 316->597 linhas (acima dos ~495 do plano, abaixo do teto R9; contagem medida a registrar no relatorio). Desvios declarados e ACEITOS pelo orquestrador como erratas da spec (registrar em W6): (a) entradaViva() traz solucoes{capId->[{product,status,deployment}]} para existente[]; (b) veto ganha notas[]; (c) \"sinal requerido ausente\" e abstencao (hipotese), nao veto; (d) laco por sinal roda tambem sob suficiencia fechada (status quo 022); (e) veto.itemId = primeira oferta relacionada nao-family; (f) __P50SUFF ausente => suficiente=false; (g) entrada nula => coletar(true) com console.error. tasks.md T020 diz preflight d023 11/11; o harness tem 12 mutantes (12/12)."
+    "notes": "W2 fechada em 2026-10-31 (core-engineer, Fable 5.1): ui_curation_v32.js 316->597 linhas (acima dos ~495 do plano, abaixo do teto R9; contagem medida a registrar no relatorio). Desvios declarados e ACEITOS pelo orquestrador como erratas da spec (registrar em W6): (a) entradaViva() traz solucoes{capId->[{product,status,deployment}]} para existente[]; (b) veto ganha notas[]; (c) \"sinal requerido ausente\" e abstencao (hipotese), nao veto; (d) laco por sinal roda tambem sob suficiencia fechada (status quo 022); (e) veto.itemId = primeira oferta relacionada nao-family; (f) __P50SUFF ausente => suficiente=false; (g) entrada nula => coletar(true) com console.error. tasks.md T020 diz preflight d023 11/11; o harness tem 12 mutantes (12/12). W3a fechada (ui-engineer, Fable 5.1): ui_p52_support_v32.js 872->1105 linhas (acima dos ~940 do plano: crescimento do estouro herdado, registrar no relatorio), CSS +67 so p53-*; D026 3/3; literais novos ACAO_TXT/CONDICAO_TXT/VETO_TXT conferidos contra tests_*.js e P52_COPY (desvio declarado: \"Acao sugerida:\" no lugar de \"Proximo passo\", observavel de P52-RES4/U15). d014 regra_morta 4/3 por censo do CSS 33->52 regras: repin por execucao na W4. W3b fechada (ui-engineer, sonnet): editor +8 linhas, D-9. Repin R2 consolidado apos W3."
   }
 }

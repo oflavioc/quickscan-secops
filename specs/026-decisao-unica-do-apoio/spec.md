@@ -124,7 +124,7 @@ fixture F2 de `tests_023_leitura.js:156`), **GF** (gate fechado por
 |---|---|---|---|
 | C1 | **Veto visível, nunca aquisição.** Onde o motor diz *operacionalizar/expandir/enablement* (ou plataforma, avaliação, validar) a linha do MAP **não vira card**; o bloco de vetos nomeia a linha, a razão **literal** do motor (`ctx.notes`) e "Tecnologia declarada: <product> (<status>)". QS-01 casos 2 e 4; aceites 1 e 4 do plano §2 | **`D026-REC1 (b)`** · `tests_026_contrato.js` · C2/C4: pré `ctx.supportMode === "CONTEXTUAL" && ctx.candidates.length === 0` (motor público); **zero** `[data-p53-sol-produto]` na seção; `[data-p53-vetos]` presente com `li[data-p53-veto-item]` por linha vetada (C4: `data-p53-vetos="2"`, FortiAnalyzer e FortiSIEM) e `txt(li)` contendo `ctx.notes[0]` literal **e** "Tecnologia declarada" | **`D026-M1`** (`ui_curation_v32.js`: `reconciliar` trata todo `ctx` como `CONTEXT_NOT_INFORMED` — ignora `temVoz`) ⇒ C2/C4 voltam ao MAP, cards reaparecem, zero veto; **`D026-M4`** (`ui_p52_support_v32.js`: `declararVetos` escreve `data-p53-suprimido` em vez de `data-p53-vetos`) ⇒ (b) sem `[data-p53-vetos]` |
 | C2 | **A variante resolvida é o título; a linha é a identidade.** Candidato `offering` do motor vira card **modo motor** sob a linha do MAP que o cobre: `data-p53-sol-produto` = linha (`PRODUCTS[chave].n`), `h4` = item resolvido, `data-p53-sol-item-id` = id do motor; variante de uma linha **nunca** vira card próprio (E2/022); o pareamento é **total** sobre `OFFERINGS ∪ SERVICES` e por critério (D-7; QS-01 caso 1; NDR; C10) | **`D026-REC1 (a)(c)(e)(g)(i)`** · idem · (a) C1: pré `archSatisfied(OFFERINGS.fortiendpoint.architectureRequires) === "violated"`; card `[data-p53-sol-item-id="fortiedr"]`, `h4` "FortiEDR", `data-p53-sol-produto="FortiEndpoint"`, `data-p53-sol-tier="prioritaria"` (gap-high), **zero** `[data-p53-vetos]` (E5); (c) C6: `item-id="fortindr-onprem"`, `h4 === OFFERINGS["fortindr-onprem"].name`, linha `FortiNDR`; (e) C10: card `FortiSIEM` com `data-p53-sol-variantes="fortisiem, fortisiem-cloud"`, **sem** card "FortiSIEM Cloud"; (g) **totalidade**: `chaveDe` reimplementado no teste é definido sobre todo `OFFERINGS ∪ SERVICES`, toda chave de `PRODUCTS` (13) tem ≥ 1 pré-imagem (a do `FortiGuard-Service-Bundle` nasce da constante da regra 4, exceção declarada), e `fortisoc`/`fortimail*`/`fortiaigate`/`fortipam`/`fortiauthenticator`/`fortisat` → `null` — **e** o produto concorda: para cada id, o card (ou veto) que o carrega em `data-p53-sol-item-id` tem `data-p53-sol-produto` igual à chave reimplementada; (i) **F2-placeholder**: pré `ctx.candidates[0].itemKind === "family"` (motor público, `engine_v32.js:647`); card `data-p53-sol-produto="FortiEndpoint"`, `data-p53-sol-item-id="endpoint-family"`, `data-p53-sol-acao="modalidade-a-definir"`, `data-p53-sol-tier="validacao"` (E9 — nunca `prioritaria`), `.p53-sol-variante` com texto não vazio; `cards.length === published().length` | **`D026-M3`** (`ui_curation_v32.js`: `chaveDe` pareia **só por nome** — regras 2–3 removidas) ⇒ `fortiedr`/`fortindr-onprem`/`fortisiem-cloud` viram chave própria: (a) `data-p53-sol-produto` ≠ "FortiEndpoint", (c) linha ≠ `FortiNDR`, (e) nasce card "FortiSIEM Cloud"; **`D026-M1`** também derruba (a) e (c) (C1/C6 voltam ao MAP: `h4` = linha, sem `item-id`) |
-| C3 | **Serviço gerenciado: a elegibilidade é do motor, e veto vence hipótese.** `serviceEligibility()` inelegível sobre landscape **declarado** ⇒ veto com a `reason` literal; serviço disparado pelo motor ⇒ card `servico` com tier por `gap-high` e `elegibilidade` do `note`; hipótese do MAP da **mesma chave** em outra capability **cai** diante do veto (E4) | **`D026-REC1 (d)(f)`** · idem · (d) C7: pré `serviceEligibility("fortiguard-mdr").eligible === false` e `reason` começa por "base declarada apenas em deployments não elegíveis"; **sem** card `[data-p53-sol-produto="FortiGuard MDR"]`; `li[data-p53-veto-item="FortiGuard MDR"]` com a `reason` literal; card `FortiGuard SOCaaS` com `data-p53-sol-acao="servico"` e `data-p53-sol-tier="prioritaria"` (controle positivo, `origem="gap"`); veto de `FortiEndpoint` com `[data-p53-sol-extensao="fortixdr"]` e o `scopeNote` M50 literal; `li[data-p53-veto-item="FortiEndpoint"]` com `txt` contendo "Tecnologia declarada: FortiEDR (production, on-prem)" (`C7.json`); card SOCaaS com `.p53-sol-elig` contendo o `note` literal de `ctx.services[]` para `fortiguard-socaas`; (f) **precedência**: em C7 nenhum card `FortiGuard MDR` **apesar** de `MAP["team-capacity"].lv[0].c` o listar (`v3_1_3.html:431`) e de `soc-staffing` ser `CONTEXT_NOT_INFORMED` | **`D026-M5`** (`ui_curation_v32.js`: fusão sem a precedência veto > hipótese — `vetos.length > 0` deixa de derrubar `hipoteses[]`) ⇒ (d) e (f) publicam "FortiGuard MDR · indicação prioritária" via `team-capacity` |
+| C3 | **Serviço gerenciado: a elegibilidade é do motor, e veto vence hipótese.** `serviceEligibility()` inelegível sobre landscape **declarado** ⇒ veto com a `reason` literal; serviço disparado pelo motor ⇒ card `servico` com tier por `gap-high` e `elegibilidade` do `note`; hipótese do MAP da **mesma chave** em outra capability **cai** diante do veto (E4) | **`D026-REC1 (d)(f)`** · idem · (d) C7: pré `serviceEligibility("fortiguard-mdr").eligible === false` e `reason` começa por "base declarada apenas em deployments não elegíveis"; **sem** card `[data-p53-sol-produto="FortiGuard MDR"]`; `li[data-p53-veto-item="FortiGuard MDR"]` com a `reason` literal; card `FortiGuard SOCaaS` com `data-p53-sol-acao="servico"` e `data-p53-sol-tier="prioritaria"` (controle positivo, `origem="gap"`); veto de `FortiEndpoint` com `[data-p53-sol-extensao="fortixdr"]` e o `scopeNote` M50 literal; `li[data-p53-veto-item="FortiEndpoint"]` com `txt` contendo "Tecnologia declarada: FortiEDR (production, on-prem)" (`C7.json`); card SOCaaS com `.p53-sol-elig` contendo o `note` literal de `ctx.services[]` para `fortiguard-socaas`; (f) **precedência**: em C7 nenhum card `FortiGuard MDR` **apesar** de `MAP["team-capacity"].lv[0].c` o listar (`v3_1_3.html:431`) e de `soc-staffing` ser `CONTEXT_NOT_INFORMED` | **`D026-M5`** (`ui_curation_v32.js`: fusão sem a precedência veto > hipótese — `vetos.length > 0` deixa de derrubar `hipoteses[]`) ~~⇒ (d) e (f) publicam "FortiGuard MDR · indicação prioritária" via `team-capacity`~~ — **corrigido pela errata E12 (W4b, 2026-10-31)**: medido que em C7 o MDR é vetado por inelegibilidade em **toda** linha da chave, `hipoteses[]` do MDR nasce vazio e `REC1 (d)(f)` são garantidas pelo veto por linha, não pela fusão (M5 sobreviveu na primeira execução da campanha); M5 passa a ser julgado por **`REC1 (j)`** (fixture C4-DL: `FortiSIEM` com hipótese por `detection-engineering` e veto por `security-analytics` ⇒ zero card, veto presente, `published()` sem `FortiSIEM`; sob M5 publica "FortiSIEM · indicação prioritária" ao lado do próprio veto) |
 | C4 | **Sem voz do motor nada é inventado.** Legado, `CONTEXT_NOT_INFORMED` (inclui as 3 capabilities `landscapeEnabled:false`, `engine_v32.js:43-45`), `UNSET`/`UNKNOWN` na base de um serviço (D-6) e fora do catálogo contextual ⇒ **hipótese condicionada**, tier por `sev`, **condição visível em tela e papel nos dois modos** (D-2, D-6); zero veto; C3 nasce com `CONTEXTO_SUPRIMIDO_POR_PLATAFORMA = false` (D-3) e C3b é o caso "plataforma cobre" | **`D026-LEG1 (a)(b)(c)`** · idem · (a) C8 (legado): card `FortiEndpoint`, `data-p53-sol-acao="hipotese"`, `data-p53-sol-condicao="sem-contexto"`, `data-p53-sol-tier="prioritaria"`, `.p53-sol-condicao` com texto não vazio, zero `[data-p53-vetos]`; **oferta ≡ `computeFindings()+MAP`** (conjunto de linhas e pares produto × capability — o oráculo do `D019-SOL1`, declarado aqui como oráculo de hipótese); (b) C7-UNSET: card `FortiGuard MDR` com `acao="hipotese"` e `condicao="capability-nao-informada"`, zero veto, e pré `serviceEligibility("fortiguard-mdr").reason` começa por "base requerida ausente" com `TECH_LANDSCAPE["endpoint-detection"].presence === "UNSET"`; (c) C3: card `FortiSOAR` `condicao="capability-nao-informada"`, tier `prioritaria` (sev 2), zero veto, `[data-p53-suprimido]` **ausente** — pina a constante em `false`; **C3b**: zero card `FortiSOAR`, `li[data-p53-veto-item="FortiSOAR"]` com classe `operacional` ou `plataforma` e `txt` contendo "M75" | **`D026-M6`** (`ui_curation_v32.js`: remove a exceção D-6 em `veredictoDeServico` — "base requerida ausente" vira veto também sob `UNSET`/`UNKNOWN`) ⇒ (b) MDR vetado em C7-UNSET. A constante de (c) **não tem mutante próprio**: a alínea pina o valor (`true` sem a forma segura da §2.6 faria (c) cair por `[data-p53-vetos]`), e o backlog carrega a lacuna do engine (§Fora de escopo) |
 | C5 | **Gate fechado e leitura congelada.** Sob `__P50SUFF.contract().sufficient === false` nada do motor vira veto (INV-3 pelo lado da apresentação); onde há veto, a região congelada **permanece oculta** (`porCapability` pela nota) e o veto **nunca** é supressão (`[data-p53-suprimido]` ausente sem curadoria) | **`D026-LEG1 (d)(e)`** · idem · (d) **GF** nas duas variantes (`poucasRespostas` + `endpoint-detection` NONE; `poucasRespostas` + terceiro em produção): `#p50-results[data-p50-gate] !== "released"` (vacuidade nomeada), cards de hipótese com `condicao="contexto-a-validar"` nas duas variantes, **zero** `[data-p53-vetos]`; (e) em **toda** fixture com `[data-p53-vetos]` (C2, C4, C7, C3b): `FX010.d010HasSubstitute(w) === true`, nenhum `.apoio-block` congelado visível no escopo de apoio (censo `tests_010_vao.js:168-196`), **e** `[data-p53-suprimido]` ausente (a invariante do `D025-AUS1 (b)`, remedida onde há veto) | **`D026-M4`** ⇒ (e) `[data-p53-suprimido]` presente sem curadoria em C2/C4/C7. **(d) sem carrasco próprio entre M1–M6**: a variante NONE é hipótese por construção do engine (`classify` exige `assessmentSufficient()` para `TECHNOLOGY_WHITESPACE`, `engine_v32.js:402-404`); a variante *terceiro em produção* é a única que a porta de saída de suficiência decide (`OPERATIONAL_GAP` não consulta suficiência) — alínea de regressão, **dívida declarada** na matriz (precedente `D025-INV8 (c)`) |
 | C6 | **O papel diz o que a tela diz, por card** (QS-02). Qualificador, ação, origem, condição, variante, elegibilidade e escopo saem no `pr-card` **por cópia do card** (derivação, nunca recálculo — `D019-PAR1`); o bloco de vetos sai no papel com a mesma contagem e os mesmos itens | **`D026-PAP1`** · idem · para cada `pr-card` de `#pr-sup-solucao` após `beforeprint`, em C1/C5/C7/C9/C10: `data-p53-sol-tier`, `-acao`, `-item-id`, `-origem`, `-condicao`, `-variantes` **iguais** ao card homônimo da tela (`data-p53-sol-produto`); `.p53-pr-tier` com o texto do tier ("indicação prioritária"/"após validação"); **C5**: 9/9 `pr-card` com `data-p53-sol-tier` e `.p53-pr-tier` (7 `validacao`, 2 `prioritaria` — contagem **medida pela fixture**, nunca pinada como requisito futuro) e `pr-card[FortiEndpoint]` com `.p53-pr-escopo` contendo "Escopo: cobre a camada de endpoint"; `pr-card[data-p53-sol-produto="FortiRecon"]` com `.p53-pr-escopo` contendo "complementa o programa de gestão de vulnerabilidades" (escopo do MAP, não do motor); **C1**: `<b>` "FortiEDR" + `.p53-pr-variante`; **C9**: `.p53-pr-tier` "após validação" + `data-p53-sol-origem="sinal"` + `data-qs22-sinais` não vazio; **C2/C7**: `.p53-pr-vetos[data-p53-vetos]` com a **mesma** contagem e os **mesmos** `data-p53-veto-item` da tela; **C2/C4**: a seção existe no papel **só com** o bloco de vetos (guarda `if (!cards.length && !aviso && !vetos) return ""`) | **`D026-M2`** (`ui_p52_support_v32.js`: `papelHTML` omite `data-p53-sol-tier`/`.p53-pr-tier` — **só no papel**, padrão `D019-M4`) ⇒ PAP1 vermelho em todas as fixtures |
@@ -727,3 +727,143 @@ congelado apenas para facilitar o renderizador"*; microfase 02 é outra demanda)
   QS-03..QS-08): outras demandas. **QS-09..QS-12** (instrumento): fora.
 - **Deploy/release**: merge, selagem e deploy manual em `127.0.0.1:1337` são do
   proprietário (merge não é entrega).
+
+## Erratas
+
+> Escritas pelo `doc-writer`, 2026-10-31, na branch
+> `feature/026-decisao-unica-do-apoio` (HEAD `fc5874f`). Cada erratum registra um
+> desvio que a **execução** das waves W2/W3/W4 declarou e o orquestrador aceitou
+> (`planning-state → implement.notes`); a spec foi escrita antes do código e não
+> previu esses pontos. **Nenhuma errata afrouxa gate, alínea ou mutante; a E12
+> acrescenta uma alínea (`D026-REC1 (j)`) e nenhuma contagem de gate muda** — o
+> texto passa a descrever o que foi medido. Aceite: *decidido pelo orquestrador sob a instrução
+> do proprietário de 2026-10-31 (prompt da microfase 01); ratificação literal
+> pendente no PR*. Nenhuma linha aqui afirma aprovação do usuário.
+
+| Campo | Registro |
+|---|---|
+| **Quem decidiu** | O orquestrador, sob a instrução do proprietário de 2026-10-31 (prompt da microfase 01); ratificação literal pendente no PR |
+| **Quando / onde** | 2026-10-31 · `planning-state → implement.notes` (W2 fechada, W3a, W3b, W4, W4b) |
+| **Classes** | **aditiva** — a spec era omissa e o código acrescenta sem mudar o que ela afirma · **divergência declarada** — o código faz diferente do texto da spec (a direção está dita); na E12 é o **gate** que ganha uma alínea · **registro** — interpretação ou medida que passa a constar, sem divergência de comportamento |
+| **O que NÃO é reaberto** | Os 3 gates `D026-REC1`/`D026-PAP1`/`D026-LEG1` e todas as suas alíneas (a E12 acrescenta uma, não retira nem afrouxa nenhuma); os 6 mutantes `D026-M1`..`M6`; as 4 reancoragens de `D022-M10`; a trilha E13; as contagens existentes (`d019` 14, `d022` 14, `d023` 9, `d025` 16); D-1..D-9; o red `7678222`; o que a spec lista em «O que NÃO muda» |
+
+### E1 · `entradaViva()` traz `solucoes` — aditiva
+
+| Campo | Registro |
+|---|---|
+| **O que estava escrito** | §Contratos → *Funções*: `entradaViva()` devolve `{ legado, suficiente, findings, mapa, produtos, contextos, catalogo, landscape:{capId→presence}, supressao, arquitetura, elegibilidade }` — `landscape` guarda só a **presença** |
+| **Fato medido** | O veto precisa de `existente[]` = `TECH_LANDSCAPE[capId].solutions` (produto, status, deployment) para «Tecnologia declarada: <product> (<status>)». `ui_curation_v32.js:191-194` acrescenta `solucoes: { capId → [{product, status, deployment}] }` ao lado de `landscape`; `reconciliar()` o lê em `:211`/`:232` |
+| **O que passa a valer** | A entrada ganha o campo `solucoes`. Continua dado → dado: copiado de `V32.TECH_LANDSCAPE`, nunca escrito |
+| **Onde o gate afirma** | `D026-REC1 (b)` e `(d)` (texto «Tecnologia declarada: … (production[, on-prem])»); `D026-LEG1 (f)` (pureza: a entrada não é mutada) |
+| **Classe** | aditiva |
+
+### E2 · O veto ganha `notas[]` — aditiva
+
+| Campo | Registro |
+|---|---|
+| **O que estava escrito** | §Shape do veto: `{ chave, nome, itemId, capId, cap, classe, motivo, existente, extensoes, servicos }` |
+| **Fato medido** | `ui_curation_v32.js:231-241`: o veto carrega também `notas: ctx.notes.slice()`. `motivo` é a primeira nota; as demais (C3b: a nota M75 vem depois de «tecnologia operacional…») só chegam à tela por `notas[]` |
+| **O que passa a valer** | O shape do veto tem `notas: string[]` (literais de `ctx.notes`, cópia). A regra de ouro do shape continua: todo valor vem de dado existente |
+| **Onde o gate afirma** | `D026-LEG1 (c)` (C3b: `txt` do `li` contém «M75»); `D026-REC1 (b)` (`ctx.notes[0]` literal) |
+| **Classe** | aditiva |
+
+### E3 · «Sinal requerido ausente» é abstenção, não veto — divergência declarada
+
+| Campo | Registro |
+|---|---|
+| **O que estava escrito** | §Linhas de serviço: `!el.eligible` com «demais razões» ⇒ **veto `elegibilidade`**, `motivo = el.reason`; a única exceção é «base requerida ausente» sob `UNSET`/`UNKNOWN` (D-6) |
+| **Fato medido** | `serviceEligibility()` devolve «sinal requerido ausente: <sinais>» (`engine_v32.js:475-476`) quando o serviço exige um sinal que a sessão não ligou. Sinal é **entrada da sessão**, não landscape declarado. `ui_curation_v32.js:310-311` trata esse caso como `hip = true` (hipótese · `capability-nao-informada`), nunca veto |
+| **O que passa a valer** | Veto de elegibilidade só nasce de razão sobre landscape **declarado**. «Sinal requerido ausente» e «base requerida ausente» sob `UNSET`/`UNKNOWN` são **abstenção**. Mesma lógica de D-6 (INV-2: não informado ≠ ausente), estendida ao sinal |
+| **Onde o gate afirma** | `D026-LEG1 (b)` pina a exceção D-6 (mutante `D026-M6`). **A exceção do sinal não tem alínea nem mutante próprio** — dívida declarada; a fixture que a exercitaria (serviço gatilhado só por sinal, com o sinal desligado) não está entre as da spec |
+| **Classe** | divergência declarada (menos vetos que o texto; direção conservadora) |
+
+### E4 · O laço por sinal roda também sob suficiência fechada — divergência declarada
+
+| Campo | Registro |
+|---|---|
+| **O que estava escrito** | §Portas de saída: `suficiente === false` ⇒ «toda linha é hipótese … sem veto» |
+| **Fato medido** | O segundo laço de `reconciliar()` (`ui_curation_v32.js:341-357`, a 022 E2 transportada, âncora `D022-M10`) só testa `!entrada.legado`. Com o gate fechado o candidato `offering` **com sinal** continua virando `conversa-por-sinal`, tier 2 — que é o comportamento de hoje (`ofertaDoMotor()` não consultava o gate). O corte por `suficiente` vale para as linhas do **mapa** (`:328-330`) |
+| **O que passa a valer** | «Toda linha **do mapa** é hipótese» sob gate fechado; o card habilitado **por sinal** (`origem="sinal"`) permanece, tier 2 e sem veto. Status quo da 022; nenhum card novo |
+| **Onde o gate afirma** | `D026-LEG1 (d)` (GF nas duas variantes: hipótese com `contexto-a-validar`, zero veto) não exercita sinal; `D022-PROD1` (intacto) cobre o laço |
+| **Classe** | divergência declarada |
+
+### E5 · `veto.itemId` — a primeira oferta relacionada que não é família — registro
+
+| Campo | Registro |
+|---|---|
+| **O que estava escrito** | §Shape do veto: `itemId: "fortiendpoint"\|null`, sem regra de preenchimento |
+| **Fato medido** | `ui_curation_v32.js:258` (`alvo`): para veto de produto, a primeira oferta da linha com relação à capability e `entityType !== "family"` (a primeira relacionada se só houver família); para veto de serviço, o `serviceId` que gerou o veto (`:312`, `:315`). `null` só quando a linha não tem oferta relacionada |
+| **O que passa a valer** | A regra acima fica escrita no contrato do veto. O atributo `data-p53-veto-item` continua o **nome da linha**; `itemId` só viaja no registro (`D026-REC1 (d)` lê o `li` pelo nome) |
+| **Onde o gate afirma** | Nenhum gate assere `veto.itemId` diretamente — dívida declarada |
+| **Classe** | registro |
+
+### E6 · `__P50SUFF` ausente ⇒ `suficiente = false` — registro
+
+| Campo | Registro |
+|---|---|
+| **O que estava escrito** | §Portas de saída: `suficiente === false` lido de `__P50SUFF.contract().sufficient`; a spec não diz o que acontece sem a bridge |
+| **Fato medido** | `ui_curation_v32.js:196-198`: `suf = window.__P50SUFF && …contract().sufficient`; `e.suficiente = suf === true`. Bridge ausente ou valor não booleano ⇒ `false` ⇒ porta de saída **fechada** |
+| **O que passa a valer** | Suficiência desconhecida é tratada como **não publicável** (INV-3: a UI nunca é dona da decisão, e o que não se sabe não vira veto). Efeito: sem a bridge toda linha do mapa sai como hipótese. Os gates rodam sobre o HTML construído, onde a bridge existe |
+| **Onde o gate afirma** | Indiretamente `D026-LEG1 (d)`; sem alínea própria para «bridge ausente» |
+| **Classe** | registro (interpretação conservadora onde a spec era omissa) |
+
+### E7 · Entrada nula ⇒ `coletar(true)` com `console.error` — registro
+
+| Campo | Registro |
+|---|---|
+| **O que estava escrito** | §Portas de saída: `entradaViva() === null` ⇒ «hipóteses do mapa; `condicao = sem-contexto`; `console.error` nomeando» — sem dizer como se monta a entrada só-mapa |
+| **Fato medido** | `ui_curation_v32.js:412-418` (`derivar()`): `entradaViva() === null` ⇒ `console.error("[026] entrada do motor indisponível …")` e `coletar(true)`, que monta só a Camada 1 com `legado: true` (⇒ `sem-contexto` pela porta de legado, `:328`). Se nem isso monta, devolve `{ registros: [], vetos: [] }` |
+| **O que passa a valer** | O modo de falha é este: nunca silêncio (R10 §2), nunca veto, sempre hipótese do mapa quando a Camada 1 existe |
+| **Onde o gate afirma** | Nenhum gate exercita o ramo (precisaria de engine ausente) — dívida declarada |
+| **Classe** | registro |
+
+### E8 · `ACAO_TXT` começa por «Ação sugerida:» — registro
+
+| Campo | Registro |
+|---|---|
+| **O que estava escrito** | §Tela: `.p53-sol-acao` = `ACAO_TXT[acao]`; spec: «os gates **não pinam** esses literais». O rascunho entregue à W3a usava «Próximo passo…» e «…sobre a base declarada» (**segundo a delegação; o rascunho não está em arquivo do repositório**) |
+| **Fato medido** | «Próximo passo» é observável de outros gates: `P52-RES4` (`tests_p52_layout.js:220`, `/Pr[óo]ximo passo sugerido/i`) e `U15 (E)` (`tests_ui_m31.js:315`, «fronteiras do hiding … 'Próximo passo'»). A W3a (`816d605`) usou «Ação sugerida: …» em `ACAO_TXT` (`ui_p52_support_v32.js:278-285`) e conferiu os literais novos contra `P52_COPY` e contra `grep` em `tests_*.js`. **Pendência de verificação**: não localizei regex que pine «sobre a base declarada» nos gates lidos; o trecho permanece em `VETO_TXT.extensao` (`ui_p52_support_v32.js:297`) |
+| **O que passa a valer** | O texto da ação é «Ação sugerida: …»; o atributo `data-p53-sol-acao` carrega o enum e é o que os gates leem |
+| **Onde o gate afirma** | `P52-RES4` e `U15 (E)` (intactos, verdes: `p52layout 45/45` em `816d605`); `D026-PAP1` compara atributos, não esse texto |
+| **Classe** | registro |
+
+### E9 · Orçamentos medidos — o plano previu menos — registro
+
+| Campo | Registro |
+|---|---|
+| **O que estava escrito** | `plan.md`/desenho §5.1: `ui_curation_v32.js` 316 → ≈ 495; `ui_p52_support_v32.js` 872 → ≈ 940; CSS ≈ +35 |
+| **Fato medido** | `git show HEAD:<arquivo> \| wc -l`: `ui_curation_v32.js` **597** (`git diff --numstat 9509e4b..HEAD`: +333 −52); `ui_p52_support_v32.js` **1105** (+339 −106); `ui_p52_support_v32.css` **291** (+71); `ui_curation_edit_v32.js` +8. Os dois primeiros ficam acima do orçamento de R9 §7 (~600; o de apoio já estava acima antes: 872) |
+| **O que passa a valer** | As cifras do plano são estimativa. O crescimento do `ui_p52_support` é o do estouro herdado: a demanda **retira** a derivação do módulo (`ofertaDoMotor()` virou leitor), mas acrescenta o bloco de vetos, o papel e os literais; a justificativa de R9 §7 do `plan.md` continua valendo e o split segue como rota futura. `lint-arch`: 0 problema(s) |
+| **Onde o gate afirma** | `lint-arch` (stage); R9 §7 é justificativa registrada, não gate |
+| **Classe** | registro |
+
+### E10 · O preflight d023 tem 12 mutantes, não 11 — registro
+
+| Campo | Registro |
+|---|---|
+| **O que estava escrito** | `tasks.md` T020 (e `plan.md` §Janela vermelha): «preflight d023 11/11» |
+| **Fato medido** | O harness d023 declara **12** mutantes e o preflight fecha 12/12 (planning-state, W2) |
+| **O que passa a valer** | Onde o plano diz 11, lê-se 12. A contagem registrada (`mutation_map.json`) é a do harness, não a da prosa |
+| **Onde o gate afirma** | `tests_023_mutants.js --preflight` |
+| **Classe** | registro |
+
+### E11 · Os repins foram consolidados (R0 a R3), não nove — registro
+
+| Campo | Registro |
+|---|---|
+| **O que estava escrito** | `plan.md` §Pins: série `R0`, `R1`, `R2`, `R3`, `R4a`, `R4b`, `R4c`, `R5`, `R6`, `R7`, `R8`, cada um em commit separado |
+| **Fato medido** | Executados até `fc5874f`: `R0` (`96369af`, docs), `R1` (`a02d411`, após o red), `R2` (`102decc`, `ui_curation`, `ui_p52_support` `.js`/`.css`, editor e HTML, **depois** de W2 e W3) e `R3` (`3f13100`, harness `d026`, registros, censo do CSS e trilhas da W4). W2 (`6ace994`) e W3a/W3b (`816d605`, `dc5b633`) não tiveram repin próprio. O planning-state registra a consolidação (após o red, após o rebuild da W3, no fecho) em lugar dos «nove previstos» — diretriz de 2026-09-13. Depois de `3f13100`, `993e371` (W4b: `REC1 (j)`, matriz) e `fc5874f` (nota do `__CURATION` em `bridges.json`) tocaram arquivos pinados e esperam o repin de fecho |
+| **O que passa a valer** | R8 pede o repin **no mesmo PR**, não um commit por wave. Janela de `baseline` vermelho entre `6ace994` e `102decc` aceita e declarada. O repin de fecho (a série executada é `R0`–`R3`) cobre o que vier depois de `3f13100`, inclusive os documentos desta entrega: <<pipeline-final>> |
+| **Onde o gate afirma** | stage `baseline` (`check_baseline.py`) no fecho |
+| **Classe** | registro |
+
+
+### E12 · `D026-M5`: o mecanismo de C7 e a alínea `REC1 (j)` com a fixture C4-DL — divergência declarada
+
+| Campo | Registro |
+|---|---|
+| **O que estava escrito** | §Critérios, linha C3, coluna *Mutante previsto*, e `tasks.md` §Estado do mundo, linha M5: «em C7 a hipótese do MAP de `team-capacity` cai diante do veto pela **precedência da fusão**» (E4 do desenho); `D026-M5` (fusão sem a precedência veto > hipótese) faria `REC1 (d)(f)` publicarem «FortiGuard MDR · indicação prioritária» |
+| **Fato medido** | W4, primeira execução da campanha `d026` (`993e371` registra a correção; trilha em `mutation_map.json → harnesses.d026._trilha`): **5 DETECTADO · 1 SOBREVIVENTE · 0 NÃO EXECUTADO de 6** — o sobrevivente é `D026-M5`. Em C7, `veredictoDeServico` veta o MDR por **inelegibilidade**, propriedade do landscape que vale igual em toda linha da chave: o `li[data-p53-veto-item="FortiGuard MDR"]` lista as duas capabilities (`team-capacity` e `monitoring-coverage`), logo `hipoteses[]` do MDR nasce **vazio** e a precedência da fusão não tem sujeito. `REC1 (d)(f)` em C7 são garantidas pelo **veto por linha**, não pela fusão. O estado que M5 distingue existe no lado **produto**: a mesma chave com hipótese numa capability e veto noutra — C4 com `detection-lifecycle: 0` (fixture **C4-DL**): `FortiSIEM` com hipótese por `detection-engineering` (`CONTEXT_NOT_INFORMED`) e veto por `security-analytics` (`OPERATIONAL_GAP`). No produto correto a fusão derruba o card (`offered []`); sob M5 sai «FortiSIEM · indicação prioritária» ao lado do próprio veto. Nenhuma das 15 fixtures então existentes o exercitava: M5 não era equivalente, o **gate** era cego |
+| **O que passa a valer** | `D026-M5` prevê `D026-REC1 (j)`: em C4-DL, zero card `[data-p53-sol-produto="FortiSIEM"]`, `li[data-p53-veto-item="FortiSIEM"]` presente e `published()` sem `FortiSIEM`. A alínea **nasce verde por desenho** (o produto está certo) e tem poder exclusivamente em M5 — precedente `D025-INV8 (c)`, aqui **com** carrasco. `REC1 (f)` continua medindo C7, agora com o mecanismo nomeado certo (veto por linha). O texto «precedência da fusão» da linha C3 e da linha M5 fica como redação original, desmentida por medição (R2 §5) |
+| **Onde o gate afirma** | `D026-REC1 (j)` (`tests_026_contrato.js`); carrasco `D026-M5` (`tests_026_mutants.js`, reancorado em (j)). Remedido: `D026 CONTRATO` 3 PASS · 0 FAIL de 3; preflight 6/6; campanha `d026` **6 DETECTADO · 0 SOBREVIVENTE · 0 NÃO EXECUTADO** (M5 cai em `REC1 (j)`); matriz de mutação 207 pares completos |
+| **Classe** | divergência declarada — **o gate ganhou uma alínea, nenhuma foi afrouxada**: nenhuma asserção foi removida ou relaxada, uma foi acrescentada; a contagem da suíte continua em 3 gates |

@@ -70,7 +70,7 @@
     },
     "__CURATION": {
       "owner": "ui_curation_v32.js",
-      "nota": "estado de curadoria do relatorio (demanda 019): selecao por offering, enum fechado include/exclude; getters/setters e contract() de leitura. Renderizacao consome, nunca escreve (R9 §5). [025] validate(obj) e PURO e e a unica verdade sobre curadoria valida (R9 §8); fromSession recusa SEM tocar o estado e trata `undefined` como 'nada declarado'; unset()/unsetArchitectureNote() devolvem ao ausente (toggle-back, D025-UNS1)."
+      "nota": "estado de curadoria do relatorio (demanda 019): selecao por offering, enum fechado include/exclude; getters/setters e contract() de leitura. Renderizacao consome, nunca escreve (R9 §5). [025] validate(obj) e PURO e e a unica verdade sobre curadoria valida (R9 §8); fromSession recusa SEM tocar o estado e trata `undefined` como 'nada declarado'; unset()/unsetArchitectureNote() devolvem ao ausente (toggle-back, D025-UNS1). [026] oferta()/vetos()/reconcile(entrada): a oferta por produto nasce UMA vez aqui (registro de decisao de apoio + vetos com razao literal do motor), reconciliando computeFindings()+MAP com buildRecommendationContext(); reconcile e PURO (dado -> dado), o registro e DERIVADO e nunca serializado (INV-8); __P53SOL e __P53CUR consomem, nunca escrevem (R9 §5). Veto so onde o motor tem voz (temVoz espelha hasSubstituteV32, ui_v32.js:750-752)."
     },
     "__P53SOL": {
       "owner": "ui_p52_support_v32.js",

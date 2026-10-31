@@ -154,6 +154,10 @@
 .p53-cur-item-txt { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
 .p53-cur-item-nome { font-size: 14px; color: var(--text); }
 .p53-cur-item-grp { font-size: 12px; color: var(--faint); }
+/* [026 · D-9] "apresentado como <variante>": o editor lista a LINHA (é o que
+   se cura) e diz como ela aparece na tela. Regra aqui porque o dono da folha
+   é a apresentação (plan §W3b); o editor só consome a classe. */
+.p53-cur-item-var { font-size: 12px; font-style: italic; color: var(--faint); }
 .p53-cur-item-add {
   font-size: 11px;
   font-weight: 700;
@@ -217,4 +221,71 @@
 }
 @media (min-width: 1180px) {
   .p53-sol-lead { grid-column: 1 / -1; }
+}
+
+/* ============================================================================
+   [026] A DECISÃO VISÍVEL NO CARD — variante, ação, condição, elegibilidade,
+   escopo. Texto sempre presente: cor nunca é o único portador (mesma regra
+   do `D022-A11Y1`). Só tokens já declarados, nenhum hex (lição `P50-COR1`).
+   ========================================================================== */
+.p53-sol-variante,
+.p53-sol-acao,
+.p53-sol-condicao,
+.p53-sol-elig {
+  margin: 0 0 8px;
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--muted);
+}
+.p53-sol-variante { font-weight: 600; color: var(--text); }
+.p53-sol-condicao,
+.p53-sol-elig[data-p53-sol-elig="validar"] {
+  padding-left: 10px;
+  border-left: 3px solid var(--p52-attn);
+}
+.p53-sol-escopo { font-style: italic; }
+
+/* O bloco de vetos: nó próprio, fora de `CLASSES_CONTIGUAS`, nunca card. */
+.p53-sol-vetos {
+  margin: 14px 0 0;
+  padding: 12px 14px;
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--ftnt-silver);
+  border-radius: 8px;
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--muted);
+}
+.p53-sol-vetos-t {
+  margin: 0 0 4px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--text);
+}
+.p53-sol-vetos-lead { margin: 0 0 10px; color: var(--faint); }
+.p53-sol-vetos-lista { list-style: none; margin: 0; padding: 0; }
+.p53-sol-veto {
+  padding: 8px 0;
+  border-top: 1px solid var(--line);
+}
+.p53-sol-veto-nome { font-weight: 650; color: var(--text); }
+.p53-sol-veto-motivo { margin: 2px 0 0; }
+.p53-sol-veto-caps,
+.p53-sol-veto-tec,
+.p53-sol-veto-ext,
+.p53-sol-veto-svc { margin: 2px 0 0; font-size: 12.5px; color: var(--faint); }
+@media (min-width: 1180px) {
+  .p53-sol-vetos { grid-column: 1 / -1; }
+}
+
+/* No papel, tudo é `.pr-mut` (estilo do dono, `ui_v32.css`); aqui só o que é
+   próprio: o qualificador legível e o escopo distinguível do descritivo. */
+@media print {
+  .p53-pr-tier { font-weight: 700; text-transform: uppercase; letter-spacing: .07em; }
+  .p53-pr-escopo { font-style: italic; }
+  .p53-pr-vetos { break-inside: avoid; }
+  .p53-pr-vetos-t { font-weight: 700; text-transform: uppercase; letter-spacing: .07em; }
+  .p53-pr-vetos ul { margin: 4px 0 0; padding-left: 16px; }
 }

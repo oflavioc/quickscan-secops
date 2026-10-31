@@ -1,0 +1,1 @@
+{"id":"C4-sentinel","nivel":2,"niveis":{"logs":0},"landscape":{"security-analytics":{"presence":"PRESENT","solutions":[{"product":"Microsoft Sentinel","vendor":"Microsoft","status":"production","deployment":"saas"}]}},"arch":{"saasAllowed":"yes"}}

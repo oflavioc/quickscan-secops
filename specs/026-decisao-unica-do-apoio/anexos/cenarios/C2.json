@@ -1,0 +1,1 @@
+{"id":"C2-edr-terceiro","nivel":2,"niveis":{"endpoint":0},"landscape":{"endpoint-detection":{"presence":"PRESENT","solutions":[{"product":"CrowdStrike Falcon","vendor":"CrowdStrike","status":"production","coverage":"","deployment":"saas"}]}},"arch":{"saasAllowed":"yes"}}

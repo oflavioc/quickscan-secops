@@ -316,6 +316,10 @@ T("D019-PROV1", "item cuja PRESENÇA é decisão do operador leva marcador na TE
    a tela mostra. A alínea nova compara a OFERTA do motor antes e depois —
    mesma expressão que o `D019-SOL1` usa como oráculo, pela mesma razão.
    ========================================================================== */
+/* [026 · T042 · E13 · 2026-10-31] `reconciliar()` é insensível ao estado do
+ * operador; `OFERTA_DO_MOTOR` continua a oferta de hipótese (`computeFindings()
+ * +MAP`) — o oráculo vale em modo legado/hipótese; com voz do motor o oráculo
+ * é `D026-REC1`. Corpo byte-idêntico; só este comentário nasceu. */
 const OFERTA_DO_MOTOR =
   "(function(){var o=[],fs=(computeFindings()||{}).findings||[];" +
   "for(var i=0;i<fs.length;i++){var f=fs[i],m=MAP[f.id];" +
@@ -369,6 +373,11 @@ T("D019-MED1", "a curadoria não alcança medição nem declaração: derivados 
    DECLARADA e pública deste repositório justamente para que um gate possa
    comparar texto canônico com texto exibido sem aceitar divergência.
    ========================================================================== */
+/* [026 · T042 · E13 · 2026-10-31] oráculo `computeFindings()+MAP` vale em modo
+ * legado/hipótese (é o modo desta fixture); com voz do motor o oráculo é
+ * `D026-REC1`. Os pares continuam idênticos em legado porque
+ * `data-p53-sol-produto` = linha e `[data-p53-sol-cap]` = `applyCopy(MAP.cap)`.
+ * Corpo byte-idêntico; só este comentário nasceu. */
 T("D019-SOL1", "visão por solução: o par (produto × capability) é igual ao que o MOTOR produziu, menções curtas incluídas", () => {
   const { w, d } = boot();
   const copy = (w.__P52 && typeof w.__P52.applyCopy === "function")
@@ -502,6 +511,8 @@ T("D019-SOL3", "em sessão REALISTA, todo produto que o motor oferece está na v
     throw new Error("produto na visão que o motor não ofereceu: " + nasceram.join(", "));
 
   /* (b) o QUALIFICADOR diz de onde o produto veio, e bate com o motor */
+  /* [026 · T042 · E13 · 2026-10-31] oráculo `computeFindings()+MAP` vale em modo
+   * legado/hipótese; com voz do motor o oráculo é `D026-REC1`. Corpo byte-idêntico. */
   const tierDoMotor = w.eval("(function(){var o={},fs=(computeFindings()||{}).findings||[];" +
     "for(var i=0;i<fs.length;i++){var f=fs[i],m=MAP[f.id];if(!m||!m.lv||!m.lv[f.lvl])continue;" +
     "var c=m.lv[f.lvl].c||[];for(var j=0;j<c.length;j++){var t=(f.sev===2)?1:2;" +

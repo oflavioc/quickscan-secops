@@ -17,7 +17,7 @@
    gates com alíneas nomeadas:
 
      D026-REC1  o motor vence a Camada 1 onde tem voz; a identidade é a chave,
-                não o nome                                  (a)…(i)
+                não o nome                                  (a)…(j)
      D026-PAP1  o papel diz o que a tela diz, por card      (QS-02)
      D026-LEG1  sem voz do motor nada é inventado; a derivação é pura  (a)…(g)
 
@@ -130,7 +130,12 @@ const J = x => JSON.stringify(x);
    padrão de `anexos/sonda-leitura.js:33-39`: respostas por `__DEV`, contexto
    escrito em `V32.TECH_LANDSCAPE`/`ARCHITECTURE_CONTEXT`/`SESSION_SIGNALS`.
    C7-UNSET, F2-placeholder (fixture F2 de `tests_023_leitura.js:156`) e as
-   duas GF (gate fechado) são as da spec §Fixtures.
+   duas GF (gate fechado) são as da spec §Fixtures. C4-DL (W4b, 2026-10-31)
+   é C4 + `detection-lifecycle` em gap: a MESMA chave (FortiSIEM) com hipótese
+   numa capability sem landscape (detection-engineering, CONTEXT_NOT_INFORMED)
+   e veto noutra (security-analytics, OPERATIONAL_GAP) — o único estado em que
+   a precedência veto > hipótese da FUSÃO (E4) decide algo; nasceu da
+   sobrevivência de D026-M5 na campanha da W4 (logs 026-W4-M5-*.log).
    ========================================================================== */
 const QS_ORDER = ["mandate", "governance", "policies", "team-capacity", "training", "knowledge",
   "incident-response", "detection-lifecycle", "automation", "logs", "endpoint", "network-visibility",
@@ -155,6 +160,8 @@ const FX = {
   "C3b": { nivel: 2, niveis: { automation: 0 }, landscape: { "soc-platform": { presence: "PRESENT", solutions: [SOL_FORTISOC] },
            "security-automation": { presence: "PRESENT", solutions: [SOL_FORTISOC] } }, arch: { saasAllowed: "yes" } },
   "C4":  { nivel: 2, niveis: { logs: 0 }, landscape: { "security-analytics": { presence: "PRESENT", solutions: [SOL_SENTINEL] } },
+           arch: { saasAllowed: "yes" } },
+  "C4-DL": { nivel: 2, niveis: { logs: 0, "detection-lifecycle": 0 }, landscape: { "security-analytics": { presence: "PRESENT", solutions: [SOL_SENTINEL] } },
            arch: { saasAllowed: "yes" } },
   "C5":  { arq: 1, answers: [1, 2, 2, 2, 1, 1, 1, 1, 1, 1, "NA", 1, 2, 0, 0], prios: ["mandate", "training", "knowledge"] },
   "C6":  { nivel: 2, niveis: { "network-visibility": 0 }, landscape: { "network-detection": { presence: "NONE" } },
@@ -728,6 +735,40 @@ T("D026-REC1", "o motor vence a Camada 1 onde tem voz; a identidade é a chave, 
     if (!v || !txt(v)) throw new Error("`.p53-sol-variante` ausente ou vazio no placeholder");
     const n = cards(d).length, p = b.published().length;
     if (n !== p) throw new Error("cards na tela (" + n + ") ≠ published() (" + p + ")");
+  })],
+
+  /* (j) C4-DL — precedência veto > hipótese NA FUSÃO (E4), lado produto.
+     ALÍNEA DE REGRESSÃO QUE NASCE VERDE POR DESENHO (W4b, 2026-10-31): o
+     produto já está certo — a fusão por chave de `reconciliar()` derruba a
+     hipótese do MAP quando a mesma chave carrega um veto e nenhuma fonte do
+     motor. O poder está em D026-M5, que remove essa precedência e publica
+     "FortiSIEM · indicação prioritária" ao lado do próprio veto. Precedente
+     D025-INV8 (c), mas aqui COM carrasco. Nasceu da campanha da W4: M5
+     sobreviveu porque nenhuma das 15 fixtures tinha a MESMA chave com
+     hipótese numa capability e veto noutra — em C7 o veto de elegibilidade
+     do MDR cobre as DUAS capabilities (veto por linha), e a alínea (f) é
+     garantida por ele, não pela fusão. Medido em 026-W4-M5-reachability*.log. */
+  ["(j) C4-DL · precedência veto > hipótese na fusão: FortiSIEM vetado por security-analytics não volta pela hipótese de detection-lifecycle",
+    () => com("C4-DL", ({ w, d, V }) => {
+    const b = bridge(w);
+    const ctx = ctxDe(V, "security-analytics");
+    if (!(ctx.classification === "OPERATIONAL_GAP" && ctx.supportMode === "CONTEXTUAL" && ctx.candidates.length === 0))
+      vac("(j)", "security-analytics: classification=" + ctx.classification + ", supportMode=" + ctx.supportMode + ", candidates=" + ctx.candidates.length);
+    const clsDE = V.classify("detection-engineering").c;
+    if (clsDE !== "CONTEXT_NOT_INFORMED") vac("(j)", "detection-engineering não é CONTEXT_NOT_INFORMED (" + clsDE + ")");
+    const mapDL = w.eval("(MAP['detection-lifecycle'].lv[0].c||[]).map(function(c){return c.p;})");
+    if (mapDL.indexOf("FortiSIEM") < 0) vac("(j)", "MAP[detection-lifecycle].lv[0].c não lista FortiSIEM: " + J(mapDL));
+    if (linhasDoMapa(w, V, "detection-engineering").indexOf("FortiSIEM") < 0)
+      vac("(j)", "a Camada 1 não oferece FortiSIEM por detection-lifecycle nesta fixture — a hipótese não existe");
+    if (linhasDoMapa(w, V, "security-analytics").indexOf("FortiSIEM") < 0)
+      vac("(j)", "a Camada 1 não oferece FortiSIEM por logs nesta fixture — o veto não tem linha");
+    const card = cardDe(d, "FortiSIEM");
+    if (card) throw new Error("card `[data-p53-sol-produto=\"FortiSIEM\"]` presente apesar do veto de security-analytics — a hipótese de detection-lifecycle venceu o veto (E4); cards: " + listar(d));
+    const li = vetoDe(d, "FortiSIEM");
+    if (!li) throw new Error("`li[data-p53-veto-item=\"FortiSIEM\"]` ausente" + (vetosBloco(d) ? " (itens: " + J(vetoItens(d).map(x => attr(x, "data-p53-veto-item"))) + ")" : " — `[data-p53-vetos]` ausente"));
+    const P = w.eval("PRODUCTS");
+    const pub = b.published().map(id => (P[id] && P[id].n) || id);
+    if (pub.indexOf("FortiSIEM") >= 0) throw new Error("published() contém FortiSIEM apesar do veto: " + J(pub));
   })]
 ]));
 

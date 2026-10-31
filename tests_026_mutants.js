@@ -60,7 +60,9 @@
        025 não têm veto); o desenho §7 o listava — corrigido lá, não aqui.
    M5  ui_curation_v32.js · fusão sem a precedência veto > hipótese: uma chave
        com `vetos.length > 0` e sem fonte do motor passa a publicar as
-       hipóteses do MAP. Gate: D026-REC1 (f).
+       hipóteses do MAP. Gate: D026-REC1 — alínea ESPERADA (j), fixture C4-DL
+       (W4b): card "FortiSIEM · indicação prioritária" nasce da hipótese de
+       `detection-lifecycle` apesar do veto de `logs`/security-analytics.
        PRIMEIRA EXECUÇÃO (2026-10-31, HEAD ab666e2): SOBREVIVENTE — e a
        sobrevivência acusa o GATE, não o código. A spec e a tasks.md previam
        que em C7 o card "FortiGuard MDR" nasceria da hipótese de
@@ -71,8 +73,9 @@
        mutação distingue EXISTE (C4 + `detection-lifecycle` em gap: FortiSIEM
        com hipótese por detection-engineering CNI e veto por
        security-analytics; HEAD derruba o card, M5 publica-o ao lado do
-       veto), mas nenhuma fixture da suíte o exercita. O mutante fica como
-       está (R10 §1); o remédio é alínea + fixture no gate, fora desta wave.
+       veto), mas nenhuma fixture da suíte o exercitava. O mutante ficou como
+       estava (R10 §1); o remédio foi a alínea (j) + fixture C4-DL no gate
+       (W4b, mesma data) — nada afrouxado, uma asserção a mais.
        Trilha completa em mutation_map.json → harnesses.d026._trilha.
    M6  ui_curation_v32.js · `veredictoDeServico` sem a exceção D-6: "base
        requerida ausente" vira veto também com `presence ∈ {UNSET, UNKNOWN}`.
@@ -142,8 +145,10 @@ const MUTANTS = [
     find: "    var bloco = el(\"div\", { \"class\": \"p53-sol-vetos\", \"data-p53-vetos\": String(ordem.length), role: \"note\" });",
     repl: "    var bloco = el(\"div\", { \"class\": \"p53-sol-suprimido\", \"data-p53-suprimido\": String(ordem.length), role: \"note\" });   /* MUTANTE D026-M4 */" },
 
+  /* [W4b] alínea esperada: D026-REC1 (j), fixture C4-DL — `reason` segue nominal
+     por gate; a alínea é RELATO (primeira linha FAIL, gravada em D026_MUT_LOG). */
   { id: "D026-M5", file: F.estado, suites: [d026("D026-REC1")],
-    desc: "fusão sem a precedência veto > hipótese — chave vetada sem fonte do motor publica a hipótese do MAP (C7: FortiGuard MDR via team-capacity)",
+    desc: "fusão sem a precedência veto > hipótese — chave vetada sem fonte do motor publica a hipótese do MAP (C4-DL: FortiSIEM via detection-lifecycle apesar do veto de logs — REC1 (j))",
     find: "      } else if (!e.vetos.length && e.hipoteses.length) registros.push(registroDe(e, \"hipotese\", e.hipoteses));",
     repl: "      } else if (e.hipoteses.length) registros.push(registroDe(e, \"hipotese\", e.hipoteses));   /* MUTANTE D026-M5: veto não derruba hipótese */" },
 

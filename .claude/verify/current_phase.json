@@ -12,12 +12,18 @@
     "tag": "v3.2.1"
   },
   "release_corrente": {
-    "tag": "v3.2.11",
-    "commit": "merge do PR de selagem — ver tag v3.2.11",
-    "conteudo": "0bd677c",
-    "registro": "docs_phase5/SELAGEM_V3_2_11.md",
+    "tag": "v3.2.12",
+    "commit": "merge do PR de selagem — ver tag v3.2.12",
+    "conteudo": "9ca1fde",
+    "registro": "docs_phase5/SELAGEM_V3_2_12.md",
     "abre_fase": false,
-    "rota": "(a) release develop -> main com tag, sem abrir fase; desvio declarado do gate de abertura (R4); decisão do proprietário, 2026-10-19"
+    "rota": "(a) release develop -> main com tag, sem abrir fase; desvio declarado do gate de abertura (R4); decisão do proprietário, 2026-10-19 (rota) e 2026-10-25 (corrigir o produto antes de selar); nome v3.2.12 proposto pelo orquestrador em 2026-10-31, pendente de ratificação na mescla do PR de selagem",
+    "superada": {
+      "tag_prevista": "v3.2.11",
+      "conteudo": "0bd677c",
+      "registro": "docs_phase5/SELAGEM_V3_2_11.md",
+      "motivo": "tag suspensa em 2026-10-25 (EA-91/EA-92); a v3.2.11 permanece artefato publicado em deploy/v3.2.11 (SHA-256 4c45ce20fece3bf024dd4a85b99a9766185f48039805ead45d0fe71700bf5712), sem tag, como v3.2.10"
+    }
   },
   "proxima_fase": {
     "id": null,
@@ -37,6 +43,7 @@
     "specs/PHASE_5_0_REV_A.md é histórica (REPROVADA); nunca normativa",
     "[HISTÓRICA — vigente em e7d9933 (2026-08-25), superada pelas duas notas seguintes; mantida por R2 §5] Desenvolvimento corrente: Estrutura Agêntica (Ondas 0-4) e demandas via máquina SDD — estado em .claude/project-memory/planning-state/",
     "DESVIO DECLARADO (selagem v3.2.11, rota a): entre e7d9933 (2026-08-25) e a selagem v3.2.11 o produto mudou sem abertura de fase e sem specs/PHASE_X*.md, por demandas da máquina SDD e por PRs de fix-finding, tudo sob fase_corrente 5.2 SELADA · proxima_fase NAO_ABERTA. Cada demanda da máquina SDD teve spec, plano, red e aceite próprios (specs/NNN-*/ e planning-state); os fix-findings seguiram a skill fix-finding, sem spec. O que faltou foi o gate de abertura de FASE. A decisão de selar assim — release develop -> main com tag v3.2.11, sem abrir fase — é do proprietário, 2026-10-19. Registro: docs_phase5/SELAGEM_V3_2_11.md. A 5.2 continua a última fase de produto selada; nenhuma 5.3 foi aberta.",
-    "MEDIDO em 2026-10-20 sobre c1e3649..0bd677c, ALINHADO ao registro docs_phase5/SELAGEM_V3_2_11.md (a nota anterior citava e7d9933..22aa692, outro intervalo, e 19 arquivos +10.737/-420; foi substituída pelo comando canônico e pelo mesmo resultado do registro): `git diff --numstat c1e3649 0bd677c -- engine_v32.js build_v32_html.py quickscan_secops_soccmm_v3_2_dev.html 'ui_*.js' 'ui_*.css'`, colunas somadas = 19 arquivos de produto alterados, +10.739/-422; engine_v32.js 0 linhas; USER_GUIDE.md em linha própria, +108/-24 (`git diff --numstat c1e3649 0bd677c -- USER_GUIDE.md`); 5 módulos ui_*.js novos (ui_curation_edit_v32, ui_curation_v32, ui_d011_prioridade_v32, ui_ondas_v32, ui_p52_support_v32); 19 planning-states done (003…024); tags v3.2.6…v3.2.9 na develop; Ondas 0-4 da Estrutura Agêntica fecharam em 2026-08-25 (PRs #9–#15). Por PR, no mesmo escopo e recomputado no registro de selagem: 8 demandas da máquina SDD e 15 PRs de fix-finding alteraram produto."
+    "MEDIDO em 2026-10-20 sobre c1e3649..0bd677c, ALINHADO ao registro docs_phase5/SELAGEM_V3_2_11.md (a nota anterior citava e7d9933..22aa692, outro intervalo, e 19 arquivos +10.737/-420; foi substituída pelo comando canônico e pelo mesmo resultado do registro): `git diff --numstat c1e3649 0bd677c -- engine_v32.js build_v32_html.py quickscan_secops_soccmm_v3_2_dev.html 'ui_*.js' 'ui_*.css'`, colunas somadas = 19 arquivos de produto alterados, +10.739/-422; engine_v32.js 0 linhas; USER_GUIDE.md em linha própria, +108/-24 (`git diff --numstat c1e3649 0bd677c -- USER_GUIDE.md`); 5 módulos ui_*.js novos (ui_curation_edit_v32, ui_curation_v32, ui_d011_prioridade_v32, ui_ondas_v32, ui_p52_support_v32); 19 planning-states done (003…024); tags v3.2.6…v3.2.9 na develop; Ondas 0-4 da Estrutura Agêntica fecharam em 2026-08-25 (PRs #9–#15). Por PR, no mesmo escopo e recomputado no registro de selagem: 8 demandas da máquina SDD e 15 PRs de fix-finding alteraram produto.",
+    "MEDIDO em 2026-10-31 sobre c1e3649..9ca1fde, ALINHADO ao registro docs_phase5/SELAGEM_V3_2_12.md (a nota de 2026-10-20 sobre c1e3649..0bd677c descreve a candidata v3.2.11, superada; fica por R2 §5): `git diff --numstat c1e3649 9ca1fde -- engine_v32.js build_v32_html.py quickscan_secops_soccmm_v3_2_dev.html 'ui_*.js' 'ui_*.css'`, colunas somadas = 20 arquivos de produto alterados, +10.973/-438 (o 20º é ui_ux_v32.js); engine_v32.js 0 linhas; USER_GUIDE.md em linha própria, +114/-25; os mesmos 5 módulos ui_*.js novos; 20 planning-states done (003…025); entre 0bd677c e 9ca1fde entraram os PRs #111 (selagem v3.2.11, doc-only), #112 (registro da auditoria Codex), #113 (fix EA-101) e #114 (demanda 025 — curadoria transacional: a única que toca produto, +141/-32 no HTML dev). SHA-256 do HTML dev em 9ca1fde: 024abf113f30098617cf9f0617d51295903634839fb6e1b07b625f13baa03885 (1.248.772 bytes)."
   ]
 }

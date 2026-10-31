@@ -1,7 +1,7 @@
 {
   "_meta": {
     "descricao": "Registry único de pins — fonte de identidade dos artefatos (R8). Hashes = SHA-256 dos blobs de HEAD. Alterar arquivo pinado exige regenerar este registry no MESMO PR, com motivo no commit.",
-    "gerado_de_head": "69f2374374b9faef10485bedc15937ee0b87f294",
+    "gerado_de_head": "ea5e69e57db0decd2eebaa58e3fb6141f0f318b6",
     "gerado_em": "2026-10-31",
     "exclusoes": [
       "docs_phase5/**",
@@ -15,7 +15,7 @@
     "baseline_core_zip_sha256": "625079c462be7d44ffd69b1cd85f256382322bd0555ae4b548f21bf30ee5b89d"
   },
   "files": {
-    ".claude/BACKLOG.md": "512b24dca6fb2e1510c5ddbf48c57ae7ae72e59cafc1316acc78609088d32d92",
+    ".claude/BACKLOG.md": "67dba4166448497345ca5c3055c6ed653bccf25bb8c717930d2fe9c706896540",
     ".claude/agent-memory/README.md": "2f868716c8785119c1d6a02a7715f7b5058ab968f55951410fc82fc45b960a93",
     ".claude/agent-memory/build-engineer/MEMORY.md": "96823e6bc378842d0ad5f82c2cb8b603288451bff079a23fc8e74b9d1bd345de",
     ".claude/agent-memory/build-engineer/feedback_escopo_de_scanner_nos_dois_sentidos.md": "8bce5aff5a10eb83774f624584bc11004a846419724b3654888e0403bb557db3",
@@ -577,9 +577,9 @@
     "specs/026-decisao-unica-do-apoio/plan.md": "94379577bd7ab253ee01ec1e1fc65c3fffe7a6da7d8e57525f4aad78061dc541",
     "specs/026-decisao-unica-do-apoio/red-026.md": "77f084a730e974bf67a4dea3755bec0fef49a055658041877044785a69e7ef5e",
     "specs/026-decisao-unica-do-apoio/refinement.md": "91d21c2f961d3001f47873bedaf248874a50c12b779efe5b859c52342db38c82",
-    "specs/026-decisao-unica-do-apoio/relatorio-final.md": "98528a4a8d11f96955e41369d37ff2531610f8edbe708a21bfd213a807a8da7b",
+    "specs/026-decisao-unica-do-apoio/relatorio-final.md": "c7fb2e21ed4e2bdfe16e906b4e4aa3e63a746b318f0adfd6cc269df54d7aa494",
     "specs/026-decisao-unica-do-apoio/spec-validate.md": "d0eeb7417d278fab05f45e2376a8edf83e5406daab4958e61df747dee64e3d25",
-    "specs/026-decisao-unica-do-apoio/spec.md": "86ab16444aade57ec66d884ab273b11ad905c204ce5f823d099e457e722ab829",
+    "specs/026-decisao-unica-do-apoio/spec.md": "18b676fd2f2a4cf3bda9a5e4a4c09caf81f0f5d5be977f659e34950991e724dd",
     "specs/026-decisao-unica-do-apoio/tasks.md": "0fc060a9bdf422053119ea2f6a1b126a5a9589d2156b4c5f8e75ba715229d8f9",
     "specs/PHASE_5_0_REV_A.md": "22e729174c6a3c5dd620da5330b03eb96d9eb6fc6e64eba097c2bde55eb0a510",
     "specs/PHASE_5_0_REV_B.md": "4f1583c733df62a9452aa7b218d962e40d781bb8d30dfc3179ad6e1ef004619b",

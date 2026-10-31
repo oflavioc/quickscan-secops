@@ -244,105 +244,116 @@
         ? window.__P52.applyCopy(s) : s;
     } catch (e) { return s; }
   }
+  /* ====================================================================
+     [026] A OFERTA NASCE UMA VEZ, e não é aqui.
+
+     Até a 025 este módulo era a SEGUNDA fonte da oferta (EA-76): derivava
+     de `computeFindings()+MAP`, somava o habilitado por sinal lido direto de
+     `buildRecommendationContext()` e fundia os dois POR NOME EXIBIDO — raiz
+     de C6 (variante do motor virando card próprio) e do colapso que o laço
+     por sinal tentava remendar. Medido nos cenários do anexo: C2 e C4
+     publicavam card onde o motor dizia "nunca substituição"; C7 publicava
+     "FortiGuard MDR · indicação prioritária" com `serviceEligibility`
+     inelegível.
+
+     Agora a reconciliação MAP × motor é UMA função pura no dono do estado
+     (`__CURATION.reconcile`, exposta por `oferta()`/`vetos()`), e este
+     módulo só LÊ: nome, título, tier, ação, origem, condição, variante,
+     elegibilidade, capabilities, sinais e escopo chegam prontos (R9 §5 —
+     renderização consome, nunca decide). O que esta função faz é traduzir o
+     registro para a forma que `cardDoProduto` sempre consumiu: `prod: null`
+     para `prodLegadoDe` preencher, `caps` já com `__P52.applyCopy` (o
+     registro guarda o texto CANÔNICO; a apresentação aplica a mesma
+     transformação que o resto da tela — contrato do `D019-SOL1`), e os
+     sinais traduzidos por `sigPT`, como antes (`D022-PROD1`).
+
+     Sem o bridge instalado devolve lista vazia e a seção fica como ficava:
+     nenhuma hipótese é inventada aqui. Falha de leitura NUNCA é silêncio
+     (R10 §2): o console nomeia o que se perdeu.
+     ==================================================================== */
+  /* Rótulos de apresentação para os enums do registro (spec §Contratos,
+     "regra de ouro": só rótulos nascem aqui; o valor é sempre dado que já
+     existe). Conferidos contra `P52_COPY` e contra `grep` em `tests_*.js`
+     antes de nascer. O atributo carrega o enum; o texto carrega a palavra. */
+  var ACAO_TXT = {
+    "avaliar-aquisicao":    "Ação sugerida: avaliar a aquisição no aprofundamento.",
+    "modalidade-a-definir": "Ação sugerida: definir a modalidade de entrega no aprofundamento.",
+    "servico":              "Ação sugerida: avaliar a contratação do serviço gerenciado.",
+    "apoio-contextual":     "Ação sugerida: apoio sobre a base já instalada, sem nova aquisição.",
+    "conversa-por-sinal":   "Ação sugerida: conversa a partir do sinal declarado, sem gap medido.",
+    "hipotese":             "Ação sugerida: validar a hipótese do mapa no aprofundamento."
+  };
+  var CONDICAO_TXT = {
+    "sem-contexto":                "Hipótese do mapa: contexto tecnológico não informado nesta sessão.",
+    "capability-nao-informada":    "Hipótese do mapa: esta capability não foi informada no contexto tecnológico.",
+    "contexto-a-validar":          "Hipótese do mapa: respostas insuficientes para a leitura contextual; validar no aprofundamento.",
+    "fora-do-catalogo-contextual": "Hipótese do mapa: capability fora do catálogo contextual do motor.",
+    "plataforma-declarada-cobre":  "Hipótese do mapa: a plataforma declarada cobre esta capability; validar no aprofundamento."
+  };
+  var VETO_TXT = {
+    titulo:     "Não indicado nesta leitura",
+    lead:       "Linhas do mapa que o contexto declarado afasta desta leitura. A razão é a do motor, literal.",
+    tecnologia: "Tecnologia declarada: ",
+    extensao:   "Extensão contextual sobre a base declarada: ",
+    servico:    "Serviço elegível nesta capability: ",
+    caps:       "Capabilities afetadas: ",
+    elegivel:   "Elegível: ",
+    validar:    "A validar no aprofundamento: "
+  };
+  function sinalPT(sg) { return (typeof sigPT === "function") ? sigPT(sg) : sg; }
+  function listaUnica(src, f) {
+    var out = [], i, t;
+    for (i = 0; i < (src || []).length; i++) { t = f(src[i]); if (t && out.indexOf(t) < 0) out.push(t); }
+    return out;
+  }
   function ofertaDoMotor() {
-    var out = [], porId = {};
-    if (typeof computeFindings !== "function" || typeof MAP === "undefined" ||
-        typeof PRODUCTS === "undefined") return out;
-    var fs;
-    try { fs = (computeFindings() || {}).findings || []; } catch (e) { return out; }
-    for (var i = 0; i < fs.length; i++) {
-      var f = fs[i], m = MAP[f.id];
-      if (!m || !m.lv || !m.lv[f.lvl]) continue;
-      var cands = m.lv[f.lvl].c || [], tier = (f.sev === 2) ? 1 : 2;
-      for (var j = 0; j < cands.length; j++) {
-        var id = cands[j].p, p = PRODUCTS[id];
-        if (!p) continue;
-        var reg = porId[id];
-        if (!reg) { reg = porId[id] = { id: id, nome: p.n, tier: tier, prod: null, caps: [] }; out.push(reg); }
-        if (tier < reg.tier) reg.tier = tier;                 /* menor vence, como no buildTiers */
-        /* O texto da capability vai EXIBIDO, não canônico. Colhendo do DOM eu
-           pegava o `h4` que a camada 5.2 já havia reescrito; lendo do motor,
-           preciso aplicar a mesma transformação — que é pública e declarada
-           justamente para isto (`__P52.applyCopy`). Sem ela o card diz uma
-           coisa e o resto da tela diz outra, e foi o `D019-SOL1` que pegou. */
-        var capExibida = m.cap ? aplicarCopy(m.cap) : "";
-        if (capExibida && reg.caps.indexOf(capExibida) < 0) reg.caps.push(capExibida);
-      }
-    }
-    /* ====================================================================
-       [022 · errata E2 — EA-75] O PRODUTO HABILITADO POR SINAL TAMBEM ENTRA.
-
-       O laco acima deriva de `computeFindings() + MAP`: so produto puxado por
-       GAP. Produto habilitado por SINAL DECLARADO vive nos contextos do motor e
-       nunca chegava aqui — medido no relato do proprietario: `FortiDLP` com
-       ZERO ocorrencias nesta secao e DUAS na leitura por capability, uma para
-       `Risco interno` e outra para `Prevencao de perda de dados`.
-
-       A secao que se chama "por produto" nao listava todos os produtos. O
-       remedio nao e reindexar a leitura por capability — ela responde outra
-       pergunta, "por que este apareceu para esta necessidade", e a repeticao la
-       e a mesma resposta dada duas vezes. O remedio e completar ESTA.
-
-       Chave por `itemId`, capabilities e sinais UNIDOS: um produto que serve
-       duas necessidades sai uma vez dizendo as duas, que e o argumento de
-       investimento que a duplicata escondia. Tier 2 ("apos validacao") porque
-       sinal declarado nao e gap medido — promove-lo a prioritaria seria a
-       apresentacao inventando severidade que o motor nao declarou. */
-    try {
-      if (typeof V32 !== "undefined" && typeof V32.buildRecommendationContext === "function") {
-        var ctxs = (V32.buildRecommendationContext() || {}).contexts || {};
-        Object.keys(ctxs).forEach(function (capId) {
-          var cands2 = (ctxs[capId] || {}).candidates || [];
-          cands2.forEach(function (cd) {
-            /* SO O HABILITADO POR SINAL. A primeira versao colhia toda oferta
-               do motor e trouxe `FortiSIEM Cloud` e `FortiNDR Cloud` para a
-               secao — mudanca visivel ao cliente que ninguem pediu. A errata E2
-               nomeia o buraco: produto habilitado por SINAL DECLARADO. Alargar
-               alem disso seria a implementacao decidindo escopo por conta. */
-            if (!cd || cd.itemKind !== "offering") return;
-            if (!(cd.signals && cd.signals.length)) return;
-            /* O CATALOGO E O DO MOTOR, nao o da Camada 1. `PRODUCTS` e o
-               catalogo congelado V3.1.3 e nao conhece `fortidlp` — foi por isso
-               que a primeira versao deste bloco rodou e nao acrescentou nada. */
-            var pid = cd.itemId;
-            var pr = (V32.OFFERINGS && V32.OFFERINGS[pid]) ||
-                     ((typeof OFFERINGS !== "undefined") ? OFFERINGS[pid] : null) ||
-                     ((typeof PRODUCTS !== "undefined" && PRODUCTS) ? PRODUCTS[pid] : null);
-            /* O MOTOR CHAMA `name`; a Camada 1 chama `n`. Guardar só por `n`
-               rejeitava TODA oferta do motor em silêncio — o bloco rodava, via
-               os dois candidatos e não acrescentava nada. Custou uma rodada de
-               diagnóstico, e só apareceu porque instrumentei em vez de supor. */
-            var nomeP = pr.n || pr.name;
-            if (!nomeP) return;
-            /* A CHAVE E O NOME EXIBIDO, nao o id. O laco de cima indexa pelos
-               ids do catalogo da Camada 1 e este, pelos do motor — os dois
-               catalogos nomeiam o MESMO produto com chaves diferentes, e keyar
-               por id fez FortiSIEM, FortiAnalyzer, FortiSOAR e FortiEndpoint
-               sairem DUAS vezes. A secao ja identifica produto por nome
-               (`data-p53-sol-produto`), entao a uniao usa a mesma identidade que
-               a apresentacao — senao a deduplicacao e so aparente. */
-            var reg2 = null;
-            for (var z = 0; z < out.length; z++) if (out[z].nome === nomeP) { reg2 = out[z]; break; }
-            if (!reg2) { reg2 = { id: pid, nome: nomeP, tier: 2, prod: null, caps: [], sinais: [] }; out.push(reg2); porId[pid] = reg2; }
-            if (!reg2.sinais) reg2.sinais = [];
-            var capNome = (V32.CAPABILITIES[capId] && V32.CAPABILITIES[capId].name)
-              ? aplicarCopy(V32.CAPABILITIES[capId].name) : "";
-            if (capNome && reg2.caps.indexOf(capNome) < 0) reg2.caps.push(capNome);
-            (cd.signals || []).forEach(function (sg) {
-              var t = (typeof sigPT === "function") ? sigPT(sg) : sg;
-              if (t && reg2.sinais.indexOf(t) < 0) reg2.sinais.push(t);
-            });
-          });
-        });
-      }
-    } catch (e) {
-      /* NUNCA silencio (R10 §2): o catch anterior engoliu a causa e me custou
-         uma rodada de diagnostico. Se o motor estiver indisponivel, a secao
-         segue com o que o gap deu — mas o console diz o que se perdeu. */
+    var out = [], b = curadoria();
+    if (!b || typeof b.oferta !== "function") return out;
+    var regs;
+    try { regs = b.oferta() || []; }
+    catch (e) {
       if (typeof console !== "undefined" && console.error)
-        console.error("[022] oferta por sinal nao colhida:", e && e.message);
+        console.error("[026] oferta da curadoria não lida:", e && e.message);
+      return out;
+    }
+    for (var i = 0; i < regs.length; i++) {
+      var r = regs[i];
+      if (!r || !r.nome) continue;
+      var caps = r.capabilities && r.capabilities.length
+        ? listaUnica(r.capabilities, function (c) { return (c && c.texto) ? aplicarCopy(c.texto) : ""; })
+        : listaUnica(r.caps, function (t) { return t ? aplicarCopy(t) : ""; });
+      out.push({
+        id: r.chave || r.itemId || null,
+        chave: r.chave || null,
+        nome: r.nome,
+        titulo: r.titulo || r.nome,
+        tier: r.tier === 1 ? 1 : 2,
+        prod: null,
+        caps: caps,
+        sinais: listaUnica(r.sinais, sinalPT),
+        itemId: r.itemId || null,
+        itemIds: (r.itemIds || []).slice(),
+        variante: r.variante || null,
+        acao: r.acao || "hipotese",
+        origem: r.origem || "gap",
+        condicao: (r.condicao == null) ? null : String(r.condicao),
+        elegibilidade: r.elegibilidade || null,
+        escopo: listaUnica(r.escopo, function (t) { return t ? String(t) : ""; })
+      });
     }
     return out;
+  }
+  /* Os vetos, pela mesma porta. Um por linha × capability; a apresentação
+     agrupa por linha. Sem bridge, sem veto — e sem card, pela função acima. */
+  function vetosDoMotor() {
+    var b = curadoria();
+    if (!b || typeof b.vetos !== "function") return [];
+    try { return (b.vetos() || []).filter(function (v) { return v && v.nome; }); }
+    catch (e) {
+      if (typeof console !== "undefined" && console.error)
+        console.error("[026] vetos da curadoria não lidos:", e && e.message);
+      return [];
+    }
   }
 
   /* Encontra, no que o renderer congelado emitiu, o `.prod` completo daquele
@@ -397,6 +408,19 @@
          que o habilitado por sinal seja distinguivel do puxado por gap. */
       "data-qs22-sinais": (p.sinais && p.sinais.length) ? p.sinais.join(", ") : ""
     });
+    /* [026] A IDENTIDADE E A DECISÃO VIAJAM NO CARD, em vocabulário fechado.
+       `data-p53-sol-produto` continua a LINHA (é o que a curadoria decide e o
+       que os gates da 019/023/025 comparam); a chave, o item resolvido pelo
+       motor, as variantes fundidas, a ação, a origem e a condição são
+       atributos novos — enum do registro, nunca prosa (lição "campo de
+       vocabulário fechado"). A condição só existe quando NÃO é nula: atributo
+       presente com valor vazio diria "há condição" sem dizer qual. */
+    card.setAttribute("data-p53-sol-chave", p.chave || "");
+    if (p.itemId) card.setAttribute("data-p53-sol-item-id", p.itemId);
+    if (p.itemIds && p.itemIds.length > 1) card.setAttribute("data-p53-sol-variantes", p.itemIds.join(", "));
+    card.setAttribute("data-p53-sol-acao", p.acao || "hipotese");
+    card.setAttribute("data-p53-sol-origem", p.origem || "gap");
+    if (p.condicao !== null && p.condicao !== undefined) card.setAttribute("data-p53-sol-condicao", p.condicao);
     /* ====================================================================
        O GRUPO SE NOMEIA DENTRO DO CARD, e não numa faixa entre os cards.
 
@@ -416,7 +440,20 @@
        `D010` para isso caber.
        ==================================================================== */
     card.appendChild(chipDoGrupo(grupo, p.tier));
-    card.appendChild(el("h4", null, p.nome));
+    /* [026] O TÍTULO É O ITEM RESOLVIDO (D-7): "FortiEDR" sob a linha
+       FortiEndpoint em C1, "FortiNDR (On-Premises)" sob FortiNDR em C6. A linha
+       continua no atributo e na frase de variante abaixo — numa frase, nunca
+       numa folha com o texto igual ao nome, porque o `D019-CARD1 (a)` conta
+       folhas cujo texto É o nome e exige uma só. */
+    card.appendChild(el("h4", null, p.titulo || p.nome));
+    var variante = fraseDeVariante(p);
+    if (variante) card.appendChild(el("div", { "class": "p53-sol-variante" }, variante));
+    if (p.acao) card.appendChild(el("div", { "class": "p53-sol-acao" }, ACAO_TXT[p.acao] || p.acao));
+    if (p.condicao !== null && p.condicao !== undefined)
+      card.appendChild(el("div", { "class": "p53-sol-condicao" }, CONDICAO_TXT[p.condicao] || p.condicao));
+    if (p.elegibilidade && p.elegibilidade.motivo)
+      card.appendChild(el("div", { "class": "p53-sol-elig", "data-p53-sol-elig": p.elegibilidade.estado || "" },
+        (p.elegibilidade.estado === "validar" ? VETO_TXT.validar : VETO_TXT.elegivel) + p.elegibilidade.motivo));
     /* C4 · PROVENIÊNCIA NA TELA. O mesmo marcador nasce no papel, em
        `printHTML()`. Foi o EA-58 que ensinou o modo real de as duas superfícies
        divergirem: o rótulo existe em uma e some na outra — e o mutante
@@ -450,13 +487,18 @@
       if (nomeDuplicado && txt(nomeDuplicado) === p.nome && nomeDuplicado.parentNode)
         nomeDuplicado.parentNode.removeChild(nomeDuplicado);
       corpo.appendChild(p.prod);
+      /* [026] O escopo que o registro conhece e o `.prod` movido não traz —
+         medido em C5: o FortiRecon nasce no bloco de exposição externa e a
+         nota de escopo da gestão de vulnerabilidades ficava na menção curta
+         que o renderer congelado emite e esta consolidação descarta. */
+      complementarEscopo(p.prod, p.escopo);
     } else {
       /* [EA-68] Produto de `sev 2` tem `.prod` para mover; o de `sev 1` nunca
          teve bloco nenhum — a indicação dele vive na lista "pode fazer
          sentido". O card é montado do CATÁLOGO, com a mesma marcação e o mesmo
          `productIcon` do renderer congelado, porque o que distingue os dois
          tiers é o QUALIFICADOR, nunca o acabamento (é a lição do EA-67). */
-      corpo.appendChild(corpoDoCatalogo(p.id, p.nome));
+      corpo.appendChild(corpoDoCatalogo(p.id, p.nome, p.escopo));
     }
     card.appendChild(corpo);
     if (p.caps.length) {
@@ -521,7 +563,12 @@
     var card = el("div", {
       "class": "apoio-block p53-sol-card p53-sol-card-add",
       "data-p53-sol-produto": p.n,
-      "data-p53-sol-grupo": grupo
+      "data-p53-sol-grupo": grupo,
+      /* [026] D-8: o acréscimo declara a origem e a ação no mesmo vocabulário
+         dos cards do motor — sem tier e sem condição, porque a presença dele
+         não é leitura da avaliação e o estado da curadoria não guarda condição. */
+      "data-p53-sol-origem": "operador",
+      "data-p53-sol-acao": "hipotese"
     });
     card.appendChild(chipDoGrupo(grupo));
     card.appendChild(el("h4", null, p.n));
@@ -550,8 +597,11 @@
      `sev 1`, que nunca teve bloco para mover. Um só lugar constrói isso: o
      `D019-M14` já provou que duplicar a construção do ícone é como ele some
      de um dos caminhos sem ninguém ver. */
-  function corpoDoCatalogo(id, nome) {
+  function corpoDoCatalogo(id, nome, escopo) {
     var p = (typeof PRODUCTS !== "undefined" && PRODUCTS) ? PRODUCTS[id] : null;
+    /* [026] Linha sem par na Camada 1 (`chave: null`, status quo incurável):
+       descrição não existe no catálogo do motor; o link oficial existe. */
+    var of = (!p && typeof V32 !== "undefined" && V32 && V32.OFFERINGS) ? V32.OFFERINGS[id] : null;
     var linha = el("div", { "class": "prod" });
     if (typeof productIcon === "function") {
       var tile = el("span", { "class": "icon-tile" });
@@ -560,12 +610,45 @@
     }
     var texto = el("span", null);
     if (p && p.d) texto.appendChild(el("div", { "class": "pt-desc" }, p.d));
-    if (p && p.u) {
-      var a = el("a", { "class": "pt-link", href: p.u, target: "_blank", rel: "noopener" }, "Página oficial ↗");
+    /* [026] O escopo entra com a MESMA marcação do renderer congelado
+       (`div.scope`, "Escopo: …", v3_1_3 :874) — é a nota que hoje só chega
+       ao leitor quando o produto teve bloco próprio de `sev 2`. */
+    (escopo || []).forEach(function (t) { texto.appendChild(noDeEscopo(t)); });
+    var url = (p && p.u) || (of && of.url) || null;
+    if (url) {
+      var a = el("a", { "class": "pt-link", href: url, target: "_blank", rel: "noopener" }, "Página oficial ↗");
       texto.appendChild(a);
     }
     linha.appendChild(texto);
     return linha;
+  }
+  function noDeEscopo(t) { return el("div", { "class": "scope p53-sol-escopo" }, "Escopo: " + t + "."); }
+  /* No `.prod` MOVIDO, acrescenta só o escopo que ele ainda não diz. */
+  function complementarEscopo(prod, escopo) {
+    if (!prod || !escopo || !escopo.length) return;
+    var existentes = prod.querySelectorAll(".scope"), ja = [], i;
+    for (i = 0; i < existentes.length; i++) ja.push(txt(existentes[i]));
+    var link = prod.querySelector(".pt-link");
+    var alvo = link ? link.parentNode : (prod.querySelector(".pt-desc") ? prod.querySelector(".pt-desc").parentNode : prod);
+    escopo.forEach(function (t) {
+      var dito = ja.some(function (s) { return s.indexOf(t) >= 0; });
+      if (dito) return;
+      var no = noDeEscopo(t);
+      if (link && link.parentNode === alvo) alvo.insertBefore(no, link); else alvo.appendChild(no);
+    });
+  }
+  /* A frase de variante, uma por card, e só quando há o que dizer:
+     título ≠ linha (C1/C6), modalidade a definir (placeholder de família,
+     E9) ou mais de uma variante fundida sob a mesma linha (C10). */
+  function fraseDeVariante(p) {
+    var v = p.variante, nomes = (v && v.nomes) ? v.nomes.filter(Boolean) : [];
+    if (v && v.modalidade === "a definir" && nomes.length)
+      return "Modalidade a definir no aprofundamento: " + nomes.join(" ou ");
+    if (p.titulo && p.titulo !== p.nome)
+      return "Variante resolvida pelo contexto declarado — linha de produto: " + p.nome;
+    var outras = nomes.filter(function (n) { return n !== p.titulo && n !== p.nome; });
+    if (outras.length) return "Disponível também como " + outras.join(", ");
+    return "";
   }
   function acrescimos(jaPresentes) {
     var b = curadoria(); if (!b) return [];
@@ -612,6 +695,95 @@
       : " Os " + suprimidos + (suprimidos === 1 ? " item oferecido foi retirado" : " itens oferecidos foram retirados") +
         " da apresentação por decisão do engenheiro. A avaliação e os gaps observados não mudaram."));
     sec.appendChild(aviso);
+  }
+
+  /* ===================== o veto que se declara (026) =====================
+     Onde o motor tem voz e diz "nunca substituição", "plataforma cobre" ou
+     "serviço inelegível", a linha do MAP NÃO vira card — e também não some em
+     silêncio: o bloco nomeia a linha, a razão LITERAL do motor e a tecnologia
+     declarada que a sustenta. É a leitura que o cliente vê (QS-01 casos 2 e 4).
+
+     INVARIANTES DE DOM, cada uma medida por um gate que já existe (E17):
+       · entra DEPOIS dos cards e antes do botão do editor — o censo da Camada
+         1 para no primeiro nó estranho, e aqui ele já contou todos;
+       · classe própria, fora de `CLASSES_CONTIGUAS` (`tests_010_vao.js:168`)
+         e NUNCA `.apoio-block` — não é card, não entra em
+         `data-p52-support-cards` nem nos censos de `P52-REC1g`/`tests_023`;
+       · NUNCA `data-p53-suprimido`: veto é decisão do motor, supressão é
+         decisão do operador; o `D025-AUS1 (b)` mede a ausência deste
+         atributo sem curadoria, e o `D026-M4` ataca exatamente a troca;
+       · idempotente: removido e reemitido a cada passagem, nos dois ramos de
+         `decorar()`, como o aviso de supressão.
+     Um `li` por LINHA (agrupando as capabilities vetadas); `data-p53-vetos`
+     conta linhas distintas. `data-p53-sol-item-id` no `li` quando o veto
+     nomeia um item do motor — o `D026-REC1 (g)` procura o portador em card OU
+     em veto e confere a linha contra o pareamento reimplementado. */
+  function declararVetos(sec, vetos) {
+    var velho = sec.querySelector(":scope > [data-p53-vetos]");
+    if (velho && velho.parentNode) velho.parentNode.removeChild(velho);
+    if (!vetos || !vetos.length) return;
+    var porLinha = {}, ordem = [], i, v;
+    for (i = 0; i < vetos.length; i++) {
+      v = vetos[i];
+      if (!porLinha[v.nome]) { porLinha[v.nome] = []; ordem.push(v.nome); }
+      porLinha[v.nome].push(v);
+    }
+    var bloco = el("div", { "class": "p53-sol-vetos", "data-p53-vetos": String(ordem.length), role: "note" });
+    bloco.appendChild(el("div", { "class": "p53-sol-vetos-t" }, VETO_TXT.titulo));
+    bloco.appendChild(el("p", { "class": "p53-sol-vetos-lead" }, VETO_TXT.lead));
+    var ul = el("ul", { "class": "p53-sol-vetos-lista" });
+    ordem.forEach(function (nome) {
+      var grupo = porLinha[nome], primeiro = grupo[0];
+      var li = el("li", { "class": "p53-sol-veto", "data-p53-veto-item": nome,
+        "data-p53-veto-classe": primeiro.classe || "" });
+      var itemId = null;
+      grupo.forEach(function (x) { if (!itemId && x.itemId) itemId = x.itemId; });
+      if (itemId) li.setAttribute("data-p53-sol-item-id", itemId);
+      li.appendChild(el("div", { "class": "p53-sol-veto-nome" }, nome));
+      /* a razão: TODAS as notas do motor (é assim que o "M75" de C3b chega),
+         com o `motivo` como fallback quando o engine veta sem nota */
+      var razoes = [];
+      grupo.forEach(function (x) {
+        (x.notas && x.notas.length ? x.notas : [x.motivo]).forEach(function (n) {
+          if (n && razoes.indexOf(n) < 0) razoes.push(n);
+        });
+      });
+      razoes.forEach(function (n) { li.appendChild(el("div", { "class": "p53-sol-veto-motivo" }, n)); });
+      var caps = listaUnica(grupo, function (x) { return x.cap ? aplicarCopy(x.cap) : ""; });
+      if (caps.length) li.appendChild(el("div", { "class": "p53-sol-veto-caps" }, VETO_TXT.caps + caps.join("; ")));
+      var tecs = [];
+      grupo.forEach(function (x) {
+        (x.existente || []).forEach(function (s) {
+          if (!s || !s.product) return;
+          var t = VETO_TXT.tecnologia + s.product + " (" + (s.status || "") + (s.deployment ? ", " + s.deployment : "") + ")";
+          if (tecs.indexOf(t) < 0) tecs.push(t);
+        });
+      });
+      tecs.forEach(function (t) { li.appendChild(el("div", { "class": "p53-sol-veto-tec" }, t)); });
+      var extVistas = [];
+      grupo.forEach(function (x) {
+        (x.extensoes || []).forEach(function (e) {
+          if (!e || !e.itemId || extVistas.indexOf(e.itemId) >= 0) return;
+          extVistas.push(e.itemId);
+          var d = el("div", { "class": "p53-sol-veto-ext" }, VETO_TXT.extensao);
+          d.appendChild(el("span", { "data-p53-sol-extensao": e.itemId },
+            (e.nome || e.itemId) + (e.scopeNote ? " — " + e.scopeNote : "")));
+          li.appendChild(d);
+        });
+      });
+      var svcVistos = [];
+      grupo.forEach(function (x) {
+        (x.servicos || []).forEach(function (s) {
+          if (!s || !s.serviceId || svcVistos.indexOf(s.serviceId) >= 0) return;
+          svcVistos.push(s.serviceId);
+          li.appendChild(el("div", { "class": "p53-sol-veto-svc", "data-p53-sol-servico": s.serviceId },
+            VETO_TXT.servico + (s.nome || s.serviceId) + (s.note ? " — " + s.note : "")));
+        });
+      });
+      ul.appendChild(li);
+    });
+    bloco.appendChild(ul);
+    sec.appendChild(bloco);
   }
 
   /* ===================== colocação e agrupamento ===================== */
@@ -719,7 +891,11 @@
          porque "um mutante aponta para ele" é dívida disfarçada de cobertura —
          o mutante foi reancorado e a função, removida. */
       var produtos = ofertaDoMotor();
-      if (!produtos.length) return;
+      /* [026] Os vetos vêm pela mesma porta e não dependem de haver card:
+         C2/C4 têm ZERO produto e um bloco de vetos — a seção precisa dizer
+         por que não há card, senão o leitor acha que o motor nada viu. */
+      var vetos = vetosDoMotor();
+      if (!produtos.length) { declararVetos(sec, vetos); return; }
       for (var k = 0; k < produtos.length; k++)
         produtos[k].prod = prodLegadoDe(ws, produtos[k].nome);
       var cards = [], i;
@@ -739,8 +915,9 @@
         if (legados[i].parentNode) legados[i].parentNode.removeChild(legados[i]);
       colocar(sec, cards, arbitrando);
       declararSupressao(sec, cards.length, suprimidos);
+      declararVetos(sec, vetos);
       ultimoCenso = { produtos: produtos.length, publicados: cards.length,
-        suprimidos: suprimidos, blocos: legados.length };
+        suprimidos: suprimidos, blocos: legados.length, vetos: vetos.length };
     } else {
       /* IDEMPOTÊNCIA. A camada 5.2 roda também sob MutationObserver, e esta
          função é chamada a cada passagem. Sem os legados não há o que
@@ -759,6 +936,7 @@
       atuais = atuais.concat(acrescimos(atuais.map(function (c) { return c.getAttribute("data-p53-sol-produto"); })));
       colocar(sec, atuais, arbitrando);
       declararSupressao(sec, atuais.length, removidos);
+      declararVetos(sec, vetosDoMotor());
     }
 
     /* O contador é lido pelo `P52-REC1g` e comparado com os cards MEDIDOS na
@@ -796,7 +974,10 @@
     if (!sec) return "";
     var cards = sec.querySelectorAll(":scope > .apoio-block[data-p53-sol-produto]");
     var aviso = sec.querySelector(":scope > [data-p53-suprimido]");
-    if (!cards.length && !aviso) return "";
+    /* [026] C2/C4: a seção existe no papel SÓ com o bloco de vetos — o PDF
+       precisa dizer por que não há card tanto quanto a tela. */
+    var vetos = sec.querySelector(":scope > [data-p53-vetos]");
+    if (!cards.length && !aviso && !vetos) return "";
     var h = '<div class="pr-sec" id="pr-sup-solucao"><h2>Formas de apoio, por produto</h2>';
     if (aviso) h += '<div class="pr-mut" data-p53-suprimido="' +
       escHtml(aviso.getAttribute("data-p53-suprimido")) + '">' + escHtml(txt(aviso)) + "</div>";
@@ -811,15 +992,30 @@
       }
       var sinais = c.getAttribute("data-qs22-sinais") || "";
       h += '<div class="pr-card" data-p53-sol-produto="' + escHtml(nome) + '" data-p53-sol-grupo="' + escHtml(gid) +
-           '"' + (sinais ? ' data-qs22-sinais="' + escHtml(sinais) + '"' : "") + '>';
+           '"' + (sinais ? ' data-qs22-sinais="' + escHtml(sinais) + '"' : "") + atributosCopiados(c) + '>';
+      /* [026] QS-02: o qualificador viaja — era o ÚNICO `data-*` do card que o
+         papel descartava (C5: 0 de 9 com qualificador). Texto copiado do
+         `.p53-sol-tierlabel`, nunca recalculado (`D019-PAR1`). */
+      var tierLabel = c.querySelector(".p53-sol-tierlabel");
+      if (c.getAttribute("data-p53-sol-tier") && tierLabel)
+        h += '<div class="pr-mut p53-pr-tier">' + escHtml(txt(tierLabel)) + "</div>";
       if (sinais) h += '<div class="pr-mut">habilitado por sinal declarado: ' + escHtml(sinais) + "</div>";
-      h += "<b>" + escHtml(nome) + "</b>";
+      /* o <b> é o TÍTULO do card (item resolvido, D-7); a linha vai no atributo */
+      var h4 = c.querySelector("h4");
+      h += "<b>" + escHtml(h4 ? txt(h4) : nome) + "</b>";
+      h += linhaCopiada(c, ".p53-sol-variante", "p53-pr-variante") + linhaCopiada(c, ".p53-sol-acao", "p53-pr-acao") +
+           linhaCopiada(c, ".p53-sol-condicao", "p53-pr-condicao") + linhaCopiada(c, ".p53-sol-elig", "p53-pr-elig");
       /* MESMO marcador da tela. O `D019-M4` remove só aqui, porque é aqui que
          a divergência costuma nascer sem ninguém ver (EA-58). */
       if (c.querySelector("[data-p53-prov]"))
         h += '<div class="pr-mut" data-p53-prov="operador">' + escHtml(PROV_TXT) + "</div>";
       var desc = c.querySelector(".pt-desc");
       if (desc) h += '<div class="pr-mut">' + escHtml(txt(desc)) + "</div>";
+      /* [026] "Escopo: …" — do `.scope` movido ou do montado do registro;
+         hoje nunca chegava ao papel (QS-02, "camada endpoint"). */
+      var escopos = c.querySelectorAll(".scope"), textoEscopo = [];
+      for (j = 0; j < escopos.length; j++) if (txt(escopos[j])) textoEscopo.push(txt(escopos[j]));
+      if (textoEscopo.length) h += '<div class="pr-mut p53-pr-escopo">' + escHtml(textoEscopo.join(" ")) + "</div>";
       var caps = c.querySelectorAll("[data-p53-sol-cap]");
       if (caps.length) {
         h += "<ul>";
@@ -830,7 +1026,44 @@
       }
       h += "</div>";
     }
+    /* [026] O bloco de vetos, copiado da tela: mesma contagem, mesmos itens.
+       NÃO é `.pr-card` e não carrega `data-p53-sol-produto` — as contagens de
+       `D023-PAP1`/`D010-PAPEL1` continuam a contar só cards. */
+    if (vetos) {
+      h += '<div class="pr-mut p53-pr-vetos" data-p53-vetos="' + escHtml(vetos.getAttribute("data-p53-vetos")) + '">';
+      var tit = vetos.querySelector(".p53-sol-vetos-t");
+      if (tit) h += '<div class="p53-pr-vetos-t">' + escHtml(txt(tit)) + "</div>";
+      h += "<ul>";
+      var itens = vetos.querySelectorAll("li[data-p53-veto-item]");
+      for (i = 0; i < itens.length; i++) {
+        var li = itens[i];
+        h += '<li data-p53-veto-item="' + escHtml(li.getAttribute("data-p53-veto-item")) + '" data-p53-veto-classe="' +
+             escHtml(li.getAttribute("data-p53-veto-classe") || "") + '"' +
+             (li.getAttribute("data-p53-sol-item-id") ? ' data-p53-sol-item-id="' + escHtml(li.getAttribute("data-p53-sol-item-id")) + '"' : "") + ">";
+        var partes = li.children;
+        for (j = 0; j < partes.length; j++) if (txt(partes[j])) h += "<div>" + escHtml(txt(partes[j])) + "</div>";
+        h += "</li>";
+      }
+      h += "</ul></div>";
+    }
     return h + "</div>";
+  }
+  /* Os atributos do card que o papel copia (spec §Papel): a chave, o item, as
+     variantes, a ação, a origem e a condição — presentes no papel sse
+     presentes na tela, para que `D026-PAP1` compare `null` com `null`. */
+  var ATTRS_DO_PAPEL = ["data-p53-sol-tier", "data-p53-sol-chave", "data-p53-sol-item-id", "data-p53-sol-variantes",
+    "data-p53-sol-acao", "data-p53-sol-origem", "data-p53-sol-condicao"];
+  function atributosCopiados(c) {
+    var s = "", i, v;
+    for (i = 0; i < ATTRS_DO_PAPEL.length; i++) {
+      v = c.getAttribute(ATTRS_DO_PAPEL[i]);
+      if (v !== null) s += " " + ATTRS_DO_PAPEL[i] + '="' + escHtml(v) + '"';
+    }
+    return s;
+  }
+  function linhaCopiada(c, seletor, classe) {
+    var n = c.querySelector(seletor);
+    return (n && txt(n)) ? '<div class="pr-mut ' + classe + '">' + escHtml(txt(n)) + "</div>" : "";
   }
 
   function seguro() {

@@ -1,0 +1,1 @@
+{"id":"C3-fortisoc-cobre-automacao","nivel":2,"niveis":{"automation":0},"landscape":{"soc-platform":{"presence":"PRESENT","solutions":[{"product":"FortiSOC","vendor":"Fortinet","status":"production","deployment":"saas"}]}},"arch":{"saasAllowed":"yes"}}

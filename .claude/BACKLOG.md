@@ -7093,7 +7093,103 @@ a mesma direção.
 
 ## EA-76 — "o que o motor ofereceu" é derivado em dois lugares, e nada obriga os dois a andarem juntos
 
-**Status**: `aberto`
+**Status**: `resolvido`
+
+> **Fecho — demanda `026-decisao-unica-do-apoio` (branch
+> `feature/026-decisao-unica-do-apoio`, PR PR #117 (https://github.com/oflavioc/quickscan-secops/pull/117)), registrado em 2026-10-31 —
+> T060, `doc-writer`.** Corrigido **na branch**; a mesclagem e o job `visual` do CI
+> estão pendentes. `resolvido` aqui significa «corrigido e medido pela suíte
+> `D026` e pelas campanhas da 026», não «mesclado» nem «entregue» (merge e deploy
+> em `127.0.0.1:1337` são do proprietário). A origem é a auditoria externa de
+> 2026-10-31 (`QS-01`, `QS-02`). As decisões D-1..D-9 em que o conserto se apoia
+> foram *decididas pelo orquestrador sob a instrução do proprietário de
+> 2026-10-31 (prompt da microfase 01); ratificação literal pendente no PR*.
+>
+> **O que foi feito — a fonte única.** A derivação de «o que o motor ofereceu»
+> deixou de existir em dois módulos. Nasce **uma vez**, no dono do estado:
+> `reconciliar(entrada)` (`ui_curation_v32.js:207`) — função **pura**, sem DOM e
+> sem estado — reconcilia `computeFindings()+MAP` (a hipótese da Camada 1) com
+> `buildRecommendationContext()` (a voz do motor) e devolve
+> `{ registros[], vetos[] }`. O coletor é `entradaViva()` (`:173-202`); a derivação
+> viva é `derivar()` (`:412-418`); a bridge `__CURATION` ganha `oferta()`,
+> `vetos()` e `reconcile()` (`:550-552`) e `contract()` ganha `{oferta, vetos}`
+> (`:584-595`). `ofertados()` (`:422-426`) virou **leitor** do mesmo registro
+> (chaves com `chave ≠ null`); `decidir`, `publicados`, `valido`, `validar`,
+> `daSessao`, `paraSessao` e `unset` estão byte-iguais. Do outro lado,
+> `ofertaDoMotor()` (`ui_p52_support_v32.js:309`) deixou de varrer
+> `computeFindings()` e o catálogo por nome: lê `oferta()` e o laço por sinal da
+> 022 E2 saiu do módulo (a âncora do `D022-M10` foi transportada verbatim para
+> `ui_curation_v32.js:341-357`). O editor lê a mesma bridge
+> (`ui_curation_edit_v32.js:106`, «apresentado como <variante>», D-9).
+> Engine, Camada 1, `ui_v32.js`, `ui_session_v32.js` e o schema: **zero linha**.
+>
+> **As duas direções do `EA-76`, fechadas.**
+>
+> - **O card que morria no filtro** (direção do corpo do achado: o coletor tinha
+>   o produto e `decisaoDe()` → `decide()` devolvia `exclude` por ele não estar em
+>   `offered()`). Agora `offered()` e os cards saem do **mesmo** registro:
+>   `ofertados()` (`ui_curation_v32.js:422-426`) lista as chaves dos registros e
+>   `decisaoDe()` (`ui_p52_support_v32.js:136-141`) só age sobre a linha que o
+>   registro já trouxe. Medido por `D026-REC1 (h)`: `published()` ≡ conjunto de
+>   `data-p53-sol-produto` da tela ≡ o do papel em C1, C7 e C10.
+> - **O card que entrava sem passar pela curadoria** (a «segunda fonte» de
+>   2026-10-19: candidato do motor por sinal, resolvido por **nome**, sem chave
+>   em `PRODUCTS`). O pareamento `itemId → chave` passou a ser **por critério** e
+>   total sobre `OFFERINGS ∪ SERVICES` (`ui_curation_v32.js:133-167`, regras 1–5
+>   do desenho §1.4): `fortiedr` e `forticlient` curam sob a linha `FortiEndpoint`,
+>   `fortindr-onprem` e `fortindr-cloud` sob `FortiNDR`, `fortisiem-cloud` sob
+>   `FortiSIEM`, `fortiguard-labs-advisory` sob `FortiGuard-Service-Bundle`.
+>   `data-p53-sol-produto` carrega a **linha** (a identidade curável); o item
+>   resolvido vai ao `h4` e a `data-p53-sol-item-id` (D-7). Medido por
+>   `D026-REC1 (a)(c)(e)(g)` e `D026-LEG1 (g)`:
+>   `set("FortiEndpoint","exclude")` retira o card `FortiEDR` da tela e do papel,
+>   `unset` o devolve.
+>
+> **Resíduo declarado — item sem par na Camada 1 (`chave:null`).** O pareamento
+> não inventa chave: `fortisoc`, `fortimail`, `fortimail-wss`, `fortimail-cloud-saas`,
+> `fortisandbox`, `fortiaigate`, `fortipam`, `fortiauthenticator`, `fortisat`,
+> `fortigate` e os nós `fortimail-family`/`soc-platform-family`/`identity-family`
+> continuam **publicáveis e incuráveis** — o status quo de
+> `ui_curation_v32.js` (em `9509e4b`, `ui_curation_v32.js:142`, `if (!chave) return;`) e de
+> `ui_p52_support_v32.js:136-141` (`idDoNome` nulo → `include`). Ou seja: os seis
+> nomes da tabela de 2026-10-19 (`FortiMail`, `FortiMail Workspace Security`,
+> `FortiMail Cloud SaaS`, `FortiAuthenticator`, `FortiPAM`, `FortiAIGate`)
+> **ainda não podem ser excluídos pelo operador** — `valido()` (byte-igual)
+> recusa id fora de `catalogo()`. O que mudou para eles: aparecem com o registro
+> completo (tier, ação, condição, origem) em tela e papel, e `D026-REC1 (g)` fixa
+> que o pareamento devolve `null` para eles (a fixação é do gate; a recusa de
+> `valido()` é por leitura minha, **não reexecutada**). A rota é Porta B em
+> `PRODUCTS` (`specs/019-curadoria-do-relatorio/spec.md:215-218`, payload M41) ou
+> alternativa restrita a esse grupo, em demanda própria. `published() ≠ cards`
+> continua latente nesse caso, como já era antes da 026.
+>
+> **Medido** (execuções citadas das mensagens de commit e dos logs da W4/W4b;
+> não reexecutadas por mim): red `7678222` — `D026 CONTRATO: 0 PASS · 3 FAIL de 3`;
+> green em `816d605`/`dc5b633` — `3 PASS · 0 FAIL de 3` (`D026-REC1`, `D026-PAP1`,
+> `D026-LEG1`); a alínea `D026-REC1 (j)` (fixture C4-DL) entrou em `993e371` com a
+> suíte ainda 3/3 (errata E12 da spec); regressão `d019` 14/14, `d022` 14/14,
+> `d023` 9/9, `d025` 16/16, `d010` 13/13, `d015` 5/5, `d021` 8/8. Campanhas
+> sequenciais (`5a99293`, `993e371`): `d019` 17/17, `d022` 13/13 (`D022-M10`
+> DETECTADO no arquivo novo), `d023` 12/12, `d025` 23/23 e `d026` **6/6**
+> DETECTADO · 0 SOBREVIVENTE · 0 NÃO EXECUTADO. A primeira execução da `d026`
+> fechou 5/1, com `D026-M5` sobrevivente: o diagnóstico mostrou que ele acusava o
+> **gate** (nenhuma fixture exercitava a fusão veto > hipótese do lado produto),
+> não o código — a alínea (j) nasceu verde por desenho e o derruba, sem afrouxar
+> asserção alguma. Ainda: `d014 regra_morta` 7/7 após o censo do CSS remedido
+> (33/205/3 → 52/298/5); stage `suites` 0 problemas; `compliance-audit` 17 PASS ·
+> 0 FAIL · 0 WARN (execução da W4); matriz de mutação com 207 pares. **Pendentes**:
+> o pipeline final (`run.sh` **18 PASS · 0 FAIL** (stage `mutation` incluso: campanhas d019/d022/d023/d025/d026 pela relação do diff) e `compliance-audit` **17 PASS · 0 FAIL · 0 WARN**, sobre `fca0e1c` em árvore limpa, 2026-10-31 (log `026-pipeline-final.log`)); `playwright P8` e `P52-PDF5/6`, que rodam
+> no job `visual` do CI e dependem do PR. Carrascos: `D026-M1`…`D026-M6`
+> (`tests_026_mutants.js`).
+>
+> **Aberto por causa dele.** `EA-122` (lacuna do engine: `suppressedByPlatform()`
+> não consultada no ramo `CONTEXT_NOT_INFORMED`, e dois descartes silenciosos) —
+> a 026 a contorna (`CONTEXTO_SUPRIMIDO_POR_PLATAFORMA = false`,
+> `ui_curation_v32.js:111`), não a corrige. A decisão de 2026-10-19 («DECLARAR E
+> SELAR», pendência 1 dos registros de selagem) fica como trilha; a pendência que
+> ela declarava é esta. `EA-123` (decisão `exclude` sobre linha que o motor deixou
+> de ofertar sobrevive no arquivo de sessão sem efeito e sem aviso) — achado
+> lateral, fora da 026.
 
 **Aberto em**: 2026-09-29, durante a W3 da demanda 022, ao descobrir por que um
 produto entrava na lista do coletor e o card nunca chegava ao DOM.
@@ -11279,3 +11375,155 @@ Dono: `build-engineer`. Ordenar por tupla numérica —
 critério de "anterior"; com o gate que o `EA-64` pede (registro escrito pelo
 script, não à mão), a base passaria a ser dado e não inferência por nome. Ver
 `EA-53`, `EA-64`.
+
+## EA-122 — `buildRecommendationContext()` aplica `suppressedByPlatform()` em três ramos e não no `CONTEXT_NOT_INFORMED`; e descarta em silêncio o que o desenho precisaria mostrar (`violated`, serviço inelegível)
+
+**Status**: `aberto`
+
+**Severidade (triagem do `doc-writer`; a confirmar pelo `core-engineer`)**: média —
+lacuna de **cobertura** do motor, não fail-open: a 026 a contorna de forma
+conservadora (o item vira hipótese rotulada, nunca afirmação de aquisição). Classe
+**frozen** (`engine_v32.js`): conserto só por **Porta B** (R1, rito D2; a Porta A
+segue pendente de ratificação).
+
+**Aberto em**: 2026-10-31, durante a Fase 6 da demanda `026-decisao-unica-do-apoio`.
+Medido na Fase 0 pelo refutador (`specs/026-decisao-unica-do-apoio/anexos/refutacao-reproducoes.json`,
+caso C3 e C3b) e reproduzido na W3a pela sonda
+(`anexos/sonda-leitura.js` sobre `anexos/cenarios/C3.json` e `C3b.json`). Linhas
+do engine relidas por mim em `fc5874f`.
+
+### O que foi medido
+
+**C3** — gap em `security-automation`, FortiSOC declarado **só** em `soc-platform`:
+a plataforma que o cliente declarou cobre a capability, e o motor sabe
+(`suppressedByPlatform().caps ∋ security-automation`), mas o ramo que o
+classificou **não olha** essa informação. Resultado: `CONTEXT_NOT_INFORMED` /
+`LEGACY-LABELLED`, sem nota de plataforma — a tela mostra o card `FortiSOAR`
+(prioritário, com a condição «capability não informada» desde a 026) em vez de
+dizer «plataforma cobre».
+
+**C3b** — o mesmo FortiSOC declarado **na própria** `security-automation`:
+`OPERATIONAL_GAP` e a nota M75 *«plataforma unificada declarada cobre esta
+capability — gap é operacional, explicável»*. Aqui o motor fala, e a 026 veta o
+FortiSOAR com a nota literal. As duas fixtures só diferem pelo lugar onde a
+plataforma foi declarada; o comportamento do motor muda de «cobre» para «silêncio».
+
+### Cadeia arquivo:linha → efeito
+
+- `engine_v32.js:500-521` — `suppressedByPlatform()`: com `soc-platform` `PRESENT`
+  e produto `fortisoc`, `caps` recebe toda capability de
+  `OFFERINGS.fortisoc.capabilityRelations` com relação `embedded` ou `primary`
+  (`:510-514`); plataforma de terceiro só suprime o que declarou em
+  `solutions[].coveredCapabilities` (`:515-518`).
+- `engine_v32.js:401` — `classify()`: capability com gap (`gap-high`/`gap-moderate`)
+  e tecnologia `UNSET` ⇒ `CONTEXT_NOT_INFORMED`. `classify()` **não** consulta a
+  supressão (`:392-419`).
+- `engine_v32.js:554` — `const sup = suppressedByPlatform();` em
+  `buildRecommendationContext()` (`:551`). A supressão é aplicada em **três**
+  pontos: `:573-577` (ramo `TECHNOLOGY_WHITESPACE`: zera `candidates`, vira
+  `CONTEXTUAL`, nota «coberta pela plataforma unificada declarada»), `:584` (ramos
+  `OPERATIONAL_GAP`/`COVERAGE_GAP`/`ADOPTION_GAP`: nota M75) e `:636` (bloco de
+  `contextual-support`: não adiciona).
+- `engine_v32.js:601-602` — ramo `CONTEXT_NOT_INFORMED`:
+  `ctx.supportMode = "LEGACY-LABELLED"; break;` — **não lê `sup.caps`**.
+- **Efeito**: capability coberta pela plataforma declarada mas ainda sem
+  `presence` declarada na própria capability sai do motor como abstenção; quem
+  consome o `ctx` não distingue «não informada» de «não informada, mas a plataforma
+  cobre».
+
+**Dois descartes silenciosos da mesma classe** (a razão existe no engine e some):
+
+- `engine_v32.js:447-448` — `resolveCandidates()`: `archSatisfied(o.architectureRequires)
+  === "violated"` ⇒ `return;` sem registro. Em C1 (endpoint `NONE`,
+  `saasAllowed:"no"`, `localProcessingRequired:"yes"`) o `fortiendpoint` é vetado
+  aqui e o `fortiedr` entra; quem quer mostrar *por que* a linha `FortiEndpoint` do
+  mapa não é a resolvida só consegue chamando `archSatisfied()` de novo — o que
+  `entradaViva()` faz (`ui_curation_v32.js:189`).
+- `engine_v32.js:658-659` — `buildRecommendationContext()`:
+  `const el = serviceEligibility(sid); if (!el.eligible) return;`. Em C7
+  (FortiEDR `on-prem`) `fortiguard-mdr` é inelegível («…— OG oficial», `:486`) e some
+  de `ctx.services[]`; a razão só aparece chamando `serviceEligibility(sid)` de novo
+  (`ui_curation_v32.js:190`). O mesmo `return` descarta o inelegível por
+  `base requerida ausente` (`:484`) com `presence` `UNSET`, onde a leitura é
+  *não informado*, não *ausente* — a 026 trata isso como abstenção (D-6).
+
+### Como a 026 contorna — e por que não corrige
+
+- **C3 vira hipótese condicionada**, não veto: a constante
+  `CONTEXTO_SUPRIMIDO_POR_PLATAFORMA = false` (`ui_curation_v32.js:111`) mantém o
+  card `FortiSOAR` com `condicao = capability-nao-informada` e tier pela severidade
+  (`D026-LEG1 (c)`, que pina a constante em `false`). Hipótese de trabalho,
+  **condicionada**: ligar a constante (`:252`) daria o mesmo card com
+  `plataforma-declarada-cobre` e tier 2 — nunca veto.
+- **Por que nunca veto**: retirar o FortiSOAR esvazia `published()`;
+  `presentationOf` nunca promove `CONTEXT_NOT_INFORMED` a `card`
+  (`ui_v32.js:693-696`) e `hasSubstituteV32` exige classificação ≠
+  `CONTEXT_NOT_INFORMED` (`ui_v32.js:751`) ⇒ a leitura congelada da Camada 1 **volta**
+  à tela com o produto que o veto acabou de negar. Medido em C3 (desenho §2.6).
+- **C3b é o caso «plataforma cobre»** que a spec usa: o motor fala (nota M75) e a
+  026 veta por `D026-LEG1 (c)`.
+- **Os dois descartes**: a 026 recalcula `archSatisfied()`/`serviceEligibility()`
+  fora do motor para mostrar a razão (E5 e veto `elegibilidade`), e é por isso que
+  `reconciliar()` carrega dois literais próprios para vetos que o engine emite sem
+  nota (`SEM_CANDIDATO`, `ARQ_VIOLADA`, `ui_curation_v32.js` — «únicos literais do
+  dono do estado»). É o custo de o motor não dizer a razão.
+
+### Como foi medido (executado vs. lido)
+
+**Executado** (refutador e sonda, jsdom, citado de
+`anexos/refutacao-reproducoes.json` e do log da sonda da W3a): C3 → card `FortiSOAR`
+prioritário com `condicao=capability-nao-informada`, zero veto; C3b → zero card,
+veto `operacional` com «(M75)» e «Tecnologia declarada: FortiSOC (production, saas)».
+**Lido por mim**: todas as linhas do engine acima, em `fc5874f`. **Não executado**:
+nenhuma alteração do engine — não é desta demanda.
+
+### Encaminhamento
+
+Dono: `core-engineer` (guardião do engine), **Porta B** (spec + auditoria
+independente humana; mudar o `ctx` de `CONTEXT_NOT_INFORMED` altera o payload
+funcional, logo a régua D2 reprova a Porta A). Três pontas, que **não** precisam
+sair juntas:
+
+1. ramo `:601-602` consultar `sup.caps.has(capId)` e dizer «plataforma declarada
+   cobre» como o `:576` e o `:584` já dizem;
+2. o descarte de `:448` e o de `:659` passarem a deixar rastro legível (por exemplo,
+   `ctx.notes` ou lista de inelegíveis) para o consumidor não recalcular fora do
+   motor;
+3. **dependência de outra classe**: enquanto `hasSubstituteV32` exigir classificação
+   ≠ `CONTEXT_NOT_INFORMED` (`ui_v32.js:751`, §29.4), um veto em
+   `CONTEXT_NOT_INFORMED` continua devolvendo a Camada 1 — a ponta 1 sozinha não
+   libera ligar a constante da 026 por veto. A decisão de mexer ali é do
+   proprietário.
+
+Ver `EA-76` (fecho da 026) e `EA-79` (convivência sob gate fechado). Fora do
+escopo da 026 (`specs/026-decisao-unica-do-apoio/spec.md` §Fora de escopo).
+
+### Nota de 2026-10-31 — observação (c) do aceite de intenção da 026
+
+Os códigos internos do engine chegam ao texto que o cliente lê — `(M75)` e `(M50)` nas notas de
+`ctx.notes`, «OG oficial» em `serviceEligibility().reason` — e a 026 os reproduz **literalmente** nos
+vetos (decisão D-4: a razão é a do motor, literal). Não é introdução da 026: `#pr-support` já os
+imprimia (medido pelo `product-owner` em C3b/C7). A redação das notas é do engine (frozen) e entra
+na mesma Porta B deste achado; até lá, o passe de copy da apresentação não os reescreve (R10 §1:
+o literal é o observável de `D026-REC1 (b)(d)`).
+
+## EA-123 — `exclude` obsoleto sem sujeito no arquivo de sessão: decisão sobre linha que o motor deixou de ofertar sobrevive sem efeito e sem aviso
+
+**Status**: `aberto`
+
+**Aberto em**: 2026-10-31, na Fase 6 da demanda `026-decisao-unica-do-apoio`, ao listar
+os residuais do `EA-76`. Fora da 026. Severidade (triagem do `doc-writer`): baixa —
+não publica produto errado hoje; deixa uma decisão do operador invisível.
+
+**Cadeia** (`ui_curation_v32.js`, lida em `fc5874f`; **não executado**):
+`set()` (`:554-558`) aceita `exclude` para qualquer id do catálogo (`valido()`,
+`:428-433`) e `paraSessao()` (`:473-476`) o grava no arquivo. Se a avaliação muda e a
+linha deixa de ser ofertada, `publicados()` (`:444-454`) parte de `ofertados()` e
+ignora o `exclude`; `contract().suppressed` (`:591`) lista só ofertados;
+`inclusoesSemLastro()` (`:463-467`) cobre só `include`. **Efeito**: o `exclude` fica
+no arquivo sem efeito e sem aviso — e, se a linha voltar a ser ofertada numa sessão
+futura, o card some em silêncio (`decidir()`, `:436-439`).
+
+**Encaminhamento**: dar ao `exclude` sem sujeito o mesmo aviso do `include` sem
+lastro, ou descartá-lo com registro na importação. Mexe no dono do estado e no
+contrato `unsupported`: demanda própria, não fix-finding. Ver `EA-76`.

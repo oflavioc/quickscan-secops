@@ -1,0 +1,84 @@
+{
+ "casos": [
+  {
+   "id": "C1",
+   "reproduzi": true,
+   "defeito_real": true,
+   "motivo": "Re-executado (refutador/out/C1.json): motor endpoint-detection = TECHNOLOGY_WHITESPACE/DIRECT, candidato unico fortiedr[atende]; tela = card por produto 'FortiEndpoint' com tier 'prioritaria' (label 'indicação prioritária'); papel #pr-sup-solucao = FortiEndpoint. Tentativa de refutacao pela ressalva (d): NAO se sustenta como 'marca incompativel', mas a contradicao e com o CATALOGO DO PROPRIO MOTOR — medido V32.archSatisfied(OFFERINGS.fortiendpoint.architectureRequires {saasAllowed:'yes'}) = 'violated' sob saasAllowed=no, e fortiedr = 'ok' (engine_v32.js:122-129). Ou seja, a oferta que o motor VETA pela restricao declarada e a que a tela chama de indicacao prioritaria. As duas leituras coexistem na MESMA tela (#v32support: 'FortiEDR aquisição candidata' visivel; #p52-sec-support: card FortiEndpoint) e no MESMO papel (pr-support cita FortiEDR 1x; pr-sup-solucao cita FortiEndpoint). Camada 1 PRODUCTS so tem 'FortiEndpoint' (v3_1_3:266); 'FortiEndpoint' == OFFERINGS.fortiendpoint (plataforma SaaS), nao a familia 'endpoint-family' ('Fortinet Endpoint Security'). Causa: ofertaDoMotor() primeira fonte = computeFindings()+MAP (ui_p52_support_v32.js:254-271), sem consultar classify/resolveCandidates.",
+   "decisao_registrada": "Nenhuma decisao R13 cobre o conteudo. Ao contrario: specs/010-recomendacao-sem-vao/spec.md:461-462 (spec validada): 'sob contexto declarado a autoridade é o engine, e listar produto do catálogo congelado ali contradiria a leitura informada'. O que existe e (i) EA-76 `aberto`, 'declarar e selar' (2026-10-19; SELAGEM_V3_2_11 pendencia 1; SELAGEM_V3_2_12.md:351) — fail-open NOMEADO com 'conserto é demanda futura' (a 026 e essa demanda), nao decisao de desenho; (ii) errata E2 da 022 (spec 022:85-117, 'Vamos de B'), que LIMITA a segunda fonte ao habilitado por sinal — decisao de ESCOPO da 022, nao de que produto do MAP possa contrariar o motor; (iii) EA-65 (fix-finding) e 023 C2/D023-REG1(c) ('cards intactos com contexto declarado') — afirmam PRESENCA de nos, nao concordancia de conteudo.",
+   "observacao_engine": "Engine nao precisa de edicao: ja decide certo (fortiedr). Correcao cabe na apresentacao/curadoria. Custo real que nao refuta: D019-CUR2, D019-SOL1, D019-SOL3(b) (oraculo de tier = MAP, tests_019_curadoria.js:505-511) e D023-REG1(c) usam offered()/MAP como oraculo e terao de ser reancorados; e __CURATION.catalog() = Object.keys(PRODUCTS) (ui_curation_v32.js:88-91) NAO tem id para 'FortiEDR' — mostrar FortiEDR por nome sem passar pelo dono do estado recria a segunda direcao do EA-76 (card nao curavel). A fonte unica tem de nascer em ui_curation_v32.js (R9 §5), como o EA-76 encaminha."
+  },
+  {
+   "id": "C2",
+   "reproduzi": true,
+   "defeito_real": true,
+   "motivo": "Re-executado: motor endpoint-detection = OPERATIONAL_GAP/CONTEXTUAL, 0 candidatos, nota 'tecnologia operacional — apoio em operacionalização (nunca substituição)' (engine_v32.js:574-578). Tela: #v32support card visivel com esse texto E card por produto 'FortiEndpoint' tier 'prioritaria'; papel: pr-support tem 'operacionaliza' 3x e pr-sup-solucao tem FortiEndpoint sem qualificador. A tela afirma 'nunca substituição' e 'indicação prioritária' do mesmo produto na mesma secao de apoio. Nao ha como refutar: o motor nao ofereceu aquisicao e a apresentacao reconstruiu uma pelo MAP (endpoint lv0 -> FortiEndpoint).",
+   "decisao_registrada": "Nenhuma. Contraria specs/010 spec.md:461-462 (autoridade do engine sob contexto declarado). EA-76 aberto/declarado (nao e R13). D023-REG1(c) (tests_023_leitura.js:343-356) afirma cards == publicados sob contexto declarado (fixture F.F2) — gate a reancorar, nao decisao sobre conteudo.",
+   "observacao_engine": "Engine congelado nao precisa mudar. Fix e de apresentacao (consumir contexts[cap].classification/supportMode/candidates) via dono do estado (ui_curation_v32.js ofertados(), :96-152). Mesma raiz de C4 e C7."
+  },
+  {
+   "id": "C3",
+   "reproduzi": true,
+   "defeito_real": false,
+   "motivo": "Re-executado: com FortiSOC declarado SO em soc-platform, classify('security-automation') devolve CONTEXT_NOT_INFORMED (TECH_LANDSCAPE[security-automation] = UNSET, engine_v32.js:401), supportMode 'LEGACY-LABELLED' (:600). suppressedByPlatform().caps contem security-automation (OFFERINGS.fortisoc embedded, :513-517), mas buildRecommendationContext so aplica a supressao no ramo TECHNOLOGY_WHITESPACE (:567-572); no ramo OPERATIONAL_GAP so acrescenta a nota M75 (:579). Logo a 'decisao do motor' que a auditoria atribui ('capacidade já coberta; foco em operacionalização') NAO e a saida do motor neste cenario: o motor se ABSTEM e delega ao rotulo legado — e o rotulo legado (MAP automation lv0) e FortiSOAR. A tela mostrar FortiSOAR e coerente com 'LEGACY-LABELLED'. Para a apresentacao suprimir FortiSOAR ela teria de consultar V32.suppressedByPlatform() (exportado em :816) e sobrepor o veredito de classify — um terceiro decisor, o oposto do 'contrato unico' da 026. A correcao certa esta em classify (classe frozen) -> defeito_real=false pela regra da tarefa. Estado e alcancavel pela UI: o editor so oferece coveredCapabilities para plataforma de TERCEIRO (ui_v32.js:364-371, 478-481); para FortiSOC a cobertura e inferida pelo motor e nao propagada ao landscape da capability — desenho P2.1-C.",
+   "decisao_registrada": "Desenho do engine congelado (P2.1-C, comentario em engine_v32.js:501-504) + engine classe frozen (R6). Sem entrada em design-decisions.md; nenhum EA registra esta lacuna de classify — candidata a nota no backlog, nao a demanda.",
+   "observacao_engine": "VARIANTE QUE E DEFEITO REAL (refutador/cen_C3b.json, out/C3b.json): declarando FortiSOC tambem em security-automation (PRESENT/production), motor = OPERATIONAL_GAP/CONTEXTUAL, 0 candidatos, notas 'apoio em operacionalização' + 'plataforma unificada declarada cobre esta capability — gap é operacional (M75)'; tela = FortiSOAR 'prioritaria'; papel = FortiSOAR. Isso e a mesma classe de C2 e cabe na 026 sem tocar o engine. Recomendo que a 026 use C3b como caso 'plataforma cobre' e registre C3 (UNSET + FortiSOC) como limitacao do engine a decidir pelo proprietario."
+  },
+  {
+   "id": "C4",
+   "reproduzi": true,
+   "defeito_real": true,
+   "motivo": "Re-executado: motor security-analytics = OPERATIONAL_GAP/CONTEXTUAL (Microsoft Sentinel production), 0 candidatos, nota 'nunca substituição'; tela = FortiAnalyzer e FortiSIEM ambos 'prioritaria'; papel pr-sup-solucao = os dois, sem qualificador. Identico a C2 em causa e forma (MAP logs lv0). Nada a refutar; a ressalva (d) nao se aplica (nao e marca, e decisao contextual ignorada).",
+   "decisao_registrada": "Nenhuma. Mesmas referencias de C2 (010 spec.md:461-462 contra; EA-76 aberto; D023-REG1(c)/D019-CUR2 como oraculos a reancorar).",
+   "observacao_engine": "Engine nao envolvido na correcao."
+  },
+  {
+   "id": "C5",
+   "reproduzi": true,
+   "defeito_real": true,
+   "motivo": "Re-executado: legacyMode=true, suff=true; tela = 9 cards (7 'validacao': FortiSIEM, FortiAnalyzer, FortiSOAR, FortiAI-Assist, FortiXDR, FortiNDR, Serviços FortiGuard; 2 'prioritaria': FortiEndpoint, FortiRecon); papel #pr-sup-solucao = 9 .pr-card com ZERO qualificador. Varri TODAS as .pr-sec do #v32-print-report (refutador/probe_v32.js): 0 ocorrencias de 'indicação prioritária' e 0 de 'após validação' em qualquer secao — nada no papel compensa (a Camada 1 'nunca é impressa', 010 C5/C13, entao a lista 'Pode fazer sentido' tambem nao chega). Causa: papelHTML() (ui_p52_support_v32.js:794-834) copia nome, [data-p53-prov], .pt-desc e [data-p53-sol-cap], mas nao data-p53-sol-tier/.p53-sol-tierlabel que o card da tela ja carrega. Parte NAO reproduzida da alegacao QS-02: a 'nota separada de escopo (camada endpoint)' tem 0 ocorrencias na TELA (#app) neste cenario — o scopeNote 'camada endpoint' vive em OFFERINGS.fortiendpoint (engine_v32.js:124) e em modo legado o motor nao produz contexto, logo nao ha nota na tela para o papel perder; a origem de FortiEndpoint aqui e MAP vulnerability-management lv0, como a propria auditoria reconhece (§10.2).",
+   "decisao_registrada": "Nenhuma. 019 C8/D019-PAR1 mede 'mesma SELEÇÃO'; 019 C4/D019-PROV1 mede proveniencia; nenhuma spec (019/022/023/024, grep 'tier|qualificador' vazio) decide que o papel omite o tier. EA-68 fecho menciona os qualificadores so na tela. INV-7 (product-invariants.md:18, 'narrativa derivada de evidência') e o 019 (comentario :817-818: 'é aqui que a divergência costuma nascer sem ninguém ver, EA-58') apontam na direcao oposta.",
+   "observacao_engine": "Engine nao envolvido (modo legado; tier vem de f.sev do MAP). Fix so em papelHTML; gate natural e mutante estilo D019-M4 (remover so no papel)."
+  },
+  {
+   "id": "C6",
+   "reproduzi": true,
+   "defeito_real": false,
+   "motivo": "Re-executado: motor network-detection = WHITESPACE/DIRECT, candidato fortindr-onprem[atende]; card por produto = 'FortiNDR' tier 'prioritaria'. Refutacao: (1) a variante ESTA nas duas superficies — #v32support card visivel 'FortiNDR (On-Premises) aquisição candidata' e papel pr-support com 'on-prem' (1x); (2) 'FortiNDR' de PRODUCTS (v3_1_3:267) corresponde ao no de familia do motor 'ndr-family' cujo name e exatamente 'FortiNDR' (engine_v32.js:89) — a familia que CONTEM fortindr-onprem; nao e oferta vetada (ao contrario de C1), e leitura menos granular, nao contraditoria; (3) a curadoria so tem ids de PRODUCTS (sem 'fortindr-onprem'), entao exibir a variante por nome recriaria a segunda direcao do EA-76.",
+   "decisao_registrada": "Errata E2 da 022 (specs/022-escalonamento-do-investimento/spec.md:85-117, ratificada 'Vamos de B' 2026-09-28) e o comentario em ui_p52_support_v32.js:296-300: 'A primeira versao colhia toda oferta do motor e trouxe FortiSIEM Cloud e FortiNDR Cloud para a secao — mudança visível ao cliente que ninguém pediu... Alargar alem disso seria a implementacao decidindo escopo por conta'. A segunda fonte e limitada, por decisao do proprietario, ao habilitado por sinal.",
+   "observacao_engine": "Engine ja resolve a variante. Se a 026 quiser a variante no card por produto como ATRIBUTO (variantResolution) sem trocar a identidade curavel, isso e escopo novo que reabre a E2 — decisao do proprietario, nao defeito."
+  },
+  {
+   "id": "C7",
+   "reproduzi": true,
+   "defeito_real": true,
+   "motivo": "Re-executado: motor soc-staffing e continuous-monitoring -> servico fortiguard-socaas<capability-gap>; endpoint-detection = OPERATIONAL_GAP com fortixdr/contextual-extension ('nunca nova aquisição standalone (M50)'). Medido por chamada direta (refutador/probe_c7.js): V32.serviceEligibility('fortiguard-mdr') = {eligible:false, reason:'base declarada apenas em deployments não elegíveis (on-prem/air-gapped) — OG oficial'} (engine_v32.js:480-493; SERVICES.fortiguard-mdr eligibilityRequires :207-210). Tela: 'FortiGuard MDR' com 'indicação prioritária' (MAP team-capacity lv0 e monitoring-coverage lv0 listam FortiGuard-MDR-Service) e 'FortiEndpoint após validação' (MAP endpoint lv1) ao lado do card V32 que diz 'FortiXDR extensão contextual da base instalada... nunca nova aquisição'. Papel: pr-support traz SOCaaS/XDR; pr-sup-solucao traz MDR sem a inelegibilidade. E uma restricao EXPLICITA do catalogo ('OG oficial') contrariada — o aceite da auditoria e exatamente este.",
+   "decisao_registrada": "Parcial: (a) 010 spec.md:455-458 (E9, mutantes M18/M19) decidiu manter 'FortiGuard MDR' vindo do MAP vivo no NO A VALIDAR do cenario-alvo quando o engine nao o anexa — vale para ui_target ('a validar'), nao para o card de recomendacao com 'indicação prioritária'; (b) a ausencia de FortiXDR no card por produto e decisao da errata E2 da 022 (so sinal). O nucleo (MDR inelegivel apresentado como prioritario; FortiEndpoint 'após validação' sobre gap operacional com FortiEDR instalado) nao tem decisao registrada e contraria 010 spec.md:461-462.",
+   "observacao_engine": "Engine nao envolvido. Mesma raiz de C2/C4. Nota: SOCaaS 'prioritaria' coincide com o motor (elegivel, gatilho capability-gap) — a 026 deve preservar esse caso como controle positivo."
+  },
+  {
+   "id": "C8",
+   "reproduzi": true,
+   "defeito_real": false,
+   "motivo": "Re-executado: legacyMode=true, buildRecommendationContext() devolve contexts:{} (engine_v32.js:552); a unica leitura e a Camada 1 (MAP) e o card FortiEndpoint 'prioritaria' E essa leitura. Hipotese 'comportamento MAP' confirmada.",
+   "decisao_registrada": "Errata E1 da 023 ('Vamos com a B', 2026-10-02; spec 023:118-146 e tabela :59: 'modo legado, com produto: uma leitura: os cards — é o caso do relato') e design-decisions.md (entrada 'lista pode fazer sentido', fecho 2026-10-19). Engine: modo legado = comportamento V3.1.3 por desenho (isLegacyModeV32).",
+   "observacao_engine": "Qualquer mudanca aqui e engine (frozen) ou mudanca do significado de 'sem contexto' — fora da 026."
+  },
+  {
+   "id": "EXTRA-curadoria-include",
+   "reproduzi": true,
+   "defeito_real": false,
+   "motivo": "Sonda refutador/probe_extra.js: __CURATION.set(id,'include') em produto NAO ofertado, 3 cenarios: C5 (legado, FortiDeceptor), C2 (contexto declarado, FortiNDR), C1 (contexto, FortiDLP). Resultado identico nos tres: isOperatorChoice=true; published() ganha o id; TELA card com [data-p53-prov] 'Incluído por decisão do engenheiro — não derivado da avaliação.'; PAPEL .pr-card com [data-p53-prov] e o mesmo texto, exatamente 1 marcador em #pr-sup-solucao; o card incluido NAO recebe tier (data-p53-sol-tier=null, sem label) nem caps — nao e convertido em 'indicação prioritária'. consoleErrors=[]. D019-PROV1 (tests_019_curadoria.js:270-305) ja cobre (a) tela, (b) papel apos preparePrint, (c) item ofertado sem selo; mutante D019-M4 (remover so no papel) ataca exatamente a divergencia; a fixture do gate e so legado (boot() nunca declara contexto), mas a sonda mostra que vale tambem com contexto declarado.",
+   "decisao_registrada": "019 C4 (spec 019:43) e C1 'Curadoria é seleção, nunca redação' (D019-CUR1): o estado so tem ids e enum fechado. Logo 'condições/limitações' da inclusao manual que a auditoria pede (§9.3 'Produto adicionado manualmente: proveniência humana e condições preservadas') nao existem para preservar — seria recurso novo que contraria C1 da 019; decisao do proprietario, nao defeito.",
+   "observacao_engine": "Nao envolve o engine. Residuo honesto: o card incluido carrega so proveniencia + descricao do catalogo; se a 026 quiser 'condições' no item manual, precisa reabrir 019 C1."
+  },
+  {
+   "id": "RELATORIO",
+   "reproduzi": true,
+   "defeito_real": false,
+   "motivo": "ARQUIVOS_TOCADOS: somente scratchpad — C:/Users/usuario/AppData/Local/Temp/claude/C--Projetos-QuickScan-SOC-CMM/ed12b417-535d-4d8a-94c5-4194158e2cc2/scratchpad/refutador/{out/C1..C8.json+.err, out/C3b.json, resumo.js, probe_v32.js, probe_extra.js, probe_c7.js, cen_C3b.json}. Zero escrita no repositorio; zero git. RESUMO: C1, C2, C4, C5, C7 = defeito real (C1/C2/C4/C7 uma raiz: ofertaDoMotor()/ofertados() derivam do MAP e nao consultam classify/resolveCandidates/serviceEligibility; C5 = papelHTML nao copia o tier). C3 = abstencao do engine (CONTEXT_NOT_INFORMED/LEGACY-LABELLED), fix em classify (frozen) -> nao e defeito da apresentacao; variante C3b (FortiSOC declarado na propria capability) E real, classe C2. C6 = decisao registrada (022 E2) e variante presente nas duas superficies. C8 = decisao (023 E1) + desenho do engine. Extra = coberto por D019-PROV1/M4. EVIDENCIA: specs/010 spec.md:461-462 e a ancora normativa a favor da auditoria ('sob contexto declarado a autoridade é o engine, e listar produto do catálogo congelado ali contradiria a leitura informada'); V32.archSatisfied(fortiendpoint)='violated' em C1; V32.serviceEligibility('fortiguard-mdr').eligible=false em C7; 0 ocorrencias de qualificador em todas as .pr-sec do papel em C5; 'camada endpoint' 0x na tela em C5 (parte da QS-02 nao reproduzida). DEPENDENCIAS para a 026: (1) EA-76 aberto/declarado — a fonte unica tem de nascer em ui_curation_v32.js (dono do estado, R9 §5) e catalog() = Object.keys(PRODUCTS) nao conhece ids do motor (fortiedr, fortindr-onprem, fortixdr) — identidade curavel e decisao de contrato; (2) gates com oraculo MAP/offered() a reancorar: D019-CUR2, D019-SOL1, D019-SOL3(b), D023-REG1(c), D022-PROD1 (R10: reancorar com demanda, nunca enfraquecer); (3) pin V10/D010-INV7 ('nenhum produto é inferido sem contexto') e D019-MED1 (payload M41 byte-identico) delimitam o que a 026 nao pode tocar; (4) C3 (UNSET + FortiSOC) exige decisao do proprietario sobre errata no engine congelado — fora da 026; (5) 'condições' em item incluido manualmente contraria 019 C1 — decisao do proprietario.",
+   "decisao_registrada": "n/a",
+   "observacao_engine": "Engine permanece intocado em todos os remedios propostos, exceto C3 (recusado por isso)."
+  }
+ ]
+}

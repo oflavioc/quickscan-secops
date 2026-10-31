@@ -45,7 +45,8 @@ const DETECTADO = "DETECTADO", SOBREVIVENTE = "SOBREVIVENTE", NAO_EXECUTADO = "N
 const F = {
   ondas: P("ui_ondas_v32.js"),          /* a decisão — função pura */
   papel: P("ui_v32.js"),                /* a apresentação (§29.4) */
-  apoio: P("ui_p52_support_v32.js")     /* a visão por produto */
+  apoio: P("ui_p52_support_v32.js"),    /* a visão por produto */
+  estado: P("ui_curation_v32.js")       /* [026 · T040] o registro único da oferta — portador da âncora de M10 */
 };
 
 const CMD = "node tests_022_escalonamento.js";
@@ -106,7 +107,19 @@ const MUTANTS = [
     repl: "  h += \"\";",
     reason: /não traz a primeira onda|papel × contrato divergem/ },
 
-  { id: "D022-M10", file: F.apoio, gate: "D022-PROD1", cmd: CMD,
+  /* REANCORADO em 2026-10-31 (demanda 026, T040 — spec §Reancoragens): a
+     linha-âncora MUDOU DE ARQUIVO, não de forma. O laço por sinal que a
+     carregava (`ofertaDoMotor()`, ui_p52_support_v32.js:~327) foi transportado
+     verbatim para a fusão por chave de `reconciliar()` em ui_curation_v32.js —
+     a 026 fez a oferta nascer UMA vez, no registro, e a tela virou leitora.
+     `find`, `repl` e `reason` são BYTE-IGUAIS aos de 2026-09-29: o ataque (guardar
+     só a primeira capability) e a agulha do motivo não mudaram. O que muda é
+     `file` (F.apoio → F.estado) e, por consequência, `precisaBuild` abaixo —
+     sem o rebuild a mutação do fonte não alcançaria o HTML que o gate lê e o
+     mutante sairia SOBREVIVENTE pelo motivo errado (o falso negativo que o
+     comentário do runner já descreve). `ocorrencias` esperada: 1 no arquivo
+     novo, 0 no antigo (medido no --preflight de T040). */
+  { id: "D022-M10", file: F.estado, gate: "D022-PROD1", cmd: CMD,
     desc: "a fusão guarda só a PRIMEIRA capability — a alavancagem do produto multi-necessidade some",
     find: "            if (capNome && reg2.caps.indexOf(capNome) < 0) reg2.caps.push(capNome);",
     repl: "            if (capNome && !reg2.caps.length) reg2.caps.push(capNome);",
@@ -238,7 +251,7 @@ for (const m of MUTANTS) {
        O build escreve em arquivo EFÊMERO e o gate é apontado para ele: a
        verificação não toca o artefato rastreado (R7 §3). */
     const efemero = path.join(require("os").tmpdir(), "d022-" + m.id + ".html");
-    const precisaBuild = (m.file === F.papel || m.file === F.ondas || m.file === F.apoio);
+    const precisaBuild = (m.file === F.papel || m.file === F.ondas || m.file === F.apoio || m.file === F.estado);   /* [026 · T040] F.estado: M10 */
     if (precisaBuild) {
       const build = construir(efemero);
       if (!build.ok) { estado = NAO_EXECUTADO; causa = CAUSA.rebuild + ": " + build.why; }

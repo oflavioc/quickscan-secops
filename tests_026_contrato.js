@@ -20,6 +20,11 @@
                 não o nome                                  (a)…(j)
      D026-PAP1  o papel diz o que a tela diz, por card      (QS-02)
      D026-LEG1  sem voz do motor nada é inventado; a derivação é pura  (a)…(g)
+                — D-3 nasce TRUE (Fase 6, objeção O-1 do PO, 2026-10-31): a
+                plataforma declarada noutra capability vira hipótese
+                `plataforma-declarada-cobre` ("após validação"), nunca veto nem
+                "indicação prioritária"; a alínea (c) pina a constante
+                `CONTEXTO_SUPRIMIDO_POR_PLATAFORMA` em true (EA-122 no backlog)
 
    A TESE que estes gates cercam (desenho §0): "o que o motor ofereceu nesta
    sessão" nasce UMA vez, em `ui_curation_v32.js` (`__CURATION.oferta()`,
@@ -922,20 +927,51 @@ T("D026-LEG1", "sem voz do motor nada é inventado (hipótese condicionada); gat
     if (vetosBloco(d)) throw new Error("`[data-p53-vetos]` presente em C7-UNSET: " + J(vetoItens(d).map(li => attr(li, "data-p53-veto-item"))));
   })],
 
-  ["(c) C3 · constante desligada (hipótese); C3b · plataforma cobre (veto M75)", () => {
+  /* REANCORADA na Fase 6 (2026-10-31, objeção O-1 do product-owner): D-3 passa a
+     nascer TRUE. Com `false`, o C3 declarado da forma natural (FortiSOC em
+     soc-platform) continuava "FortiSOAR · indicação prioritária" — o defeito que
+     o plano chama de C3. A FORMA SEGURA já implementada atrás de
+     `CONTEXTO_SUPRIMIDO_POR_PLATAFORMA` entrega o C3 do plano: hipótese com
+     condição `plataforma-declarada-cobre`, tier 2 ("após validação"), condição
+     visível em tela e papel, zero veto, zero `[data-p53-suprimido]`, Camada 1
+     oculta (published() não vazio). A alínea PINA a constante em `true`: com
+     `false` cai por tier/condição (RED medido em 026-F6-red-c3.log). A lacuna do
+     engine (M75 fora da classificação) continua no backlog como EA-122 — a
+     constante é a forma segura, não o remédio. C3b (plataforma declarada na
+     própria capability ⇒ veto com M75) não muda. Sem mutante próprio: nenhum
+     D026-M* ancora a constante (conferido por grep); o pin é a própria alínea. */
+  ["(c) C3 · constante ligada (hipótese plataforma-declarada-cobre, após validação, tela e papel); C3b · plataforma cobre (veto M75)", () => {
     com("C3", ({ w, d, V }) => {
       bridge(w);
       if (V.classify("security-automation").c !== "CONTEXT_NOT_INFORMED") vac("(c) C3", "security-automation não é CONTEXT_NOT_INFORMED");
       if (!V.suppressedByPlatform().caps.has("security-automation")) vac("(c) C3", "suppressedByPlatform() não cobre security-automation");
       const card = cardDe(d, "FortiSOAR");
       if (!card) throw new Error("C3: card `FortiSOAR` ausente — cards: " + listar(d));
-      if (attr(card, "data-p53-sol-condicao") !== "capability-nao-informada")
-        throw new Error("C3: data-p53-sol-condicao = " + J(attr(card, "data-p53-sol-condicao")) + " ≠ \"capability-nao-informada\"");
-      const tierEsp = tierDaHipotese(w, "FortiSOAR");
-      if (attr(card, "data-p53-sol-tier") !== "prioritaria" || tierEsp !== "prioritaria")
-        throw new Error("C3: data-p53-sol-tier = " + J(attr(card, "data-p53-sol-tier")) + ", MAP diz " + J(tierEsp));
-      if (vetosBloco(d)) throw new Error("C3: `[data-p53-vetos]` presente — a constante CONTEXTO_SUPRIMIDO_POR_PLATAFORMA não está em false");
+      if (attr(card, "data-p53-sol-condicao") !== "plataforma-declarada-cobre")
+        throw new Error("C3: data-p53-sol-condicao = " + J(attr(card, "data-p53-sol-condicao")) + " ≠ \"plataforma-declarada-cobre\" (D-3 = true)");
+      if (attr(card, "data-p53-sol-tier") !== "validacao")
+        throw new Error("C3: data-p53-sol-tier = " + J(attr(card, "data-p53-sol-tier")) + " ≠ \"validacao\" (D-3 = true: a plataforma declarada cobre ⇒ após validação, nunca prioritária)");
+      if (attr(card, "data-p53-sol-acao") !== "hipotese")
+        throw new Error("C3: data-p53-sol-acao = " + J(attr(card, "data-p53-sol-acao")) + " ≠ \"hipotese\"");
+      const cond = card.querySelector(".p53-sol-condicao");
+      if (!cond || !txt(cond)) throw new Error("C3: `.p53-sol-condicao` ausente ou vazio — a condição tem de ser visível na tela (D-2)");
+      if (vetosBloco(d)) throw new Error("C3: `[data-p53-vetos]` presente — a plataforma declarada em outra capability nunca é veto (D-3): " + J(vetoItens(d).map(x => attr(x, "data-p53-veto-item"))));
       if (aviso(d)) throw new Error("C3: `[data-p53-suprimido]` presente sem curadoria");
+      if (!bridge(w).published().length) throw new Error("C3: published() vazio — a hipótese condicionada tem de ser publicada");
+      const rel = papel(w, d);
+      try {
+        const pr = prCardDe(rel, "FortiSOAR");
+        if (!pr) throw new Error("C3 papel: pr-card `FortiSOAR` ausente em #pr-sup-solucao");
+        if (attr(pr, "data-p53-sol-condicao") !== "plataforma-declarada-cobre")
+          throw new Error("C3 papel: data-p53-sol-condicao = " + J(attr(pr, "data-p53-sol-condicao")) + " ≠ \"plataforma-declarada-cobre\"");
+        if (attr(pr, "data-p53-sol-tier") !== "validacao")
+          throw new Error("C3 papel: data-p53-sol-tier = " + J(attr(pr, "data-p53-sol-tier")) + " ≠ \"validacao\"");
+        const prTier = pr.querySelector(".p53-pr-tier");
+        if (!prTier || txt(prTier) !== "após validação") throw new Error("C3 papel: `.p53-pr-tier` = " + J(txt(prTier)) + " ≠ \"após validação\"");
+        const prCond = pr.querySelector(".p53-pr-condicao");
+        if (!prCond || txt(prCond) !== txt(cond)) throw new Error("C3 papel: `.p53-pr-condicao` = " + J(txt(prCond)) + " ≠ tela " + J(txt(cond)) + " (cópia, nunca recálculo)");
+        if (prVetos(rel)) throw new Error("C3 papel: `.p53-pr-vetos` presente");
+      } finally { fimPapel(w); }
     });
     com("C3b", ({ w, d, V }) => {
       const ctx = ctxDe(V, "security-automation");

@@ -1,7 +1,7 @@
 {
   "_meta": {
     "descricao": "Registry único de pins — fonte de identidade dos artefatos (R8). Hashes = SHA-256 dos blobs de HEAD. Alterar arquivo pinado exige regenerar este registry no MESMO PR, com motivo no commit.",
-    "gerado_de_head": "2cc513ad63907d55e9b46706c94dff0fa21a5a30",
+    "gerado_de_head": "7678222fdff654640653d0093c51383a48032ace",
     "gerado_em": "2026-10-31",
     "exclusoes": [
       "docs_phase5/**",
@@ -571,9 +571,11 @@
     "specs/026-decisao-unica-do-apoio/anexos/desenho-C.md": "c9e068925201b125d6b75f696bb424c49a58b91f14e30a89c235bf9dfba6a0c4",
     "specs/026-decisao-unica-do-apoio/anexos/desenho-sintese.md": "671559a615adfdb987b0433f47202e168d2ed1cbd860b9a82a8c5cd288988fdf",
     "specs/026-decisao-unica-do-apoio/anexos/objecoes-dos-juizes.json": "54a41d3094b54ebda535bcfe5409e885aaf90e9c209c8e61c02a0dfee848ed8f",
+    "specs/026-decisao-unica-do-apoio/anexos/pareamento.md": "f4d04da32876105cb91f100b75956749f41113f6585c09367d64501da1445815",
     "specs/026-decisao-unica-do-apoio/anexos/refutacao-reproducoes.json": "76dc78857e8efc087b4442c64e04671249685e62577e167f0b5babfe04f89a10",
     "specs/026-decisao-unica-do-apoio/anexos/sonda-leitura.js": "84e0b26e90b8191785ee53a45ef008a02fcce55cd0af129ac580f01c50fe98ba",
     "specs/026-decisao-unica-do-apoio/plan.md": "94379577bd7ab253ee01ec1e1fc65c3fffe7a6da7d8e57525f4aad78061dc541",
+    "specs/026-decisao-unica-do-apoio/red-026.md": "1ec9c253109279d55e62d4e68256e5f32a30f1861e0a9ae5eab2a879ba3a717a",
     "specs/026-decisao-unica-do-apoio/refinement.md": "725622dbc1e235387b2805d85edbc5cbc396877f2424ad08f6186e06014dbf20",
     "specs/026-decisao-unica-do-apoio/spec.md": "572b609e299d9a8f2bf8f61d9830b5785555a0800f037c09afa25eed807ccbea",
     "specs/026-decisao-unica-do-apoio/tasks.md": "b95f4a1a6bd662dabe8a661ba3939b56a2fd244bb2bb682e947692e0b95a16fc",
@@ -605,6 +607,7 @@
     "tests_023_mutants.js": "445a572727b6a22c72694add6a738cd34c54b871e29b39edcd779c44a10b79dd",
     "tests_025_curadoria_sessao.js": "86fabac8707bb2a103198f0962d33b9b106740489d231619945fbd95b7c79faa",
     "tests_025_mutants.js": "280727f468612a79100aa1352ee7d8367cba7448f0a2e09c1d4dfb64c712c487",
+    "tests_026_contrato.js": "14d0dcf9e7d3fa1f3f45288f220a9cf519bdfbcdddc0f03e6d296974f27d9047",
     "tests_core_mutants.js": "40f5bc0f3d0e4850496b5a9f85ef3a1512bcb035304e1f669d6ba79fa7a50d92",
     "tests_ea41_instrumento.js": "dc93b175b1be807fe7989645c6a61df73a1909d3a5b56510753059d6f93dfcbc",
     "tests_ea41_mutants.js": "1ce0c3c7444cf4eae710e9ad714fd7fb0b58cb3c0136afce7842e1af6be07301",

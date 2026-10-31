@@ -1,7 +1,7 @@
 {
   "_meta": {
     "descricao": "Registry único de pins — fonte de identidade dos artefatos (R8). Hashes = SHA-256 dos blobs de HEAD. Alterar arquivo pinado exige regenerar este registry no MESMO PR, com motivo no commit.",
-    "gerado_de_head": "ea5e69e57db0decd2eebaa58e3fb6141f0f318b6",
+    "gerado_de_head": "e60671445a6b95c8e39f472fd8a00b3ae795d075",
     "gerado_em": "2026-10-31",
     "exclusoes": [
       "docs_phase5/**",
@@ -252,7 +252,7 @@
     ".claude/hooks/post-turn-verify.sh": "e46d2c17c4d7b0164154bd5220e2696011482da3dd49b28c41b90a844a89ea1a",
     ".claude/hooks/state-eval.sh": "f15c4df2e181f3f1b8db64bc6aedb46883d7600418f1c28a16446037b13d6b6e",
     ".claude/rules/boundary.md": "327888a7af5719d2bb264058457d1c6782f62a6dcaa506fdf844336a55da47f4",
-    ".claude/rules/design-decisions.md": "2e1e21637357e85755e5e4a1193e6443f399fa5ff824c688216e5f2519565f8f",
+    ".claude/rules/design-decisions.md": "58cd256ae835336123276083eec4cfc41833e98ec25706c9e126294447b3a4d3",
     ".claude/rules/determinism.md": "90bab1c89c7b9a54c400b7124d60693a431face37f422e847e6d2e566cb5f76d",
     ".claude/rules/documentation.md": "1bc3ee711769319d3bd7dbfe5d7ac376f764149865457fe9bb283fcf0daf10d4",
     ".claude/rules/evidence-intake.md": "a93f8d063602e2b075c2096d38e74f9cd1f8452c8943691aca82c3847c84cd8c",
@@ -576,8 +576,8 @@
     "specs/026-decisao-unica-do-apoio/anexos/sonda-leitura.js": "84e0b26e90b8191785ee53a45ef008a02fcce55cd0af129ac580f01c50fe98ba",
     "specs/026-decisao-unica-do-apoio/plan.md": "94379577bd7ab253ee01ec1e1fc65c3fffe7a6da7d8e57525f4aad78061dc541",
     "specs/026-decisao-unica-do-apoio/red-026.md": "77f084a730e974bf67a4dea3755bec0fef49a055658041877044785a69e7ef5e",
-    "specs/026-decisao-unica-do-apoio/refinement.md": "91d21c2f961d3001f47873bedaf248874a50c12b779efe5b859c52342db38c82",
-    "specs/026-decisao-unica-do-apoio/relatorio-final.md": "c7fb2e21ed4e2bdfe16e906b4e4aa3e63a746b318f0adfd6cc269df54d7aa494",
+    "specs/026-decisao-unica-do-apoio/refinement.md": "f7dd7072f3f8505132d06e2f4a243ed1329c400328ef6f5d7d24d2cc022444af",
+    "specs/026-decisao-unica-do-apoio/relatorio-final.md": "a4f3b10a4e24edef75f5518874735d3a35e73e5ba536b65d9f0399de08bc9b99",
     "specs/026-decisao-unica-do-apoio/spec-validate.md": "d0eeb7417d278fab05f45e2376a8edf83e5406daab4958e61df747dee64e3d25",
     "specs/026-decisao-unica-do-apoio/spec.md": "18b676fd2f2a4cf3bda9a5e4a4c09caf81f0f5d5be977f659e34950991e724dd",
     "specs/026-decisao-unica-do-apoio/tasks.md": "0fc060a9bdf422053119ea2f6a1b126a5a9589d2156b4c5f8e75ba715229d8f9",

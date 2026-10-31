@@ -377,3 +377,7 @@ não resolve nem incidentalmente:
 - **Invariante 8 do plano**: perguntas, pesos, `SCORES`, `stageOf`, suficiência
   e significado metodológico **não mudam** — C5 da 019 continua critério:
   payload M41 byte-idêntico.
+
+## Ratificação (adendo de 2026-10-31, pós-merge)
+
+O proprietário ratificou as nove decisões no PR #117, por comentário literal de 2026-10-31 — *«Ratifico D-1 a D-9.»* — e mesclou a demanda em `develop` (`a29d3bd`, merge commit). D-1, D-2 e D-7 passaram à tabela *Confirmadas* de `.claude/rules/design-decisions.md` neste adendo; as demais ficam registradas aqui como ratificadas. Toda menção anterior a «ratificação literal pendente no PR» neste diretório fica superada por este adendo (R2 §5: o texto original não é reescrito).

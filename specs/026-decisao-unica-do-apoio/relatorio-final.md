@@ -432,3 +432,7 @@ commits `2cc513a` `96369af` `4041ec7` `7678222` `a02d411` `193ee84` `6ace994`
 --oneline 9509e4b..HEAD`, `git diff --stat`/`--numstat 9509e4b..HEAD`, `git show
 HEAD:<arquivo> | wc -l`, leitura de `engine_v32.js`, `ui_curation_v32.js`,
 `ui_p52_support_v32.js` em `HEAD`.
+
+## Ratificação (adendo de 2026-10-31, pós-merge)
+
+O proprietário ratificou as nove decisões no PR #117, por comentário literal de 2026-10-31 — *«Ratifico D-1 a D-9.»* — e mesclou a demanda em `develop` (`a29d3bd`, merge commit). D-1, D-2 e D-7 passaram à tabela *Confirmadas* de `.claude/rules/design-decisions.md` neste adendo; as demais ficam registradas aqui como ratificadas. Toda menção anterior a «ratificação literal pendente no PR» neste diretório fica superada por este adendo (R2 §5: o texto original não é reescrito).

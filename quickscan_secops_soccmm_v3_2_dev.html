@@ -17648,6 +17648,14 @@ if (window.__DEV) Object.assign(window.__DEV, { openExportModal, openImportPicke
     linha.appendChild(cx);
     var texto = el("span", { "class": "p53-cur-item-txt" });
     texto.appendChild(el("span", { "class": "p53-cur-item-nome" }, nome));
+    /* [026 · T031 · D-9] A linha segue sendo o PRODUTO (`data-p53-cur-item` e
+       `.p53-cur-item-nome`); o título que o relatório dará à oferta, quando
+       difere do nome, vem do registro de `oferta()`. Bridge sem `oferta` ⇒ nada muda. */
+    try {
+      var reg = (b.oferta() || []).filter(function (r) { return r.chave === id; })[0];
+      if (reg && reg.titulo !== reg.nome)
+        texto.appendChild(el("span", { "class": "p53-cur-item-var" }, "apresentado como " + reg.titulo));
+    } catch (e) { /* sem oferta(): a linha fica como estava */ }
     var ps = portfolio();
     texto.appendChild(el("span", { "class": "p53-cur-item-grp" },
       ps ? rotuloGrupo(ps, nome) : ""));

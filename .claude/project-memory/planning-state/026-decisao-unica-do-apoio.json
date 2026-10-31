@@ -1,6 +1,6 @@
 {
   "demanda": "026-decisao-unica-do-apoio",
-  "phase": "implement",
+  "phase": "validate",
   "spec_dir": "specs/026-decisao-unica-do-apoio",
   "branch": "feature/026-decisao-unica-do-apoio",
   "brief": "Contrato unico de decisao de apoio: a oferta por produto nasce uma vez em ui_curation_v32.js (dono do estado, __CURATION) reconciliando a Camada 1 (MAP) com o motor contextual; tela (ui_p52_support_v32.js), editor e papel consomem. O papel preserva qualificador, acao, variante, escopo e origem. Origem: auditoria externa de 2026-10-31 (QS-01 cards contradizem o motor; QS-02 PDF perde qualificadores) e EA-76 (segunda fonte do ofertaDoMotor, 'conserto e demanda futura'). Microfase 01 do plano de correcao de 2026-10-31.",
@@ -35,18 +35,24 @@
     "notes": "RED PROVADO pelo qa-engineer (Fable 5.1) em 2026-10-31 e reexecutado pelo orquestrador: D026 CONTRATO: 0 PASS · 3 FAIL de 3 (REC1 cai em (a) por __CURATION.oferta ausente; PAP1 cai em (a) C5 0/9 pr-card com tier; LEG1 cai em (a) por contrato ausente). Nascem verdes sem os atributos novos (declarado em red-026.md): REC1 (h), LEG1 (b), LEG1 (d) e metades puras de REC1 (g), LEG1 (a), LEG1 (c)-C3, LEG1 (f). SHA-256 do tests_026_contrato.js: 14d0dcf9e7d3fa1f3f45288f220a9cf519bdfbcdddc0f03e6d296974f27d9047. Regressao: d019 14/14, d022 14/14, d023 9/9, d025 16/16. T011 pareamento.md em 4041ec7 (forticlient -> FortiEndpoint pela regra 3; PAR-4 cadeia esgotada cai para a 3; PAR-5 family null nao aplica a 3 — decididas pelo orquestrador para o core)."
   },
   "implement": {
-    "status": "in_progress",
+    "status": "done",
     "waves_done": [
       0,
       1,
       2,
-      3
+      3,
+      4,
+      5,
+      6
     ],
-    "pending": [
-      "W4 reancoragens+harness+registros",
-      "W5 pins/bridges/CI",
-      "W6 docs/aceite"
-    ],
-    "notes": "W2 fechada em 2026-10-31 (core-engineer, Fable 5.1): ui_curation_v32.js 316->597 linhas (acima dos ~495 do plano, abaixo do teto R9; contagem medida a registrar no relatorio). Desvios declarados e ACEITOS pelo orquestrador como erratas da spec (registrar em W6): (a) entradaViva() traz solucoes{capId->[{product,status,deployment}]} para existente[]; (b) veto ganha notas[]; (c) \"sinal requerido ausente\" e abstencao (hipotese), nao veto; (d) laco por sinal roda tambem sob suficiencia fechada (status quo 022); (e) veto.itemId = primeira oferta relacionada nao-family; (f) __P50SUFF ausente => suficiente=false; (g) entrada nula => coletar(true) com console.error. tasks.md T020 diz preflight d023 11/11; o harness tem 12 mutantes (12/12). W3a fechada (ui-engineer, Fable 5.1): ui_p52_support_v32.js 872->1105 linhas (acima dos ~940 do plano: crescimento do estouro herdado, registrar no relatorio), CSS +67 so p53-*; D026 3/3; literais novos ACAO_TXT/CONDICAO_TXT/VETO_TXT conferidos contra tests_*.js e P52_COPY (desvio declarado: \"Acao sugerida:\" no lugar de \"Proximo passo\", observavel de P52-RES4/U15). d014 regra_morta 4/3 por censo do CSS 33->52 regras: repin por execucao na W4. W3b fechada (ui-engineer, sonnet): editor +8 linhas, D-9. Repin R2 consolidado apos W3."
+    "pending": [],
+    "notes": "W2 fechada em 2026-10-31 (core-engineer, Fable 5.1): ui_curation_v32.js 316->597 linhas (acima dos ~495 do plano, abaixo do teto R9; contagem medida a registrar no relatorio). Desvios declarados e ACEITOS pelo orquestrador como erratas da spec (registrar em W6): (a) entradaViva() traz solucoes{capId->[{product,status,deployment}]} para existente[]; (b) veto ganha notas[]; (c) \"sinal requerido ausente\" e abstencao (hipotese), nao veto; (d) laco por sinal roda tambem sob suficiencia fechada (status quo 022); (e) veto.itemId = primeira oferta relacionada nao-family; (f) __P50SUFF ausente => suficiente=false; (g) entrada nula => coletar(true) com console.error. tasks.md T020 diz preflight d023 11/11; o harness tem 12 mutantes (12/12). W3a fechada (ui-engineer, Fable 5.1): ui_p52_support_v32.js 872->1105 linhas (acima dos ~940 do plano: crescimento do estouro herdado, registrar no relatorio), CSS +67 so p53-*; D026 3/3; literais novos ACAO_TXT/CONDICAO_TXT/VETO_TXT conferidos contra tests_*.js e P52_COPY (desvio declarado: \"Acao sugerida:\" no lugar de \"Proximo passo\", observavel de P52-RES4/U15). d014 regra_morta 4/3 por censo do CSS 33->52 regras: repin por execucao na W4. W3b fechada (ui-engineer, sonnet): editor +8 linhas, D-9. Repin R2 consolidado apos W3. W4 (QA): D022-M10 reancorado (4 toques), trilha E13, harness d026 + registros, censo do CSS remedido 52/298/5; campanhas d019 17, d022 13, d023 12, d025 23; d026 5/1 (D026-M5 sobrevivente: gate cego ao estado hipotese+veto na mesma chave do lado produto) -> W4b alinea REC1 (j) com fixture C4-DL, d026 6/0. W5: nota __CURATION em bridges.json. W6: EA-76 resolvido, EA-122/EA-123 abertos, erratas E1-E12, relatorio final."
+  },
+  "validate": {
+    "status": "done",
+    "conformance": "125/125 (100%) — iteracao 2 (0768076) apos erratas E13/E14; iteracao 1 = 123/125 (0bdfcfe; G1 trilha de temVoz unilateral, G2 literais de motivo no owner — ambos spec-errada)",
+    "aceite_po": "NAO ENCONTREI OBJECAO — product-owner (lente), Fable 5.1, 2026-10-31, segundo passe sobre 5d9bdff. Primeiro passe reprovou nomeando O-1 (C3 do plano nao resolvido com D-3=false): acolhida pelo orquestrador — iteracao unica da Fase 6: red 6122bb7 (LEG1 (c) reancorada, 2/3), green 860735a (CONTEXTO_SUPRIMIDO_POR_PLATAFORMA = true, 3/3), campanha d026 6/0, errata E15. Observacoes (a)(b)(c) com rota registradas no relatorio.",
+    "aprovacao_de_fase": "Portoes das Fases 0-3 e as decisoes D-1..D-9 (D-3 revertida para true na Fase 6): decidido pelo orquestrador sob a instrucao do proprietario de 2026-10-31 (prompt da microfase 01); ratificacao literal pendente no PR. A Fase 6 encerra com QA + PO (R4).",
+    "notes": "Pipeline completo e compliance-audit em arvore limpa apos o repin de fecho: ver relatorio-final.md (marcador pipeline-final preenchido no commit de fecho). CI verde e condicao do merge, nao do done."
   }
 }

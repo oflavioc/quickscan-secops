@@ -6,12 +6,12 @@
 > commits à frente (18 até `fc5874f`; depois `8ad6621` W6 docs, `0bdfcfe`
 > spec-validate iteração 1, `6122bb7` red F6, `860735a` green F6) · PR <<PR>>.
 > **Aceite de intenção do `product-owner`: reprovação nomeada O-1, acolhida (D-3
-> passa a `true`); segundo passe pendente — <<aceite-PO-2>>**; ele não emite PASS/FAIL.
+> passa a `true`); segundo passe sobre `5d9bdff`: «não encontrei objeção»**; ele não emite PASS/FAIL.
 > **Ratificação de D-1..D-9: pendente do proprietário, no PR** — as decisões foram
 > *decididas pelo orquestrador sob a instrução do proprietário de 2026-10-31
 > (prompt da microfase 01); ratificação literal pendente no PR*.
 > Marcadores deixados de propósito, a preencher quando o número existir:
-> `<<spec-validate-2>>`, `<<aceite-PO-2>>`, `<<pipeline-final>>`, `<<PR>>`. Todo número
+> `<<pipeline-final>>`, `<<PR>>` (os de `spec-validate` e do aceite já preenchidos). Todo número
 > vem de execução citável ou de registro canônico, com a fonte ao lado: «medido por
 > mim» é leitura desta escrita; «citado de <fonte>» é número que li e não reexecutei.
 
@@ -178,7 +178,7 @@ reexecutou suíte**.
 | F6 red `6122bb7` | `node tests_026_contrato.js` com `LEG1 (c)` reancorada | **2 PASS · 1 FAIL de 3** (`LEG1 (c)` C3: condição `capability-nao-informada` ≠ `plataforma-declarada-cobre`) | corpo do commit (citado) |
 | F6 green `860735a` | `D026 CONTRATO` após `CONTEXTO_SUPRIMIDO_POR_PLATAFORMA = true` e HTML regenerado | **3 PASS · 0 FAIL de 3** | corpo do commit (citado) |
 | Pós-F6 | campanha de mutação (alvos `d026` incluem `ui_curation_v32.js`), `run.sh` e `compliance-audit.sh` sobre a árvore limpa depois do repin de fecho; CI `verify` · `visual` · `fecho` | pendente: pipeline final (<<pipeline-final>>) | — |
-| Fase 6 | `spec-validate` iteração 2 (itens 24 e 64 contra E13/E14; itens 4 e 52 contra E15) | <<spec-validate-2>> | — |
+| Fase 6 | `spec-validate` iteração 2 (itens 24 e 64 contra E13/E14; itens 4 e 52 contra E15) | 125/125 (100 %), `0768076` | — |
 
 Placar do red por alínea (`red-026.md`): nasceram verdes, declarados, `REC1 (h)`,
 `LEG1 (b)`, `LEG1 (d)` e as metades puras de `REC1 (g)`, `LEG1 (a)`, `LEG1 (c)`-C3
@@ -329,7 +329,7 @@ registro ou código:
   `SEM_CANDIDATO` e `ARQ_VIOLADA` (motivo dos vetos que o engine descarta sem nota) ⇒
   **errata E14**.
 
-**Iteração 2: pendente** — <<spec-validate-2>>. Confere só os itens 24 e 64 contra o texto
+**Iteração 2: feita** — 125 de 125 (100 %), commit `0768076`. Confere só os itens 24 e 64 contra o texto
 das E13/E14 **e** os itens que a E15 altera (4 — `LEG1 (c)` — e 52 — a constante); o
 resto da conferência de 125 itens não se repete.
 
@@ -357,7 +357,7 @@ constante** (diretriz de 2026-09-13); o `EA-122` segue com a lacuna do engine. E
 | (b) | o *lead* do bloco de vetos não é copiado ao papel | escolha registrada; sem ação |
 | (c) | códigos internos do engine («(M75)», «(M50)», «OG oficial») chegam ao texto do cliente nos vetos — mas já chegavam via `#pr-support` | nota no `EA-122` — **pendente**: `.claude/BACKLOG.md` não foi tocado nesta escrita |
 
-**Segundo passe do PO: pendente** — <<aceite-PO-2>>. Contra o `refinement.md` revisto
+**Segundo passe do PO: feito** — «não encontrei objeção» sobre `5d9bdff` (nits: linha da constante `:115` na E15, corrigida; nome da plataforma no rótulo fica para o passe de copy). Contra o `refinement.md` revisto
 (caso 3, D-3), a matriz acima e os aceites do plano do proprietário.
 
 ## O que não foi executado, e por quê
@@ -407,8 +407,8 @@ como `agentType`. Os papéis foram exercidos **por lente** em agentes
 |---|---|---|
 | W4 (reancoragens, harness, registros, campanhas) | **fechada** (`3560ba6`, `6182ef6`, `5a99293`, `993e371`, `3f13100`) | `qa-engineer` |
 | W5 (nota do `__CURATION` em `bridges.json`) | feita em `fc5874f`; repin de fecho, pipeline e CI pendentes (<<pipeline-final>>) | `build-engineer` |
-| `spec-validate.md` | iteração 1 **feita** (`0bdfcfe`, 123/125, G1/G2 → E13/E14); iteração 2 pendente (<<spec-validate-2>>) | `qa-engineer` |
-| Aceite de intenção | reprovação O-1 **acolhida** (D-3 `true`, red `6122bb7`, green `860735a`); segundo passe pendente (<<aceite-PO-2>>) | `product-owner` |
+| `spec-validate.md` | iteração 1 **feita** (`0bdfcfe`, 123/125, G1/G2 → E13/E14); iteração 2 feita (`0768076`, 125/125) | `qa-engineer` |
+| Aceite de intenção | reprovação O-1 **acolhida** (D-3 `true`, red `6122bb7`, green `860735a`); segundo passe «não encontrei objeção» sobre `5d9bdff` | `product-owner` |
 | Iteração única da F6 (O-1) | **feita** (`6122bb7`, `860735a`); repin de fecho, campanha pós-F6 e pipeline pendentes (<<pipeline-final>>) | orquestrador · `build-engineer` |
 | `BACKLOG.md` (EA-76, EA-122, EA-123) | **inserido** (aguarda repin); nota da obs. (c) do PO no `EA-122` **pendente** | `doc-writer` |
 | Erratas E1–E15 em `spec.md`; M5 e nota da F6 em `tasks.md`; D-3 em `refinement.md` | **inseridas** (aguardam repin) | `doc-writer` |

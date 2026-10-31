@@ -11498,6 +11498,15 @@ sair juntas:
 Ver `EA-76` (fecho da 026) e `EA-79` (convivência sob gate fechado). Fora do
 escopo da 026 (`specs/026-decisao-unica-do-apoio/spec.md` §Fora de escopo).
 
+### Nota de 2026-10-31 — observação (c) do aceite de intenção da 026
+
+Os códigos internos do engine chegam ao texto que o cliente lê — `(M75)` e `(M50)` nas notas de
+`ctx.notes`, «OG oficial» em `serviceEligibility().reason` — e a 026 os reproduz **literalmente** nos
+vetos (decisão D-4: a razão é a do motor, literal). Não é introdução da 026: `#pr-support` já os
+imprimia (medido pelo `product-owner` em C3b/C7). A redação das notas é do engine (frozen) e entra
+na mesma Porta B deste achado; até lá, o passe de copy da apresentação não os reescreve (R10 §1:
+o literal é o observável de `D026-REC1 (b)(d)`).
+
 ## EA-123 — `exclude` obsoleto sem sujeito no arquivo de sessão: decisão sobre linha que o motor deixou de ofertar sobrevive sem efeito e sem aviso
 
 **Status**: `aberto`

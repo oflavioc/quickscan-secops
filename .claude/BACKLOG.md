@@ -8484,7 +8484,40 @@ um global não impeditivo para slug de `excluidas_por_r13` sem sujeito (família
 
 ## EA-91 — a importação de sessão não é transacional nem substitutiva para a curadoria: validar já aplica, cancelar não desfaz, e a chave ausente herda a sessão anterior
 
-**Status**: `aberto`
+**Status**: `resolvido`
+
+> **Fecho — demanda `025-curadoria-transacional` (branch
+> `feature/025-curadoria-transacional`, ainda sem PR), registrado em 2026-10-30 —
+> E8 da spec, T093, `doc-writer`.** Corrigido **na branch**; a mesclagem (T095) e
+> o job `visual` do CI estão pendentes. `resolvido` aqui significa «corrigido e
+> medido pela suíte e pela campanha da 025», não «mesclado».
+>
+> **Corrigido pela 025** (`D025-VAL1`, `D025-VAL2`, `D025-TRX1`, `D025-TRX2`,
+> `D025-AUS1`, `D025-NOP1`; commits `e11fd05` e `d8518e0`). Os seis gates vivem em
+> `tests_025_curadoria_sessao.js` (`D025 CURADORIA SESSAO: 16 PASS · 0 FAIL de 16`,
+> reexecutado na escrita deste fecho, HEAD `b24534e`). Cada metade da cadeia acima
+> tem o seu gate e o seu carrasco:
+>
+> - *validar aplicava* (`ui_session_v32.js:237-242`) → o validador chama
+>   `__CURATION.validate`, puro (`ui_session_v32.js:242`): `VAL1` (seletor real,
+>   prévia, Cancelar, Escape e exportar: 0 escritas no bridge); `D025-M1`.
+> - *`daSessao` zerava antes de validar* (sub-caso E) → `fromSession` recusa sem
+>   tocar o estado: `VAL2`; `D025-M2`.
+> - *a chave ausente herdava a sessão anterior* → a curadoria — inclusive
+>   `undefined` — é a 11ª chave do candidato e o commit a escreve: `TRX1`
+>   (`D025-M4`) e `AUS1` (`D025-M5`).
+> - *o snapshot nascia depois da mutação* → `snapshotCanonicalOwners()` é a primeira
+>   instrução de `commitCanonicalOwners` (`ui_session_v32.js:624`);
+>   `fromSession(cand.curadoria)` entra dentro do `try` (`:637`); o restore perde a
+>   guarda `&& snap.curadoria` (`:620`; ERR-1 do refinamento): `TRX2` (`D025-M6`,
+>   `M7`, `M8`, `M22`).
+> - *cancelar, falha tardia e engine incompatível* → `NOP1` (`D025-M10`).
+>
+> Campanha `d025`: `23 DETECTADO · 0 SOBREVIVENTE · 0 NÃO EXECUTADO de 23`
+> (`mutation-matrix.json → _meta.execucao_demanda_025`). Conformidade:
+> `specs/025-curadoria-transacional/spec-validate.md`, 42/42 na iteração 2 (C1–C8
+> conformes). A cadeia acima fica como foi escrita (R2 §5). Os irmãos — `EA-92`,
+> `EA-105`, `EA-106` e `EA-111` a `EA-114` — fecham nos próprios blocos.
 
 **Severidade (triagem do orquestrador)**: alta — visível no relatório impresso
 sob fluxo normal.
@@ -8657,7 +8690,30 @@ instrumentos byte-idênticos a `cee02e9`), salvo as marcadas *(síntese)*.
 
 ## EA-92 — "Nova sessão" não limpa a curadoria: a exclusão de um relatório sobrevive e é exportada na sessão seguinte
 
-**Status**: `aberto`
+**Status**: `resolvido`
+
+> **Fecho — demanda `025-curadoria-transacional` (branch
+> `feature/025-curadoria-transacional`, ainda sem PR), registrado em 2026-10-30 —
+> E8 da spec, T093, `doc-writer`.** Corrigido **na branch**; a mesclagem (T095) e
+> o job `visual` do CI estão pendentes. `resolvido` aqui significa «corrigido e
+> medido pela suíte e pela campanha da 025», não «mesclado».
+>
+> **Corrigido pela 025** (`D025-NEW1`, `D025-RST1`; commit `17683b6`,
+> `ui_ux_v32.js`, §29.4 autorizado em 2026-10-27). `uxNewSession`
+> (`ui_ux_v32.js:30`) e `uxResetAssessment` (`:21`) chamam `__CURATION.clear()` —
+> e `__V32UI.discardDraft()` — antes de `render()`. A pergunta que o
+> Encaminhamento deixava ao `tech-lead` («Reiniciar avaliação» leva a curadoria?)
+> foi decidida por P2 (portão da Fase 0, 2026-10-27): leva, e o diálogo a nomeia
+> (`ui_ux_v32.js:57`).
+>
+> `D025-NEW1`: Nova sessão, pelo diálogo e pela rota direta, deixa `state()` vazio
+> e o export sem `reportCuration`; Cancelar e Escape preservam; o texto de `:61`
+> permanece intacto (UX21). `D025-RST1`: Reiniciar limpa a curadoria e preserva o
+> contexto tecnológico. Carrascos `D025-M11` e `D025-M12` — ambos DETECTADOS
+> também sob a m48, pela alínea reancorada de `S31-S32` (`b20b20b`) — e
+> `D025-M13` (o texto do diálogo). `tests_ux_m41.js` ficou byte-idêntico à base
+> (`56 PASS · 0 FAIL`). A pegada que a nota de 2026-10-25 previa (pin em
+> `tests_p50_core.js`) foi o repin §29.4 `97f08d8`, com «Identidade anterior».
 
 **Severidade (triagem do orquestrador)**: alta — risco de seleção de relatório de
 um cliente vazar para o seguinte.
@@ -10240,7 +10296,22 @@ Linhas de README relidas por mim em `cee02e9` (o corpo descreve esse estado; o
 
 ## EA-105 — exportar também escreve no owner da curadoria: `prepareSessionExport` chama `validateSessionDocument`, que chama `fromSession` — o botão de exportar zera e reescreve o estado a partir da própria serialização
 
-**Status**: `aberto`
+**Status**: `resolvido`
+
+> **Fecho — demanda `025-curadoria-transacional` (branch
+> `feature/025-curadoria-transacional`, ainda sem PR), registrado em 2026-10-30 —
+> E8 da spec, T093, `doc-writer`.** Corrigido **na branch**; a mesclagem (T095) e
+> o job `visual` do CI estão pendentes. `resolvido` aqui significa «corrigido e
+> medido pela suíte e pela campanha da 025», não «mesclado».
+>
+> **Corrigido pela 025** (`D025-VAL1(c)`, `D025-M1`; commit `d8518e0`). A alínea
+> (c) do gate chama `prepareSessionExport("x")` com curadoria declarada e exige
+> `ok:true`, 0 escritas no bridge e `JSON.stringify(state())` idêntico antes e
+> depois — o contador que o Encaminhamento pedia; a alínea (d) é o controle
+> negativo (importar confirmado escreve ≥ 1). O terceiro chamador deixou de
+> escrever porque `validateSessionDocument` não aplica mais
+> (`ui_session_v32.js:242`). O mutante do Encaminhamento — reintroduzir
+> `fromSession` no validador — é `D025-M1`, DETECTADO.
 
 **Severidade (refutação adversarial)**: baixa — idempotente hoje; é o terceiro chamador
 do "validar que aplica".
@@ -10282,7 +10353,26 @@ idêntico antes e depois do export. Mutante: reintroduzir `fromSession` no valid
 
 ## EA-106 — "sem curadoria" tem três representações e dois comportamentos: a chave ausente PRESERVA a sessão anterior, `{}` e `{decisions:{}}` LIMPAM — e o validador aceita `{}` onde recusa `coverage:""` e `coveredCapabilities:[]`
 
-**Status**: `aberto`
+**Status**: `resolvido`
+
+> **Fecho — demanda `025-curadoria-transacional` (branch
+> `feature/025-curadoria-transacional`, ainda sem PR), registrado em 2026-10-30 —
+> E8 da spec, T093, `doc-writer`.** Corrigido **na branch**; a mesclagem (T095) e
+> o job `visual` do CI estão pendentes. `resolvido` aqui significa «corrigido e
+> medido pela suíte e pela campanha da 025», não «mesclado».
+>
+> **Corrigido pela 025** (`D025-CAN1`, `D025-AUS1`; commits `e11fd05` e
+> `d8518e0`). Decisão de produto P1 (portão da Fase 0, 2026-10-27, «Aprovado em
+> bloco (Recomendada)»): a forma canônica de «sem curadoria» é a **ausência da
+> chave**; `null`, `{}`, `{decisions:{}}` e `decisions` sem chaves são
+> **recusados**, com as mensagens de §Mensagens da spec; só a nota arquitetural
+> (`{architectureNote:"exclude"}`) é válida. Extensão ERR-2 (portão da Fase 1, «Aprovado, com a
+> extensão (Recomendada)»): chave desconhecida dentro de `reportCuration` também é
+> recusada, nomeando-a. `CAN1` mede as quatro recusas de forma vazia (`F-null`,
+> `F-vazio`, `F-dec-vazio`, `F-dec-vazio-arch`), a recusa de chave desconhecida
+> (`F-extra`) e as duas formas aceitas (`F-arch`, `F-0`); carrascos `D025-M3` (o
+> vazio aceito — o mutante (f) do Encaminhamento) e `D025-M23` (chave desconhecida
+> ignorada). `AUS1` mede o que a ausência faz: substitui.
 
 **Severidade (refutação adversarial)**: média.
 
@@ -10324,7 +10414,23 @@ aceito/recusado invertido).
 
 ## EA-107 — o `draft` do editor de contexto tecnológico sobrevive a importação, "Nova sessão" e "Reiniciar avaliação" e bloqueia a impressão do cliente seguinte por um editor que não está na tela
 
-**Status**: `aberto`
+**Status**: `resolvido`
+
+> **Fecho — demanda `025-curadoria-transacional` (branch
+> `feature/025-curadoria-transacional`, ainda sem PR), registrado em 2026-10-30 —
+> E8 da spec, T093, `doc-writer`.** Corrigido **na branch**; a mesclagem (T095) e
+> o job `visual` do CI estão pendentes. `resolvido` aqui significa «corrigido e
+> medido pela suíte e pela campanha da 025», não «mesclado».
+>
+> **Corrigido pela 025** (`D025-TRN2`, `D025-M15`; commits `4ef94ba`, `d8518e0` e
+> `17683b6`). `ui_v32.js` (§29.4) expõe `__V32UI.discardDraft()` e `hasDraft()`
+> (`ui_v32.js:1691-1693`; a bridge passa a 7 chaves); o commit da importação
+> (`ui_session_v32.js:641`), «Nova sessão» (`ui_ux_v32.js:30`) e «Reiniciar»
+> (`:21`) o chamam. `TRN2(a)`: para cada um dos três, abrir o editor → ação →
+> `hasDraft()===false` e `preparePrint().blocked` diferente de `true`; `(b)` a
+> transação — importação recusada e prévia cancelada **não** descartam o draft;
+> `(c)` `discardDraft` é função. A wave do `draft` (P5) era severável e não foi
+> cortada.
 
 **Severidade (refutação adversarial)**: média.
 
@@ -10370,7 +10476,20 @@ editor aberto, `preparePrint()` não bloqueia". Mutante (h): `draft` não descar
 
 ## EA-108 — `prioLimitHit` (Camada 1) sobrevive à importação: o aviso "Limite de 3 prioridades atingido" aparece sobre uma sessão importada com 0 prioridades
 
-**Status**: `aberto`
+**Status**: `resolvido`
+
+> **Fecho — demanda `025-curadoria-transacional` (branch
+> `feature/025-curadoria-transacional`, ainda sem PR), registrado em 2026-10-30 —
+> E8 da spec, T093, `doc-writer`.** Corrigido **na branch**; a mesclagem (T095) e
+> o job `visual` do CI estão pendentes. `resolvido` aqui significa «corrigido e
+> medido pela suíte e pela campanha da 025», não «mesclado».
+>
+> **Corrigido pela 025** (`D025-TRN1`, `D025-M14`; commit `d8518e0`):
+> `prioLimitHit = false;` no commit (`ui_session_v32.js:640`) — transiente zerado
+> onde o Encaminhamento previa, sem tocar arquivo congelado. `TRN1`:
+> `prioLimitHit` produzido pela UI (três prioridades e a quarta tentativa) →
+> importar `F-0` com `priorities: []` → `prioLimitHit===false` e a tela de
+> prioridades não exibe «Limite de 3 prioridades atingido».
 
 **Severidade (refutação adversarial)**: baixa.
 
@@ -10406,7 +10525,23 @@ commit (`ui_session_v32.js`) não toca arquivo congelado: a variável já é esc
 
 ## EA-109 — `sessionHasContent()` e `sessionPreview()` são cegos à curadoria: o aviso "substituirá a sessão atual" e a prévia da importação ficam mudos sobre o que a 025 tornará substitutivo
 
-**Status**: `aberto`
+**Status**: `resolvido`
+
+> **Fecho — demanda `025-curadoria-transacional` (branch
+> `feature/025-curadoria-transacional`, ainda sem PR), registrado em 2026-10-30 —
+> E8 da spec, T093, `doc-writer`.** Corrigido **na branch**; a mesclagem (T095) e
+> o job `visual` do CI estão pendentes. `resolvido` aqui significa «corrigido e
+> medido pela suíte e pela campanha da 025», não «mesclado».
+>
+> **Corrigido pela 025** (`D025-PRV1`, `S30(b)`; `D025-M16`, `D025-M17`; commits
+> `d8518e0` e `b20b20b`). `sessionHasContent()` conta a curadoria
+> (`ui_session_v32.js:677`, `toSession() !== undefined`) e `sessionPreview` ganha
+> o campo `curation`, exibido na prévia como «Curadoria do relatório: sim/não»
+> (`:756`). `PRV1`: janela virgem com só uma declaração → o modal traz
+> «substituirá a sessão atual» e o botão «Importar e substituir»; sem declaração →
+> «Importar». A suíte congelada recebeu a alínea (b) de S30 com o mesmo cenário
+> (reancoragem §29.4, `b20b20b`); `D025-M16` é DETECTADO pelas duas suítes (d025 e
+> m48). Os literais de S30 ficaram intactos.
 
 **Severidade (refutação adversarial)**: média.
 
@@ -10447,7 +10582,28 @@ decisão de produto qualquer que seja.
 
 ## EA-110 — pergunta de desenho (NÃO é defeito confirmado): desmarcar e remarcar um item ofertado grava `include` explícito, porque o bridge da curadoria não tem `unset`
 
-**Status**: `aberto`
+**Status**: `resolvido`
+
+> **Fecho — demanda `025-curadoria-transacional` (branch
+> `feature/025-curadoria-transacional`, ainda sem PR), registrado em 2026-10-30 —
+> E8 da spec, T093, `doc-writer`.** Corrigido **na branch**; a mesclagem (T095) e
+> o job `visual` do CI estão pendentes. `resolvido` aqui significa «corrigido e
+> medido pela suíte e pela campanha da 025», não «mesclado».
+>
+> **Corrigido pela 025** (P3, `D025-UNS1`, `a0a879a`) — **decisão do usuário no
+> portão da Fase 0, 2026-10-27**: «Aprovado em bloco (Recomendada)», e P3 =
+> toggle-back volta a ausente. O achado era pergunta de desenho; a 025 a
+> respondeu na direção «corrigir». Por isso **não** está riscado (não foi
+> refutado) e **não** vai para `design-decisions.md`, que guarda o que se decidiu
+> *não* ser defeito — a alternativa «manter e registrar» foi a não adotada.
+>
+> Mecanismo: `__CURATION.unset(id)` e `unsetArchitectureNote()` (`e11fd05`); o
+> editor escreve só a decisão que diverge do motor — tabela fechada em
+> `ui_curation_edit_v32.js:87-93` e nota arquitetural em `:187` (`a0a879a`;
+> `gateFechado()` e `decorar()` byte-idênticos à base). `UNS1` (a–e): remarcar
+> ofertado → ausente; desmarcar não ofertado → ausente; nota arquitetural →
+> `undefined`; `toSession()===undefined` depois dos três; `unset` no bridge.
+> Carrasco `D025-M18`, DETECTADO.
 
 **Severidade (refutação adversarial)**: baixa — e **isto não é um defeito confirmado**.
 É uma pergunta de desenho para `product-owner` / `tech-lead`, registrada aqui para não
@@ -10490,7 +10646,31 @@ conteúdo do `product-owner`); **não** foi levado para lá neste passe.
 
 ## EA-111 — `D019-INV8` é tautológico para a importação: o título promete "recomputada na importação" e o corpo não importa; três mutantes (mutB, mutC, mutD) sobrevivem com 14/14
 
-**Status**: `aberto`
+**Status**: `resolvido`
+
+> **Fecho — demanda `025-curadoria-transacional` (branch
+> `feature/025-curadoria-transacional`, ainda sem PR), registrado em 2026-10-30 —
+> E8 da spec, T093, `doc-writer`.** Corrigido **na branch**; a mesclagem (T095) e
+> o job `visual` do CI estão pendentes. `resolvido` aqui significa «corrigido e
+> medido pela suíte e pela campanha da 025», não «mesclado».
+>
+> **Corrigido pela 025** (`D025-INV8` + errata E3, `8ce520a`). O Encaminhamento
+> oferecia duas rotas; a 025 tomou a segunda: nasce `D025-INV8` (C7: roundtrip em
+> DOM novo, janela suja substituída, idempotência, e `exemplo-completo.json`
+> declarando `reportCuration`) e o título do `D019-INV8` foi reduzido ao que o
+> corpo mede. Prova mecânica da errata (`corpo_019_inv8.py`, base e HEAD de
+> `8ce520a`): *«janela de edição base :218-:219 → nova :218-:220 · 217 linha(s)
+> antes idênticas · corpo + resto idênticos (638 linhas) · título E3 presente»*;
+> `d019` segue `14 PASS · 0 FAIL`; `D019-M3` intacto.
+>
+> Os três sobreviventes do achado agora morrem: mutC é `D025-M5` (`AUS1`), mutD é
+> `D025-M9` (`INV8(b)`), mutB é `D025-M6` (`TRX2(b)`) — todos DETECTADOS.
+> **Resíduo declarado**: a alínea `INV8(c)` (idempotência) não tem carrasco —
+> dívida em `mutation-matrix.json → dividas_declaradas` (`af41f72`, errata E9 da
+> spec). Nasceu verde; mutante que a matasse sozinha exigiria efeito acumulativo
+> por importação, que nenhum sítio do produto tem, e seria sintético. Gatilho
+> nomeado na dívida: qualquer escrita em `commitCanonicalOwners`,
+> `restoreCanonicalOwners` ou `fromSession` que passe a somar.
 
 **Severidade (refutação adversarial)**: alta — classe `EA-20` (gate que promete
 asserção e entrega tautologia), ligado ao `EA-91`.
@@ -10534,7 +10714,43 @@ real), ou nasce um `D025-INV8` e o `INV8` é reduzido ao que mede. Mutantes (i) 
 
 ## EA-112 — guarda-chuva: as suítes de sessão e de UX são cegas ao sexto owner (a curadoria), em quatro famílias — reject-before-commit, roundtrip, Nova sessão e self-import / documentação
 
-**Status**: `aberto`
+**Status**: `resolvido`
+
+> **Fecho — demanda `025-curadoria-transacional` (branch
+> `feature/025-curadoria-transacional`, ainda sem PR), registrado em 2026-10-30 —
+> E8 da spec, T093, `doc-writer`.** Corrigido **na branch**; a mesclagem (T095) e
+> o job `visual` do CI estão pendentes. `resolvido` aqui significa «corrigido e
+> medido pela suíte e pela campanha da 025», não «mesclado».
+>
+> **Corrigido pela 025 no que a spec tomou; resíduo declarado ao fim.**
+> Reancoragens `S50`/`S69(b)`/`S30(b)`/`S31-S32` na m48 (`b20b20b`, §29.4
+> autorizado em 2026-10-27); erratas E4–E6 (`01e7067`, `6cace4c`); gates
+> `D025-NEW1`/`RST1`/`INV8`/`DOC1`.
+>
+> - **(c) Nova sessão** — `S31-S32` reancorada (importa a variante curada;
+>   `afterRestart` e `afterNew` exigem `toSession()===undefined`; `D025-M11` e
+>   `M12` DETECTADOS sob a m48) e `D025-NEW1`/`RST1` com oráculo que vê o owner.
+>   `tests_ux_m41.js` não foi tocada, como o Encaminhamento preferia. Quanto a «o
+>   `mutation_map` não tem harness para `ui_ux_v32.js`»: `harnesses.d025.targets`
+>   o contém.
+> - **(a) reject-before-commit e (b) roundtrip** — o oráculo é a suíte nova:
+>   `D025-NOP1` (janela com curadoria B; `F-tardio`, `F-engine`, `F-inv-id`,
+>   Cancelar, Escape), `D025-TRX2` e `D025-INV8` (o mesmo documento sobre estados
+>   prévios distintos).
+> - **(d) documentação** — `SESSION_SCHEMA_V32.md` (sexta chave; ausência
+>   legítima e substitutiva; `__CURATION` na cobertura de rollback),
+>   `synthetic_session_examples/exemplo-completo.json` (`reportCuration`) e
+>   `USER_GUIDE.md` §11; `D025-DOC1` (a–e); carrasco `D025-M21`.
+>
+> **Resíduo declarado** (só o medido): (1) a spec excluiu as fixtures curadas
+> **dentro** das suítes congeladas S29/S49/S67/S77/S6/S7/S37/S41/S112 (§Fora de
+> escopo da spec: a propriedade é medida em `NOP1`/`INV8`, e a m48 recebeu só as
+> quatro reancoragens autorizadas) — as alíneas (a) e (b) foram cumpridas **na
+> propriedade**, não na forma do Encaminhamento. (2) Dos cinco documentos da
+> alínea (d), `synthetic_session_examples/exemplo-minimo.json` e
+> `session_roundtrip_report.md` seguem com 0 ocorrências de `reportCuration` e de
+> «curadoria» (`grep -c -i`, 2026-10-30) — a 025 não os tocou. Se alguém quiser
+> (1) ou (2) como achado próprio, é id novo.
 
 **Severidade (refutação adversarial)**: alta — mesma raiz de cobertura do `EA-91` e do
 `EA-92`, que citam S29, S6/S7, UX21 e S31 só de passagem.
@@ -10597,7 +10813,22 @@ proprietário; para `tests_ux_m41.js`, preferir gates novos em `tests_019_*`.
 
 ## EA-113 — S50 ("o candidato é completo antes do commit") pina a AUSÊNCIA da curadoria: a lista de 10 chaves é o contrato de 5 — a correção certa do `EA-91` vai reprovar S50
 
-**Status**: `aberto`
+**Status**: `resolvido`
+
+> **Fecho — demanda `025-curadoria-transacional` (branch
+> `feature/025-curadoria-transacional`, ainda sem PR), registrado em 2026-10-30 —
+> E8 da spec, T093, `doc-writer`.** Corrigido **na branch**; a mesclagem (T095) e
+> o job `visual` do CI estão pendentes. `resolvido` aqui significa «corrigido e
+> medido pela suíte e pela campanha da 025», não «mesclado».
+>
+> **Corrigido pela 025** (`S50`, `D025-M20`; reancoragem §29.4 autorizada em
+> 2026-10-27, `b20b20b`). Direção decidida — a spec mudou, o gate não foi
+> afrouxado (R10 §1): a lista passou a **11** chaves (`…,arq,curadoria,
+> landscape,…`) e S50 ganhou a alínea (b), `"curadoria" in cand &&
+> cand.curadoria === undefined` para documento **sem** a chave; a asserção antiga
+> (`pre === pós`) permanece. O mutante que o Encaminhamento pedia — ressuscitar a
+> lista de 10 — é `D025-M20`, que muta a própria m48 (`skipBuild`, heap 6144) e é
+> DETECTADO (80,6 s). Estado da suíte: `SESSION 4.8: 97 PASS · 0 FAIL de 97`.
 
 **Severidade (refutação adversarial)**: média — e **acionável**: é o gate que vai
 bloquear a correção.
@@ -10637,7 +10868,23 @@ proprietário; a suíte é PROTECTED), com um mutante que **ressuscite a lista d
 
 ## EA-114 — S69 ("snapshot/restore cobre todos os owners escritos pelo commit") confere uma lista fixa de 10 owners sem `__CURATION`, por regex sobre o fonte: remover a curadoria do snapshot/restore sobrevive a ele, à suíte e à d019
 
-**Status**: `aberto`
+**Status**: `resolvido`
+
+> **Fecho — demanda `025-curadoria-transacional` (branch
+> `feature/025-curadoria-transacional`, ainda sem PR), registrado em 2026-10-30 —
+> E8 da spec, T093, `doc-writer`.** Corrigido **na branch**; a mesclagem (T095) e
+> o job `visual` do CI estão pendentes. `resolvido` aqui significa «corrigido e
+> medido pela suíte e pela campanha da 025», não «mesclado».
+>
+> **Corrigido pela 025** (`S69(b)`, `D025-M6`; `b20b20b`). S69 ganhou a alínea (b)
+> **comportamental** — a regex sobre o fonte virou a alínea (a), «estrutural», e
+> permanece: `richLandscape` + curadoria A → `snapshotCanonicalOwners()` → zera
+> **cada** owner (inclusive `__CURATION.clear()` e `step`), com não-vacuidade
+> asserida → `restoreCanonicalOwners(snap)` → inputs, `derivedModel`, `state()` e
+> `step` iguais ao pré. O mutante do Encaminhamento (mutB: o restore deixa de
+> devolver a curadoria) é `D025-M6`, DETECTADO sob a m48 via `M48_HTML_OVERRIDE`
+> (93,5 s) e pela d025 (`TRX2(b)`). S69(b) nasceu verde, declarado em
+> `red-025.md`: o poder está em M6.
 
 **Severidade (refutação adversarial)**: média — instância do `EA-20` no gatilho da
 atomicidade.
@@ -10676,6 +10923,14 @@ provar o restore, incluindo a curadoria (cenário 2). Suíte PROTECTED: rito §2
 ## EA-115 — `D019-SUF1` mede só metade de C10: "não se oferece E o estado não é lido" — o corpo confere apenas a ausência do controle; o estado É lido sob gate fechado
 
 **Status**: `aberto`
+
+> **Nota de 2026-10-30 — demanda 025 (E8 da spec, T093): permanece `aberto`.** Da
+> 025 entrou **só a redação de C10** (errata E2, `19f4d45`): a spec da 019 passa a
+> dizer «o controle não existe e **o editor** não lê o estado», que é o que
+> `ui_curation_edit_v32.js` faz e o que `D019-SUF1` mede. «Instrumentar o bridge
+> sob gate fechado» ficou fora de escopo (§Fora de escopo da spec da 025). O efeito
+> do achado — `showResults` lê o bridge sob gate fechado e nenhum gate o mede — não
+> mudou.
 
 **Severidade (refutação adversarial)**: baixa — classe `EA-20`.
 
@@ -10758,3 +11013,200 @@ Id próprio, baixa. `tech-lead` decide a rota: manter o `Write(...)` por defensi
 `compliance-audit.sh:52-54` — o que altera texto de regra (decisão do proprietário) e
 arquivos pinados (repin no mesmo PR). Confirmar antes contra a documentação do host na
 versão corrente.
+
+## EA-117 — `mutation_map.json → harnesses.p52.requires` declara só `chromium`, mas quatro gates da p52 exigem `poppler-utils`: com o cache do Playwright presente e o poppler ausente, o stage local produz 12 falsos sobreviventes em vez de `[DEFER]` ou FAIL nomeado
+
+**Status**: `aberto`
+
+**Severidade (triagem do `doc-writer`; a confirmar pelo `qa-engineer`)**: média —
+instrumento, não produto. O ruído é nomeável por controle A/B, mas o stage local
+reporta como «sobrevivente» o que é dependência de ambiente ausente: a mesma classe
+do `EA-72` (o gatilho — aqui, o `requires` — vigia menos do que a campanha depende).
+
+**Aberto em**: 2026-10-30, na Fase 6 da demanda 025 (T090 e T093), a partir do
+`spec-validate.md` (iteração 1, `f965100`) e de `mutation-matrix.json →
+_meta.execucao_demanda_025`. Linhas relidas por mim em `b24534e`.
+
+### Cadeia arquivo:linha → efeito
+
+- `.claude/verify/mutation_map.json:127-131` — `harnesses.p52.requires` =
+  `["node", "python", "chromium"]`. Não há `poppler`.
+- `.claude/verify/check_mutation.py:39-55` — `have(req)` só conhece `node`,
+  `python` e `chromium`; qualquer outro nome cai no `return False` final. `:1701` —
+  `missing = [r for r in h["requires"] if not have(r)]` é o único ponto que decide
+  `[DEFER]` ou FAIL nomeado por ambiente: o poppler não entra nessa conta.
+- `tests_p52_chromium.js:1919-1922` (verificação de `pdftotext` e `pdftoppm`),
+  `:2022` (`P52-PDF4`), `:2095` (`P52-PDF5`), `:2166` (`P52-PDF6`) e `:3965`
+  (`P52-TGT4`) — sem poppler os quatro gates falham com
+  `poppler-utils (pdftotext/pdftoppm) ausente: a prova de papel NÃO foi executada`.
+- `.github/workflows/verify.yml:72` — o job `visual` instala `poppler-utils` por
+  `apt-get`; é o único lugar em código executável onde a dependência é declarada.
+  O `env_doctor.py` não a nomeia (`grep poppler` = 0) — contra o que `gates.md` §7
+  e `determinism.md` §4 pedem para dependência de ambiente.
+- **Efeito**: com `ms-playwright` em cache, `have("chromium")` é verdadeiro e a
+  p52 **executa** localmente; os mutantes `ER7`, `ER8`, `ER9`, `EX5`, `EX6` (gates
+  `P52-PDF4/5/6`) e `FT1`…`FT7` (gate `P52-TGT4`) saem «reprovou por motivo
+  diferente do esperado» — **12 falsos sobreviventes** — e o stage fecha com `p52
+  95/108` e `11 campanha(s) executada(s) · 1 problema(s)`.
+
+### Como foi medido (executado vs. lido)
+
+**Executado pelo `qa-engineer`, em 2026-10-30** (`mutation-matrix.json →
+_meta.execucao_demanda_025`; `spec-validate.md` §Pipeline inteiro): controle A/B
+**sem mutação** — `P52_ONLY=P52-POP2,P52-PDF4,P52-PDF5,P52-PDF6,P52-TGT4
+P52_NO_EVIDENCE=1 node tests_p52_chromium.js` — em HEAD `f8f753a` **e** na base
+`da71759` (worktree efêmera), mesmo resultado nas duas: PDF4, PDF5, PDF6 e TGT4 FAIL
+por poppler ausente; POP2 PASS. Logo os 12 são vermelho de controle, idênticos sem
+a 025. **Executado por mim** (Git Bash desta máquina, 2026-10-30): `which pdftoppm`
+→ nada; `which pdftotext` → `/ucrt64/bin/pdftotext` — o poppler está **incompleto**,
+e o gate exige os dois binários. **Lido por mim**: as linhas acima. Não reexecutei
+a p52.
+
+**Lateral, não classificado aqui**: `P52-ER5` (gate `P52-POP2`) sobrevive **também
+na base** `da71759` (reexecutado isolado pelo `qa-engineer`, `P52_MUT_ONLY=P52-ER5`)
+— pré-existente neste ambiente, achado da p52. A prova canônica da p52 é o job
+`visual` do CI Linux (última registrada na matriz: run `34772594772`, 2026-09-13,
+`108/108`).
+
+### Encaminhamento
+
+Dono: `build-engineer` (registro e `env_doctor`) com o `qa-engineer` (vocabulário
+do `requires`). Rota a decidir; o que o achado exige é que o poppler ausente
+**seja nomeado** — `[DEFER]` com `MUTATION_DEFER_MISSING=1`, FAIL nomeado sem ela
+— em vez de sobrevivente. Isso passa por `have()` aprender o requisito (hoje devolve
+`False` para nome desconhecido, o que faria a campanha ser sempre deferida/reprovada
+para quem só acrescentar a palavra ao `requires`) e pelo `env_doctor` avisar. Ver
+`EA-72`, de quem este é instância.
+
+## EA-118 — `run.sh` resolve o interpretador como `python3`, que nesta máquina é o alias da Microsoft Store: sob ele `have("chromium")` e o `env-doctor` não veem o cache `ms-playwright` que `python` vê — o veredito do stage `mutation` depende do interpretador (KI-3 cresce)
+
+**Status**: `aberto`
+
+**Severidade (triagem do `doc-writer`; a confirmar pelo `qa-engineer`)**: média —
+instrumento, específico de ambiente Windows; no CI Linux o `python3` é o do
+`setup-python` e o achado não se manifesta.
+
+**Aberto em**: 2026-10-30, na Fase 6 da demanda 025 (T090 e T093), a partir do
+`spec-validate.md` (iteração 1) e confirmado por mim por execução (abaixo). Linhas
+relidas por mim em `b24534e`.
+
+### Cadeia arquivo:linha → efeito
+
+- `.claude/verify/run.sh:17` — `PYBIN=python3; command -v python3 >/dev/null 2>&1 ||
+  PYBIN=python`; `:61` — `cmd="${cmd/#python /$PYBIN }"`: todo stage cujo comando
+  começa por `python ` roda sob `PYBIN`, inclusive `env-doctor` e `mutation`.
+- `.claude/verify/check_mutation.py:52-53` e `.claude/verify/env_doctor.py:76-78` —
+  o Chromium é «visto» por `os.path.isdir(<LOCALAPPDATA>\ms-playwright)` mais um
+  diretório com «chromium» no nome.
+- **Efeito**: o mesmo checkout, a mesma máquina e o mesmo cache dão veredito
+  diferente por interpretador. No `run.sh` completo de `91a57e7` (via `python3`):
+  `p51/p52: campanha EXIGIDA … ambiente sem chromium` e `mutation: 9 campanha(s)
+  executada(s) · 2 problema(s)`; com `python .claude/verify/check_mutation.py` direto
+  (3.14.7): p51 e p52 executam e o stage fecha em `11 campanha(s) · 1 problema(s)`.
+  O `env-doctor` do pipeline avisa «Chromium indisponível» com o cache presente.
+
+### Como foi medido (executado vs. lido)
+
+**Executado por mim, 2026-10-30, nesta máquina, Git Bash**: `which python3` →
+`…\AppData\Local\Microsoft\WindowsApps\python3`; `python3 -c` imprime versão
+`3.12.10`, `sys.executable` `…\AppData\Local\Python\pythoncore-3.12-64\python.exe` e
+`os.path.isdir(%LOCALAPPDATA%\ms-playwright)` = **False**; `python -c` imprime
+`3.14.7`, `C:\Python314\python.exe` e o mesmo teste = **True**. **Executado pelo
+`qa-engineer`**: as duas execuções do stage (tabela em `spec-validate.md` §Pipeline
+inteiro). **Não verificado por mim**: a causa mecânica — o `qa-engineer` a atribui à
+virtualização de sistema de arquivos do app da Store (MSIX); eu medi o sintoma
+(`False` sob `python3`, `True` sob `python`), não o mecanismo. Causa antes de culpa
+(R2 §3): não tratar esta linha como defeito de `check_mutation.py` até isolar.
+
+### Encaminhamento
+
+Dono: `build-engineer`. Rota a decidir: `PYBIN` rejeitar o alias da Store, ou o
+`env-doctor` nomear **qual interpretador** viu o quê, ou o teste do cache não
+depender do interpretador. O que o achado exige é que o resultado de uma verificação
+não mude com o `PATH` sem que o relatório diga qual interpretador respondeu.
+Relaciona-se a `KI-3` (`design-decisions.md`, linha «Suítes visuais fora do agregado
+local») e a `EA-117`.
+
+## EA-119 — `run.sh` apaga o log completo do stage reprovado no `EXIT` (`mktemp -d` + `trap`): o trecho omitido no meio — 101 linhas na T090 da 025 — só se recupera reexecutando o stage
+
+**Status**: `aberto`
+
+**Severidade (triagem do `doc-writer`; a confirmar pelo `qa-engineer`)**: baixa —
+o `EA-15` (resolvido) já garante o veredito na cauda; o que se perde é o meio.
+
+**Aberto em**: 2026-10-30, na Fase 6 da demanda 025 (T090), a partir do
+`spec-validate.md` (§Pipeline inteiro). Linhas relidas por mim em `b24534e`.
+
+### Cadeia arquivo:linha → efeito
+
+- `.claude/verify/run.sh:52` — `TMPD=$(mktemp -d); trap 'rm -rf "$TMPD"' EXIT`; a
+  saída de cada stage vai para `$TMPD/<stage>.out` (`executa()`, `:59-63`).
+- `.claude/verify/run.sh:56` e `:81-85` — `CABECA=30; CAUDA=15`; num stage
+  reprovado imprime cabeça e cauda e declara
+  `[...] N linha(s) omitida(s) no meio (saída completa: M linhas) [...]`.
+- **Efeito**: a omissão é declarada, mas **não recuperável** — o arquivo com a
+  saída completa morre no `EXIT`. Na T090 da 025 (`91a57e7`), o stage `mutation`
+  reprovou com 146 linhas: 30 + 15 impressas, **101 omitidas**; a identidade das
+  campanhas não executadas e a segunda causa só vieram de reexecutar o comando do
+  stage isoladamente, duas vezes (`spec-validate.md`). É a família do `EA-15`: o
+  `EA-15` corrigiu *o que se imprime*; este é *o que sobra depois*.
+
+### Como foi medido (executado vs. lido)
+
+**Executado pelo `qa-engineer`**: o `run.sh` completo de `91a57e7` (1857 s, exit 1) e
+as reexecuções isoladas do stage. **Lido por mim**: `run.sh:52-85`; a aritmética
+146 − 30 − 15 = 101 confere com a linha de omissão que o `run.sh` imprime. Não
+reexecutei o pipeline completo.
+
+### Encaminhamento
+
+Dono: `build-engineer`. Persistir o log do stage reprovado em diretório **ignorado**
+(R7 §3, R11 §1 — nunca em diretório rastreado) e imprimir o caminho junto da linha de
+omissão. Ver `EA-15`.
+
+## EA-120 — `mutation_map.json → harnesses.d011` não lista `check_lint_arch.py` — o carrasco de `D011-M7` — em `targets` nem em `insumos.oraculo`: mudar o lint não dispara a campanha d011
+
+**Status**: `aberto`
+
+**Severidade (triagem do `doc-writer`; a confirmar pelo `qa-engineer`)**: baixa —
+instrumento; a mudança que o expôs (`EA-101`) não alterou a mensagem casada, por
+leitura de diff.
+
+**Aberto em**: 2026-10-30, na Fase 6 da demanda 025 (T093). O vão já estava
+anotado em prosa, sem id, no item 6 do fecho do `EA-101` (PR #113); este id o torna
+rastreável. Linhas relidas por mim em `b24534e`.
+
+### Cadeia arquivo:linha → efeito
+
+- `tests_011_mutants.js:70` — `LINT_PY` = `.claude/verify/check_lint_arch.py`;
+  `:338-346` — `D011-M7` (`oraculo: "lint"`, `gate: "lint-arch
+  (check_lint_arch.py)"`, `reason` casando `ui_d011_prioridade_v32.js: atribuição
+  .innerHTML=`): o carrasco do mutante é o **lint**, não uma suíte.
+- `.claude/verify/mutation_map.json:165-181` — `harnesses.d011.targets` tem cinco
+  nomes (`ui_d011_prioridade_v32.js`, `…css`, `build_v32_html.py`,
+  `tests_011_prioridade.js`, `tests_011_mutants.js`) e `insumos.oraculo` lista só
+  `tests_011_prioridade.js`. `check_lint_arch.py` não está em nenhum.
+- `.claude/verify/check_mutation.py:1697` — `due = changed is None or any(t in
+  changed for t in h["targets"])`: o gatilho é só por `targets`.
+- **Efeito**: alterar `check_lint_arch.py` não torna a `d011` exigida; o stage
+  imprime `nenhum alvo mudou desde a base — campanha não exigida`, que o `EA-72`
+  já nomeia como ausência de medição lida como saúde. O fix do `EA-101` (`1def6a9`,
+  regras 2/3 passam a varrer `ui_*_v32.js` menos allowlist; PR #113) mudou
+  exatamente esse arquivo.
+
+### Como foi medido (executado vs. lido)
+
+**Executado pelo `qa-engineer`**: `--preflight` da `d011` em 2026-10-30 → `19/19`
+(`spec-validate.md`; mede as âncoras, **não** a campanha). **Citado do briefing da
+T093 (orquestrador), sem registro em arquivo**: campanha da `d011` feita à mão em
+2026-10-27, no PR #113, `19/19` — não a reexecutei nem encontrei o registro dela no
+repositório. **Lido por mim**: as linhas acima. Classe `EA-72` (o gatilho vigia menos
+do que a campanha depende); o `D017-REL1` (`targets ⊇ mutados ∪ {harness}`) não o
+pega porque o carrasco do `D011-M7` não é um arquivo *mutado*.
+
+### Encaminhamento
+
+Dono: `build-engineer` (registro) com o `qa-engineer`. Declarar `check_lint_arch.py`
+no `d011` — `targets` e `insumos.oraculo` (classe `oraculo`, vocabulário da 017) —
+é a rota mínima; a rota que fecha a classe é a do `EA-72` (derivar o gatilho da
+dependência real). Ver `EA-101`, item 6.

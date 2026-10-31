@@ -1,6 +1,6 @@
 {
   "demanda": "025-curadoria-transacional",
-  "phase": "validate",
+  "phase": "done",
   "spec_dir": "specs/025-curadoria-transacional",
   "branch": "feature/025-curadoria-transacional",
   "brief": "A curadoria do relatorio (sexta chave canonica da sessao, demanda 019) entra de fato no ciclo de vida da sessao: validar sem aplicar; candidato, commit atomico e snapshot ANTES de qualquer escrita, inclusive a AUSENCIA da chave (INV-8: o documento basta para reconstruir o resultado); Nova sessao limpa o owner; gates de roundtrip real que importam. Origem: EA-91/EA-92 (auditoria externa Codex 2026-10-20, refutacao adversarial 2026-10-25 em docs_phase5/auditoria_codex_2026-10-20/refutacao_adversarial_2026-10-25.md §3), com os adjacentes EA-105..EA-114. Decisao do proprietario 2026-10-25: corrigir o produto antes de selar a v3.2.11.",
@@ -71,6 +71,7 @@
     "conformance": "42/42 (100%) — iteracao 2 apos a errata E12 autorizada pelo usuario; iteracao 1 = 41/42 (G1 spec-errada: targets 8 vs 9)",
     "aceite_po": "NAO ENCONTREI OBJECAO — product-owner, Fable 5.1, 2026-10-30, T092: produto, suite, docs e glossario conferem com o refinement (casos 1-28, P1-P6, ERR-1/2) e com as 12 emendas da spec; condicionado a prova verde — cumprida: d025 16/16, m48 97/97, p50core 65/65, campanha d025 23/23 DETECTADO, spec-validate 42/42, compliance 17/17, M41 payload == pin (relatorio-final.md). O1/O2 viraram E9/E11 (usuario), O3 divida INV8(c) na matriz, O6 refutada (pre-025), O8 = job visual do PR.",
     "aprovacao_de_fase": "Portoes das Fases 0-3 e erratas E9-E12 aprovados pelo usuario no chat (refinement.md rodadas 2-8). A Fase 6 encerra com QA + PO (R4); a selagem/release da v3.2.11 e ato posterior e separado do proprietario.",
-    "notes": "T090 spec-validate f965100 (41/42) -> ce0628a (42/42). T093 relatorio final 683c127 + E8 d75bc8f. Pipeline completo medido em 91a57e7: 17 PASS · 1 FAIL (mutation local: python3 da Store cego ao cache do Playwright — KI-3; explicado; EA-118). Pronto = job visual do CI verde (KI-3)."
-  }
+    "notes": "T090 spec-validate f965100 (41/42) -> ce0628a (42/42). T093 relatorio final 683c127 + E8 d75bc8f. Pipeline completo medido em 91a57e7: 17 PASS · 1 FAIL (mutation local: python3 da Store cego ao cache do Playwright — KI-3; explicado; EA-118). Pronto = job visual do CI verde (KI-3). T095: PR #114 aberto em 2026-10-30 sobre 6d92df1; phase done (fecho C8: Fase 6 completa + PR aberto; CI verde e condicao de merge; 'pronto' = job visual verde). Merge e do usuario (T096)."
+  },
+  "pr_url": "https://github.com/oflavioc/quickscan-secops/pull/114"
 }

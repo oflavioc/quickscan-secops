@@ -20,3 +20,4 @@
 - [Linha citada por auditoria: reler no SHA-alvo](feedback_linha-citada-pela-auditoria-reler-no-sha-alvo.md) — linhas deslizam entre SHAs e com notas inseridas; claim ausente da evidência = só o que a leitura sustenta
 - [Splice por marcador: conferir o mapa bloco→heading](feedback_splice-por-marcador-conferir-o-mapa.md) — "BEFORE N+1" leva o conteúdo do N; errei 2×; checar por frase-assinatura, nota sem lugar vai no achado dono
 - [Fecho de fix em arquivo de gate: achar o mutante que o usa](feedback_fecho-de-fix-checar-campanha-do-oraculo.md) — oráculo pode estar fora de `targets`; declarar campanha não executada
+- [Classe de boundary confere-se em boundary.json](feedback_classe-de-boundary-confere-em-boundary-json.md) — rótulo do rascunho de quem delegou não vale; linha de script citada em prompt se relê; contagem de abertos cita o commit

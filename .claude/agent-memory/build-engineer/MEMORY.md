@@ -12,3 +12,4 @@
 - [Hooks rodam do project dir, não da worktree](project_hooks_rodam_do_project_dir.md) — instrumentá-los lá é negado como Self-Modification; medir despacho não é autoexecutável
 - [Worktree nova não tem node_modules](project_worktree_nova_sem_node_modules.md) — 22 suítes "sem saída" + regra-morta "instrumento ausente"; env-doctor passa igual
 - [compliance-audit não é stage](project_compliance_audit_fora_do_pipeline.md) — só o CI o roda; `run.sh --light` verde não diz nada sobre ele, e a casa tem DUAS fontes de exceção nominal
+- [Cutover: conferir o "anterior" contra docker ps](project_cutover_conferir_anterior_contra_docker_ps.md) — `preparar_release.py` ordena versões lexicograficamente (EA-121); stop do antigo antes do up; no WSL a pasta é /mnt/c

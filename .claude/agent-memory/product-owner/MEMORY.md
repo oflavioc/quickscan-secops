@@ -26,3 +26,7 @@
 - [Errata do refinement da 024](project_024_errata_do_refinement.md) — letra de opção tem o escopo da pergunta que a gerou (li "C" errado); refinement selado pede errata `ERR-n`; remedir até o fecho da função
 - [Refinamento e Fase 1 da 025 (curadoria transacional)](project_025_refinamento_curadoria_transacional.md) — 019 falhou por omissão; P1–P6; Fase 1: guarda cai por contrato (ERR-1), mutante da guarda não tinha gate (TRX2 b′), chave desconhecida entrou (ERR-2)
 - [Checklist Fase 0: owner de estado novo](project_checklist_fase0_owner_novo.md) — oito perguntas: seis de ciclo de vida + chaves desconhecidas no bloco + "quem mata a volta da guarda que caiu"
+- [Owner canônico: seis perguntas](feedback_owner_canonico_seis_perguntas.md) — exportar · importar presente · importar AUSENTE · cancelar/falhar · Nova sessão · Reiniciar, na Fase 0; a 019 omitiu, a 025 pagou
+- [Cobertura de mutante por alínea](feedback_cobertura_de_mutante_por_alinea.md) — gate com carrasco ≠ cada alínea com carrasco; INV8(c) da 025 ficou órfã; declarar, não esconder
+- [Aceite da 025](project_025_aceite_intencao.md) — "não encontrei objeção" condicionado; E9–E11 escritas por mim em 2026-10-30; O4–O10 a conferir; memória sumiu com árvore limpa — reler no início
+- [Targets derivam do conjunto mutado](feedback_targets_derivam_do_conjunto_mutado.md) — spec que enumera targets à mão esquece o documento que M* muta em cópia; D017-REL1 é a régua (E12 da 025)

@@ -1,0 +1,27 @@
+{
+  "demanda": "026-decisao-unica-do-apoio",
+  "phase": "tasks",
+  "spec_dir": "specs/026-decisao-unica-do-apoio",
+  "branch": "feature/026-decisao-unica-do-apoio",
+  "brief": "Contrato unico de decisao de apoio: a oferta por produto nasce uma vez em ui_curation_v32.js (dono do estado, __CURATION) reconciliando a Camada 1 (MAP) com o motor contextual; tela (ui_p52_support_v32.js), editor e papel consomem. O papel preserva qualificador, acao, variante, escopo e origem. Origem: auditoria externa de 2026-10-31 (QS-01 cards contradizem o motor; QS-02 PDF perde qualificadores) e EA-76 (segunda fonte do ofertaDoMotor, 'conserto e demanda futura'). Microfase 01 do plano de correcao de 2026-10-31.",
+  "refinement": {
+    "status": "approved",
+    "notes": "Fase 0 aberta em 2026-10-31 pelo orquestrador (Fable 5.1) a partir do prompt da microfase 01 (Downloads/Plano_de_correcao_e_prompt_QuickScan_2026-10-31.md §2) e da auditoria (Auditoria_QuickScan_SecOps_SOC-CMM_2026-10-31.md). Reproducao no HEAD 9509e4b por sonda jsdom (anexos/sonda-leitura.js, anexos/cenarios/*.json): C1, C2, C4, C5, C7 defeitos reais; C3 abstencao do engine (lacuna classify x suppressedByPlatform, frozen) -> hipotese condicionada; C6 decisao registrada (022 E2) -> variante como titulo, nao card; C8 decisao registrada (023 E1). Refutacao adversarial e painel de tres desenhos (A/B/C) julgado por tres lentes: vencedor B (fonte unica na curadoria), sintese em anexos/desenho-sintese.md. Decisoes D-1..D-9 do §10 do desenho adotadas na recomendacao do tech-lead, decididas pelo orquestrador sob a instrucao do proprietario de 2026-10-31 (prompt da microfase 01); ratificacao literal pendente no PR. PORTAO DA FASE 0: decidido pelo orquestrador sob a instrucao do proprietario de 2026-10-31 (prompt da microfase 01); ratificacao literal pendente no PR. refinement.md (product-owner, Fable 5.1) + 4 verbetes em CONTEXT.md:247-305; critica de completude aplicada (itens 1.7, 3.3, 4.6, 4.10, 6.1-6.4).",
+    "approved_at": "2026-10-31"
+  },
+  "specify": {
+    "status": "approved",
+    "approved_at": "2026-10-31",
+    "notes": "spec.md do tech-lead (Fable 5.1, 2026-10-31): 8 criterios C1..C8 -> 3 gates D026-REC1 (a)-(i), D026-PAP1, D026-LEG1 (a)-(g); 6 mutantes D026-M1..M6; secao Reancoragens (D022-M10 muda de arquivo em 4 toques; comentarios-trilha E13); cross-check por leitura das specs seladas (REV B sha 4f1583c7 conferido) e boundary em tres fontes: classe mais alta tocada = produto/generated. Critica de completude aplicada (alinea (i) placeholder de familia; condicao nas portas de saida; escopo do FortiRecon em PAP1; C7 veto FortiEndpoint + elig SOCaaS; dividas declaradas; 12 citacoes de linha corrigidas). PORTAO DA FASE 1: decidido pelo orquestrador sob a instrucao do proprietario de 2026-10-31 (prompt da microfase 01); ratificacao literal pendente no PR."
+  },
+  "plan": {
+    "status": "approved",
+    "approved_at": "2026-10-31",
+    "notes": "plan.md do tech-lead (Fable 5.1, 2026-10-31): desenho B (fonte unica em ui_curation_v32.js, bridge __CURATION ganha oferta()/vetos()/reconcile()), boundary produto+generated, zero frozen; R9: ui_curation 316->~495, ui_p52_support 872->~940 justificado (a demanda retira derivacao); waves W0-W6; harness d026 na W4 (IC-4). Repins consolidados pelo orquestrador em tres (apos red, apos rebuild da W3, no fecho) em vez dos nove previstos — R8 exige o mesmo PR, nao um commit por wave (diretriz 2026-09-13). PORTAO DA FASE 2: decidido pelo orquestrador sob a instrucao do proprietario de 2026-10-31 (prompt da microfase 01); ratificacao literal pendente no PR."
+  },
+  "tasks": {
+    "status": "approved",
+    "approved_at": "2026-10-31",
+    "notes": "tasks.md do tech-lead (Fable 5.1, 2026-10-31): T001-T069, W0-W6, tipagem auditavel (4 feature: T010, T020, T030, T031), estado do mundo M1..M6 corrigido pela critica (M1 nao derruba C7 (d); M5 sem FortiEndpoint de volta). T030/T031 executadas em sequencia na pasta primaria (um escritor por vez) em vez de worktrees paralelas — ganho de D-9 (+8 linhas) nao paga a junção. PORTAO DA FASE 3: decidido pelo orquestrador sob a instrucao do proprietario de 2026-10-31 (prompt da microfase 01); ratificacao literal pendente no PR."
+  }
+}

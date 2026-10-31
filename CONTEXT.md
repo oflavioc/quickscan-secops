@@ -244,6 +244,66 @@ pelo documento.
 _Evitar_: mesclagem, merge, importação aditiva, herança da sessão, "preservar o
 que o arquivo não traz"
 
+**Registro de decisão de apoio**:
+Resultado, por linha de produto, da reconciliação entre a hipótese da Camada 1
+(`MAP`) e a voz do motor contextual — nascido UMA vez no dono do estado da
+curadoria (`__CURATION`) e consumido por tela, editor e papel. Um caso pertence
+quando a linha é publicável nesta sessão; o registro diz o que o motor resolveu
+para a linha — ou sob que condição a hipótese da Camada 1 permanece — e de onde
+cada valor veio; todos valores que JÁ existem no engine, no `MAP` ou no
+catálogo, nunca inventados pela apresentação. É DERIVADO: recomputado a cada
+leitura, nunca serializado (INV-8), nunca lido de volta do DOM; o que se persiste
+continua sendo só a decisão do operador. O shape canônico vive no contrato do
+bridge (`oferta()`), que este verbete referencia sem copiar (R12 / `EA-47`).
+_Evitar_: oferta do motor (é só a metade com voz), card (é a apresentação),
+recomendação, decisão de curadoria (é a do operador), DTO, snapshot
+
+**Hipótese condicionada**:
+Modo de um registro de decisão de apoio em que nenhuma fonte do motor sustenta a
+linha e nenhum veto a atinge — porque o motor não tem voz sobre a capability
+(`CONTEXT_NOT_INFORMED`, ou nenhum candidato, serviço ou nota), porque a
+apresentação está numa porta de saída (modo legado, gate de suficiência fechado),
+porque a base de um serviço não foi declarada (`UNSET`/`UNKNOWN`) ou porque a
+linha está fora do catálogo contextual da capability: a oferta da Camada 1 passa
+inteira, rotulada
+pela condição que a mantém hipótese, com o tier da severidade do achado. Nunca
+afirma presença nem ausência de tecnologia (INV-2): não informado ≠ ausente. A
+condição é enum fechado (`condicao`), nunca prosa; o texto visível é escolhido
+pela apresentação a partir dele. Distinta de *Habilitador a validar* (o ITEM
+listado sob capability não declarada — uma das condições; aqui o que se
+qualifica é a LEITURA, em todas elas) e de *Vão de contexto parcial* (estado da
+SESSÃO, não de uma linha). O critério de "ter voz" é o mesmo que decide o
+substituto por capability (`hasSubstituteV32`) — referenciado, não copiado.
+_Evitar_: sugestão, palpite, recomendação provisória, fallback do MAP, leitura
+legada, "sem contexto" como nome do modo (é uma das condições)
+
+**Veto do motor**:
+Negativa, por linha de produto × capability, que o motor contextual produz quando
+tem voz sobre a capability e NÃO oferece a linha. Um caso pertence quando a razão é um LITERAL do engine (`ctx.notes`,
+`serviceEligibility().reason`) sobre landscape DECLARADO — nunca sobre
+`UNSET`/`UNKNOWN` (INV-2), nunca sob gate fechado ou modo legado. Tem precedência
+sobre a hipótese da mesma linha, é visível nas duas superfícies com a razão e a
+tecnologia declarada, e NÃO é supressão: não é decisão do operador, não conta em
+`[data-p53-suprimido]` e não retira o substituto — a capability que veta é, por
+si, substituto. A lista de classes vive no contrato do bridge (`vetos()`),
+referenciada, não copiada.
+_Evitar_: supressão (é do operador — ver *Supressão pela curadoria*), exclusão,
+filtro, bloqueio, descarte, "produto incompatível" (é a leitura de UMA sessão,
+não do catálogo)
+
+**Linha de produto**:
+Identidade CURÁVEL de uma oferta: a chave do catálogo congelado da Camada 1
+(`PRODUCTS`) sob a qual o operador decide e que `data-p53-sol-produto` carrega.
+Os itens do motor — oferta, variante, nó de família, serviço — pertencem a uma
+linha pelo critério de pareamento que o dono do estado declara (`chaveDe`,
+`ui_curation_v32.js`), nunca por nome exibido; item que
+nenhum critério devolve fica sem linha (`chave:null`): publicável e incurável. O
+item que o contexto resolveu (a variante) é o TÍTULO do card, não a identidade —
+excluir a linha retira qualquer variante dela, nas duas superfícies. A função de
+pareamento vive no dono do estado e é referenciada, não copiada.
+_Evitar_: produto (ambíguo entre linha, item e card), família (é o nó do motor),
+variante (é o item resolvido), SKU, nome exibido como chave
+
 ## Estrutura (processo)
 
 **Demanda**:

@@ -1,0 +1,1 @@
+{"id":"C7-servico-gerenciado","nivel":2,"niveis":{"monitoring-coverage":0,"team-capacity":0,"endpoint":1},"landscape":{"endpoint-detection":{"presence":"PRESENT","solutions":[{"product":"FortiEDR","vendor":"Fortinet","status":"production","deployment":"on-prem"}]},"continuous-monitoring":{"presence":"NONE"}},"arch":{"saasAllowed":"yes"}}

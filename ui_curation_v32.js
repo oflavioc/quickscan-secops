@@ -105,10 +105,14 @@
 
   /* [026] constantes da derivação — vocabulário fechado; rótulo de apresentação
      NÃO mora aqui (ui_p52_support_v32.js). D-3 (spec §C3): chave de reversão —
-     com `true` a regra NUNCA veta (hipótese `plataforma-declarada-cobre`, tier
-     2); nasce desligada porque retirar o card devolveria a Camada 1
-     (`hasSubstituteV32`, ui_v32.js:751). */
-  var CONTEXTO_SUPRIMIDO_POR_PLATAFORMA = false;
+     com `true` a regra NUNCA veta: a linha vira hipótese
+     `plataforma-declarada-cobre`, tier 2, e o card FICA (publicado, curável),
+     por isso a Camada 1 não volta (`hasSubstituteV32`, ui_v32.js:751). Nasceu
+     desligada na W2; ligada na Fase 6 pela objeção O-1 do aceite do PO
+     (2026-10-31): o C3 do plano exige explicar uso/expansão da plataforma
+     declarada. A lacuna do engine (supressão não consultada em
+     CONTEXT_NOT_INFORMED) continua no EA-122. */
+  var CONTEXTO_SUPRIMIDO_POR_PLATAFORMA = true;
   var LINHA_DA_FAMILIA_DE_SERVICO = { "fortiguard-labs-advisory": "FortiGuard-Service-Bundle" };   /* regra 4 do pareamento */
   /* precedências da fusão (plan.md §Contratos): índice menor = mais forte */
   var FORCA_ACAO = ["avaliar-aquisicao", "modalidade-a-definir", "servico", "apoio-contextual", "conversa-por-sinal", "hipotese"];

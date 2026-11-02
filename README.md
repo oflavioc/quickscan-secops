@@ -16,13 +16,13 @@ contextuais e um relatório em PDF pronto para leitura executiva.
 
 | versão | o que é | onde está |
 |---|---|---|
-| **v3.2.13** | **versão corrente — selada em 2026-11-02** (tag anotada `v3.2.13` sobre o merge do PR #119, `main` fast-forward, Release do GitHub com asset conferido), **ainda não em produção publicada**: o serviço do proprietário segue na v3.2.12 até o cutover, ato dele. Unifica a **decisão de apoio** da seção de apoio (`EA-76`, demanda 026): tela, editor e PDF passam a dizer o mesmo sobre cada linha de produto, e o produto que o motor contextual vetou deixa de aparecer como indicação prioritária. Identidade: SHA-256 `9d5fca714308e358223cc31c579a7c3a508d5d07ae0f7b4065f237702ffa52ce` (1.287.472 bytes). A tag anotada `v3.2.13` e a Release do GitHub são criadas na selagem, no ato de release. | [registro de selagem](docs_phase5/SELAGEM_V3_2_13.md) |
-| v3.2.12 | **produção publicada até o cutover da v3.2.13**, que é ato do proprietário: é a versão liberada e em uso hoje. Selada em 2026-10-31 (tag anotada `v3.2.12` sobre o merge do PR #115; `main` fast-forward), com Release do GitHub. Depois do cutover passa a ser o **rollback com Release**. Corrige a **curadoria do relatório** na importação de sessão e em *Nova sessão* (`EA-91`/`EA-92`). SHA-256 `024abf113f30098617cf9f0617d51295903634839fb6e1b07b625f13baa03885` (1.248.772 bytes). | [release `v3.2.12`](https://github.com/oflavioc/quickscan-secops/releases/tag/v3.2.12) · [registro de selagem](docs_phase5/SELAGEM_V3_2_12.md) |
+| **v3.2.13** | **produção publicada.** É a versão liberada e em uso: selada em 2026-11-02 (tag anotada `v3.2.13` sobre o merge do PR #119; `main` fast-forward), com Release do GitHub e cutover do serviço do proprietário conferido byte a byte no mesmo dia. Unifica a **decisão de apoio** da seção de apoio (`EA-76`, demanda 026): tela, editor e PDF passam a dizer o mesmo sobre cada linha de produto, e o produto que o motor contextual vetou deixa de aparecer como indicação prioritária. Identidade: SHA-256 `9d5fca714308e358223cc31c579a7c3a508d5d07ae0f7b4065f237702ffa52ce` (1.287.472 bytes). A tag anotada `v3.2.13` e a Release do GitHub são criadas na selagem, no ato de release. | [registro de selagem](docs_phase5/SELAGEM_V3_2_13.md) |
+| v3.2.12 | **rollback com Release**: foi a versão em uso até o cutover da v3.2.13 em 2026-11-02. Selada em 2026-10-31 (tag anotada `v3.2.12` sobre o merge do PR #115; `main` fast-forward), com Release do GitHub. Saiu do ar no cutover de 2026-11-02. Corrige a **curadoria do relatório** na importação de sessão e em *Nova sessão* (`EA-91`/`EA-92`). SHA-256 `024abf113f30098617cf9f0617d51295903634839fb6e1b07b625f13baa03885` (1.248.772 bytes). | [release `v3.2.12`](https://github.com/oflavioc/quickscan-secops/releases/tag/v3.2.12) · [registro de selagem](docs_phase5/SELAGEM_V3_2_12.md) |
 | v3.2.11 | publicada no ambiente do proprietário em 2026-10-02, **sem tag nem Release do GitHub**, e **superada** pela v3.2.12 antes de ganhar tag: a correção da curadoria mudou o conteúdo, e o nome v3.2.11 já estava ligado a este artefato. Saiu do ar no cutover de 2026-10-31. SHA-256 `4c45ce20fece3bf024dd4a85b99a9766185f48039805ead45d0fe71700bf5712` (1.242.046 bytes). | [registro superado](docs_phase5/SELAGEM_V3_2_11.md) |
 | **v3.2.9** | **versão anterior com Release do GitHub**, preservada e verificada como caminho de rollback mais antigo. | [release `v3.2.9`](https://github.com/oflavioc/quickscan-secops/releases/tag/v3.2.9) |
 | v3.2.8 · v3.2.7 · v3.2.6 · v3.2.2 · v3.2.1 | marcos anteriores, com release própria e auditoria externa registrada | [`v3.2.8`](https://github.com/oflavioc/quickscan-secops/releases/tag/v3.2.8) · [`v3.2.7`](https://github.com/oflavioc/quickscan-secops/releases/tag/v3.2.7) · [`v3.2.6`](https://github.com/oflavioc/quickscan-secops/releases/tag/v3.2.6) · [`v3.2.2`](https://github.com/oflavioc/quickscan-secops/releases/tag/v3.2.2) · [`v3.2.1`](https://github.com/oflavioc/quickscan-secops/releases/tag/v3.2.1) |
 
-**A versão corrente do produto é a v3.2.13.** A v3.2.12 é a versão publicada em uso até o cutover e,
+**A versão corrente do produto é a v3.2.13.** A v3.2.12 é o rollback com Release e,
 depois dele, o rollback imediato com Release; a v3.2.9 permanece preservada e verificada. As versões v3.2.3 a v3.2.5 foram publicadas no ambiente do proprietário sem
 release própria; a v3.2.6 consolidou todas, a v3.2.7 acrescentou a **curadoria do relatório** — o
 engenheiro escolhe o que de fato será apresentado, e a seção de apoio agrupa por produto em vez de
@@ -51,9 +51,9 @@ fica como trilha). O nome v3.2.13 é o seguinte da sequência; a tag anotada e a
 
 **Para avaliar ou distribuir a v3.2.13, use o asset da [Release `v3.2.13`](https://github.com/oflavioc/quickscan-secops/releases/tag/v3.2.13)** (`quickscan_secops_soccmm_v3_2_13.html`,
 byte-idêntico ao blob da tag) e confira o SHA-256 `9d5fca714308e358223cc31c579a7c3a508d5d07ae0f7b4065f237702ffa52ce` (1.287.472 bytes).
-Até o cutover do proprietário, o que está em uso é a v3.2.12 (SHA-256 `024abf113f30098617cf9f0617d51295903634839fb6e1b07b625f13baa03885`,
-1.248.772 bytes) — não confunda os dois. A Release mais recente do GitHub é a v3.2.13; a
-[`v3.2.12`](https://github.com/oflavioc/quickscan-secops/releases/tag/v3.2.12) é a versão em uso até o cutover e o rollback depois dele; a v3.2.11 (SHA-256
+A v3.2.12 (SHA-256 `024abf113f30098617cf9f0617d51295903634839fb6e1b07b625f13baa03885`,
+1.248.772 bytes), que o serviço servia até 2026-11-02, não é a corrente — não confunda os dois. A Release mais recente do GitHub é a v3.2.13; a
+[`v3.2.12`](https://github.com/oflavioc/quickscan-secops/releases/tag/v3.2.12) é o rollback; a v3.2.11 (SHA-256
 `4c45ce20fece3bf024dd4a85b99a9766185f48039805ead45d0fe71700bf5712`, 1.242.046 bytes) está superada. A tag
 `v3.2.13` é a referência de código.
 Um arquivo `*_dev.html` na árvore de trabalho é candidata, nunca release: antes de avaliar ou
@@ -94,7 +94,7 @@ dependência de runtime.
 Obtenha o HTML da v3.2.13 pelo asset da Release `v3.2.13` ou pela tag `v3.2.13` (SHA-256 `9d5fca714308e358223cc31c579a7c3a508d5d07ae0f7b4065f237702ffa52ce`,
 1.287.472 bytes), e abra no navegador (duplo clique, ou
 `Arquivo → Abrir`). A [última release do GitHub](https://github.com/oflavioc/quickscan-secops/releases/latest)
-é a v3.2.13; a v3.2.12 é a versão em uso até o cutover e o rollback depois dele.
+é a v3.2.13; a v3.2.12 é o rollback, não a versão corrente.
 Não há instalação nem servidor.
 
 > O GitHub **não renderiza HTML como página**: clicar no arquivo mostra o código-fonte e o botão

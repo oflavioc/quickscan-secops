@@ -2358,3 +2358,86 @@
   .v32-icon[data-icon="FortiXDR"]                        { --p52-v32icon-scale: 0.955; }   /* tinta 88.0% */
   .v32-icon[data-icon="SOCaaS"]                          { --p52-v32icon-scale: 1.006; }   /* tinta 88.0% */
 }
+
+/* ==========================================================================
+   v3.3 · AMPLIFICAÇÃO VISUAL DA VISÃO EXECUTIVA E DO EMBLEMA — SÓ TELA
+   Os mecanismos já existem (barras segmentadas por domínio, emblema com
+   ping/trace, score). Aqui ganham PRESENÇA: barras grossas com blocos e glow
+   na cor do domínio, pentágono vivo (nós brilhantes + pulso), score gigante.
+   NÃO toca geometria medida pelo P52-POP2: zero `transform` em disco/haste/
+   rótulo — só cor, brilho (`filter`) e opacidade. Impressão intacta.
+   ========================================================================== */
+@media screen{
+  /* ---- Barras de maturidade: trilho mais alto, blocos nítidos, fill com glow ---- */
+  .p52-dombar-track{
+    height:20px; border-radius:11px;
+    background:rgba(255,255,255,.035); border:1px solid var(--line);
+    box-shadow:inset 0 1px 2px rgba(0,0,0,.5);
+  }
+  .p52-dombar-ticks i{ border-right:3px solid var(--bg); opacity:1; }
+  .p52-dombar-fill{
+    border-radius:11px;
+    background:linear-gradient(180deg,
+      color-mix(in srgb, var(--dom-accent) 86%, #fff), var(--dom-accent));
+    box-shadow:
+      0 0 16px -2px color-mix(in srgb, var(--dom-accent) 70%, transparent),
+      inset 0 1px 0 rgba(255,255,255,.35);
+  }
+  .p52-dombar-target{
+    border-left:2px dashed var(--ftnt-green);
+    box-shadow:0 0 8px color-mix(in srgb, var(--ftnt-green) 60%, transparent);
+  }
+
+  /* ---- Barras do resumo superior (.ruler/.fill da Camada 1): mais presença,
+         mantendo o vermelho da marca (o resumo não é domínio-colorido por design, R13) ---- */
+  .p52-workspace .ruler{ height:14px; border-radius:7px; box-shadow:inset 0 1px 2px rgba(0,0,0,.5); }
+  .p52-workspace .ruler .fill{
+    border-radius:7px;
+    background:linear-gradient(180deg, color-mix(in srgb, var(--red) 82%, #fff), var(--red));
+    box-shadow:0 0 14px -2px color-mix(in srgb, var(--red) 65%, transparent), inset 0 1px 0 rgba(255,255,255,.30);
+  }
+  .p52-workspace .ruler .ticks i{ border-right:2px solid var(--bg); }
+
+  /* ---- Score gigante: branco com halo (sem fill transparente p/ não cair no gate de contraste) ---- */
+  #p52-sec-exec .score-big{
+    color:#FFFFFF; font-weight:800; letter-spacing:-.02em;
+    text-shadow:0 2px 34px rgba(255,255,255,.20), 0 0 2px rgba(255,255,255,.35);
+  }
+  #p52-sec-exec .score-big small{
+    color:var(--muted); font-weight:600; text-shadow:none;
+  }
+
+  /* ---- Emblema pentagonal: vivo e vívido ---- */
+  .p52-emblem-ring{ stroke:color-mix(in srgb, #fff 16%, transparent); stroke-width:2; }
+  .p52-emblem-spoke{ stroke:color-mix(in srgb, #fff 10%, transparent); stroke-width:1.3; }
+  .p52-emblem-core{
+    fill:color-mix(in srgb, var(--surface2) 92%, #000);
+    stroke:color-mix(in srgb, #fff 20%, transparent); stroke-width:1.5;
+    filter:drop-shadow(0 0 10px rgba(255,255,255,.09));
+  }
+  .p52-emblem-node[data-dom] .p52-emblem-disc{
+    fill:color-mix(in srgb, var(--dom-accent) 32%, var(--surface));
+    stroke:var(--dom-accent); stroke-width:3;
+    animation:p52-node-pulse 3.6s ease-in-out infinite;
+  }
+  .p52-emblem-node[data-dom="1"] .p52-emblem-disc{ animation-delay:.5s; }
+  .p52-emblem-node[data-dom="2"] .p52-emblem-disc{ animation-delay:1s; }
+  .p52-emblem-node[data-dom="3"] .p52-emblem-disc{ animation-delay:1.5s; }
+  .p52-emblem-node[data-dom="4"] .p52-emblem-disc{ animation-delay:2s; }
+  @keyframes p52-node-pulse{
+    0%,100%{ filter:drop-shadow(0 0 5px color-mix(in srgb, var(--dom-accent) 55%, transparent)); }
+    50%    { filter:drop-shadow(0 0 17px color-mix(in srgb, var(--dom-accent) 95%, transparent)); }
+  }
+  .p52-emblem-num{ fill:#FFFFFF; font-weight:800; }
+  .p52-emblem-label{ fill:var(--text); font-weight:700; }
+  /* ping e traço do pentágono mais presentes, na cor da marca */
+  .p52-emblem-ping{ stroke:color-mix(in srgb, var(--red) 88%, transparent); stroke-width:2; }
+  .p52-emblem-trace{
+    stroke:color-mix(in srgb, var(--red) 92%, transparent); stroke-width:2.6;
+    filter:drop-shadow(0 0 6px color-mix(in srgb, var(--red) 70%, transparent));
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .p52-emblem-node[data-dom] .p52-emblem-disc{ animation:none; }
+  }
+}

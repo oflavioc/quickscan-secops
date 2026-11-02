@@ -222,3 +222,74 @@
   #v32-print-report .pr-howto-list{margin:0; padding-left:15px;}
   #v32-print-report .pr-howto-list li{font-size:9.8px; line-height:1.42; color:#222; margin:1px 0;}
 }
+
+/* ==========================================================================
+   NOVA VERSÃO VISUAL (v3.3) · FUNDAÇÃO GLOBAL — SÓ TELA
+   Layered dark mode, atmosfera (dot-grid + glow radial), elevação em camadas,
+   topbar glass, keycaps 3D e indicador neon de seleção. TUDO confinado a
+   @media screen: o relatório de impressão (tema claro, selado) fica intacto.
+   Reaproveita a paleta oficial --ftnt-* (definida em ui_ux_v32.css). Puro CSS
+   sobre as classes já existentes — sem rede, sem JS, sem mudança de DOM.
+   ========================================================================== */
+@media screen{
+  :root{
+    /* superfícies em camadas (profundidade) no lugar do preto chapado */
+    --bg:#08090A; --surface:#111316; --surface2:#181B20;
+    --line:#23262C; --line-strong:#2E323A; --line-soft:rgba(255,255,255,.06);
+    --text:#F4F5F6; --muted:#A7ABB3; --faint:#72767E;
+    /* elevação e tipografia mono para números/atalhos */
+    --elev-1:0 1px 2px rgba(0,0,0,.45);
+    --elev-2:0 12px 32px -14px rgba(0,0,0,.70), 0 2px 10px -6px rgba(0,0,0,.55);
+    --mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,"Cascadia Mono",Consolas,"Segoe UI Mono",monospace;
+  }
+
+  /* atmosfera: dot-grid + glow radial que desvanece nas bordas; camada fixa,
+     sem eventos, atrás de tudo — nunca gera rolagem (V2) nem rede (V11). */
+  body::before{
+    content:""; position:fixed; inset:0; z-index:-1; pointer-events:none;
+    background:
+      radial-gradient(1150px 480px at 50% -10%, rgba(218,41,28,.07), transparent 60%),
+      radial-gradient(820px 560px at 88% -4%, rgba(48,127,226,.045), transparent 55%),
+      radial-gradient(circle, rgba(255,255,255,.03) 1px, transparent 1.4px);
+    background-size:100% 100%, 100% 100%, 22px 22px;
+    -webkit-mask-image:linear-gradient(#000, #000 40%, transparent 90%);
+            mask-image:linear-gradient(#000, #000 40%, transparent 90%);
+  }
+
+  /* topbar glass: fixa no topo, blur + hairline. Full-bleed via margem negativa
+     dentro do padding do .wrap (não ultrapassa a borda → sem overflow). */
+  .top{
+    position:sticky; top:0; z-index:40;
+    margin:-28px -24px 36px; padding:18px 24px;
+    background:color-mix(in srgb, var(--bg) 72%, transparent);
+    -webkit-backdrop-filter:blur(12px) saturate(140%);
+            backdrop-filter:blur(12px) saturate(140%);
+    border-bottom:1px solid var(--line-soft);
+  }
+
+  /* superfícies em camadas: elevação discreta (sombra não altera contraste) */
+  .panel,.v32-block,.v32-card,.finding,.disclaimer,.next,.prio-decl,
+  #v32editor,#v32panel .v32-group,.v32-subs,.apoio-block,.t-list,details.t-details{
+    box-shadow:var(--elev-1);
+  }
+
+  /* HUD: números grandes do hero em monoespaçada */
+  .meta-row b{font-family:var(--mono); letter-spacing:-.01em;}
+
+  /* opções: lift no hover; indicador neon à esquerda quando selecionada */
+  .opt{box-shadow:var(--elev-1);
+    transition:border-color .15s, background .15s, box-shadow .18s, transform .12s;}
+  .opt:hover{transform:translateY(-1px);}
+  .opt.sel{box-shadow:inset 3px 0 0 var(--red), 0 0 0 1px rgba(218,41,28,.28), var(--elev-2);}
+
+  /* keycaps 3D: luz no topo, base mais espessa; afundam no :active/seleção */
+  .opt .key{font-family:var(--mono);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.09), 0 2px 0 rgba(0,0,0,.55);
+    border-bottom-width:2px; transition:transform .08s, box-shadow .08s;}
+  .opt:active .key, .opt.sel .key{transform:translateY(1px);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.14), 0 1px 0 rgba(0,0,0,.5);}
+
+  /* CTA primário: brilho mais rico, mantendo o vermelho como único foco */
+  .cta{box-shadow:0 10px 30px -12px rgba(218,41,28,.50);}
+  .cta:hover{box-shadow:0 14px 36px -10px rgba(218,41,28,.60);}
+}

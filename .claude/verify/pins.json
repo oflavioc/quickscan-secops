@@ -1,8 +1,8 @@
 {
   "_meta": {
     "descricao": "Registry único de pins — fonte de identidade dos artefatos (R8). Hashes = SHA-256 dos blobs de HEAD. Alterar arquivo pinado exige regenerar este registry no MESMO PR, com motivo no commit.",
-    "gerado_de_head": "e67aa322cfe7f3339a7867666e3997c2dca89db6",
-    "gerado_em": "2026-10-31",
+    "gerado_de_head": "5a2157e09eecb17d0f62aad95cae0addce414fd9",
+    "gerado_em": "2026-11-02",
     "exclusoes": [
       "docs_phase5/**",
       ".claude/project-memory/** (estado de processo — muda por fase; validado pelo stage state, não por pin)",
@@ -581,6 +581,7 @@
     "specs/026-decisao-unica-do-apoio/spec-validate.md": "d0eeb7417d278fab05f45e2376a8edf83e5406daab4958e61df747dee64e3d25",
     "specs/026-decisao-unica-do-apoio/spec.md": "18b676fd2f2a4cf3bda9a5e4a4c09caf81f0f5d5be977f659e34950991e724dd",
     "specs/026-decisao-unica-do-apoio/tasks.md": "0fc060a9bdf422053119ea2f6a1b126a5a9589d2156b4c5f8e75ba715229d8f9",
+    "specs/027-linguagem-e-metodologia/decisoes.md": "502936d4b30f765703ce0df6eb252cb6a98311abdbca7f818c53fafd74b27050",
     "specs/PHASE_5_0_REV_A.md": "22e729174c6a3c5dd620da5330b03eb96d9eb6fc6e64eba097c2bde55eb0a510",
     "specs/PHASE_5_0_REV_B.md": "4f1583c733df62a9452aa7b218d962e40d781bb8d30dfc3179ad6e1ef004619b",
     "synthetic_session_examples/exemplo-completo.json": "3fc6e39bd7be411912bdd591bc79e3ef73b27c5b8cf5d158f52038f5de20d751",

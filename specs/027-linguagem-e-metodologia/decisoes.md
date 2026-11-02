@@ -564,3 +564,15 @@ metodológico nomeado pelo proprietário; IDs da planilha oficial do SOC-CMM
 2.4 (não atribuídos pela auditoria); confirmação do *tipo* linha a linha;
 versão e data no cabeçalho. Até lá, a única frase publicável no produto é a
 da 6-A — *próprias, inspiradas, não cobrem o modelo* — nunca "15 de 27".
+
+## 12 · Ratificação — 2026-11-02
+
+O proprietário respondeu às oito perguntas no chat, literalmente: *"1A concordo · 2B concordo ·
+3A concordo · 4A concordo · 5A concordo · 6A concordo · 7A concordo · 8A concordo"*. Todas na
+recomendação deste documento. Empacotamento, conforme §10: o que é copy e documento (1-A, 2-A como
+degrau da 2-B, 3-A, 4-A, 5-A registro, 6-A, 7-A, 8-A) e o comportamento novo da 2-B (bandas
+próprias por rótulo, com os gates de nomes de estágio reancorados) entram na **demanda 027**, pela
+máquina de 7 fases; 3-A-R e 3-B ficam como demandas seguintes, não pedidas. 7-B (delimitação dos
+três objetos no `LICENSE`/README) não foi escolhida: fica registrada como pergunta aberta ao
+proprietário, sem prazo.
+

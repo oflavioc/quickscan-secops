@@ -1,4 +1,19 @@
 # Changelog · Quickscan V3.2
+## Nota de 2026-11-02 — onde vive o histórico recente
+A partir da Fase 5 (2026-08), este arquivo deixou de receber entradas por versão. O histórico de
+versões vive nas **Releases do GitHub** (v3.2.1, v3.2.2, v3.2.6 a v3.2.9, v3.2.12 e v3.2.13; as v3.2.3 a
+v3.2.5, v3.2.10 e v3.2.11 foram publicadas só no ambiente do proprietário, sem Release) e nos registros de selagem
+`docs_phase5/SELAGEM_V3_2_*.md`; as demandas que originaram cada versão estão em
+`specs/NNN-*/relatorio-final.md`. As entradas abaixo são o histórico anterior e não foram reescritas.
+- **v3.2.12** (tag `v3.2.12`) — curadoria transacional: a curadoria do relatório entra na importação
+  de sessão de forma transacional e substitutiva (validar não aplica; cancelar não deixa rastro; chave
+  ausente não herda a sessão anterior) e *Nova sessão*/*Reiniciar* a limpam (`EA-91`, `EA-92`; demanda
+  `025-curadoria-transacional`; registro `docs_phase5/SELAGEM_V3_2_12.md`).
+- **v3.2.13** (tag `v3.2.13`) — decisão única do apoio: tela, editor e PDF consomem a mesma decisão
+  por linha de produto, com qualificador, ação, condição, variante e o bloco "Não indicado nesta
+  leitura" (`QS-01`, `QS-02`, `EA-76`; demanda `026-decisao-unica-do-apoio`; registro
+  `docs_phase5/SELAGEM_V3_2_13.md`).
+
 ## Phase 3.2.1 · Recommendation UI Conformance Patch
 - **Registry fix (autorizado):** `soc-governance.landscapeEnabled` corrigido de `true` para `false`,
   aderindo à matriz aprovada (governança é avaliada pelo SOC-CMM; não é camada de tecnologia declarável).

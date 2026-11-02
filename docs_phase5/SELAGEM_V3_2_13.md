@@ -285,3 +285,17 @@ Nada disso está feito no momento da escrita deste registro. O **cutover** não 
 parte da lista: é o item 6 acima, do proprietário. O adendo que registrar o que de
 fato aconteceu (hash do merge, objeto da tag, run do CI, URL da Release, cutover) é
 posterior e só acrescenta (R2 §5).
+
+## Adendo de 2026-11-02 — selagem consumada: ff, tag, Release
+
+- PR de selagem #119 mesclado pelo proprietário em 2026-10-31 (merge `a964498`, *merge commit*).
+- `main` `f2ff25d` → `a964498` por fast-forward (2026-11-02); tag anotada **`v3.2.13`** = objeto
+  `3140b62e81d3e4c745301137ceedfa4917c99db3` → `a964498`, com os hashes deste registro; push de `main` e da tag.
+- Release do GitHub **v3.2.13** publicada com o asset `quickscan_secops_soccmm_v3_2_13.html` (1.287.472 bytes) e o
+  `.sha256`; conferência pós-download (`sha256sum -c`: OK) e digest da API do GitHub
+  `sha256:9d5fca714308e358223cc31c579a7c3a508d5d07ae0f7b4065f237702ffa52ce` — igual ao HTML dev de `b50dde2`.
+  https://github.com/oflavioc/quickscan-secops/releases/tag/v3.2.13
+- **Cutover do serviço em `127.0.0.1:1337`: pendente, ato do proprietário.** Comando correto (o impresso pelo
+  `preparar_release.py` está errado por `EA-121`): `docker stop quickscan-v3212 && docker compose -f deploy/v3.2.13/compose.yaml up -d`,
+  depois `curl -s http://127.0.0.1:1337/ | sha256sum` == `9d5fca71…52ce`. Até lá a porta devolve `024abf11…3885` (v3.2.12).
+

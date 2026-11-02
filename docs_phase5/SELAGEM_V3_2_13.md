@@ -295,7 +295,7 @@ posterior e só acrescenta (R2 §5).
   `.sha256`; conferência pós-download (`sha256sum -c`: OK) e digest da API do GitHub
   `sha256:9d5fca714308e358223cc31c579a7c3a508d5d07ae0f7b4065f237702ffa52ce` — igual ao HTML dev de `b50dde2`.
   https://github.com/oflavioc/quickscan-secops/releases/tag/v3.2.13
-- **Cutover do serviço em `127.0.0.1:1337`: pendente, ato do proprietário.** Comando correto (o impresso pelo
+- **Cutover do serviço em `127.0.0.1:1337`: FEITO pelo proprietário em 2026-11-02** (`docker stop quickscan-v3212`; `docker compose -f deploy/v3.2.13/compose.yaml up -d`; container `quickscan-v3213` healthy). Conferido pelo orquestrador no mesmo dia: `curl -s http://127.0.0.1:1337/ | sha256sum` = `9d5fca714308e358223cc31c579a7c3a508d5d07ae0f7b4065f237702ffa52ce`, 1.287.472 bytes; `/healthz` 200. Item 1 do roteiro de aceite da auditoria externa (hash do HTML servido = artefato aprovado) **fechado**. O texto abaixo era o estado antes do cutover (R2 §5): Comando correto (o impresso pelo
   `preparar_release.py` está errado por `EA-121`): `docker stop quickscan-v3212 && docker compose -f deploy/v3.2.13/compose.yaml up -d`,
   depois `curl -s http://127.0.0.1:1337/ | sha256sum` == `9d5fca71…52ce`. Até lá a porta devolve `024abf11…3885` (v3.2.12).
 

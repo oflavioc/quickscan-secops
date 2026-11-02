@@ -378,6 +378,30 @@ possibilidade de tecnologia condicionada ao contexto; o *serviço de apoio* é a
 - A recomendação depende **do gap e do contexto declarado** — muda quando qualquer um dos dois muda.
 - Formas de apresentação: **apoio direto** (ausência confirmada de tecnologia), **apoio contextual**
   (operacionalização e serviços) e **a validar em aprofundamento** (falta contexto para afirmar).
+  Na seção **Formas de apoio, por produto**, essas formas aparecem como cards, e cada card traz:
+  - o **qualificador**, que diz o peso da indicação: **indicação prioritária** (vem de um gap alto) ou
+    **após validação** (vem de um gap moderado, ou de uma hipótese que ainda precisa ser confirmada);
+  - o **item resolvido pelo contexto declarado**, já no título: se o contexto aponta a variante de
+    endpoint ou a on-premises, o card mostra **FortiEDR**, sob a linha de produto FortiEndpoint, ou
+    **FortiNDR (On-Premises)**, e uma frase informa a linha de origem ("Variante resolvida pelo
+    contexto declarado — linha de produto: …"). Quando há outra modalidade possível, o card diz
+    "Disponível também como …" em vez de abrir um segundo card;
+  - a **linha de ação** ("Ação sugerida: …"): avaliar a aquisição, definir a modalidade de entrega,
+    avaliar o serviço gerenciado, apoiar a base já instalada ou conversar a partir de um sinal
+    declarado — sempre no aprofundamento, nunca como compra decidida;
+  - a **condição**, quando o contexto não dá voz à avaliação contextual para afirmar mais. O card diz
+    então **"Hipótese do mapa: …"** e o motivo: contexto tecnológico não informado nesta sessão,
+    capability não informada, respostas insuficientes para a leitura contextual, capability fora do
+    catálogo contextual ou **plataforma declarada que já cobre a capability** (por exemplo, FortiSOC
+    declarado como plataforma de SOC faz o FortiSOAR aparecer como hipótese, após validação, e não como
+    indicação prioritária). Hipótese é ponto de partida de conversa, não conclusão.
+- **"Não indicado nesta leitura".** Quando o contexto declarado afasta uma linha do mapa, ela **não
+  vira card**: aparece nesse bloco, com a **razão literal** da avaliação contextual e, quando é o caso,
+  "Tecnologia declarada: <produto> (<status>)". Isso acontece em três situações: o cliente **já tem em
+  produção** a tecnologia de terceiro que a linha ocuparia (o apoio vira operacionalização, nunca
+  substituição); uma **restrição declarada** (por exemplo, SaaS vedado ou processamento local) veta a
+  oferta; ou o **serviço não é elegível** pela base declarada. É uma leitura da ferramenta sobre o
+  contexto, **não** uma supressão feita pela curadoria do relatório, e o PDF repete o bloco.
 - **"Por que apareceu"** explica a origem da sugestão a partir do que foi declarado. Se essa frase
   não fizer sentido para o cliente, o contexto provavelmente está incompleto.
 - Uma **solução existente pode suprimir** nova aquisição: se a capability já é coberta, a ferramenta
@@ -467,7 +491,10 @@ Estrutura, na ordem em que o documento realmente sai:
 9. **Formas de apoio, por produto**: o mesmo apoio reagrupado por produto em vez de por gap, com
    as capabilities que cada um atende e a divisão do portfólio. Traz a seleção feita na tela — se
    o engenheiro removeu ou acrescentou algo, o documento sai com a mesma seleção e diz quando a
-   presença de um item é decisão dele;
+   presença de um item é decisão dele. O papel sai com o mesmo **qualificador**, a mesma **ação**, a
+   mesma **condição**, a mesma **variante** e o mesmo **escopo** do card na tela, e com o bloco
+   **"Não indicado nesta leitura"** quando a tela o mostra — por cópia do que a tela decidiu, não por
+   um novo cálculo, de modo que tela e papel contam a mesma história;
 10. **Jornada de maturidade** e **leitura executiva**;
 11. **Perfil atual × Cenário-alvo de maturidade**;
 12. **Anexo — respostas da sessão**, com as observações registradas.
